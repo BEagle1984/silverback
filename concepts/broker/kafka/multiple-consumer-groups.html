@@ -8,7 +8,7 @@
     <title>Multiple Consumer Groups (in same process) | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Multiple Consumer Groups (in same process) | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -87,7 +87,7 @@
 <h1 id="multiple-consumer-groups-in-same-process">Multiple Consumer Groups (in same process)</h1>
 
 <p>In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
-<p>A much safer approach is to bind multiple consumers to the same topic, using a different consumer group id. This will cause the message to be consumed multiple times (once per consumer group) and being committed independently. The &lt;xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute&gt; can be used to execute a subscribed method according to the group id.</p>
+<p>A much safer approach is to bind multiple consumers to the same topic, using a different consumer group id. This will cause the message to be consumed multiple times (once per consumer group) and being committed independently. The <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> can be used to execute a subscribed method according to the group id.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -167,7 +167,7 @@
 </section>
 </div>
 
-<p>Using the &lt;xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute&gt; is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>GroupId</code> value.</p>
+<p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>GroupId</code> value.</p>
 <pre><code class="lang-csharp">public class MySubscriber
 {
     public void OnMessageReceived(IInboundEnvelope&lt;MyEvent&gt; envelope)

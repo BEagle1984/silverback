@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ChunkSequenceWriter
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -143,7 +143,8 @@
   </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_CanHandle_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.CanHandle*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)">CanHandle(IOutboundEnvelope)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Checks whether this writer can and must handle the specified message.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -162,7 +163,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td></td>
+        <td><p>The envelope containing the message to be handled.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -177,7 +179,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p>A value indicating whether this writer can and must handle the message.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -190,11 +193,13 @@
   </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessageAsync_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessageAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)">ProcessMessageAsync(IOutboundEnvelope)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sets the headers used to match the message with the sequence it belongs to. If needed it can
+also split a single message into multiple messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IAsyncEnumerable&lt;IOutboundEnvelope&gt; ProcessMessageAsync(IOutboundEnvelope envelope)</code></pre>
+    <pre><code class="lang-csharp hljs">public async IAsyncEnumerable&lt;IOutboundEnvelope&gt; ProcessMessageAsync(IOutboundEnvelope envelope)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -209,7 +214,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td></td>
+        <td><p>The envelope containing the message to be handled.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -224,7 +230,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.IAsyncEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>&gt;</td>
-        <td></td>
+        <td><p>An <span class="xref">System.Collections.Generic.IAsyncEnumerable&lt;T&gt;</span> with the envelopes containing the messages to be
+produced.</p>
+</td>
       </tr>
     </tbody>
   </table>

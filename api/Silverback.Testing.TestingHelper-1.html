@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class TestingHelper&lt;TBroker&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,12 +90,14 @@
   
   <h1 id="Silverback_Testing_TestingHelper_1" data-uid="Silverback.Testing.TestingHelper`1" class="text-break">Class TestingHelper&lt;TBroker&gt;
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">TestingHelper&lt;TBroker&gt;</span></div>
+      <div class="level2"><a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a></div>
       <div class="level2"><a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a></div>
   </div>
   <div classs="implements">
@@ -143,7 +145,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TBroker</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -200,7 +203,8 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_Broker_" data-uid="Silverback.Testing.TestingHelper`1.Broker*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_Broker" data-uid="Silverback.Testing.TestingHelper`1.Broker">Broker</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the current <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -230,7 +234,8 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_Spy_" data-uid="Silverback.Testing.TestingHelper`1.Spy*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_Spy" data-uid="Silverback.Testing.TestingHelper`1.Spy">Spy</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -251,6 +256,10 @@
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_TestingHelper_1_Spy_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> must be enabled calling <code>AddIntegrationSpy</code> or
+<code>AddIntegrationSpyAndSubscriber</code>.</p>
+</div>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
@@ -262,11 +271,12 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync_" data-uid="Silverback.Testing.TestingHelper`1.IsOutboxEmptyAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync" data-uid="Silverback.Testing.TestingHelper`1.IsOutboxEmptyAsync">IsOutboxEmptyAsync()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Checks whether the outbox (table) is empty.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; IsOutboxEmptyAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task&lt;bool&gt; IsOutboxEmptyAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -279,7 +289,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains
+<code>true</code> if the outbox is empty, otherwise <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -292,11 +304,13 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages routed to the consumers have been
+processed and committed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = default(TimeSpan? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -311,7 +325,8 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
-        <td></td>
+        <td><p>The time to wait for the messages to be consumed and processed. The default is 30 seconds.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -326,10 +341,14 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages have been processed.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked brokers only.</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilConnectedAsync(System.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
@@ -339,11 +358,12 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})">WaitUntilConnectedAsync(Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all consumers are connected and ready.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task WaitUntilConnectedAsync(TimeSpan? timeout = default(TimeSpan? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task WaitUntilConnectedAsync(TimeSpan? timeout = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -358,7 +378,8 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
-        <td></td>
+        <td><p>The time to wait for the consumers to connect. The default is 30 seconds.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -373,7 +394,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all consumers are successfully connected and ready.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -386,11 +408,12 @@
   </span>
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilOutboxIsEmptyAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilOutboxIsEmptyAsync(System.Threading.CancellationToken)">WaitUntilOutboxIsEmptyAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages stored in the outbox have been produced.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -405,7 +428,8 @@
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -420,7 +444,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when the outbox is empty.</p>
+</td>
       </tr>
     </tbody>
   </table>

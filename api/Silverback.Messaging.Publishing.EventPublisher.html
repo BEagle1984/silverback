@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class EventPublisher
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,8 @@
   
   <h1 id="Silverback_Messaging_Publishing_EventPublisher" data-uid="Silverback.Messaging.Publishing.EventPublisher" class="text-break">Class EventPublisher
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a>.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -160,9 +161,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Publishing.IPublisher</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
         <td><span class="parametername">publisher</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Publishing.IPublisher</span> to be wrapped.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to be wrapped.</p>
 </td>
       </tr>
     </tbody>
@@ -178,7 +179,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_EventPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.EventPublisher.Publish*"></a>
   <h4 id="Silverback_Messaging_Publishing_EventPublisher_Publish_Silverback_Messaging_Messages_IEvent_" data-uid="Silverback.Messaging.Publishing.EventPublisher.Publish(Silverback.Messaging.Messages.IEvent)">Publish(IEvent)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+and the method will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -197,7 +201,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
         <td><span class="parametername">eventMessage</span></td>
-        <td></td>
+        <td><p>The event to be published.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -210,7 +215,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_EventPublisher_Publish_" data-uid="Silverback.Messaging.Publishing.EventPublisher.Publish*"></a>
   <h4 id="Silverback_Messaging_Publishing_EventPublisher_Publish_Silverback_Messaging_Messages_IEvent_System_Boolean_" data-uid="Silverback.Messaging.Publishing.EventPublisher.Publish(Silverback.Messaging.Messages.IEvent,System.Boolean)">Publish(IEvent, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+and the method will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -229,12 +237,15 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
         <td><span class="parametername">eventMessage</span></td>
-        <td></td>
+        <td><p>The event to be published.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td></td>
+        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+message.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -247,7 +258,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_EventPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.EventPublisher.PublishAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_EventPublisher_PublishAsync_Silverback_Messaging_Messages_IEvent_" data-uid="Silverback.Messaging.Publishing.EventPublisher.PublishAsync(Silverback.Messaging.Messages.IEvent)">PublishAsync(IEvent)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -266,7 +280,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
         <td><span class="parametername">eventMessage</span></td>
-        <td></td>
+        <td><p>The event to be executed.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -281,7 +296,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -294,7 +310,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_EventPublisher_PublishAsync_" data-uid="Silverback.Messaging.Publishing.EventPublisher.PublishAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_EventPublisher_PublishAsync_Silverback_Messaging_Messages_IEvent_System_Boolean_" data-uid="Silverback.Messaging.Publishing.EventPublisher.PublishAsync(Silverback.Messaging.Messages.IEvent,System.Boolean)">PublishAsync(IEvent, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
+and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -313,12 +332,15 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IEvent.html">IEvent</a></td>
         <td><span class="parametername">eventMessage</span></td>
-        <td></td>
+        <td><p>The event to be executed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td></td>
+        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+message.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -333,7 +355,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>

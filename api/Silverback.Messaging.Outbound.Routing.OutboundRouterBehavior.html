@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class OutboundRouterBehavior
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -101,8 +101,8 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><span class="xref">Silverback.Messaging.Publishing.IBehavior</span></div>
-    <div><span class="xref">Silverback.ISorted</span></div>
+    <div><a class="xref" href="Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a></div>
+    <div><a class="xref" href="Silverback.ISorted.html">ISorted</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -163,9 +163,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Publishing.IPublisher</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
         <td><span class="parametername">publisher</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Publishing.IPublisher</span>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>.</p>
 </td>
       </tr>
       <tr>
@@ -193,7 +193,8 @@
   </span>
   <a id="Silverback_Messaging_Outbound_Routing_OutboundRouterBehavior_SortIndex_" data-uid="Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.SortIndex*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_OutboundRouterBehavior_SortIndex" data-uid="Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.SortIndex">SortIndex</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the sort index.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -225,11 +226,12 @@
   </span>
   <a id="Silverback_Messaging_Outbound_Routing_OutboundRouterBehavior_HandleAsync_" data-uid="Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.HandleAsync*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_OutboundRouterBehavior_HandleAsync_System_Object_Silverback_Messaging_Publishing_MessageHandler_" data-uid="Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.HandleAsync(System.Object,Silverback.Messaging.Publishing.MessageHandler)">HandleAsync(Object, MessageHandler)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Process, handles or transforms the messages being published to the internal bus.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;IReadOnlyCollection&lt;object&gt;&gt; HandleAsync(object message, MessageHandler next)</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task&lt;IReadOnlyCollection&lt;object&gt;&gt; HandleAsync(object message, MessageHandler next)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -244,12 +246,14 @@
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
+        <td><p>The message being published.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Publishing.MessageHandler</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.MessageHandler.html">MessageHandler</a></td>
         <td><span class="parametername">next</span></td>
-        <td></td>
+        <td><p>The next behavior in the pipeline.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -264,16 +268,18 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+result values (if any).</p>
+</td>
       </tr>
     </tbody>
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">Silverback.Messaging.Publishing.IBehavior</span>
+      <a class="xref" href="Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a>
   </div>
   <div>
-      <span class="xref">Silverback.ISorted</span>
+      <a class="xref" href="Silverback.ISorted.html">ISorted</a>
   </div>
 </article>
           </div>

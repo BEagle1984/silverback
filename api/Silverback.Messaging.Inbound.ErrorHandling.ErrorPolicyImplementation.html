@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ErrorPolicyImplementation
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,8 @@
   
   <h1 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyImplementation" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation" class="text-break">Class ErrorPolicyImplementation
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>An error policy is used to handle errors that may occur while processing the inbound messages.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -273,7 +274,9 @@ action that the consumer should perform (e.g. skip the message or stop consuming
   </span>
   <a id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyImplementation_CanHandle_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.CanHandle*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyImplementation_CanHandle_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Exception_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.CanHandle(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,System.Exception)">CanHandle(ConsumerPipelineContext, Exception)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a boolean value indicating whether the policy can handle the specified envelopes and the
+specified exception.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -292,12 +295,14 @@ action that the consumer should perform (e.g. skip the message or stop consuming
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> related to the message that failed to be processed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">exception</span></td>
-        <td></td>
+        <td><p>The exception that was thrown during the processing.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -312,7 +317,8 @@ action that the consumer should perform (e.g. skip the message or stop consuming
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p>A value indicating whether the specified envelopes and exception can be handled.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -325,11 +331,13 @@ action that the consumer should perform (e.g. skip the message or stop consuming
   </span>
   <a id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyImplementation_HandleErrorAsync_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.HandleErrorAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyImplementation_HandleErrorAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_System_Exception_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.HandleErrorAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,System.Exception)">HandleErrorAsync(ConsumerPipelineContext, Exception)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Performs the necessary actions to handle the error (including invoking the
+<a class="xref" href="Silverback.Messaging.Inbound.Transaction.IConsumerTransactionManager.html">IConsumerTransactionManager</a>).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; HandleErrorAsync(ConsumerPipelineContext context, Exception exception)</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task&lt;bool&gt; HandleErrorAsync(ConsumerPipelineContext context, Exception exception)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -344,12 +352,14 @@ action that the consumer should perform (e.g. skip the message or stop consuming
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> related to the message that failed to be processed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">exception</span></td>
-        <td></td>
+        <td><p>The exception that was thrown during the processing.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -364,7 +374,10 @@ action that the consumer should perform (e.g. skip the message or stop consuming
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
+boolean flag indicating whether the error was handled. If <code>false</code> is returned the exception will
+be rethrown and the consumer will stop.</p>
+</td>
       </tr>
     </tbody>
   </table>

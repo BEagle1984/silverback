@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class InMemoryInboundLog
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -208,7 +208,8 @@
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)">AddAsync(IRawInboundEnvelope)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Add the message contained in the specified envelope to the log.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -227,7 +228,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td></td>
+        <td><p>The envelope containing the message to be added.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -242,7 +244,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -255,7 +258,9 @@
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)">ExistsAsync(IRawInboundEnvelope)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a boolean value indicating whether this very same message has already been logged for the
+same consumer group.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -274,7 +279,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td></td>
+        <td><p>The envelope containing the message to be checked.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -289,7 +295,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
+value indicating whether the message was found in the log.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -302,7 +310,8 @@
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_GetLengthAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.GetLengthAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_GetLengthAsync" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.GetLengthAsync">GetLengthAsync()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the total number of messages in the log.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -319,7 +328,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the result of the asynchronous operation. The task
+result contains the log length.</p>
+</td>
       </tr>
     </tbody>
   </table>

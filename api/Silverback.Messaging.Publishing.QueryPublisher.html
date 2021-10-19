@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class QueryPublisher
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,8 @@
   
   <h1 id="Silverback_Messaging_Publishing_QueryPublisher" data-uid="Silverback.Messaging.Publishing.QueryPublisher" class="text-break">Class QueryPublisher
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -160,9 +161,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Publishing.IPublisher</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
         <td><span class="parametername">publisher</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Publishing.IPublisher</span> to be wrapped.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to be wrapped.</p>
 </td>
       </tr>
     </tbody>
@@ -178,7 +179,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(Silverback.Messaging.Messages.IQuery{``0})">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
+subscribers and the method will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -197,7 +201,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
-        <td></td>
+        <td><p>The query to be executed.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -212,7 +217,8 @@
     <tbody>
       <tr>
         <td><span class="xref">TResult</span></td>
-        <td></td>
+        <td><p>The query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -227,7 +233,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td></td>
+        <td><p>The type of the expected query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -240,7 +247,10 @@
   </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
+subscribers and the method will not complete until all subscribers have processed it (unless using
+Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -259,12 +269,15 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
-        <td></td>
+        <td><p>The query to be executed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td></td>
+        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+message.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -279,7 +292,8 @@
     <tbody>
       <tr>
         <td><span class="xref">TResult</span></td>
-        <td></td>
+        <td><p>The query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -294,7 +308,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td></td>
+        <td><p>The type of the expected query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -307,11 +322,14 @@
   </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.IQuery{``0})">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
+subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it
+(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;TResult&gt; ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage)</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task&lt;TResult&gt; ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -326,7 +344,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
-        <td></td>
+        <td><p>The query to be executed.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -341,7 +360,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -356,7 +377,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td></td>
+        <td><p>The type of the expected query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -369,11 +391,14 @@
   </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
+subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it
+(unless using Silverback.Integration to produce and consume the message through a message broker).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;TResult&gt; ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang-csharp hljs">public async Task&lt;TResult&gt; ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt; queryMessage, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -388,12 +413,15 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
-        <td></td>
+        <td><p>The query to be executed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td></td>
+        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+message.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -408,7 +436,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+query result.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -423,7 +453,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td></td>
+        <td><p>The type of the expected query result.</p>
+</td>
       </tr>
     </tbody>
   </table>

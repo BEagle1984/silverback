@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -98,6 +98,8 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html">EndpointBuilder</a>&lt;TEndpoint, TBuilder&gt;</div>
     <div class="level2"><span class="xref">ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</span></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html">KafkaConsumerEndpointBuilder</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html">MqttConsumerEndpointBuilder</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -236,7 +238,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_MessageType_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_MessageType" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType">MessageType</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the type of the message being consumed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -257,6 +260,10 @@ builder.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_MessageType_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value might be used during the configuration to automatically determine some configurations (e.g. the
+correct deserializer to be used) without having to specify the message type once again.</p>
+</div>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
@@ -268,7 +275,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Build_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Build" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Build">Build()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Builds the endpoint instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -285,7 +293,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TEndpoint</span></td>
-        <td></td>
+        <td><p>The endpoint.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -300,7 +309,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Decrypt*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_Silverback_Messaging_Encryption_EncryptionSettings_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Decrypt(Silverback.Messaging.Encryption.EncryptionSettings)">Decrypt(EncryptionSettings)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> to be used to decrypt the messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -319,7 +329,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
         <td><span class="parametername">encryptionSettings</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -334,7 +345,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -347,7 +359,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.DeserializeUsing*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.DeserializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)">DeserializeUsing(IMessageSerializer)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to deserialize the messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -366,7 +379,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></td>
         <td><span class="parametername">serializer</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -381,7 +395,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -394,11 +409,12 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing(System.Int32,System.Nullable{System.TimeSpan})">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Enables batch processing.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder EnableBatchProcessing(int batchSize, TimeSpan? maxWaitTime = default(TimeSpan? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public TBuilder EnableBatchProcessing(int batchSize, TimeSpan? maxWaitTime = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -413,12 +429,15 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">batchSize</span></td>
-        <td></td>
+        <td><p>The number of messages to be processed in batch.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">maxWaitTime</span></td>
-        <td></td>
+        <td><p>The maximum amount of time to wait for the batch to be filled. After this time the batch will be
+completed even if the specified <code>batchSize</code> is not reached.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -433,7 +452,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -446,7 +466,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_Silverback_Messaging_Inbound_ExactlyOnce_IExactlyOnceStrategy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy)">EnsureExactlyOnce(IExactlyOnceStrategy)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -465,7 +486,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a></td>
         <td><span class="parametername">strategy</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -480,7 +502,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -493,7 +516,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_System_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(System.Action{Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder})">EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -512,7 +536,9 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a>&gt;</td>
         <td><span class="parametername">strategyBuilderAction</span></td>
-        <td></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> and configures
+it.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -527,7 +553,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -540,7 +567,10 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_HandleTombstoneMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.HandleTombstoneMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_HandleTombstoneMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.HandleTombstoneMessages">HandleTombstoneMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the null messages have to be mapped to a <a class="xref" href="Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> (
+<a class="xref" href="Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html#Silverback_Messaging_Serialization_NullMessageHandlingStrategy_Tombstone">Tombstone</a>). This is the default behavior, use the
+<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_UseLegacyNullMessageHandling">UseLegacyNullMessageHandling()</a> or <a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_SkipNullMessages">SkipNullMessages()</a> methods to change it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -557,7 +587,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -570,7 +601,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages">IgnoreUnhandledMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the message has to be silently ignored if no subscriber is handling it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -587,7 +619,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -600,7 +633,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Silverback_Messaging_Inbound_ErrorHandling_IErrorPolicy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy)">OnError(IErrorPolicy)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
+consumed messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -619,7 +654,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a></td>
         <td><span class="parametername">errorPolicy</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -634,7 +670,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -647,7 +684,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_System_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(System.Action{Silverback.Messaging.Configuration.IErrorPolicyBuilder})">OnError(Action&lt;IErrorPolicyBuilder&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
+consumed messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -666,7 +705,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>&gt;</td>
         <td><span class="parametername">errorPolicyBuilderAction</span></td>
-        <td></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a> and configures it.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -681,7 +721,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -694,7 +735,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_SkipNullMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.SkipNullMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_SkipNullMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.SkipNullMessages">SkipNullMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the null messages have to be silently skipped (
+<a class="xref" href="Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html#Silverback_Messaging_Serialization_NullMessageHandlingStrategy_Skip">Skip</a>).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -711,7 +754,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -724,7 +768,10 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled">ThrowIfUnhandled()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that an exception must be thrown if no subscriber is handling the received message. This
+option is enabled by default. Use the
+<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_IgnoreUnhandledMessages">IgnoreUnhandledMessages()</a> to disable it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -741,7 +788,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -754,7 +802,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_UseLegacyNullMessageHandling_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.UseLegacyNullMessageHandling*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_UseLegacyNullMessageHandling" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.UseLegacyNullMessageHandling">UseLegacyNullMessageHandling()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the null messages have to be forwarded as <code>null</code> (
+<a class="xref" href="Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html#Silverback_Messaging_Serialization_NullMessageHandlingStrategy_Legacy">Legacy</a>).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -771,7 +821,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -784,7 +835,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout(System.TimeSpan)">WithSequenceTimeout(TimeSpan)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sets the timeout after which an incomplete sequence that isn't pushed with new messages will
+be aborted and discarded. The default is a conservative 30 minutes.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -803,7 +856,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
-        <td></td>
+        <td><p>The timeout.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -818,10 +872,16 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This setting is ignored for batches (<a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>), use the
+<code>maxWaitTime</code> parameter of
+<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</a> instead.</p>
+</div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html">IConsumerEndpointBuilder&lt;TBuilder&gt;</a>
@@ -830,6 +890,9 @@ builder.</p>
       <a class="xref" href="Silverback.Messaging.Configuration.IEndpointBuilder-1.html">IEndpointBuilder&lt;TBuilder&gt;</a>
   </div>
   <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeAvroExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeAvroExtensions_DeserializeAvro__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IAvroMessageSerializerBuilder__">ConsumerEndpointBuilderDeserializeAvroExtensions.DeserializeAvro&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IAvroMessageSerializerBuilder&gt;)</a>
+  </div>
   <div>
       <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder__">ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IBinaryFileMessageSerializerBuilder&gt;)</a>
   </div>

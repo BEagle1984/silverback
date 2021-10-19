@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ProducerEndpointNameResolver&lt;TMessage&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -97,6 +97,7 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">ProducerEndpointNameResolver&lt;TMessage&gt;</span></div>
+      <div class="level2"><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaProducerEndpointNameResolver-1.html">KafkaProducerEndpointNameResolver&lt;TMessage&gt;</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -159,7 +160,8 @@
   </span>
   <a id="Silverback_Messaging_Outbound_Routing_ProducerEndpointNameResolver_1_GetName_" data-uid="Silverback.Messaging.Outbound.Routing.ProducerEndpointNameResolver`1.GetName*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_ProducerEndpointNameResolver_1_GetName_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Outbound.Routing.ProducerEndpointNameResolver`1.GetName(Silverback.Messaging.Messages.IOutboundEnvelope)">GetName(IOutboundEnvelope)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the actual target endpoint name for the message being produced.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -178,7 +180,8 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td></td>
+        <td><p>The envelope containing the message being produced.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -193,7 +196,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The actual name of the endpoint to be produced to.</p>
+</td>
       </tr>
     </tbody>
   </table>

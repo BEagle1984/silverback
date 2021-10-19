@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ExactlyOnceStrategyBuilder
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -175,7 +175,9 @@
   </span>
   <a id="Silverback_Messaging_Configuration_ExactlyOnceStrategyBuilder_LogMessages_" data-uid="Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.LogMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_ExactlyOnceStrategyBuilder_LogMessages" data-uid="Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.LogMessages">LogMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates a <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.html">LogExactlyOnceStrategy</a> that uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IInboundLog.html">IInboundLog</a> to keep track
+of each processed message and guarantee that each one is processed only once.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -192,7 +194,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -205,7 +208,9 @@
   </span>
   <a id="Silverback_Messaging_Configuration_ExactlyOnceStrategyBuilder_StoreOffsets_" data-uid="Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.StoreOffsets*"></a>
   <h4 id="Silverback_Messaging_Configuration_ExactlyOnceStrategyBuilder_StoreOffsets" data-uid="Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.StoreOffsets">StoreOffsets()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> that uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html">IOffsetStore</a> to
+keep track of the latest processed offsets and guarantee that each message is processed only once.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -222,7 +227,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>

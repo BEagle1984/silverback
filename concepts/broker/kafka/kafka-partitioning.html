@@ -8,7 +8,7 @@
     <title>Kafka Partitioning and Message Key | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka Partitioning and Message Key | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -146,7 +146,7 @@
 	<a href="../../../images/diagrams/kafka-key.png"><img src="../../../images/diagrams/kafka-key.png"></a>
     <figcaption>The messages with the same key are guaranteed to be written to the same partition.</figcaption>
 </figure>
-<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but you can also generate your own key, either adding an enricher to the <a class="xref" href="../../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> or decorating the properties that must be part of the key with &lt;xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute&gt;.</p>
+<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but you can also generate your own key, either adding an enricher to the <a class="xref" href="../../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> or decorating the properties that must be part of the key with <a class="xref" href="../../../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>.</p>
 <h4 id="using-enricher">Using enricher</h4>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
@@ -290,7 +290,7 @@
 <h3 id="manual-partitions-assignment">Manual partitions assignment</h3>
 <p>In some cases you don't want to let the broker randomly distribute the partitions among the consumers.</p>
 <p>This might also be useful when dealing with large sequences (e.g. large messages/files being <a class="xref" href="../chunking.html">chunked</a> or when <a class="xref" href="../inbound.html#batch-processing">batch processing</a>), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.</p>
-<p>The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see &lt;xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder&gt; and &lt;xref:Silverback.Messaging.KafkaConsumerEndpoint&gt; for details).</p>
+<p>The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see <a class="xref" href="../../../api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a> and <a class="xref" href="../../../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> for details).</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">

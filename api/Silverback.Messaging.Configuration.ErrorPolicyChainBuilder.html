@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ErrorPolicyChainBuilder
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -245,7 +245,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenMove_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenMove*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenMove_Silverback_Messaging_IProducerEndpoint_System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenMove(Silverback.Messaging.IProducerEndpoint,System.Action{Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy})">ThenMove(IProducerEndpoint, Action&lt;MoveMessageErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> that moves the messages that fail to  be processed to the
+configured endpoint.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -264,12 +266,14 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></td>
         <td><span class="parametername">endpoint</span></td>
-        <td></td>
+        <td><p>The endpoint to move the message to.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -284,7 +288,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -297,7 +302,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">ThenRetry(Action&lt;RetryErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -316,7 +323,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -331,7 +339,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -344,7 +353,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">ThenRetry(Int32, Action&lt;RetryErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -363,12 +374,14 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">retriesCount</span></td>
-        <td></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -383,7 +396,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -396,7 +410,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_System_TimeSpan_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,System.TimeSpan,System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">ThenRetry(Int32, TimeSpan, Action&lt;RetryErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -415,17 +431,20 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">retriesCount</span></td>
-        <td></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">initialDelay</span></td>
-        <td></td>
+        <td><p>The optional delay to be applied to the first retry.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -440,7 +459,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -453,11 +473,13 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Nullable_System_Int32__System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Nullable{System.Int32},System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan},System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">ThenRetry(Nullable&lt;Int32&gt;, Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;, Action&lt;RetryErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenRetry(int? retriesCount = default(int? ), TimeSpan? initialDelay = default(TimeSpan? ), TimeSpan? delayIncrement = default(TimeSpan? ), Action&lt;RetryErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenRetry(int? retriesCount = null, TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null, Action&lt;RetryErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -472,22 +494,26 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
         <td><span class="parametername">retriesCount</span></td>
-        <td></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">initialDelay</span></td>
-        <td></td>
+        <td><p>The optional delay to be applied to the first retry.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">delayIncrement</span></td>
-        <td></td>
+        <td><p>The optional increment to the delay to be applied at each retry.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -502,7 +528,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -515,7 +542,8 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenSkip_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenSkip*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenSkip_System_Action_Silverback_Messaging_Inbound_ErrorHandling_SkipMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenSkip(System.Action{Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy})">ThenSkip(Action&lt;SkipMessageErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> that skips the messages that fail to be processed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -534,7 +562,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -549,7 +578,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -562,7 +592,9 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenStop_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenStop*"></a>
   <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenStop_System_Action_Silverback_Messaging_Inbound_ErrorHandling_StopConsumerErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenStop(System.Action{Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy})">ThenStop(Action&lt;StopConsumerErrorPolicy&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a> that stops the consumer when an exception is thrown
+during the message processing.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -581,7 +613,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
-        <td></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -596,7 +629,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -606,10 +640,10 @@ builder.</p>
   </div>
   <h3 id="extensionmethods">Extension Methods</h3>
   <div>
-      <span class="xref">Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToMqttTopicExtensions.ThenMoveToMqttTopic(Silverback.Messaging.Configuration.IErrorPolicyChainBuilder, System.Action&lt;Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder&gt;, System.Action&lt;Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt;)</span>
+      <a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToMqttTopicExtensions.html#Silverback_Messaging_Configuration_ErrorPolicyChainBuilderMoveToMqttTopicExtensions_ThenMoveToMqttTopic_Silverback_Messaging_Configuration_IErrorPolicyChainBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__">ErrorPolicyChainBuilderMoveToMqttTopicExtensions.ThenMoveToMqttTopic(IErrorPolicyChainBuilder, Action&lt;IMqttProducerEndpointBuilder&gt;, Action&lt;MoveMessageErrorPolicy&gt;)</a>
   </div>
   <div>
-      <span class="xref">Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToKafkaTopicExtensions.ThenMoveToKafkaTopic(Silverback.Messaging.Configuration.IErrorPolicyChainBuilder, System.Action&lt;Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder&gt;, System.Action&lt;Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt;)</span>
+      <a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToKafkaTopicExtensions.html#Silverback_Messaging_Configuration_ErrorPolicyChainBuilderMoveToKafkaTopicExtensions_ThenMoveToKafkaTopic_Silverback_Messaging_Configuration_IErrorPolicyChainBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__">ErrorPolicyChainBuilderMoveToKafkaTopicExtensions.ThenMoveToKafkaTopic(IErrorPolicyChainBuilder, Action&lt;IKafkaProducerEndpointBuilder&gt;, Action&lt;MoveMessageErrorPolicy&gt;)</a>
   </div>
 </article>
           </div>

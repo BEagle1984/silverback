@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SimpleOutboundRouter&lt;TMessage&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -224,7 +224,9 @@ must be produced. When <code>null</code> is returned, the message will not be be
   </span>
   <a id="Silverback_Messaging_Outbound_Routing_SimpleOutboundRouter_1_GetDestinationEndpoints_" data-uid="Silverback.Messaging.Outbound.Routing.SimpleOutboundRouter`1.GetDestinationEndpoints*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_SimpleOutboundRouter_1_GetDestinationEndpoints__0_Silverback_Messaging_Messages_MessageHeaderCollection_" data-uid="Silverback.Messaging.Outbound.Routing.SimpleOutboundRouter`1.GetDestinationEndpoints(`0,Silverback.Messaging.Messages.MessageHeaderCollection)">GetDestinationEndpoints(TMessage, MessageHeaderCollection)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the endpoints where the
+specified message must be produced.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -243,12 +245,14 @@ must be produced. When <code>null</code> is returned, the message will not be be
       <tr>
         <td><span class="xref">TMessage</span></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
+        <td><p>The message to be routed.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
         <td><span class="parametername">headers</span></td>
-        <td></td>
+        <td><p>The message headers collection.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -263,7 +267,8 @@ must be produced. When <code>null</code> is returned, the message will not be be
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
-        <td></td>
+        <td><p>The endpoints to route the message to.</p>
+</td>
       </tr>
     </tbody>
   </table>

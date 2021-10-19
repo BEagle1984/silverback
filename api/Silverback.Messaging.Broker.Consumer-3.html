@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,13 +90,17 @@
   
   <h1 id="Silverback_Messaging_Broker_Consumer_3" data-uid="Silverback.Messaging.Broker.Consumer`3" class="text-break">Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Consumer.html">Consumer</a></div>
     <div class="level2"><span class="xref">Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;</span></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.RabbitConsumer.html">RabbitConsumer</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -384,7 +388,8 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">CommitCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Commits the specified messages sending the acknowledgement to the message broker.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -418,7 +423,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -431,7 +437,8 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Commits the specified messages sending the acknowledgement to the message broker.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -450,7 +457,8 @@
       <tr>
         <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
         <td><span class="parametername">brokerMessageIdentifiers</span></td>
-        <td></td>
+        <td><p>The identifiers of to message be committed.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -465,7 +473,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -480,7 +489,8 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore__2_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(`2)">GetSequenceStore(TIdentifier)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> to be used to store the pending sequences.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -514,7 +524,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -527,7 +538,8 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">GetSequenceStore(IBrokerMessageIdentifier)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> to be used to store the pending sequences.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -546,7 +558,9 @@
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></td>
         <td><span class="parametername">brokerMessageIdentifier</span></td>
-        <td></td>
+        <td><p>The message identifier (the offset in Kafka) may determine which store is being used. For example a
+dedicated sequence store is used per each Kafka partition, since they may be processed concurrently.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -561,7 +575,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -576,7 +591,9 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">RollbackCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>If necessary notifies the message broker that the specified messages couldn't be processed
+successfully, to ensure that they will be consumed again.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -610,7 +627,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -623,7 +641,9 @@
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>If necessary notifies the message broker that the specified messages couldn't be processed
+successfully, to ensure that they will be consumed again.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -642,7 +662,8 @@
       <tr>
         <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
         <td><span class="parametername">brokerMessageIdentifiers</span></td>
-        <td></td>
+        <td><p>The identifiers of to message be rolled back.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -657,7 +678,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>

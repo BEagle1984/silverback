@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SequencerConsumerBehaviorBase
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -105,7 +105,7 @@ the right sequence.</p>
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a></div>
     <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a></div>
-    <div><span class="xref">Silverback.ISorted</span></div>
+    <div><a class="xref" href="Silverback.ISorted.html">ISorted</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -177,9 +177,9 @@ to implement batch processing.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Silverback.Diagnostics.ISilverbackLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.html">SequencerConsumerBehaviorBase</a>&gt;</td>
+        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.html">SequencerConsumerBehaviorBase</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <span class="xref">Silverback.Diagnostics.ISilverbackLogger</span>.</p>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -195,7 +195,8 @@ to implement batch processing.</p>
   </span>
   <a id="Silverback_Messaging_Sequences_SequencerConsumerBehaviorBase_SortIndex_" data-uid="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.SortIndex*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequencerConsumerBehaviorBase_SortIndex" data-uid="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.SortIndex">SortIndex</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the sort index.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -280,11 +281,12 @@ end in the case where a ChunkSequence is added into another sequence (e.g. Batch
   </span>
   <a id="Silverback_Messaging_Sequences_SequencerConsumerBehaviorBase_HandleAsync_" data-uid="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.HandleAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequencerConsumerBehaviorBase_HandleAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_Silverback_Messaging_Broker_Behaviors_ConsumerBehaviorHandler_" data-uid="Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.HandleAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext,Silverback.Messaging.Broker.Behaviors.ConsumerBehaviorHandler)">HandleAsync(ConsumerPipelineContext, ConsumerBehaviorHandler)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Process, handles or transforms the message being consumed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -299,12 +301,14 @@ end in the case where a ChunkSequence is added into another sequence (e.g. Batch
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The context that is passed along the behaviors pipeline.</p>
+</td>
       </tr>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerBehaviorHandler.html">ConsumerBehaviorHandler</a></td>
         <td><span class="parametername">next</span></td>
-        <td></td>
+        <td><p>The next behavior in the pipeline.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -319,7 +323,8 @@ end in the case where a ChunkSequence is added into another sequence (e.g. Batch
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -387,7 +392,7 @@ end in the case where a ChunkSequence is added into another sequence (e.g. Batch
       <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a>
   </div>
   <div>
-      <span class="xref">Silverback.ISorted</span>
+      <a class="xref" href="Silverback.ISorted.html">ISorted</a>
   </div>
 </article>
           </div>

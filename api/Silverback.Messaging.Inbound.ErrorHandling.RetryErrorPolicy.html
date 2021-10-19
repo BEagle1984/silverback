@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RetryErrorPolicy
    | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -190,7 +190,7 @@ delay can be specified.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RetryErrorPolicy(TimeSpan? initialDelay = default(TimeSpan? ), TimeSpan? delayIncrement = default(TimeSpan? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public RetryErrorPolicy(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -227,7 +227,9 @@ delay can be specified.</p>
   </span>
   <a id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_BuildCore_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.BuildCore*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_BuildCore_System_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.BuildCore(System.IServiceProvider)">BuildCore(IServiceProvider)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the actual error policy implementation, built using the provided
+<span class="xref">System.IServiceProvider</span>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -246,7 +248,8 @@ delay can be specified.</p>
       <tr>
         <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td></td>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to build the error policy.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -261,7 +264,9 @@ delay can be specified.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.html">ErrorPolicyImplementation</a></td>
-        <td></td>
+        <td><p>An instance of <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicyImplementation.html">IErrorPolicyImplementation</a> that can be used to handle the processing
+error.</p>
+</td>
       </tr>
     </tbody>
   </table>

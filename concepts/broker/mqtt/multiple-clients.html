@@ -8,7 +8,7 @@
     <title>Multiple Clients (in same process) | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Multiple Clients (in same process) | Silverback ">
-    <meta name="generator" content="docfx 2.57.2.0">
+    <meta name="generator" content="docfx 2.58.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -87,7 +87,7 @@
 <h1 id="multiple-clients-in-same-process">Multiple Clients (in same process)</h1>
 
 <p>In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
-<p>A much safer approach is to bind multiple consumers to the same topic, using a different client id. This will cause the message to be consumed multiple times (once per client) and being committed independently. The &lt;xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute&gt; can be used to execute a subscribed method according to the client id.</p>
+<p>A much safer approach is to bind multiple consumers to the same topic, using a different client id. This will cause the message to be consumed multiple times (once per client) and being committed independently. The <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> can be used to execute a subscribed method according to the client id.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -166,7 +166,7 @@
 </section>
 </div>
 
-<p>Using the &lt;xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute&gt; is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>ClientId</code> value.</p>
+<p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>ClientId</code> value.</p>
 <pre><code class="lang-csharp">public class MySubscriber
 {
     public void OnMessageReceived(IInboundEnvelope&lt;MyEvent&gt; envelope)
