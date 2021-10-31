@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client.Options;
+using MQTTnet.Diagnostics;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
@@ -58,7 +59,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
+                new MqttNetClientFactory(Substitute.For<IMqttNetLogger>()),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _logger);
             var client1 = factory.GetClient(producer1);
@@ -98,7 +99,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
+                new MqttNetClientFactory(Substitute.For<IMqttNetLogger>()),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _logger);
             var client1 = factory.GetClient(producer1);
@@ -138,7 +139,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
+                new MqttNetClientFactory(Substitute.For<IMqttNetLogger>()),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _logger);
             var client1 = factory.GetClient(producer);
@@ -178,7 +179,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
+                new MqttNetClientFactory(Substitute.For<IMqttNetLogger>()),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _logger);
             var client1 = factory.GetClient(producer);
@@ -281,7 +282,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
+                new MqttNetClientFactory(Substitute.For<IMqttNetLogger>()),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _logger);
             var client1 = factory.GetClient(producer1);

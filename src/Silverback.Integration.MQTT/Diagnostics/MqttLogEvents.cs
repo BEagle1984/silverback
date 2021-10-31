@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
+using MQTTnet.Client;
 
 namespace Silverback.Diagnostics
 {
@@ -57,6 +58,54 @@ namespace Silverback.Diagnostics
             LogLevel.Debug,
             GetEventId(31, nameof(ProducerQueueProcessingCanceled)),
             "Producer queue processing was canceled.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+        ///     the underlying <see cref="MqttClient" />.
+        /// </summary>
+        /// <remarks>
+        ///     A different event id is used per each log level.
+        /// </remarks>
+        public static LogEvent MqttClientLogError { get; } = new(
+            LogLevel.Error,
+            GetEventId(101, nameof(MqttClientLogError)),
+            "Error from MqttClient ({source}): '{logMessage}'.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+        ///     the underlying <see cref="MqttClient" />.
+        /// </summary>
+        /// <remarks>
+        ///     A different event id is used per each log level.
+        /// </remarks>
+        public static LogEvent MqttClientLogWarning { get; } = new(
+            LogLevel.Warning,
+            GetEventId(102, nameof(MqttClientLogWarning)),
+            "Warning from MqttClient ({source}): '{logMessage}'.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+        ///     the underlying <see cref="MqttClient" />.
+        /// </summary>
+        /// <remarks>
+        ///     A different event id is used per each log level.
+        /// </remarks>
+        public static LogEvent MqttClientLogInformation { get; } = new(
+            LogLevel.Information,
+            GetEventId(103, nameof(MqttClientLogInformation)),
+            "Information from MqttClient ({source}): '{logMessage}'.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+        ///     the underlying <see cref="MqttClient" />.
+        /// </summary>
+        /// <remarks>
+        ///     A different event id is used per each log level.
+        /// </remarks>
+        public static LogEvent MqttClientLogVerbose { get; } = new(
+            LogLevel.Trace,
+            GetEventId(104, nameof(MqttClientLogVerbose)),
+            "Verbose from MqttClient ({source}): '{logMessage}'.");
 
         private static EventId GetEventId(int id, string name) =>
             new(4000 + id, $"Silverback.Integration.MQTT_{name}");

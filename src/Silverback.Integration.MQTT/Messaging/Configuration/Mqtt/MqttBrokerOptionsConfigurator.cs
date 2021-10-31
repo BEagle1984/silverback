@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Util;
@@ -22,7 +23,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
             brokerOptionsBuilder.SilverbackBuilder
                 .Services
                 .AddSingleton<IMqttClientsCache, MqttClientsCache>()
-                .AddSingleton<IMqttNetClientFactory, MqttNetClientFactory>();
+                .AddSingleton<IMqttNetClientFactory, MqttNetClientFactory>()
+                .AddSingleton<IMqttNetLogger, DefaultMqttNetLogger>();
         }
     }
 }

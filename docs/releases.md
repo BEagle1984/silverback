@@ -8,12 +8,11 @@ uid: releases
 
 ### What's new
 
-* Upgrade to [Confluent.Kafka 1.8.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.8.1)
+* Log `MqttClient` internal events (see <xref:logging>)
+* Upgrade to [Confluent.Kafka 1.8.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.8.2)
 * Upgrade to [MQTTnet 3.0.16](https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.16)
 * Upgrade to [RabbitMQ.Client 6.2.2](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.2)
 * Update several dependencies
-
-## [3.4.1-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.3)
 
 ### Fixes
 
