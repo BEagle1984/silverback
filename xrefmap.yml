@@ -5094,6 +5094,58 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.MqttLogEvents.ConsumingMessage
   nameWithType: MqttLogEvents.ConsumingMessage
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogError
+  name: MqttClientLogError
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogError
+  commentId: P:Silverback.Diagnostics.MqttLogEvents.MqttClientLogError
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogError
+  nameWithType: MqttLogEvents.MqttClientLogError
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogError*
+  name: MqttClientLogError
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogError_
+  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.MqttClientLogError
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogError
+  nameWithType: MqttLogEvents.MqttClientLogError
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation
+  name: MqttClientLogInformation
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation
+  commentId: P:Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation
+  nameWithType: MqttLogEvents.MqttClientLogInformation
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation*
+  name: MqttClientLogInformation
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation_
+  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogInformation
+  nameWithType: MqttLogEvents.MqttClientLogInformation
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose
+  name: MqttClientLogVerbose
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose
+  commentId: P:Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose
+  nameWithType: MqttLogEvents.MqttClientLogVerbose
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose*
+  name: MqttClientLogVerbose
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose_
+  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogVerbose
+  nameWithType: MqttLogEvents.MqttClientLogVerbose
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning
+  name: MqttClientLogWarning
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning
+  commentId: P:Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning
+  nameWithType: MqttLogEvents.MqttClientLogWarning
+- uid: Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning*
+  name: MqttClientLogWarning
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning_
+  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.MqttLogEvents.MqttClientLogWarning
+  nameWithType: MqttLogEvents.MqttClientLogWarning
 - uid: Silverback.Diagnostics.MqttLogEvents.ProducerQueueProcessingCanceled
   name: ProducerQueueProcessingCanceled
   href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled
@@ -13579,6 +13631,19 @@ references:
   commentId: T:Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory
   fullName: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory
   nameWithType: MqttNetClientFactory
+- uid: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.#ctor(MQTTnet.Diagnostics.IMqttNetLogger)
+  name: MqttNetClientFactory(IMqttNetLogger)
+  href: api/Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MqttNetClientFactory__ctor_MQTTnet_Diagnostics_IMqttNetLogger_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.#ctor(MQTTnet.Diagnostics.IMqttNetLogger)
+  fullName: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.MqttNetClientFactory(MQTTnet.Diagnostics.IMqttNetLogger)
+  nameWithType: MqttNetClientFactory.MqttNetClientFactory(IMqttNetLogger)
+- uid: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.#ctor*
+  name: MqttNetClientFactory
+  href: api/Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MqttNetClientFactory__ctor_
+  commentId: Overload:Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.MqttNetClientFactory
+  nameWithType: MqttNetClientFactory.MqttNetClientFactory
 - uid: Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.CreateClient
   name: CreateClient()
   href: api/Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MqttNetClientFactory_CreateClient

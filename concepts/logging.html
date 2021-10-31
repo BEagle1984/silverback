@@ -382,6 +382,12 @@
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError">ConsumerStopError</a></td>
 </tr>
 <tr>
+<td style="text-align: left;">1131</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">Failed to reconnect the consumer. Will retry in {retryDelay} milliseconds.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer">ErrorReconnectingConsumer</a></td>
+</tr>
+<tr>
 <td style="text-align: left;">1027</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Connected producer to endpoint.</td>
@@ -468,13 +474,13 @@
 <tr>
 <td style="text-align: left;">1051</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">Error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reset.</td>
+<td style="text-align: left;">Error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reconnected.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed">RollbackToRetryFailed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1052</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">Error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reset.</td>
+<td style="text-align: left;">Error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reconnected.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed">RollbackToSkipFailed</a></td>
 </tr>
 <tr>
@@ -530,6 +536,18 @@
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the outbox.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox">ErrorProcessingOutbox</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1079</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">An invalid message has been produced. | validation errors:{validationErrors}</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced">InvalidMessageProduced</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1080</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">An invalid message has been processed. | validation errors:{validationErrors}</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed">InvalidMessageProcessed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1101</td>
@@ -589,13 +607,13 @@
 <tr>
 <td style="text-align: left;">2014</td>
 <td style="text-align: left;">Error</td>
-<td style="text-align: left;">An error occurred while trying to pull the next message. The consumer will be stopped. Enable auto recovery to allow Silverback to automatically try to reconnect (EnableAutoRecovery=true in the consumer configuration).</td>
+<td style="text-align: left;">An error occurred while trying to pull the next message. The consumer will be stopped. Enable auto recovery to allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer configuration).</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery">KafkaExceptionNoAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2015</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">Failed to recover from consumer exception. Will retry in {retryDelay} milliseconds.</td>
+<td style="text-align: left;">Not used anymore.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException">ErrorRecoveringFromKafkaException</a></td>
 </tr>
 <tr>
@@ -655,7 +673,7 @@
 <tr>
 <td style="text-align: left;">2037</td>
 <td style="text-align: left;">Error</td>
-<td style="text-align: left;">Error in Kafka consumer error handler.</td>
+<td style="text-align: left;">Error in Kafka error handler.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError">KafkaErrorHandlerError</a></td>
 </tr>
 <tr>
@@ -689,10 +707,28 @@
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError">ConfluentConsumerError</a></td>
 </tr>
 <tr>
+<td style="text-align: left;">2043</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error in Kafka log handler.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError">KafkaLogHandlerError</a></td>
+</tr>
+<tr>
 <td style="text-align: left;">2050</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">An error occurred while disconnecting the consumer.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError">ConfluentConsumerDisconnectError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">2060</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -&gt; The consumer will try to recover.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery">PollTimeoutAutoRecovery</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">2061</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -&gt; Enable auto recovery to allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer configuration).</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery">PollTimeoutNoAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2201</td>
@@ -796,6 +832,30 @@
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Producer queue processing was canceled.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled">ProducerQueueProcessingCanceled</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">4101</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error from MqttClient ({source}): '{logMessage}'.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogError">MqttClientLogError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">4102</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">Warning from MqttClient ({source}): '{logMessage}'.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning">MqttClientLogWarning</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">4103</td>
+<td style="text-align: left;">Information</td>
+<td style="text-align: left;">Information from MqttClient ({source}): '{logMessage}'.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation">MqttClientLogInformation</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">4104</td>
+<td style="text-align: left;">Trace</td>
+<td style="text-align: left;">Verbose from MqttClient ({source}): '{logMessage}'.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose">MqttClientLogVerbose</a></td>
 </tr>
 </tbody>
 </table>
