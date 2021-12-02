@@ -7,6 +7,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
@@ -55,7 +56,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton(typeof(IOutboundLogger<>), typeof(OutboundLogger<>))
                 .AddSingleton<InboundLoggerFactory>()
                 .AddSingleton<OutboundLoggerFactory>()
-                .AddSingleton<BrokerLogEnricherFactory>();
+                .AddSingleton<BrokerLogEnricherFactory>()
+                .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>();
 
             // Activities
             silverbackBuilder.Services.AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();

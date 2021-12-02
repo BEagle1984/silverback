@@ -9,6 +9,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
@@ -68,6 +69,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 IncludedExceptions,
                 ApplyRule,
                 MessageToPublishFactory,
+                serviceProvider
+                    .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
                 serviceProvider,
                 serviceProvider
                     .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
@@ -77,6 +80,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             private readonly IProducerEndpoint _endpoint;
 
             private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
+
+            private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
             private readonly IInboundLogger<MoveMessageErrorPolicy> _logger;
 
@@ -90,6 +95,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 ICollection<Type> includedExceptions,
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
+                IBrokerOutboundMessageEnrichersFactory enricherFactory,
                 IServiceProvider serviceProvider,
                 IInboundLogger<MoveMessageErrorPolicy> logger)
                 : base(
@@ -103,6 +109,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
                 _endpoint = Check.NotNull(endpoint, nameof(endpoint));
                 _transformationAction = transformationAction;
+                _enricherFactory = enricherFactory;
                 _logger = logger;
 
                 _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(endpoint);
@@ -112,13 +119,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
                 Check.NotNull(context, nameof(context));
 
-                if (context.Sequence != null)
-                {
-                    _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
-                    return false;
-                }
-
-                return base.CanHandle(context, exception);
+                if (context.Sequence == null)
+                    return base.CanHandle(context, exception);
+                _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
+                return false;
             }
 
             protected override async Task<bool> ApplyPolicyAsync(
@@ -139,8 +143,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
             {
-                envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.ActualEndpointName);
-
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope
                         ? new OutboundEnvelope(
@@ -148,6 +150,11 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                             deserializedEnvelope.Headers,
                             _endpoint)
                         : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
+
+                foreach (var enricher in _enricherFactory.GetMovePolicyEnrichers(envelope.Endpoint))
+                {
+                    enricher.Enrich(envelope, outboundEnvelope, exception);
+                }
 
                 _transformationAction?.Invoke(outboundEnvelope, exception);
 

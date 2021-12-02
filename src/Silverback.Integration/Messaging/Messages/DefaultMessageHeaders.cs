@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Serialization;
 
@@ -99,5 +100,18 @@ namespace Silverback.Messaging.Messages
         ///     consumer side to determine the correct key to be used to decrypt the message.
         /// </remarks>
         public const string EncryptionKeyId = "x-encryption-key-id";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the reason the failed
+        ///     message is being moved.
+        /// </summary>
+        public const string FailureReason = "x-failure-reason";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the timestamp of the failed
+        ///     message.
+        /// </summary>
+        [Obsolete("Replaced by KafkaMessageHeaders.SourceTimestamp.")]
+        public const string SourceTimestamp = "x-source-timestamp";
     }
 }

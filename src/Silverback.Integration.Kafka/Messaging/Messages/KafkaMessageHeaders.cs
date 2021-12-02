@@ -22,6 +22,36 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     The header that will be filled with the timestamp of the message consumed from Kafka.
         /// </summary>
-        public const string TimestampKey = "x-kafka-message-timestamp";
+        public const string TimestampKey = "x-message-timestamp";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the group ID of the consumer who processed the
+        ///     failed message.
+        /// </summary>
+        public const string SourceConsumerGroupId = "x-source-consumer-group-id";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the topic of the failed
+        ///     message.
+        /// </summary>
+        public const string SourceTopic = "x-source-topic";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the partition of the failed
+        ///     message.
+        /// </summary>
+        public const string SourcePartition = "x-source-partition";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the offset of the failed
+        ///     message.
+        /// </summary>
+        public const string SourceOffset = "x-source-offset";
+
+        /// <summary>
+        ///     This will be set by the Move error policy and will contain the timestamp of the failed
+        ///     message.
+        /// </summary>
+        public const string SourceTimestamp = "x-source-timestamp";
     }
 }

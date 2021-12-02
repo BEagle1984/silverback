@@ -7,6 +7,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
@@ -35,7 +36,11 @@ namespace Silverback.Messaging.Configuration
                 .AddSingleton<IBrokerLogEnricher<KafkaProducerEndpoint>, KafkaLogEnricher>()
                 .AddSingleton<IBrokerLogEnricher<KafkaConsumerEndpoint>, KafkaLogEnricher>()
                 .AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpoint>, KafkaActivityEnricher>()
-                .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>();
+                .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>()
+                .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>,
+                    KafkaBrokerHeadersEnricher>()
+                .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>,
+                    KafkaBrokerHeadersEnricher>();
         }
     }
 }

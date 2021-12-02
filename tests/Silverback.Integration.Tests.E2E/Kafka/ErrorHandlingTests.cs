@@ -55,14 +55,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Retry(10))
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -97,7 +105,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -147,7 +159,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -199,7 +215,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -298,7 +318,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -378,7 +402,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -429,7 +457,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -480,7 +512,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -540,7 +576,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -607,7 +647,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -683,7 +727,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -793,7 +841,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -856,7 +908,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -919,7 +975,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName))
@@ -978,7 +1038,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName))
@@ -1038,7 +1102,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -1047,7 +1115,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .OnError(
                                             policy => policy.MoveToKafkaTopic(
                                                 moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
@@ -1088,7 +1160,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -1098,7 +1174,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             policy => policy.MoveToKafkaTopic(
                                                 moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
                                                 movePolicy => movePolicy.MaxFailedAttempts(10)))
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -1137,7 +1217,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
@@ -1148,7 +1232,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 .Retry(1)
                                                 .ThenMoveToKafkaTopic(
                                                     moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -1176,6 +1264,103 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             otherTopic.MessagesCount.Should().Be(1);
             otherTopic.GetAllMessages()[0].Value.Should()
                 .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        }
+
+        [Fact]
+        public async Task MovePolicy_ToOtherTopic_HeadersSet()
+        {
+            var message1 = new TestEventOne
+            {
+                Content = "Hello E2E msg1."
+            };
+            var message2 = new TestEventOne
+            {
+                Content = "Hello E2E msg2."
+            };
+            var message3 = new TestEventOne
+            {
+                Content = "Hello E2E msg3."
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka(
+                            mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(
+                                            policy => policy.MoveToKafkaTopic(
+                                                moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(message1);
+            await publisher.PublishAsync(message2);
+            await publisher.PublishAsync(message3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            var otherTopic = Helper.GetTopic("other-topic");
+            var otherTopicMessages = otherTopic.GetAllMessages();
+            otherTopic.MessagesCount.Should().Be(3);
+
+            otherTopicMessages[0].Value.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+            otherTopicMessages[1].Value.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[1].RawMessage.ReReadAll());
+            otherTopicMessages[2].Value.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[2].RawMessage.ReReadAll());
+
+            Helper.Spy.OutboundEnvelopes[5].Endpoint.Name.Should().Be("other-topic");
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Should().ContainEquivalentOf(
+                    new MessageHeader(
+                        DefaultMessageHeaders.FailedAttempts,
+                        1));
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Should().ContainEquivalentOf(
+                    new MessageHeader(
+                        DefaultMessageHeaders.FailureReason,
+                        "System.Reflection.TargetInvocationException in System.Private.CoreLib"));
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Count(header => header.Name == KafkaMessageHeaders.SourceTimestamp)
+                .Should().Be(1);
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Any(header => header.Name == KafkaMessageHeaders.TimestampKey)
+                .Should().BeTrue();
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Should().ContainEquivalentOf(
+                    new MessageHeader(
+                        KafkaMessageHeaders.SourcePartition,
+                        0));
+            Helper.Spy.OutboundEnvelopes[5].Headers
+                .Should().ContainEquivalentOf(
+                    new MessageHeader(
+                        KafkaMessageHeaders.SourceOffset,
+                        2));
         }
     }
 }
