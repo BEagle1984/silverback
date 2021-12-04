@@ -11,24 +11,17 @@ namespace Silverback.Messaging.Subscribers;
 
 internal static class MethodInvokerExtensions
 {
-    public static Task<object?> InvokeWithActivityAsync(
-        this MethodInfo methodInfo,
-        object target,
-        object?[] parameters,
-        bool executeAsync) =>
+    public static Task<object?> InvokeWithActivityAsync(this MethodInfo methodInfo, object? target, object?[] parameters, bool executeAsync) =>
         executeAsync
             ? InvokeWithActivityAsync(methodInfo, target, parameters)
             : Task.FromResult(InvokeWithActivitySync(methodInfo, target, parameters));
 
-    public static Task<object?> InvokeWithActivityAsync(
-        this MethodInfo methodInfo,
-        object target,
-        object?[] parameters) =>
+    public static Task<object?> InvokeWithActivityAsync(this MethodInfo methodInfo, object? target, object?[] parameters) =>
         methodInfo.ReturnsTask()
             ? ((Task)methodInfo.InvokeWithActivity(target, parameters)!).GetReturnValueAsync()
             : Task.FromResult(methodInfo.InvokeWithActivity(target, parameters));
 
-    public static object? InvokeWithActivitySync(this MethodInfo methodInfo, object target, object?[] parameters) =>
+    public static object? InvokeWithActivitySync(this MethodInfo methodInfo, object? target, object?[] parameters) =>
         methodInfo.ReturnsTask()
             ? AsyncHelper.RunSynchronously(
                 () =>
@@ -38,15 +31,12 @@ internal static class MethodInvokerExtensions
                 })
             : methodInfo.InvokeWithActivity(target, parameters);
 
-    public static Task InvokeWithActivityWithoutBlockingAsync(
-        this MethodInfo methodInfo,
-        object target,
-        object?[] parameters) =>
+    public static Task InvokeWithActivityWithoutBlockingAsync(this MethodInfo methodInfo, object? target, object?[] parameters) =>
         methodInfo.ReturnsTask()
             ? Task.Run(() => (Task)methodInfo.InvokeWithActivity(target, parameters)!)
             : Task.Run(() => methodInfo.InvokeWithActivity(target, parameters));
 
-    private static object? InvokeWithActivity(this MethodInfo methodInfo, object target, object?[] parameters)
+    private static object? InvokeWithActivity(this MethodInfo methodInfo, object? target, object?[] parameters)
     {
         using Activity? activity = ActivitySources.StartInvokeSubscriberActivity(methodInfo);
         return methodInfo.Invoke(target, parameters);
