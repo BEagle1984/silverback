@@ -2107,9 +2107,9 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
     {
-        byte[] rawMessage1 = BytesUtil.GetRandomBytes();
-        byte[] rawMessage2 = BytesUtil.GetRandomBytes();
-        byte[] rawMessage3 = BytesUtil.GetRandomBytes();
+        byte[] rawMessage1 = BytesUtil.GetRandomBytes(30);
+        byte[] rawMessage2 = BytesUtil.GetRandomBytes(30);
+        byte[] rawMessage3 = BytesUtil.GetRandomBytes(30);
 
         int receivedFilesCount = 0;
         List<byte[]?> receivedFiles = new();
