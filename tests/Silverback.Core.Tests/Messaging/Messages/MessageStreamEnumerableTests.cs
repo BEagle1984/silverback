@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -139,6 +140,7 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
     public async Task CompleteAsync_WhileEnumerating_EnumerationCompleted()
     {
         bool completed = false;
@@ -146,7 +148,6 @@ public class MessageStreamEnumerableTests
         using IEnumerator<int> enumerator = stream.GetEnumerator();
 
         // The next MoveNext reaches the end of the enumerable
-        // ReSharper disable once AccessToDisposedClosure
         Task.Run(
             () =>
             {
@@ -190,13 +191,13 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
     public async Task Abort_WhileEnumerating_EnumerationAborted()
     {
         bool completed = false;
         MessageStreamEnumerable<int> stream = new();
         using IEnumerator<int> enumerator = stream.GetEnumerator();
 
-        // ReSharper disable once AccessToDisposedClosure
         Task enumerationTask = Task.Run(
             () =>
             {

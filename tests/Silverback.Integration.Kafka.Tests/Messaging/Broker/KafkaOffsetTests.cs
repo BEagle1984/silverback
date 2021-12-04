@@ -254,12 +254,12 @@ public class KafkaOffsetTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
     public void EqualsObject_DifferentOffsetType_FalseReturned()
     {
         KafkaOffset offset1 = new("test-topic", 0, 42);
         TestOtherOffset offset2 = new("test-queue", "42");
 
-        // ReSharper disable once SuspiciousTypeConversion.Global
         bool result = offset1.Equals((object)offset2);
 
         result.Should().BeFalse();

@@ -3,7 +3,6 @@
 
 using System.ComponentModel.DataAnnotations;
 
-// ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes.Model;
 
 public class Person

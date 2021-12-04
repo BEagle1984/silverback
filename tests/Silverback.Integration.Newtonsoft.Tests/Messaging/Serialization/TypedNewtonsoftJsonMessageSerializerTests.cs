@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -293,10 +294,10 @@ public class NewtonsoftJsonMessageSerializerTests
     [Fact]
     public void Equals_SameInstance_TrueReturned()
     {
-        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer1 = new();
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer2 = serializer1;
 
-        // ReSharper disable once EqualExpressionComparison
-        bool result = Equals(serializer, serializer);
+        bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
     }
@@ -322,7 +323,6 @@ public class NewtonsoftJsonMessageSerializerTests
             }
         };
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
@@ -334,7 +334,6 @@ public class NewtonsoftJsonMessageSerializerTests
         NewtonsoftJsonMessageSerializer<TestEventOne> serializer1 = new();
         NewtonsoftJsonMessageSerializer<TestEventOne> serializer2 = new();
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
@@ -360,7 +359,6 @@ public class NewtonsoftJsonMessageSerializerTests
             }
         };
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeFalse();

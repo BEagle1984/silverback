@@ -8,7 +8,6 @@ using Silverback.EntityFrameworkCore;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 
-// ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes;
 
 public class TestDbContext : DbContext

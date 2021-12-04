@@ -21,7 +21,6 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
 public class StopConsumerErrorPolicyTests
 {
-    // ReSharper disable once NotAccessedField.Local
     private readonly ServiceProvider _serviceProvider;
 
     public StopConsumerErrorPolicyTests()

@@ -265,10 +265,10 @@ public class JsonMessageSerializerTests
     [Fact]
     public void Equals_SameInstance_TrueReturned()
     {
-        JsonMessageSerializer<TestEventOne> serializer = new();
+        JsonMessageSerializer<TestEventOne> serializer1 = new();
+        JsonMessageSerializer<TestEventOne> serializer2 = serializer1;
 
-        // ReSharper disable once EqualExpressionComparison
-        bool result = Equals(serializer, serializer);
+        bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
     }
@@ -294,7 +294,6 @@ public class JsonMessageSerializerTests
             }
         };
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
@@ -306,7 +305,6 @@ public class JsonMessageSerializerTests
         JsonMessageSerializer<TestEventOne> serializer1 = new();
         JsonMessageSerializer<TestEventOne> serializer2 = new();
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeTrue();
@@ -332,7 +330,6 @@ public class JsonMessageSerializerTests
             }
         };
 
-        // ReSharper disable once EqualExpressionComparison
         bool result = Equals(serializer1, serializer2);
 
         result.Should().BeFalse();

@@ -51,7 +51,6 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         if (IsCompleted)
             throw new InvalidOperationException("The transaction already completed.");
 
-        // ReSharper disable once InconsistentlySynchronizedField
         if (_transactionalServices.Contains(transactionalService))
             return;
 

@@ -4,7 +4,6 @@
 using System.ComponentModel.DataAnnotations;
 using Silverback.Domain;
 
-// ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes.Model;
 
 public class TestAggregateRoot : DomainEntity

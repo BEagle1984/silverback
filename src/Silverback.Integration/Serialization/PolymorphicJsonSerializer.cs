@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Silverback.Util;
 
-// ReSharper disable once CheckNamespace
 namespace Silverback.Serialization;
 
 /// <summary>

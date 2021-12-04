@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Silverback.Messaging.Publishing;
 
-// ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes;
 
 public sealed class TestDbContextInitializer : IDisposable
