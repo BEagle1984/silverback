@@ -12,693 +12,686 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
-namespace Silverback.Tests.Performance.Broker
+namespace Silverback.Tests.Performance.Broker;
+
+// 100,000 messages of 50 bytes
+//
+// Confluent.Kafka Produce w/ callback     : 740,553.68 msg/s | 100,000 in 0.135s
+// Silverback ProduceAsync w/ callbacks    :  74,638.32 msg/s | 100,000 in 1.340s ->   +892.19%
+// Silverback RawProduceAsync w/ callbacks : 436,021.10 msg/s | 100,000 in 0.229s ->    +69.84%
+// Silverback RawProduce w/ callbacks      :       ?.?? msg/s | 100,000 in ?.???s ->    +??.??%
+//
+// (note: in this version Silverback RawProduce used to be *slower* than RawProduceAsync)
+//
+// ** After optimizations **
+//
+// 100,000 messages of 50 bytes
+//
+// Confluent.Kafka Produce w/ callback     :   721,899.17 msg/s |   0.139s
+// Silverback ProduceAsync w/ callbacks    :   106,331.89 msg/s |   0.940s  +578.91%
+// Silverback RawProduceAsync w/ callbacks :   653,406.86 msg/s |   0.153s   +10.48%
+// Silverback RawProduce w/ callbacks      :   692,581.21 msg/s |   0.144s    +4.23%
+public static class RawProduceComparison
 {
-    // 100,000 messages of 50 bytes
-    //
-    // Confluent.Kafka Produce w/ callback     : 740,553.68 msg/s | 100,000 in 0.135s
-    // Silverback ProduceAsync w/ callbacks    :  74,638.32 msg/s | 100,000 in 1.340s ->   +892.19%
-    // Silverback RawProduceAsync w/ callbacks : 436,021.10 msg/s | 100,000 in 0.229s ->    +69.84%
-    // Silverback RawProduce w/ callbacks      :       ?.?? msg/s | 100,000 in ?.???s ->    +??.??%
-    //
-    // (note: in this version Silverback RawProduce used to be *slower* than RawProduceAsync)
-    //
-    // ** After optimizations **
-    //
-    // 100,000 messages of 50 bytes
-    //
-    // Confluent.Kafka Produce w/ callback     :   721,899.17 msg/s |   0.139s
-    // Silverback ProduceAsync w/ callbacks    :   106,331.89 msg/s |   0.940s  +578.91%
-    // Silverback RawProduceAsync w/ callbacks :   653,406.86 msg/s |   0.153s   +10.48%
-    // Silverback RawProduce w/ callbacks      :   692,581.21 msg/s |   0.144s    +4.23%
-    public static class RawProduceComparison
-     {
-        private const int TargetTotalBytes = 5_000_000;
+    private const int TargetTotalBytes = 5_000_000;
 
-        private const int WarmupMessages = 100;
+    private const int WarmupMessages = 100;
 
-        // private static readonly int[] MessageSizes = { 50, 100, 1_000, 10_000 };
-        private static readonly int[] MessageSizes = { 50 };
+    // private static readonly int[] MessageSizes = { 50, 100, 1_000, 10_000 };
+    private static readonly int[] MessageSizes = { 50 };
 
-        public static async Task RunAsync()
+    public static async Task RunAsync()
+    {
+        List<Stats> statsList = new();
+
+        // Warmup
+        await RunConfluentWithCallbacks(100_000, CreateMessage(10), null, null);
+
+        foreach (int messageSize in MessageSizes)
         {
-            var statsList = new List<Stats>();
+            int messagesCount = TargetTotalBytes / messageSize;
+            Message<byte[], byte[]> message = CreateMessage(messageSize);
 
-            // Warmup
-            await RunConfluentWithCallbacks(100_000, CreateMessage(10), null, null);
+            Console.WriteLine();
+            Console.WriteLine();
+            WriteTitle($"{messagesCount:#,###} messages of {messageSize:#,###} bytes");
 
-            foreach (var messageSize in MessageSizes)
-            {
-                var messagesCount = TargetTotalBytes / messageSize;
-                var message = CreateMessage(messageSize);
-
-                Console.WriteLine();
-                Console.WriteLine();
-                WriteTitle($"{messagesCount:#,###} messages of {messageSize:#,###} bytes");
-
-                statsList.Add(
-                    await RunConfluentWithCallbacks(
-                        messagesCount,
-                        message,
-                        null,
-                        null));
-                statsList.Add(
-                    await RunSilverbackProduceAsyncWithCallbacks(
-                        messagesCount,
-                        message,
-                        null,
-                        null));
-                statsList.Add(
-                    await RunSilverbackRawProduceAsyncWithCallbacks(
-                        messagesCount,
-                        message,
-                        null,
-                        null));
-                statsList.Add(
-                    await RunSilverbackRawProduceWithCallbacks(
-                        messagesCount,
-                        message,
-                        null,
-                        null));
-            }
-
-            WriteSummary(statsList);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private static async Task<Stats> RunConfluent(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Confluent.Kafka ProduceAsync Baseline",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var producerConfig = new ProducerConfig
-            {
-                BootstrapServers = "PLAINTEXT://localhost:9092",
-                LingerMs = lingerMs,
-                BatchSize = batchSize,
-                QueueBufferingMaxMessages = 10_000_000,
-                QueueBufferingMaxKbytes = TargetTotalBytes
-            };
-            var producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
-            var stopwatch = new Stopwatch();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                await producer.ProduceAsync("test", message);
-                NotifyProduced(i);
-            }
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        private static async Task<Stats> RunConfluentWithCallbacks(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Confluent.Kafka Produce w/ callback",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var producerConfig = new ProducerConfig
-            {
-                BootstrapServers = "PLAINTEXT://localhost:9092",
-                LingerMs = lingerMs,
-                BatchSize = batchSize,
-                QueueBufferingMaxMessages = 10_000_000,
-                QueueBufferingMaxKbytes = TargetTotalBytes
-            };
-            var producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                producer.Produce(
-                    "test",
+            statsList.Add(
+                await RunConfluentWithCallbacks(
+                    messagesCount,
                     message,
-                    _ =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        if (produced == count)
-                            taskCompletionSource.TrySetResult();
-                    });
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private static async Task<Stats> RunConfluentWithoutAwait(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Confluent.Kafka ProduceAsync not awaited",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var producerConfig = new ProducerConfig
-            {
-                BootstrapServers = "PLAINTEXT://localhost:9092",
-                LingerMs = lingerMs,
-                BatchSize = batchSize,
-                QueueBufferingMaxMessages = 10_000_000,
-                QueueBufferingMaxKbytes = TargetTotalBytes
-            };
-            var producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                producer.ProduceAsync("test", message)
-                    .ContinueWith(
-                        _ =>
-                        {
-                            Interlocked.Increment(ref produced);
-                            NotifyProduced(produced);
-
-                            if (produced == count)
-                                taskCompletionSource.TrySetResult();
-                        },
-                        TaskScheduler.Default)
-                    .FireAndForget();
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private static async Task<Stats> RunSilverbackProduceAsync(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Silverback ProduceAsync not awaited",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddEndpoints(
-                    endpoints => endpoints
-                        .AddKafkaEndpoints(
-                            kafkaEndpoints => kafkaEndpoints
-                                .Configure(
-                                    config => { config.BootstrapServers = "PLAINTEXT://localhost:9092"; })
-                                .AddOutbound<object>(
-                                    endpoint => endpoint
-                                        .ProduceTo("test")
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.LingerMs = lingerMs;
-                                                config.BatchSize = batchSize;
-                                                config.QueueBufferingMaxMessages = 10_000_000;
-                                                config.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                            }))))
-                .Services.BuildServiceProvider();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.ConnectAsync();
-            var producer = broker.GetProducer("test");
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                producer.ProduceAsync(message.Value)
-                    .ContinueWith(
-                        _ =>
-                        {
-                            Interlocked.Increment(ref produced);
-                            NotifyProduced(produced);
-
-                            if (produced == count)
-                                taskCompletionSource.TrySetResult();
-                        },
-                        TaskScheduler.Default)
-                    .FireAndForget();
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        private static async Task<Stats> RunSilverbackProduceAsyncWithCallbacks(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Silverback ProduceAsync w/ callbacks",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddEndpoints(
-                    endpoints => endpoints
-                        .AddKafkaEndpoints(
-                            kafkaEndpoints => kafkaEndpoints
-                                .Configure(
-                                    config => { config.BootstrapServers = "PLAINTEXT://localhost:9092"; })
-                                .AddOutbound<object>(
-                                    endpoint => endpoint
-                                        .ProduceTo("test")
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.LingerMs = lingerMs;
-                                                config.BatchSize = batchSize;
-                                                config.QueueBufferingMaxMessages = 10_000_000;
-                                                config.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                            }))))
-                .Services.BuildServiceProvider();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.ConnectAsync();
-            var producer = broker.GetProducer("test");
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                await producer.ProduceAsync(
-                    message.Value,
                     null,
-                    _ =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        if (produced == count)
-                            taskCompletionSource.TrySetResult();
-                    },
-                    ex =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        taskCompletionSource.TrySetException(ex);
-                    });
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private static async Task<Stats> RunSilverbackProduceWithCallbacks(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Silverback Produce w/ callbacks",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddEndpoints(
-                    endpoints => endpoints
-                        .AddKafkaEndpoints(
-                            kafkaEndpoints => kafkaEndpoints
-                                .Configure(
-                                    config => { config.BootstrapServers = "PLAINTEXT://localhost:9092"; })
-                                .AddOutbound<object>(
-                                    endpoint => endpoint
-                                        .ProduceTo("test")
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.LingerMs = lingerMs;
-                                                config.BatchSize = batchSize;
-                                                config.QueueBufferingMaxMessages = 10_000_000;
-                                                config.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                            }))))
-                .Services.BuildServiceProvider();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.ConnectAsync();
-            var producer = broker.GetProducer("test");
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                producer.Produce(
-                    message.Value,
+                    null));
+            statsList.Add(
+                await RunSilverbackProduceAsyncWithCallbacks(
+                    messagesCount,
+                    message,
                     null,
-                    _ =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        if (produced == count)
-                            taskCompletionSource.TrySetResult();
-                    },
-                    ex =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        taskCompletionSource.TrySetException(ex);
-                    });
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        private static async Task<Stats> RunSilverbackRawProduceAsyncWithCallbacks(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Silverback RawProduceAsync w/ callbacks",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddEndpoints(
-                    endpoints => endpoints
-                        .AddKafkaEndpoints(
-                            kafkaEndpoints => kafkaEndpoints
-                                .Configure(
-                                    config => { config.BootstrapServers = "PLAINTEXT://localhost:9092"; })
-                                .AddOutbound<object>(
-                                    endpoint => endpoint
-                                        .ProduceTo("test")
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.LingerMs = lingerMs;
-                                                config.BatchSize = batchSize;
-                                                config.QueueBufferingMaxMessages = 10_000_000;
-                                                config.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                            }))))
-                .Services.BuildServiceProvider();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.ConnectAsync();
-            var producer = broker.GetProducer("test");
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-            var messageStream = new MemoryStream(message.Value);
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                await producer.RawProduceAsync(
-                    messageStream,
+                    null));
+            statsList.Add(
+                await RunSilverbackRawProduceAsyncWithCallbacks(
+                    messagesCount,
+                    message,
                     null,
-                    _ =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        if (produced == count)
-                            taskCompletionSource.TrySetResult();
-                    },
-                    ex =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        taskCompletionSource.TrySetException(ex);
-                    });
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
-        }
-
-        private static async Task<Stats> RunSilverbackRawProduceWithCallbacks(
-            int count,
-            Message<byte[], byte[]> message,
-            int? lingerMs,
-            int? batchSize)
-        {
-            var runTitle = GetRunTitle(
-                "Silverback RawProduce w/ callbacks",
-                lingerMs,
-                batchSize);
-            WriteTitle(runTitle);
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddEndpoints(
-                    endpoints => endpoints
-                        .AddKafkaEndpoints(
-                            kafkaEndpoints => kafkaEndpoints
-                                .Configure(
-                                    config => { config.BootstrapServers = "PLAINTEXT://localhost:9092"; })
-                                .AddOutbound<object>(
-                                    endpoint => endpoint
-                                        .ProduceTo("test")
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.LingerMs = lingerMs;
-                                                config.BatchSize = batchSize;
-                                                config.QueueBufferingMaxMessages = 10_000_000;
-                                                config.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                            }))))
-                .Services.BuildServiceProvider();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            await broker.ConnectAsync();
-            var producer = broker.GetProducer("test");
-            var stopwatch = new Stopwatch();
-
-            var produced = 0;
-            var taskCompletionSource = new TaskCompletionSource();
-            var messageStream = new MemoryStream(message.Value);
-
-            for (int i = 0; i < count + WarmupMessages; i++)
-            {
-                if (i == WarmupMessages)
-                    stopwatch.Start();
-
-                producer.RawProduce(
-                    messageStream,
+                    null));
+            statsList.Add(
+                await RunSilverbackRawProduceWithCallbacks(
+                    messagesCount,
+                    message,
                     null,
-                    _ =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        if (produced == count)
-                            taskCompletionSource.TrySetResult();
-                    },
-                    ex =>
-                    {
-                        Interlocked.Increment(ref produced);
-                        NotifyProduced(produced);
-
-                        taskCompletionSource.TrySetException(ex);
-                    });
-            }
-
-            await taskCompletionSource.Task;
-
-            return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+                    null));
         }
 
-        private static Message<byte[], byte[]> CreateMessage(int size)
+        WriteSummary(statsList);
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private static async Task<Stats> RunConfluent(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Confluent.Kafka ProduceAsync Baseline", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ProducerConfig producerConfig = new()
         {
-            var rawMessage = Enumerable.Range(1, size).Select(i => (byte)i).ToArray();
-            return new Message<byte[], byte[]>
-            {
-                Value = rawMessage
-            };
+            BootstrapServers = "PLAINTEXT://localhost:9092",
+            LingerMs = lingerMs,
+            BatchSize = batchSize,
+            QueueBufferingMaxMessages = 10_000_000,
+            QueueBufferingMaxKbytes = TargetTotalBytes
+        };
+        IProducer<byte[], byte[]>? producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
+        Stopwatch stopwatch = new();
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            await producer.ProduceAsync("test", message);
+            NotifyProduced(i);
         }
 
-        private static void WriteTitle(string title)
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    private static async Task<Stats> RunConfluentWithCallbacks(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Confluent.Kafka Produce w/ callback", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ProducerConfig producerConfig = new()
         {
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(title);
-            Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.White;
-        }
+            BootstrapServers = "PLAINTEXT://localhost:9092",
+            LingerMs = lingerMs,
+            BatchSize = batchSize,
+            QueueBufferingMaxMessages = 10_000_000,
+            QueueBufferingMaxKbytes = TargetTotalBytes
+        };
+        IProducer<byte[], byte[]>? producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
+        Stopwatch stopwatch = new();
 
-        private static string GetRunTitle(
-            string title,
-            int? lingerMs,
-            int? batchSize)
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+
+        for (int i = 0; i < count + WarmupMessages; i++)
         {
-            if (lingerMs != null)
-                title += $", LingerMs={lingerMs:#,###}";
+            if (i == WarmupMessages)
+                stopwatch.Start();
 
-            if (batchSize != null)
-                title += $", BatchSize={batchSize:#,###}";
-
-            return title;
-        }
-
-        private static void NotifyProduced(int i)
-        {
-            if (i % 10000 == 0)
-                Console.WriteLine($"Produced {i:#,###} messages");
-        }
-
-        private static void WriteSummary(List<Stats> statsList)
-        {
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
-            WriteTitle("** RESULTS **");
-
-            var maxLabelLength = statsList.Max(stats => stats.Label.Length);
-
-            var groupedStats = statsList.GroupBy(
-                stats => new
+            producer.Produce(
+                "test",
+                message,
+                _ =>
                 {
-                    stats.Count,
-                    stats.MessageSize
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    if (produced == count)
+                        taskCompletionSource.TrySetResult();
                 });
-
-            foreach (var statsGroup in groupedStats)
-            {
-                WriteTitle(
-                    $"{statsGroup.Key.Count:#,###} messages of {statsGroup.Key.MessageSize:#,###} bytes");
-
-                var minElapsed = statsGroup.Min(stats => stats.Elapsed);
-
-                foreach (var stats in statsGroup)
-                {
-                    Console.ForegroundColor =
-                        stats.Elapsed == minElapsed ? ConsoleColor.Green : ConsoleColor.White;
-
-                    var performance = (stats.Count / stats.Elapsed.TotalSeconds)
-                        .ToString("#,##0.00", CultureInfo.CurrentCulture)
-                        .PadLeft(12);
-                    var elapsed = stats.Elapsed.TotalSeconds.ToString("0.000", CultureInfo.CurrentCulture)
-                        .PadLeft(7);
-
-                    Console.Write(stats.Label.PadRight(maxLabelLength));
-                    Console.Write(" : ");
-                    Console.Write($"{performance} msg/s");
-                    Console.Write($" | {elapsed}s");
-
-                    if (stats.Elapsed > minElapsed)
-                    {
-                        Console.Write(
-                            ((stats.Elapsed.TotalMilliseconds - minElapsed.TotalMilliseconds) /
-                             minElapsed.TotalMilliseconds).ToString("+0.00%", CultureInfo.CurrentCulture)
-                            .PadLeft(10));
-                    }
-
-                    Console.WriteLine();
-                }
-            }
         }
 
-        private sealed class Stats
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private static async Task<Stats> RunConfluentWithoutAwait(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Confluent.Kafka ProduceAsync not awaited", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ProducerConfig producerConfig = new()
         {
-            public Stats(string label, int count, int messageSize, TimeSpan elapsed)
-            {
-                Label = label;
-                Count = count;
-                MessageSize = messageSize;
-                Elapsed = elapsed;
-            }
+            BootstrapServers = "PLAINTEXT://localhost:9092",
+            LingerMs = lingerMs,
+            BatchSize = batchSize,
+            QueueBufferingMaxMessages = 10_000_000,
+            QueueBufferingMaxKbytes = TargetTotalBytes
+        };
+        IProducer<byte[], byte[]>? producer = new ProducerBuilder<byte[], byte[]>(producerConfig).Build();
+        Stopwatch stopwatch = new();
 
-            public string Label { get; }
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
 
-            public int Count { get; }
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
 
-            public int MessageSize { get; }
+            producer.ProduceAsync("test", message)
+                .ContinueWith(
+                    _ =>
+                    {
+                        Interlocked.Increment(ref produced);
+                        NotifyProduced(produced);
 
-            public TimeSpan Elapsed { get; }
+                        if (produced == count)
+                            taskCompletionSource.TrySetResult();
+                    },
+                    TaskScheduler.Default)
+                .FireAndForget();
         }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private static async Task<Stats> RunSilverbackProduceAsync(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Silverback ProduceAsync not awaited", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddEndpoints(
+                endpoints => endpoints
+                    .AddKafkaEndpoints(
+                        kafkaEndpoints => kafkaEndpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
+                                })
+                            .AddOutbound<object>(
+                                producer => producer
+                                    .ProduceTo("test")
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.LingerMs = lingerMs;
+                                            configuration.BatchSize = batchSize;
+                                            configuration.QueueBufferingMaxMessages = 10_000_000;
+                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
+                                        }))))
+            .Services.BuildServiceProvider();
+
+        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
+        await broker.ConnectAsync();
+        IProducer producer = broker.GetProducer("test");
+        Stopwatch stopwatch = new();
+
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            producer.ProduceAsync(message.Value)
+                .ContinueWith(
+                    _ =>
+                    {
+                        Interlocked.Increment(ref produced);
+                        NotifyProduced(produced);
+
+                        if (produced == count)
+                            taskCompletionSource.TrySetResult();
+                    },
+                    TaskScheduler.Default)
+                .FireAndForget();
+        }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    private static async Task<Stats> RunSilverbackProduceAsyncWithCallbacks(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Silverback ProduceAsync w/ callbacks", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddEndpoints(
+                endpoints => endpoints
+                    .AddKafkaEndpoints(
+                        kafkaEndpoints => kafkaEndpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
+                                })
+                            .AddOutbound<object>(
+                                endpoint => endpoint
+                                    .ProduceTo("test")
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.LingerMs = lingerMs;
+                                            configuration.BatchSize = batchSize;
+                                            configuration.QueueBufferingMaxMessages = 10_000_000;
+                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
+                                        }))))
+            .Services.BuildServiceProvider();
+
+        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
+        await broker.ConnectAsync();
+        IProducer producer = broker.GetProducer("test");
+        Stopwatch stopwatch = new();
+
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            await producer.ProduceAsync(
+                message.Value,
+                null,
+                _ =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    if (produced == count)
+                        taskCompletionSource.TrySetResult();
+                },
+                ex =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    taskCompletionSource.TrySetException(ex);
+                });
+        }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private static async Task<Stats> RunSilverbackProduceWithCallbacks(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Silverback Produce w/ callbacks", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddEndpoints(
+                endpoints => endpoints
+                    .AddKafkaEndpoints(
+                        kafkaEndpoints => kafkaEndpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
+                                })
+                            .AddOutbound<object>(
+                                endpoint => endpoint
+                                    .ProduceTo("test")
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.LingerMs = lingerMs;
+                                            configuration.BatchSize = batchSize;
+                                            configuration.QueueBufferingMaxMessages = 10_000_000;
+                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
+                                        }))))
+            .Services.BuildServiceProvider();
+
+        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
+        await broker.ConnectAsync();
+        IProducer producer = broker.GetProducer("test");
+        Stopwatch stopwatch = new();
+
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            producer.Produce(
+                message.Value,
+                null,
+                _ =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    if (produced == count)
+                        taskCompletionSource.TrySetResult();
+                },
+                ex =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    taskCompletionSource.TrySetException(ex);
+                });
+        }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    private static async Task<Stats> RunSilverbackRawProduceAsyncWithCallbacks(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle("Silverback RawProduceAsync w/ callbacks", lingerMs, batchSize);
+        WriteTitle(runTitle);
+
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddEndpoints(
+                endpoints => endpoints
+                    .AddKafkaEndpoints(
+                        kafkaEndpoints => kafkaEndpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
+                                })
+                            .AddOutbound<object>(
+                                endpoint => endpoint
+                                    .ProduceTo("test")
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.LingerMs = lingerMs;
+                                            configuration.BatchSize = batchSize;
+                                            configuration.QueueBufferingMaxMessages = 10_000_000;
+                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
+                                        }))))
+            .Services.BuildServiceProvider();
+
+        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
+        await broker.ConnectAsync();
+        IProducer producer = broker.GetProducer("test");
+        Stopwatch stopwatch = new();
+
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+        MemoryStream messageStream = new(message.Value);
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            await producer.RawProduceAsync(
+                messageStream,
+                null,
+                _ =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    if (produced == count)
+                        taskCompletionSource.TrySetResult();
+                },
+                ex =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    taskCompletionSource.TrySetException(ex);
+                });
+        }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    private static async Task<Stats> RunSilverbackRawProduceWithCallbacks(
+        int count,
+        Message<byte[], byte[]> message,
+        int? lingerMs,
+        int? batchSize)
+    {
+        string runTitle = GetRunTitle(
+            "Silverback RawProduce w/ callbacks",
+            lingerMs,
+            batchSize);
+        WriteTitle(runTitle);
+
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddKafka())
+            .AddEndpoints(
+                endpoints => endpoints
+                    .AddKafkaEndpoints(
+                        kafkaEndpoints => kafkaEndpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
+                                })
+                            .AddOutbound<object>(
+                                endpoint => endpoint
+                                    .ProduceTo("test")
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.LingerMs = lingerMs;
+                                            configuration.BatchSize = batchSize;
+                                            configuration.QueueBufferingMaxMessages = 10_000_000;
+                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
+                                        }))))
+            .Services.BuildServiceProvider();
+
+        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
+        await broker.ConnectAsync();
+        IProducer producer = broker.GetProducer("test");
+        Stopwatch stopwatch = new();
+
+        int produced = 0;
+        TaskCompletionSource taskCompletionSource = new();
+        MemoryStream messageStream = new(message.Value);
+
+        for (int i = 0; i < count + WarmupMessages; i++)
+        {
+            if (i == WarmupMessages)
+                stopwatch.Start();
+
+            producer.RawProduce(
+                messageStream,
+                null,
+                _ =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    if (produced == count)
+                        taskCompletionSource.TrySetResult();
+                },
+                ex =>
+                {
+                    Interlocked.Increment(ref produced);
+                    NotifyProduced(produced);
+
+                    taskCompletionSource.TrySetException(ex);
+                });
+        }
+
+        await taskCompletionSource.Task;
+
+        return new Stats(runTitle, count, message.Value.Length, stopwatch.Elapsed);
+    }
+
+    private static Message<byte[], byte[]> CreateMessage(int size)
+    {
+        byte[] rawMessage = Enumerable.Range(1, size).Select(i => (byte)i).ToArray();
+        return new Message<byte[], byte[]>
+        {
+            Value = rawMessage
+        };
+    }
+
+    private static void WriteTitle(string title)
+    {
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine(title);
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.White;
+    }
+
+    private static string GetRunTitle(
+        string title,
+        int? lingerMs,
+        int? batchSize)
+    {
+        if (lingerMs != null)
+            title += $", LingerMs={lingerMs:#,###}";
+
+        if (batchSize != null)
+            title += $", BatchSize={batchSize:#,###}";
+
+        return title;
+    }
+
+    private static void NotifyProduced(int i)
+    {
+        if (i % 10000 == 0)
+            Console.WriteLine($"Produced {i:#,###} messages");
+    }
+
+    private static void WriteSummary(List<Stats> statsList)
+    {
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine();
+        WriteTitle("** RESULTS **");
+
+        int maxLabelLength = statsList.Max(stats => stats.Label.Length);
+
+        var groupedStats = statsList.GroupBy(
+            stats => new
+            {
+                stats.Count,
+                stats.MessageSize
+            });
+
+        foreach (var statsGroup in groupedStats)
+        {
+            WriteTitle($"{statsGroup.Key.Count:#,###} messages of {statsGroup.Key.MessageSize:#,###} bytes");
+
+            TimeSpan minElapsed = statsGroup.Min(stats => stats.Elapsed);
+
+            foreach (Stats stats in statsGroup)
+            {
+                Console.ForegroundColor =
+                    stats.Elapsed == minElapsed ? ConsoleColor.Green : ConsoleColor.White;
+
+                string performance = (stats.Count / stats.Elapsed.TotalSeconds)
+                    .ToString("#,##0.00", CultureInfo.CurrentCulture)
+                    .PadLeft(12);
+                string elapsed = stats.Elapsed.TotalSeconds.ToString("0.000", CultureInfo.CurrentCulture)
+                    .PadLeft(7);
+
+                Console.Write(stats.Label.PadRight(maxLabelLength));
+                Console.Write(" : ");
+                Console.Write($"{performance} msg/s");
+                Console.Write($" | {elapsed}s");
+
+                if (stats.Elapsed > minElapsed)
+                {
+                    Console.Write(
+                        ((stats.Elapsed.TotalMilliseconds - minElapsed.TotalMilliseconds) /
+                         minElapsed.TotalMilliseconds).ToString("+0.00%", CultureInfo.CurrentCulture)
+                        .PadLeft(10));
+                }
+
+                Console.WriteLine();
+            }
+        }
+    }
+
+    private sealed class Stats
+    {
+        public Stats(string label, int count, int messageSize, TimeSpan elapsed)
+        {
+            Label = label;
+            Count = count;
+            MessageSize = messageSize;
+            Elapsed = elapsed;
+        }
+
+        public string Label { get; }
+
+        public int Count { get; }
+
+        public int MessageSize { get; }
+
+        public TimeSpan Elapsed { get; }
     }
 }

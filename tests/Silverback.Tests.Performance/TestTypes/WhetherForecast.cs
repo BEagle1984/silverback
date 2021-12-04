@@ -3,16 +3,15 @@
 
 using System;
 
-namespace Silverback.Tests.Performance.TestTypes
+namespace Silverback.Tests.Performance.TestTypes;
+
+public class WhetherForecast
 {
-    public class WhetherForecast
-    {
-        public DateTimeOffset Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 
-        public int TemperatureCelsius { get; set; }
+    public int TemperatureCelsius { get; set; }
 
-        public string? Summary { get; set; }
+    public string? Summary { get; set; }
 
-        public int WindSpeed { get; set; }
-    }
+    public int WindSpeed { get; set; }
 }
