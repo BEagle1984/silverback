@@ -3,22 +3,21 @@
 
 using System.IO;
 
-namespace Silverback.Tests
+namespace Silverback.Tests;
+
+public static class StreamExtensions
 {
-    public static class StreamExtensions
+    public static byte[]? ReReadAll(this Stream? stream)
     {
-        public static byte[]? ReReadAll(this Stream? stream)
+        if (stream == null)
+            return null;
+
+        stream.Position = 0;
+
+        using (MemoryStream memoryStream = new())
         {
-            if (stream == null)
-                return null;
-
-            stream.Position = 0;
-
-            using (var memoryStream = new MemoryStream())
-            {
-                stream.CopyTo(memoryStream);
-                return memoryStream.ToArray();
-            }
+            stream.CopyTo(memoryStream);
+            return memoryStream.ToArray();
         }
     }
 }

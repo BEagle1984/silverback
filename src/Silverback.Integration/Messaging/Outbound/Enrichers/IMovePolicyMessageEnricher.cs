@@ -4,28 +4,27 @@
 using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Outbound.Enrichers
+namespace Silverback.Messaging.Outbound.Enrichers;
+
+/// <summary>
+///     Enriches the outbound message being moved.
+/// </summary>
+public interface IMovePolicyMessageEnricher
 {
     /// <summary>
-    ///     Enriches the outbound message being moved.
+    ///     Enriches the specified message.
     /// </summary>
-    public interface IMovePolicyMessageEnricher
-    {
-        /// <summary>
-        ///     Enriches the specified message.
-        /// </summary>
-        /// <param name="inboundEnvelope">
-        ///     The envelope containing the message which failed to be processed.
-        /// </param>
-        /// <param name="outboundEnvelope">
-        ///     The envelope containing the message to be enriched.
-        /// </param>
-        /// <param name="exception">
-        ///     The exception thrown during the message processing.
-        /// </param>
-        void Enrich(
-            IRawInboundEnvelope inboundEnvelope,
-            IOutboundEnvelope outboundEnvelope,
-            Exception exception);
-    }
+    /// <param name="inboundEnvelope">
+    ///     The envelope containing the message which failed to be processed.
+    /// </param>
+    /// <param name="outboundEnvelope">
+    ///     The envelope containing the message to be enriched.
+    /// </param>
+    /// <param name="exception">
+    ///     The exception thrown during the message processing.
+    /// </param>
+    void Enrich(
+        IRawInboundEnvelope inboundEnvelope,
+        IOutboundEnvelope outboundEnvelope,
+        Exception exception);
 }

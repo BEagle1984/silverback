@@ -10,193 +10,192 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Callbacks
+namespace Silverback.Messaging.Broker.Callbacks;
+
+internal sealed class BrokerCallbackInvoker : IBrokerCallbacksInvoker
 {
-    internal sealed class BrokerCallbackInvoker : IBrokerCallbacksInvoker
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    private readonly ISilverbackLogger<BrokerCallbackInvoker> _logger;
+
+    private List<Type>? _callbackTypes;
+
+    private bool _appStopping;
+
+    public BrokerCallbackInvoker(
+        IServiceScopeFactory serviceScopeFactory,
+        IHostApplicationLifetime applicationLifetime,
+        ISilverbackLogger<BrokerCallbackInvoker> logger)
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _logger = logger;
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
 
-        private readonly ISilverbackLogger<BrokerCallbackInvoker> _logger;
+        applicationLifetime.ApplicationStopping.Register(() => _appStopping = true);
+    }
 
-        private List<Type>? _callbackTypes;
-
-        private bool _appStopping;
-
-        public BrokerCallbackInvoker(
-            IServiceScopeFactory serviceScopeFactory,
-            IHostApplicationLifetime applicationLifetime,
-            ISilverbackLogger<BrokerCallbackInvoker> logger)
+    /// <inheritdoc cref="IBrokerCallbacksInvoker.Invoke{THandler}" />
+    public void Invoke<TCallback>(
+        Action<TCallback> action,
+        IServiceProvider? scopedServiceProvider = null,
+        bool invokeDuringShutdown = true)
+    {
+        try
         {
-            _logger = logger;
-            _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
-
-            applicationLifetime.ApplicationStopping.Register(() => _appStopping = true);
+            InvokeCore(action, scopedServiceProvider, invokeDuringShutdown);
         }
-
-        /// <inheritdoc cref="IBrokerCallbacksInvoker.Invoke{THandler}"/>
-        public void Invoke<TCallback>(
-            Action<TCallback> action,
-            IServiceProvider? scopedServiceProvider = null,
-            bool invokeDuringShutdown = true)
+        catch (Exception ex)
         {
-            try
-            {
-                InvokeCore(action, scopedServiceProvider, invokeDuringShutdown);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCallbackHandlerError(ex);
-                throw;
-            }
+            _logger.LogCallbackHandlerError(ex);
+            throw;
         }
+    }
 
-        /// <inheritdoc cref="IBrokerCallbacksInvoker.InvokeAsync{THandler}"/>
-        public async Task InvokeAsync<TCallback>(
-            Func<TCallback, Task> action,
-            IServiceProvider? scopedServiceProvider = null,
-            bool invokeDuringShutdown = true)
+    /// <inheritdoc cref="IBrokerCallbacksInvoker.InvokeAsync{THandler}" />
+    public async Task InvokeAsync<TCallback>(
+        Func<TCallback, Task> action,
+        IServiceProvider? scopedServiceProvider = null,
+        bool invokeDuringShutdown = true)
+    {
+        try
         {
-            try
-            {
-                await InvokeCoreAsync(action, scopedServiceProvider, invokeDuringShutdown).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCallbackHandlerError(ex);
-                throw;
-            }
+            await InvokeCoreAsync(action, scopedServiceProvider, invokeDuringShutdown).ConfigureAwait(false);
         }
-
-        private static void TryInvoke<TCallback>(TCallback service, Action<TCallback> action)
+        catch (Exception ex)
         {
-            try
-            {
-                action.Invoke(service);
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    "An exception has been thrown by the broker callback. " +
-                    "See inner exception for details.",
-                    ex);
-            }
+            _logger.LogCallbackHandlerError(ex);
+            throw;
         }
+    }
 
-        private static async Task TryInvokeAsync<TCallback>(TCallback service, Func<TCallback, Task> action)
+    private static void TryInvoke<TCallback>(TCallback service, Action<TCallback> action)
+    {
+        try
         {
-            try
-            {
-                await action.Invoke(service).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    "An exception has been thrown by the broker callback. " +
-                    "See inner exception for details.",
-                    ex);
-            }
+            action.Invoke(service);
         }
-
-        private void InvokeCore<TCallback>(
-            Action<TCallback> action,
-            IServiceProvider? scopedServiceProvider,
-            bool invokeDuringShutdown)
+        catch (Exception ex)
         {
-            if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
-                return;
+            throw new BrokerCallbackInvocationException(
+                "An exception has been thrown by the broker callback. " +
+                "See inner exception for details.",
+                ex);
+        }
+    }
 
-            IServiceScope? scope = null;
+    private static async Task TryInvokeAsync<TCallback>(TCallback service, Func<TCallback, Task> action)
+    {
+        try
+        {
+            await action.Invoke(service).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            throw new BrokerCallbackInvocationException(
+                "An exception has been thrown by the broker callback. " +
+                "See inner exception for details.",
+                ex);
+        }
+    }
 
-            try
+    private void InvokeCore<TCallback>(
+        Action<TCallback> action,
+        IServiceProvider? scopedServiceProvider,
+        bool invokeDuringShutdown)
+    {
+        if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
+            return;
+
+        IServiceScope? scope = null;
+
+        try
+        {
+            if (scopedServiceProvider == null)
             {
-                if (scopedServiceProvider == null)
-                {
-                    scope = _serviceScopeFactory.CreateScope();
-                    scopedServiceProvider = scope.ServiceProvider;
-                }
-
-                var services = GetCallbacks<TCallback>(scopedServiceProvider);
-
-                foreach (var service in services)
-                {
-                    TryInvoke(service, action);
-                }
+                scope = _serviceScopeFactory.CreateScope();
+                scopedServiceProvider = scope.ServiceProvider;
             }
-            catch (BrokerCallbackInvocationException)
+
+            IEnumerable<TCallback> services = GetCallbacks<TCallback>(scopedServiceProvider);
+
+            foreach (TCallback service in services)
             {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
-                    "See inner exception for details.",
-                    ex);
-            }
-            finally
-            {
-                scope?.Dispose();
+                TryInvoke(service, action);
             }
         }
-
-        private async Task InvokeCoreAsync<TCallback>(
-            Func<TCallback, Task> action,
-            IServiceProvider? scopedServiceProvider,
-            bool invokeDuringShutdown)
+        catch (BrokerCallbackInvocationException)
         {
-            if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
-                return;
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new BrokerCallbackInvocationException(
+                $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
+                "See inner exception for details.",
+                ex);
+        }
+        finally
+        {
+            scope?.Dispose();
+        }
+    }
 
-            IServiceScope? scope = null;
+    private async Task InvokeCoreAsync<TCallback>(
+        Func<TCallback, Task> action,
+        IServiceProvider? scopedServiceProvider,
+        bool invokeDuringShutdown)
+    {
+        if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
+            return;
 
-            try
+        IServiceScope? scope = null;
+
+        try
+        {
+            if (scopedServiceProvider == null)
             {
-                if (scopedServiceProvider == null)
-                {
-                    scope = _serviceScopeFactory.CreateScope();
-                    scopedServiceProvider = scope.ServiceProvider;
-                }
-
-                var services = GetCallbacks<TCallback>(scopedServiceProvider);
-
-                foreach (var service in services)
-                {
-                    await TryInvokeAsync(service, action).ConfigureAwait(false);
-                }
+                scope = _serviceScopeFactory.CreateScope();
+                scopedServiceProvider = scope.ServiceProvider;
             }
-            catch (BrokerCallbackInvocationException)
+
+            IEnumerable<TCallback> services = GetCallbacks<TCallback>(scopedServiceProvider);
+
+            foreach (TCallback service in services)
             {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
-                    "See inner exception for details.",
-                    ex);
-            }
-            finally
-            {
-                scope?.Dispose();
+                await TryInvokeAsync(service, action).ConfigureAwait(false);
             }
         }
-
-        private IEnumerable<TCallback> GetCallbacks<TCallback>(IServiceProvider scopedServiceProvider)
+        catch (BrokerCallbackInvocationException)
         {
-            var callbacks = scopedServiceProvider.GetServices<IBrokerCallback>().ToList();
-
-            if (_callbackTypes == null)
-                _callbackTypes = callbacks.Select(callback => callback.GetType()).ToList();
-
-            return callbacks.OfType<TCallback>().SortBySortIndex();
+            throw;
         }
-
-        private bool HasAny<TCallback>()
+        catch (Exception ex)
         {
-            if (_callbackTypes == null)
-                return true;
-
-            return _callbackTypes.Any(type => typeof(TCallback).IsAssignableFrom(type));
+            throw new BrokerCallbackInvocationException(
+                $"Error occurred invoking the callbacks of type {typeof(TCallback).Name}. " +
+                "See inner exception for details.",
+                ex);
         }
+        finally
+        {
+            scope?.Dispose();
+        }
+    }
+
+    private IEnumerable<TCallback> GetCallbacks<TCallback>(IServiceProvider scopedServiceProvider)
+    {
+        List<IBrokerCallback> callbacks = scopedServiceProvider.GetServices<IBrokerCallback>().ToList();
+
+        if (_callbackTypes == null)
+            _callbackTypes = callbacks.Select(callback => callback.GetType()).ToList();
+
+        return callbacks.OfType<TCallback>().SortBySortIndex();
+    }
+
+    private bool HasAny<TCallback>()
+    {
+        if (_callbackTypes == null)
+            return true;
+
+        return _callbackTypes.Any(type => typeof(TCallback).IsAssignableFrom(type));
     }
 }

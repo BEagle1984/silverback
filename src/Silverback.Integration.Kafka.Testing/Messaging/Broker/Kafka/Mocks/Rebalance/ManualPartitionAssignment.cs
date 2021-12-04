@@ -1,13 +1,12 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance
+namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance;
+
+internal class ManualPartitionAssignment : PartitionAssignment
 {
-    internal class ManualPartitionAssignment : PartitionAssignment
+    public ManualPartitionAssignment(IMockedConfluentConsumer consumer)
+        : base(consumer)
     {
-        public ManualPartitionAssignment(IMockedConfluentConsumer consumer)
-            : base(consumer)
-        {
-        }
     }
 }

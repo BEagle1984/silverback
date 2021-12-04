@@ -6,30 +6,29 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Configuration
+namespace Silverback.Tests.Integration.Messaging.Configuration;
+
+public class ExactlyOnceStrategyBuilderTests
 {
-    public class ExactlyOnceStrategyBuilderTests
+    [Fact]
+    public void StoreOffset_OffsetStoreExactlyOnceStrategyCreated()
     {
-        [Fact]
-        public void StoreOffset_OffsetStoreExactlyOnceStrategyCreated()
-        {
-            var builder = new ExactlyOnceStrategyBuilder();
+        ExactlyOnceStrategyBuilder builder = new();
 
-            builder.StoreOffsets();
-            var strategy = builder.Build();
+        builder.StoreOffsets();
+        IExactlyOnceStrategy strategy = builder.Build();
 
-            strategy.Should().BeOfType<OffsetStoreExactlyOnceStrategy>();
-        }
+        strategy.Should().BeOfType<OffsetStoreExactlyOnceStrategy>();
+    }
 
-        [Fact]
-        public void LogMessages_LogExactlyOnceStrategyCreated()
-        {
-            var builder = new ExactlyOnceStrategyBuilder();
+    [Fact]
+    public void LogMessages_LogExactlyOnceStrategyCreated()
+    {
+        ExactlyOnceStrategyBuilder builder = new();
 
-            builder.LogMessages();
-            var strategy = builder.Build();
+        builder.LogMessages();
+        IExactlyOnceStrategy strategy = builder.Build();
 
-            strategy.Should().BeOfType<LogExactlyOnceStrategy>();
-        }
+        strategy.Should().BeOfType<LogExactlyOnceStrategy>();
     }
 }

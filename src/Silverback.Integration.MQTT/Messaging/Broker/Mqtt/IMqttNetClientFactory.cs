@@ -3,19 +3,18 @@
 
 using MQTTnet.Client;
 
-namespace Silverback.Messaging.Broker.Mqtt
+namespace Silverback.Messaging.Broker.Mqtt;
+
+/// <summary>
+///     The factory used to create the <see cref="IMqttClient" /> instances.
+/// </summary>
+public interface IMqttNetClientFactory
 {
     /// <summary>
-    ///     The factory used to create the <see cref="IMqttClient" /> instances.
+    ///     Creates a new <see cref="IMqttClient" />.
     /// </summary>
-    public interface IMqttNetClientFactory
-    {
-        /// <summary>
-        ///     Creates a new <see cref="IMqttClient" />.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="IMqttClient" />.
-        /// </returns>
-        IMqttClient CreateClient();
-    }
+    /// <returns>
+    ///     The <see cref="IMqttClient" />.
+    /// </returns>
+    IMqttClient CreateClient();
 }

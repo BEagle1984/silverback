@@ -4,18 +4,17 @@
 using Silverback.Domain;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Database
+namespace Silverback.Tests.Integration.E2E.TestTypes.Database;
+
+public class TestDomainEntity : DomainEntity
 {
-    public class TestDomainEntity : DomainEntity
+    public int Id { get; private set; }
+
+    public int Value { get; private set; }
+
+    public void SetValue(int newValue)
     {
-        public int Id { get; private set; }
-
-        public int Value { get; private set; }
-
-        public void SetValue(int newValue)
-        {
-            Value = newValue;
-            AddEvent<ValueChangedDomainEvent>();
-        }
+        Value = newValue;
+        AddEvent<ValueChangedDomainEvent>();
     }
 }

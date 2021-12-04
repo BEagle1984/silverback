@@ -7,8 +7,7 @@
     <Version>$(BaseVersion)</Version>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package contains an implementation of an event store that perfectly integrates within the Silverback ecosystem</Description>
+    <Description>$(Description) This package contains an implementation of an event store that perfectly integrates within the Silverback ecosystem</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
@@ -22,20 +21,12 @@ This package contains an implementation of an event store that perfectly integra
     <Product>Silverback.EventSourcing</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.EventSourcing.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.EventSourcing.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-      <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

@@ -10,63 +10,62 @@ using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+
+/// <summary>
+///     Stores the outbound messages into the database. Used by the <see cref="OutboxProduceStrategy" />.
+/// </summary>
+public class DbOutboxWriter : RepositoryBase<OutboxMessage>, IOutboxWriter
 {
     /// <summary>
-    ///     Stores the outbound messages into the database. Used by the <see cref="OutboxProduceStrategy" />.
+    ///     Initializes a new instance of the <see cref="DbOutboxWriter" /> class.
     /// </summary>
-    public class DbOutboxWriter : RepositoryBase<OutboxMessage>, IOutboxWriter
+    /// <param name="dbContext">
+    ///     The <see cref="IDbContext" /> to use as storage.
+    /// </param>
+    public DbOutboxWriter(IDbContext dbContext)
+        : base(dbContext)
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="DbOutboxWriter" /> class.
-        /// </summary>
-        /// <param name="dbContext">
-        ///     The <see cref="IDbContext" /> to use as storage.
-        /// </param>
-        public DbOutboxWriter(IDbContext dbContext)
-            : base(dbContext)
-        {
-        }
-
-        /// <inheritdoc cref="IOutboxWriter.WriteAsync" />
-        public Task WriteAsync(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string endpointRawName,
-            string? endpointFriendlyName,
-            byte[]? endpoint)
-        {
-            DbSet.Add(
-                new OutboxMessage
-                {
-                    MessageType = message?.GetType().AssemblyQualifiedName,
-                    Content = messageBytes,
-                    Headers = SerializeHeaders(headers),
-                    EndpointRawName = endpointRawName,
-                    EndpointFriendlyName = endpointFriendlyName,
-                    Endpoint = endpoint,
-                    Created = DateTime.UtcNow
-                });
-
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="IOutboxWriter.CommitAsync" />
-        public Task CommitAsync()
-        {
-            // Nothing to do, the transaction is implicitly committed calling `SaveChanges` on the DbContext.
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="IOutboxWriter.RollbackAsync" />
-        public Task RollbackAsync()
-        {
-            // Nothing to do, the transaction is aborted by the DbContext
-            return Task.CompletedTask;
-        }
-
-        private static byte[]? SerializeHeaders(IReadOnlyCollection<MessageHeader>? headers) =>
-            headers == null ? null : JsonSerializer.SerializeToUtf8Bytes(headers);
     }
+
+    /// <inheritdoc cref="IOutboxWriter.WriteAsync" />
+    public Task WriteAsync(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        string endpointRawName,
+        string? endpointFriendlyName,
+        byte[]? serializedEndpoint)
+    {
+        DbSet.Add(
+            new OutboxMessage
+            {
+                MessageType = message?.GetType().AssemblyQualifiedName,
+                Content = messageBytes,
+                Headers = SerializeHeaders(headers),
+                EndpointRawName = endpointRawName,
+                EndpointFriendlyName = endpointFriendlyName,
+                Endpoint = serializedEndpoint,
+                Created = DateTime.UtcNow
+            });
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc cref="IOutboxWriter.CommitAsync" />
+    public Task CommitAsync()
+    {
+        // Nothing to do, the transaction is implicitly committed calling `SaveChanges` on the DbContext.
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc cref="IOutboxWriter.RollbackAsync" />
+    public Task RollbackAsync()
+    {
+        // Nothing to do, the transaction is aborted by the DbContext
+        return Task.CompletedTask;
+    }
+
+    private static byte[]? SerializeHeaders(IReadOnlyCollection<MessageHeader>? headers) =>
+        headers == null ? null : JsonSerializer.SerializeToUtf8Bytes(headers);
 }

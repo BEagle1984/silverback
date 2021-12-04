@@ -6,14 +6,11 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Formatter;
 using Silverback.Configuration;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
 using Xunit.Abstractions;
 

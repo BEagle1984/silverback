@@ -102,6 +102,7 @@ public class OutboxWorker : IOutboxWorker
             .ConfigureAwait(false);
     }
 
+    // TODO: Test all cases
     private static async Task<ProducerEndpoint> GetEndpointAsync(
         OutboxStoredMessage message,
         ProducerConfiguration configuration,
@@ -109,9 +110,6 @@ public class OutboxWorker : IOutboxWorker
     {
         switch (configuration.Endpoint)
         {
-            // TODO: Test all cases
-
-
             case IStaticProducerEndpointResolver staticEndpointProvider:
                 return staticEndpointProvider.GetEndpoint(configuration);
             case IDynamicProducerEndpointResolver dynamicEndpointProvider when message.Endpoint == null:
@@ -164,6 +162,7 @@ public class OutboxWorker : IOutboxWorker
         }
     }
 
+    // TODO: Avoid closure allocations
     private async Task ProcessMessageAsync(
         OutboxStoredMessage message,
         ConcurrentBag<OutboxStoredMessage> failedMessages,
@@ -177,10 +176,6 @@ public class OutboxWorker : IOutboxWorker
                     GetProducerSettings(message.MessageType, message.EndpointRawName, message.EndpointFriendlyName),
                     serviceProvider)
                 .ConfigureAwait(false);
-
-
-            // TODO: Avoid closure allocations
-
 
             await _brokerCollection.GetProducer(
                     GetProducerSettings(
@@ -221,11 +216,9 @@ public class OutboxWorker : IOutboxWorker
         }
     }
 
+    // TODO: Test all cases
     private ProducerConfiguration GetProducerSettings(Type? messageType, string rawName, string? friendlyName)
     {
-        // TODO: Test all cases
-
-
         IReadOnlyCollection<IOutboundRoute> outboundRoutes = messageType != null
             ? _routingConfiguration.GetRoutesForMessage(messageType)
             : _routingConfiguration.Routes;

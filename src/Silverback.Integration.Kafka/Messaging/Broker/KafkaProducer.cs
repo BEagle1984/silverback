@@ -34,7 +34,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
     ///     The <see cref="IBroker" /> that instantiated this producer.
     /// </param>
     /// <param name="configuration">
-    ///     The <see cref="KafkaProducerConfiguration"/>.
+    ///     The <see cref="KafkaProducerConfiguration" />.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.

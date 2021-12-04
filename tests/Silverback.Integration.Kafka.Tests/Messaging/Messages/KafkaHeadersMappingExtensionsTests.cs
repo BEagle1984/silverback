@@ -7,47 +7,46 @@ using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
+namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
+
+public class KafkaHeadersMappingExtensionsTests
 {
-    public class KafkaHeadersMappingExtensionsTests
+    [Fact]
+    public void ToConfluentHeaders_HeadersMapped()
     {
-        [Fact]
-        public void ToConfluentHeaders_HeadersMapped()
+        MessageHeaderCollection headers = new()
         {
-            var headers = new MessageHeaderCollection
+            { "one", "1" },
+            { "two", "2" }
+        };
+
+        Headers confluentHeaders = headers.ToConfluentHeaders();
+
+        confluentHeaders.Should().BeEquivalentTo(
+            new[]
             {
-                { "one", "1" },
-                { "two", "2" }
-            };
+                new Header("one", Encoding.UTF8.GetBytes("1")),
+                new Header("two", Encoding.UTF8.GetBytes("2"))
+            });
+    }
 
-            var confluentHeaders = headers.ToConfluentHeaders();
-
-            confluentHeaders.Should().BeEquivalentTo(
-                new[]
-                {
-                    new Header("one", Encoding.UTF8.GetBytes("1")),
-                    new Header("two", Encoding.UTF8.GetBytes("2"))
-                });
-        }
-
-        [Fact]
-        public void ToConfluentHeaders_MessageKeyHeaderIgnored()
+    [Fact]
+    public void ToConfluentHeaders_MessageKeyHeaderIgnored()
+    {
+        MessageHeaderCollection headers = new()
         {
-            var headers = new MessageHeaderCollection
+            { "one", "1" },
+            { KafkaMessageHeaders.KafkaMessageKey, "1234" },
+            { "two", "2" }
+        };
+
+        Headers confluentHeaders = headers.ToConfluentHeaders();
+
+        confluentHeaders.Should().BeEquivalentTo(
+            new[]
             {
-                { "one", "1" },
-                { KafkaMessageHeaders.KafkaMessageKey, "1234" },
-                { "two", "2" }
-            };
-
-            var confluentHeaders = headers.ToConfluentHeaders();
-
-            confluentHeaders.Should().BeEquivalentTo(
-                new[]
-                {
-                    new Header("one", Encoding.UTF8.GetBytes("1")),
-                    new Header("two", Encoding.UTF8.GetBytes("2"))
-                });
-        }
+                new Header("one", Encoding.UTF8.GetBytes("1")),
+                new Header("two", Encoding.UTF8.GetBytes("2"))
+            });
     }
 }

@@ -250,8 +250,7 @@ public class KafkaConsumerConfigurationBuilderTests
         KafkaConsumerConfiguration configuration = builder
             .ConsumeFrom(
                 "topic1",
-                partitions => Enumerable.Select(
-                    partitions,
+                partitions => partitions.Select(
                     partition =>
                         new TopicPartitionOffset(partition, Offset.Beginning))).Build();
 
@@ -276,8 +275,7 @@ public class KafkaConsumerConfigurationBuilderTests
         KafkaConsumerConfiguration configuration = builder
             .ConsumeFrom(
                 new[] { "topic1", "topic2" },
-                topicPartitions => Enumerable.Select<TopicPartition, TopicPartitionOffset>(
-                    topicPartitions,
+                topicPartitions => topicPartitions.Select(
                     partition =>
                         new TopicPartitionOffset(partition, Offset.Beginning)))
             .Build();

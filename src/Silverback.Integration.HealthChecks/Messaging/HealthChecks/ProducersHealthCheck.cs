@@ -8,40 +8,39 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Silverback.Util;
 
-namespace Silverback.Messaging.HealthChecks
+namespace Silverback.Messaging.HealthChecks;
+
+/// <summary>
+///     Sends a ping message through all the configured producers to verify that they are able to produce.
+/// </summary>
+public class ProducersHealthCheck : IHealthCheck
 {
+    private readonly IProducersHealthCheckService _service;
+
     /// <summary>
-    ///     Sends a ping message through all the configured producers to verify that they are able to produce.
+    ///     Initializes a new instance of the <see cref="ProducersHealthCheck" /> class.
     /// </summary>
-    public class ProducersHealthCheck : IHealthCheck
+    /// <param name="service">
+    ///     The <see cref="IProducersHealthCheckService" /> implementation to be used to ping the
+    ///     services.
+    /// </param>
+    public ProducersHealthCheck(IProducersHealthCheckService service)
     {
-        private readonly IProducersHealthCheckService _service;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ProducersHealthCheck" /> class.
-        /// </summary>
-        /// <param name="service">
-        ///     The <see cref="IProducersHealthCheckService" /> implementation to be used to ping the
-        ///     services.
-        /// </param>
-        public ProducersHealthCheck(IProducersHealthCheckService service)
-        {
-            _service = service;
-        }
-
-        /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
-        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            Check.NotNull(context, nameof(context));
-
-            IReadOnlyCollection<EndpointCheckResult> results = await _service.SendPingMessagesAsync().ConfigureAwait(false);
-
-            return results.All(r => r.IsSuccessful)
-                ? new HealthCheckResult(HealthStatus.Healthy)
-                : new HealthCheckResult(context.Registration.FailureStatus, GetDescription(results));
-        }
-
-        private static string GetDescription(IEnumerable<EndpointCheckResult> results) =>
-            string.Join(",", results.Select(r => $"{r.EndpointName}: {r.ErrorMessage}"));
+        _service = service;
     }
+
+    /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        Check.NotNull(context, nameof(context));
+
+        IReadOnlyCollection<EndpointCheckResult> results = await _service.SendPingMessagesAsync().ConfigureAwait(false);
+
+        return results.All(r => r.IsSuccessful)
+            ? new HealthCheckResult(HealthStatus.Healthy)
+            : new HealthCheckResult(context.Registration.FailureStatus, GetDescription(results));
+    }
+
+    private static string GetDescription(IEnumerable<EndpointCheckResult> results) =>
+        string.Join(",", results.Select(r => $"{r.EndpointName}: {r.ErrorMessage}"));
 }

@@ -10,97 +10,96 @@ using Silverback.Tests.EventSourcing.TestTypes;
 using Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
 using Xunit;
 
-namespace Silverback.Tests.EventSourcing.Domain.Util
+namespace Silverback.Tests.EventSourcing.Domain.Util;
+
+public class EventsApplierTests
 {
-    public class EventsApplierTests
+    [Fact]
+    public void Apply_SingleMatchingMethod_MethodInvoked()
     {
-        [Fact]
-        public void Apply_SingleMatchingMethod_MethodInvoked()
-        {
-            var entity = new Person();
+        Person entity = new();
 
-            EventsApplier.Apply(new NameChangedEvent { NewName = "Silverback" }, entity);
+        EventsApplier.Apply(new NameChangedEvent { NewName = "Silverback" }, entity);
 
-            entity.Name.Should().Be("Silverback");
-        }
+        entity.Name.Should().Be("Silverback");
+    }
 
-        [Fact]
-        public void Apply_MultipleMatchingMethods_AllMethodsInvoked()
-        {
-            var entity = new TestEntity();
+    [Fact]
+    public void Apply_MultipleMatchingMethods_AllMethodsInvoked()
+    {
+        TestEntity entity = new();
 
-            EventsApplier.Apply(new TestEntity.TestEntityEvent2(), entity);
+        EventsApplier.Apply(new TestEntity.TestEntityEvent2(), entity);
 
-            entity.Calls.Should().Be(2);
-        }
+        entity.Calls.Should().Be(2);
+    }
 
-        [Fact]
-        public void Apply_PublicApplyMethod_MethodInvoked()
-        {
-            var entity = new TestEntity();
+    [Fact]
+    public void Apply_PublicApplyMethod_MethodInvoked()
+    {
+        TestEntity entity = new();
 
-            EventsApplier.Apply(new TestEntity.TestEntityEvent1(), entity);
+        EventsApplier.Apply(new TestEntity.TestEntityEvent1(), entity);
 
-            entity.Calls.Should().Be(1);
-        }
+        entity.Calls.Should().Be(1);
+    }
 
-        [Fact]
-        public void Apply_PrivateApplyMethods_MethodsInvoked()
-        {
-            var entity = new TestEntity();
+    [Fact]
+    public void Apply_PrivateApplyMethods_MethodsInvoked()
+    {
+        TestEntity entity = new();
 
-            EventsApplier.Apply(new TestEntity.TestEntityEvent2(), entity);
+        EventsApplier.Apply(new TestEntity.TestEntityEvent2(), entity);
 
-            entity.Calls.Should().Be(2);
-        }
+        entity.Calls.Should().Be(2);
+    }
 
-        [Fact]
-        public void Apply_NoMatchingMethod_ExceptionThrown()
-        {
-            var entity = new TestEntity();
+    [Fact]
+    public void Apply_NoMatchingMethod_ExceptionThrown()
+    {
+        TestEntity entity = new();
 
-            Action action = () => EventsApplier.Apply(new TestEntity.TestEntityEvent3(), entity);
+        Action action = () => EventsApplier.Apply(new TestEntity.TestEntityEvent3(), entity);
 
-            action.Should().Throw<SilverbackException>();
-        }
+        action.Should().Throw<SilverbackException>();
+    }
 
-        private sealed class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
-        {
-            public int Calls { get; private set; }
+    private sealed class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
+    {
+        public int Calls { get; private set; }
 
-            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-            public void Apply(TestEntityEvent1 event1) => Calls++;
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        public void Apply(TestEntityEvent1 event1) => Calls++;
 
-            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
 #pragma warning disable 628
-            protected void Apply(TestEntityEvent2 event2) => Calls++;
+        protected void Apply(TestEntityEvent2 event2) => Calls++;
 #pragma warning restore 628
 
-            [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-            [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-            private void Apply2(TestEntityEvent2 event2, bool isReplaying) => Calls++;
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+        private void Apply2(TestEntityEvent2 event2, bool isReplaying) => Calls++;
 
-            public abstract class TestEntityEvent : EntityEvent
-            {
-            }
+        public abstract class TestEntityEvent : EntityEvent
+        {
+        }
 
-            public class TestEntityEvent1 : TestEntityEvent
-            {
-            }
+        public class TestEntityEvent1 : TestEntityEvent
+        {
+        }
 
-            public class TestEntityEvent2 : TestEntityEvent
-            {
-            }
+        public class TestEntityEvent2 : TestEntityEvent
+        {
+        }
 
-            public class TestEntityEvent3 : TestEntityEvent
-            {
-            }
+        public class TestEntityEvent3 : TestEntityEvent
+        {
         }
     }
 }

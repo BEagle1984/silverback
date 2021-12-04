@@ -4,10 +4,9 @@
 using Silverback.Domain;
 
 // ReSharper disable once CheckNamespace
-namespace Silverback.Tests.Core.EFCore30.TestTypes.Model
+namespace Silverback.Tests.Core.EFCore30.TestTypes.Model;
+
+public class TestDomainEventTwo : DomainEvent<TestAggregateRoot>
 {
-    public class TestDomainEventTwo : DomainEvent<TestAggregateRoot>
-    {
-        public string? Message { get; set; }
-    }
+    public string? Message { get; set; }
 }

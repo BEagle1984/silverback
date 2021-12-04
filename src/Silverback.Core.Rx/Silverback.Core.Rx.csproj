@@ -7,8 +7,7 @@
     <Version>$(BaseVersion)</Version>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package adds the ability to create an Observable from the internal bus messages stream.</Description>
+    <Description>$(Description) This package adds the ability to create an Observable from the internal bus messages stream.</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
@@ -22,20 +21,12 @@ This package adds the ability to create an Observable from the internal bus mess
     <Product>Silverback.Core.Rx</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.Rx.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.Rx.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 
-  </Project>
+</Project>

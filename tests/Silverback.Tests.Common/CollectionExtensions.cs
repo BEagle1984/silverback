@@ -3,16 +3,15 @@
 
 using System.Collections.Generic;
 
-namespace Silverback.Tests
+namespace Silverback.Tests;
+
+public static class CollectionExtensions
 {
-    public static class CollectionExtensions
+    public static void ThreadSafeAdd<T>(this ICollection<T> collection, T item)
     {
-        public static void ThreadSafeAdd<T>(this ICollection<T> collection, T item)
+        lock (collection)
         {
-            lock (collection)
-            {
-                collection.Add(item);
-            }
+            collection.Add(item);
         }
     }
 }

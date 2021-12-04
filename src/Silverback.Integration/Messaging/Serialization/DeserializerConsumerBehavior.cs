@@ -126,8 +126,6 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
             DefaultMessageHeaders.MessageType,
             tombstoneType.AssemblyQualifiedName);
 
-        return (Tombstone)Activator.CreateInstance(
-            tombstoneType,
-            messageId);
+        return (Tombstone)Activator.CreateInstance(tombstoneType, messageId)!;
     }
 }

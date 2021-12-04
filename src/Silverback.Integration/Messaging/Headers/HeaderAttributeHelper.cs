@@ -9,85 +9,80 @@ using System.Reflection;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Headers
+namespace Silverback.Messaging.Headers;
+
+internal static class HeaderAttributeHelper
 {
-    internal static class HeaderAttributeHelper
+    private static readonly ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>> PropertiesCache =
+        new();
+
+    public static IEnumerable<MessageHeader> GetHeaders(object? message)
     {
-        private static readonly ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>> PropertiesCache =
-            new();
+        if (message == null)
+            yield break;
 
-        public static IEnumerable<MessageHeader> GetHeaders(object? message)
+        Type type = message.GetType();
+
+        List<DecoratedProperty> properties = GetDecoratedProperties(type)
+            .Where(property => property.PropertyInfo.CanRead)
+            .ToList();
+
+        if (!properties.Any())
+            yield break;
+
+        foreach (DecoratedProperty? property in properties)
         {
-            if (message == null)
-                yield break;
+            object? value = property.PropertyInfo.GetValue(message);
 
-            var type = message.GetType();
-
-            var properties = GetDecoratedProperties(type)
-                .Where(property => property.PropertyInfo.CanRead)
-                .ToList();
-
-            if (!properties.Any())
-                yield break;
-
-            foreach (var property in properties)
+            if (value != null && !value.Equals(property.PropertyInfo.PropertyType.GetDefaultValue()) ||
+                property.Attribute.PublishDefaultValue)
             {
-                var value = property.PropertyInfo.GetValue(message);
-
-                if (value != null && !value.Equals(property.PropertyInfo.PropertyType.GetDefaultValue()) ||
-                    property.Attribute.PublishDefaultValue)
-                {
-                    yield return new MessageHeader(property.Attribute.HeaderName, value?.ToString());
-                }
+                yield return new MessageHeader(property.Attribute.HeaderName, value?.ToString());
             }
         }
+    }
 
-        public static void SetFromHeaders(object? message, MessageHeaderCollection headers)
+    public static void SetFromHeaders(object? message, MessageHeaderCollection headers)
+    {
+        if (message == null)
+            return;
+
+        Type type = message.GetType();
+
+        List<DecoratedProperty> properties = GetDecoratedProperties(type)
+            .Where(property => property.PropertyInfo.CanWrite)
+            .ToList();
+
+        if (!properties.Any())
+            return;
+
+        foreach (DecoratedProperty? property in properties)
         {
-            if (message == null)
-                return;
+            property.PropertyInfo.SetValue(
+                message,
+                headers.GetValueOrDefault(property.Attribute.HeaderName, property.PropertyInfo.PropertyType));
+        }
+    }
 
-            var type = message.GetType();
+    private static IReadOnlyCollection<DecoratedProperty> GetDecoratedProperties(Type type) =>
+        PropertiesCache.GetOrAdd(
+            type.Name,
+            _ =>
+                type.GetProperties()
+                    .Select(propertyInfo => new DecoratedProperty(propertyInfo, propertyInfo.GetCustomAttribute<HeaderAttribute>(true)!))
+                    .Where(decoratedProperty => decoratedProperty.Attribute != null)
+                    .ToList());
 
-            var properties = GetDecoratedProperties(type)
-                .Where(property => property.PropertyInfo.CanWrite)
-                .ToList();
-
-            if (!properties.Any())
-                return;
-
-            foreach (var property in properties)
-            {
-                property.PropertyInfo.SetValue(
-                    message,
-                    headers.GetValueOrDefault(property.Attribute.HeaderName, property.PropertyInfo.PropertyType));
-            }
+    private sealed class DecoratedProperty
+    {
+        public DecoratedProperty(PropertyInfo propertyInfo, HeaderAttribute attribute)
+        {
+            PropertyInfo = propertyInfo;
+            Attribute = attribute;
         }
 
-        private static IReadOnlyCollection<DecoratedProperty> GetDecoratedProperties(Type type) =>
-            PropertiesCache.GetOrAdd(
-                type.Name,
-                _ =>
-                    type.GetProperties()
-                        .Select(
-                            propertyInfo =>
-                                new DecoratedProperty(
-                                    propertyInfo,
-                                    propertyInfo.GetCustomAttribute<HeaderAttribute>(true)))
-                        .Where(decoratedProperty => decoratedProperty.Attribute != null)
-                        .ToList());
+        public PropertyInfo PropertyInfo { get; }
 
-        private sealed class DecoratedProperty
-        {
-            public DecoratedProperty(PropertyInfo propertyInfo, HeaderAttribute attribute)
-            {
-                PropertyInfo = propertyInfo;
-                Attribute = attribute;
-            }
-
-            public PropertyInfo PropertyInfo { get; }
-
-            public HeaderAttribute Attribute { get; }
-        }
+        public HeaderAttribute Attribute { get; }
     }
 }

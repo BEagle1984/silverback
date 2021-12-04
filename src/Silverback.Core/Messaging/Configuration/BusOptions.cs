@@ -6,22 +6,21 @@ using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.Subscriptions;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Stores the internal bus configuration (subscribers, etc.).
+/// </summary>
+public class BusOptions
 {
     /// <summary>
-    ///     Stores the internal bus configuration (subscribers, etc.).
+    ///     Gets the collection of <see cref="ISubscription" />. A single subscription can resolve to multiple subscribed methods.
     /// </summary>
-    public class BusOptions
-    {
-        /// <summary>
-        ///     Gets the collection of <see cref="ISubscription" />. A single subscription can resolve to multiple subscribed methods.
-        /// </summary>
-        public IList<ISubscription> Subscriptions { get; } = new List<ISubscription>();
+    public IList<ISubscription> Subscriptions { get; } = new List<ISubscription>();
 
-        /// <summary>
-        ///     Gets the collection of handled message types. These types will be recognized as messages and thus automatically republished
-        ///     when returned by a subscribed method.
-        /// </summary>
-        public IList<Type> MessageTypes { get; } = new List<Type> { typeof(IMessage) };
-    }
+    /// <summary>
+    ///     Gets the collection of handled message types. These types will be recognized as messages and thus automatically republished
+    ///     when returned by a subscribed method.
+    /// </summary>
+    public IList<Type> MessageTypes { get; } = new List<Type> { typeof(IMessage) };
 }

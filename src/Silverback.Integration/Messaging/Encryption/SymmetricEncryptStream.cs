@@ -9,105 +9,107 @@ using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     The implementation of <see cref="SilverbackCryptoStream" /> based on a
+///     <see cref="SymmetricAlgorithm" /> used to encrypt the messages.
+/// </summary>
+public class SymmetricEncryptStream : SilverbackCryptoStream
 {
+    private readonly ICryptoTransform _cryptoTransform;
+
+    private readonly CryptoStream _cryptoStream;
+
+    private byte[]? _prefixBuffer;
+
+    private int _prefixBufferPosition;
+
     /// <summary>
-    ///     The implementation of <see cref="SilverbackCryptoStream" /> based on a
-    ///     <see cref="SymmetricAlgorithm" /> used to encrypt the messages.
+    ///     Initializes a new instance of the <see cref="SymmetricEncryptStream" /> class.
     /// </summary>
-    public class SymmetricEncryptStream : SilverbackCryptoStream
+    /// <param name="stream">
+    ///     The inner <see cref="Stream" /> to read the clear-text message from.
+    /// </param>
+    /// <param name="settings">
+    ///     The <see cref="SymmetricEncryptionSettings" /> specifying the cryptographic algorithm settings.
+    /// </param>
+    public SymmetricEncryptStream(Stream stream, SymmetricEncryptionSettings settings)
     {
-        private readonly ICryptoTransform _cryptoTransform;
+        Check.NotNull(stream, nameof(stream));
+        Check.NotNull(settings, nameof(settings));
 
-        private readonly CryptoStream _cryptoStream;
+        _cryptoTransform = CreateCryptoTransform(settings);
+        _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
+    }
 
-        private byte[]? _prefixBuffer;
+    /// <inheritdoc cref="SilverbackCryptoStream.CryptoStream" />
+    protected override CryptoStream CryptoStream => _cryptoStream;
 
-        private int _prefixBufferPosition;
+    /// <inheritdoc cref="SilverbackCryptoStream.Read(byte[],int,int)" />
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        int prefixLength = ReadMessagePrefix(buffer, offset, count);
+        if (prefixLength > 0)
+            return prefixLength;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="SymmetricEncryptStream" /> class.
-        /// </summary>
-        /// <param name="stream">
-        ///     The inner <see cref="Stream" /> to read the clear-text message from.
-        /// </param>
-        /// <param name="settings">
-        ///     The <see cref="SymmetricEncryptionSettings" /> specifying the cryptographic algorithm settings.
-        /// </param>
-        public SymmetricEncryptStream(Stream stream, SymmetricEncryptionSettings settings)
+        return base.Read(buffer, offset, count);
+    }
+
+    /// <inheritdoc cref="SilverbackCryptoStream.ReadAsync(byte[],int,int,CancellationToken)" />
+    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+    {
+        int prefixLength = ReadMessagePrefix(buffer, offset, count);
+        if (prefixLength > 0)
+            return Task.FromResult(prefixLength);
+
+        return base.ReadAsync(buffer, offset, count, cancellationToken);
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            Check.NotNull(stream, nameof(stream));
-            Check.NotNull(settings, nameof(settings));
-
-            _cryptoTransform = CreateCryptoTransform(settings);
-            _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
-        }
-
-        /// <inheritdoc cref="SilverbackCryptoStream.CryptoStream" />
-        protected override CryptoStream CryptoStream => _cryptoStream;
-
-        /// <inheritdoc cref="SilverbackCryptoStream.Read(byte[],int,int)" />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            var prefixLength = ReadMessagePrefix(buffer, offset, count);
-            if (prefixLength > 0)
-                return prefixLength;
-
-            return base.Read(buffer, offset, count);
-        }
-
-        /// <inheritdoc cref="SilverbackCryptoStream.ReadAsync(byte[],int,int,CancellationToken)" />
-        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-        {
-            var prefixLength = ReadMessagePrefix(buffer, offset, count);
-            if (prefixLength > 0)
-                return Task.FromResult(prefixLength);
-
-            return base.ReadAsync(buffer, offset, count, cancellationToken);
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_prefixBuffer != null)
-                    Array.Clear(_prefixBuffer, 0, _prefixBuffer.Length);
-
-                _cryptoTransform.Dispose();
-                _cryptoStream.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        private int ReadMessagePrefix(byte[] buffer, int offset, int count)
-        {
-            if (_prefixBuffer == null)
-                return 0;
-
-            var length = Math.Min(count, _prefixBuffer.Length - _prefixBufferPosition);
-            Array.Copy(_prefixBuffer, _prefixBufferPosition, buffer, offset, length);
-            _prefixBufferPosition += length;
-
-            if (_prefixBufferPosition == _prefixBuffer.Length)
-            {
+            if (_prefixBuffer != null)
                 Array.Clear(_prefixBuffer, 0, _prefixBuffer.Length);
-                _prefixBuffer = null;
-            }
 
-            return length;
+            _cryptoTransform.Dispose();
+            _cryptoStream.Dispose();
         }
 
-        [SuppressMessage("", "CA5401", Justification = "User choice to use a fix IV")]
-        private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
+        base.Dispose(disposing);
+    }
+
+    private int ReadMessagePrefix(byte[] buffer, int offset, int count)
+    {
+        if (_prefixBuffer == null)
+            return 0;
+
+        int length = Math.Min(count, _prefixBuffer.Length - _prefixBufferPosition);
+        Array.Copy(_prefixBuffer, _prefixBufferPosition, buffer, offset, length);
+        _prefixBufferPosition += length;
+
+        if (_prefixBufferPosition == _prefixBuffer.Length)
         {
-            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, settings.Key);
-
-            if (settings.InitializationVector == null)
-                _prefixBuffer = algorithm.IV;
-
-            return algorithm.CreateEncryptor();
+            Array.Clear(_prefixBuffer, 0, _prefixBuffer.Length);
+            _prefixBuffer = null;
         }
+
+        return length;
+    }
+
+    [SuppressMessage("", "CA5401", Justification = "User choice to use a fix IV")]
+    private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
+    {
+        if (settings.Key == null)
+            throw new InvalidOperationException("The encryption key is not set.");
+
+        using SymmetricAlgorithm algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, settings.Key);
+
+        if (settings.InitializationVector == null)
+            _prefixBuffer = algorithm.IV;
+
+        return algorithm.CreateEncryptor();
     }
 }

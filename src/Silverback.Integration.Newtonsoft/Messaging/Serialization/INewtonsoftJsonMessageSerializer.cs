@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
+///     Serializes and deserializes the messages in JSON format.
 /// </summary>
 internal interface INewtonsoftJsonMessageSerializer : IMessageSerializer
 {

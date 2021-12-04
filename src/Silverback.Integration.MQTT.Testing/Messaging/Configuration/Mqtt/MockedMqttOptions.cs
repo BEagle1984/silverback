@@ -3,10 +3,9 @@
 
 using System;
 
-namespace Silverback.Messaging.Configuration.Mqtt
+namespace Silverback.Messaging.Configuration.Mqtt;
+
+internal sealed class MockedMqttOptions : IMockedMqttOptions
 {
-    internal sealed class MockedMqttOptions : IMockedMqttOptions
-    {
-        public TimeSpan ConnectionDelay { get; set; } = TimeSpan.FromMilliseconds(10);
-    }
+    public TimeSpan ConnectionDelay { get; set; } = TimeSpan.FromMilliseconds(10);
 }

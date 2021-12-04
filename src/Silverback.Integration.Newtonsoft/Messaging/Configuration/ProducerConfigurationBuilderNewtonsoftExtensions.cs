@@ -15,7 +15,7 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
 {
     /// <summary>
     ///     <para>
-    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer" /> (or
+    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer{TMessage}" /> (or
     ///         <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />) to serialize the produced messages as JSON.
     ///     </para>
     ///     <para>

@@ -3,18 +3,17 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.TestTypes.Messages
+namespace Silverback.Tests.Core.TestTypes.Messages;
+
+public class TestEnvelope : ITestRawEnvelope, IEnvelope
 {
-    public class TestEnvelope : ITestRawEnvelope, IEnvelope
+    public TestEnvelope(object message, bool autoUnwrap = true)
     {
-        public TestEnvelope(object message, bool autoUnwrap = true)
-        {
-            Message = message;
-            AutoUnwrap = autoUnwrap;
-        }
-
-        public bool AutoUnwrap { get; }
-
-        public object? Message { get; set; }
+        Message = message;
+        AutoUnwrap = autoUnwrap;
     }
+
+    public bool AutoUnwrap { get; }
+
+    public object? Message { get; set; }
 }

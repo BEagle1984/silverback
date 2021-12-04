@@ -3,10 +3,9 @@
 
 using Silverback.Domain;
 
-namespace Silverback.Tests.EventSourcing.TestTypes.EntityEvents
+namespace Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
+
+public class AgeChangedEvent : EntityEvent
 {
-    public class AgeChangedEvent : EntityEvent
-    {
-        public int NewAge { get; set; }
-    }
+    public int NewAge { get; set; }
 }

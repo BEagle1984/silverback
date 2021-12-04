@@ -3,46 +3,45 @@
 
 using System.IO;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     The factory used to create the <see cref="SilverbackCryptoStream" /> implementation according to the
+///     <see cref="EncryptionSettings" />.
+/// </summary>
+public interface ISilverbackCryptoStreamFactory
 {
     /// <summary>
-    ///     The factory used to create the <see cref="SilverbackCryptoStream" /> implementation according to the
-    ///     <see cref="EncryptionSettings" />.
+    ///     Gets a <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
     /// </summary>
-    public interface ISilverbackCryptoStreamFactory
-    {
-        /// <summary>
-        ///     Gets a <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
-        /// </summary>
-        /// <param name="stream">
-        ///     The inner <see cref="Stream" /> to read the clear-text message from.
-        /// </param>
-        /// <param name="settings">
-        ///     The <see cref="EncryptionSettings" /> specifying the cryptographic algorithm settings.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
-        /// </returns>
-        SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings);
+    /// <param name="stream">
+    ///     The inner <see cref="Stream" /> to read the clear-text message from.
+    /// </param>
+    /// <param name="settings">
+    ///     The <see cref="EncryptionSettings" /> specifying the cryptographic algorithm settings.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
+    /// </returns>
+    SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings);
 
-        /// <summary>
-        ///     Gets a <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
-        /// </summary>
-        /// <param name="stream">
-        ///     The inner <see cref="Stream" /> to read the encrypted message from.
-        /// </param>
-        /// <param name="settings">
-        ///     The <see cref="EncryptionSettings" /> specifying the cryptographic algorithm settings.
-        /// </param>
-        /// <param name="keyIdentifier">
-        ///     The encryption key identifier that was submitted as header.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
-        /// </returns>
-        SilverbackCryptoStream GetDecryptStream(
-            Stream stream,
-            EncryptionSettings settings,
-            string? keyIdentifier = null);
-    }
+    /// <summary>
+    ///     Gets a <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
+    /// </summary>
+    /// <param name="stream">
+    ///     The inner <see cref="Stream" /> to read the encrypted message from.
+    /// </param>
+    /// <param name="settings">
+    ///     The <see cref="EncryptionSettings" /> specifying the cryptographic algorithm settings.
+    /// </param>
+    /// <param name="keyIdentifier">
+    ///     The encryption key identifier that was submitted as header.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
+    /// </returns>
+    SilverbackCryptoStream GetDecryptStream(
+        Stream stream,
+        EncryptionSettings settings,
+        string? keyIdentifier = null);
 }

@@ -3,9 +3,8 @@
 
 using Silverback.Tests.Core.TestTypes.Messages;
 
-namespace Silverback.Tests.Core.TestTypes.Subscribers
+namespace Silverback.Tests.Core.TestTypes.Subscribers;
+
+public class EventOneGenericSubscriber : GenericSubscriber<TestEventOne>
 {
-    public class EventOneGenericSubscriber : GenericSubscriber<TestEventOne>
-    {
-    }
 }

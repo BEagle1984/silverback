@@ -5,62 +5,61 @@ using FluentAssertions;
 using Silverback.Tests.Core.Model.TestTypes.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Core.Model.Domain
+namespace Silverback.Tests.Core.Model.Domain;
+
+public class DomainEntityTests
 {
-    public class DomainEntityTests
+    [Fact]
+    public void AddEvent_EventInstance_AddedToCollection()
     {
-        [Fact]
-        public void AddEvent_EventInstance_AddedToCollection()
-        {
-            var entity = new TestAggregateRoot();
+        TestAggregateRoot entity = new();
 
-            entity.AddEvent(new TestDomainEventOne());
-            entity.AddEvent(new TestDomainEventTwo());
-            entity.AddEvent(new TestDomainEventOne());
+        entity.AddEvent(new TestDomainEventOne());
+        entity.AddEvent(new TestDomainEventTwo());
+        entity.AddEvent(new TestDomainEventOne());
 
-            entity.DomainEvents.Should().NotBeNull();
-            entity.DomainEvents.Should().HaveCount(3);
-            entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
-        }
+        entity.DomainEvents.Should().NotBeNull();
+        entity.DomainEvents.Should().HaveCount(3);
+        entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
+    }
 
-        [Fact]
-        public void AddEvent_EventType_AddedToCollection()
-        {
-            var entity = new TestAggregateRoot();
+    [Fact]
+    public void AddEvent_EventType_AddedToCollection()
+    {
+        TestAggregateRoot entity = new();
 
-            entity.AddEvent<TestDomainEventOne>();
-            entity.AddEvent<TestDomainEventTwo>();
-            entity.AddEvent<TestDomainEventOne>();
+        entity.AddEvent<TestDomainEventOne>();
+        entity.AddEvent<TestDomainEventTwo>();
+        entity.AddEvent<TestDomainEventOne>();
 
-            entity.DomainEvents.Should().NotBeNull();
-            entity.DomainEvents.Should().HaveCount(3);
-            entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
-        }
+        entity.DomainEvents.Should().NotBeNull();
+        entity.DomainEvents.Should().HaveCount(3);
+        entity.DomainEvents.Should().OnlyContain(e => e.Source == entity);
+    }
 
-        [Fact]
-        public void AddEvent_SameEventTypeWithoutAllowMultiple_AddedOnlyOnceToCollection()
-        {
-            var entity = new TestAggregateRoot();
+    [Fact]
+    public void AddEvent_SameEventTypeWithoutAllowMultiple_AddedOnlyOnceToCollection()
+    {
+        TestAggregateRoot entity = new();
 
-            entity.AddEvent<TestDomainEventOne>(false);
-            entity.AddEvent<TestDomainEventTwo>(false);
-            entity.AddEvent<TestDomainEventOne>(false);
+        entity.AddEvent<TestDomainEventOne>(false);
+        entity.AddEvent<TestDomainEventTwo>(false);
+        entity.AddEvent<TestDomainEventOne>(false);
 
-            entity.DomainEvents.Should().HaveCount(2);
-        }
+        entity.DomainEvents.Should().HaveCount(2);
+    }
 
-        [Fact]
-        public void ClearMessages_WithSomePendingMessages_MessagesCleared()
-        {
-            var entity = new TestAggregateRoot();
+    [Fact]
+    public void ClearMessages_WithSomePendingMessages_MessagesCleared()
+    {
+        TestAggregateRoot entity = new();
 
-            entity.AddEvent<TestDomainEventOne>();
-            entity.AddEvent<TestDomainEventTwo>();
-            entity.AddEvent<TestDomainEventOne>();
-            entity.ClearMessages();
+        entity.AddEvent<TestDomainEventOne>();
+        entity.AddEvent<TestDomainEventTwo>();
+        entity.AddEvent<TestDomainEventOne>();
+        entity.ClearMessages();
 
-            entity.DomainEvents.Should().NotBeNull();
-            entity.DomainEvents.Should().BeEmpty();
-        }
+        entity.DomainEvents.Should().NotBeNull();
+        entity.DomainEvents.Should().BeEmpty();
     }
 }

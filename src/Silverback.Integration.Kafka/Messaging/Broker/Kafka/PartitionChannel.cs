@@ -8,118 +8,117 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
 
-namespace Silverback.Messaging.Broker.Kafka
+namespace Silverback.Messaging.Broker.Kafka;
+
+internal sealed class PartitionChannel : IDisposable
 {
-    internal sealed class PartitionChannel : IDisposable
+    private readonly KafkaConsumer _consumer;
+
+    private readonly ISilverbackLogger _logger;
+
+    private readonly object _readingLock = new();
+
+    private Channel<ConsumeResult<byte[]?, byte[]?>> _channel;
+
+    private TaskCompletionSource<bool> _readTaskCompletionSource = new();
+
+    private CancellationTokenSource _readCancellationTokenSource = new();
+
+    private bool _disposed;
+
+    public PartitionChannel(KafkaConsumer consumer, TopicPartition topicPartition, ISilverbackLogger logger)
     {
-        private readonly KafkaConsumer _consumer;
+        _consumer = consumer;
+        TopicPartition = topicPartition;
+        _logger = logger;
 
-        private readonly ISilverbackLogger _logger;
+        _channel = CreateBoundedChannel();
+    }
 
-        private readonly object _readingLock = new();
+    public TopicPartition TopicPartition { get; }
 
-        private Channel<ConsumeResult<byte[]?, byte[]?>> _channel;
+    public ChannelReader<ConsumeResult<byte[]?, byte[]?>> Reader => _channel.Reader;
 
-        private TaskCompletionSource<bool> _readTaskCompletionSource = new();
+    public ChannelWriter<ConsumeResult<byte[]?, byte[]?>> Writer => _channel.Writer;
 
-        private CancellationTokenSource _readCancellationTokenSource = new();
+    public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
 
-        private bool _disposed;
+    public Task ReadTask => _readTaskCompletionSource.Task;
 
-        public PartitionChannel(KafkaConsumer consumer, TopicPartition topicPartition, ISilverbackLogger logger)
+    public bool IsReading { get; private set; }
+
+    public void Reset()
+    {
+        Writer.Complete();
+        _channel = CreateBoundedChannel();
+    }
+
+    public bool StartReading()
+    {
+        lock (_readingLock)
         {
-            _consumer = consumer;
-            TopicPartition = topicPartition;
-            _logger = logger;
+            if (IsReading)
+                return false;
 
-            _channel = CreateBoundedChannel();
+            IsReading = true;
         }
 
-        public TopicPartition TopicPartition { get; }
-
-        public ChannelReader<ConsumeResult<byte[]?, byte[]?>> Reader => _channel.Reader;
-
-        public ChannelWriter<ConsumeResult<byte[]?, byte[]?>> Writer => _channel.Writer;
-
-        public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
-
-        public Task ReadTask => _readTaskCompletionSource.Task;
-
-        public bool IsReading { get; private set; }
-
-        public void Reset()
+        if (_readCancellationTokenSource.IsCancellationRequested)
         {
-            Writer.Complete();
-            _channel = CreateBoundedChannel();
+            _readCancellationTokenSource.Dispose();
+            _readCancellationTokenSource = new CancellationTokenSource();
         }
 
-        public bool StartReading()
+        if (_readTaskCompletionSource.Task.IsCompleted)
+            _readTaskCompletionSource = new TaskCompletionSource<bool>();
+
+        return true;
+    }
+
+    public Task StopReadingAsync()
+    {
+        if (!_readCancellationTokenSource.IsCancellationRequested)
         {
-            lock (_readingLock)
-            {
-                if (IsReading)
-                    return false;
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Stopping channel processing loop for partition {topic}[{partition}].",
+                () => new object[] { TopicPartition.Topic, TopicPartition.Partition });
 
-                IsReading = true;
-            }
-
-            if (_readCancellationTokenSource.IsCancellationRequested)
-            {
-                _readCancellationTokenSource.Dispose();
-                _readCancellationTokenSource = new CancellationTokenSource();
-            }
-
-            if (_readTaskCompletionSource.Task.IsCompleted)
-                _readTaskCompletionSource = new TaskCompletionSource<bool>();
-
-            return true;
+            _readCancellationTokenSource.Cancel();
         }
 
-        public Task StopReadingAsync()
+        lock (_readingLock)
         {
-            if (!_readCancellationTokenSource.IsCancellationRequested)
-            {
-                _logger.LogConsumerLowLevelTrace(
-                    _consumer,
-                    "Stopping channel processing loop for partition {topic}[{partition}].",
-                    () => new object[] { TopicPartition.Topic, TopicPartition.Partition });
-
-                _readCancellationTokenSource.Cancel();
-            }
-
-            lock (_readingLock)
-            {
-                if (!IsReading)
-                    _readTaskCompletionSource.TrySetResult(true);
-            }
-
-            return _readTaskCompletionSource.Task;
+            if (!IsReading)
+                _readTaskCompletionSource.TrySetResult(true);
         }
 
-        public void NotifyReadingStopped(bool hasThrown)
-        {
-            lock (_readingLock)
-            {
-                if (!IsReading)
-                    return;
+        return _readTaskCompletionSource.Task;
+    }
 
-                IsReading = false;
-                _readTaskCompletionSource.TrySetResult(!hasThrown);
-            }
-        }
-
-        public void Dispose()
+    public void NotifyReadingStopped(bool hasThrown)
+    {
+        lock (_readingLock)
         {
-            if (_disposed)
+            if (!IsReading)
                 return;
 
-            _readCancellationTokenSource.Dispose();
-
-            _disposed = true;
+            IsReading = false;
+            _readTaskCompletionSource.TrySetResult(!hasThrown);
         }
-
-        // TODO: Can test setting for backpressure limit?
-        private Channel<ConsumeResult<byte[]?, byte[]?>> CreateBoundedChannel() =>
-            Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(_consumer.Configuration.BackpressureLimit);
     }
+
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        _readCancellationTokenSource.Dispose();
+
+        _disposed = true;
+    }
+
+    // TODO: Can test setting for backpressure limit?
+    private Channel<ConsumeResult<byte[]?, byte[]?>> CreateBoundedChannel() =>
+        Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(_consumer.Configuration.BackpressureLimit);
 }

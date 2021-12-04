@@ -245,13 +245,12 @@ public class MqttClientConfigurationBuilder
     ///     The LWT message type.
     /// </typeparam>
     /// <param name="lastWillBuilderAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttLastWillMessageBuilder" /> and configures it.
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttLastWillMessageBuilder{TMessage}" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder SendLastWillMessage<TLwtMessage>(
-        Action<MqttLastWillMessageBuilder<TLwtMessage>> lastWillBuilderAction)
+    public MqttClientConfigurationBuilder SendLastWillMessage<TLwtMessage>(Action<MqttLastWillMessageBuilder<TLwtMessage>> lastWillBuilderAction)
     {
         Check.NotNull(lastWillBuilderAction, nameof(lastWillBuilderAction));
 

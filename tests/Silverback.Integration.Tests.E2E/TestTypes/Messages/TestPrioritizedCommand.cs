@@ -3,12 +3,11 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
-{
-    public class TestPrioritizedCommand : IIntegrationCommand
-    {
-        public Priority Priority { get; set; }
+namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
-        public string? Content { get; set; }
-    }
+public class TestPrioritizedCommand : IIntegrationCommand
+{
+    public Priority Priority { get; set; }
+
+    public string? Content { get; set; }
 }

@@ -5,51 +5,50 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class CloneExtensionsTests
 {
-    public class CloneExtensionsTests
+    [Fact]
+    public void ShallowCopy_SomeObject_ShallowCloneReturned()
     {
-        [Fact]
-        public void ShallowCopy_SomeObject_ShallowCloneReturned()
+        SomeObject source = new()
         {
-            var source = new SomeObject
+            Number = 42,
+            Nested = new SomeNestedObject
             {
-                Number = 42,
-                Nested = new SomeNestedObject
+                Text = "Silverback",
+                Nested = new SomeNestedNestedObject
                 {
-                    Text = "Silverback",
-                    Nested = new SomeNestedNestedObject
-                    {
-                        Number = 4.2
-                    }
+                    Number = 4.2
                 }
-            };
+            }
+        };
 
-            var clone = source.ShallowCopy();
+        SomeObject clone = source.ShallowCopy();
 
-            clone.Should().NotBeSameAs(source);
-            clone.Should().BeEquivalentTo(source);
+        clone.Should().NotBeSameAs(source);
+        clone.Should().BeEquivalentTo(source);
 
-            clone.Nested.Should().BeSameAs(source.Nested);
-        }
+        clone.Nested.Should().BeSameAs(source.Nested);
+    }
 
-        private sealed class SomeObject
-        {
-            public int Number { get; set; }
+    private sealed class SomeObject
+    {
+        public int Number { get; set; }
 
-            public SomeNestedObject? Nested { get; set; }
-        }
+        public SomeNestedObject? Nested { get; set; }
+    }
 
-        private sealed class SomeNestedObject
-        {
-            public string? Text { get; set; }
+    private sealed class SomeNestedObject
+    {
+        public string? Text { get; set; }
 
-            public SomeNestedNestedObject? Nested { get; set; }
-        }
+        public SomeNestedNestedObject? Nested { get; set; }
+    }
 
-        private sealed class SomeNestedNestedObject
-        {
-            public double Number { get; set; }
-        }
+    private sealed class SomeNestedNestedObject
+    {
+        public double Number { get; set; }
     }
 }

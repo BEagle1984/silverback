@@ -155,8 +155,8 @@ function Delete-All()
     Write-Host "Deleting everything in target folder..." -ForegroundColor Yellow -NoNewline
 
     Get-ChildItem -exclude Update.ps1 |
-            Remove-Item -Force -Recurse |
-            Out-Null
+        Remove-Item -Force -Recurse |
+        Out-Null
 
     Write-Host "OK" -ForegroundColor Green
 
@@ -258,9 +258,9 @@ function Add-Version([string]$path, [hashtable]$hashtable)
         $previousVersion = $hashtable[$name]
 
         if ($previousVersion.major -gt $major -Or
-                ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
-                ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or
-                ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And $suffix -ne "" -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix)))
+            ($previousVersion.major -eq $major -And $previousVersion.minor -gt $minor) -Or
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -gt $patch) -Or
+            ($previousVersion.major -eq $major -And $previousVersion.minor -eq $minor -And $previousVersion.patch -eq $patch -And $suffix -ne "" -And ($previousVersion.suffix -eq "" -Or $previousVersion.suffix -gt $suffix)))
         {
             return
         }

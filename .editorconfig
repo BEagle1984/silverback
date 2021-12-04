@@ -624,6 +624,5 @@ resharper_arrange_object_creation_when_type_evident_highlighting = warning
 resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
 
 
-
-[*.{csproj,props,yml,yaml}]
+[*.{csproj,props,yml,yaml,json,xml,config}]
 indent_size = 2

@@ -17,189 +17,187 @@ using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Broker
+namespace Silverback.Tests.Integration.Messaging.Broker;
+
+public class BrokerConnectorServiceTests
 {
-    public class BrokerConnectorServiceTests
+    [Fact]
+    public async Task StartAsync_ConnectAtStartup_BrokersConnected()
     {
-        [Fact]
-        public async Task StartAsync_ConnectAtStartup_BrokersConnected()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .AddBroker<TestOtherBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = BrokerConnectionMode.Startup
-                                })));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddBroker<TestOtherBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = BrokerConnectionMode.Startup
+                            })));
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
-        }
+        IBrokerCollection brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
+        brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
+    }
 
-        [Fact]
-        public async Task StartAsync_ExceptionWithRetryEnabled_ConnectRetried()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .AddBroker<TestOtherBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = BrokerConnectionMode.Startup,
-                                    RetryOnFailure = true,
-                                    RetryInterval = TimeSpan.FromMilliseconds(1)
-                                })));
+    [Fact]
+    public async Task StartAsync_ExceptionWithRetryEnabled_ConnectRetried()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddBroker<TestOtherBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = BrokerConnectionMode.Startup,
+                                RetryOnFailure = true,
+                                RetryInterval = TimeSpan.FromMilliseconds(1)
+                            })));
 
-            var testBroker = serviceProvider.GetRequiredService<TestBroker>();
-            testBroker.SimulateConnectIssues = true;
+        TestBroker testBroker = serviceProvider.GetRequiredService<TestBroker>();
+        testBroker.SimulateConnectIssues = true;
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
+        IBrokerCollection brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
+        brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
 
-            testBroker.SimulateConnectIssues.Should().BeFalse(); // Check that the exception mechanism what triggered
-        }
+        testBroker.SimulateConnectIssues.Should().BeFalse(); // Check that the exception mechanism what triggered
+    }
 
-        [Fact]
-        public async Task StartAsync_ExceptionWithRetryDisabled_ConnectNotRetried()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = BrokerConnectionMode.Startup,
-                                    RetryOnFailure = false
-                                })));
+    [Fact]
+    public async Task StartAsync_ExceptionWithRetryDisabled_ConnectNotRetried()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = BrokerConnectionMode.Startup,
+                                RetryOnFailure = false
+                            })));
 
-            var testBroker = serviceProvider.GetRequiredService<TestBroker>();
-            testBroker.SimulateConnectIssues = true;
+        TestBroker testBroker = serviceProvider.GetRequiredService<TestBroker>();
+        testBroker.SimulateConnectIssues = true;
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            testBroker.IsConnected.Should().BeFalse();
-        }
+        testBroker.IsConnected.Should().BeFalse();
+    }
 
-        [Fact]
-        public async Task StartAsync_ConnectAfterStartup_BrokerConnectedAfterLifetimeEvent()
-        {
-            var appStartedTokenSource = new CancellationTokenSource();
-            var lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
-            lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
+    [Fact]
+    public async Task StartAsync_ConnectAfterStartup_BrokerConnectedAfterLifetimeEvent()
+    {
+        CancellationTokenSource appStartedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
 
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => lifetimeEvents)
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = BrokerConnectionMode.AfterStartup
-                                })));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => lifetimeEvents)
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = BrokerConnectionMode.AfterStartup
+                            })));
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            var testBroker = serviceProvider.GetRequiredService<TestBroker>();
-            testBroker.IsConnected.Should().BeFalse();
+        TestBroker testBroker = serviceProvider.GetRequiredService<TestBroker>();
+        testBroker.IsConnected.Should().BeFalse();
 
-            appStartedTokenSource.Cancel();
+        appStartedTokenSource.Cancel();
 
-            testBroker.IsConnected.Should().BeTrue();
-        }
+        testBroker.IsConnected.Should().BeTrue();
+    }
 
-        [Fact]
-        public async Task StartAsync_AutoConnectDisabled_BrokersNotConnected()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .AddBroker<TestOtherBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = BrokerConnectionMode.Manual
-                                })));
+    [Fact]
+    public async Task StartAsync_AutoConnectDisabled_BrokersNotConnected()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .AddBroker<TestOtherBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = BrokerConnectionMode.Manual
+                            })));
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            brokers.ForEach(broker => broker.IsConnected.Should().BeFalse());
-        }
+        IBrokerCollection brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
+        brokers.ForEach(broker => broker.IsConnected.Should().BeFalse());
+    }
 
-        [Theory]
-        [InlineData(BrokerConnectionMode.Manual)]
-        [InlineData(BrokerConnectionMode.Startup)]
-        [InlineData(BrokerConnectionMode.AfterStartup)]
-        public async Task StartAsync_ApplicationStopping_BrokerGracefullyDisconnectedRegardlessOfMode(
-            BrokerConnectionMode mode)
-        {
-            var appStoppingTokenSource = new CancellationTokenSource();
-            var appStoppedTokenSource = new CancellationTokenSource();
-            var lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
-            lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
-            lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
+    [Theory]
+    [InlineData(BrokerConnectionMode.Manual)]
+    [InlineData(BrokerConnectionMode.Startup)]
+    [InlineData(BrokerConnectionMode.AfterStartup)]
+    public async Task StartAsync_ApplicationStopping_BrokerGracefullyDisconnectedRegardlessOfMode(BrokerConnectionMode mode)
+    {
+        CancellationTokenSource appStoppingTokenSource = new();
+        CancellationTokenSource appStoppedTokenSource = new();
+        IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
+        lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+        lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddTransient(_ => lifetimeEvents)
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .WithConnectionOptions(
-                                new BrokerConnectionOptions
-                                {
-                                    Mode = mode
-                                })));
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddTransient(_ => lifetimeEvents)
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()
+                        .WithConnectionOptions(
+                            new BrokerConnectionOptions
+                            {
+                                Mode = mode
+                            })));
 
-            var service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
-            await service.StartAsync(CancellationToken.None);
+        BrokerConnectorService service = serviceProvider.GetServices<IHostedService>().OfType<BrokerConnectorService>().Single();
+        await service.StartAsync(CancellationToken.None);
 
-            var testBroker = serviceProvider.GetRequiredService<TestBroker>();
-            await testBroker.ConnectAsync();
-            testBroker.IsConnected.Should().BeTrue();
+        TestBroker testBroker = serviceProvider.GetRequiredService<TestBroker>();
+        await testBroker.ConnectAsync();
+        testBroker.IsConnected.Should().BeTrue();
 
-            appStoppingTokenSource.Cancel();
-            appStoppedTokenSource.Cancel();
+        appStoppingTokenSource.Cancel();
+        appStoppedTokenSource.Cancel();
 
-            testBroker.IsConnected.Should().BeFalse();
-        }
+        testBroker.IsConnected.Should().BeFalse();
     }
 }

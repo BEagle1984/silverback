@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,219 +13,263 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Messaging.Publishing
+namespace Silverback.Tests.Core.Messaging.Publishing;
+
+public class SubscribedMethodsCacheTests
 {
-    public class SubscribedMethodsCacheTests
+    [Fact]
+    public void IsSubscribed_NoSubscribers_FalseReturned()
     {
-        [Fact]
-        public void IsSubscribed_NoSubscribers_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback());
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_UnsubscribedType_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventTwo _) => { })
-                    .AddDelegateSubscriber((IEnumerable<TestEventThree> _) => { })
-                    .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventFour> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_UnsubscribedType_FalseReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventTwo _) =>
+                    {
+                    })
+                .AddDelegateSubscriber(
+                    (IEnumerable<TestEventThree> _) =>
+                    {
+                    })
+                .AddDelegateSubscriber(
+                    (IMessageStreamEnumerable<TestEventFour> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_Subscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_Subscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventOne _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_SubscribedMoreThanOnce_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventOne _) => { })
-                    .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_SubscribedMoreThanOnce_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventOne _) =>
+                    {
+                    })
+                .AddDelegateSubscriber(
+                    (IEnumerable<TestEventOne> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_BaseTypeSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((IEvent _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_BaseTypeSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (IEvent _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_EnvelopeMessageSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_EnvelopeMessageSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventOne _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_EnvelopeMessageBaseTypeSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((ITestMessage _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_EnvelopeMessageBaseTypeSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (ITestMessage _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_EnvelopeNotUnwrapping_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_EnvelopeNotUnwrapping_FalseReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventOne _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne(), false));
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne(), false));
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_EnvelopeMessageNotSubscribed_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_EnvelopeMessageNotSubscribed_FalseReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (TestEventOne _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventTwo()));
+        bool result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventTwo()));
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_StreamNotSubscribed_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback());
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_StreamNotSubscribed_FalseReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
+        bool result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_StreamMatchingTypeNotSubscribed_FalseReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((IMessageStreamEnumerable<ICommand> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_StreamMatchingTypeNotSubscribed_FalseReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (IMessageStreamEnumerable<ICommand> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IEvent>());
+        bool result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IEvent>());
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void IsSubscribed_StreamSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventOne> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_StreamSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (IMessageStreamEnumerable<TestEventOne> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<TestEventOne>());
+        bool result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<TestEventOne>());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_StreamBaseTypeSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((IMessageStreamEnumerable<ITestMessage> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_StreamBaseTypeSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (IMessageStreamEnumerable<ITestMessage> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
+        bool result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void IsSubscribed_StreamDerivedTypeSubscribed_TrueReturned()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((IMessageStreamEnumerable<IMessage> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
+    [Fact]
+    public void IsSubscribed_StreamDerivedTypeSubscribed_TrueReturned()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber(
+                    (IMessageStreamEnumerable<IMessage> _) =>
+                    {
+                    }));
+        SubscribedMethodsCache subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
-            var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<ITestMessage>());
+        bool result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<ITestMessage>());
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
     }
 }

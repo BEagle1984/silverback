@@ -8,43 +8,42 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Diagnostics
+namespace Silverback.Diagnostics;
+
+internal sealed class BrokerLogEnricherFactory
 {
-    internal sealed class BrokerLogEnricherFactory
+    private static readonly NullEnricher NullEnricherInstance = new();
+
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly ConcurrentDictionary<Type, Type> _enricherTypeCache = new();
+
+    public BrokerLogEnricherFactory(IServiceProvider serviceProvider)
     {
-        private static readonly NullEnricher NullEnricherInstance = new();
+        _serviceProvider = serviceProvider;
+    }
 
-        private readonly IServiceProvider _serviceProvider;
+    public IBrokerLogEnricher GetLogEnricher(EndpointConfiguration endpointConfiguration)
+    {
+        Type? enricherType = _enricherTypeCache.GetOrAdd(
+            endpointConfiguration.GetType(),
+            type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
 
-        private readonly ConcurrentDictionary<Type, Type> _enricherTypeCache = new();
+        IBrokerLogEnricher? logEnricher = (IBrokerLogEnricher?)_serviceProvider.GetService(enricherType);
 
-        public BrokerLogEnricherFactory(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        return logEnricher ?? NullEnricherInstance;
+    }
 
-        public IBrokerLogEnricher GetLogEnricher(EndpointConfiguration endpointConfiguration)
-        {
-            var enricherType = _enricherTypeCache.GetOrAdd(
-                endpointConfiguration.GetType(),
-                type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
+    private sealed class NullEnricher : IBrokerLogEnricher
+    {
+        public string AdditionalPropertyName1 => "unused1";
 
-            var logEnricher = (IBrokerLogEnricher?)_serviceProvider.GetService(enricherType);
+        public string AdditionalPropertyName2 => "unused2";
 
-            return logEnricher ?? NullEnricherInstance;
-        }
-
-        private sealed class NullEnricher : IBrokerLogEnricher
-        {
-            public string AdditionalPropertyName1 => "unused1";
-
-            public string AdditionalPropertyName2 => "unused2";
-
-            public (string? Value1, string? Value2) GetAdditionalValues(
-                Endpoint endpoint,
-                IReadOnlyCollection<MessageHeader>? headers,
-                IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-                (null, null);
-        }
+        public (string? Value1, string? Value2) GetAdditionalValues(
+            Endpoint endpoint,
+            IReadOnlyCollection<MessageHeader>? headers,
+            IBrokerMessageIdentifier? brokerMessageIdentifier) =>
+            (null, null);
     }
 }

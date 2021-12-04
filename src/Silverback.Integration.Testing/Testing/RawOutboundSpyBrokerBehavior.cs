@@ -6,39 +6,38 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Testing
+namespace Silverback.Testing;
+
+/// <summary>
+///     Added at the very end of the producer pipeline, forwards the produced <see cref="IRawOutboundEnvelope" />
+///     to the <see cref="IIntegrationSpy" />.
+/// </summary>
+public class RawOutboundSpyBrokerBehavior : IProducerBehavior
 {
+    private readonly IntegrationSpy _integrationSpy;
+
     /// <summary>
-    ///     Added at the very end of the producer pipeline, forwards the produced <see cref="IRawOutboundEnvelope" />
-    ///     to the <see cref="IIntegrationSpy" />.
+    ///     Initializes a new instance of the <see cref="RawOutboundSpyBrokerBehavior" /> class.
     /// </summary>
-    public class RawOutboundSpyBrokerBehavior : IProducerBehavior
+    /// <param name="integrationSpy">
+    ///     The <see cref="IntegrationSpy" />.
+    /// </param>
+    public RawOutboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
     {
-        private readonly IntegrationSpy _integrationSpy;
+        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RawOutboundSpyBrokerBehavior" /> class.
-        /// </summary>
-        /// <param name="integrationSpy">
-        ///     The <see cref="IntegrationSpy" />.
-        /// </param>
-        public RawOutboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
-        {
-            _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
-        }
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => int.MaxValue;
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => int.MaxValue;
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
+        _integrationSpy.AddRawOutboundEnvelope(context.Envelope);
 
-            _integrationSpy.AddRawOutboundEnvelope(context.Envelope);
-
-            return next(context);
-        }
+        return next(context);
     }
 }

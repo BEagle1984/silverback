@@ -16,144 +16,143 @@ using Silverback.Tests.Core.TestTypes.Database;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Background
+namespace Silverback.Tests.Core.Background;
+
+public sealed class DistributedBackgroundServiceTests : IDisposable
 {
-    public sealed class DistributedBackgroundServiceTests : IDisposable
+    private readonly SqliteConnection _connection;
+
+    private readonly IServiceProvider _serviceProvider;
+
+    public DistributedBackgroundServiceTests()
     {
-        private readonly SqliteConnection _connection;
+        _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
+        _connection.Open();
 
-        private readonly IServiceProvider _serviceProvider;
+        ServiceCollection services = new();
 
-        public DistributedBackgroundServiceTests()
-        {
-            _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
-            _connection.Open();
+        services
+            .AddTransient<DbDistributedLockManager>()
+            .AddDbContext<TestDbContext>(
+                opt => opt
+                    .UseSqlite(_connection.ConnectionString))
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .UseDbContext<TestDbContext>();
 
-            ServiceCollection services = new();
+        _serviceProvider = services.BuildServiceProvider();
 
-            services
-                .AddTransient<DbDistributedLockManager>()
-                .AddDbContext<TestDbContext>(
-                    opt => opt
-                        .UseSqlite(_connection.ConnectionString))
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .UseDbContext<TestDbContext>();
+        using IServiceScope scope = _serviceProvider.CreateScope();
+        scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
+    }
 
-            _serviceProvider = services.BuildServiceProvider();
+    [Fact]
+    public async Task StartAsync_NullLockManager_TaskIsExecuted()
+    {
+        bool executed = false;
 
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
-        }
-
-        [Fact]
-        public async Task StartAsync_NullLockManager_TaskIsExecuted()
-        {
-            bool executed = false;
-
-            using TestDistributedBackgroundService service = new(
-                _ =>
-                {
-                    executed = true;
-                    return Task.CompletedTask;
-                },
-                new NullLockManager());
-            await service.StartAsync(CancellationToken.None);
-
-            await AsyncTestingUtil.WaitAsync(() => executed);
-
-            executed.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task StartAsync_WithDbLockManager_TaskIsExecuted()
-        {
-            bool executed = false;
-
-            using TestDistributedBackgroundService service = new(
-                _ =>
-                {
-                    executed = true;
-                    return Task.CompletedTask;
-                },
-                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
-            await service.StartAsync(CancellationToken.None);
-
-            await AsyncTestingUtil.WaitAsync(() => executed);
-
-            executed.Should().BeTrue();
-        }
-
-        [Fact]
-        [Trait("CI", "false")]
-        public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
-        {
-            bool executed1 = false;
-            bool executed2 = false;
-
-            using TestDistributedBackgroundService service1 = new(
-                async stoppingToken =>
-                {
-                    executed1 = true;
-
-                    while (!stoppingToken.IsCancellationRequested)
-                    {
-                        await Task.Delay(10, stoppingToken);
-                    }
-                },
-                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
-            await service1.StartAsync(CancellationToken.None);
-
-            await AsyncTestingUtil.WaitAsync(() => executed1);
-
-            using TestDistributedBackgroundService service2 = new(
-                _ =>
-                {
-                    executed2 = true;
-                    return Task.CompletedTask;
-                },
-                _serviceProvider.GetRequiredService<DbDistributedLockManager>());
-            await service2.StartAsync(CancellationToken.None);
-
-            await AsyncTestingUtil.WaitAsync(() => executed2, TimeSpan.FromMilliseconds(100));
-
-            executed1.Should().BeTrue();
-            executed2.Should().BeFalse();
-
-            await service1.StopAsync(CancellationToken.None);
-            await AsyncTestingUtil.WaitAsync(() => executed2);
-
-            executed2.Should().BeTrue();
-        }
-
-        public void Dispose()
-        {
-            _connection.SafeClose();
-            _connection.Dispose();
-        }
-
-        private sealed class TestDistributedBackgroundService : DistributedBackgroundService
-        {
-            private readonly Func<CancellationToken, Task> _task;
-
-            public TestDistributedBackgroundService(
-                Func<CancellationToken, Task> task,
-                IDistributedLockManager lockManager)
-                : base(
-                    new DistributedLockSettings(
-                        "test",
-                        "unique",
-                        TimeSpan.FromMilliseconds(500),
-                        TimeSpan.FromMilliseconds(100),
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromMilliseconds(100)),
-                    lockManager,
-                    Substitute.For<ISilverbackLogger<DistributedBackgroundService>>())
+        using TestDistributedBackgroundService service = new(
+            _ =>
             {
-                _task = task;
-            }
+                executed = true;
+                return Task.CompletedTask;
+            },
+            new NullLockManager());
+        await service.StartAsync(CancellationToken.None);
 
-            protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
+        await AsyncTestingUtil.WaitAsync(() => executed);
+
+        executed.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task StartAsync_WithDbLockManager_TaskIsExecuted()
+    {
+        bool executed = false;
+
+        using TestDistributedBackgroundService service = new(
+            _ =>
+            {
+                executed = true;
+                return Task.CompletedTask;
+            },
+            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+        await service.StartAsync(CancellationToken.None);
+
+        await AsyncTestingUtil.WaitAsync(() => executed);
+
+        executed.Should().BeTrue();
+    }
+
+    [Fact]
+    [Trait("CI", "false")]
+    public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
+    {
+        bool executed1 = false;
+        bool executed2 = false;
+
+        using TestDistributedBackgroundService service1 = new(
+            async stoppingToken =>
+            {
+                executed1 = true;
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    await Task.Delay(10, stoppingToken);
+                }
+            },
+            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+        await service1.StartAsync(CancellationToken.None);
+
+        await AsyncTestingUtil.WaitAsync(() => executed1);
+
+        using TestDistributedBackgroundService service2 = new(
+            _ =>
+            {
+                executed2 = true;
+                return Task.CompletedTask;
+            },
+            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+        await service2.StartAsync(CancellationToken.None);
+
+        await AsyncTestingUtil.WaitAsync(() => executed2, TimeSpan.FromMilliseconds(100));
+
+        executed1.Should().BeTrue();
+        executed2.Should().BeFalse();
+
+        await service1.StopAsync(CancellationToken.None);
+        await AsyncTestingUtil.WaitAsync(() => executed2);
+
+        executed2.Should().BeTrue();
+    }
+
+    public void Dispose()
+    {
+        _connection.SafeClose();
+        _connection.Dispose();
+    }
+
+    private sealed class TestDistributedBackgroundService : DistributedBackgroundService
+    {
+        private readonly Func<CancellationToken, Task> _task;
+
+        public TestDistributedBackgroundService(
+            Func<CancellationToken, Task> task,
+            IDistributedLockManager lockManager)
+            : base(
+                new DistributedLockSettings(
+                    "test",
+                    "unique",
+                    TimeSpan.FromMilliseconds(500),
+                    TimeSpan.FromMilliseconds(100),
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromMilliseconds(100)),
+                lockManager,
+                Substitute.For<ISilverbackLogger<DistributedBackgroundService>>())
+        {
+            _task = task;
         }
+
+        protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
     }
 }

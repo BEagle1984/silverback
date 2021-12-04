@@ -3,37 +3,34 @@
 
 using System.Security.Cryptography;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+internal static class SymmetricAlgorithmFactory
 {
-    internal static class SymmetricAlgorithmFactory
+    public static SymmetricAlgorithm CreateSymmetricAlgorithm(SymmetricEncryptionSettingsBase encryptionSettings, byte[] encryptionKey)
     {
-        public static SymmetricAlgorithm CreateSymmetricAlgorithm(
-            SymmetricEncryptionSettingsBase encryptionSettings,
-            byte[]? encryptionKey)
-        {
-            var algorithm = SymmetricAlgorithm.Create(encryptionSettings.AlgorithmName);
+        SymmetricAlgorithm algorithm = SymmetricAlgorithm.Create(encryptionSettings.AlgorithmName)!;
 
-            if (encryptionSettings.BlockSize != null)
-                algorithm.BlockSize = encryptionSettings.BlockSize.Value;
+        if (encryptionSettings.BlockSize != null)
+            algorithm.BlockSize = encryptionSettings.BlockSize.Value;
 
-            if (encryptionSettings.FeedbackSize != null)
-                algorithm.FeedbackSize = encryptionSettings.FeedbackSize.Value;
+        if (encryptionSettings.FeedbackSize != null)
+            algorithm.FeedbackSize = encryptionSettings.FeedbackSize.Value;
 
-            if (encryptionSettings.BlockSize != null)
-                algorithm.BlockSize = encryptionSettings.BlockSize.Value;
+        if (encryptionSettings.BlockSize != null)
+            algorithm.BlockSize = encryptionSettings.BlockSize.Value;
 
-            if (encryptionSettings.InitializationVector != null)
-                algorithm.IV = encryptionSettings.InitializationVector;
+        if (encryptionSettings.InitializationVector != null)
+            algorithm.IV = encryptionSettings.InitializationVector;
 
-            algorithm.Key = encryptionKey;
+        algorithm.Key = encryptionKey;
 
-            if (encryptionSettings.CipherMode != null)
-                algorithm.Mode = encryptionSettings.CipherMode.Value;
+        if (encryptionSettings.CipherMode != null)
+            algorithm.Mode = encryptionSettings.CipherMode.Value;
 
-            if (encryptionSettings.PaddingMode != null)
-                algorithm.Padding = encryptionSettings.PaddingMode.Value;
+        if (encryptionSettings.PaddingMode != null)
+            algorithm.Padding = encryptionSettings.PaddingMode.Value;
 
-            return algorithm;
-        }
+        return algorithm;
     }
 }

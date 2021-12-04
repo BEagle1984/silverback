@@ -3,11 +3,10 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Types.Domain
+namespace Silverback.Tests.Types.Domain;
+
+public interface ITestEventWithHeaders
 {
-    public interface ITestEventWithHeaders
-    {
-        [Header("x-inherited")]
-        string? InheritedHeader { get; set; }
-    }
+    [Header("x-inherited")]
+    string? InheritedHeader { get; set; }
 }

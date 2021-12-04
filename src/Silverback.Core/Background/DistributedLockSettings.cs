@@ -5,113 +5,112 @@ using System;
 using System.Globalization;
 using Silverback.Util;
 
-namespace Silverback.Background
+namespace Silverback.Background;
+
+/// <summary>
+///     The settings to be applied to the configured <see cref="IDistributedLockManager" />.
+/// </summary>
+public class DistributedLockSettings
 {
+    private static readonly TimeSpan DefaultAcquireRetryInterval = TimeSpan.FromSeconds(30);
+
+    private static readonly TimeSpan DefaultHeartbeatInterval = TimeSpan.FromSeconds(1);
+
+    private static readonly TimeSpan DefaultHeartbeatTimeout = TimeSpan.FromMinutes(1);
+
     /// <summary>
-    ///     The settings to be applied to the configured <see cref="IDistributedLockManager" />.
+    ///     Initializes a new instance of the <see cref="DistributedLockSettings" /> class.
     /// </summary>
-    public class DistributedLockSettings
+    /// <param name="resourceName">
+    ///     The name of the lock / the resource being locked.
+    /// </param>
+    /// <param name="uniqueId">
+    ///     A unique identifier representing the entity trying to acquire the lock. Th default is a new
+    ///     <see cref="System.Guid" />.
+    /// </param>
+    /// <param name="acquireTimeout">
+    ///     After the acquire timeout is expired the lock manager will abort the lock acquisition. The default is
+    ///     no timeout.
+    /// </param>
+    /// <param name="acquireRetryInterval">
+    ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource.
+    ///     The default is 30 seconds.
+    /// </param>
+    /// <param name="heartbeatTimeout">
+    ///     After the heartbeat timeout is expired the lock will be considered released. The default is 1 minute.
+    /// </param>
+    /// <param name="heartbeatInterval">
+    ///     The interval at which the heartbeat has to be sent. The default is 1 second.
+    /// </param>
+    public DistributedLockSettings(
+        string resourceName = "",
+        string? uniqueId = null,
+        TimeSpan? acquireTimeout = null,
+        TimeSpan? acquireRetryInterval = null,
+        TimeSpan? heartbeatTimeout = null,
+        TimeSpan? heartbeatInterval = null)
     {
-        private static readonly TimeSpan DefaultAcquireRetryInterval = TimeSpan.FromSeconds(30);
+        if (heartbeatInterval >= heartbeatTimeout)
+            throw new ArgumentException("The heartbeat interval must be shorter than the timeout.");
 
-        private static readonly TimeSpan DefaultHeartbeatInterval = TimeSpan.FromSeconds(1);
+        ResourceName = Check.NotNull(resourceName, nameof(resourceName));
+        UniqueId = uniqueId ?? Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
+        AcquireTimeout = acquireTimeout;
+        AcquireRetryInterval = acquireRetryInterval ?? DefaultAcquireRetryInterval;
+        HeartbeatTimeout = heartbeatTimeout ?? DefaultHeartbeatTimeout;
+        HeartbeatInterval = heartbeatInterval ?? DefaultHeartbeatInterval;
 
-        private static readonly TimeSpan DefaultHeartbeatTimeout = TimeSpan.FromMinutes(1);
+        int heartbeatsBeforeTimeout =
+            (int)(HeartbeatTimeout.TotalMilliseconds / HeartbeatInterval.TotalMilliseconds) - 1;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="DistributedLockSettings" /> class.
-        /// </summary>
-        /// <param name="resourceName">
-        ///     The name of the lock / the resource being locked.
-        /// </param>
-        /// <param name="uniqueId">
-        ///     A unique identifier representing the entity trying to acquire the lock. Th default is a new
-        ///     <see cref="System.Guid" />.
-        /// </param>
-        /// <param name="acquireTimeout">
-        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition. The default is
-        ///     no timeout.
-        /// </param>
-        /// <param name="acquireRetryInterval">
-        ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource.
-        ///     The default is 30 seconds.
-        /// </param>
-        /// <param name="heartbeatTimeout">
-        ///     After the heartbeat timeout is expired the lock will be considered released. The default is 1 minute.
-        /// </param>
-        /// <param name="heartbeatInterval">
-        ///     The interval at which the heartbeat has to be sent. The default is 1 second.
-        /// </param>
-        public DistributedLockSettings(
-            string resourceName = "",
-            string? uniqueId = null,
-            TimeSpan? acquireTimeout = null,
-            TimeSpan? acquireRetryInterval = null,
-            TimeSpan? heartbeatTimeout = null,
-            TimeSpan? heartbeatInterval = null)
-        {
-            if (heartbeatInterval >= heartbeatTimeout)
-                throw new ArgumentException("The heartbeat interval must be shorter than the timeout.");
+        FailedHeartbeatsThreshold = Math.Min(0, heartbeatsBeforeTimeout);
+    }
 
-            ResourceName = Check.NotNull(resourceName, nameof(resourceName));
-            UniqueId = uniqueId ?? Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
-            AcquireTimeout = acquireTimeout;
-            AcquireRetryInterval = acquireRetryInterval ?? DefaultAcquireRetryInterval;
-            HeartbeatTimeout = heartbeatTimeout ?? DefaultHeartbeatTimeout;
-            HeartbeatInterval = heartbeatInterval ?? DefaultHeartbeatInterval;
+    /// <summary>
+    ///     Gets the <see cref="DistributedLockSettings" /> signaling that no lock is to be checked and
+    ///     acquired. Corresponds to an instance of <see cref="NullLockSettings" />.
+    /// </summary>
+    public static DistributedLockSettings NoLock { get; } = new NullLockSettings();
 
-            int heartbeatsBeforeTimeout =
-                (int)(HeartbeatTimeout.TotalMilliseconds / HeartbeatInterval.TotalMilliseconds) - 1;
+    /// <summary>
+    ///     Gets a unique identifier representing the entity trying to acquire the lock.
+    /// </summary>
+    public string UniqueId { get; }
 
-            FailedHeartbeatsThreshold = Math.Min(0, heartbeatsBeforeTimeout);
-        }
+    /// <summary>
+    ///     Gets the timeout after which the lock manager will abort the lock acquisition.
+    /// </summary>
+    public TimeSpan? AcquireTimeout { get; }
 
-        /// <summary>
-        ///     Gets the <see cref="DistributedLockSettings" /> signaling that no lock is to be checked and
-        ///     acquired. Corresponds to an instance of <see cref="NullLockSettings" />.
-        /// </summary>
-        public static DistributedLockSettings NoLock { get; } = new NullLockSettings();
+    /// <summary>
+    ///     Gets the interval at which the lock manager checks if a lock can be acquired for the specified
+    ///     resource.
+    /// </summary>
+    public TimeSpan AcquireRetryInterval { get; }
 
-        /// <summary>
-        ///     Gets a unique identifier representing the entity trying to acquire the lock.
-        /// </summary>
-        public string UniqueId { get; }
+    /// <summary>
+    ///     Gets the timeout after which the lock will be considered released if no heartbeat is sent.
+    /// </summary>
+    public TimeSpan HeartbeatTimeout { get; }
 
-        /// <summary>
-        ///     Gets the timeout after which the lock manager will abort the lock acquisition.
-        /// </summary>
-        public TimeSpan? AcquireTimeout { get; }
+    /// <summary>
+    ///     Gets the interval at which the heartbeat has to be sent.
+    /// </summary>
+    public TimeSpan HeartbeatInterval { get; }
 
-        /// <summary>
-        ///     Gets the interval at which the lock manager checks if a lock can be acquired for the specified
-        ///     resource.
-        /// </summary>
-        public TimeSpan AcquireRetryInterval { get; }
+    /// <summary>
+    ///     Gets the maximum number of heartbeats that can be failed to be sent before stopping.
+    /// </summary>
+    public int FailedHeartbeatsThreshold { get; }
 
-        /// <summary>
-        ///     Gets the timeout after which the lock will be considered released if no heartbeat is sent.
-        /// </summary>
-        public TimeSpan HeartbeatTimeout { get; }
+    /// <summary>
+    ///     Gets the name of the lock / the resource being locked.
+    /// </summary>
+    public string ResourceName { get; private set; }
 
-        /// <summary>
-        ///     Gets the interval at which the heartbeat has to be sent.
-        /// </summary>
-        public TimeSpan HeartbeatInterval { get; }
-
-        /// <summary>
-        ///     Gets the maximum number of heartbeats that can be failed to be sent before stopping.
-        /// </summary>
-        public int FailedHeartbeatsThreshold { get; }
-
-        /// <summary>
-        ///     Gets the name of the lock / the resource being locked.
-        /// </summary>
-        public string ResourceName { get; private set; }
-
-        internal void EnsureResourceNameIsSet(string fallback)
-        {
-            if (string.IsNullOrEmpty(ResourceName))
-                ResourceName = fallback;
-        }
+    internal void EnsureResourceNameIsSet(string fallback)
+    {
+        if (string.IsNullOrEmpty(ResourceName))
+            ResourceName = fallback;
     }
 }

@@ -3,28 +3,27 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Diagnostics
+namespace Silverback.Diagnostics;
+
+/// <summary>
+///     Used to perform logging in Silverback.
+/// </summary>
+public interface ISilverbackLogger
 {
     /// <summary>
-    ///     Used to perform logging in Silverback.
+    ///     Gets the underlying <see cref="ILogger" />.
     /// </summary>
-    public interface ISilverbackLogger
-    {
-        /// <summary>
-        ///     Gets the underlying <see cref="ILogger" />.
-        /// </summary>
-        ILogger InnerLogger { get; }
+    ILogger InnerLogger { get; }
 
-        /// <summary>
-        ///     Checks if the given <see cref="LogEvent" /> is enabled according to its default or overridden
-        ///     <see cref="LogLevel" />.
-        /// </summary>
-        /// <param name="logEvent">
-        ///     The <see cref="LogEvent" /> to be checked.
-        /// </param>
-        /// <returns>
-        ///     <c>true</c> if enabled.
-        /// </returns>
-        bool IsEnabled(LogEvent logEvent);
-    }
+    /// <summary>
+    ///     Checks if the given <see cref="LogEvent" /> is enabled according to its default or overridden
+    ///     <see cref="LogLevel" />.
+    /// </summary>
+    /// <param name="logEvent">
+    ///     The <see cref="LogEvent" /> to be checked.
+    /// </param>
+    /// <returns>
+    ///     <c>true</c> if enabled.
+    /// </returns>
+    bool IsEnabled(LogEvent logEvent);
 }

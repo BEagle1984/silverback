@@ -186,7 +186,6 @@ public class MessageHeaderCollectionFixture
             });
     }
 
-
     [Fact]
     public void Replace_ShouldReplaceStringValue_WhenHeaderAlreadyExists()
     {
@@ -445,31 +444,6 @@ public class MessageHeaderCollectionFixture
                 new MessageHeader("three", "3")
             });
     }
-
-    // This test is important because it ensures that we will not run into the
-    // "Collection was modified" InvalidOperationException when headers are removed
-    // while the collection is being enumerated in another thread (e.g. to log the headers info)
-    // [Fact]
-    // [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-    // public void Remove_ExistingHeader_EnumerableNotBroken()
-    // {
-    //     MessageHeaderCollection collection = new()
-    //     {
-    //         { "one", "1" },
-    //         { "two", "2" },
-    //         { "three", "3" }
-    //     };
-    //
-    //     using IEnumerator<MessageHeader> enumerator = collection.GetEnumerator();
-    //
-    //     enumerator.MoveNext();
-    //
-    //     collection.Remove(new MessageHeader("three", "3"));
-    //
-    //     Action act = () => enumerator.MoveNext();
-    //
-    //     act.Should().NotThrow();
-    // }
 
     [Fact]
     public void Contains_ShouldReturnTrue_WhenHeaderExists()

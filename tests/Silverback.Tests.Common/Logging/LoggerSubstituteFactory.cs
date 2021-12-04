@@ -3,25 +3,24 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Tests.Logging
+namespace Silverback.Tests.Logging;
+
+public sealed class LoggerSubstituteFactory : ILoggerFactory
 {
-    public sealed class LoggerSubstituteFactory : ILoggerFactory
+    public LoggerSubstituteFactory(LogLevel minLevel = LogLevel.Information)
     {
-        public LoggerSubstituteFactory(LogLevel minLevel = LogLevel.Information)
-        {
-            MinLevel = minLevel;
-        }
+        MinLevel = minLevel;
+    }
 
-        public LogLevel MinLevel { get; }
+    public LogLevel MinLevel { get; }
 
-        public ILogger CreateLogger(string categoryName) => new LoggerSubstitute(this);
+    public ILogger CreateLogger(string categoryName) => new LoggerSubstitute(this);
 
-        public void AddProvider(ILoggerProvider provider)
-        {
-        }
+    public void AddProvider(ILoggerProvider provider)
+    {
+    }
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

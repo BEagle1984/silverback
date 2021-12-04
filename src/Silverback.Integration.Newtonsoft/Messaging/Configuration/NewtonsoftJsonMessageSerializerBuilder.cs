@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Builds the <see cref="NewtonsoftJsonMessageSerializer" /> or <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />.
+///     Builds the <see cref="NewtonsoftJsonMessageSerializer{TMessage}" /> or <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />.
 /// </summary>
 public class NewtonsoftJsonMessageSerializerBuilder
 {
@@ -48,7 +48,7 @@ public class NewtonsoftJsonMessageSerializerBuilder
     public NewtonsoftJsonMessageSerializerBuilder UseFixedType(Type messageType)
     {
         Type serializerType = typeof(NewtonsoftJsonMessageSerializer<>).MakeGenericType(messageType);
-        _serializer = (INewtonsoftJsonMessageSerializer)Activator.CreateInstance(serializerType);
+        _serializer = (INewtonsoftJsonMessageSerializer)Activator.CreateInstance(serializerType)!;
         return this;
     }
 

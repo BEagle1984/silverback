@@ -14,54 +14,52 @@ using Silverback.Tests.Core.TestTypes.Subscribers;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Messaging.Publishing
+namespace Silverback.Tests.Core.Messaging.Publishing;
+
+public class PublisherActivityTests
 {
-    public class PublisherActivityTests
+    [Fact]
+    public async Task Publish_WithActivityListener_StartActivity()
     {
-        [Fact]
-        public async Task Publish_WithActivityListener_StartActivity()
+        using TestActivityListener activityListener = new();
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddSingletonSubscriber<TestSubscriber>());
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+        serviceProvider.GetRequiredService<TestSubscriber>();
+
+        publisher.Publish(new TestCommandOne());
+        await publisher.PublishAsync(new TestCommandOne());
+        publisher.Publish(new TestCommandTwo());
+        await publisher.PublishAsync(new TestCommandTwo());
+
+        activityListener.Activites.Should().Contain(activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
+    }
+
+    private sealed class TestActivityListener : IDisposable
+    {
+        private readonly ActivityListener _listener;
+
+        private readonly List<Activity> _activites = new();
+
+        public TestActivityListener()
         {
-            using TestActivityListener activityListener = new();
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddSingletonSubscriber<TestSubscriber>());
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            serviceProvider.GetRequiredService<TestSubscriber>();
-
-            publisher.Publish(new TestCommandOne());
-            await publisher.PublishAsync(new TestCommandOne());
-            publisher.Publish(new TestCommandTwo());
-            await publisher.PublishAsync(new TestCommandTwo());
-
-            activityListener.Activites.Should().Contain(
-                activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
+            _listener = new ActivityListener();
+            _listener.ShouldListenTo = _ => true;
+            _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) =>
+                ActivitySamplingResult.AllDataAndRecorded;
+            _listener.ActivityStarted = a => _activites.Add(a);
+            ActivitySource.AddActivityListener(_listener);
         }
 
-        private sealed class TestActivityListener : IDisposable
+        public IEnumerable<Activity> Activites => _activites;
+
+        public void Dispose()
         {
-            private readonly ActivityListener _listener;
-
-            private readonly List<Activity> _activites = new();
-
-            public TestActivityListener()
-            {
-                _listener = new ActivityListener();
-                _listener.ShouldListenTo = _ => true;
-                _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) =>
-                    ActivitySamplingResult.AllDataAndRecorded;
-                _listener.ActivityStarted = a => _activites.Add(a);
-                ActivitySource.AddActivityListener(_listener);
-            }
-
-            public IEnumerable<Activity> Activites => _activites;
-
-            public void Dispose()
-            {
-                _listener.Dispose();
-            }
+            _listener.Dispose();
         }
     }
 }

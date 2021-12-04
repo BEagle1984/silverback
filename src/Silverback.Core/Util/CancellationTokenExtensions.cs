@@ -5,16 +5,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class CancellationTokenExtensions
 {
-    internal static class CancellationTokenExtensions
+    [SuppressMessage("", "VSTHRD200", Justification = "Named after ValueTask.AsTask")]
+    public static Task AsTask(this CancellationToken cancellationToken)
     {
-        [SuppressMessage("", "VSTHRD200", Justification = "Named after ValueTask.AsTask")]
-        public static Task AsTask(this CancellationToken cancellationToken)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            cancellationToken.Register(s => { ((TaskCompletionSource<bool>)s).SetResult(true); }, tcs);
-            return tcs.Task;
-        }
+        TaskCompletionSource<bool> taskCompletionSource = new();
+        cancellationToken.Register(tcs => ((TaskCompletionSource<bool>)tcs!).SetResult(true), taskCompletionSource);
+        return taskCompletionSource.Task;
     }
 }

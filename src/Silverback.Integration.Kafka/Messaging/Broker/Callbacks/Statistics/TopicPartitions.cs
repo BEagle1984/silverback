@@ -6,15 +6,14 @@ using System.Text.Json.Serialization;
 
 #pragma warning disable 1591 // Will maybe document later
 
-namespace Silverback.Messaging.Broker.Callbacks.Statistics
-{
-    [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
-    public class TopicPartitions
-    {
-        [JsonPropertyName("topic")]
-        public string Topic { get; set; } = string.Empty;
+namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 
-        [JsonPropertyName("partition")]
-        public long Partition { get; set; }
-    }
+[SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
+public class TopicPartitions
+{
+    [JsonPropertyName("topic")]
+    public string Topic { get; set; } = string.Empty;
+
+    [JsonPropertyName("partition")]
+    public long Partition { get; set; }
 }

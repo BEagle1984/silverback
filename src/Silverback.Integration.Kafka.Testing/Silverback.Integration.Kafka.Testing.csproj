@@ -12,8 +12,7 @@
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
-    <Description>$(Description)
-This package adds a mocked implementation of the Kafka broker, suitable for in-memory testing.</Description>
+    <Description>$(Description) This package adds a mocked implementation of the Kafka broker, suitable for in-memory testing.</Description>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
@@ -22,21 +21,13 @@ This package adds a mocked implementation of the Kafka broker, suitable for in-m
     <Product>Silverback.Integration.Kafka.Testing</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Messaging\Broker\Kafka\Mocks\IPartitionAssignment.cs" />
+    <Compile Remove="Messaging\Broker\Kafka\Mocks\IPartitionAssignment.cs"/>
   </ItemGroup>
 
 </Project>

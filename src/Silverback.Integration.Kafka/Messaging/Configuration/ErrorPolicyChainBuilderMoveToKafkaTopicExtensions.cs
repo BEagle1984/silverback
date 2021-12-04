@@ -38,7 +38,7 @@ public static class ErrorPolicyChainBuilderMoveToKafkaTopicExtensions
 
         KafkaClientConfiguration? kafkaClientConfig =
             (builder.EndpointsConfigurationBuilder as
-                    KafkaEndpointsConfigurationBuilder)?.ClientConfiguration;
+                KafkaEndpointsConfigurationBuilder)?.ClientConfiguration;
 
         KafkaProducerConfigurationBuilder<object> producerConfigurationBuilder = new(kafkaClientConfig);
         configurationBuilderAction(producerConfigurationBuilder);

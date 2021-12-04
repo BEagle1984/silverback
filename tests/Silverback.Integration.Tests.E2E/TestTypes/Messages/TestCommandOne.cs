@@ -3,10 +3,9 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
+namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
+
+public class TestCommandOne : IIntegrationCommand
 {
-    public class TestCommandOne : IIntegrationCommand
-    {
-        public string? Content { get; set; }
-    }
+    public string? Content { get; set; }
 }

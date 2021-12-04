@@ -47,8 +47,8 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
         _clientConfiguration = clientConfiguration;
     }
 
-    // TODO: Test
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
+    // TODO: Test
     public override string? EndpointRawName => _endpointResolver?.RawName;
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.This" />
@@ -224,9 +224,6 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
     /// </summary>
-    /// <typeparam name="TMessage">
-    ///     The type of the messages to be enriched.
-    /// </typeparam>
     /// <param name="valueProvider">
     ///     The value provider function.
     /// </param>
@@ -243,9 +240,6 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
     /// </summary>
-    /// <typeparam name="TMessage">
-    ///     The type of the messages to be enriched.
-    /// </typeparam>
     /// <param name="valueProvider">
     ///     The value provider function.
     /// </param>
@@ -295,10 +289,6 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
         };
 
         _clientConfigurationActions.ForEach(action => action.Invoke(configuration.Client));
-
-
-        // TOOD: Config must be set to read only
-
 
         return configuration;
     }

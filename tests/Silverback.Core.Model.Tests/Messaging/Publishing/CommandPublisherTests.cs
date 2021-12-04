@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,90 +12,89 @@ using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Model.Messaging.Publishing
+namespace Silverback.Tests.Core.Model.Messaging.Publishing;
+
+public class CommandPublisherTests
 {
-    public class CommandPublisherTests
+    private readonly ICommandPublisher _publisher;
+
+    private int _receivedMessages;
+
+    public CommandPublisherTests()
     {
-        private readonly ICommandPublisher _publisher;
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .UseModel()
+                .AddDelegateSubscriber((TestCommand _) => _receivedMessages++)
+                .AddDelegateSubscriber((TestCommandWithResult _) => new[] { 1, 2, 3 }));
 
-        private int _receivedMessages;
+        _publisher = serviceProvider.CreateScope().ServiceProvider
+            .GetRequiredService<ICommandPublisher>();
+    }
 
-        public CommandPublisherTests()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .UseModel()
-                    .AddDelegateSubscriber((TestCommand _) => _receivedMessages++)
-                    .AddDelegateSubscriber((TestCommandWithResult _) => new[] { 1, 2, 3 }));
+    [Fact]
+    public async Task ExecuteAsync_Command_Executed()
+    {
+        await _publisher.ExecuteAsync(new TestCommand());
 
-            _publisher = serviceProvider.CreateScope().ServiceProvider
-                .GetRequiredService<ICommandPublisher>();
-        }
+        _receivedMessages.Should().Be(1);
+    }
 
-        [Fact]
-        public async Task ExecuteAsync_Command_Executed()
-        {
-            await _publisher.ExecuteAsync(new TestCommand());
+    [Fact]
+    public void Execute_Command_Executed()
+    {
+        _publisher.Execute(new TestCommand());
 
-            _receivedMessages.Should().Be(1);
-        }
+        _receivedMessages.Should().Be(1);
+    }
 
-        [Fact]
-        public void Execute_Command_Executed()
-        {
-            _publisher.Execute(new TestCommand());
+    [Fact]
+    public async Task ExecuteAsync_CommandWithResult_ResultReturned()
+    {
+        IEnumerable<int> result = await _publisher.ExecuteAsync(new TestCommandWithResult());
 
-            _receivedMessages.Should().Be(1);
-        }
+        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+    }
 
-        [Fact]
-        public async Task ExecuteAsync_CommandWithResult_ResultReturned()
-        {
-            var result = await _publisher.ExecuteAsync(new TestCommandWithResult());
+    [Fact]
+    public void Execute_CommandWithResult_ResultReturned()
+    {
+        IEnumerable<int> result = _publisher.Execute(new TestCommandWithResult());
 
-            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
-        }
+        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+    }
 
-        [Fact]
-        public void Execute_CommandWithResult_ResultReturned()
-        {
-            var result = _publisher.Execute(new TestCommandWithResult());
+    [Fact]
+    public async Task ExecuteAsync_UnhandledCommand_ExceptionThrown()
+    {
+        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand());
 
-            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
-        }
+        await act.Should().ThrowAsync<UnhandledMessageException>();
+    }
 
-        [Fact]
-        public async Task ExecuteAsync_UnhandledCommand_ExceptionThrown()
-        {
-            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand());
+    [Fact]
+    public void Execute_UnhandledCommand_ExceptionThrown()
+    {
+        Action act = () => _publisher.Execute(new UnhandledCommand());
 
-            await act.Should().ThrowAsync<UnhandledMessageException>();
-        }
+        act.Should().Throw<UnhandledMessageException>();
+    }
 
-        [Fact]
-        public void Execute_UnhandledCommand_ExceptionThrown()
-        {
-            Action act = () => _publisher.Execute(new UnhandledCommand());
+    [Fact]
+    public async Task ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
+    {
+        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult());
 
-            act.Should().Throw<UnhandledMessageException>();
-        }
+        await act.Should().ThrowAsync<UnhandledMessageException>();
+    }
 
-        [Fact]
-        public async Task ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
-        {
-            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult());
+    [Fact]
+    public void Execute_UnhandledCommandWithResult_ExceptionThrown()
+    {
+        Action act = () => _publisher.Execute(new UnhandledCommandWithResult());
 
-            await act.Should().ThrowAsync<UnhandledMessageException>();
-        }
-
-        [Fact]
-        public void Execute_UnhandledCommandWithResult_ExceptionThrown()
-        {
-            Action act = () => _publisher.Execute(new UnhandledCommandWithResult());
-
-            act.Should().Throw<UnhandledMessageException>();
-        }
+        act.Should().Throw<UnhandledMessageException>();
     }
 }

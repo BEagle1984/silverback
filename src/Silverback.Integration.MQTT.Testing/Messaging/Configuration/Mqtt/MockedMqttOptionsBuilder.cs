@@ -5,26 +5,24 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration.Mqtt
+namespace Silverback.Messaging.Configuration.Mqtt;
+
+internal sealed class MockedMqttOptionsBuilder : IMockedMqttOptionsBuilder
 {
-    internal sealed class MockedMqttOptionsBuilder : IMockedMqttOptionsBuilder
+    public MockedMqttOptionsBuilder(IServiceCollection services)
     {
-        public MockedMqttOptionsBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
+        Services = services;
+    }
 
-        public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; }
 
-        public IMockedMqttOptions MockedMqttOptions =>
-            Services.GetSingletonServiceInstance<IMockedMqttOptions>() ??
-            throw new InvalidOperationException(
-                "IMockedMqttOptions not found, AddMockedMqtt has not been called.");
+    public IMockedMqttOptions MockedMqttOptions =>
+        Services.GetSingletonServiceInstance<IMockedMqttOptions>() ??
+        throw new InvalidOperationException("IMockedMqttOptions not found, AddMockedMqtt has not been called.");
 
-        public IMockedMqttOptionsBuilder DelayConnection(TimeSpan delay)
-        {
-            MockedMqttOptions.ConnectionDelay = delay;
-            return this;
-        }
+    public IMockedMqttOptionsBuilder DelayConnection(TimeSpan delay)
+    {
+        MockedMqttOptions.ConnectionDelay = delay;
+        return this;
     }
 }

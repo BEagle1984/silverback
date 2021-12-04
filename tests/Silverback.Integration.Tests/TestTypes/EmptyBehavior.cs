@@ -4,14 +4,13 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Integration.TestTypes;
+
+public class EmptyBehavior : IConsumerBehavior, IProducerBehavior
 {
-    public class EmptyBehavior : IConsumerBehavior, IProducerBehavior
-    {
-        public int SortIndex => 0;
+    public int SortIndex => 0;
 
-        public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next) => next(context);
+    public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next) => next(context);
 
-        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next) => next(context);
-    }
+    public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next) => next(context);
 }

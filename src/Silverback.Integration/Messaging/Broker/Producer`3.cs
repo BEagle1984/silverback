@@ -47,7 +47,7 @@ public abstract class Producer<TBroker, TConfiguration, TEndpoint> : IProducer
     ///     The <see cref="IBroker" /> that instantiated this producer.
     /// </param>
     /// <param name="configuration">
-    ///     The <see cref="TConfiguration" />.
+    ///     The <typeparamref name="TConfiguration" />.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.

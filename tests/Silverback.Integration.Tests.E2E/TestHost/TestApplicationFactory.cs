@@ -6,22 +6,21 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
-namespace Silverback.Tests.Integration.E2E.TestHost
-{
-    public class TestApplicationFactory : WebApplicationFactory<Startup>
-    {
-        protected override IHostBuilder? CreateHostBuilder() =>
-            null;
+namespace Silverback.Tests.Integration.E2E.TestHost;
 
-        protected override IWebHostBuilder CreateWebHostBuilder() =>
-            WebHost
-                .CreateDefaultBuilder()
-                .UseDefaultServiceProvider(
-                    (_, options) =>
-                    {
-                        options.ValidateScopes = true;
-                        options.ValidateOnBuild = true;
-                    })
-                .UseStartup<Startup>();
-    }
+public class TestApplicationFactory : WebApplicationFactory<Startup>
+{
+    protected override IHostBuilder? CreateHostBuilder() =>
+        null;
+
+    protected override IWebHostBuilder CreateWebHostBuilder() =>
+        WebHost
+            .CreateDefaultBuilder()
+            .UseDefaultServiceProvider(
+                (_, options) =>
+                {
+                    options.ValidateScopes = true;
+                    options.ValidateOnBuild = true;
+                })
+            .UseStartup<Startup>();
 }

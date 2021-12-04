@@ -66,7 +66,7 @@ public abstract record EndpointConfiguration
 
     /// <summary>
     ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages being produced or consumed.
-    ///     The default is the <see cref="JsonMessageSerializer" />.
+    ///     The default is the <see cref="JsonMessageSerializer{TMessage}" />.
     /// </summary>
     public virtual IMessageSerializer Serializer { get; init; } = DefaultSerializer;
 

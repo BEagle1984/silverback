@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace Silverback.Messaging.Broker;
 /// <typeparam name="TConsumerConfiguration">
 ///     The type of the <see cref="ConsumerConfiguration" /> that is used by this broker implementation.
 /// </typeparam>
+[SuppressMessage("Naming", "CA1724:Type names should not match namespaces", Justification = "Is not going to cause much confusion, not worth breaking compatibility.")]
 public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : IBroker, IDisposable
     where TProducerConfiguration : ProducerConfiguration
     where TConsumerConfiguration : ConsumerConfiguration
@@ -45,7 +47,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
     private bool _disposed;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
+    ///     Initializes a new instance of the <see cref="Broker{TProducerConfiguration,TConsumerConfiguration}" /> class.
     /// </summary>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
@@ -188,7 +190,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
     ///     returned instance will be cached and reused for the same endpoint.
     /// </summary>
     /// <param name="configuration">
-    ///     The <see cref="TProducerConfiguration" />.
+    ///     The <typeparamref name="TProducerConfiguration" />.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
@@ -209,7 +211,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
     ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
     /// </summary>
     /// <param name="configuration">
-    ///     The <see cref="TConsumerConfiguration" />.
+    ///     The <typeparamref name="TConsumerConfiguration" />.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.

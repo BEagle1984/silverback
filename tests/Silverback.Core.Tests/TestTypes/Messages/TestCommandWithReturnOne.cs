@@ -3,10 +3,9 @@
 
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 
-namespace Silverback.Tests.Core.TestTypes.Messages
+namespace Silverback.Tests.Core.TestTypes.Messages;
+
+public class TestCommandWithReturnOne : ICommand<string>, ITestMessage
 {
-    public class TestCommandWithReturnOne : ICommand<string>, ITestMessage
-    {
-        public string? Message { get; set; }
-    }
+    public string? Message { get; set; }
 }

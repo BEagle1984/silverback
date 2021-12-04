@@ -3,13 +3,12 @@
 
 using Confluent.Kafka;
 
-namespace Silverback
+namespace Silverback;
+
+internal static class TopicPartitionExtensions
 {
-    internal static class TopicPartitionExtensions
-    {
-        public static string ToDisplayString(this TopicPartition topicPartition) =>
-            topicPartition.Partition == Partition.Any
-                ? topicPartition.Topic
-                : $"{topicPartition.Topic}[{topicPartition.Partition.Value}]";
-    }
+    public static string ToDisplayString(this TopicPartition topicPartition) =>
+        topicPartition.Partition == Partition.Any
+            ? topicPartition.Topic
+            : $"{topicPartition.Topic}[{topicPartition.Partition.Value}]";
 }

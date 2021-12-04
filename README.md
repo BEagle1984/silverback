@@ -1,10 +1,13 @@
-# <img src="https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png" alt="Silverback"> 
+# <img src="https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png" alt="Silverback">
 
 A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
-It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment only [Apache Kafka](https://kafka.apache.org/), MQTT and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices.
+At the moment only [Apache Kafka](https://kafka.apache.org/), MQTT and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message
+brokers could be added without much effort.
 
 Its main features are:
+
 * Simple yet powerful message bus
 * Abstracted integration with a message broker
 * Apache Kafka, MQTT and RabbitMQ integration
@@ -17,7 +20,7 @@ Discover more in the [project's website][docs-site].
 
 ### Build
 
-[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master) 
+[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
 [![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
 
 ### Quality
@@ -70,24 +73,39 @@ Have a look at the [project's website][docs-site] for usage details, API documen
 
 ## Contributing
 
-You are encouraged to contribute to Silverback! Please check out the [how to contribute](CONTRIBUTING.md) guide for guidelines about how to proceed.
+You are encouraged to contribute to Silverback! Please check out the [how to contribute](CONTRIBUTING.md) guide for guidelines about how to
+proceed.
 
 ## License
 
 This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
 
 [docs-site]: https://silverback-messaging.net
+
 [Nuget-Core]: https://www.nuget.org/packages/Silverback.Core/
+
 [Nuget-Core.Model]: https://www.nuget.org/packages/Silverback.Core.Model/
+
 [Nuget-Core.EntityFrameworkCore]: https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/
+
 [Nuget-Core.Rx]: https://www.nuget.org/packages/Silverback.Core.Rx/
+
 [Nuget-Integration]: https://www.nuget.org/packages/Silverback.Integration/
+
 [Nuget-Integration.Testing]: https://www.nuget.org/packages/Silverback.Integration.Testing/
+
 [Nuget-Integration.Kafka]: https://www.nuget.org/packages/Silverback.Integration.Kafka/
+
 [Nuget-Integration.Kafka.SchemaRegistry]: https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/
+
 [Nuget-Integration.Kafka.Testing]: https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/
+
 [Nuget-Integration.MQTT]: https://www.nuget.org/packages/Silverback.Integration.MQTT/
+
 [Nuget-Integration.MQTT.Testing]: https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing/
+
 [Nuget-Integration.RabbitMQ]: https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/
+
 [Nuget-Integration.HealthChecks]: https://www.nuget.org/packages/Silverback.Integration.HealthChecks/
+
 [Nuget-Integration.Newtonsoft]: https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/

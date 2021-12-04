@@ -7,81 +7,80 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class AsyncHelperTests
 {
-    public class AsyncHelperTests
+    [Fact]
+    public void RunSynchronously_ReturningTask_Executed()
     {
-        [Fact]
-        public void RunSynchronously_ReturningTask_Executed()
+        bool done = false;
+
+        AsyncHelper.RunSynchronously(AsyncMethod);
+
+        done.Should().BeTrue();
+
+        async Task AsyncMethod()
         {
-            var done = false;
-
-            AsyncHelper.RunSynchronously(AsyncMethod);
-
-            done.Should().BeTrue();
-
-            async Task AsyncMethod()
-            {
-                await Task.Delay(50);
-                done = true;
-            }
+            await Task.Delay(50);
+            done = true;
         }
+    }
 
-        [Fact]
-        public void RunSynchronously_ReturningTaskWithResult_Executed()
+    [Fact]
+    public void RunSynchronously_ReturningTaskWithResult_Executed()
+    {
+        int result = AsyncHelper.RunSynchronously(AsyncMethod);
+
+        result.Should().Be(3);
+
+        static async Task<int> AsyncMethod()
         {
-            var result = AsyncHelper.RunSynchronously(AsyncMethod);
-
-            result.Should().Be(3);
-
-            static async Task<int> AsyncMethod()
-            {
-                await Task.Delay(50);
-                return 3;
-            }
+            await Task.Delay(50);
+            return 3;
         }
+    }
 
-        [Fact]
-        public void RunSynchronously_WithArgumentReturningTask_Executed()
+    [Fact]
+    public void RunSynchronously_WithArgumentReturningTask_Executed()
+    {
+        int result = 1;
+        AsyncHelper.RunSynchronously(() => AsyncMethod(2));
+
+        result.Should().Be(3);
+
+        async Task AsyncMethod(int arg)
         {
-            int result = 1;
-            AsyncHelper.RunSynchronously(() => AsyncMethod(2));
-
-            result.Should().Be(3);
-
-            async Task AsyncMethod(int arg)
-            {
-                await Task.Delay(50);
-                result += arg;
-            }
+            await Task.Delay(50);
+            result += arg;
         }
+    }
 
-        [Fact]
-        public void RunSynchronously_ReturningTaskButThrowingException_ExceptionRethrown()
+    [Fact]
+    public void RunSynchronously_ReturningTaskButThrowingException_ExceptionRethrown()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static async Task AsyncMethod()
         {
-            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
-
-            act.Should().Throw<NotSupportedException>();
-
-            static async Task AsyncMethod()
-            {
-                await Task.Delay(50);
-                throw new NotSupportedException("test");
-            }
+            await Task.Delay(50);
+            throw new NotSupportedException("test");
         }
+    }
 
-        [Fact]
-        public void RunSynchronously_ReturningTaskWithResultButThrowingException_ExceptionRethrown()
+    [Fact]
+    public void RunSynchronously_ReturningTaskWithResultButThrowingException_ExceptionRethrown()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static async Task<int> AsyncMethod()
         {
-            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
-
-            act.Should().Throw<NotSupportedException>();
-
-            static async Task<int> AsyncMethod()
-            {
-                await Task.Delay(50);
-                throw new NotSupportedException("test");
-            }
+            await Task.Delay(50);
+            throw new NotSupportedException("test");
         }
     }
 }

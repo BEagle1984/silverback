@@ -3,24 +3,23 @@
 
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Subscribers.ArgumentResolvers
+namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
+
+/// <summary>
+///     Represent a value for an argument that will be available in the future.
+/// </summary>
+public interface ILazyArgumentValue
 {
     /// <summary>
-    ///     Represent a value for an argument that will be available in the future.
+    ///     Gets the argument value, as soon as it is available.
     /// </summary>
-    public interface ILazyArgumentValue
-    {
-        /// <summary>
-        ///     Gets the argument value, as soon as it is available.
-        /// </summary>
-        object? Value { get; }
+    object? Value { get; }
 
-        /// <summary>
-        ///     Gets an awaitable <see cref="Task" /> that completes when the argument value is available.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task WaitUntilCreatedAsync();
-    }
+    /// <summary>
+    ///     Gets an awaitable <see cref="Task" /> that completes when the argument value is available.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WaitUntilCreatedAsync();
 }

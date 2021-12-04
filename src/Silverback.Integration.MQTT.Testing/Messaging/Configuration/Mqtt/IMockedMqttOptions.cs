@@ -3,16 +3,15 @@
 
 using System;
 
-namespace Silverback.Messaging.Configuration.Mqtt
+namespace Silverback.Messaging.Configuration.Mqtt;
+
+/// <summary>
+///     Stores the mocked MQTT configuration.
+/// </summary>
+public interface IMockedMqttOptions
 {
     /// <summary>
-    ///     Stores the mocked MQTT configuration.
+    ///     Gets or sets the delay to be applied before establishing a connection.
     /// </summary>
-    public interface IMockedMqttOptions
-    {
-        /// <summary>
-        ///     Gets or sets the delay to be applied before establishing a connection.
-        /// </summary>
-        public TimeSpan ConnectionDelay { get; set; }
-    }
+    public TimeSpan ConnectionDelay { get; set; }
 }

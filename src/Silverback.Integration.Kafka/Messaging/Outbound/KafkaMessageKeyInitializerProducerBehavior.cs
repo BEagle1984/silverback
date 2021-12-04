@@ -7,44 +7,43 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound
+namespace Silverback.Messaging.Outbound;
+
+/// <summary>
+///     Sets the message key header with the value from the properties decorated with the
+///     <see cref="KafkaKeyMemberAttribute" />. The header will be used by the
+///     <see cref="Messaging.Broker.KafkaProducer" /> to set the actual message key.
+/// </summary>
+public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
 {
-    /// <summary>
-    ///     Sets the message key header with the value from the properties decorated with the
-    ///     <see cref="KafkaKeyMemberAttribute" />. The header will be used by the
-    ///     <see cref="Messaging.Broker.KafkaProducer" /> to set the actual message key.
-    /// </summary>
-    public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
+
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        if (!context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            if (!context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
-            {
-                string key = GetKafkaKey(context);
-                context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
-            }
-
-            await next(context).ConfigureAwait(false);
+            string key = GetKafkaKey(context);
+            context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
         }
 
-        private static string GetKafkaKey(ProducerPipelineContext context)
-        {
-            string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
-            if (keyFromMessage != null)
-                return keyFromMessage;
+        await next(context).ConfigureAwait(false);
+    }
 
-            var messageIdHeaderValue = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-            if (messageIdHeaderValue != null)
-                return messageIdHeaderValue;
+    private static string GetKafkaKey(ProducerPipelineContext context)
+    {
+        string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
+        if (keyFromMessage != null)
+            return keyFromMessage;
 
-            return Guid.NewGuid().ToString();
-        }
+        string? messageIdHeaderValue = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+        if (messageIdHeaderValue != null)
+            return messageIdHeaderValue;
+
+        return Guid.NewGuid().ToString();
     }
 }

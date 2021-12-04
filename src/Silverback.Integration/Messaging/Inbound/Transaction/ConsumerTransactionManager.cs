@@ -8,144 +8,143 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Inbound.Transaction
+namespace Silverback.Messaging.Inbound.Transaction;
+
+/// <inheritdoc cref="IConsumerTransactionManager" />
+public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 {
-    /// <inheritdoc cref="IConsumerTransactionManager" />
-    public sealed class ConsumerTransactionManager : IConsumerTransactionManager
+    private readonly ConsumerPipelineContext _context;
+
+    private readonly IInboundLogger<ConsumerTransactionManager> _logger;
+
+    private readonly List<ITransactional> _transactionalServices = new();
+
+    private bool _isAborted;
+
+    private bool _isCommitted;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
+    /// </summary>
+    /// <param name="context">
+    ///     The current <see cref="ConsumerPipelineContext" />.
+    /// </param>
+    /// <param name="logger">
+    ///     The <see cref="ISilverbackLogger" />.
+    /// </param>
+    public ConsumerTransactionManager(
+        ConsumerPipelineContext context,
+        IInboundLogger<ConsumerTransactionManager> logger)
     {
-        private readonly ConsumerPipelineContext _context;
+        _context = context;
+        _logger = logger;
+    }
 
-        private readonly IInboundLogger<ConsumerTransactionManager> _logger;
+    /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
+    public bool IsCompleted => _isAborted || _isCommitted;
 
-        private readonly List<ITransactional> _transactionalServices = new();
+    /// <inheritdoc cref="IConsumerTransactionManager.Enlist" />
+    public void Enlist(ITransactional transactionalService)
+    {
+        Check.NotNull(transactionalService, nameof(transactionalService));
 
-        private bool _isAborted;
+        if (IsCompleted)
+            throw new InvalidOperationException("The transaction already completed.");
 
-        private bool _isCommitted;
+        // ReSharper disable once InconsistentlySynchronizedField
+        if (_transactionalServices.Contains(transactionalService))
+            return;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
-        /// </summary>
-        /// <param name="context">
-        ///     The current <see cref="ConsumerPipelineContext" />.
-        /// </param>
-        /// <param name="logger">
-        ///     The <see cref="ISilverbackLogger" />.
-        /// </param>
-        public ConsumerTransactionManager(
-            ConsumerPipelineContext context,
-            IInboundLogger<ConsumerTransactionManager> logger)
+        lock (_transactionalServices)
         {
-            _context = context;
-            _logger = logger;
-        }
-
-        /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
-        public bool IsCompleted => _isAborted || _isCommitted;
-
-        /// <inheritdoc cref="IConsumerTransactionManager.Enlist" />
-        public void Enlist(ITransactional transactionalService)
-        {
-            Check.NotNull(transactionalService, nameof(transactionalService));
-
-            if (IsCompleted)
-                throw new InvalidOperationException("The transaction already completed.");
-
-            // ReSharper disable once InconsistentlySynchronizedField
             if (_transactionalServices.Contains(transactionalService))
                 return;
 
-            lock (_transactionalServices)
-            {
-                if (_transactionalServices.Contains(transactionalService))
-                    return;
-
-                _transactionalServices.Add(transactionalService);
-            }
+            _transactionalServices.Add(transactionalService);
         }
+    }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
-        public async Task CommitAsync()
+    /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
+    public async Task CommitAsync()
+    {
+        if (_isCommitted)
         {
-            if (_isCommitted)
-            {
-                _logger.LogInboundLowLevelTrace(
-                    "Not committing consumer transaction because it was already committed.",
-                    _context.Envelope);
-
-                return;
-            }
-
-            if (_isAborted)
-                throw new InvalidOperationException("The transaction already aborted.");
-
-            _isCommitted = true;
-
-            _logger.LogInboundLowLevelTrace("Committing consumer transaction...", _context.Envelope);
-
-            // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
-            await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
-            await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
-
-            _logger.LogInboundLowLevelTrace("Consumer transaction committed.", _context.Envelope);
-        }
-
-        /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
-        public async Task<bool> RollbackAsync(
-            Exception? exception,
-            bool commitConsumer = false,
-            bool throwIfAlreadyCommitted = true,
-            bool stopConsuming = true)
-        {
-            if (_isAborted)
-            {
-                _logger.LogInboundLowLevelTrace(
-                    "Not aborting consumer transaction because it was already aborted.",
-                    _context.Envelope);
-
-                return false;
-            }
-
-            if (_isCommitted)
-            {
-                if (throwIfAlreadyCommitted)
-                    throw new InvalidOperationException("The transaction already completed.");
-
-                return false;
-            }
-
-            _isAborted = true;
-
             _logger.LogInboundLowLevelTrace(
-                "Aborting consumer transaction...",
-                _context.Envelope,
-                exception);
+                "Not committing consumer transaction because it was already committed.",
+                _context.Envelope);
 
-            try
+            return;
+        }
+
+        if (_isAborted)
+            throw new InvalidOperationException("The transaction already aborted.");
+
+        _isCommitted = true;
+
+        _logger.LogInboundLowLevelTrace("Committing consumer transaction...", _context.Envelope);
+
+        // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
+        await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
+        await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
+
+        _logger.LogInboundLowLevelTrace("Consumer transaction committed.", _context.Envelope);
+    }
+
+    /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
+    public async Task<bool> RollbackAsync(
+        Exception? exception,
+        bool commitConsumer = false,
+        bool throwIfAlreadyCommitted = true,
+        bool stopConsuming = true)
+    {
+        if (_isAborted)
+        {
+            _logger.LogInboundLowLevelTrace(
+                "Not aborting consumer transaction because it was already aborted.",
+                _context.Envelope);
+
+            return false;
+        }
+
+        if (_isCommitted)
+        {
+            if (throwIfAlreadyCommitted)
+                throw new InvalidOperationException("The transaction already completed.");
+
+            return false;
+        }
+
+        _isAborted = true;
+
+        _logger.LogInboundLowLevelTrace(
+            "Aborting consumer transaction...",
+            _context.Envelope,
+            exception);
+
+        try
+        {
+            await _transactionalServices.ForEachAsync(service => service.RollbackAsync())
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            if (commitConsumer)
             {
-                await _transactionalServices.ForEachAsync(service => service.RollbackAsync())
+                await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers())
                     .ConfigureAwait(false);
             }
-            finally
+            else
             {
-                if (commitConsumer)
-                {
-                    await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers())
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    if (stopConsuming)
-                        await _context.Consumer.StopAsync().ConfigureAwait(false);
+                if (stopConsuming)
+                    await _context.Consumer.StopAsync().ConfigureAwait(false);
 
-                    await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers())
-                        .ConfigureAwait(false);
-                }
+                await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers())
+                    .ConfigureAwait(false);
             }
-
-            _logger.LogInboundLowLevelTrace("Consumer transaction aborted.", _context.Envelope);
-
-            return true;
         }
+
+        _logger.LogInboundLowLevelTrace("Consumer transaction aborted.", _context.Envelope);
+
+        return true;
     }
 }

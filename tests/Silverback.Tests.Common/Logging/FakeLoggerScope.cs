@@ -3,18 +3,17 @@
 
 using System;
 
-namespace Silverback.Tests.Logging
+namespace Silverback.Tests.Logging;
+
+public sealed class FakeLoggerScope : IDisposable
 {
-    public sealed class FakeLoggerScope : IDisposable
+    private FakeLoggerScope()
     {
-        private FakeLoggerScope()
-        {
-        }
+    }
 
-        public static FakeLoggerScope Instance { get; } = new();
+    public static FakeLoggerScope Instance { get; } = new();
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

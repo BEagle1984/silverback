@@ -6,92 +6,94 @@ using System.IO;
 using System.Security.Cryptography;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     The implementation of <see cref="SilverbackCryptoStream" /> based on a
+///     <see cref="SymmetricAlgorithm" /> used to decrypt the messages.
+/// </summary>
+public class SymmetricDecryptStream : SilverbackCryptoStream
 {
+    private readonly ICryptoTransform _cryptoTransform;
+
+    private readonly CryptoStream _cryptoStream;
+
     /// <summary>
-    ///     The implementation of <see cref="SilverbackCryptoStream" /> based on a
-    ///     <see cref="SymmetricAlgorithm" /> used to decrypt the messages.
+    ///     Initializes a new instance of the <see cref="SymmetricDecryptStream" /> class.
     /// </summary>
-    public class SymmetricDecryptStream : SilverbackCryptoStream
+    /// <param name="stream">
+    ///     The inner <see cref="Stream" /> to read the encrypted message from.
+    /// </param>
+    /// <param name="settings">
+    ///     The <see cref="SymmetricDecryptionSettings" /> specifying the cryptographic algorithm settings.
+    /// </param>
+    /// <param name="keyIdentifier">
+    ///     The key identifier to retrieve the encryption key.
+    /// </param>
+    public SymmetricDecryptStream(
+        Stream stream,
+        SymmetricDecryptionSettings settings,
+        string? keyIdentifier = null)
     {
-        private readonly ICryptoTransform _cryptoTransform;
+        Check.NotNull(stream, nameof(stream));
+        Check.NotNull(settings, nameof(settings));
 
-        private readonly CryptoStream _cryptoStream;
+        _cryptoTransform = CreateCryptoTransform(settings, stream, keyIdentifier);
+        _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="SymmetricDecryptStream" /> class.
-        /// </summary>
-        /// <param name="stream">
-        ///     The inner <see cref="Stream" /> to read the encrypted message from.
-        /// </param>
-        /// <param name="settings">
-        ///     The <see cref="SymmetricDecryptionSettings" /> specifying the cryptographic algorithm settings.
-        /// </param>
-        /// <param name="keyIdentifier">
-        ///     The key identifier to retrieve the encryption key.
-        /// </param>
-        public SymmetricDecryptStream(
-            Stream stream,
-            SymmetricDecryptionSettings settings,
-            string? keyIdentifier = null)
+    /// <inheritdoc cref="SilverbackCryptoStream.CryptoStream" />
+    protected override CryptoStream CryptoStream => _cryptoStream;
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            Check.NotNull(stream, nameof(stream));
-            Check.NotNull(settings, nameof(settings));
-
-            _cryptoTransform = CreateCryptoTransform(settings, stream, keyIdentifier);
-            _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
+            _cryptoTransform.Dispose();
+            _cryptoStream.Dispose();
         }
 
-        /// <inheritdoc cref="SilverbackCryptoStream.CryptoStream" />
-        protected override CryptoStream CryptoStream => _cryptoStream;
+        base.Dispose(disposing);
+    }
 
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _cryptoTransform.Dispose();
-                _cryptoStream.Dispose();
-            }
+    private static ICryptoTransform CreateCryptoTransform(
+        SymmetricDecryptionSettings settings,
+        Stream stream,
+        string? keyIdentifier)
+    {
+        Check.NotNull(settings, nameof(settings));
+        Check.NotNull(stream, nameof(stream));
 
-            base.Dispose(disposing);
-        }
+        byte[]? encryptionKey = settings.KeyProvider != null
+            ? settings.KeyProvider(keyIdentifier)
+            : settings.Key;
 
-        private static ICryptoTransform CreateCryptoTransform(
-            SymmetricDecryptionSettings settings,
-            Stream stream,
-            string? keyIdentifier)
-        {
-            Check.NotNull(settings, nameof(settings));
-            Check.NotNull(stream, nameof(stream));
+        if (encryptionKey == null)
+            throw new InvalidOperationException("The encryption key is not set.");
 
-            byte[]? encryptionKey = settings.KeyProvider != null
-                ? settings.KeyProvider(keyIdentifier)
-                : settings.Key;
+        using SymmetricAlgorithm algorithm =
+            SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);
 
-            using var algorithm =
-                SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);
-
-            if (settings.InitializationVector != null)
-                return algorithm.CreateDecryptor();
-
-            // Read the IV prepended to the message
-            byte[] buffer = new byte[algorithm.IV.Length];
-
-            var totalReadCount = 0;
-            while (totalReadCount < algorithm.IV.Length)
-            {
-                int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
-
-                if (readCount == 0)
-                    break;
-
-                totalReadCount += readCount;
-            }
-
-            algorithm.IV = buffer;
-
+        if (settings.InitializationVector != null)
             return algorithm.CreateDecryptor();
+
+        // Read the IV prepended to the message
+        byte[] buffer = new byte[algorithm.IV.Length];
+
+        int totalReadCount = 0;
+        while (totalReadCount < algorithm.IV.Length)
+        {
+            int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
+
+            if (readCount == 0)
+                break;
+
+            totalReadCount += readCount;
         }
+
+        algorithm.IV = buffer;
+
+        return algorithm.CreateDecryptor();
     }
 }

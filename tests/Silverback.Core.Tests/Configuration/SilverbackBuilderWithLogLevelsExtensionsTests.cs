@@ -9,26 +9,25 @@ using Silverback.Diagnostics;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Configuration
+namespace Silverback.Tests.Core.Configuration;
+
+public class SilverbackBuilderWithLogLevelsExtensionsTests
 {
-    public class SilverbackBuilderWithLogLevelsExtensionsTests
+    [Fact]
+    public void WithLogLevels_WithLogLevels_LogLevelMappingCorrectlyBuilt()
     {
-        [Fact]
-        public void WithLogLevels_WithLogLevels_LogLevelMappingCorrectlyBuilt()
-        {
-            var services = new ServiceCollection();
+        ServiceCollection services = new();
 
-            services
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithLogLevels(
-                    configurator => configurator
-                        .SetLogLevel(CoreLogEvents.DistributedLockAcquired.EventId, LogLevel.Information)
-                        .SetLogLevel(CoreLogEvents.FailedToAcquireDistributedLock.EventId, LogLevel.Warning));
+        services
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithLogLevels(
+                configurator => configurator
+                    .SetLogLevel(CoreLogEvents.DistributedLockAcquired.EventId, LogLevel.Information)
+                    .SetLogLevel(CoreLogEvents.FailedToAcquireDistributedLock.EventId, LogLevel.Warning));
 
-            var serviceProvider = services.BuildServiceProvider();
+        ServiceProvider? serviceProvider = services.BuildServiceProvider();
 
-            serviceProvider.GetRequiredService<ISilverbackLogger<object>>().Should().NotBeNull();
-        }
+        serviceProvider.GetRequiredService<ISilverbackLogger<object>>().Should().NotBeNull();
     }
 }

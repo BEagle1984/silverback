@@ -113,7 +113,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
     /// <inheritdoc cref="ISequence.Sequences" />
-
     public IReadOnlyCollection<ISequence> Sequences => (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
 
     /// <inheritdoc cref="ISequence.Context" />

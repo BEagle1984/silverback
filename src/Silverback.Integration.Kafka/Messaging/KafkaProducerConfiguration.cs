@@ -16,7 +16,7 @@ public sealed record KafkaProducerConfiguration : ProducerConfiguration<KafkaPro
     /// </summary>
     public KafkaClientProducerConfiguration Client { get; init; } = new();
 
-    /// <inheritdoc cref="ProducerConfiguration{TEndpoint}.ValidateCore" />
+    /// <inheritdoc cref="ProducerConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {
         base.ValidateCore();

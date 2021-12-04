@@ -3,10 +3,9 @@
 
 using Silverback.Domain;
 
-namespace Silverback.Tests.EventSourcing.TestTypes.EntityEvents
+namespace Silverback.Tests.EventSourcing.TestTypes.EntityEvents;
+
+public class NameChangedEvent : EntityEvent
 {
-    public class NameChangedEvent : EntityEvent
-    {
-        public string? NewName { get; set; }
-    }
+    public string? NewName { get; set; }
 }

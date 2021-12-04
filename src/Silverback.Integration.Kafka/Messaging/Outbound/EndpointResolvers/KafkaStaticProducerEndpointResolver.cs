@@ -35,7 +35,7 @@ public sealed class KafkaStaticProducerEndpointResolver : StaticProducerEndpoint
     public KafkaStaticProducerEndpointResolver(TopicPartition topicPartition)
         : base(Check.NotNull(topicPartition, nameof(topicPartition)).ToDisplayString())
     {
-        if (topicPartition.Partition == null || topicPartition.Partition < Partition.Any)
+        if (topicPartition.Partition < Partition.Any)
             throw new ArgumentException("The partition must be a value greater or equal to 0, or Partition.Any.", nameof(topicPartition));
 
         TopicPartition = topicPartition;
@@ -46,6 +46,6 @@ public sealed class KafkaStaticProducerEndpointResolver : StaticProducerEndpoint
     /// </summary>
     public TopicPartition TopicPartition { get; }
 
-    /// <inheritdoc cref="StaticProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore"/>
+    /// <inheritdoc cref="StaticProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore" />
     protected override KafkaProducerEndpoint GetEndpointCore(KafkaProducerConfiguration configuration) => new(TopicPartition, configuration);
 }

@@ -3,11 +3,10 @@
 
 using System;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class TypeExtensions
 {
-    internal static class TypeExtensions
-    {
-        public static object? GetDefaultValue(this Type type) =>
-            type.IsValueType ? Activator.CreateInstance(type) : null;
-    }
+    public static object? GetDefaultValue(this Type type) =>
+        type.IsValueType ? Activator.CreateInstance(type) : null;
 }

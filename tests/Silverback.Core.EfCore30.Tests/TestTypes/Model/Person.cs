@@ -4,15 +4,14 @@
 using System.ComponentModel.DataAnnotations;
 
 // ReSharper disable once CheckNamespace
-namespace Silverback.Tests.Core.EFCore30.TestTypes.Model
+namespace Silverback.Tests.Core.EFCore30.TestTypes.Model;
+
+public class Person
 {
-    public class Person
-    {
-        [Key]
-        public int Id { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-        public string? Name { get; set; }
+    public string? Name { get; set; }
 
-        public int Age { get; set; }
-    }
+    public int Age { get; set; }
 }

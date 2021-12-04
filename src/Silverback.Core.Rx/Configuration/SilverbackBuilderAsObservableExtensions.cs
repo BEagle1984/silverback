@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <summary>
-///     Adds the <see cref="AsObservable"/> method to the <see cref="SilverbackBuilder" />.
+///     Adds the <see cref="AsObservable" /> method to the <see cref="SilverbackBuilder" />.
 /// </summary>
 public static class SilverbackBuilderAsObservableExtensions
 {

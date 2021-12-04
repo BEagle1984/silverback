@@ -70,8 +70,9 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider
-            .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
-                serviceProvider,serviceProvider
+                .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
+            serviceProvider,
+            serviceProvider
                 .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
 
     private sealed class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
@@ -84,7 +85,7 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
 
         private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
-            private readonly IProducer _producer;
+        private readonly IProducer _producer;
 
         public MoveMessageErrorPolicyImplementation(
             ProducerConfiguration producerConfiguration,
@@ -94,7 +95,8 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
             ICollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
-            IBrokerOutboundMessageEnrichersFactory enricherFactory,IServiceProvider serviceProvider,
+            IBrokerOutboundMessageEnrichersFactory enricherFactory,
+            IServiceProvider serviceProvider,
             IInboundLogger<MoveMessageErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
@@ -106,7 +108,8 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
                 logger)
         {
             _producerConfiguration = Check.NotNull(producerConfiguration, nameof(producerConfiguration));
-            _transformationAction = transformationAction;_enricherFactory = enricherFactory;
+            _transformationAction = transformationAction;
+            _enricherFactory = enricherFactory;
             _logger = logger;
 
             _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(producerConfiguration);
@@ -153,10 +156,10 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
                         envelope.Headers,
                         _producerConfiguration.Endpoint.GetEndpoint(envelope.RawMessage, _producerConfiguration, serviceProvider));
 
-            var enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
-                enricher.Enrich(envelope, outboundEnvelope, exception);
+            IMovePolicyMessageEnricher enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
+            enricher.Enrich(envelope, outboundEnvelope, exception);
 
-                _transformationAction?.Invoke(outboundEnvelope, exception);
+            _transformationAction?.Invoke(outboundEnvelope, exception);
 
             await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
         }

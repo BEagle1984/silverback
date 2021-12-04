@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -15,141 +16,138 @@ using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Mqtt.Mocks
+namespace Silverback.Messaging.Broker.Mqtt.Mocks;
+
+internal sealed class ClientSession : IDisposable, IClientSession
 {
-    internal sealed class ClientSession : IDisposable, IClientSession
-    {
-        private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
+    private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
 
-        private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
+    private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;private readonly Channel<MqttApplicationMessage> _channel =
+        Channel.CreateUnbounded<MqttApplicationMessage>();
 
-        private readonly Channel<MqttApplicationMessage> _channel =
-            Channel.CreateUnbounded<MqttApplicationMessage>();
+    private readonly List<Subscription> _subscriptions = new();
 
-        private readonly List<Subscription> _subscriptions = new();
+    private CancellationTokenSource _readCancellationTokenSource = new();
 
-        private CancellationTokenSource _readCancellationTokenSource = new();
+    private int _pendingMessagesCount;
 
-        private int _pendingMessagesCount;
-
-        public ClientSession(
-            IMqttClientOptions clientOptions,
-            IMqttApplicationMessageReceivedHandler messageHandler,
-            SharedSubscriptionsManager sharedSubscriptionsManager)
-        {
-            ClientOptions = Check.NotNull(clientOptions, nameof(clientOptions));
-            _messageHandler = Check.NotNull(messageHandler, nameof(messageHandler));
-            _sharedSubscriptionsManager = Check.NotNull(
+    public ClientSession(
+        IMqttClientOptions clientOptions,
+        IMqttApplicationMessageReceivedHandler messageHandler,
+    SharedSubscriptionsManager sharedSubscriptionsManager){
+        ClientOptions = Check.NotNull(clientOptions, nameof(clientOptions));
+        _messageHandler = Check.NotNull(messageHandler, nameof(messageHandler));
+    _sharedSubscriptionsManager = Check.NotNull(
                 sharedSubscriptionsManager,
                 nameof(sharedSubscriptionsManager));
         }
 
-        public IMqttClientOptions ClientOptions { get; }
+    public IMqttClientOptions ClientOptions { get; }
 
-        public int PendingMessagesCount => _pendingMessagesCount;
+    public int PendingMessagesCount => _pendingMessagesCount;
 
-        public bool IsConnected { get; private set; }
+    public bool IsConsumerDisconnected =>
+        !((_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? true);
 
-        public bool IsConsumerDisconnected =>
-            !((_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? true);
+    public bool IsConnected { get; private set; }
 
-        public void Connect()
+    public void Connect()
+    {
+        if (IsConnected)
+            return;
+
+        IsConnected = true;
+
+        if (_readCancellationTokenSource.IsCancellationRequested)
+            _readCancellationTokenSource = new CancellationTokenSource();
+
+        Task.Run(() => ReadChannelAsync(_readCancellationTokenSource.Token)).FireAndForget();
+    }
+
+    public void Disconnect()
+    {
+        if (!IsConnected)
+            return;
+
+        IsConnected = false;
+
+        _readCancellationTokenSource.Cancel();
+    }
+
+    public void Subscribe(IReadOnlyCollection<string> topics)
+    {
+        lock (_subscriptions)
         {
-            if (IsConnected)
+            foreach (string? topic in topics)
+            {
+                if (_subscriptions.Any(subscription => subscription.Topic == topic))
+                    continue;
+
+                _subscriptions.Add(new Subscription(ClientOptions, topic, _sharedSubscriptionsManager));
+            }
+        }
+    }
+
+    public void Unsubscribe(IReadOnlyCollection<string> topics)
+    {
+        lock (_subscriptions)
+        {
+            _subscriptions.RemoveAll(subscription => topics.Contains(subscription.Topic));
+        }
+    }
+
+    public async ValueTask PushAsync(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+    {
+        lock (_subscriptions)
+        {
+            if (_subscriptions.All(subscription => !subscription.IsMatch(message, clientOptions)))
                 return;
-
-            IsConnected = true;
-
-            if (_readCancellationTokenSource.IsCancellationRequested)
-                _readCancellationTokenSource = new CancellationTokenSource();
-
-            Task.Run(() => ReadChannelAsync(_readCancellationTokenSource.Token)).FireAndForget();
         }
 
-        public void Disconnect()
+        await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
+
+        Interlocked.Increment(ref _pendingMessagesCount);
+    }
+
+    public void Dispose()
+    {
+        Disconnect();
+
+        _readCancellationTokenSource.Dispose();
+    }
+
+    private async Task ReadChannelAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
         {
-            if (!IsConnected)
-                return;
+            MqttApplicationMessage message =
+                await _channel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
-            IsConnected = false;
+            MqttApplicationMessageReceivedEventArgs eventArgs = new(
+                ClientOptions.ClientId,
+                message,
+                new MqttPublishPacket(),
+                (_, _) => Task.CompletedTask);
 
-            _readCancellationTokenSource.Cancel();
+            Task messageHandlingTask =
+                _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
+                    .ContinueWith(
+                        _ => Interlocked.Decrement(ref _pendingMessagesCount),
+                        TaskScheduler.Default);
+
+            if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
+                await messageHandlingTask.ConfigureAwait(false);
         }
+    }
 
-        public void Subscribe(IReadOnlyCollection<string> topics)
-        {
-            lock (_subscriptions)
-            {
-                foreach (var topic in topics)
-                {
-                    if (_subscriptions.Any(subscription => subscription.Topic == topic))
-                        continue;
-
-                    _subscriptions.Add(new Subscription(ClientOptions, topic, _sharedSubscriptionsManager));
-                }
-            }
-        }
-
-        public void Unsubscribe(IReadOnlyCollection<string> topics)
-        {
-            lock (_subscriptions)
-            {
-                _subscriptions.RemoveAll(subscription => topics.Contains(subscription.Topic));
-            }
-        }
-
-        public async ValueTask PushAsync(MqttApplicationMessage message, IMqttClientOptions clientOptions)
-        {
-            lock (_subscriptions)
-            {
-                if (_subscriptions.All(subscription => !subscription.IsMatch(message, clientOptions)))
-                    return;
-            }
-
-            await _channel.Writer.WriteAsync(message).ConfigureAwait(false);
-
-            Interlocked.Increment(ref _pendingMessagesCount);
-        }
-
-        public void Dispose()
-        {
-            Disconnect();
-
-            _readCancellationTokenSource.Dispose();
-        }
-
-        private async Task ReadChannelAsync(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                MqttApplicationMessage message =
-                    await _channel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
-
-                var eventArgs = new MqttApplicationMessageReceivedEventArgs(
-                    ClientOptions.ClientId,
-                    message,
-                    new MqttPublishPacket(),
-                    (_, _) => Task.CompletedTask);
-
-                Task messageHandlingTask =
-                    _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
-                        .ContinueWith(
-                            _ => Interlocked.Decrement(ref _pendingMessagesCount),
-                            TaskScheduler.Default);
-
-                if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
-                    await messageHandlingTask.ConfigureAwait(false);
-            }
-        }
-
-        private sealed class Subscription
-        {
-            private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
+    private sealed class Subscription
+    {
+        private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
 
             public Subscription(
                 IMqttClientOptions clientOptions,
                 string topic,
-                SharedSubscriptionsManager sharedSubscriptionsManager)
+        SharedSubscriptionsManager sharedSubscriptionsManager)
             {
                 _sharedSubscriptionsManager = sharedSubscriptionsManager;
 
@@ -159,19 +157,17 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     topic = actualTopic;
                     Group = group;
                 }
+            Topic = topic;
+            Regex = GetSubscriptionRegex(topic, clientOptions);
+        }
 
-                Topic = topic;
+        public string Topic { get; }
 
-                Regex = GetSubscriptionRegex(topic, clientOptions);
-            }
-
-            public string Topic { get; }
-
-            public string? Group { get; }
+        public string? Group { get; }
 
             public Regex Regex { get; }
 
-            public bool IsMatch(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+        public bool IsMatch(MqttApplicationMessage message, IMqttClientOptions clientOptions)
             {
                 if (!Regex.IsMatch(GetFullTopicName(message.Topic, clientOptions)))
                     return false;
@@ -199,29 +195,28 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                 return false;
             }
 
-            private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
-            {
-                var pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
-                    .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
-                    .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
+        private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
+        {
+            string? pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
+                .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
+                .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
 
-                return new Regex($"^{pattern}$", RegexOptions.Compiled);
-            }
-
-            private static string GetFullTopicName(string topic, IMqttClientOptions clientOptions) =>
-                $"{GetBrokerIdentifier(clientOptions)}|{topic}";
-
-            private static string GetBrokerIdentifier(IMqttClientOptions clientOptions) =>
-                clientOptions.ChannelOptions switch
-                {
-                    MqttClientTcpOptions tcpOptions =>
-                        $"{tcpOptions.Server.ToUpperInvariant()}-{tcpOptions.GetPort()}",
-                    MqttClientWebSocketOptions socketOptions =>
-                        socketOptions.Uri.ToUpperInvariant(),
-                    _ => throw new InvalidOperationException(
-                        "Expecting ChannelOptions to be of type " +
-                        "MqttClientTcpOptions or MqttClientWebSocketOptions.")
-                };
+            return new Regex($"^{pattern}$", RegexOptions.Compiled);
         }
+
+        private static string GetFullTopicName(string topic, IMqttClientOptions clientOptions) =>
+            $"{GetBrokerIdentifier(clientOptions)}|{topic}";
+
+        private static string GetBrokerIdentifier(IMqttClientOptions clientOptions) =>
+            clientOptions.ChannelOptions switch
+            {
+                MqttClientTcpOptions tcpOptions =>
+                    $"{tcpOptions.Server.ToUpperInvariant()}-{tcpOptions.GetPort()}",
+                MqttClientWebSocketOptions socketOptions =>
+                    socketOptions.Uri.ToUpperInvariant(),
+                _ => throw new InvalidOperationException(
+                    "Expecting ChannelOptions to be of type " +
+                    "MqttClientTcpOptions or MqttClientWebSocketOptions.")
+            };
     }
 }

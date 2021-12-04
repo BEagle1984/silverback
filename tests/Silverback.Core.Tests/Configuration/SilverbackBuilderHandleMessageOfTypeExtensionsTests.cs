@@ -11,162 +11,161 @@ using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Configuration
+namespace Silverback.Tests.Core.Configuration;
+
+public class SilverbackBuilderHandleMessageOfTypeExtensionsTests
 {
-    public class SilverbackBuilderHandleMessageOfTypeExtensionsTests
+    [Fact]
+    public void HandleMessageOfType_Type_MessagesRepublished()
     {
-        [Fact]
-        public void HandleMessageOfType_Type_MessagesRepublished()
-        {
-            int received = 0;
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType(typeof(UnhandledMessage)));
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType(typeof(UnhandledMessage)));
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_Type_MessagesEnumerableRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_Type_MessagesEnumerableRepublished()
+    {
+        int received = 0;
 
-            static IEnumerable<UnhandledMessage> Republish(TestEventOne message) =>
-                new[] { new UnhandledMessage(), new UnhandledMessage() };
+        static IEnumerable<UnhandledMessage> Republish(TestEventOne message) =>
+            new[] { new UnhandledMessage(), new UnhandledMessage() };
 
-            void Receive(UnhandledMessage message) => received++;
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, IEnumerable<UnhandledMessage>>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType(typeof(UnhandledMessage)));
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, IEnumerable<UnhandledMessage>>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType(typeof(UnhandledMessage)));
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(4);
-        }
+        received.Should().Be(4);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_TypeGenericParameter_MessagesRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_TypeGenericParameter_MessagesRepublished()
+    {
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType<UnhandledMessage>());
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType<UnhandledMessage>());
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_BaseType_MessagesRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_BaseType_MessagesRepublished()
+    {
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType(typeof(BaseUnhandledMessage)));
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType(typeof(BaseUnhandledMessage)));
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_BaseTypeGenericParameter_MessagesRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_BaseTypeGenericParameter_MessagesRepublished()
+    {
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType<BaseUnhandledMessage>());
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType<BaseUnhandledMessage>());
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_Interface_MessagesRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_Interface_MessagesRepublished()
+    {
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType(typeof(IUnhandledMessage)));
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType(typeof(IUnhandledMessage)));
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        [Fact]
-        public void HandleMessageOfType_InterfaceGenericParameter_MessagesRepublished()
-        {
-            int received = 0;
+    [Fact]
+    public void HandleMessageOfType_InterfaceGenericParameter_MessagesRepublished()
+    {
+        int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new();
-            void Receive(UnhandledMessage message) => received++;
+        static UnhandledMessage Republish(TestEventOne message) => new();
+        void Receive(UnhandledMessage message) => received++;
 
-            var publisher = GetPublisher(
-                builder => builder
-                    .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
-                    .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
-                    .HandleMessagesOfType<IUnhandledMessage>());
+        IPublisher publisher = GetPublisher(
+            builder => builder
+                .AddDelegateSubscriber((Func<TestEventOne, UnhandledMessage>)Republish)
+                .AddDelegateSubscriber((Action<UnhandledMessage>)Receive)
+                .HandleMessagesOfType<IUnhandledMessage>());
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
+        publisher.Publish(new TestEventOne());
 
-            received.Should().Be(2);
-        }
+        received.Should().Be(2);
+    }
 
-        private static IPublisher GetPublisher(Action<SilverbackBuilder> buildAction)
-        {
-            var services = new ServiceCollection();
-            var builder = services.AddSilverback();
+    private static IPublisher GetPublisher(Action<SilverbackBuilder> buildAction)
+    {
+        ServiceCollection services = new();
+        SilverbackBuilder builder = services.AddSilverback();
 
-            services.AddLoggerSubstitute();
+        services.AddLoggerSubstitute();
 
-            buildAction(builder);
+        buildAction(builder);
 
-            return services.BuildServiceProvider().GetRequiredService<IPublisher>();
-        }
+        return services.BuildServiceProvider().GetRequiredService<IPublisher>();
     }
 }

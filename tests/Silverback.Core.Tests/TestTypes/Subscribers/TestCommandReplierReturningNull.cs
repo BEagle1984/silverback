@@ -6,33 +6,32 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 
-namespace Silverback.Tests.Core.TestTypes.Subscribers
+namespace Silverback.Tests.Core.TestTypes.Subscribers;
+
+public class TestCommandReplierReturningNull
 {
-    public class TestCommandReplierReturningNull
+    public int ReceivedMessagesCount { get; private set; }
+
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+    public string? OnRequestReceived(ICommand<string> message)
     {
-        public int ReceivedMessagesCount { get; private set; }
+        ReceivedMessagesCount++;
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        public string? OnRequestReceived(ICommand<string> message)
-        {
-            ReceivedMessagesCount++;
+        return null;
+    }
 
-            return null;
-        }
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+    public async Task<string?> OnRequestReceived2(ICommand<string> message)
+    {
+        await Task.Delay(1);
+        ReceivedMessagesCount++;
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        public async Task<string?> OnRequestReceived2(ICommand<string> message)
-        {
-            await Task.Delay(1);
-            ReceivedMessagesCount++;
-
-            return null;
-        }
+        return null;
     }
 }

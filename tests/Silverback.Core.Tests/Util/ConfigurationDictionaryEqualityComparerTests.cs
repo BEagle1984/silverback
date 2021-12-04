@@ -7,167 +7,166 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class ConfigurationDictionaryEqualityComparerTests
 {
-    public class ConfigurationDictionaryEqualityComparerTests
+    [Fact]
+    public void Equals_SameDictionary_TrueReturned()
     {
-        [Fact]
-        public void Equals_SameDictionary_TrueReturned()
+        Dictionary<string, string> dictionary = new()
         {
-            var dictionary = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
 
-            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionary, dictionary);
+        bool result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionary, dictionary);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_SameItems_TrueReturned()
+    [Fact]
+    public void Equals_SameItems_TrueReturned()
+    {
+        Dictionary<string, string> dictionaryX = new()
         {
-            var dictionaryX = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-            var dictionaryY = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-
-            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_SameItemsDifferentOrder_TrueReturned()
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
+        Dictionary<string, string> dictionaryY = new()
         {
-            var dictionaryX = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-            var dictionaryY = new Dictionary<string, string>
-            {
-                { "two", "due" },
-                { "three", "tre" },
-                { "one", "uno" }
-            };
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
 
-            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+        bool result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_DifferentValues_FalseReturned()
+    [Fact]
+    public void Equals_SameItemsDifferentOrder_TrueReturned()
+    {
+        Dictionary<string, string> dictionaryX = new()
         {
-            var dictionaryX = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-            var dictionaryY = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "3" }
-            };
-
-            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Equals_DifferentKeys_FalseReturned()
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
+        Dictionary<string, string> dictionaryY = new()
         {
-            var dictionaryX = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-            var dictionaryY = new Dictionary<string, string>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "four", "quattro" }
-            };
+            { "two", "due" },
+            { "three", "tre" },
+            { "one", "uno" }
+        };
 
-            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+        bool result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_NullVsNonNull_FalseReturned()
+    [Fact]
+    public void Equals_DifferentValues_FalseReturned()
+    {
+        Dictionary<string, string> dictionaryX = new()
         {
-            var dictionaryX = new Dictionary<string, string?>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", "tre" }
-            };
-            var dictionaryY = new Dictionary<string, string?>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", null }
-            };
-
-            var result =
-                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Equals_NullVsMissingKey_FalseReturned()
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
+        Dictionary<string, string> dictionaryY = new()
         {
-            var dictionaryX = new Dictionary<string, string?>
-            {
-                { "one", "uno" },
-                { "two", "due" },
-                { "three", null }
-            };
-            var dictionaryY = new Dictionary<string, string?>
-            {
-                { "one", "uno" },
-                { "two", "due" }
-            };
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "3" }
+        };
 
-            var result =
-                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+        bool result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test")]
-        [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
-        public void Equals_NullDictionaryVsEmptyDictionary_TrueReturned()
+    [Fact]
+    public void Equals_DifferentKeys_FalseReturned()
+    {
+        Dictionary<string, string> dictionaryX = new()
         {
-            Dictionary<string, string> dictionaryX = new();
-            Dictionary<string, string>? dictionaryY = null;
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
+        Dictionary<string, string> dictionaryY = new()
+        {
+            { "one", "uno" },
+            { "two", "due" },
+            { "four", "quattro" }
+        };
 
-            var result1 =
-                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
-            var result2 =
-                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryY, dictionaryX);
+        bool result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
-            result1.Should().BeTrue();
-            result2.Should().BeTrue();
-        }
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Equals_NullVsNonNull_FalseReturned()
+    {
+        Dictionary<string, string?> dictionaryX = new()
+        {
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", "tre" }
+        };
+        Dictionary<string, string?> dictionaryY = new()
+        {
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", null }
+        };
+
+        bool result =
+            new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Equals_NullVsMissingKey_FalseReturned()
+    {
+        Dictionary<string, string?> dictionaryX = new()
+        {
+            { "one", "uno" },
+            { "two", "due" },
+            { "three", null }
+        };
+        Dictionary<string, string?> dictionaryY = new()
+        {
+            { "one", "uno" },
+            { "two", "due" }
+        };
+
+        bool result =
+            new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test")]
+    [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
+    public void Equals_NullDictionaryVsEmptyDictionary_TrueReturned()
+    {
+        Dictionary<string, string> dictionaryX = new();
+        Dictionary<string, string>? dictionaryY = null;
+
+        bool result1 =
+            new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+        bool result2 =
+            new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryY, dictionaryX);
+
+        result1.Should().BeTrue();
+        result2.Should().BeTrue();
     }
 }

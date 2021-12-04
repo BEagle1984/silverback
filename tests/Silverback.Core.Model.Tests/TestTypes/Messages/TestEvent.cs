@@ -3,9 +3,8 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.Model.TestTypes.Messages
+namespace Silverback.Tests.Core.Model.TestTypes.Messages;
+
+public class TestEvent : IEvent
 {
-    public class TestEvent : IEvent
-    {
-    }
 }

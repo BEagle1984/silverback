@@ -7,20 +7,19 @@ using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Messages
-{
-    public class RawInboundEnvelopeTests
-    {
-        [Fact]
-        public void Constructor_NullRawMessage_NoExceptionIsThrown()
-        {
-            var envelope = new RawInboundEnvelope(
-                (Stream?)null,
-                null,
-                TestConsumerEndpoint.GetDefault(),
-                new TestOffset("a", "b"));
+namespace Silverback.Tests.Integration.Messaging.Messages;
 
-            envelope.Should().NotBeNull();
-        }
+public class RawInboundEnvelopeTests
+{
+    [Fact]
+    public void Constructor_NullRawMessage_NoExceptionIsThrown()
+    {
+        RawInboundEnvelope envelope = new(
+            (Stream?)null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            new TestOffset("a", "b"));
+
+        envelope.Should().NotBeNull();
     }
 }

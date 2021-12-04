@@ -12,7 +12,7 @@
       "documentInterfaces": true,
       "documentExposedElements": true,
       "documentInternalElements": false,
-      "documentPrivateElements":  false,
+      "documentPrivateElements": false,
       "documentPrivateFields": false,
       "fileNamingConvention": "metadata"
     }

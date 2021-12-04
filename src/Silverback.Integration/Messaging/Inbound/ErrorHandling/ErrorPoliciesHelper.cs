@@ -11,15 +11,15 @@ namespace Silverback.Messaging.Inbound.ErrorHandling;
 internal static class ErrorPoliciesHelper
 {
     public static async Task<bool> ApplyErrorPoliciesAsync(
-            ConsumerPipelineContext context,
-            Exception exception)
+        ConsumerPipelineContext context,
+        Exception exception)
     {
         int failedAttempts = context.Consumer.IncrementFailedAttempts(context.Envelope);
 
         context.Envelope.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, failedAttempts);
 
         IErrorPolicyImplementation errorPolicyImplementation =
-                context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
+            context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
 
         if (!errorPolicyImplementation.CanHandle(context, exception))
             return false;

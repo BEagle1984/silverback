@@ -5,8 +5,7 @@
     <RootNamespace>$(RootNamespace)</RootNamespace>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This core package provides a very simple in-memory message bus.</Description>
+    <Description>$(Description) This core package provides a very simple in-memory message bus.</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
@@ -21,16 +20,6 @@ This core package provides a very simple in-memory message bus.</Description>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Core</PackageId>
     <Product>Silverback.Core</Product>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,51 +7,50 @@ using FluentAssertions;
 using Silverback.Collections;
 using Xunit;
 
-namespace Silverback.Tests.Core.Collections
+namespace Silverback.Tests.Core.Collections;
+
+public class ValueReadOnlyCollectionExtensionsTests
 {
-    public class ValueReadOnlyCollectionExtensionsTests
+    [Fact]
+    public void AsValueReadOnlyCollection_Enumerable_NewInstanceReturned()
     {
-        [Fact]
-        public void AsValueReadOnlyCollection_Enumerable_NewInstanceReturned()
-        {
-            IEnumerable<int> enumerable = Enumerable.Range(1, 3);
+        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
-            IValueReadOnlyCollection<int> valueCollection = enumerable.AsValueReadOnlyCollection();
+        IValueReadOnlyCollection<int> valueCollection = enumerable.AsValueReadOnlyCollection();
 
-            valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-            valueCollection.ToList().Should().BeEquivalentTo(new[] { 1, 2, 3 });
-        }
+        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToList().Should().BeEquivalentTo(new[] { 1, 2, 3 });
+    }
 
-        [Fact]
-        public void AsValueReadOnlyCollection_List_NewInstanceReturned()
-        {
-            List<int> list = new() { 1, 2, 3 };
+    [Fact]
+    public void AsValueReadOnlyCollection_List_NewInstanceReturned()
+    {
+        List<int> list = new() { 1, 2, 3 };
 
-            IValueReadOnlyCollection<int> valueCollection = list.AsValueReadOnlyCollection();
+        IValueReadOnlyCollection<int> valueCollection = list.AsValueReadOnlyCollection();
 
-            valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-            valueCollection.ToList().Should().BeEquivalentTo(list);
-        }
+        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToList().Should().BeEquivalentTo(list);
+    }
 
-        [Fact]
-        public void AsValueReadOnlyCollection_Array_NewInstanceReturned()
-        {
-            var array = new[] { 1, 2, 3 };
+    [Fact]
+    public void AsValueReadOnlyCollection_Array_NewInstanceReturned()
+    {
+        int[] array = { 1, 2, 3 };
 
-            IValueReadOnlyCollection<int> valueCollection = array.AsValueReadOnlyCollection();
+        IValueReadOnlyCollection<int> valueCollection = array.AsValueReadOnlyCollection();
 
-            valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
-            valueCollection.ToArray().Should().BeEquivalentTo(array);
-        }
+        valueCollection.Should().BeOfType<ValueReadOnlyCollection<int>>();
+        valueCollection.ToArray().Should().BeEquivalentTo(array);
+    }
 
-        [Fact]
-        public void AsValueReadOnlyCollection_ValueCollection_SameInstanceReturned()
-        {
-            IReadOnlyCollection<int> collection = new List<int> { 1, 2, 3, 4 }.AsValueReadOnlyCollection();
+    [Fact]
+    public void AsValueReadOnlyCollection_ValueCollection_SameInstanceReturned()
+    {
+        IReadOnlyCollection<int> collection = new List<int> { 1, 2, 3, 4 }.AsValueReadOnlyCollection();
 
-            IValueReadOnlyCollection<int> valueCollection = collection.AsValueReadOnlyCollection();
+        IValueReadOnlyCollection<int> valueCollection = collection.AsValueReadOnlyCollection();
 
-            valueCollection.Should().BeSameAs(collection);
-        }
+        valueCollection.Should().BeSameAs(collection);
     }
 }

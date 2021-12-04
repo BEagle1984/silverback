@@ -6,54 +6,53 @@ using System.IO;
 using System.Reflection;
 using Confluent.Kafka;
 
-namespace Silverback.Tools.KafkaConfigClassGenerator
+namespace Silverback.Tools.KafkaConfigClassGenerator;
+
+internal static class Program
 {
-    internal static class Program
+    private static void Main()
     {
-        private static void Main()
-        {
-            var assembly = Assembly.GetAssembly(typeof(ClientConfig));
+        Assembly? assembly = Assembly.GetAssembly(typeof(ClientConfig));
 
-            if (assembly == null)
-                throw new InvalidOperationException("Couldn't load ClientConfig assembly.");
+        if (assembly == null)
+            throw new InvalidOperationException("Couldn't load ClientConfig assembly.");
 
-            var xmlDocumentationPath = Path.Combine(
-                Path.GetDirectoryName(assembly.Location)!,
-                "Confluent.Kafka.xml");
+        string xmlDocumentationPath = Path.Combine(
+            Path.GetDirectoryName(assembly.Location)!,
+            "Confluent.Kafka.xml");
 
-            Console.Write(
-                new ProxyClassGenerator(
-                        typeof(ClientConfig),
-                        "ConfluentClientConfigProxy",
-                        null,
-                        null,
-                        xmlDocumentationPath,
-                        false)
-                    .Generate());
+        Console.Write(
+            new ProxyClassGenerator(
+                    typeof(ClientConfig),
+                    "ConfluentClientConfigProxy",
+                    null,
+                    null,
+                    xmlDocumentationPath,
+                    false)
+                .Generate());
 
-            Console.WriteLine();
+        Console.WriteLine();
 
-            Console.Write(
-                new ProxyClassGenerator(
-                        typeof(ConsumerConfig),
-                        "ConfluentConsumerConfigProxy",
-                        "ConfluentClientConfigProxy",
-                        "Confluent.Kafka.ConsumerConfig",
-                        xmlDocumentationPath,
-                        false)
-                    .Generate());
+        Console.Write(
+            new ProxyClassGenerator(
+                    typeof(ConsumerConfig),
+                    "ConfluentConsumerConfigProxy",
+                    "ConfluentClientConfigProxy",
+                    "Confluent.Kafka.ConsumerConfig",
+                    xmlDocumentationPath,
+                    false)
+                .Generate());
 
-            Console.WriteLine();
+        Console.WriteLine();
 
-            Console.Write(
-                new ProxyClassGenerator(
-                        typeof(ProducerConfig),
-                        "ConfluentProducerConfigProxy",
-                        "ConfluentClientConfigProxy",
-                        "Confluent.Kafka.ProducerConfig",
-                        xmlDocumentationPath,
-                        false)
-                    .Generate());
-        }
+        Console.Write(
+            new ProxyClassGenerator(
+                    typeof(ProducerConfig),
+                    "ConfluentProducerConfigProxy",
+                    "ConfluentClientConfigProxy",
+                    "Confluent.Kafka.ProducerConfig",
+                    xmlDocumentationPath,
+                    false)
+                .Generate());
     }
 }

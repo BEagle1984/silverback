@@ -3,25 +3,24 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Tests.Logging
+namespace Silverback.Tests.Logging;
+
+public sealed class FakeLoggerFactory : ILoggerFactory
 {
-    public sealed class FakeLoggerFactory : ILoggerFactory
+    public FakeLoggerFactory(LogLevel minLevel = LogLevel.Information)
     {
-        public FakeLoggerFactory(LogLevel minLevel = LogLevel.Information)
-        {
-            MinLevel = minLevel;
-        }
+        MinLevel = minLevel;
+    }
 
-        public LogLevel MinLevel { get; }
+    public LogLevel MinLevel { get; }
 
-        public ILogger CreateLogger(string categoryName) => new FakeLogger(this);
+    public ILogger CreateLogger(string categoryName) => new FakeLogger(this);
 
-        public void AddProvider(ILoggerProvider provider)
-        {
-        }
+    public void AddProvider(ILoggerProvider provider)
+    {
+    }
 
-        public void Dispose()
-        {
-        }
+    public void Dispose()
+    {
     }
 }

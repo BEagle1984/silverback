@@ -3,30 +3,29 @@
 
 using Silverback.Util;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+internal sealed class PushedMessage
 {
-    internal sealed class PushedMessage
+    public PushedMessage(int id, object? message, object? originalMessage = null)
     {
-        public PushedMessage(int id, object? message, object? originalMessage = null)
-        {
-            Id = id;
-            Message = Check.NotNull(message, nameof(message));
-            OriginalMessage = originalMessage ?? Message;
-        }
-
-        /// <summary>
-        ///     Gets the message identifier. The identifier is unique for a given stream.
-        /// </summary>
-        public int Id { get; }
-
-        /// <summary>
-        ///     Gets the message that is being enumerated.
-        /// </summary>
-        public object Message { get; }
-
-        /// <summary>
-        ///     Gets the original, unwrapped, untransformed message.
-        /// </summary>
-        public object OriginalMessage { get; }
+        Id = id;
+        Message = Check.NotNull(message, nameof(message));
+        OriginalMessage = originalMessage ?? Message;
     }
+
+    /// <summary>
+    ///     Gets the message identifier. The identifier is unique for a given stream.
+    /// </summary>
+    public int Id { get; }
+
+    /// <summary>
+    ///     Gets the message that is being enumerated.
+    /// </summary>
+    public object Message { get; }
+
+    /// <summary>
+    ///     Gets the original, unwrapped, untransformed message.
+    /// </summary>
+    public object OriginalMessage { get; }
 }

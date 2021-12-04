@@ -63,7 +63,7 @@ public class SubscribedMethod
     public IReadOnlyList<ParameterInfo> Parameters { get; }
 
     /// <summary>
-    ///     Gets the <see cref="SubscriptionOptions"/>.
+    ///     Gets the <see cref="SubscriptionOptions" />.
     /// </summary>
     public SubscriptionOptions Options { get; }
 
@@ -92,9 +92,9 @@ public class SubscribedMethod
     ///     The <see cref="IServiceProvider" /> to be used to resolve the type or the necessary services.
     /// </param>
     /// <returns>
-    ///     The target type .
+    ///     The target type.
     /// </returns>
-    public object ResolveTargetType(IServiceProvider serviceProvider) => _targetTypeFactory(serviceProvider);
+    public object ResolveTargetType(IServiceProvider serviceProvider) => _targetTypeFactory.Invoke(serviceProvider);
 
     internal SubscribedMethod EnsureInitialized(IServiceProvider serviceProvider)
     {

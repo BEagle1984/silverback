@@ -7,31 +7,30 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silverback.Diagnostics;
 using Silverback.Util;
 
-namespace Silverback.Configuration
+namespace Silverback.Configuration;
+
+/// <content>
+///     Adds the WithLogLevels methods to the <see cref="SilverbackBuilder" />.
+/// </content>
+public partial class SilverbackBuilder
 {
-    /// <content>
-    ///     Adds the WithLogLevels methods to the <see cref="SilverbackBuilder" />.
-    /// </content>
-    public partial class SilverbackBuilder
+    /// <summary>
+    ///     Configures the log levels that should be used to log the standard Silverback events.
+    /// </summary>
+    /// <param name="logLevelsConfigurationAction">
+    ///     The log levels configuration action.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public SilverbackBuilder WithLogLevels(Action<LogLevelConfigurator> logLevelsConfigurationAction)
     {
-        /// <summary>
-        ///     Configures the log levels that should be used to log the standard Silverback events.
-        /// </summary>
-        /// <param name="logLevelsConfigurationAction">
-        ///     The log levels configuration action.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public SilverbackBuilder WithLogLevels(Action<LogLevelConfigurator> logLevelsConfigurationAction)
-        {
-            Check.NotNull(logLevelsConfigurationAction, nameof(logLevelsConfigurationAction));
+        Check.NotNull(logLevelsConfigurationAction, nameof(logLevelsConfigurationAction));
 
-            LogLevelConfigurator configurator = new();
-            logLevelsConfigurationAction.Invoke(configurator);
-            Services.Replace(ServiceDescriptor.Singleton(configurator.LogLevelDictionary));
+        LogLevelConfigurator configurator = new();
+        logLevelsConfigurationAction.Invoke(configurator);
+        Services.Replace(ServiceDescriptor.Singleton(configurator.LogLevelDictionary));
 
-            return this;
-        }
+        return this;
     }
 }

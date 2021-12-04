@@ -24,6 +24,6 @@ public abstract record ConsumerEndpoint<TConfiguration> : ConsumerEndpoint
         Configuration = Check.NotNull(configuration, nameof(configuration));
     }
 
-    /// <inheritdoc cref="ConsumerEndpoint.Configuration"/>
+    /// <inheritdoc cref="ConsumerEndpoint.Configuration" />
     public new TConfiguration Configuration { get; }
 }

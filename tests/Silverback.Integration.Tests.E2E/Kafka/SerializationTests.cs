@@ -5,148 +5,144 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.Kafka
+namespace Silverback.Tests.Integration.E2E.Kafka;
+
+public class SerializationTests : KafkaTestFixture
 {
-    public class SerializationTests : KafkaTestFixture
+    public SerializationTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
     {
-        public SerializationTests(ITestOutputHelper testOutputHelper)
-            : base(testOutputHelper)
-        {
-        }
+    }
 
-        [Fact]
-        public async Task JsonSerializer_WithHardcodedMessageType_ProducedAndConsumed()
-        {
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    producer => producer
-                                        .ProduceTo(DefaultTopicName)
-                                        .SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound<TestEventOne>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
+    [Fact]
+    public async Task JsonSerializer_WithHardcodedMessageType_ProducedAndConsumed()
+    {
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    .SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>()))
+                            .AddInbound<TestEventOne>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
 
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(new TestEventOne());
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        }
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+    }
 
-        [Fact]
-        public async Task NewtonsoftSerializer_DefaultSettings_ProducedAndConsumed()
-        {
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    producer => producer
-                                        .ProduceTo(DefaultTopicName)
-                                        .SerializeAsJsonUsingNewtonsoft())
-                                .AddInbound(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJsonUsingNewtonsoft()
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
-                        .AddIntegrationSpy())
-                .Run();
+    [Fact]
+    public async Task NewtonsoftSerializer_DefaultSettings_ProducedAndConsumed()
+    {
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://tests";
+                                })
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    .SerializeAsJsonUsingNewtonsoft())
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .DeserializeJsonUsingNewtonsoft()
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })))
+                    .AddIntegrationSpy())
+            .Run();
 
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-            Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
-        }
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+        Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+    }
 
-        [Fact]
-        public async Task NewtonsoftSerializer_WithHardcodedMessageType_ProducedAndConsumed()
-        {
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    producer => producer
-                                        .ProduceTo(DefaultTopicName)
-                                        .SerializeAsJsonUsingNewtonsoft(serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound<TestEventOne>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .DeserializeJsonUsingNewtonsoft()))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
+    [Fact]
+    public async Task NewtonsoftSerializer_WithHardcodedMessageType_ProducedAndConsumed()
+    {
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    .SerializeAsJsonUsingNewtonsoft(serializer => serializer.UseFixedType<TestEventOne>()))
+                            .AddInbound<TestEventOne>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .DeserializeJsonUsingNewtonsoft()))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
 
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(new TestEventOne());
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(new TestEventOne());
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-        }
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
     }
 }

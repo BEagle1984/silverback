@@ -3,26 +3,25 @@
 
 using System.Collections.Generic;
 
-namespace Silverback.Messaging.Broker.Behaviors
+namespace Silverback.Messaging.Broker.Behaviors;
+
+/// <summary>
+///     Provides the <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> and
+///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> and
+///     <see cref="IConsumer" /> pipeline.
+/// </summary>
+/// <typeparam name="TBehavior">
+///     The type of the behaviors to be provided, either <see cref="IProducerBehavior" /> or
+///     <see cref="IConsumerBehavior" />.
+/// </typeparam>
+public interface IBrokerBehaviorsProvider<out TBehavior>
+    where TBehavior : IBrokerBehavior
 {
     /// <summary>
-    ///     Provides the <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> and
-    ///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> and
+    ///     Creates a new <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> or
+    ///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> or
     ///     <see cref="IConsumer" /> pipeline.
     /// </summary>
-    /// <typeparam name="TBehavior">
-    ///     The type of the behaviors to be provided, either <see cref="IProducerBehavior" /> or
-    ///     <see cref="IConsumerBehavior" />.
-    /// </typeparam>
-    public interface IBrokerBehaviorsProvider<out TBehavior>
-        where TBehavior : IBrokerBehavior
-    {
-        /// <summary>
-        ///     Creates a new <see cref="IReadOnlyList{T}" /> of <see cref="IProducerBehavior" /> or
-        ///     <see cref="IConsumerBehavior" /> to be used in the <see cref="IProducer" /> or
-        ///     <see cref="IConsumer" /> pipeline.
-        /// </summary>
-        /// <returns>The ready-to-use <see cref="Stack{T}" /> of <typeparamref name="TBehavior" />.</returns>
-        IReadOnlyList<TBehavior> GetBehaviorsList();
-    }
+    /// <returns>The ready-to-use <see cref="Stack{T}" /> of <typeparamref name="TBehavior" />.</returns>
+    IReadOnlyList<TBehavior> GetBehaviorsList();
 }

@@ -3,9 +3,8 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.TestTypes.Messages.Base
+namespace Silverback.Tests.Core.TestTypes.Messages.Base;
+
+public interface ICommand : IMessage
 {
-    public interface ICommand : IMessage
-    {
-    }
 }

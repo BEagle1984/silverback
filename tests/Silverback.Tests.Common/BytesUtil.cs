@@ -3,28 +3,21 @@
 
 using System;
 using System.IO;
-using System.Linq;
 
-namespace Silverback.Tests
+namespace Silverback.Tests;
+
+public static class BytesUtil
 {
-    public static class BytesUtil
+    public static Stream GetRandomStream(int? length = null) => new MemoryStream(GetRandomBytes(length));
+
+    public static byte[] GetRandomBytes(int? length = null)
     {
-        public static Stream GetRandomStream(int? length = null) => new MemoryStream(GetRandomBytes(length));
+        Random random = new();
+        length ??= random.Next(10, 50);
 
-        public static byte[] GetRandomBytes(int? length = null)
-        {
-            Random random = new();
-            length ??= random.Next(10, 50);
+        byte[] bytes = new byte[length.Value];
+        random.NextBytes(bytes);
 
-            byte[] bytes = new byte[length.Value];
-            random.NextBytes(bytes);
-
-            return bytes;
-        }
-
-
-
-
-        //        public static byte[] GetSequentialBytes(int start, int count) => Enumerable.Range(start, count).Select(Convert.ToByte).ToArray();
+        return bytes;
     }
 }

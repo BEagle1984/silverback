@@ -1,14 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
+namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
+
+public enum Priority
 {
-    public enum Priority
-    {
-        Low,
+    Low,
 
-        Normal,
+    Normal,
 
-        High
-    }
+    High
 }

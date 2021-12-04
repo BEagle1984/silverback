@@ -43,6 +43,7 @@ uid: releases
   * IOutboundQueueHealthCheckService to IOutboxHealthCheckService
   * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
   * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
+  * Broker -> BrokerBase
 
 ### Deprecation Notice
 

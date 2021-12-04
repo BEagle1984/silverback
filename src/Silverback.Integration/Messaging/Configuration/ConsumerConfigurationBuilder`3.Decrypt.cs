@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <content>
-///     Adds the Decrypt methods to the <see cref="ConsumerConfigurationBuilder{TMessage,TConfiguration,TBuilder}" />
+///     Adds the Decrypt methods to the <see cref="ConsumerConfigurationBuilder{TMessage,TConfiguration,TBuilder}" />.
 /// </content>
 public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {

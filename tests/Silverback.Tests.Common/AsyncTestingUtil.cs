@@ -4,33 +4,32 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Silverback.Tests
+namespace Silverback.Tests;
+
+public static class AsyncTestingUtil
 {
-    public static class AsyncTestingUtil
+    private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(5);
+
+    public static Task WaitAsync(Func<bool> breakCondition, TimeSpan? timeout = null) =>
+        WaitAsync(() => Task.FromResult(breakCondition()), timeout);
+
+    public static async Task WaitAsync(Func<Task<bool>> breakCondition, TimeSpan? timeout = null)
     {
-        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(5);
+        timeout ??= TimeSpan.FromSeconds(2);
 
-        public static Task WaitAsync(Func<bool> breakCondition, TimeSpan? timeout = null) =>
-            WaitAsync(() => Task.FromResult(breakCondition()), timeout);
-
-        public static async Task WaitAsync(Func<Task<bool>> breakCondition, TimeSpan? timeout = null)
+        for (double i = 0; i < timeout.Value.TotalMilliseconds; i += Interval.TotalMilliseconds)
         {
-            timeout ??= TimeSpan.FromSeconds(2);
-
-            for (double i = 0; i < timeout.Value.TotalMilliseconds; i += Interval.TotalMilliseconds)
+            try
             {
-                try
-                {
-                    if (await breakCondition())
-                        break;
-                }
-                catch (Exception)
-                {
-                    // Ignore
-                }
-
-                await Task.Delay(Interval);
+                if (await breakCondition())
+                    break;
             }
+            catch (Exception)
+            {
+                // Ignore
+            }
+
+            await Task.Delay(Interval);
         }
     }
 }

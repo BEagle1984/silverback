@@ -15,123 +15,122 @@ using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker;
+
+public class MqttClientWrapperTests
 {
-    public class MqttClientWrapperTests
+    // TODO: How to implement?
+    [Fact(Skip = "To be reimplemented")]
+    public Task ConnectAsync_CalledFromMultipleSenders_ClientConnectedOnce()
     {
-        // TODO: How to implement?
-        [Fact(Skip = "To be reimplemented")]
-        public Task ConnectAsync_CalledFromMultipleSenders_ClientConnectedOnce()
-        {
-            throw new NotImplementedException();
+        throw new NotImplementedException();
 
-            // var sender1 = new object();
-            // var sender2 = new object();
-            // var mqttClientConfig = new MqttClientConfig();
-            //
-            // var mqttClient = Substitute.For<IMqttClient>();
-            // mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-            //     .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
-            //
-            // var clientWrapper = new MqttClientWrapper(
-            //     mqttClient,
-            //     mqttClientConfig,
-            //     Substitute.For<IBrokerCallbacksInvoker>(),
-            //     Substitute.For<ISilverbackLogger>());
-            //
-            // var task1 = clientWrapper.ConnectAsync(sender1);
-            // var task2 = clientWrapper.ConnectAsync(sender2);
-            //
-            // task2.Should().BeSameAs(task1);
-            //
-            // await task1;
-            //
-            // await mqttClient.Received(1).ConnectAsync(
-            //     Arg.Any<IMqttClientOptions>(),
-            //     Arg.Any<CancellationToken>());
-            // await mqttClient.Received(1).ConnectAsync(
-            //     mqttClientConfig.GetMqttClientOptions(),
-            //     Arg.Any<CancellationToken>());
-        }
+        // var sender1 = new object();
+        // var sender2 = new object();
+        // var mqttClientConfig = new MqttClientConfig();
+        //
+        // var mqttClient = Substitute.For<IMqttClient>();
+        // mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
+        //     .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+        //
+        // var clientWrapper = new MqttClientWrapper(
+        //     mqttClient,
+        //     mqttClientConfig,
+        //     Substitute.For<IBrokerCallbacksInvoker>(),
+        //     Substitute.For<ISilverbackLogger>());
+        //
+        // var task1 = clientWrapper.ConnectAsync(sender1);
+        // var task2 = clientWrapper.ConnectAsync(sender2);
+        //
+        // task2.Should().BeSameAs(task1);
+        //
+        // await task1;
+        //
+        // await mqttClient.Received(1).ConnectAsync(
+        //     Arg.Any<IMqttClientOptions>(),
+        //     Arg.Any<CancellationToken>());
+        // await mqttClient.Received(1).ConnectAsync(
+        //     mqttClientConfig.GetMqttClientOptions(),
+        //     Arg.Any<CancellationToken>());
+    }
 
-        // TODO: How to implement?
-        [Fact(Skip = "To be reimplemented")]
-        public Task ConnectAsync_CalledWhenAlreadyConnected_ClientConnectNotCalled()
-        {
-            throw new NotImplementedException();
+    // TODO: How to implement?
+    [Fact(Skip = "To be reimplemented")]
+    public Task ConnectAsync_CalledWhenAlreadyConnected_ClientConnectNotCalled()
+    {
+        throw new NotImplementedException();
 
-            // var mqttClient = Substitute.For<IMqttClient>();
-            // mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-            //     .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
-            // mqttClient.IsConnected.Returns(true);
-            //
-            // var clientWrapper = new MqttClientWrapper(
-            //     mqttClient,
-            //     new MqttClientConfig(),
-            //     Substitute.For<ILogger>());
-            //
-            // await clientWrapper.ConnectAsync(new object());
-            //
-            // await mqttClient.Received(0).ConnectAsync(
-            //     Arg.Any<IMqttClientOptions>(),
-            //     Arg.Any<CancellationToken>());
-        }
+        // var mqttClient = Substitute.For<IMqttClient>();
+        // mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
+        //     .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+        // mqttClient.IsConnected.Returns(true);
+        //
+        // var clientWrapper = new MqttClientWrapper(
+        //     mqttClient,
+        //     new MqttClientConfig(),
+        //     Substitute.For<ILogger>());
+        //
+        // await clientWrapper.ConnectAsync(new object());
+        //
+        // await mqttClient.Received(0).ConnectAsync(
+        //     Arg.Any<IMqttClientOptions>(),
+        //     Arg.Any<CancellationToken>());
+    }
 
-        [Fact]
-        public async Task
-            DisconnectAsync_CalledFromMultipleSenders_ClientDisconnectedWhenAllSendersDisconnect()
-        {
-            var sender1 = new object();
-            var sender2 = new object();
-            var mqttClientConfig = new MqttClientConfiguration();
+    [Fact]
+    public async Task
+        DisconnectAsync_CalledFromMultipleSenders_ClientDisconnectedWhenAllSendersDisconnect()
+    {
+        object sender1 = new();
+        object sender2 = new();
+        MqttClientConfiguration mqttClientConfig = new();
 
-            var mqttClient = Substitute.For<IMqttClient>();
-            mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+        IMqttClient? mqttClient = Substitute.For<IMqttClient>();
+        mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
+            .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
 
-            var clientWrapper = new MqttClientWrapper(
-                mqttClient,
-                mqttClientConfig,
-                Substitute.For<IBrokerCallbacksInvoker>(),
-                Substitute.For<ISilverbackLogger>());
+        MqttClientWrapper clientWrapper = new(
+            mqttClient,
+            mqttClientConfig,
+            Substitute.For<IBrokerCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
 
-            await clientWrapper.ConnectAsync(sender1);
-            await clientWrapper.ConnectAsync(sender2);
+        await clientWrapper.ConnectAsync(sender1);
+        await clientWrapper.ConnectAsync(sender2);
 
-            mqttClient.IsConnected.Returns(true);
+        mqttClient.IsConnected.Returns(true);
 
-            await clientWrapper.DisconnectAsync(sender1);
+        await clientWrapper.DisconnectAsync(sender1);
 
-            await mqttClient.Received(0).DisconnectAsync(
-                Arg.Any<MqttClientDisconnectOptions>(),
-                Arg.Any<CancellationToken>());
+        await mqttClient.Received(0).DisconnectAsync(
+            Arg.Any<MqttClientDisconnectOptions>(),
+            Arg.Any<CancellationToken>());
 
-            await clientWrapper.DisconnectAsync(sender2);
+        await clientWrapper.DisconnectAsync(sender2);
 
-            await mqttClient.Received(1).DisconnectAsync(
-                Arg.Any<MqttClientDisconnectOptions>(),
-                Arg.Any<CancellationToken>());
-        }
+        await mqttClient.Received(1).DisconnectAsync(
+            Arg.Any<MqttClientDisconnectOptions>(),
+            Arg.Any<CancellationToken>());
+    }
 
-        [Fact]
-        public async Task DisconnectAsync_CalledWhenNotConnected_ClientDisconnectNotCalled()
-        {
-            var mqttClient = Substitute.For<IMqttClient>();
-            mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
-            mqttClient.IsConnected.Returns(false);
+    [Fact]
+    public async Task DisconnectAsync_CalledWhenNotConnected_ClientDisconnectNotCalled()
+    {
+        IMqttClient? mqttClient = Substitute.For<IMqttClient>();
+        mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
+            .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+        mqttClient.IsConnected.Returns(false);
 
-            var clientWrapper = new MqttClientWrapper(
-                mqttClient,
-                new MqttClientConfiguration(),
-                Substitute.For<IBrokerCallbacksInvoker>(),
-                Substitute.For<ISilverbackLogger>());
+        MqttClientWrapper clientWrapper = new(
+            mqttClient,
+            new MqttClientConfiguration(),
+            Substitute.For<IBrokerCallbacksInvoker>(),
+            Substitute.For<ISilverbackLogger>());
 
-            await clientWrapper.DisconnectAsync(new object());
+        await clientWrapper.DisconnectAsync(new object());
 
-            await mqttClient.Received(0).DisconnectAsync(
-                Arg.Any<MqttClientDisconnectOptions>(),
-                Arg.Any<CancellationToken>());
-        }
+        await mqttClient.Received(0).DisconnectAsync(
+            Arg.Any<MqttClientDisconnectOptions>(),
+            Arg.Any<CancellationToken>());
     }
 }

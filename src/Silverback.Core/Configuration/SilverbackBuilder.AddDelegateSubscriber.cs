@@ -51,9 +51,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber<TMessage>(
-        Action<TMessage> handler,
-        SubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Action<TMessage> handler, SubscriptionOptions? options = null) =>
         AddDelegateSubscriber((Delegate)handler, options);
 
     /// <summary>
@@ -71,9 +69,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber<TMessage>(
-        Func<TMessage, Task> handler,
-        SubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Func<TMessage, Task> handler, SubscriptionOptions? options = null) =>
         AddDelegateSubscriber((Delegate)handler, options);
 
     /// <summary>
@@ -131,9 +127,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber<TMessage>(
-        Action<IEnumerable<TMessage>> handler,
-        SubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Action<IEnumerable<TMessage>> handler, SubscriptionOptions? options = null) =>
         AddDelegateSubscriber((Delegate)handler, options);
 
     /// <summary>

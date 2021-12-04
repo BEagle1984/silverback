@@ -121,7 +121,8 @@ internal sealed class ConsumeLoopHandler : IDisposable
         CancellationToken cancellationToken)
     {
         // Clear the current activity to ensure we don't propagate the previous traceId
-            Activity.Current = null;_logger.LogConsumerLowLevelTrace(
+        Activity.Current = null;
+        _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",
             () => new object[]

@@ -9,65 +9,64 @@ using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class TaskExtensionsTests
 {
-    public class TaskExtensionsTests
+    [Fact]
+    public async Task CancelOnException_TasksWithoutReturnValue_CanceledAtFirstException()
     {
-        [Fact]
-        public async Task CancelOnException_TasksWithoutReturnValue_CanceledAtFirstException()
+        bool success = false;
+
+        using CancellationTokenSource cts = new();
+
+        Task task1 = SuccessTask(cts.Token);
+        Task task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
+
+        Func<Task> act = () => Task.WhenAll(task1, task2);
+
+        await act.Should().ThrowAsync<TestException>();
+        success.Should().BeFalse();
+
+        async Task SuccessTask(CancellationToken cancellationToken)
         {
-            bool success = false;
-
-            using var cts = new CancellationTokenSource();
-
-            var task1 = SuccessTask(cts.Token);
-            var task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
-
-            Func<Task> act = () => Task.WhenAll(task1, task2);
-
-            await act.Should().ThrowAsync<TestException>();
-            success.Should().BeFalse();
-
-            async Task SuccessTask(CancellationToken cancellationToken)
-            {
-                await Task.Delay(5000, cancellationToken);
-                success = true;
-            }
-
-            static async Task FailingTask(CancellationToken cancellationToken)
-            {
-                await Task.Delay(100, cancellationToken);
-                throw new TestException();
-            }
+            await Task.Delay(5000, cancellationToken);
+            success = true;
         }
 
-        [Fact]
-        public async Task CancelOnException_TasksWithReturnValue_CanceledAtFirstException()
+        static async Task FailingTask(CancellationToken cancellationToken)
         {
-            bool success = false;
+            await Task.Delay(100, cancellationToken);
+            throw new TestException();
+        }
+    }
 
-            using var cts = new CancellationTokenSource();
+    [Fact]
+    public async Task CancelOnException_TasksWithReturnValue_CanceledAtFirstException()
+    {
+        bool success = false;
 
-            var task1 = SuccessTask(cts.Token);
-            var task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
+        using CancellationTokenSource cts = new();
 
-            Func<Task> act = () => Task.WhenAll(task1, task2);
+        Task<int> task1 = SuccessTask(cts.Token);
+        Task<int> task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
 
-            await act.Should().ThrowAsync<TestException>();
-            success.Should().BeFalse();
+        Func<Task> act = () => Task.WhenAll(task1, task2);
 
-            async Task<int> SuccessTask(CancellationToken cancellationToken)
-            {
-                await Task.Delay(5000, cancellationToken);
-                success = true;
-                return 1;
-            }
+        await act.Should().ThrowAsync<TestException>();
+        success.Should().BeFalse();
 
-            static async Task<int> FailingTask(CancellationToken cancellationToken)
-            {
-                await Task.Delay(100, cancellationToken);
-                throw new TestException();
-            }
+        async Task<int> SuccessTask(CancellationToken cancellationToken)
+        {
+            await Task.Delay(5000, cancellationToken);
+            success = true;
+            return 1;
+        }
+
+        static async Task<int> FailingTask(CancellationToken cancellationToken)
+        {
+            await Task.Delay(100, cancellationToken);
+            throw new TestException();
         }
     }
 }

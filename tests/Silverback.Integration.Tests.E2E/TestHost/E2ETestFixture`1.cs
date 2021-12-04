@@ -8,36 +8,35 @@ using Silverback.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.TestHost
+namespace Silverback.Tests.Integration.E2E.TestHost;
+
+[Trait("Category", "E2E")]
+public abstract class E2ETestFixture<THelper> : IDisposable
+    where THelper : ITestingHelper<IBroker>
 {
-    [Trait("Category", "E2E")]
-    public abstract class E2ETestFixture<THelper> : IDisposable
-        where THelper : ITestingHelper<IBroker>
+    private THelper? _testingHelper;
+
+    protected E2ETestFixture(ITestOutputHelper testOutputHelper)
     {
-        private THelper? _testingHelper;
+        Host = new TestApplicationHost<THelper>().WithTestOutputHelper(testOutputHelper);
+    }
 
-        protected E2ETestFixture(ITestOutputHelper testOutputHelper)
-        {
-            Host = new TestApplicationHost<THelper>().WithTestOutputHelper(testOutputHelper);
-        }
+    protected TestApplicationHost<THelper> Host { get; }
 
-        protected TestApplicationHost<THelper> Host { get; }
+    protected THelper Helper =>
+        _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();
 
-        protected THelper Helper =>
-            _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposing)
+            return;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-                return;
-
-            Host.Dispose();
-        }
+        Host.Dispose();
     }
 }

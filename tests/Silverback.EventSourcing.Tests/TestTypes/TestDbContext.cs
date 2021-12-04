@@ -3,15 +3,14 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Silverback.Tests.EventSourcing.TestTypes
-{
-    public class TestDbContext : DbContext
-    {
-        public TestDbContext(DbContextOptions options)
-            : base(options)
-        {
-        }
+namespace Silverback.Tests.EventSourcing.TestTypes;
 
-        public DbSet<PersonEventStore> Persons { get; set; } = null!;
+public class TestDbContext : DbContext
+{
+    public TestDbContext(DbContextOptions options)
+        : base(options)
+    {
     }
+
+    public DbSet<PersonEventStore> Persons { get; set; } = null!;
 }

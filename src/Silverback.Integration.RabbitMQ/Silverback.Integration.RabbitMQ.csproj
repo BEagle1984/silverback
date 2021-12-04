@@ -12,8 +12,7 @@
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
-    <Description>$(Description)
-This package contains an implementation of Silverback.Integration for the popular RabbitMQ message broker.</Description>
+    <Description>$(Description) This package contains an implementation of Silverback.Integration for the popular RabbitMQ message broker.</Description>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
@@ -22,19 +21,11 @@ This package contains an implementation of Silverback.Integration for the popula
     <Product>Silverback.Integration.RabbitMQ</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.RabbitMQ.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-      <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.2"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
   </ItemGroup>
 </Project>

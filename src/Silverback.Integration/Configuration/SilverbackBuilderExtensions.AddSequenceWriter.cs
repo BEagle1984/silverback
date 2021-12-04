@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
@@ -165,4 +164,3 @@ public static partial class SilverbackBuilderExtensions
         return builder;
     }
 }
-

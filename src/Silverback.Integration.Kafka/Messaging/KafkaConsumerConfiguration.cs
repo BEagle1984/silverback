@@ -141,9 +141,7 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
 
         ValidateTopicPartitions();
 
-
         // TODO: TO BE REFINED to include other cases where the GroupId is needed
-
         if (!IsStaticAssignment && string.IsNullOrEmpty(Client.GroupId))
             throw new EndpointConfigurationException("GroupId must be specified when the partitions are assigned dynamically.");
 

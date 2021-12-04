@@ -6,143 +6,138 @@ using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
 
-namespace Silverback.Messaging.Broker.Kafka
+namespace Silverback.Messaging.Broker.Kafka;
+
+/// <summary>
+///     Wraps the <see cref="Confluent.Kafka.ConsumerBuilder{TKey,TValue}" />.
+/// </summary>
+public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
 {
-    /// <summary>
-    ///     Wraps the <see cref="Confluent.Kafka.ConsumerBuilder{TKey,TValue}" />.
-    /// </summary>
-    public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
+    private ConsumerConfig? _config;
+
+    private Action<IConsumer<byte[]?, byte[]?>, string>? _statisticsHandler;
+
+    private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
+
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
+        _partitionsAssignedHandler;
+
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
+        _partitionsRevokedHandlerFunc;
+
+    private Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>?
+        _partitionsRevokedHandlerAction;
+
+    private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
+
+    private Action<IConsumer<byte[]?, byte[]?>, LogMessage>? _logHandler;
+
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />
+    public IConfluentConsumerBuilder SetConfig(ConsumerConfig config)
     {
-        private ConsumerConfig? _config;
+        _config = config;
+        return this;
+    }
 
-        private Action<IConsumer<byte[]?, byte[]?>, string>? _statisticsHandler;
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetStatisticsHandler" />
+    public IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
+    {
+        _statisticsHandler = statisticsHandler;
+        return this;
+    }
 
-        private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
+    public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
+    {
+        _errorHandler = errorHandler;
+        return this;
+    }
 
-        private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
-            _partitionsAssignedHandler;
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartition},IEnumerable{TopicPartitionOffset}})" />
+    public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
+        Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+            partitionsAssignedHandler)
+    {
+        _partitionsAssignedHandler = partitionsAssignedHandler;
+        return this;
+    }
 
-        private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
-            _partitionsRevokedHandlerFunc;
-
-        private Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>?
-            _partitionsRevokedHandlerAction;
-
-        private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
-
-        private Action<IConsumer<byte[]?, byte[]?>, LogMessage>? _logHandler;
-
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />
-        public IConfluentConsumerBuilder SetConfig(ConsumerConfig config)
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartition}})" />
+    public IConfluentConsumerBuilder SetPartitionsAssignedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
+    {
+        _partitionsAssignedHandler = (consumer, partitions) =>
         {
-            _config = config;
-            return this;
-        }
+            partitionsAssignedHandler(consumer, partitions);
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetStatisticsHandler" />
-        public IConfluentConsumerBuilder SetStatisticsHandler(
-            Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
-        {
-            _statisticsHandler = statisticsHandler;
-            return this;
-        }
+            return partitions
+                .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))
+                .ToList();
+        };
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
-        public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
-        {
-            _errorHandler = errorHandler;
-            return this;
-        }
+        return this;
+    }
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartition},IEnumerable{TopicPartitionOffset}})" />
-        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
-            Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>
-                partitionsAssignedHandler)
-        {
-            _partitionsAssignedHandler = partitionsAssignedHandler;
-            return this;
-        }
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartitionOffset},IEnumerable{TopicPartitionOffset}})" />
+    public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
+        Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
+            partitionsRevokedHandler)
+    {
+        _partitionsRevokedHandlerFunc = partitionsRevokedHandler;
+        _partitionsRevokedHandlerAction = null;
+        return this;
+    }
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartition}})" />
-        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
-        {
-            _partitionsAssignedHandler = (consumer, partitions) =>
-            {
-                partitionsAssignedHandler(consumer, partitions);
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartitionOffset}})" />
+    public IConfluentConsumerBuilder SetPartitionsRevokedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
+    {
+        _partitionsRevokedHandlerAction = (consumer, partitions) => partitionsRevokedHandler(consumer, partitions);
+        _partitionsRevokedHandlerFunc = null;
 
-                return partitions
-                    .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))
-                    .ToList();
-            };
+        return this;
+    }
 
-            return this;
-        }
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetOffsetsCommittedHandler" />
+    public IConfluentConsumerBuilder SetOffsetsCommittedHandler(Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
+    {
+        _offsetsCommittedHandler = offsetsCommittedHandler;
+        return this;
+    }
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartitionOffset},IEnumerable{TopicPartitionOffset}})" />
-        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
-            Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
-                partitionsRevokedHandler)
-        {
-            _partitionsRevokedHandlerFunc = partitionsRevokedHandler;
-            _partitionsRevokedHandlerAction = null;
-            return this;
-        }
+    /// <inheritdoc cref="IConfluentConsumerBuilder.SetLogHandler" />
+    public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler)
+    {
+        _logHandler = logHandler;
+        return this;
+    }
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartitionOffset}})" />
-        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
-        {
-            _partitionsRevokedHandlerAction = (consumer, partitions) => partitionsRevokedHandler(consumer, partitions);
-            _partitionsRevokedHandlerFunc = null;
+    /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
+    public IConsumer<byte[]?, byte[]?> Build()
+    {
+        if (_config == null)
+            throw new InvalidOperationException("SetConfig must be called to provide the consumer configuration.");
 
-            return this;
-        }
+        ConsumerBuilder<byte[]?, byte[]?> builder = new(_config);
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetOffsetsCommittedHandler" />
-        public IConfluentConsumerBuilder SetOffsetsCommittedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
-        {
-            _offsetsCommittedHandler = offsetsCommittedHandler;
-            return this;
-        }
+        if (_statisticsHandler != null)
+            builder.SetStatisticsHandler(_statisticsHandler);
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.SetLogHandler" />
-        public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler)
-        {
-            _logHandler = logHandler;
-            return this;
-        }
+        if (_errorHandler != null)
+            builder.SetErrorHandler(_errorHandler);
 
-        /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
-        public IConsumer<byte[]?, byte[]?> Build()
-        {
-            if (_config == null)
-                throw new InvalidOperationException("SetConfig must be called to provide the consumer configuration.");
+        if (_partitionsAssignedHandler != null)
+            builder.SetPartitionsAssignedHandler(_partitionsAssignedHandler);
 
-            var builder = new ConsumerBuilder<byte[]?, byte[]?>(_config);
+        if (_partitionsRevokedHandlerFunc != null)
+            builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerFunc);
+        else if (_partitionsRevokedHandlerAction != null)
+            builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerAction);
 
-            if (_statisticsHandler != null)
-                builder.SetStatisticsHandler(_statisticsHandler);
+        if (_offsetsCommittedHandler != null)
+            builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);
 
-            if (_errorHandler != null)
-                builder.SetErrorHandler(_errorHandler);
+        if (_logHandler != null)
+            builder.SetLogHandler(_logHandler);
 
-            if (_partitionsAssignedHandler != null)
-                builder.SetPartitionsAssignedHandler(_partitionsAssignedHandler);
-
-            if (_partitionsRevokedHandlerFunc != null)
-                builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerFunc);
-            else if (_partitionsRevokedHandlerAction != null)
-                builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerAction);
-
-            if (_offsetsCommittedHandler != null)
-                builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);
-
-            if (_logHandler != null)
-                builder.SetLogHandler(_logHandler);
-
-            return builder.Build();
-        }
+        return builder.Build();
     }
 }

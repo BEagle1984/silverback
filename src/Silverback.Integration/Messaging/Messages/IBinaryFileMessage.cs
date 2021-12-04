@@ -3,16 +3,15 @@
 
 using System.IO;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     A binary file that is being transferred over the message broker.
+/// </summary>
+public interface IBinaryFileMessage
 {
     /// <summary>
-    ///     A binary file that is being transferred over the message broker.
+    ///     Gets or sets the binary content.
     /// </summary>
-    public interface IBinaryFileMessage
-    {
-        /// <summary>
-        ///     Gets or sets the binary content.
-        /// </summary>
-        Stream? Content { get; set; }
-    }
+    Stream? Content { get; set; }
 }

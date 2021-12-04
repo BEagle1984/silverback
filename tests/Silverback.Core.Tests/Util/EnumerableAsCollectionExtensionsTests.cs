@@ -8,89 +8,88 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+[SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Test methods")]
+public class EnumerableAsCollectionExtensionsTests
 {
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Test methods")]
-    public class EnumerableAsCollectionExtensionsTests
+    [Fact]
+    public void AsReadOnlyCollection_Enumerable_NewInstanceReturned()
     {
-        [Fact]
-        public void AsReadOnlyCollection_Enumerable_NewInstanceReturned()
-        {
-            var enumerable = Enumerable.Range(1, 10);
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
 
-            var collection = enumerable.AsReadOnlyCollection();
+        IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
-            collection.Should().NotBeSameAs(enumerable);
-        }
+        collection.Should().NotBeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsReadOnlyCollection_Collection_SameInstanceReturned()
-        {
-            var enumerable = new List<int> { 1, 2, 3, 4 };
+    [Fact]
+    public void AsReadOnlyCollection_Collection_SameInstanceReturned()
+    {
+        List<int> enumerable = new() { 1, 2, 3, 4 };
 
-            var collection = enumerable.AsReadOnlyCollection();
+        IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
-            collection.Should().BeSameAs(enumerable);
-        }
+        collection.Should().BeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsReadOnlyList_Enumerable_NewInstanceReturned()
-        {
-            var enumerable = Enumerable.Range(1, 10);
+    [Fact]
+    public void AsReadOnlyList_Enumerable_NewInstanceReturned()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
 
-            var collection = enumerable.AsReadOnlyList();
+        IReadOnlyList<int> collection = enumerable.AsReadOnlyList();
 
-            collection.Should().NotBeSameAs(enumerable);
-        }
+        collection.Should().NotBeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsReadOnlyList_Collection_SameInstanceReturned()
-        {
-            var enumerable = new[] { 1, 2, 3, 4 };
+    [Fact]
+    public void AsReadOnlyList_Collection_SameInstanceReturned()
+    {
+        int[] enumerable = { 1, 2, 3, 4 };
 
-            var collection = enumerable.AsReadOnlyList();
+        IReadOnlyList<int> collection = enumerable.AsReadOnlyList();
 
-            collection.Should().BeSameAs(enumerable);
-        }
+        collection.Should().BeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsList_Enumerable_NewInstanceReturned()
-        {
-            var enumerable = Enumerable.Range(1, 10);
+    [Fact]
+    public void AsList_Enumerable_NewInstanceReturned()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
 
-            var collection = enumerable.AsList();
+        List<int> collection = enumerable.AsList();
 
-            collection.Should().NotBeSameAs(enumerable);
-        }
+        collection.Should().NotBeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsList_List_SameInstanceReturned()
-        {
-            var enumerable = new List<int> { 1, 2, 3, 4 };
+    [Fact]
+    public void AsList_List_SameInstanceReturned()
+    {
+        List<int> enumerable = new() { 1, 2, 3, 4 };
 
-            var collection = enumerable.AsList();
+        List<int> collection = enumerable.AsList();
 
-            collection.Should().BeSameAs(enumerable);
-        }
+        collection.Should().BeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsArray_Enumerable_NewInstanceReturned()
-        {
-            var enumerable = Enumerable.Range(1, 10);
+    [Fact]
+    public void AsArray_Enumerable_NewInstanceReturned()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
 
-            var collection = enumerable.AsArray();
+        int[] collection = enumerable.AsArray();
 
-            collection.Should().NotBeSameAs(enumerable);
-        }
+        collection.Should().NotBeSameAs(enumerable);
+    }
 
-        [Fact]
-        public void AsArray_Array_SameInstanceReturned()
-        {
-            var enumerable = new[] { 1, 2, 3, 4 };
+    [Fact]
+    public void AsArray_Array_SameInstanceReturned()
+    {
+        int[] enumerable = { 1, 2, 3, 4 };
 
-            var collection = enumerable.AsArray();
+        int[] collection = enumerable.AsArray();
 
-            collection.Should().BeSameAs(enumerable);
-        }
+        collection.Should().BeSameAs(enumerable);
     }
 }

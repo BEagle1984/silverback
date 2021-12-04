@@ -4,25 +4,24 @@
 using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.HealthChecks
+namespace Silverback.Messaging.HealthChecks;
+
+/// <summary>
+///     The message that is periodically produced by the <see cref="ProducersHealthCheckService" />
+///     to verify that the endpoints are reachable.
+/// </summary>
+public class PingMessage : IMessage
 {
     /// <summary>
-    ///     The message that is periodically produced by the <see cref="ProducersHealthCheckService" />
-    ///     to verify that the endpoints are reachable.
+    ///     Gets or sets the datetime at which the message has been produced.
     /// </summary>
-    public class PingMessage : IMessage
-    {
-        /// <summary>
-        ///     Gets or sets the datetime at which the message has been produced.
-        /// </summary>
-        public DateTime TimeStamp { get; set; }
+    public DateTime TimeStamp { get; set; }
 
-        /// <summary>
-        ///     Creates a new instance of the <see cref="PingMessage" />.
-        /// </summary>
-        /// <returns>
-        ///     The new <see cref="PingMessage" />.
-        /// </returns>
-        public static PingMessage New() => new() { TimeStamp = DateTime.UtcNow };
-    }
+    /// <summary>
+    ///     Creates a new instance of the <see cref="PingMessage" />.
+    /// </summary>
+    /// <returns>
+    ///     The new <see cref="PingMessage" />.
+    /// </returns>
+    public static PingMessage New() => new() { TimeStamp = DateTime.UtcNow };
 }

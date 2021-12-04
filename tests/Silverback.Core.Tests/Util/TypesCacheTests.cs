@@ -7,60 +7,59 @@ using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class TypesCacheTests
 {
-    public class TypesCacheTests
+    [Fact]
+    public void GetType_ExistingType_TypeReturned()
     {
-        [Fact]
-        public void GetType_ExistingType_TypeReturned()
-        {
-            var typeName = typeof(TestEventOne).AssemblyQualifiedName!;
+        string typeName = typeof(TestEventOne).AssemblyQualifiedName!;
 
-            var type = TypesCache.GetType(typeName);
+        Type type = TypesCache.GetType(typeName);
 
-            type.Should().Be(typeof(TestEventOne));
-        }
+        type.Should().Be(typeof(TestEventOne));
+    }
 
-        [Fact]
-        public void GetType_WrongAssemblyVersion_TypeReturned()
-        {
-            var typeName =
-                "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, " +
-                "Silverback.Core.Tests, Version=123.123.123.123";
+    [Fact]
+    public void GetType_WrongAssemblyVersion_TypeReturned()
+    {
+        string typeName =
+            "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, " +
+            "Silverback.Core.Tests, Version=123.123.123.123";
 
-            var type = TypesCache.GetType(typeName);
+        Type type = TypesCache.GetType(typeName);
 
-            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
-        }
+        type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+    }
 
-        [Fact]
-        public void GetType_NonExistingType_ExceptionThrown()
-        {
-            var typeName = "Baaaad.Event, Silverback.Core.Tests";
+    [Fact]
+    public void GetType_NonExistingType_ExceptionThrown()
+    {
+        string typeName = "Baaaad.Event, Silverback.Core.Tests";
 
-            Action act = () => TypesCache.GetType(typeName);
+        Action act = () => TypesCache.GetType(typeName);
 
-            act.Should().Throw<TypeLoadException>();
-        }
+        act.Should().Throw<TypeLoadException>();
+    }
 
-        [Fact]
-        public void GetType_NonExistingTypeWithNoThrow_NullReturned()
-        {
-            var typeName = "Baaaad.Event, Silverback.Core.Tests";
+    [Fact]
+    public void GetType_NonExistingTypeWithNoThrow_NullReturned()
+    {
+        string typeName = "Baaaad.Event, Silverback.Core.Tests";
 
-            var type = TypesCache.GetType(typeName, false);
+        Type? type = TypesCache.GetType(typeName, false);
 
-            type.Should().BeNull();
-        }
+        type.Should().BeNull();
+    }
 
-        [Fact]
-        public void GetType_IncompleteTypeName_TypeReturned()
-        {
-            var typeName = "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, Silverback.Core.Tests";
+    [Fact]
+    public void GetType_IncompleteTypeName_TypeReturned()
+    {
+        string typeName = "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, Silverback.Core.Tests";
 
-            var type = TypesCache.GetType(typeName);
+        Type type = TypesCache.GetType(typeName);
 
-            type.Should().Be(typeof(TestEventOne));
-        }
+        type.Should().Be(typeof(TestEventOne));
     }
 }

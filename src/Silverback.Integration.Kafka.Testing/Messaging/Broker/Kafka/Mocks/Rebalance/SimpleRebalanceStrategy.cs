@@ -6,58 +6,57 @@ using System.Linq;
 using Confluent.Kafka;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance
+namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance;
+
+internal class SimpleRebalanceStrategy : IRebalanceStrategy
 {
-    internal class SimpleRebalanceStrategy : IRebalanceStrategy
+    public RebalanceResult Rebalance(
+        IReadOnlyList<TopicPartition> partitionsToAssign,
+        IReadOnlyList<SubscriptionPartitionAssignment> partitionAssignments)
     {
-        public RebalanceResult Rebalance(
-            IReadOnlyList<TopicPartition> partitionsToAssign,
-            IReadOnlyList<SubscriptionPartitionAssignment> partitionAssignments)
+        Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>> revokedPartitions = new();
+
+        foreach (SubscriptionPartitionAssignment assignment in partitionAssignments)
         {
-            var revokedPartitions = new Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>>();
+            if (assignment.Partitions.Count > 0)
+                revokedPartitions[assignment.Consumer] = assignment.Partitions.ToList(); // Clone via ToList
 
-            foreach (var assignment in partitionAssignments)
-            {
-                if (assignment.Partitions.Count > 0)
-                    revokedPartitions[assignment.Consumer] = assignment.Partitions.ToList(); // Clone via ToList
-
-                assignment.Partitions.Clear();
-            }
-
-            IEnumerable<IGrouping<string, TopicPartition>> partitionsByTopic =
-                partitionsToAssign.GroupBy(topicPartition => topicPartition.Topic);
-
-            foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
-            {
-                List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = partitionAssignments
-                    .Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key)).ToList();
-
-                AssignTopicPartitions(topicPartitions, partitionAssignmentsForTopic);
-            }
-
-            var assignedPartitions =
-                partitionAssignments
-                    .Where(assignment => assignment.Partitions.Count > 0)
-                    .ToDictionary(
-                        assignment => assignment.Consumer,
-                        assignment => assignment.Partitions.AsReadOnlyCollection());
-
-            return new RebalanceResult(assignedPartitions, revokedPartitions);
+            assignment.Partitions.Clear();
         }
 
-        private static void AssignTopicPartitions(
-            IEnumerable<TopicPartition> topicPartitions,
-            IReadOnlyList<PartitionAssignment> partitionAssignments)
+        IEnumerable<IGrouping<string, TopicPartition>> partitionsByTopic =
+            partitionsToAssign.GroupBy(topicPartition => topicPartition.Topic);
+
+        foreach (IGrouping<string, TopicPartition> topicPartitions in partitionsByTopic)
         {
-            int index = -1;
+            List<SubscriptionPartitionAssignment> partitionAssignmentsForTopic = partitionAssignments
+                .Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key)).ToList();
 
-            foreach (var topicPartition in topicPartitions)
-            {
-                if (++index >= partitionAssignments.Count)
-                    index = 0;
+            AssignTopicPartitions(topicPartitions, partitionAssignmentsForTopic);
+        }
 
-                partitionAssignments[index].Partitions.Add(topicPartition);
-            }
+        Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>> assignedPartitions =
+            partitionAssignments
+                .Where(assignment => assignment.Partitions.Count > 0)
+                .ToDictionary(
+                    assignment => assignment.Consumer,
+                    assignment => assignment.Partitions.AsReadOnlyCollection());
+
+        return new RebalanceResult(assignedPartitions, revokedPartitions);
+    }
+
+    private static void AssignTopicPartitions(
+        IEnumerable<TopicPartition> topicPartitions,
+        IReadOnlyList<PartitionAssignment> partitionAssignments)
+    {
+        int index = -1;
+
+        foreach (TopicPartition topicPartition in topicPartitions)
+        {
+            if (++index >= partitionAssignments.Count)
+                index = 0;
+
+            partitionAssignments[index].Partitions.Add(topicPartition);
         }
     }
 }

@@ -21,7 +21,7 @@ internal sealed class ArgumentsResolversRepository
 
     public (IMessageArgumentResolver Resolver, Type MessageType) GetMessageArgumentResolver(SubscribedMethod method)
     {
-        ParameterInfo? parameterInfo = method.Parameters[0];
+        ParameterInfo parameterInfo = method.Parameters[0];
         IMessageArgumentResolver resolver = GetMessageArgumentResolver(parameterInfo, method.MethodInfo);
 
         return (resolver, resolver.GetMessageType(parameterInfo.ParameterType));

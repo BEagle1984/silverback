@@ -78,8 +78,8 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
         TestConsumerConfigurationBuilder<object> builder = new();
 
         TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-            serializer => serializer
-                .WithEncoding(MessageEncoding.Unicode))
+                serializer => serializer
+                    .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
         configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();

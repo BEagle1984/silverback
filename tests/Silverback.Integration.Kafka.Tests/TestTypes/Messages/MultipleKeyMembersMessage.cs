@@ -4,18 +4,17 @@
 using System;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages
+namespace Silverback.Tests.Integration.Kafka.TestTypes.Messages;
+
+public class MultipleKeyMembersMessage : IMessage
 {
-    public class MultipleKeyMembersMessage : IMessage
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        [KafkaKeyMember]
-        public string? One { get; set; }
+    [KafkaKeyMember]
+    public string? One { get; set; }
 
-        [KafkaKeyMember]
-        public string? Two { get; set; }
+    [KafkaKeyMember]
+    public string? Two { get; set; }
 
-        public string? Three { get; set; }
-    }
+    public string? Three { get; set; }
 }

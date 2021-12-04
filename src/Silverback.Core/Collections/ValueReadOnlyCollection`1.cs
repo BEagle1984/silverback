@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Util;
 
@@ -30,9 +31,10 @@ public class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatabl
     /// <summary>
     ///     Gets a static instance of the <see cref="ValueReadOnlyCollection{T}" /> wrapping an empty array.
     /// </summary>
+    [SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "OK to have an instance per actual type")]
     public static ValueReadOnlyCollection<T> Empty { get; } = new(Array.Empty<T>());
 
-    /// <inheritdoc cref="IValueReadOnlyCollection{T}.Count" />
+    /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
     public int Count => _collection.Count;
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
@@ -56,7 +58,7 @@ public class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatabl
         return !enumerator2.MoveNext();
     }
 
-    /// <inheritdoc cref="IValueReadOnlyCollection{T}.GetEnumerator" />
+    /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
     public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
 
     /// <inheritdoc cref="object.Equals(object)" />

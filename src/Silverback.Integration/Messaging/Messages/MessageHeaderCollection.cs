@@ -4,8 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
@@ -244,7 +242,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     public bool Contains(string name) => _list.Contains(name);
 
     /// <summary>
-    ///         Checks whether an header with the specified name exists and returns its value.
+    ///     Checks whether an header with the specified name exists and returns its value.
     /// </summary>
     /// <param name="name">
     ///     The name of the header to be retrieved.

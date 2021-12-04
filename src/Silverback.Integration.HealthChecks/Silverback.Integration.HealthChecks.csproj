@@ -6,8 +6,7 @@
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package contains the extensions for Microsoft.Extensions.Diagnostics.HealthChecks to monitor the connection to the message broker.</Description>
+    <Description>$(Description) This package contains the extensions for Microsoft.Extensions.Diagnostics.HealthChecks to monitor the connection to the message broker.</Description>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
@@ -23,19 +22,11 @@ This package contains the extensions for Microsoft.Extensions.Diagnostics.Health
     <Product>Silverback.Integration.HealthChecks</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.HealthChecks.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.HealthChecks.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
   </ItemGroup>
 </Project>

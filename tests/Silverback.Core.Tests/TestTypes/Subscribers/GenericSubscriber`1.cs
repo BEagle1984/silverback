@@ -4,16 +4,15 @@
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Tests.Core.TestTypes.Subscribers
-{
-    public abstract class GenericSubscriber<TMessage>
-    {
-        public int ReceivedMessagesCount { get; private set; }
+namespace Silverback.Tests.Core.TestTypes.Subscribers;
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        protected void OnMessageReceived(TMessage message) => ReceivedMessagesCount++;
-    }
+public abstract class GenericSubscriber<TMessage>
+{
+    public int ReceivedMessagesCount { get; private set; }
+
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+    protected void OnMessageReceived(TMessage message) => ReceivedMessagesCount++;
 }

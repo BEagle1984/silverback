@@ -4,18 +4,17 @@
 using System;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Messages
-{
-    internal static class MessageIdProvider
-    {
-        public static void EnsureMessageIdIsInitialized(MessageHeaderCollection headers)
-        {
-            Check.NotNull(headers, nameof(headers));
+namespace Silverback.Messaging.Messages;
 
-            if (!headers.Contains(DefaultMessageHeaders.MessageId))
-            {
-                headers.Add(DefaultMessageHeaders.MessageId, Guid.NewGuid().ToString());
-            }
+internal static class MessageIdProvider
+{
+    public static void EnsureMessageIdIsInitialized(MessageHeaderCollection headers)
+    {
+        Check.NotNull(headers, nameof(headers));
+
+        if (!headers.Contains(DefaultMessageHeaders.MessageId))
+        {
+            headers.Add(DefaultMessageHeaders.MessageId, Guid.NewGuid().ToString());
         }
     }
 }

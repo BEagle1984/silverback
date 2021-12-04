@@ -5,62 +5,61 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class TypesCache
 {
-    internal static class TypesCache
+    private static readonly ConcurrentDictionary<string, Type?> Cache = new();
+
+    public static Type GetType(string typeName) => GetType(typeName, true)!;
+
+    public static Type? GetType(string typeName, bool throwOnError)
     {
-        private static readonly ConcurrentDictionary<string, Type?> Cache = new();
+        Check.NotNull(typeName, nameof(typeName));
 
-        public static Type GetType(string typeName) => GetType(typeName, true)!;
+        Type? type = Cache.GetOrAdd(
+            typeName,
+            static (factoryTypeName, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
+            throwOnError);
 
-        public static Type? GetType(string typeName, bool throwOnError)
+        if (throwOnError && type == null)
         {
-            Check.NotNull(typeName, nameof(typeName));
-
-            Type? type = Cache.GetOrAdd(
+            type = Cache.AddOrUpdate(
                 typeName,
                 static (factoryTypeName, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
+                static (factoryTypeName, _, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
                 throwOnError);
-
-            if (throwOnError && type == null)
-            {
-                type = Cache.AddOrUpdate(
-                    typeName,
-                    static (factoryTypeName, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
-                    static (factoryTypeName, _, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
-                    throwOnError);
-            }
-
-            return type;
         }
 
-        [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
-        private static Type? ResolveType(string typeName, bool throwOnError)
+        return type;
+    }
+
+    [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
+    private static Type? ResolveType(string typeName, bool throwOnError)
+    {
+        Type? type = null;
+
+        try
         {
-            Type? type = null;
-
-            try
-            {
-                type = Type.GetType(typeName);
-            }
-            catch
-            {
-                // Ignored
-            }
-
-            type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), throwOnError);
-
-            return type;
+            type = Type.GetType(typeName);
         }
-
-        private static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
+        catch
         {
-            if (string.IsNullOrEmpty(typeAssemblyQualifiedName))
-                return typeAssemblyQualifiedName;
-
-            string[]? split = typeAssemblyQualifiedName.Split(',');
-
-            return split.Length >= 2 ? $"{split[0]}, {split[1]}" : typeAssemblyQualifiedName;
+            // Ignored
         }
+
+        type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), throwOnError);
+
+        return type;
+    }
+
+    private static string CleanAssemblyQualifiedName(string typeAssemblyQualifiedName)
+    {
+        if (string.IsNullOrEmpty(typeAssemblyQualifiedName))
+            return typeAssemblyQualifiedName;
+
+        string[] split = typeAssemblyQualifiedName.Split(',');
+
+        return split.Length >= 2 ? $"{split[0]}, {split[1]}" : typeAssemblyQualifiedName;
     }
 }

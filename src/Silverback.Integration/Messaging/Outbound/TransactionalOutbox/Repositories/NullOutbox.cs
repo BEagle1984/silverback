@@ -7,38 +7,37 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 
-namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+
+internal sealed class NullOutbox : IOutboxReader, IOutboxWriter
 {
-    internal sealed class NullOutbox : IOutboxReader, IOutboxWriter
-    {
-        public Task<int> GetLengthAsync() => Task.FromResult(0);
+    public Task<int> GetLengthAsync() => Task.FromResult(0);
 
-        public Task<TimeSpan> GetMaxAgeAsync() => Task.FromResult(TimeSpan.Zero);
+    public Task<TimeSpan> GetMaxAgeAsync() => Task.FromResult(TimeSpan.Zero);
 
-        public Task<IReadOnlyCollection<OutboxStoredMessage>> ReadAsync(int count) =>
-            Task.FromResult<IReadOnlyCollection<OutboxStoredMessage>>(Array.Empty<OutboxStoredMessage>());
+    public Task<IReadOnlyCollection<OutboxStoredMessage>> ReadAsync(int count) =>
+        Task.FromResult<IReadOnlyCollection<OutboxStoredMessage>>(Array.Empty<OutboxStoredMessage>());
 
-        public Task AcknowledgeAsync(OutboxStoredMessage outboxMessage) => Task.CompletedTask;
+    public Task AcknowledgeAsync(OutboxStoredMessage outboxMessage) => Task.CompletedTask;
 
-        public Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
-            throw new NotSupportedException();
+    public Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
+        throw new NotSupportedException();
 
-        public Task RetryAsync(OutboxStoredMessage outboxMessage) => throw new NotSupportedException();
+    public Task RetryAsync(OutboxStoredMessage outboxMessage) => throw new NotSupportedException();
 
-        public Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
-            throw new NotSupportedException();
+    public Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
+        throw new NotSupportedException();
 
-        public Task WriteAsync(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string endpointRawName,
-            string? endpointFriendlyName,
-            byte[]? endpoint) =>
-            throw new NotSupportedException();
+    public Task WriteAsync(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        string endpointRawName,
+        string? endpointFriendlyName,
+        byte[]? endpoint) =>
+        throw new NotSupportedException();
 
-        public Task CommitAsync() => Task.CompletedTask;
+    public Task CommitAsync() => Task.CompletedTask;
 
-        public Task RollbackAsync() => Task.CompletedTask;
-    }
+    public Task RollbackAsync() => Task.CompletedTask;
 }

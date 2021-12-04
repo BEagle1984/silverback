@@ -7,14 +7,12 @@ using Confluent.Kafka;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Kafka
+namespace Silverback.Tests.Integration.E2E.TestTypes.Kafka;
+
+public class ResetOffsetPartitionsAssignedCallbackHandler : IKafkaPartitionsAssignedCallback
 {
-    public class ResetOffsetPartitionsAssignedCallbackHandler : IKafkaPartitionsAssignedCallback
-    {
-        public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
-            IReadOnlyCollection<TopicPartition> topicPartitions,
-            KafkaConsumer consumer) =>
-            topicPartitions.Select(
-                topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
-    }
+    public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
+        IReadOnlyCollection<TopicPartition> topicPartitions,
+        KafkaConsumer consumer) =>
+        topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
 }

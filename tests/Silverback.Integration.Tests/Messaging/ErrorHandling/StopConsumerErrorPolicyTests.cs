@@ -17,81 +17,80 @@ using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.ErrorHandling
+namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
+
+public class StopConsumerErrorPolicyTests
 {
-    public class StopConsumerErrorPolicyTests
+    // ReSharper disable once NotAccessedField.Local
+    private readonly ServiceProvider _serviceProvider;
+
+    public StopConsumerErrorPolicyTests()
     {
-        // ReSharper disable once NotAccessedField.Local
-        private readonly ServiceProvider _serviceProvider;
+        ServiceCollection services = new();
 
-        public StopConsumerErrorPolicyTests()
-        {
-            var services = new ServiceCollection();
+        services
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
-            services
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+        _serviceProvider = services.BuildServiceProvider();
+    }
 
-            _serviceProvider = services.BuildServiceProvider();
-        }
+    [Fact]
+    public void CanHandle_Whatever_TrueReturned()
+    {
+        IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            new TestOffset(),
+            TestConsumerEndpoint.GetDefault());
 
-        [Fact]
-        public void CanHandle_Whatever_TrueReturned()
-        {
-            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(),
-                null,
-                new TestOffset(),
-                TestConsumerEndpoint.GetDefault());
+        bool canHandle = policy.CanHandle(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            new InvalidOperationException("test"));
 
-            var canHandle = policy.CanHandle(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                new InvalidOperationException("test"));
+        canHandle.Should().BeTrue();
+    }
 
-            canHandle.Should().BeTrue();
-        }
+    [Fact]
+    public async Task HandleErrorAsync_Whatever_FalseReturned()
+    {
+        IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            new TestOffset(),
+            TestConsumerEndpoint.GetDefault());
 
-        [Fact]
-        public async Task HandleErrorAsync_Whatever_FalseReturned()
-        {
-            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(),
-                null,
-                new TestOffset(),
-                TestConsumerEndpoint.GetDefault());
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            new InvalidOperationException("test"));
 
-            var result = await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                new InvalidOperationException("test"));
+        result.Should().BeFalse();
+    }
 
-            result.Should().BeFalse();
-        }
+    [Fact]
+    public async Task HandleErrorAsync_Whatever_TransactionNotCommittedNorAborted()
+    {
+        /* The consumer will be stopped and the transaction aborted by the consumer/behavior */
 
-        [Fact]
-        public async Task HandleErrorAsync_Whatever_TransactionNotCommittedNorAborted()
-        {
-            /* The consumer will be stopped and the transaction aborted by the consumer/behavior */
+        IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            null,
+            new TestOffset(),
+            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
 
-            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
-                null,
-                new TestOffset(),
-                new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
+        IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
 
-            var transactionManager = Substitute.For<IConsumerTransactionManager>();
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
+            new InvalidOperationException("test"));
 
-            await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
-                new InvalidOperationException("test"));
-
-            await transactionManager.ReceivedWithAnyArgs(0).RollbackAsync(Arg.Any<InvalidOperationException>());
-        }
+        await transactionManager.ReceivedWithAnyArgs(0).RollbackAsync(Arg.Any<InvalidOperationException>());
     }
 }

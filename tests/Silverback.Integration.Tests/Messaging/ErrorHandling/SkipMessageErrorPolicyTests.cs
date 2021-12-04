@@ -17,78 +17,77 @@ using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.ErrorHandling
+namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
+
+public class SkipMessageErrorPolicyTests
 {
-    public class SkipMessageErrorPolicyTests
+    private readonly ServiceProvider _serviceProvider;
+
+    public SkipMessageErrorPolicyTests()
     {
-        private readonly ServiceProvider _serviceProvider;
+        ServiceCollection services = new();
 
-        public SkipMessageErrorPolicyTests()
-        {
-            var services = new ServiceCollection();
+        services
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
-            services
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+        _serviceProvider = services.BuildServiceProvider();
+    }
 
-            _serviceProvider = services.BuildServiceProvider();
-        }
+    [Fact]
+    public void CanHandle_Whatever_TrueReturned()
+    {
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            new TestOffset(),
+            TestConsumerEndpoint.GetDefault());
 
-        [Fact]
-        public void CanHandle_Whatever_TrueReturned()
-        {
-            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(),
-                null,
-                new TestOffset(),
-                TestConsumerEndpoint.GetDefault());
+        bool canHandle = policy.CanHandle(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            new InvalidOperationException("test"));
 
-            var canHandle = policy.CanHandle(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                new InvalidOperationException("test"));
+        canHandle.Should().BeTrue();
+    }
 
-            canHandle.Should().BeTrue();
-        }
+    [Fact]
+    public async Task HandleErrorAsync_Whatever_TrueReturned()
+    {
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(),
+            null,
+            new TestOffset(),
+            TestConsumerEndpoint.GetDefault());
 
-        [Fact]
-        public async Task HandleErrorAsync_Whatever_TrueReturned()
-        {
-            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(),
-                null,
-                new TestOffset(),
-                TestConsumerEndpoint.GetDefault());
+        bool result = await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            new InvalidOperationException("test"));
 
-            var result = await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                new InvalidOperationException("test"));
+        result.Should().BeTrue();
+    }
 
-            result.Should().BeTrue();
-        }
+    [Fact]
+    public async Task HandleError_Whatever_ConsumerCommittedButTransactionAborted()
+    {
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
+        InboundEnvelope envelope = new(
+            "hey oh!",
+            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            null,
+            new TestOffset(),
+            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
 
-        [Fact]
-        public async Task HandleError_Whatever_ConsumerCommittedButTransactionAborted()
-        {
-            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
-                null,
-                new TestOffset(),
-                new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
+        IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
 
-            var transactionManager = Substitute.For<IConsumerTransactionManager>();
+        await policy.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
+            new InvalidOperationException("test"));
 
-            await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
-                new InvalidOperationException("test"));
-
-            await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
-        }
+        await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
     }
 }

@@ -32,7 +32,7 @@ public static class MessageHeaderEnumerableExtensions
         headers.Any(header => header.Name == name);
 
     /// <summary>
-    ///         Checks whether an header with the specified name exists and returns its value.
+    ///     Checks whether an header with the specified name exists and returns its value.
     /// </summary>
     /// <param name="headers">
     ///     The enumerable containing the headers to be searched.

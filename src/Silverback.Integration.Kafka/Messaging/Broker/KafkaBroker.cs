@@ -62,7 +62,7 @@ public class KafkaBroker : Broker<KafkaProducerConfiguration, KafkaConsumerConfi
         return (KafkaProducer)GetProducer(builder.Build());
     }
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateProducer" />
     protected override IProducer InstantiateProducer(
         KafkaProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
@@ -76,7 +76,7 @@ public class KafkaBroker : Broker<KafkaProducerConfiguration, KafkaConsumerConfi
             serviceProvider,
             serviceProvider.GetRequiredService<IOutboundLogger<KafkaProducer>>());
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateConsumer" />
     protected override IConsumer InstantiateConsumer(
         KafkaConsumerConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,

@@ -6,8 +6,7 @@
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package contains the message broker and connectors abstractions.</Description>
+    <Description>$(Description) This package contains the message broker and connectors abstractions.</Description>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
@@ -21,14 +20,6 @@ This package contains the message broker and connectors abstractions.</Descripti
     <Copyright>$(Copyright)</Copyright>
     <PackageId>Silverback.Integration</PackageId>
     <Product>Silverback.Integration</Product>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

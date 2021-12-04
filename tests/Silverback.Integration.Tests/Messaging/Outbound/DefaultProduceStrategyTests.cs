@@ -6,26 +6,25 @@ using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound
+namespace Silverback.Tests.Integration.Messaging.Outbound;
+
+public class DefaultProduceStrategyTests
 {
-    public class DefaultProduceStrategyTests
+    [Fact]
+    public void Equals_SameType_ReturnsTrue()
     {
-        [Fact]
-        public void Equals_SameType_ReturnsTrue()
-        {
-            DefaultProduceStrategy strategy = new();
-            DefaultProduceStrategy otherStrategy = new();
+        DefaultProduceStrategy strategy = new();
+        DefaultProduceStrategy otherStrategy = new();
 
-            strategy.Equals(otherStrategy).Should().BeTrue();
-        }
+        strategy.Equals(otherStrategy).Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_DifferentType_ReturnsFalse()
-        {
-            DefaultProduceStrategy strategy = new();
-            OutboxProduceStrategy otherStrategy = new();
+    [Fact]
+    public void Equals_DifferentType_ReturnsFalse()
+    {
+        DefaultProduceStrategy strategy = new();
+        OutboxProduceStrategy otherStrategy = new();
 
-            strategy.Equals(otherStrategy).Should().BeFalse();
-        }
+        strategy.Equals(otherStrategy).Should().BeFalse();
     }
 }

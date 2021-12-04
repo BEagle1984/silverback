@@ -48,7 +48,7 @@ public static class SilverbackBuilderUseMockedKafkaExtensions
             .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
             .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 
-        MockedKafkaOptionsBuilder optionsBuilder = new MockedKafkaOptionsBuilder(builder.Services);
+        MockedKafkaOptionsBuilder optionsBuilder = new(builder.Services);
         optionsAction?.Invoke(optionsBuilder);
 
         return builder;

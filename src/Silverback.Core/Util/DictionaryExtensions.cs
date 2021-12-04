@@ -4,25 +4,26 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class DictionaryExtensions
 {
-    internal static class DictionaryExtensions
+    public static TValue GetOrAdd<TKey, TValue>(
+        this Dictionary<TKey, TValue> dictionary,
+        TKey key,
+        Func<TKey, TValue> factory)
+        where TKey : notnull
     {
-        public static TValue GetOrAdd<TKey, TValue>(
-            this Dictionary<TKey, TValue> dictionary,
-            TKey key,
-            Func<TKey, TValue> factory)
-        {
-            if (dictionary.TryGetValue(key, out TValue? value))
-                return value;
+        if (dictionary.TryGetValue(key, out TValue? value))
+            return value;
 
-            return dictionary[key] = factory(key);
-        }
-
-        public static TValue GetOrAddDefault<TKey, TValue>(
-            this Dictionary<TKey, TValue> dictionary,
-            TKey key)
-            where TValue : new() =>
-            dictionary.GetOrAdd(key, _ => new TValue());
+        return dictionary[key] = factory(key);
     }
+
+    public static TValue GetOrAddDefault<TKey, TValue>(
+        this Dictionary<TKey, TValue> dictionary,
+        TKey key)
+        where TKey : notnull
+        where TValue : new() =>
+        dictionary.GetOrAdd(key, _ => new TValue());
 }

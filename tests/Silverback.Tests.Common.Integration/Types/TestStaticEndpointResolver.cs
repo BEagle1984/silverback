@@ -1,24 +1,21 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using Silverback.Messaging;
 using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Util;
 
-namespace Silverback.Tests.Types
+namespace Silverback.Tests.Types;
+
+public sealed class TestStaticEndpointResolver : StaticProducerEndpointResolver<TestProducerEndpoint, TestProducerConfiguration>
 {
-    public sealed class TestStaticEndpointResolver : StaticProducerEndpointResolver<TestProducerEndpoint, TestProducerConfiguration>
+    public TestStaticEndpointResolver(string topic)
+        : base(Check.NotEmpty(topic, nameof(topic)))
     {
-        public TestStaticEndpointResolver(string topic)
-            : base(Check.NotEmpty(topic, nameof(topic)))
-        {
-            Topic = topic;
-        }
-
-        public string Topic { get; }
-
-        protected override TestProducerEndpoint GetEndpointCore(TestProducerConfiguration configuration) =>
-            new(Topic, configuration);
+        Topic = topic;
     }
+
+    public string Topic { get; }
+
+    protected override TestProducerEndpoint GetEndpointCore(TestProducerConfiguration configuration) =>
+        new(Topic, configuration);
 }

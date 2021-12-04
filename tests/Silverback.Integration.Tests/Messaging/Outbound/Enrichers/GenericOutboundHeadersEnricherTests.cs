@@ -8,109 +8,108 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
+namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers;
+
+public class GenericOutboundHeadersEnricherTests
 {
-    public class GenericOutboundHeadersEnricherTests
+    [Fact]
+    public void Enrich_StaticValues_HeaderAdded()
     {
-        [Fact]
-        public void Enrich_StaticValues_HeaderAdded()
-        {
-            var envelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                null,
-                TestProducerEndpoint.GetDefault());
+        OutboundEnvelope<TestEventOne> envelope = new(
+            new TestEventOne(),
+            null,
+            TestProducerEndpoint.GetDefault());
 
-            var enricher = new GenericOutboundHeadersEnricher("x-test", "value");
+        GenericOutboundHeadersEnricher enricher = new("x-test", "value");
 
-            enricher.Enrich(envelope);
+        enricher.Enrich(envelope);
 
-            envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
-        }
+        envelope.Headers.Should().HaveCount(1);
+        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
+    }
 
-        [Fact]
-        public void Enrich_StaticValues_HeaderReplaced()
-        {
-            var envelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                new MessageHeaderCollection
-                {
-                    { "x-test", "old-value" }
-                },
-                TestProducerEndpoint.GetDefault());
+    [Fact]
+    public void Enrich_StaticValues_HeaderReplaced()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            new TestEventOne(),
+            new MessageHeaderCollection
+            {
+                { "x-test", "old-value" }
+            },
+            TestProducerEndpoint.GetDefault());
 
-            var enricher = new GenericOutboundHeadersEnricher("x-test", "value");
+        GenericOutboundHeadersEnricher enricher = new("x-test", "value");
 
-            enricher.Enrich(envelope);
+        enricher.Enrich(envelope);
 
-            envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
-        }
+        envelope.Headers.Should().HaveCount(1);
+        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
+    }
 
-        [Fact]
-        public void Enrich_SpecificMessageType_HeaderAddedToMessagesOfMatchingType()
-        {
-            var envelopeEventOne = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                null,
-                TestProducerEndpoint.GetDefault());
-            var envelopeEventTwo = new OutboundEnvelope<TestEventTwo>(
-                new TestEventTwo(),
-                null,
-                TestProducerEndpoint.GetDefault());
+    [Fact]
+    public void Enrich_SpecificMessageType_HeaderAddedToMessagesOfMatchingType()
+    {
+        OutboundEnvelope<TestEventOne> envelopeEventOne = new(
+            new TestEventOne(),
+            null,
+            TestProducerEndpoint.GetDefault());
+        OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
+            new TestEventTwo(),
+            null,
+            TestProducerEndpoint.GetDefault());
 
-            var enricher = new GenericOutboundHeadersEnricher<TestEventOne>("x-test", "value");
+        GenericOutboundHeadersEnricher<TestEventOne> enricher = new("x-test", "value");
 
-            enricher.Enrich(envelopeEventOne);
-            enricher.Enrich(envelopeEventTwo);
+        enricher.Enrich(envelopeEventOne);
+        enricher.Enrich(envelopeEventTwo);
 
-            envelopeEventOne.Headers.Should().HaveCount(1);
-            envelopeEventTwo.Headers.Should().BeEmpty();
-        }
+        envelopeEventOne.Headers.Should().HaveCount(1);
+        envelopeEventTwo.Headers.Should().BeEmpty();
+    }
 
-        [Fact]
-        public void Enrich_SpecificBaseMessageType_HeaderAddedToMessagesOfMatchingType()
-        {
-            var envelopeEventOne = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                null,
-                TestProducerEndpoint.GetDefault());
-            var envelopeEventTwo = new OutboundEnvelope<TestEventTwo>(
-                new TestEventTwo(),
-                null,
-                TestProducerEndpoint.GetDefault());
-            var envelopeBinaryMessage = new OutboundEnvelope<BinaryMessage>(
-                new BinaryMessage(),
-                null,
-                TestProducerEndpoint.GetDefault());
+    [Fact]
+    public void Enrich_SpecificBaseMessageType_HeaderAddedToMessagesOfMatchingType()
+    {
+        OutboundEnvelope<TestEventOne> envelopeEventOne = new(
+            new TestEventOne(),
+            null,
+            TestProducerEndpoint.GetDefault());
+        OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
+            new TestEventTwo(),
+            null,
+            TestProducerEndpoint.GetDefault());
+        OutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
+            new BinaryMessage(),
+            null,
+            TestProducerEndpoint.GetDefault());
 
-            var enricher = new GenericOutboundHeadersEnricher<IIntegrationEvent>("x-test", "value");
+        GenericOutboundHeadersEnricher<IIntegrationEvent> enricher = new("x-test", "value");
 
-            enricher.Enrich(envelopeEventOne);
-            enricher.Enrich(envelopeEventTwo);
-            enricher.Enrich(envelopeBinaryMessage);
+        enricher.Enrich(envelopeEventOne);
+        enricher.Enrich(envelopeEventTwo);
+        enricher.Enrich(envelopeBinaryMessage);
 
-            envelopeEventOne.Headers.Should().HaveCount(1);
-            envelopeEventTwo.Headers.Should().HaveCount(1);
-            envelopeBinaryMessage.Headers.Should().BeEmpty();
-        }
+        envelopeEventOne.Headers.Should().HaveCount(1);
+        envelopeEventTwo.Headers.Should().HaveCount(1);
+        envelopeBinaryMessage.Headers.Should().BeEmpty();
+    }
 
-        [Fact]
-        public void Enrich_ValueProvider_HeaderAdded()
-        {
-            var envelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne { Content = "content" },
-                null,
-                TestProducerEndpoint.GetDefault());
+    [Fact]
+    public void Enrich_ValueProvider_HeaderAdded()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            new TestEventOne { Content = "content" },
+            null,
+            TestProducerEndpoint.GetDefault());
 
-            var enricher = new GenericOutboundHeadersEnricher<TestEventOne>(
-                "x-test",
-                envelopeToEnrich => envelopeToEnrich.Message?.Content);
+        GenericOutboundHeadersEnricher<TestEventOne> enricher = new(
+            "x-test",
+            envelopeToEnrich => envelopeToEnrich.Message?.Content);
 
-            enricher.Enrich(envelope);
+        enricher.Enrich(envelope);
 
-            envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "content") });
-        }
+        envelope.Headers.Should().HaveCount(1);
+        envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "content") });
     }
 }

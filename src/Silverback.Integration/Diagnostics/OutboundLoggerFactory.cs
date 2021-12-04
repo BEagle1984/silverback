@@ -23,10 +23,6 @@ internal sealed class OutboundLoggerFactory
     {
         Type type = producerConfiguration.GetType();
 
-
-        // TODO: Validate this pattern
-
-
         if (_outboundLoggers.TryGetValue(type, out OutboundLogger? logger))
             return logger;
 

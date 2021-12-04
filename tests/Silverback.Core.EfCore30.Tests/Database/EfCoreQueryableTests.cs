@@ -11,237 +11,236 @@ using Silverback.Tests.Core.EFCore30.TestTypes;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
-namespace Silverback.Tests.Core.EFCore30.Database
+namespace Silverback.Tests.Core.EFCore30.Database;
+
+public sealed class EfCoreQueryableTests : IDisposable
 {
-    public sealed class EfCoreQueryableTests : IDisposable
+    private readonly TestDbContextInitializer _dbInitializer;
+
+    private readonly TestDbContext _dbContext;
+
+    private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
+
+    public EfCoreQueryableTests()
     {
-        private readonly TestDbContextInitializer _dbInitializer;
+        _dbInitializer = new TestDbContextInitializer();
+        _dbContext = _dbInitializer.GetTestDbContext();
+        _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
 
-        private readonly TestDbContext _dbContext;
+        SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
+    }
 
-        private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
+    [Fact]
+    public async Task AnyAsync_EmptySet_FalseReturned()
+    {
+        bool result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .AnyAsync();
 
-        public EfCoreQueryableTests()
-        {
-            _dbInitializer = new TestDbContextInitializer();
-            _dbContext = _dbInitializer.GetTestDbContext();
-            _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
+        result.Should().BeFalse();
+    }
 
-            SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
-        }
+    [Fact]
+    public async Task AnyAsync_NotEmptySet_TrueReturned()
+    {
+        _dbContext.Persons.Add(new Person());
+        _dbContext.SaveChanges();
 
-        [Fact]
-        public async Task AnyAsync_EmptySet_FalseReturned()
-        {
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .AnyAsync();
+        bool result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .AnyAsync();
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public async Task AnyAsync_NotEmptySet_TrueReturned()
-        {
-            _dbContext.Persons.Add(new Person());
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task AnyAsync_WithNotMatchingPredicate_FalseReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .AnyAsync();
+        bool result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .AnyAsync(p => p.Age > 35);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public async Task AnyAsync_WithNotMatchingPredicate_FalseReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task AnyAsync_WithMatchingPredicate_TrueReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .AnyAsync(p => p.Age > 35);
+        bool result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .AnyAsync(p => p.Age == 30);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public async Task AnyAsync_WithMatchingPredicate_TrueReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task FirstOrDefaultAsync_EmptySet_NullReturned()
+    {
+        Person result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .FirstOrDefaultAsync();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .AnyAsync(p => p.Age == 30);
+        result.Should().BeNull();
+    }
 
-            result.Should().BeTrue();
-        }
+    [Fact]
+    public async Task FirstOrDefaultAsync_NotEmptySet_FirstEntityReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_EmptySet_NullReturned()
-        {
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .FirstOrDefaultAsync();
+        Person result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .FirstOrDefaultAsync();
 
-            result.Should().BeNull();
-        }
+        result.Should().NotBeNull();
+        result.Age.Should().Be(20);
+    }
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_NotEmptySet_FirstEntityReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .FirstOrDefaultAsync();
+        Person? result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .FirstOrDefaultAsync(p => p.Age < 18);
 
-            result.Should().NotBeNull();
-            result.Age.Should().Be(20);
-        }
+        result.Should().BeNull();
+    }
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.Persons.Add(new Person { Age = 40 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .FirstOrDefaultAsync(p => p.Age < 18);
+        Person? result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .FirstOrDefaultAsync(p => p.Age > 25);
 
-            result.Should().BeNull();
-        }
+        result.Should().NotBeNull();
+        result!.Age.Should().Be(30);
+    }
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.Persons.Add(new Person { Age = 40 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task CountAsync_EmptySet_ZeroReturned()
+    {
+        int result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .CountAsync();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .FirstOrDefaultAsync(p => p.Age > 25);
+        result.Should().Be(0);
+    }
 
-            result.Should().NotBeNull();
-            result.Age.Should().Be(30);
-        }
+    [Fact]
+    public async Task CountAsync_NotEmptySet_CountReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 20 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-        [Fact]
-        public async Task CountAsync_EmptySet_ZeroReturned()
-        {
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .CountAsync();
+        int result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .CountAsync();
 
-            result.Should().Be(0);
-        }
+        result.Should().Be(2);
+    }
 
-        [Fact]
-        public async Task CountAsync_NotEmptySet_CountReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 20 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task CountAsync_WithPredicate_CorrectCountReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 15 });
+        _dbContext.Persons.Add(new Person { Age = 17 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .CountAsync();
+        int result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .CountAsync(p => p.Age >= 18);
 
-            result.Should().Be(2);
-        }
+        result.Should().Be(1);
+    }
 
-        [Fact]
-        public async Task CountAsync_WithPredicate_CorrectCountReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 15 });
-            _dbContext.Persons.Add(new Person { Age = 17 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task ToListAsync_NotEmptySet_ListReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 15 });
+        _dbContext.Persons.Add(new Person { Age = 17 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .CountAsync(p => p.Age >= 18);
+        List<Person> result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .ToListAsync();
 
-            result.Should().Be(1);
-        }
+        result.Should().NotBeNull();
+        result.Should().BeOfType<List<Person>>();
+        result.Should().HaveCount(3);
+    }
 
-        [Fact]
-        public async Task ToListAsync_NotEmptySet_ListReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 15 });
-            _dbContext.Persons.Add(new Person { Age = 17 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task ToListAsync_ApplyingWhereClause_FilteredListReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 15 });
+        _dbContext.Persons.Add(new Person { Age = 17 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .ToListAsync();
+        List<Person> result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .Where(p => p.Age <= 18)
+            .ToListAsync();
 
-            result.Should().NotBeNull();
-            result.Should().BeOfType<List<Person>>();
-            result.Should().HaveCount(3);
-        }
+        result.Should().NotBeNull();
+        result.Should().BeOfType<List<Person>>();
+        result.Should().HaveCount(2);
+    }
 
-        [Fact]
-        public async Task ToListAsync_ApplyingWhereClause_FilteredListReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 15 });
-            _dbContext.Persons.Add(new Person { Age = 17 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task ToDictionaryAsync_NotEmptySet_DictionaryReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 15 });
+        _dbContext.Persons.Add(new Person { Age = 17 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .Where(p => p.Age <= 18)
-                .ToListAsync();
+        Dictionary<int, int> result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .ToDictionaryAsync(
+                p => p.Id,
+                p => p.Age);
 
-            result.Should().NotBeNull();
-            result.Should().BeOfType<List<Person>>();
-            result.Should().HaveCount(2);
-        }
+        result.Should().NotBeNull();
+        result.Should().BeOfType<Dictionary<int, int>>();
+        result.Should().HaveCount(3);
+        result.First().Key.Should().Be(1);
+        result.First().Value.Should().Be(15);
+    }
 
-        [Fact]
-        public async Task ToDictionaryAsync_NotEmptySet_DictionaryReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 15 });
-            _dbContext.Persons.Add(new Person { Age = 17 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task ToDictionaryAsync_ApplyingWhereClause_DictionaryReturned()
+    {
+        _dbContext.Persons.Add(new Person { Age = 15 });
+        _dbContext.Persons.Add(new Person { Age = 17 });
+        _dbContext.Persons.Add(new Person { Age = 30 });
+        _dbContext.SaveChanges();
 
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .ToDictionaryAsync(
-                    p => p.Id,
-                    p => p.Age);
+        Dictionary<int, int> result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
+            .Where(p => p.Age <= 18)
+            .ToDictionaryAsync(
+                p => p.Id,
+                p => p.Age);
 
-            result.Should().NotBeNull();
-            result.Should().BeOfType<Dictionary<int, int>>();
-            result.Should().HaveCount(3);
-            result.First().Key.Should().Be(1);
-            result.First().Value.Should().Be(15);
-        }
+        result.Should().NotBeNull();
+        result.Should().BeOfType<Dictionary<int, int>>();
+        result.Should().HaveCount(2);
+        result.First().Key.Should().Be(1);
+        result.First().Value.Should().Be(15);
+    }
 
-        [Fact]
-        public async Task ToDictionaryAsync_ApplyingWhereClause_DictionaryReturned()
-        {
-            _dbContext.Persons.Add(new Person { Age = 15 });
-            _dbContext.Persons.Add(new Person { Age = 17 });
-            _dbContext.Persons.Add(new Person { Age = 30 });
-            _dbContext.SaveChanges();
-
-            var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
-                .Where(p => p.Age <= 18)
-                .ToDictionaryAsync(
-                    p => p.Id,
-                    p => p.Age);
-
-            result.Should().NotBeNull();
-            result.Should().BeOfType<Dictionary<int, int>>();
-            result.Should().HaveCount(2);
-            result.First().Key.Should().Be(1);
-            result.First().Value.Should().Be(15);
-        }
-
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-            _dbInitializer.Dispose();
-        }
+    public void Dispose()
+    {
+        _dbContext.Dispose();
+        _dbInitializer.Dispose();
     }
 }

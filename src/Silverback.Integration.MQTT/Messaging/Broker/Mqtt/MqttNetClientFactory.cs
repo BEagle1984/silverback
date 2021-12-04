@@ -5,29 +5,28 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Diagnostics;
 
-namespace Silverback.Messaging.Broker.Mqtt
+namespace Silverback.Messaging.Broker.Mqtt;
+
+/// <summary>
+///     Wraps the <see cref="MQTTnet.MqttFactory" />.
+/// </summary>
+public class MqttNetClientFactory : IMqttNetClientFactory
 {
+    private readonly IMqttNetLogger _mqttNetLogger;
+
+    private readonly MqttFactory _factory = new();
+
     /// <summary>
-    ///     Wraps the <see cref="MQTTnet.MqttFactory" />.
+    ///     Initializes a new instance of the <see cref="MqttNetClientFactory" /> class.
     /// </summary>
-    public class MqttNetClientFactory : IMqttNetClientFactory
+    /// <param name="mqttNetLogger">
+    ///     The <see cref="IMqttNetLogger" />.
+    /// </param>
+    public MqttNetClientFactory(IMqttNetLogger mqttNetLogger)
     {
-        private readonly IMqttNetLogger _mqttNetLogger;
-
-        private readonly MqttFactory _factory = new();
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MqttNetClientFactory" /> class.
-        /// </summary>
-        /// <param name="mqttNetLogger">
-        ///     The <see cref="IMqttNetLogger" />.
-        /// </param>
-        public MqttNetClientFactory(IMqttNetLogger mqttNetLogger)
-        {
-            _mqttNetLogger = mqttNetLogger;
-        }
-
-        /// <inheritdoc cref="IMqttNetClientFactory.CreateClient" />
-        public IMqttClient CreateClient() => _factory.CreateMqttClient(_mqttNetLogger);
+        _mqttNetLogger = mqttNetLogger;
     }
+
+    /// <inheritdoc cref="IMqttNetClientFactory.CreateClient" />
+    public IMqttClient CreateClient() => _factory.CreateMqttClient(_mqttNetLogger);
 }

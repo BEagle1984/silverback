@@ -4,25 +4,24 @@
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Callbacks;
 
-namespace Silverback.Messaging.Broker
+namespace Silverback.Messaging.Broker;
+
+/// <summary>
+///     Handles the consumer error callback and reverts the consumer <see cref="ConsumerStatus.Ready" /> status
+///     to <see cref="ConsumerStatus.Connected" /> when the local poll timeout is exceeded. The consumer should
+///     eventually reconnect but this allows to accurately track its status.
+/// </summary>
+public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback
 {
-    /// <summary>
-    ///     Handles the consumer error callback and reverts the consumer <see cref="ConsumerStatus.Ready" /> status
-    ///     to <see cref="ConsumerStatus.Connected" /> when the local poll timeout is exceeded. The consumer should
-    ///     eventually reconnect but this allows to accurately track its status.
-    /// </summary>
-    public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback
+    /// <inheritdoc cref="IKafkaConsumerLogCallback.OnConsumerLog" />
+    public bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer)
     {
-        /// <inheritdoc cref="IKafkaConsumerLogCallback.OnConsumerLog" />
-        public bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer)
-        {
-            if (consumer == null || logMessage == null)
-                return false;
-
-            if (logMessage.Facility == "MAXPOLL")
-                return consumer.OnPollTimeout(logMessage);
-
+        if (consumer == null || logMessage == null)
             return false;
-        }
+
+        if (logMessage.Facility == "MAXPOLL")
+            return consumer.OnPollTimeout(logMessage);
+
+        return false;
     }
 }

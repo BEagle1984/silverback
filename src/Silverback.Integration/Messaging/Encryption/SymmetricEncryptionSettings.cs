@@ -3,18 +3,17 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     The encryption settings used to encrypt the messages.
+/// </summary>
+public record SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase
 {
     /// <summary>
-    ///     The encryption settings used to encrypt the messages.
+    ///     Gets the key identifier to be sent in the header (see
+    ///     <see cref="DefaultMessageHeaders.EncryptionKeyId" />). It will be used on the consumer side to
+    ///     determine the correct key to be used to decrypt the message.
     /// </summary>
-    public record SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase
-    {
-        /// <summary>
-        ///     Gets the key identifier to be sent in the header (see
-        ///     <see cref="DefaultMessageHeaders.EncryptionKeyId" />). It will be used on the consumer side to
-        ///     determine the correct key to be used to decrypt the message.
-        /// </summary>
-        public string? KeyIdentifier { get; init; }
-    }
+    public string? KeyIdentifier { get; init; }
 }

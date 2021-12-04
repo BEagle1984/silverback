@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,71 +15,70 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Configuration
+namespace Silverback.Tests.Integration.Messaging.Configuration;
+
+public class BrokerOptionsBuilderAddBrokerExtensionsTests
 {
-    public class BrokerOptionsBuilderAddBrokerExtensionsTests
+    [Fact]
+    public void AddBroker_ActivityBehaviorsRegisteredForDI()
     {
-        [Fact]
-        public void AddBroker_ActivityBehaviorsRegisteredForDI()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
-                .Services.BuildServiceProvider();
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+            .Services.BuildServiceProvider();
 
-            var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
+        List<IBrokerBehavior> registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
 
-            registeredBehaviors.Should().Contain(behavior => behavior.GetType() == typeof(ActivityProducerBehavior));
-            registeredBehaviors.Should().Contain(behavior => behavior.GetType() == typeof(ActivityConsumerBehavior));
-        }
+        registeredBehaviors.Should().Contain(behavior => behavior.GetType() == typeof(ActivityProducerBehavior));
+        registeredBehaviors.Should().Contain(behavior => behavior.GetType() == typeof(ActivityConsumerBehavior));
+    }
 
-        [Fact]
-        public void AddBroker_ExceptionLoggerBehaviorRegisteredForDI()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
-                .Services.BuildServiceProvider();
+    [Fact]
+    public void AddBroker_ExceptionLoggerBehaviorRegisteredForDI()
+    {
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+            .Services.BuildServiceProvider();
 
-            var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
+        List<IBrokerBehavior> registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
 
-            registeredBehaviors.Should()
-                .Contain(behavior => behavior.GetType() == typeof(FatalExceptionLoggerConsumerBehavior));
-        }
+        registeredBehaviors.Should()
+            .Contain(behavior => behavior.GetType() == typeof(FatalExceptionLoggerConsumerBehavior));
+    }
 
-        [Fact]
-        public void AddBroker_BrokerRegisteredForDI()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>())
-                .Services.BuildServiceProvider();
+    [Fact]
+    public void AddBroker_BrokerRegisteredForDI()
+    {
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>())
+            .Services.BuildServiceProvider();
 
-            serviceProvider.GetService<IBroker>().Should().NotBeNull();
-            serviceProvider.GetService<IBroker>().Should().BeOfType<TestBroker>();
-        }
+        serviceProvider.GetService<IBroker>().Should().NotBeNull();
+        serviceProvider.GetService<IBroker>().Should().BeOfType<TestBroker>();
+    }
 
-        [Fact]
-        public void AddBroker_BrokerOptionsConfiguratorInvoked()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddLoggerSubstitute()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>())
-                .Services.BuildServiceProvider();
+    [Fact]
+    public void AddBroker_BrokerOptionsConfiguratorInvoked()
+    {
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddLoggerSubstitute()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>())
+            .Services.BuildServiceProvider();
 
-            var registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
+        List<IBrokerBehavior> registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
 
-            registeredBehaviors.Should()
-                .Contain(x => x.GetType() == typeof(EmptyBehavior));
-        }
+        registeredBehaviors.Should()
+            .Contain(x => x.GetType() == typeof(EmptyBehavior));
     }
 }

@@ -50,8 +50,7 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
     {
         if (string.IsNullOrEmpty(BootstrapServers))
         {
-            throw new EndpointConfigurationException(
-                "BootstrapServers is required to connect with the message broker.");
+            throw new EndpointConfigurationException("BootstrapServers is required to connect with the message broker.");
         }
 
         if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
@@ -63,8 +62,7 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
 
         if (!IsAutoCommitEnabled && CommitOffsetEach <= 0)
         {
-            throw new EndpointConfigurationException(
-                "CommitOffSetEach must be greater or equal to 1 when auto-commit is disabled.");
+            throw new EndpointConfigurationException("CommitOffSetEach must be greater or equal to 1 when auto-commit is disabled.");
         }
 
         if (EnableAutoOffsetStore == true)
@@ -108,5 +106,11 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(BootstrapServers);
 
+    /// <summary>
+    ///     Returns a read-only copy of the <see cref="KafkaClientConsumerConfiguration" />.
+    /// </summary>
+    /// <returns>
+    ///     A read-only copy of the <see cref="KafkaClientConsumerConfiguration" />.
+    /// </returns>
     public KafkaClientConsumerConfiguration AsReadOnly() => this;
 }

@@ -4,23 +4,22 @@
 using System;
 using System.Reflection;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class CloneExtensions
 {
-    internal static class CloneExtensions
+    public static T ShallowCopy<T>(this T source)
+        where T : class
     {
-        public static T ShallowCopy<T>(this T source)
-            where T : class
-        {
-            Check.NotNull(source, nameof(source));
+        Check.NotNull(source, nameof(source));
 
-            var memberwiseCloneMethodInfo = source.GetType().GetMethod(
-                "MemberwiseClone",
-                BindingFlags.Instance | BindingFlags.NonPublic);
+        MethodInfo? memberwiseCloneMethodInfo = source.GetType().GetMethod(
+            "MemberwiseClone",
+            BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (memberwiseCloneMethodInfo == null)
-                throw new InvalidOperationException("MemberwiseClone method not found.");
+        if (memberwiseCloneMethodInfo == null)
+            throw new InvalidOperationException("MemberwiseClone method not found.");
 
-            return (T)memberwiseCloneMethodInfo.Invoke(source, null);
-        }
+        return (T)memberwiseCloneMethodInfo.Invoke(source, null)!;
     }
 }

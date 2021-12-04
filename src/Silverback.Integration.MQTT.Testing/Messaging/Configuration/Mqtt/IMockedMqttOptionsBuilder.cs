@@ -3,22 +3,21 @@
 
 using System;
 
-namespace Silverback.Messaging.Configuration.Mqtt
+namespace Silverback.Messaging.Configuration.Mqtt;
+
+/// <summary>
+///     Exposes the methods to configure the mocked MQTT.
+/// </summary>
+public interface IMockedMqttOptionsBuilder
 {
     /// <summary>
-    ///     Exposes the methods to configure the mocked MQTT.
+    ///     Specifies the delay to be applied before establishing a connection.
     /// </summary>
-    public interface IMockedMqttOptionsBuilder
-    {
-        /// <summary>
-        ///     Specifies the delay to be applied before establishing a connection.
-        /// </summary>
-        /// <param name="delay">
-        ///     The delay to be applied before establishing a connection.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IMockedMqttOptionsBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        IMockedMqttOptionsBuilder DelayConnection(TimeSpan delay);
-    }
+    /// <param name="delay">
+    ///     The delay to be applied before establishing a connection.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IMockedMqttOptionsBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    IMockedMqttOptionsBuilder DelayConnection(TimeSpan delay);
 }

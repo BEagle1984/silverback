@@ -7,19 +7,21 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Configuration
-{
-    public class SilverbackBuilderWithConnectionToExtensionsTests
-    {
-        [Fact]
-        public void WithConnectionToMessageBroker_BrokerCollectionRegisteredForDI()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(_ => { })
-                .Services.BuildServiceProvider();
+namespace Silverback.Tests.Integration.Messaging.Configuration;
 
-            serviceProvider.GetService<IBrokerCollection>().Should().NotBeNull();
-        }
+public class SilverbackBuilderWithConnectionToExtensionsTests
+{
+    [Fact]
+    public void WithConnectionToMessageBroker_BrokerCollectionRegisteredForDI()
+    {
+        ServiceProvider? serviceProvider = new ServiceCollection()
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                _ =>
+                {
+                })
+            .Services.BuildServiceProvider();
+
+        serviceProvider.GetService<IBrokerCollection>().Should().NotBeNull();
     }
 }

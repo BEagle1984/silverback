@@ -11,18 +11,18 @@
       <!-- Workaround for xml documentation not being copied to output folder -->
       <CopyToOutputDirectory>lib/netcoreapp2.1/*.xml</CopyToOutputDirectory>
     </PackageReference>
-    <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    <PackageReference Include="System.CodeDom" Version="5.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 
   <!-- Workaround for xml documentation not being copied to output folder -->
   <Target Name="CopyXMLFromPackagesForBuild" AfterTargets="Build">
     <ItemGroup>
-      <PackageReferenceFiles Condition="%(PackageReference.CopyToOutputDirectory) != ''" Include="$(NugetPackageRoot)$([MSBuild]::Escape('%(PackageReference.Identity)').ToLower())/%(PackageReference.Version)/%(PackageReference.CopyToOutputDirectory)" />
+      <PackageReferenceFiles Condition="%(PackageReference.CopyToOutputDirectory) != ''" Include="$(NugetPackageRoot)$([MSBuild]::Escape('%(PackageReference.Identity)').ToLower())/%(PackageReference.Version)/%(PackageReference.CopyToOutputDirectory)"/>
     </ItemGroup>
-    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="@(PackageReferenceFiles)" DestinationFolder="$(OutDir)"/>
   </Target>
 </Project>

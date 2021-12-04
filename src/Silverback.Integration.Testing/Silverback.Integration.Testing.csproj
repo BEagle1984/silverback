@@ -12,8 +12,7 @@
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
-    <Description>$(Description)
-This package adds some utilities to help writing automated tests involving Silverback.Integration.</Description>
+    <Description>$(Description) This package adds some utilities to help writing automated tests involving Silverback.Integration.</Description>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
@@ -22,16 +21,8 @@ This package adds some utilities to help writing automated tests involving Silve
     <Product>Silverback.Integration.Testing</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Testing.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Testing.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
   </ItemGroup>
 
 </Project>

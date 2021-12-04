@@ -14,485 +14,484 @@ using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Diagnostics
+namespace Silverback.Tests.Integration.Diagnostics;
+
+public class InboundLoggerTests
 {
-    public class InboundLoggerTests
+    private readonly LoggerSubstitute<InboundLoggerTests> _loggerSubstitute;
+
+    private readonly IInboundLogger<InboundLoggerTests> _inboundLogger;
+
+    public InboundLoggerTests()
     {
-        private readonly LoggerSubstitute<InboundLoggerTests> _loggerSubstitute;
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddLoggerSubstitute(LogLevel.Trace)
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddBroker<TestBroker>()));
 
-        private readonly IInboundLogger<InboundLoggerTests> _inboundLogger;
+        _loggerSubstitute =
+            (LoggerSubstitute<InboundLoggerTests>)serviceProvider
+                .GetRequiredService<ILogger<InboundLoggerTests>>();
 
-        public InboundLoggerTests()
-        {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddLoggerSubstitute(LogLevel.Trace)
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()));
+        _inboundLogger = serviceProvider
+            .GetRequiredService<IInboundLogger<InboundLoggerTests>>();
+    }
 
-            _loggerSubstitute =
-                (LoggerSubstitute<InboundLoggerTests>)serviceProvider
-                    .GetRequiredService<ILogger<InboundLoggerTests>>();
+    [Fact]
+    public void LogProcessing_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            _inboundLogger = serviceProvider
-                .GetRequiredService<IInboundLogger<InboundLoggerTests>>();
-        }
+        string expectedMessage =
+            "Processing inbound message. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-        [Fact]
-        public void LogProcessing_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
+        _inboundLogger.LogProcessing(envelope);
+
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
+    }
+
+    [Fact]
+    public void LogProcessing_WithFriendlyEndpointName_FriendlyNameLogged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerEndpoint(
+                "test1",
+                new TestConsumerConfiguration("test1", "test2")
                 {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+                    FriendlyName = "friendly-name"
+                }),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Processing inbound message. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Processing inbound message. | " +
+            "endpointName: friendly-name (test1), " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogProcessing(envelope);
+        _inboundLogger.LogProcessing(envelope);
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
+    }
 
-        [Fact]
-        public void LogProcessing_WithFriendlyEndpointName_FriendlyNameLogged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerEndpoint(
-                    "test1",
-                    new TestConsumerConfiguration("test1", "test2")
-                    {
-                        FriendlyName = "friendly-name"
-                    }),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogProcessingError_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Processing inbound message. | " +
-                "endpointName: friendly-name (test1), " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Error occurred processing the inbound message. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogProcessing(envelope);
+        _inboundLogger.LogProcessingError(envelope, new InvalidDataException());
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
-        }
+        _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidDataException), expectedMessage, 1002);
+    }
 
-        [Fact]
-        public void LogProcessingError_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogProcessingFatalError_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Error occurred processing the inbound message. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Fatal error occurred processing the consumed message. The consumer will be stopped. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogProcessingError(envelope, new InvalidDataException());
+        _inboundLogger.LogProcessingFatalError(envelope, new ArithmeticException());
 
-            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidDataException), expectedMessage, 1002);
-        }
+        _loggerSubstitute.Received(LogLevel.Critical, typeof(ArithmeticException), expectedMessage, 1023);
+    }
 
-        [Fact]
-        public void LogProcessingFatalError_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogRetryProcessing_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Fatal error occurred processing the consumed message. The consumer will be stopped. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The message(s) will be processed again. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogProcessingFatalError(envelope, new ArithmeticException());
+        _inboundLogger.LogRetryProcessing(envelope);
 
-            _loggerSubstitute.Received(LogLevel.Critical, typeof(ArithmeticException), expectedMessage, 1023);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1046);
+    }
 
-        [Fact]
-        public void LogRetryProcessing_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogMoved_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The message(s) will be processed again. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The message will be moved to the endpoint 'target1'. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogRetryProcessing(envelope);
+        _inboundLogger.LogMoved(envelope, new TestProducerConfiguration("target1"));
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1046);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1048);
+    }
 
-        [Fact]
-        public void LogMoved_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogSkipped_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The message will be moved to the endpoint 'target1'. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The message(s) will be skipped. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogMoved(envelope, new TestProducerConfiguration("target1"));
+        _inboundLogger.LogSkipped(envelope);
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1048);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1049);
+    }
 
-        [Fact]
-        public void LogSkipped_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogCannotMoveSequences_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The message(s) will be skipped. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The message belongs to a FakeSequence and cannot be moved. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogSkipped(envelope);
+        _inboundLogger.LogCannotMoveSequences(envelope, new FakeSequence());
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1049);
-        }
+        _loggerSubstitute.Received(LogLevel.Warning, null, expectedMessage, 1050);
+    }
 
-        [Fact]
-        public void LogCannotMoveSequences_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogRollbackToRetryFailed_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The message belongs to a FakeSequence and cannot be moved. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Error occurred while rolling back, the retry error policy cannot be applied. " +
+            "The consumer will be reconnected. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogCannotMoveSequences(envelope, new FakeSequence());
+        _inboundLogger.LogRollbackToRetryFailed(envelope, new TimeoutException());
 
-            _loggerSubstitute.Received(LogLevel.Warning, null, expectedMessage, 1050);
-        }
+        _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1051);
+    }
 
-        [Fact]
-        public void LogRollbackToRetryFailed_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogRollbackToSkipFailed_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Error occurred while rolling back, the retry error policy cannot be applied. " +
-                "The consumer will be reconnected. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Error occurred while rolling back or committing, the skip message error policy " +
+            "cannot be applied. The consumer will be reconnected. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogRollbackToRetryFailed(envelope, new TimeoutException());
+        _inboundLogger.LogRollbackToSkipFailed(envelope, new TimeoutException());
 
-            _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1051);
-        }
+        _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1052);
+    }
 
-        [Fact]
-        public void LogRollbackToSkipFailed_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogNullMessageSkipped_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Error occurred while rolling back or committing, the skip message error policy " +
-                "cannot be applied. The consumer will be reconnected. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The null message will be skipped. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogRollbackToSkipFailed(envelope, new TimeoutException());
+        _inboundLogger.LogNullMessageSkipped(envelope);
 
-            _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1052);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1062);
+    }
 
-        [Fact]
-        public void LogNullMessageSkipped_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogAlreadyProcessed_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The null message will be skipped. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "Message is being skipped since it was already processed. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogNullMessageSkipped(envelope);
+        _inboundLogger.LogAlreadyProcessed(envelope);
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1062);
-        }
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1072);
+    }
 
-        [Fact]
-        public void LogAlreadyProcessed_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogInboundTrace_NoException_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "Message is being skipped since it was already processed. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The RetryErrorPolicy will be skipped because the current failed " +
+            "attempts (5) exceeds the configured maximum attempts (3). | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogAlreadyProcessed(envelope);
+        _inboundLogger.LogInboundTrace(
+            IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
+            envelope,
+            () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
 
-            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1072);
-        }
+        _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1041);
+    }
 
-        [Fact]
-        public void LogInboundTrace_NoException_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogInboundTrace_WithException_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The RetryErrorPolicy will be skipped because the current failed " +
-                "attempts (5) exceeds the configured maximum attempts (3). | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "The RetryErrorPolicy will be skipped because the current failed " +
+            "attempts (5) exceeds the configured maximum attempts (3). | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogInboundTrace(
-                IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
-                envelope,
-                () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
+        _inboundLogger.LogInboundTrace(
+            IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
+            envelope,
+            new InvalidOperationException(),
+            () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
 
-            _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1041);
-        }
+        _loggerSubstitute.Received(
+            LogLevel.Trace,
+            typeof(InvalidOperationException),
+            expectedMessage,
+            1041);
+    }
 
-        [Fact]
-        public void LogInboundTrace_WithException_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogInboundLowLevelTrace_NoException_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "The RetryErrorPolicy will be skipped because the current failed " +
-                "attempts (5) exceeds the configured maximum attempts (3). | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "BatchSequence 'batch123' processing has completed... | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogInboundTrace(
-                IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
-                envelope,
-                new InvalidOperationException(),
-                () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
+        _inboundLogger.LogInboundLowLevelTrace(
+            "{sequenceType} '{sequenceId}' processing has completed...",
+            envelope,
+            () => new object[]
+            {
+                "BatchSequence",
+                "batch123"
+            });
 
-            _loggerSubstitute.Received(
-                LogLevel.Trace,
-                typeof(InvalidOperationException),
-                expectedMessage,
-                1041);
-        }
+        _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
+    }
 
-        [Fact]
-        public void LogInboundLowLevelTrace_NoException_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
+    [Fact]
+    public void LogInboundLowLevelTrace_WithException_Logged()
+    {
+        RawInboundEnvelope envelope = new(
+            Stream.Null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
+            new TestOffset("a", "42"));
 
-            var expectedMessage =
-                "BatchSequence 'batch123' processing has completed... | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
+        string expectedMessage =
+            "BatchSequence 'batch123' processing has failed. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
 
-            _inboundLogger.LogInboundLowLevelTrace(
-                "{sequenceType} '{sequenceId}' processing has completed...",
-                envelope,
-                () => new object[]
-                {
-                    "BatchSequence",
-                    "batch123"
-                });
+        _inboundLogger.LogInboundLowLevelTrace(
+            "{sequenceType} '{sequenceId}' processing has failed.",
+            envelope,
+            new OperationCanceledException(),
+            () => new object[]
+            {
+                "BatchSequence",
+                "batch123"
+            });
 
-            _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
-        }
-
-        [Fact]
-        public void LogInboundLowLevelTrace_WithException_Logged()
-        {
-            var envelope = new RawInboundEnvelope(
-                Stream.Null,
-                new MessageHeaderCollection
-                {
-                    { DefaultMessageHeaders.MessageType, "Message.Type" },
-                    { DefaultMessageHeaders.MessageId, "1234" }
-                },
-                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
-                new TestOffset("a", "42"));
-
-            var expectedMessage =
-                "BatchSequence 'batch123' processing has failed. | " +
-                "endpointName: test1, " +
-                "messageType: Message.Type, " +
-                "messageId: 1234, " +
-                "unused1: (null), " +
-                "unused2: (null)";
-
-            _inboundLogger.LogInboundLowLevelTrace(
-                "{sequenceType} '{sequenceId}' processing has failed.",
-                envelope,
-                new OperationCanceledException(),
-                () => new object[]
-                {
-                    "BatchSequence",
-                    "batch123"
-                });
-
-            _loggerSubstitute.Received(
-                LogLevel.Trace,
-                typeof(OperationCanceledException),
-                expectedMessage,
-                1999);
-        }
+        _loggerSubstitute.Received(
+            LogLevel.Trace,
+            typeof(OperationCanceledException),
+            expectedMessage,
+            1999);
     }
 }

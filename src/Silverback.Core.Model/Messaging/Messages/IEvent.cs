@@ -3,13 +3,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     A message that notifies an event.
+/// </summary>
+[SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
+public interface IEvent : IMessage
 {
-    /// <summary>
-    ///     A message that notifies an event.
-    /// </summary>
-    [SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
-    public interface IEvent : IMessage
-    {
-    }
 }

@@ -14,87 +14,86 @@ using Silverback.Messaging.Sequences;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Diagnostics
+namespace Silverback.Tests.Integration.Messaging.Diagnostics;
+
+public class ActivityConsumerBehaviorTests
 {
-    public class ActivityConsumerBehaviorTests
+    public ActivityConsumerBehaviorTests()
     {
-        public ActivityConsumerBehaviorTests()
-        {
-            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
-        }
+        Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+    }
 
-        [Fact]
-        public async Task HandleAsync_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
-        {
-            var rawEnvelope = new RawInboundEnvelope(
-                new byte[5],
-                new MessageHeaderCollection
+    [Fact]
+    public async Task HandleAsync_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
+    {
+        RawInboundEnvelope rawEnvelope = new(
+            new byte[5],
+            new MessageHeaderCollection
+            {
                 {
-                    {
-                        DefaultMessageHeaders.TraceId,
-                        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
-                    }
-                },
-                TestConsumerEndpoint.GetDefault(),
-                new TestOffset());
+                    DefaultMessageHeaders.TraceId,
+                    "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+                }
+            },
+            TestConsumerEndpoint.GetDefault(),
+            new TestOffset());
 
-            var entered = false;
-            await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
-                .HandleAsync(
-                    new ConsumerPipelineContext(
-                        rawEnvelope,
-                        Substitute.For<IConsumer>(),
-                        Substitute.For<ISequenceStore>(),
-                        Substitute.For<IServiceProvider>()),
-                    _ =>
-                    {
-                        Activity.Current.Should().NotBeNull();
-                        Activity.Current!.ParentId.Should()
-                            .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-                        Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
-
-                        entered = true;
-
-                        return Task.CompletedTask;
-                    });
-
-            entered.Should().BeTrue();
-        }
-
-        [Fact]
-        public async Task HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
-        {
-            var rawEnvelope = new RawInboundEnvelope(
-                new byte[5],
-                new MessageHeaderCollection
+        bool entered = false;
+        await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
+            .HandleAsync(
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
                 {
-                    {
-                        DefaultMessageHeaders.TraceId,
-                        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
-                    }
-                },
-                TestConsumerEndpoint.GetDefault(),
-                new TestOffset());
+                    Activity.Current.Should().NotBeNull();
+                    Activity.Current!.ParentId.Should()
+                        .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                    Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
-            var entered = false;
-            await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
-                .HandleAsync(
-                    new ConsumerPipelineContext(
-                        rawEnvelope,
-                        Substitute.For<IConsumer>(),
-                        Substitute.For<ISequenceStore>(),
-                        Substitute.For<IServiceProvider>()),
-                    _ =>
-                    {
-                        Activity.Current.Should().NotBeNull();
-                        Activity.Current!.Id.Should().NotBeNullOrEmpty();
+                    entered = true;
 
-                        entered = true;
+                    return Task.CompletedTask;
+                });
 
-                        return Task.CompletedTask;
-                    });
+        entered.Should().BeTrue();
+    }
 
-            entered.Should().BeTrue();
-        }
+    [Fact]
+    public async Task HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
+    {
+        RawInboundEnvelope rawEnvelope = new(
+            new byte[5],
+            new MessageHeaderCollection
+            {
+                {
+                    DefaultMessageHeaders.TraceId,
+                    "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+                }
+            },
+            TestConsumerEndpoint.GetDefault(),
+            new TestOffset());
+
+        bool entered = false;
+        await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
+            .HandleAsync(
+                new ConsumerPipelineContext(
+                    rawEnvelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                _ =>
+                {
+                    Activity.Current.Should().NotBeNull();
+                    Activity.Current!.Id.Should().NotBeNullOrEmpty();
+
+                    entered = true;
+
+                    return Task.CompletedTask;
+                });
+
+        entered.Should().BeTrue();
     }
 }

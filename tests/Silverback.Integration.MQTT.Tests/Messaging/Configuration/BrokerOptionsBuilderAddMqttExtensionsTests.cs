@@ -8,28 +8,27 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration;
+
+public class BrokerOptionsBuilderAddMqttExtensionsTests
 {
-    public class BrokerOptionsBuilderAddMqttExtensionsTests
+    [Fact]
+    public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()
     {
-        [Fact]
-        public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()
-        {
-            var servicesGeneric = new ServiceCollection();
-            var servicesSpecific = new ServiceCollection();
+        ServiceCollection servicesGeneric = new();
+        ServiceCollection servicesSpecific = new();
 
-            servicesGeneric
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options =>
-                        options.AddBroker<MqttBroker>());
-            servicesSpecific
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options =>
-                        options.AddMqtt());
+        servicesGeneric
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options =>
+                    options.AddBroker<MqttBroker>());
+        servicesSpecific
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options =>
+                    options.AddMqtt());
 
-            servicesGeneric.Should().HaveCount(servicesSpecific.Count);
-        }
+        servicesGeneric.Should().HaveCount(servicesSpecific.Count);
     }
 }

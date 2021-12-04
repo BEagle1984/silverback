@@ -13,7 +13,6 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public static class ErrorPolicyBuilderMoveToKafkaTopicExtensions
 {
-    // TODO: Version with typed KafkaProducerConfigurationBuilder?
     /// <summary>
     ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the configured Kafka topic.
     /// </summary>
@@ -29,6 +28,7 @@ public static class ErrorPolicyBuilderMoveToKafkaTopicExtensions
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
     /// </returns>
+    // TODO: Version with typed KafkaProducerConfigurationBuilder?
     public static ErrorPolicyChainBuilder MoveToKafkaTopic(
         this ErrorPolicyBuilder builder,
         Action<KafkaProducerConfigurationBuilder<object>> configurationBuilderAction,

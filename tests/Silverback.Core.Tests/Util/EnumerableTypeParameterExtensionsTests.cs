@@ -8,60 +8,59 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class EnumerableTypeParameterExtensionsTests
 {
-    public class EnumerableTypeParameterExtensionsTests
+    [Fact]
+    public void OfType_SpecificType_ObjectsOfMatchingTypeReturned()
     {
-        [Fact]
-        public void OfType_SpecificType_ObjectsOfMatchingTypeReturned()
+        object[] objects =
         {
-            var objects = new object[]
-            {
-                new TestEventOne(), new TestEventTwo(), new TestCommandOne(), new TestCommandTwo()
-            };
+            new TestEventOne(), new TestEventTwo(), new TestCommandOne(), new TestCommandTwo()
+        };
 
-            var result = objects.OfType(typeof(TestEventOne));
+        IEnumerable<object> result = objects.OfType(typeof(TestEventOne));
 
-            result.Should().HaveCount(1);
-        }
+        result.Should().HaveCount(1);
+    }
 
-        [Fact]
-        public void OfType_BaseType_ObjectsOfMatchingTypeReturned()
+    [Fact]
+    public void OfType_BaseType_ObjectsOfMatchingTypeReturned()
+    {
+        object[] objects =
         {
-            var objects = new object[]
-            {
-                new TestEventOne(), new TestEventTwo(), new TestCommandOne(), new TestCommandTwo()
-            };
+            new TestEventOne(), new TestEventTwo(), new TestCommandOne(), new TestCommandTwo()
+        };
 
-            var result = objects.OfType(typeof(IEvent));
+        IEnumerable<object> result = objects.OfType(typeof(IEvent));
 
-            result.Should().HaveCount(2);
-        }
+        result.Should().HaveCount(2);
+    }
 
-        [Fact]
-        public void Cast_Type_EnumerableOfMatchingTypeReturned()
+    [Fact]
+    public void Cast_Type_EnumerableOfMatchingTypeReturned()
+    {
+        object[] objects =
         {
-            var objects = new object[]
-            {
-                new TestEventOne(), new TestEventTwo()
-            };
+            new TestEventOne(), new TestEventTwo()
+        };
 
-            var result = objects.OfType(typeof(IEvent));
+        IEnumerable<object> result = objects.OfType(typeof(IEvent));
 
-            result.Should().BeAssignableTo<IEnumerable<IEvent>>();
-        }
+        result.Should().BeAssignableTo<IEnumerable<IEvent>>();
+    }
 
-        [Fact]
-        public void ToList_Type_ListOfMatchingTypeReturned()
+    [Fact]
+    public void ToList_Type_ListOfMatchingTypeReturned()
+    {
+        IEvent[] objects =
         {
-            var objects = new IEvent[]
-            {
-                new TestEventOne(), new TestEventTwo()
-            };
+            new TestEventOne(), new TestEventTwo()
+        };
 
-            var result = objects.ToList(typeof(IEvent));
+        IEnumerable<object> result = objects.ToList(typeof(IEvent));
 
-            result.Should().BeAssignableTo<List<IEvent>>();
-        }
+        result.Should().BeAssignableTo<List<IEvent>>();
     }
 }

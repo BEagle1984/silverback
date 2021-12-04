@@ -4,24 +4,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silverback.Messaging.Subscribers.Subscriptions
+namespace Silverback.Messaging.Subscribers.Subscriptions;
+
+/// <summary>
+///     The subscription options such as filters and parallelism settings.
+/// </summary>
+public class SubscriptionOptions
 {
     /// <summary>
-    ///     The subscription options such as filters and parallelism settings.
+    ///     Gets or sets a value indicating whether the method(s) can be executed concurrently to other methods
+    ///     handling the same message. The default value is <c>true</c> (the method(s) will be executed
+    ///     sequentially to other subscribers).
     /// </summary>
-    public class SubscriptionOptions
-    {
-        /// <summary>
-        ///     Gets or sets a value indicating whether the method(s) can be executed concurrently to other methods
-        ///     handling the same message. The default value is <c>true</c> (the method(s) will be executed
-        ///     sequentially to other subscribers).
-        /// </summary>
-        // TODO: Rename to IsExclusive
-        public bool Exclusive { get; set; } = true;
+    // TODO: Rename to IsExclusive
+    public bool Exclusive { get; set; } = true;
 
-        /// <summary>
-        ///     Gets or sets the filters to be applied.
-        /// </summary>
-        public IReadOnlyCollection<IMessageFilter> Filters { get; set; } = Array.Empty<IMessageFilter>();
-    }
+    /// <summary>
+    ///     Gets or sets the filters to be applied.
+    /// </summary>
+    public IReadOnlyCollection<IMessageFilter> Filters { get; set; } = Array.Empty<IMessageFilter>();
 }

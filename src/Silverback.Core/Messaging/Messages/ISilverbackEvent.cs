@@ -3,13 +3,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     An event that is triggered internally by Silverback.
+/// </summary>
+[SuppressMessage("", "CA1040", Justification = Justifications.BaseInterface)]
+public interface ISilverbackEvent : IMessage
 {
-    /// <summary>
-    ///     An event that is triggered internally by Silverback.
-    /// </summary>
-    [SuppressMessage("", "CA1040", Justification = Justifications.BaseInterface)]
-    public interface ISilverbackEvent : IMessage
-    {
-    }
 }

@@ -9,78 +9,77 @@ using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Rx.Messaging
+namespace Silverback.Tests.Core.Rx.Messaging;
+
+[Collection("MessageObservable")]
+public sealed class MessageObservableTests : IDisposable
 {
-    [Collection("MessageObservable")]
-    public sealed class MessageObservableTests : IDisposable
+    private readonly MessageStreamProvider<int> _streamProvider;
+
+    private readonly IMessageStreamObservable<int> _observable;
+
+    public MessageObservableTests()
     {
-        private readonly MessageStreamProvider<int> _streamProvider;
+        _streamProvider = new MessageStreamProvider<int>();
+        _observable = new MessageStreamObservable<int>(_streamProvider.CreateStream<int>());
+    }
 
-        private readonly IMessageStreamObservable<int> _observable;
+    [Fact]
+    public async Task Subscribe_MessagesPushed_MessagesReceived()
+    {
+        int count = 0;
 
-        public MessageObservableTests()
-        {
-            _streamProvider = new MessageStreamProvider<int>();
-            _observable = new MessageStreamObservable<int>(_streamProvider.CreateStream<int>());
-        }
+        Task<IDisposable> task = Task.Run(() => _observable.Subscribe(_ => count++));
 
-        [Fact]
-        public async Task Subscribe_MessagesPushed_MessagesReceived()
-        {
-            int count = 0;
+        await _streamProvider.PushAsync(1);
+        await _streamProvider.PushAsync(2);
+        await _streamProvider.PushAsync(3);
 
-            var task = Task.Run(() => _observable.Subscribe(_ => count++));
+        count.Should().Be(3);
+        task.IsCompleted.Should().BeFalse();
+    }
 
-            await _streamProvider.PushAsync(1);
-            await _streamProvider.PushAsync(2);
-            await _streamProvider.PushAsync(3);
+    [Fact]
+    public async Task Subscribe_StreamPushedAndCompleted_SubscribeReturned()
+    {
+        int count = 0;
 
-            count.Should().Be(3);
-            task.IsCompleted.Should().BeFalse();
-        }
+        Task<IDisposable> subscribeTask = Task.Run(() => _observable.Subscribe(_ => count++));
 
-        [Fact]
-        public async Task Subscribe_StreamPushedAndCompleted_SubscribeReturned()
-        {
-            int count = 0;
+        await _streamProvider.PushAsync(1);
+        await _streamProvider.PushAsync(2);
+        await _streamProvider.PushAsync(3);
 
-            var subscribeTask = Task.Run(() => _observable.Subscribe(_ => count++));
+        await _streamProvider.CompleteAsync();
 
-            await _streamProvider.PushAsync(1);
-            await _streamProvider.PushAsync(2);
-            await _streamProvider.PushAsync(3);
+        await subscribeTask;
 
-            await _streamProvider.CompleteAsync();
+        count.Should().Be(3);
+    }
 
-            await subscribeTask;
+    [Fact]
+    public async Task Subscribe_StreamPushBlockedUntilSubscribed()
+    {
+        int count = 0;
 
-            count.Should().Be(3);
-        }
+        Task<int> pushTask = _streamProvider.PushAsync(1);
 
-        [Fact]
-        public async Task Subscribe_StreamPushBlockedUntilSubscribed()
-        {
-            int count = 0;
+        await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
+        pushTask.IsCompleted.Should().BeFalse();
 
-            var pushTask = _streamProvider.PushAsync(1);
+        Task.Run(() => _observable.Subscribe(_ => count++)).FireAndForget();
 
-            await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
-            pushTask.IsCompleted.Should().BeFalse();
+        await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
+        pushTask.IsCompleted.Should().BeTrue();
 
-            Task.Run(() => _observable.Subscribe(_ => count++)).FireAndForget();
+        await _streamProvider.PushAsync(2);
+        await _streamProvider.PushAsync(3);
 
-            await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
-            pushTask.IsCompleted.Should().BeTrue();
+        count.Should().Be(3);
+    }
 
-            await _streamProvider.PushAsync(2);
-            await _streamProvider.PushAsync(3);
-
-            count.Should().Be(3);
-        }
-
-        public void Dispose()
-        {
-            _streamProvider.Dispose();
-        }
+    public void Dispose()
+    {
+        _streamProvider.Dispose();
     }
 }

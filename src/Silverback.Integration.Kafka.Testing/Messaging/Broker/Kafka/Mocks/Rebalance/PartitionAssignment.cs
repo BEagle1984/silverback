@@ -4,17 +4,16 @@
 using System.Collections.Generic;
 using Confluent.Kafka;
 
-namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance
+namespace Silverback.Messaging.Broker.Kafka.Mocks.Rebalance;
+
+internal abstract class PartitionAssignment
 {
-    internal abstract class PartitionAssignment
+    protected PartitionAssignment(IMockedConfluentConsumer consumer)
     {
-        protected PartitionAssignment(IMockedConfluentConsumer consumer)
-        {
-            Consumer = consumer;
-        }
-
-        public IMockedConfluentConsumer Consumer { get; }
-
-        public List<TopicPartition> Partitions { get; } = new();
+        Consumer = consumer;
     }
+
+    public IMockedConfluentConsumer Consumer { get; }
+
+    public List<TopicPartition> Partitions { get; } = new();
 }

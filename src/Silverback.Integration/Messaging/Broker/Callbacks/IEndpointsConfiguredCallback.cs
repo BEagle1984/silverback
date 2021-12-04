@@ -3,19 +3,18 @@
 
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Broker.Callbacks
+namespace Silverback.Messaging.Broker.Callbacks;
+
+/// <summary>
+///     Declares the <see cref="OnEndpointsConfiguredAsync" /> callback.
+/// </summary>
+public interface IEndpointsConfiguredCallback : IBrokerCallback
 {
     /// <summary>
-    ///     Declares the <see cref="OnEndpointsConfiguredAsync" /> callback.
+    ///     Called when all endpoints have been configured.
     /// </summary>
-    public interface IEndpointsConfiguredCallback : IBrokerCallback
-    {
-        /// <summary>
-        ///     Called when all endpoints have been configured.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task OnEndpointsConfiguredAsync();
-    }
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task OnEndpointsConfiguredAsync();
 }

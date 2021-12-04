@@ -42,7 +42,7 @@ public class InMemoryOffsetStore : TransactionalDictionary<string, IBrokerMessag
     /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
     public Task<IBrokerMessageOffset?> GetLatestValueAsync(string offsetKey, ConsumerConfiguration consumerConfiguration) =>
         Task.FromResult(
-            (IBrokerMessageOffset?)Items.Union(UncommittedItems)
+            Items.Union(UncommittedItems)
                 .Where(pair => pair.Key == GetKey(offsetKey, consumerConfiguration))
                 .Select(pair => pair.Value)
                 .Max());

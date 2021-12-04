@@ -4,10 +4,9 @@
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.TestTypes.Messages.Base
+namespace Silverback.Tests.Core.TestTypes.Messages.Base;
+
+[SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
+public interface IQuery<out TResult> : IMessage
 {
-    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
-    public interface IQuery<out TResult> : IMessage
-    {
-    }
 }

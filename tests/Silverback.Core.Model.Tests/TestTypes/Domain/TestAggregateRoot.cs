@@ -3,15 +3,14 @@
 
 using Silverback.Domain;
 
-namespace Silverback.Tests.Core.Model.TestTypes.Domain
-{
-    public class TestAggregateRoot : DomainEntity, IAggregateRoot
-    {
-        public new void AddEvent(IDomainEvent domainEvent)
-            => base.AddEvent(domainEvent);
+namespace Silverback.Tests.Core.Model.TestTypes.Domain;
 
-        public new TEvent AddEvent<TEvent>(bool allowMultiple = true)
-            where TEvent : IDomainEvent, new()
-            => base.AddEvent<TEvent>(allowMultiple);
-    }
+public class TestAggregateRoot : DomainEntity, IAggregateRoot
+{
+    public new void AddEvent(IDomainEvent domainEvent)
+        => base.AddEvent(domainEvent);
+
+    public new TEvent AddEvent<TEvent>(bool allowMultiple = true)
+        where TEvent : IDomainEvent, new()
+        => base.AddEvent<TEvent>(allowMultiple);
 }

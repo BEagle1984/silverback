@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Adds the <c>AddMqtt</c> method to the <see cref="IBrokerOptionsBuilder" />.
+///     Adds the <c>AddMqtt</c> method to the <see cref="BrokerOptionsBuilder" />.
 /// </summary>
 public static class BrokerOptionsBuilderAddMqttExtensions
 {

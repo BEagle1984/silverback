@@ -3,20 +3,19 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Domain
-{
-    /// <inheritdoc cref="IDomainEvent{TEntity}" />
-    public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
-        where TEntity : class
-    {
-        /// <inheritdoc cref="IDomainEvent{TEntity}.Source" />
-        public TEntity? Source { get; set; }
+namespace Silverback.Domain;
 
-        /// <inheritdoc cref="IMessageWithSource.Source" />
-        object? IMessageWithSource.Source
-        {
-            get => Source;
-            set => Source = (TEntity?)value;
-        }
+/// <inheritdoc cref="IDomainEvent{TEntity}" />
+public abstract class DomainEvent<TEntity> : IDomainEvent<TEntity>
+    where TEntity : class
+{
+    /// <inheritdoc cref="IDomainEvent{TEntity}.Source" />
+    public TEntity? Source { get; set; }
+
+    /// <inheritdoc cref="IMessageWithSource.Source" />
+    object? IMessageWithSource.Source
+    {
+        get => Source;
+        set => Source = (TEntity?)value;
     }
 }

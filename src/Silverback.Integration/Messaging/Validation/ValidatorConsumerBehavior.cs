@@ -8,52 +8,51 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Validation
+namespace Silverback.Messaging.Validation;
+
+/// <summary>
+///     Deserializes the messages being consumed using the configured <see cref="IMessageSerializer" />.
+/// </summary>
+public class ValidatorConsumerBehavior : IConsumerBehavior
 {
+    private readonly IInboundLogger<ValidatorConsumerBehavior> _logger;
+
     /// <summary>
-    ///     Deserializes the messages being consumed using the configured <see cref="IMessageSerializer" />.
+    ///     Initializes a new instance of the <see cref="ValidatorConsumerBehavior" /> class.
     /// </summary>
-    public class ValidatorConsumerBehavior : IConsumerBehavior
+    /// <param name="logger">
+    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    /// </param>
+    public ValidatorConsumerBehavior(IInboundLogger<ValidatorConsumerBehavior> logger)
     {
-        private readonly IInboundLogger<ValidatorConsumerBehavior> _logger;
+        _logger = Check.NotNull(logger, nameof(logger));
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ValidatorConsumerBehavior" /> class.
-        /// </summary>
-        /// <param name="logger">
-        ///     The <see cref="IInboundLogger{TCategoryName}" />.
-        /// </param>
-        public ValidatorConsumerBehavior(IInboundLogger<ValidatorConsumerBehavior> logger)
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Validator;
+
+    /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+    public async Task HandleAsync(
+        ConsumerPipelineContext context,
+        ConsumerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
+
+        if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
+            context.Envelope is IInboundEnvelope deserializeEnvelope &&
+            deserializeEnvelope.Message != null)
         {
-            _logger = Check.NotNull(logger, nameof(logger));
-        }
+            (bool isValid, string? validationErrors) = MessageValidator.CheckMessageIsValid(
+                deserializeEnvelope.Message,
+                context.Envelope.Endpoint.Configuration.MessageValidationMode);
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Validator;
-
-        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
-                context.Envelope is IInboundEnvelope deserializeEnvelope &&
-                deserializeEnvelope.Message != null)
+            if (!isValid)
             {
-                (bool isValid, string? validationErrors) = MessageValidator.CheckMessageIsValid(
-                    deserializeEnvelope.Message,
-                    context.Envelope.Endpoint.Configuration.MessageValidationMode);
-
-                if (!isValid)
-                {
-                    _logger.LogInvalidMessageProcessed(validationErrors!);
-                }
+                _logger.LogInvalidMessageProcessed(validationErrors!);
             }
-
-            await next(context).ConfigureAwait(false);
         }
+
+        await next(context).ConfigureAwait(false);
     }
 }

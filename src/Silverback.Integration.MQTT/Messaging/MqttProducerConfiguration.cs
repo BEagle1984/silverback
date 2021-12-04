@@ -38,7 +38,7 @@ public sealed record MqttProducerConfiguration : ProducerConfiguration<MqttProdu
     /// </summary>
     public uint? MessageExpiryInterval { get; init; }
 
-    /// <inheritdoc cref="ProducerConfiguration{TEndpoint}.ValidateCore" />
+    /// <inheritdoc cref="ProducerConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {
         base.ValidateCore();

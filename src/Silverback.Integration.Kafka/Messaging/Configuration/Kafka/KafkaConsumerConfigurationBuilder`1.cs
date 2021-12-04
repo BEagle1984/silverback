@@ -13,7 +13,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration.Kafka;
 
 /// <summary>
-///     Builds the <see cref="KafkaConsumerConfiguration"/>.
+///     Builds the <see cref="KafkaConsumerConfiguration" />.
 /// </summary>
 /// <typeparam name="TMessage">
 ///     The type of the messages being consumed.
@@ -55,10 +55,11 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
         DeserializeJson();
     }
 
-    // TODO: Test
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
-    public override string? EndpointRawName =>
-        _topicPartitionOffsets == null ? null : string.Join(',', _topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.Topic));
+    // TODO: Test
+    public override string? EndpointRawName => _topicPartitionOffsets == null
+        ? null
+        : string.Join(',', _topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.Topic));
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.This" />
     protected override KafkaConsumerConfigurationBuilder<TMessage> This => this;

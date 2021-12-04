@@ -6,26 +6,25 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Headers
+namespace Silverback.Messaging.Headers;
+
+/// <summary>
+///     Maps the properties decorated with the <see cref="HeaderAttribute" /> to the message headers.
+/// </summary>
+public class HeadersWriterProducerBehavior : IProducerBehavior
 {
-    /// <summary>
-    ///     Maps the properties decorated with the <see cref="HeaderAttribute" /> to the message headers.
-    /// </summary>
-    public class HeadersWriterProducerBehavior : IProducerBehavior
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;
+
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
+        HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
+            .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
 
-            HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
-                .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
-
-            await next(context).ConfigureAwait(false);
-        }
+        await next(context).ConfigureAwait(false);
     }
 }

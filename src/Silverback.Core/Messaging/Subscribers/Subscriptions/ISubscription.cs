@@ -4,23 +4,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silverback.Messaging.Subscribers.Subscriptions
+namespace Silverback.Messaging.Subscribers.Subscriptions;
+
+/// <summary>
+///     A subscription configuration. Each subscription can resolve to multiple
+///     <see cref="SubscribedMethod" />.
+/// </summary>
+public interface ISubscription
 {
     /// <summary>
-    ///     A subscription configuration. Each subscription can resolve to multiple
-    ///     <see cref="SubscribedMethod" />.
+    ///     Gets the <see cref="SubscribedMethod" /> collection.
     /// </summary>
-    public interface ISubscription
-    {
-        /// <summary>
-        ///     Gets the <see cref="SubscribedMethod" /> collection.
-        /// </summary>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
-        /// </param>
-        /// <returns>
-        ///     A collection of <see cref="SubscribedMethod" />.
-        /// </returns>
-        IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider);
-    }
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
+    /// </param>
+    /// <returns>
+    ///     A collection of <see cref="SubscribedMethod" />.
+    /// </returns>
+    IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider);
 }

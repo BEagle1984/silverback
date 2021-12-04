@@ -17,9 +17,9 @@ internal sealed class DelegateSubscription : ISubscription
     public DelegateSubscription(Delegate handler, SubscriptionOptions options)
     {
         Check.NotNull(handler, nameof(handler));
-            Check.NotNull(options, nameof(options));
+        Check.NotNull(options, nameof(options));
 
-        _method = new SubscribedMethod(_ => handler.Target, handler.Method, options);
+        _method = new SubscribedMethod(_ => handler.Target!, handler.Method, options);
     }
 
     public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>

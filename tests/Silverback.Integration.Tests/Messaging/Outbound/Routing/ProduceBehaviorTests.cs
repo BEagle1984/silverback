@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,6 +14,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
@@ -21,87 +23,86 @@ using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
+namespace Silverback.Tests.Integration.Messaging.Outbound.Routing;
+
+public class ProduceBehaviorTests
 {
-    public class ProduceBehaviorTests
+    private readonly ProduceBehavior _behavior;
+
+    private readonly InMemoryOutbox _outbox;
+
+    private readonly TestBroker _broker;
+
+    public ProduceBehaviorTests()
     {
-        private readonly ProduceBehavior _behavior;
+        ServiceCollection services = new();
 
-        private readonly InMemoryOutbox _outbox;
+        services.AddSilverback()
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddBroker<TestBroker>()
+                    .AddOutbox<InMemoryOutbox>());
 
-        private readonly TestBroker _broker;
+        services
+            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+            .AddLoggerSubstitute();
 
-        public ProduceBehaviorTests()
-        {
-            var services = new ServiceCollection();
+        ServiceProvider? serviceProvider = services.BuildServiceProvider();
 
-            services.AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>()
-                        .AddOutbox<InMemoryOutbox>());
+        _behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
+            .First(behavior => behavior is ProduceBehavior);
+        _broker = serviceProvider.GetRequiredService<TestBroker>();
+        _outbox = (InMemoryOutbox)serviceProvider.GetRequiredService<IOutboxWriter>();
+    }
 
-            services
-                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-                .AddLoggerSubstitute();
+    [Fact]
+    public async Task HandleAsync_OutboundMessage_RelayedToEndpoint()
+    {
+        OutboundEnvelope<TestEventOne> outboundEnvelope = new(
+            new TestEventOne(),
+            Array.Empty<MessageHeader>(),
+            new TestProducerConfiguration("test").GetDefaultEndpoint());
 
-            var serviceProvider = services.BuildServiceProvider();
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _outbox.CommitAsync();
 
-            _behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
-                .First(behavior => behavior is ProduceBehavior);
-            _broker = serviceProvider.GetRequiredService<TestBroker>();
-            _outbox = (InMemoryOutbox)serviceProvider.GetRequiredService<IOutboxWriter>();
-        }
+        IReadOnlyCollection<OutboxStoredMessage> queued = await _outbox.ReadAsync(10);
+        queued.Should().BeEmpty();
+        _broker.ProducedMessages.Should().HaveCount(3);
+    }
 
-        [Fact]
-        public async Task HandleAsync_OutboundMessage_RelayedToEndpoint()
-        {
-            var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                Array.Empty<MessageHeader>(),
-                new TestProducerConfiguration("test").GetDefaultEndpoint());
+    [Fact]
+    public async Task HandleAsync_OutboundMessageWithOutboxStrategy_RelayedToOutbox()
+    {
+        OutboundEnvelope<TestEventOne> outboundEnvelope = new(
+            new TestEventOne(),
+            Array.Empty<MessageHeader>(),
+            new TestProducerConfiguration("test")
+            {
+                Strategy = new OutboxProduceStrategy()
+            }.GetDefaultEndpoint());
 
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _outbox.CommitAsync();
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _behavior.HandleAsync(
+            outboundEnvelope,
+            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+        await _outbox.CommitAsync();
 
-            var queued = await _outbox.ReadAsync(10);
-            queued.Should().BeEmpty();
-            _broker.ProducedMessages.Should().HaveCount(3);
-        }
-
-        [Fact]
-        public async Task HandleAsync_OutboundMessageWithOutboxStrategy_RelayedToOutbox()
-        {
-            var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
-                new TestEventOne(),
-                Array.Empty<MessageHeader>(),
-                new TestProducerConfiguration("test")
-                {
-                    Strategy = new OutboxProduceStrategy()
-                }.GetDefaultEndpoint());
-
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _behavior.HandleAsync(
-                outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
-            await _outbox.CommitAsync();
-
-            var queued = await _outbox.ReadAsync(10);
-            queued.Should().HaveCount(3);
-            _broker.ProducedMessages.Should().BeEmpty();
-        }
+        IReadOnlyCollection<OutboxStoredMessage> queued = await _outbox.ReadAsync(10);
+        queued.Should().HaveCount(3);
+        _broker.ProducedMessages.Should().BeEmpty();
     }
 }

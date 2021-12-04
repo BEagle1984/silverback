@@ -3,23 +3,22 @@
 
 using System;
 
-namespace Silverback.Messaging.Broker
+namespace Silverback.Messaging.Broker;
+
+internal sealed class ConsumerStatusChange : IConsumerStatusChange
 {
-    internal sealed class ConsumerStatusChange : IConsumerStatusChange
+    public ConsumerStatusChange(ConsumerStatus status)
+        : this(status, DateTime.UtcNow)
     {
-        public ConsumerStatusChange(ConsumerStatus status)
-            : this(status, DateTime.UtcNow)
-        {
-        }
-
-        public ConsumerStatusChange(ConsumerStatus status, DateTime timestamp)
-        {
-            Status = status;
-            Timestamp = timestamp;
-        }
-
-        public ConsumerStatus Status { get; }
-
-        public DateTime? Timestamp { get; }
     }
+
+    public ConsumerStatusChange(ConsumerStatus status, DateTime timestamp)
+    {
+        Status = status;
+        Timestamp = timestamp;
+    }
+
+    public ConsumerStatus Status { get; }
+
+    public DateTime? Timestamp { get; }
 }

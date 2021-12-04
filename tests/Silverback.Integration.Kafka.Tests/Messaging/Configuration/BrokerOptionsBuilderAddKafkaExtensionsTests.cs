@@ -8,28 +8,27 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
+namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration;
+
+public class BrokerOptionsBuilderAddKafkaExtensionsTests
 {
-    public class BrokerOptionsBuilderAddKafkaExtensionsTests
+    [Fact]
+    public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()
     {
-        [Fact]
-        public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()
-        {
-            var servicesGeneric = new ServiceCollection();
-            var servicesSpecific = new ServiceCollection();
+        ServiceCollection servicesGeneric = new();
+        ServiceCollection servicesSpecific = new();
 
-            servicesGeneric
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options =>
-                        options.AddBroker<KafkaBroker>());
-            servicesSpecific
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options =>
-                        options.AddKafka());
+        servicesGeneric
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options =>
+                    options.AddBroker<KafkaBroker>());
+        servicesSpecific
+            .AddSilverback()
+            .WithConnectionToMessageBroker(
+                options =>
+                    options.AddKafka());
 
-            servicesGeneric.Should().HaveCount(servicesSpecific.Count);
-        }
+        servicesGeneric.Should().HaveCount(servicesSpecific.Count);
     }
 }

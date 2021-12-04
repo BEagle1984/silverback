@@ -3,10 +3,9 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.Rx.TestTypes.Messages
+namespace Silverback.Tests.Core.Rx.TestTypes.Messages;
+
+public interface ITestMessage : IMessage
 {
-    public interface ITestMessage : IMessage
-    {
-        string? Message { get; }
-    }
+    string? Message { get; }
 }

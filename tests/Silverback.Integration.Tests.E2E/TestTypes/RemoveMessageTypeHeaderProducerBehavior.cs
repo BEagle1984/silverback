@@ -5,17 +5,16 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes
+namespace Silverback.Tests.Integration.E2E.TestTypes;
+
+public class RemoveMessageTypeHeaderProducerBehavior : IProducerBehavior
 {
-    public class RemoveMessageTypeHeaderProducerBehavior : IProducerBehavior
+    public int SortIndex => int.MaxValue;
+
+    public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
-        public int SortIndex => int.MaxValue;
+        context.Envelope.Headers.Remove(DefaultMessageHeaders.MessageType);
 
-        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
-        {
-            context.Envelope.Headers.Remove(DefaultMessageHeaders.MessageType);
-
-            return next(context);
-        }
+        return next(context);
     }
 }

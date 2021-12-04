@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Outbound.EndpointResolvers;
 public interface IProducerEndpointResolver
 {
     /// <summary>
-    ///     Gets the raw endpoint name that can be used as <see cref="ProducerConfiguration.RawName" />.
+    ///     Gets the raw endpoint name that can be used as <see cref="EndpointConfiguration.RawName" />.
     /// </summary>
     string RawName { get; }
 

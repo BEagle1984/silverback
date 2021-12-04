@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 ///     Builds the <see cref="JsonMessageSerializer{TMessage}" />.
 /// </summary>
 public sealed class JsonMessageSerializerBuilder
-    {
+{
     private IJsonMessageSerializer? _serializer;
 
     private JsonSerializerOptions? _options;
@@ -45,7 +45,7 @@ public sealed class JsonMessageSerializerBuilder
     public JsonMessageSerializerBuilder UseFixedType(Type messageType)
     {
         Type serializerType = typeof(JsonMessageSerializer<>).MakeGenericType(messageType);
-        _serializer = (IJsonMessageSerializer)Activator.CreateInstance(serializerType);
+        _serializer = (IJsonMessageSerializer)Activator.CreateInstance(serializerType)!;
         return this;
     }
 

@@ -4,9 +4,8 @@
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Core.Model.TestTypes.Messages
+namespace Silverback.Tests.Core.Model.TestTypes.Messages;
+
+public class TestCommandWithResult : ICommand<IEnumerable<int>>
 {
-    public class TestCommandWithResult : ICommand<IEnumerable<int>>
-    {
-    }
 }

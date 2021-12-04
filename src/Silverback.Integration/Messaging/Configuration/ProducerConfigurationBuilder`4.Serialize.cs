@@ -44,8 +44,7 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
 
     /// <summary>
     ///     <para>
-    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer" /> (or
-    ///         <see cref="JsonMessageSerializer{TMessage}" />) to serialize the produced messages as JSON.
+    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer{TMessage}" /> to serialize the produced messages as JSON.
     ///     </para>
     ///     <para>
     ///         By default this serializer forwards the message type in an header to let the consumer know which type has to be deserialized.

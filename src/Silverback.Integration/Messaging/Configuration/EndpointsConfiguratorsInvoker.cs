@@ -9,69 +9,68 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+internal sealed class EndpointsConfiguratorsInvoker
 {
-    internal sealed class EndpointsConfiguratorsInvoker
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    private readonly IBrokerCallbacksInvoker _callbackInvoker;
+
+    private readonly ISilverbackLogger<EndpointsConfigurationBuilder> _logger;
+
+    private readonly object _lock = new();
+
+    private Task? _invokeTask;
+
+    public EndpointsConfiguratorsInvoker(
+        IServiceScopeFactory scopeFactory,
+        IBrokerCallbacksInvoker callbackInvoker,
+        ISilverbackLogger<EndpointsConfigurationBuilder> logger)
     {
-        private readonly IServiceScopeFactory _scopeFactory;
+        _scopeFactory = Check.NotNull(scopeFactory, nameof(scopeFactory));
+        _callbackInvoker = Check.NotNull(callbackInvoker, nameof(callbackInvoker));
+        _logger = Check.NotNull(logger, nameof(logger));
+    }
 
-        private readonly IBrokerCallbacksInvoker _callbackInvoker;
-
-        private readonly ISilverbackLogger<EndpointsConfigurationBuilder> _logger;
-
-        private readonly object _lock = new();
-
-        private Task? _invokeTask;
-
-        public EndpointsConfiguratorsInvoker(
-            IServiceScopeFactory scopeFactory,
-            IBrokerCallbacksInvoker callbackInvoker,
-            ISilverbackLogger<EndpointsConfigurationBuilder> logger)
+    public Task InvokeAsync()
+    {
+        lock (_lock)
         {
-            _scopeFactory = Check.NotNull(scopeFactory, nameof(scopeFactory));
-            _callbackInvoker = Check.NotNull(callbackInvoker, nameof(callbackInvoker));
-            _logger = Check.NotNull(logger, nameof(logger));
+            _invokeTask ??= InvokeCoreAsync();
         }
 
-        public Task InvokeAsync()
-        {
-            lock (_lock)
-            {
-                _invokeTask ??= InvokeCoreAsync();
-            }
+        return _invokeTask;
+    }
 
-            return _invokeTask;
+    private async Task InvokeCoreAsync()
+    {
+        using IServiceScope? scope = _scopeFactory.CreateScope();
+        EndpointsConfigurationBuilder endpointsConfigurationBuilder = new(scope.ServiceProvider);
+
+        foreach (IEndpointsConfigurator? configurator in scope.ServiceProvider.GetServices<IEndpointsConfigurator>())
+        {
+            InvokeConfigurator(configurator, endpointsConfigurationBuilder);
         }
 
-        private async Task InvokeCoreAsync()
+        await _callbackInvoker.InvokeAsync<IEndpointsConfiguredCallback>(
+                handler => handler.OnEndpointsConfiguredAsync(),
+                scope.ServiceProvider)
+            .ConfigureAwait(false);
+    }
+
+    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    private void InvokeConfigurator(
+        IEndpointsConfigurator configurator,
+        EndpointsConfigurationBuilder endpointsConfigurationBuilder)
+    {
+        try
         {
-            using IServiceScope? scope = _scopeFactory.CreateScope();
-            EndpointsConfigurationBuilder endpointsConfigurationBuilder = new(scope.ServiceProvider);
-
-            foreach (IEndpointsConfigurator? configurator in scope.ServiceProvider.GetServices<IEndpointsConfigurator>())
-            {
-                InvokeConfigurator(configurator, endpointsConfigurationBuilder);
-            }
-
-            await _callbackInvoker.InvokeAsync<IEndpointsConfiguredCallback>(
-                    handler => handler.OnEndpointsConfiguredAsync(),
-                    scope.ServiceProvider)
-                .ConfigureAwait(false);
+            configurator.Configure(endpointsConfigurationBuilder);
         }
-
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private void InvokeConfigurator(
-            IEndpointsConfigurator configurator,
-            EndpointsConfigurationBuilder endpointsConfigurationBuilder)
+        catch (Exception ex)
         {
-            try
-            {
-                configurator.Configure(endpointsConfigurationBuilder);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogEndpointConfiguratorError(configurator, ex);
-            }
+            _logger.LogEndpointConfiguratorError(configurator, ex);
         }
     }
 }

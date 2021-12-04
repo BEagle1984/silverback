@@ -6,39 +6,37 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class EnumerableFirstExtensionsTests
 {
-    public class EnumerableFirstExtensionsTests
+    [Fact]
+    public async Task FirstOrDefaultAsync_MatchingItem_ItemReturned()
     {
-        [Fact]
-        public async Task FirstOrDefaultAsync_MatchingItem_ItemReturned()
-        {
-            object?[] enumerable = { "one", 1, null };
+        object?[] enumerable = { "one", 1, null };
 
-            object? result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item is int));
+        object? result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item is int));
 
-            result.Should().Be(1);
-        }
+        result.Should().Be(1);
+    }
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_NoMatchingItems_NullReturned()
-        {
-            object?[] enumerable = { "one", 1, null };
+    [Fact]
+    public async Task FirstOrDefaultAsync_NoMatchingItems_NullReturned()
+    {
+        object?[] enumerable = { "one", 1, null };
 
-            object? result = await enumerable.FirstOrDefaultAsync(
-                item => Task.FromResult(item is int intItem && intItem == 2));
+        object? result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item is int intItem && intItem == 2));
 
-            result.Should().BeNull();
-        }
+        result.Should().BeNull();
+    }
 
-        [Fact]
-        public async Task FirstOrDefaultAsync_NoMatchingItems_DefaultReturned()
-        {
-            var enumerable = new[] { 1, 3, 5, 7, 9 };
+    [Fact]
+    public async Task FirstOrDefaultAsync_NoMatchingItems_DefaultReturned()
+    {
+        int[] enumerable = { 1, 3, 5, 7, 9 };
 
-            var result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item % 2 == 0));
+        int result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item % 2 == 0));
 
-            result.Should().Be(0);
-        }
+        result.Should().Be(0);
     }
 }

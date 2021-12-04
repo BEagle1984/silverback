@@ -5,16 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Sequences
+namespace Silverback.Messaging.Sequences;
+
+internal static class SequenceStoreEnumerableExtensions
 {
-    internal static class SequenceStoreEnumerableExtensions
-    {
-        public static Task AbortAllSequencesAsync(
-            this IEnumerable<ISequenceStore> stores,
-            SequenceAbortReason abortReason) =>
-            stores
-                .SelectMany(store => store)
-                .ToList()
-                .AbortAllAsync(abortReason);
-    }
+    public static Task AbortAllSequencesAsync(
+        this IEnumerable<ISequenceStore> stores,
+        SequenceAbortReason abortReason) =>
+        stores
+            .SelectMany(store => store)
+            .ToList()
+            .AbortAllAsync(abortReason);
 }

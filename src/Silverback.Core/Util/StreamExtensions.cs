@@ -5,62 +5,59 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class StreamExtensions
 {
-    internal static class StreamExtensions
+    public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
     {
-        public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
+        if (stream == null)
+            return null;
+
+        if (stream is MemoryStream memoryStream)
+            return memoryStream.ToArray();
+
+        using MemoryStream tempMemoryStream = new();
+        await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
+        return tempMemoryStream.ToArray();
+    }
+
+    public static byte[]? ReadAll(this Stream? stream)
+    {
+        if (stream == null)
+            return null;
+
+        if (stream is MemoryStream memoryStream)
+            return memoryStream.ToArray();
+
+        using (MemoryStream tempMemoryStream = new())
         {
-            if (stream == null)
-                return null;
-
-            if (stream is MemoryStream memoryStream)
-                return memoryStream.ToArray();
-
-            await using (var tempMemoryStream = new MemoryStream())
-            {
-                await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
-                return tempMemoryStream.ToArray();
-            }
+            stream.CopyTo(tempMemoryStream);
+            return tempMemoryStream.ToArray();
         }
+    }
 
-        public static byte[]? ReadAll(this Stream? stream)
-        {
-            if (stream == null)
-                return null;
+    public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count)
+    {
+        if (stream == null)
+            return null;
 
-            if (stream is MemoryStream memoryStream)
-                return memoryStream.ToArray();
+        byte[] buffer = new byte[count];
 
-            using (var tempMemoryStream = new MemoryStream())
-            {
-                stream.CopyTo(tempMemoryStream);
-                return tempMemoryStream.ToArray();
-            }
-        }
+        await stream.ReadAsync(buffer.AsMemory()).ConfigureAwait(false);
 
-        public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count)
-        {
-            if (stream == null)
-                return null;
+        return buffer;
+    }
 
-            var buffer = new byte[count];
+    public static byte[]? Read(this Stream? stream, int count)
+    {
+        if (stream == null)
+            return null;
 
-            await stream.ReadAsync(buffer.AsMemory()).ConfigureAwait(false);
+        byte[] buffer = new byte[count];
 
-            return buffer;
-        }
+        stream.Read(buffer.AsSpan());
 
-        public static byte[]? Read(this Stream? stream, int count)
-        {
-            if (stream == null)
-                return null;
-
-            var buffer = new byte[count];
-
-            stream.Read(buffer.AsSpan());
-
-            return buffer;
-        }
+        return buffer;
     }
 }

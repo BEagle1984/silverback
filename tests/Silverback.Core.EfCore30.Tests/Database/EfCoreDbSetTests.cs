@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -11,107 +12,106 @@ using Silverback.Tests.Core.EFCore30.TestTypes;
 using Silverback.Tests.Core.EFCore30.TestTypes.Model;
 using Xunit;
 
-namespace Silverback.Tests.Core.EFCore30.Database
+namespace Silverback.Tests.Core.EFCore30.Database;
+
+public sealed class EfCoreDbSetTests : IDisposable
 {
-    public sealed class EfCoreDbSetTests : IDisposable
+    private readonly TestDbContextInitializer _dbInitializer;
+
+    private readonly TestDbContext _dbContext;
+
+    private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
+
+    public EfCoreDbSetTests()
     {
-        private readonly TestDbContextInitializer _dbInitializer;
+        _dbInitializer = new TestDbContextInitializer();
+        _dbContext = _dbInitializer.GetTestDbContext();
+        _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
+    }
 
-        private readonly TestDbContext _dbContext;
+    [Fact]
+    public void Add_SomeEntity_EntityIsAdded()
+    {
+        _efCoreDbContext.GetDbSet<Person>().Add(new Person());
 
-        private readonly EfCoreDbContext<TestDbContext> _efCoreDbContext;
+        _dbContext.Persons.Local.Should().HaveCount(1);
+        _dbContext.Entry(_dbContext.Persons.Local.First()).State.Should().Be(EntityState.Added);
+    }
 
-        public EfCoreDbSetTests()
-        {
-            _dbInitializer = new TestDbContextInitializer();
-            _dbContext = _dbInitializer.GetTestDbContext();
-            _efCoreDbContext = new EfCoreDbContext<TestDbContext>(_dbContext);
-        }
+    [Fact]
+    public void Remove_ExistingEntity_EntityIsRemoved()
+    {
+        _dbContext.Persons.Add(new Person());
+        _dbContext.SaveChanges();
 
-        [Fact]
-        public void Add_SomeEntity_EntityIsAdded()
-        {
-            _efCoreDbContext.GetDbSet<Person>().Add(new Person());
+        _efCoreDbContext.GetDbSet<Person>().Remove(_dbContext.Persons.First());
 
-            _dbContext.Persons.Local.Should().HaveCount(1);
-            _dbContext.Entry(_dbContext.Persons.Local.First()).State.Should().Be(EntityState.Added);
-        }
+        _dbContext.Entry(_dbContext.Persons.First()).State.Should().Be(EntityState.Deleted);
+    }
 
-        [Fact]
-        public void Remove_ExistingEntity_EntityIsRemoved()
-        {
-            _dbContext.Persons.Add(new Person());
-            _dbContext.SaveChanges();
+    [Fact]
+    public void RemoveRange_ExistingEntities_EntitiesAreRemoved()
+    {
+        _dbContext.Persons.Add(new Person());
+        _dbContext.Persons.Add(new Person());
+        _dbContext.SaveChanges();
 
-            _efCoreDbContext.GetDbSet<Person>().Remove(_dbContext.Persons.First());
+        _efCoreDbContext.GetDbSet<Person>().RemoveRange(_dbContext.Persons.ToList());
 
-            _dbContext.Entry(_dbContext.Persons.First()).State.Should().Be(EntityState.Deleted);
-        }
+        _dbContext.Entry(_dbContext.Persons.First()).State.Should().Be(EntityState.Deleted);
+        _dbContext.Entry(_dbContext.Persons.Skip(1).First()).State.Should().Be(EntityState.Deleted);
+    }
 
-        [Fact]
-        public void RemoveRange_ExistingEntities_EntitiesAreRemoved()
-        {
-            _dbContext.Persons.Add(new Person());
-            _dbContext.Persons.Add(new Person());
-            _dbContext.SaveChanges();
+    [Fact]
+    public void Find_ExistingKey_EntityReturned()
+    {
+        _dbContext.Persons.Add(new Person { Name = "Sergio" });
+        _dbContext.Persons.Add(new Person { Name = "Mandy" });
+        _dbContext.SaveChanges();
 
-            _efCoreDbContext.GetDbSet<Person>().RemoveRange(_dbContext.Persons.ToList());
+        Person? person = _efCoreDbContext.GetDbSet<Person>().Find(2);
 
-            _dbContext.Entry(_dbContext.Persons.First()).State.Should().Be(EntityState.Deleted);
-            _dbContext.Entry(_dbContext.Persons.Skip(1).First()).State.Should().Be(EntityState.Deleted);
-        }
+        person.Should().NotBeNull();
+        person!.Name.Should().Be("Mandy");
+    }
 
-        [Fact]
-        public void Find_ExistingKey_EntityReturned()
-        {
-            _dbContext.Persons.Add(new Person { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person { Name = "Mandy" });
-            _dbContext.SaveChanges();
+    [Fact]
+    public async Task FindAsync_ExistingKey_EntityReturned()
+    {
+        _dbContext.Persons.Add(new Person { Name = "Sergio" });
+        _dbContext.Persons.Add(new Person { Name = "Mandy" });
+        _dbContext.SaveChanges();
 
-            var person = _efCoreDbContext.GetDbSet<Person>().Find(2);
+        Person? person = await _efCoreDbContext.GetDbSet<Person>().FindAsync(2);
 
-            person.Should().NotBeNull();
-            person!.Name.Should().Be("Mandy");
-        }
+        person.Should().NotBeNull();
+        person!.Name.Should().Be("Mandy");
+    }
 
-        [Fact]
-        public async Task FindAsync_ExistingKey_EntityReturned()
-        {
-            _dbContext.Persons.Add(new Person { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person { Name = "Mandy" });
-            _dbContext.SaveChanges();
+    [Fact]
+    public void AsQueryable_EfCoreDbSetQueryableReturned()
+    {
+        IQueryable<Person> queryable = _efCoreDbContext.GetDbSet<Person>().AsQueryable();
 
-            var person = await _efCoreDbContext.GetDbSet<Person>().FindAsync(2);
+        queryable.Should().NotBeNull();
+        queryable.Should().BeAssignableTo<IQueryable<Person>>();
+    }
 
-            person.Should().NotBeNull();
-            person!.Name.Should().Be("Mandy");
-        }
+    [Fact]
+    public void GetLocalCache_LocalEntitiesAreReturned()
+    {
+        _dbContext.Persons.Add(new Person { Name = "Sergio" });
+        _dbContext.Persons.Add(new Person { Name = "Mandy" });
 
-        [Fact]
-        public void AsQueryable_EfCoreDbSetQueryableReturned()
-        {
-            var queryable = _efCoreDbContext.GetDbSet<Person>().AsQueryable();
+        List<Person> local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache().ToList();
 
-            queryable.Should().NotBeNull();
-            queryable.Should().BeAssignableTo<IQueryable<Person>>();
-        }
+        local.Should().NotBeNull();
+        local.Should().HaveCount(2);
+    }
 
-        [Fact]
-        public void GetLocalCache_LocalEntitiesAreReturned()
-        {
-            _dbContext.Persons.Add(new Person { Name = "Sergio" });
-            _dbContext.Persons.Add(new Person { Name = "Mandy" });
-
-            var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache().ToList();
-
-            local.Should().NotBeNull();
-            local.Should().HaveCount(2);
-        }
-
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-            _dbInitializer.Dispose();
-        }
+    public void Dispose()
+    {
+        _dbContext.Dispose();
+        _dbInitializer.Dispose();
     }
 }

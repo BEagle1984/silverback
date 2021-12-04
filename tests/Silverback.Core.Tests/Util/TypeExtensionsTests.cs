@@ -6,17 +6,16 @@ using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class TypeExtensionsTests
 {
-    public class TypeExtensionsTests
+    [Theory]
+    [InlineData("System.String", null)]
+    [InlineData("System.Int32", 0)]
+    [InlineData("System.Nullable`1[[System.Int32]]", null)]
+    public void GetDefaultValue_DefaultForTypeReturned(string typeName, object expected)
     {
-        [Theory]
-        [InlineData("System.String", null)]
-        [InlineData("System.Int32", 0)]
-        [InlineData("System.Nullable`1[[System.Int32]]", null)]
-        public void GetDefaultValue_DefaultForTypeReturned(string typeName, object expected)
-        {
-            Type.GetType(typeName)!.GetDefaultValue().Should().Be(expected);
-        }
+        Type.GetType(typeName)!.GetDefaultValue().Should().Be(expected);
     }
 }

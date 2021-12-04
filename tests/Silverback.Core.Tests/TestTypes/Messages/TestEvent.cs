@@ -3,10 +3,9 @@
 
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 
-namespace Silverback.Tests.Core.TestTypes.Messages
+namespace Silverback.Tests.Core.TestTypes.Messages;
+
+public class TestEvent : IEvent, ITestMessage
 {
-    public class TestEvent : IEvent, ITestMessage
-    {
-        public string? Message { get; set; }
-    }
+    public string? Message { get; set; }
 }

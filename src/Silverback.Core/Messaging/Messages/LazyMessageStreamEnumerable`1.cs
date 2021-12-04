@@ -7,60 +7,59 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+internal sealed class LazyMessageStreamEnumerable<TMessage>
+    : ILazyMessageStreamEnumerable<TMessage>,
+        ILazyMessageStreamEnumerable,
+        ILazyArgumentValue,
+        IDisposable
 {
-    internal sealed class LazyMessageStreamEnumerable<TMessage>
-        : ILazyMessageStreamEnumerable<TMessage>,
-            ILazyMessageStreamEnumerable,
-            ILazyArgumentValue,
-            IDisposable
+    private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource =
+        new();
+
+    private MessageStreamEnumerable<TMessage>? _stream;
+
+    public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
-        private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource =
-            new();
+        Filters = filters;
+    }
 
-        private MessageStreamEnumerable<TMessage>? _stream;
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.MessageType" />
+    public Type MessageType => typeof(TMessage);
 
-        public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
+    public IMessageStreamEnumerable<TMessage>? Stream => _stream;
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.Filters" />
+    public IReadOnlyCollection<IMessageFilter>? Filters { get; }
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
+    IMessageStreamEnumerable? ILazyMessageStreamEnumerable.Stream => _stream;
+
+    object? ILazyArgumentValue.Value => Stream;
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable{TMessage}.WaitUntilCreatedAsync" />
+    public Task WaitUntilCreatedAsync() => _taskCompletionSource.Task;
+
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
+    public IMessageStreamEnumerable GetOrCreateStream()
+    {
+        if (_stream == null)
         {
-            Filters = filters;
+            _stream = new MessageStreamEnumerable<TMessage>();
+            _taskCompletionSource.SetResult(_stream);
         }
 
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.MessageType" />
-        public Type MessageType => typeof(TMessage);
+        return _stream;
+    }
 
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
-        public IMessageStreamEnumerable<TMessage>? Stream => _stream;
+    /// <inheritdoc cref="ILazyMessageStreamEnumerable.Cancel" />
+    public void Cancel() => _taskCompletionSource.SetCanceled();
 
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.Filters" />
-        public IReadOnlyCollection<IMessageFilter>? Filters { get; }
-
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.Stream" />
-        IMessageStreamEnumerable? ILazyMessageStreamEnumerable.Stream => _stream;
-
-        object? ILazyArgumentValue.Value => Stream;
-
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable{TMessage}.WaitUntilCreatedAsync" />
-        public Task WaitUntilCreatedAsync() => _taskCompletionSource.Task;
-
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
-        public IMessageStreamEnumerable GetOrCreateStream()
-        {
-            if (_stream == null)
-            {
-                _stream = new MessageStreamEnumerable<TMessage>();
-                _taskCompletionSource.SetResult(_stream);
-            }
-
-            return _stream;
-        }
-
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable.Cancel" />
-        public void Cancel() => _taskCompletionSource.SetCanceled();
-
-        public void Dispose()
-        {
-            _stream?.Dispose();
-            _stream = null;
-        }
+    public void Dispose()
+    {
+        _stream?.Dispose();
+        _stream = null;
     }
 }

@@ -3,19 +3,18 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Outbound.Enrichers
+namespace Silverback.Messaging.Outbound.Enrichers;
+
+/// <summary>
+///     Enriches the outbound message (e.g. adding custom headers).
+/// </summary>
+public interface IOutboundMessageEnricher
 {
     /// <summary>
-    ///     Enriches the outbound message (e.g. adding custom headers).
+    ///     Enriches the specified message.
     /// </summary>
-    public interface IOutboundMessageEnricher
-    {
-        /// <summary>
-        ///     Enriches the specified message.
-        /// </summary>
-        /// <param name="envelope">
-        ///     The envelope containing the message to be enriched.
-        /// </param>
-        void Enrich(IOutboundEnvelope envelope);
-    }
+    /// <param name="envelope">
+    ///     The envelope containing the message to be enriched.
+    /// </param>
+    void Enrich(IOutboundEnvelope envelope);
 }

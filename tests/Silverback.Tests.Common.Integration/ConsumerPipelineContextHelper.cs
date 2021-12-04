@@ -16,37 +16,36 @@ using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 
-namespace Silverback.Tests
-{
-    public static class ConsumerPipelineContextHelper
-    {
-        public static ConsumerPipelineContext CreateSubstitute(
-            IRawInboundEnvelope? envelope = null,
-            IServiceProvider? serviceProvider = null,
-            IConsumerTransactionManager? transactionManager = null,
-            IConsumer? consumer = null,
-            ISequenceStore? sequenceStore = null,
-            ConsumerEndpoint? endpoint = null) =>
-            new(
-                envelope ?? new RawInboundEnvelope(
-                    Stream.Null,
-                    Array.Empty<MessageHeader>(),
-                    endpoint ?? TestConsumerEndpoint.GetDefault(),
-                    new TestOffset()),
-                consumer ?? Substitute.For<IConsumer>(),
-                sequenceStore ?? Substitute.For<ISequenceStore>(),
-                serviceProvider ?? GetServiceProvider())
-            {
-                TransactionManager = transactionManager ?? Substitute.For<IConsumerTransactionManager>()
-            };
+namespace Silverback.Tests;
 
-        private static IServiceProvider GetServiceProvider() =>
-            ServiceProviderHelper.GetServiceProvider(
-                services =>
-                    services
-                        .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-                        .AddFakeLogger()
-                        .AddSilverback()
-                        .WithConnectionToMessageBroker());
-    }
+public static class ConsumerPipelineContextHelper
+{
+    public static ConsumerPipelineContext CreateSubstitute(
+        IRawInboundEnvelope? envelope = null,
+        IServiceProvider? serviceProvider = null,
+        IConsumerTransactionManager? transactionManager = null,
+        IConsumer? consumer = null,
+        ISequenceStore? sequenceStore = null,
+        ConsumerEndpoint? endpoint = null) =>
+        new(
+            envelope ?? new RawInboundEnvelope(
+                Stream.Null,
+                Array.Empty<MessageHeader>(),
+                endpoint ?? TestConsumerEndpoint.GetDefault(),
+                new TestOffset()),
+            consumer ?? Substitute.For<IConsumer>(),
+            sequenceStore ?? Substitute.For<ISequenceStore>(),
+            serviceProvider ?? GetServiceProvider())
+        {
+            TransactionManager = transactionManager ?? Substitute.For<IConsumerTransactionManager>()
+        };
+
+    private static IServiceProvider GetServiceProvider() =>
+        ServiceProviderHelper.GetServiceProvider(
+            services =>
+                services
+                    .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker());
 }

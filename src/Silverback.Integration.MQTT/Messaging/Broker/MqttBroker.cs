@@ -60,7 +60,7 @@ public class MqttBroker : Broker<MqttProducerConfiguration, MqttConsumerConfigur
         return (MqttProducer)GetProducer(builder.Build());
     }
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateProducer" />
     protected override IProducer InstantiateProducer(
         MqttProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
@@ -73,7 +73,7 @@ public class MqttBroker : Broker<MqttProducerConfiguration, MqttConsumerConfigur
             serviceProvider,
             serviceProvider.GetRequiredService<IOutboundLogger<MqttProducer>>());
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateConsumer" />
     protected override IConsumer InstantiateConsumer(
         MqttConsumerConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,

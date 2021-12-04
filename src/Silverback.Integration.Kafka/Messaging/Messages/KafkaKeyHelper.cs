@@ -8,81 +8,78 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+internal static class KafkaKeyHelper
 {
-    internal static class KafkaKeyHelper
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> TypeMessageKeyPropertyInfoCache =
+        new();
+
+    public static string? GetMessageKey(object? message)
     {
-        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> TypeMessageKeyPropertyInfoCache =
-            new();
+        if (message == null)
+            return null;
 
-        public static string? GetMessageKey(object? message)
+        PropertyInfo[] propertyInfos = GetPropertyInfos(message);
+
+        if (propertyInfos.Length == 0)
         {
-            if (message == null)
-                return null;
-
-            PropertyInfo[] propertyInfos = GetPropertyInfos(message);
-
-            if (propertyInfos.Length == 0)
-            {
-                return null;
-            }
-
-            if (propertyInfos.Length == 1)
-            {
-                var value = propertyInfos[0].GetValue(message, null)?.ToString();
-                return string.IsNullOrEmpty(value) ? null : value;
-            }
-
-            StringBuilder stringBuilder = BuildMessageKey(message, propertyInfos);
-            return stringBuilder.Length == 0 ? null : stringBuilder.ToString();
+            return null;
         }
 
-        private static PropertyInfo[] GetPropertyInfos(object message)
+        if (propertyInfos.Length == 1)
         {
-            if (TypeMessageKeyPropertyInfoCache.TryGetValue(
-                message.GetType(),
-                out PropertyInfo[] propertyInfos))
-            {
-                return propertyInfos;
-            }
+            string? value = propertyInfos[0].GetValue(message, null)?.ToString();
+            return string.IsNullOrEmpty(value) ? null : value;
+        }
 
-            Type messageType = message.GetType();
-            propertyInfos = messageType
-                .GetProperties()
-                .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
-                .ToArray();
+        StringBuilder stringBuilder = BuildMessageKey(message, propertyInfos);
+        return stringBuilder.Length == 0 ? null : stringBuilder.ToString();
+    }
 
-            // Must not fail if there is already an entry for this type
-            _ = TypeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
-
+    private static PropertyInfo[] GetPropertyInfos(object message)
+    {
+        if (TypeMessageKeyPropertyInfoCache.TryGetValue(message.GetType(), out PropertyInfo[]? propertyInfos))
+        {
             return propertyInfos;
         }
 
-        private static StringBuilder BuildMessageKey(
-            object? message,
-            IReadOnlyList<PropertyInfo> propertyInfos)
+        Type messageType = message.GetType();
+        propertyInfos = messageType
+            .GetProperties()
+            .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
+            .ToArray();
+
+        // Must not fail if there is already an entry for this type
+        _ = TypeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
+
+        return propertyInfos;
+    }
+
+    private static StringBuilder BuildMessageKey(
+        object? message,
+        IReadOnlyList<PropertyInfo> propertyInfos)
+    {
+        StringBuilder stringBuilder = new();
+        for (int i = 0; i < propertyInfos.Count; i++)
         {
-            StringBuilder stringBuilder = new();
-            for (var i = 0; i < propertyInfos.Count; i++)
+            string name = propertyInfos[i].Name;
+            string? value = propertyInfos[i].GetValue(message, null)?.ToString();
+            if (string.IsNullOrEmpty(value))
             {
-                string name = propertyInfos[i].Name;
-                var value = propertyInfos[i].GetValue(message, null)?.ToString();
-                if (string.IsNullOrEmpty(value))
-                {
-                    continue;
-                }
-
-                if (stringBuilder.Length > 0)
-                {
-                    stringBuilder.Append(',');
-                }
-
-                stringBuilder.Append(name);
-                stringBuilder.Append('=');
-                stringBuilder.Append(value);
+                continue;
             }
 
-            return stringBuilder;
+            if (stringBuilder.Length > 0)
+            {
+                stringBuilder.Append(',');
+            }
+
+            stringBuilder.Append(name);
+            stringBuilder.Append('=');
+            stringBuilder.Append(value);
         }
+
+        return stringBuilder;
     }
 }

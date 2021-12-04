@@ -46,11 +46,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     }
 
     /// <summary>
-    ///     Gets the <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
-    /// </summary>
-    internal EndpointsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
-
-    /// <summary>
     ///     Gets the endpoint name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </summary>
     // TODO: Get proper endpoint name from implementation
@@ -60,6 +55,11 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     ///     Gets the endpoint name (e.g. the topic name).
     /// </summary>
     public abstract string? EndpointRawName { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
+    /// </summary>
+    internal EndpointsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
 
     /// <summary>
     ///     Gets this instance.
@@ -165,7 +165,7 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     }
 
     /// <summary>
-    ///     Creates the <see cref="TConfiguration"/> instance.
+    ///     Creates the <typeparamref name="TConfiguration" /> instance.
     /// </summary>
     /// <returns>
     ///     The endpoint.

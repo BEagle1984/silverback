@@ -36,7 +36,7 @@ public class TransactionalOutboxBroker : Broker<ProducerConfiguration, ConsumerC
         _queueWriter = queueWriter;
     }
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateProducer" />
     protected override IProducer InstantiateProducer(
         ProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
@@ -50,7 +50,7 @@ public class TransactionalOutboxBroker : Broker<ProducerConfiguration, ConsumerC
             serviceProvider,
             serviceProvider.GetRequiredService<IOutboundLogger<OutboundQueueProducer>>());
 
-    /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
+    /// <inheritdoc cref="Broker{TProducerConfiguration,TConsumerConfiguration}.InstantiateConsumer" />
     protected override IConsumer InstantiateConsumer(
         ConsumerConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,

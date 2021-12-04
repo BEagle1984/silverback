@@ -50,9 +50,6 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     /// <summary>
     ///     Uses the specified value provider function to set the message id header for each produced message.
     /// </summary>
-    /// <typeparam name="TMessage">
-    ///     The type of the messages to be enriched with this header.
-    /// </typeparam>
     /// <param name="valueProvider">
     ///     The value provider function.
     /// </param>

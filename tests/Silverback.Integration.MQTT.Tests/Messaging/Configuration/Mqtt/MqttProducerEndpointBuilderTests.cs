@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
@@ -178,6 +179,8 @@ public class MqttProducerEndpointBuilderTests
         configuration.MessageExpiryInterval.Should().Be(42 * 60);
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {
         public string GetTopic(TestEventOne? message) => "some-topic";

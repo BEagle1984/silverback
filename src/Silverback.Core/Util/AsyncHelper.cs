@@ -14,60 +14,59 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Silverback.Util
+namespace Silverback.Util;
+
+internal static class AsyncHelper
 {
-    internal static class AsyncHelper
+    private static readonly TaskFactory TaskFactory = new(
+        CancellationToken.None,
+        TaskCreationOptions.None,
+        TaskContinuationOptions.None,
+        TaskScheduler.Default);
+
+    public static TResult RunSynchronously<TResult>(Func<Task<TResult>> func)
     {
-        private static readonly TaskFactory TaskFactory = new(
-            CancellationToken.None,
-            TaskCreationOptions.None,
-            TaskContinuationOptions.None,
-            TaskScheduler.Default);
+        CultureInfo? culture = CultureInfo.CurrentCulture;
+        CultureInfo? uiCulture = CultureInfo.CurrentUICulture;
 
-        public static TResult RunSynchronously<TResult>(Func<Task<TResult>> func)
+        Task<TResult> ExecuteTask()
         {
-            var culture = CultureInfo.CurrentCulture;
-            var uiCulture = CultureInfo.CurrentUICulture;
-
-            Task<TResult> ExecuteTask()
-            {
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = uiCulture;
-                return func();
-            }
-
-            return TaskFactory.StartNew(
-                    ExecuteTask,
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    TaskScheduler.Default)
-                .Unwrap()
-                .ConfigureAwait(false)
-                .GetAwaiter()
-                .GetResult();
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = uiCulture;
+            return func();
         }
 
-        public static void RunSynchronously(Func<Task> func)
+        return TaskFactory.StartNew(
+                ExecuteTask,
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
+    }
+
+    public static void RunSynchronously(Func<Task> func)
+    {
+        CultureInfo? culture = CultureInfo.CurrentCulture;
+        CultureInfo? uiCulture = CultureInfo.CurrentUICulture;
+
+        Task ExecuteTask()
         {
-            var culture = CultureInfo.CurrentCulture;
-            var uiCulture = CultureInfo.CurrentUICulture;
-
-            Task ExecuteTask()
-            {
-                Thread.CurrentThread.CurrentCulture = culture;
-                Thread.CurrentThread.CurrentUICulture = uiCulture;
-                return func();
-            }
-
-            TaskFactory.StartNew(
-                    ExecuteTask,
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    TaskScheduler.Default)
-                .Unwrap()
-                .ConfigureAwait(false)
-                .GetAwaiter()
-                .GetResult();
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = uiCulture;
+            return func();
         }
+
+        TaskFactory.StartNew(
+                ExecuteTask,
+                CancellationToken.None,
+                TaskCreationOptions.None,
+                TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 }

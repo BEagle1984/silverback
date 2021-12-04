@@ -114,12 +114,6 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     /// <inheritdoc cref="IConsumer.IsConsuming" />
     public bool IsConsuming { get; protected set; }
 
-    /// <inheritdoc cref="IBrokerConnectedObject.Broker" />
-    IBroker IBrokerConnectedObject.Broker => Broker;
-
-    /// <inheritdoc cref="IConsumer.Configuration" />
-    ConsumerConfiguration IConsumer.Configuration => Configuration;
-
     /// <summary>
     ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </summary>
@@ -134,6 +128,12 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     ///     Gets a value indicating whether the consumer is being stopped.
     /// </summary>
     protected bool IsStopping { get; private set; }
+
+    /// <inheritdoc cref="IBrokerConnectedObject.Broker" />
+    IBroker IBrokerConnectedObject.Broker => Broker;
+
+    /// <inheritdoc cref="IConsumer.Configuration" />
+    ConsumerConfiguration IConsumer.Configuration => Configuration;
 
     /// <inheritdoc cref="IBrokerConnectedObject.ConnectAsync" />
     public async Task ConnectAsync() => await ConnectAndStartAsync().ConfigureAwait(false);

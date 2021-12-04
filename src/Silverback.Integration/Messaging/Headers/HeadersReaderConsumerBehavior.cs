@@ -6,32 +6,31 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Headers
+namespace Silverback.Messaging.Headers;
+
+/// <summary>
+///     Maps the headers with the properties decorated with the <see cref="HeaderAttribute" />.
+/// </summary>
+public class HeadersReaderConsumerBehavior : IConsumerBehavior
 {
-    /// <summary>
-    ///     Maps the headers with the properties decorated with the <see cref="HeaderAttribute" />.
-    /// </summary>
-    public class HeadersReaderConsumerBehavior : IConsumerBehavior
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
+
+    /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+    public async Task HandleAsync(
+        ConsumerPipelineContext context,
+        ConsumerBehaviorHandler next)
     {
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+        if (context.Envelope is IInboundEnvelope inboundEnvelope)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            if (context.Envelope is IInboundEnvelope inboundEnvelope)
-            {
-                HeaderAttributeHelper.SetFromHeaders(
-                    inboundEnvelope.Message,
-                    inboundEnvelope.Headers);
-            }
-
-            await next(context).ConfigureAwait(false);
+            HeaderAttributeHelper.SetFromHeaders(
+                inboundEnvelope.Message,
+                inboundEnvelope.Headers);
         }
+
+        await next(context).ConfigureAwait(false);
     }
 }

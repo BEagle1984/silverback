@@ -8,36 +8,35 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Integration.TestTypes;
+
+public class TestSubscriber
 {
-    public class TestSubscriber
+    public IList<IMessage> ReceivedMessages { get; } = new List<IMessage>();
+
+    public int MustFailCount { get; set; }
+
+    public Func<IMessage, bool>? FailCondition { get; set; }
+
+    public int FailCount { get; private set; }
+
+    public TimeSpan Delay { get; set; } = TimeSpan.Zero;
+
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private async Task OnMessageReceived(IMessage message)
     {
-        public IList<IMessage> ReceivedMessages { get; } = new List<IMessage>();
+        if (Delay > TimeSpan.Zero)
+            await Task.Delay(Delay);
 
-        public int MustFailCount { get; set; }
+        ReceivedMessages.Add(message);
 
-        public Func<IMessage, bool>? FailCondition { get; set; }
-
-        public int FailCount { get; private set; }
-
-        public TimeSpan Delay { get; set; } = TimeSpan.Zero;
-
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private async Task OnMessageReceived(IMessage message)
+        if (message is not ISilverbackEvent &&
+            MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
         {
-            if (Delay > TimeSpan.Zero)
-                await Task.Delay(Delay);
-
-            ReceivedMessages.Add(message);
-
-            if (message is not ISilverbackEvent &&
-                MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
-            {
-                FailCount++;
-                throw new InvalidOperationException("Test failure");
-            }
+            FailCount++;
+            throw new InvalidOperationException("Test failure");
         }
     }
 }

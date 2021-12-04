@@ -9,159 +9,156 @@ using Silverback.Diagnostics;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Core.Diagnostics
+namespace Silverback.Tests.Core.Diagnostics;
+
+public class SilverbackLoggerTests
 {
-    public class SilverbackLoggerTests
+    [Fact]
+    public void Log_EmptyLogLevelMapping_LogLevelNotChanged()
     {
-        [Fact]
-        public void Log_EmptyLogLevelMapping_LogLevelNotChanged()
+        LogLevelDictionary logLevels = new();
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
+
+        silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
+
+        logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
+    }
+
+    [Fact]
+    public void Log_ConfiguredLogLevelMapping_LogLevelChanged()
+    {
+        LogLevelDictionary logLevels = new()
         {
-            var logLevels = new LogLevelDictionary();
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger =
-                new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+            { CoreLogEvents.DistributedLockAcquired.EventId, (_, _, _) => LogLevel.Error }
+        };
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
 
-            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
+        silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
-        }
+        logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
+    }
 
-        [Fact]
-        public void Log_ConfiguredLogLevelMapping_LogLevelChanged()
+    [Fact]
+    public void Log_EventIdNotConfigured_LogLevelNotChanged()
+    {
+        LogLevelDictionary logLevels = new()
         {
-            var logLevels = new LogLevelDictionary
+            { CoreLogEvents.BackgroundServiceStarting.EventId, (_, _, _) => LogLevel.Error }
+        };
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
+
+        silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
+
+        logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
+    }
+
+    [Fact]
+    public void Log_ConfiguredConditionalLogLevelMapping_LogLevelChanged()
+    {
+        LogLevelDictionary logLevels = new()
+        {
             {
-                { CoreLogEvents.DistributedLockAcquired.EventId, (_, _, _) => LogLevel.Error }
-            };
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger =
-                new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
-
-            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
-
-            logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
-        }
-
-        [Fact]
-        public void Log_EventIdNotConfigured_LogLevelNotChanged()
-        {
-            var logLevels = new LogLevelDictionary
-            {
-                { CoreLogEvents.BackgroundServiceStarting.EventId, (_, _, _) => LogLevel.Error }
-            };
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
-
-            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
-
-            logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
-        }
-
-        [Fact]
-        public void Log_ConfiguredConditionalLogLevelMapping_LogLevelChanged()
-        {
-            var logLevels = new LogLevelDictionary
-            {
+                CoreLogEvents.FailedToAcquireDistributedLock.EventId,
+                (exception, originalLogLevel, _) =>
                 {
-                    CoreLogEvents.FailedToAcquireDistributedLock.EventId,
-                    (exception, originalLogLevel, _) =>
-                    {
-                        if (exception is InvalidOperationException)
-                            return LogLevel.Error;
+                    if (exception is InvalidOperationException)
+                        return LogLevel.Error;
 
-                        return originalLogLevel;
-                    }
+                    return originalLogLevel;
                 }
-            };
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Error);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+            }
+        };
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Error);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
 
-            silverbackLogger.LogFailedToAcquireLock(
-                new DistributedLockSettings("name", "id"),
-                new InvalidOperationException());
+        silverbackLogger.LogFailedToAcquireLock(
+            new DistributedLockSettings("name", "id"),
+            new InvalidOperationException());
 
-            logger.Received(
-                LogLevel.Error,
-                typeof(InvalidOperationException),
-                "Failed to acquire lock name (id).");
-        }
+        logger.Received(
+            LogLevel.Error,
+            typeof(InvalidOperationException),
+            "Failed to acquire lock name (id).");
+    }
 
-        [Fact]
-        public void Log_ConfiguredConditionalLogLevelMapping_LogLevelNotChanged()
+    [Fact]
+    public void Log_ConfiguredConditionalLogLevelMapping_LogLevelNotChanged()
+    {
+        LogLevelDictionary logLevels = new()
         {
-            var logLevels = new LogLevelDictionary
             {
+                CoreLogEvents.FailedToAcquireDistributedLock.EventId,
+                (exception, originalLogLevel, _) =>
                 {
-                    CoreLogEvents.FailedToAcquireDistributedLock.EventId,
-                    (exception, originalLogLevel, _) =>
-                    {
-                        if (exception is InvalidCastException)
-                            return LogLevel.Error;
+                    if (exception is InvalidCastException)
+                        return LogLevel.Error;
 
-                        return originalLogLevel;
-                    }
+                    return originalLogLevel;
                 }
-            };
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Debug);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+            }
+        };
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Debug);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
 
-            silverbackLogger.LogFailedToAcquireLock(
-                new DistributedLockSettings("name", "id"),
-                new InvalidOperationException());
+        silverbackLogger.LogFailedToAcquireLock(
+            new DistributedLockSettings("name", "id"),
+            new InvalidOperationException());
 
-            logger.Received(
-                LogLevel.Debug,
-                typeof(InvalidOperationException),
-                "Failed to acquire lock name (id).");
-        }
+        logger.Received(
+            LogLevel.Debug,
+            typeof(InvalidOperationException),
+            "Failed to acquire lock name (id).");
+    }
 
-        [Fact]
-        public void Log_ConfiguredMessageBasedLogLevelMapping_LogLevelChanged()
+    [Fact]
+    public void Log_ConfiguredMessageBasedLogLevelMapping_LogLevelChanged()
+    {
+        LogLevelDictionary logLevels = new()
         {
-            var logLevels = new LogLevelDictionary
             {
+                CoreLogEvents.DistributedLockAcquired.EventId,
+                (_, originalLogLevel, message) =>
                 {
-                    CoreLogEvents.DistributedLockAcquired.EventId,
-                    (_, originalLogLevel, message) =>
-                    {
-                        if (message.Value == "Acquired lock name (id).")
-                            return LogLevel.Error;
+                    if (message.Value == "Acquired lock name (id).")
+                        return LogLevel.Error;
 
-                        return originalLogLevel;
-                    }
+                    return originalLogLevel;
                 }
-            };
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+            }
+        };
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
 
-            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
+        silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
-        }
+        logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
+    }
 
-        [Fact]
-        public void IsEnabled_ConfiguredLogLevelMapping_CheckedAccordingToNewLevel()
+    [Fact]
+    public void IsEnabled_ConfiguredLogLevelMapping_CheckedAccordingToNewLevel()
+    {
+        LoggerSubstitute<SilverbackLoggerTests> logger = new(LogLevel.Information);
+        LogEvent logEvent = CoreLogEvents.AcquiringDistributedLock;
+        logger.IsEnabled(logEvent.Level).Should().BeTrue();
+
+        LogLevelDictionary logLevels = new()
         {
-            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var logEvent = CoreLogEvents.AcquiringDistributedLock;
-            logger.IsEnabled(logEvent.Level).Should().BeTrue();
+            { logEvent.EventId, (_, _, _) => LogLevel.Trace }
+        };
+        MappedLevelsLogger<SilverbackLoggerTests> mappedLevelsLogger = new(logLevels, logger);
+        SilverbackLogger<SilverbackLoggerTests> silverbackLogger = new(mappedLevelsLogger);
 
-            var logLevels = new LogLevelDictionary
-            {
-                { logEvent.EventId, (_, _, _) => LogLevel.Trace }
-            };
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
-            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+        bool result = silverbackLogger.IsEnabled(logEvent);
 
-            var result = silverbackLogger.IsEnabled(logEvent);
-
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
     }
 }

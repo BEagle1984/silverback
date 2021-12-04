@@ -17,5 +17,5 @@ public sealed class TestOtherStaticEndpointResolver
 
     public string Topic { get; }
 
-    protected override TestOtherProducerEndpoint GetEndpointCore(TestOtherProducerConfiguration endpointConfiguration) => new(Topic, endpointConfiguration);
+    protected override TestOtherProducerEndpoint GetEndpointCore(TestOtherProducerConfiguration configuration) => new(Topic, configuration);
 }

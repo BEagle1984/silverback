@@ -25,7 +25,7 @@ public abstract record DynamicProducerEndpointResolver<TEndpoint, TConfiguration
     ///     Initializes a new instance of the <see cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}" /> class.
     /// </summary>
     /// <param name="rawName">
-    ///     The raw endpoint name that can be used as <see cref="ProducerConfiguration.RawName" />.
+    ///     The raw endpoint name that can be used as <see cref="EndpointConfiguration.RawName" />.
     /// </param>
     protected DynamicProducerEndpointResolver(string rawName)
     {

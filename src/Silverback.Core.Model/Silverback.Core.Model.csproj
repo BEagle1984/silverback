@@ -7,8 +7,7 @@
     <Version>$(BaseVersion)</Version>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package contains the default messages interfaces and domain entity implementation.</Description>
+    <Description>$(Description) This package contains the default messages interfaces and domain entity implementation.</Description>
     <PackageLicenseExpression>$(License)</PackageLicenseExpression>
     <Copyright>$(Copyright)</Copyright>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
@@ -22,16 +21,8 @@ This package contains the default messages interfaces and domain entity implemen
     <Product>Silverback.Core.Model</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.Model.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.Model.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 
 </Project>

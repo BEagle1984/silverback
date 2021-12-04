@@ -3,11 +3,10 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
+namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
+
+public class BinaryFileMessageWithKafkaKey : BinaryFileMessage
 {
-    public class BinaryFileMessageWithKafkaKey : BinaryFileMessage
-    {
-        [KafkaKeyMember]
-        public int? KafkaKey { get; set; }
-    }
+    [KafkaKeyMember]
+    public int? KafkaKey { get; set; }
 }

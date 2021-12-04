@@ -6,39 +6,38 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Testing
+namespace Silverback.Testing;
+
+/// <summary>
+///     Added at the very beginning of the consumer pipeline, forwards the untouched
+///     <see cref="IRawInboundEnvelope" /> to the <see cref="IIntegrationSpy" />.
+/// </summary>
+public class RawInboundSpyBrokerBehavior : IConsumerBehavior
 {
+    private readonly IntegrationSpy _integrationSpy;
+
     /// <summary>
-    ///     Added at the very beginning of the consumer pipeline, forwards the untouched
-    ///     <see cref="IRawInboundEnvelope" /> to the <see cref="IIntegrationSpy" />.
+    ///     Initializes a new instance of the <see cref="RawInboundSpyBrokerBehavior" /> class.
     /// </summary>
-    public class RawInboundSpyBrokerBehavior : IConsumerBehavior
+    /// <param name="integrationSpy">
+    ///     The <see cref="IntegrationSpy" />.
+    /// </param>
+    public RawInboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
     {
-        private readonly IntegrationSpy _integrationSpy;
+        _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RawInboundSpyBrokerBehavior" /> class.
-        /// </summary>
-        /// <param name="integrationSpy">
-        ///     The <see cref="IntegrationSpy" />.
-        /// </param>
-        public RawInboundSpyBrokerBehavior(IntegrationSpy integrationSpy)
-        {
-            _integrationSpy = Check.NotNull(integrationSpy, nameof(integrationSpy));
-        }
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => int.MinValue;
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => int.MinValue;
+    /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+    public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
+        _integrationSpy.AddRawInboundEnvelope(context.Envelope);
 
-            _integrationSpy.AddRawInboundEnvelope(context.Envelope);
-
-            return next(context);
-        }
+        return next(context);
     }
 }

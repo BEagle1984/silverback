@@ -14,7 +14,7 @@ public static class ConsumerConfigurationBuilderNewtonsoftExtensions
 {
     /// <summary>
     ///     <para>
-    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer" /> (or
+    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer{TMessage}" /> (or
     ///         <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />) to deserialize the consumed JSON.
     ///     </para>
     ///     <para>

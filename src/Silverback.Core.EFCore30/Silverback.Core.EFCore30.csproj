@@ -5,8 +5,7 @@
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
     <Authors>$(Authors)</Authors>
     <Company>$(Company)</Company>
-    <Description>$(Description)
-This package It contains the storage implementation to integrate Silverback with Entity Framework Core. It is needed to use a DbContext as storage for (temporary) data and to fire the domain events as part of the SaveChanges transaction.</Description>
+    <Description>$(Description) This package It contains the storage implementation to integrate Silverback with Entity Framework Core. It is needed to use a DbContext as storage for (temporary) data and to fire the domain events as part of the SaveChanges transaction.</Description>
     <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
@@ -22,20 +21,12 @@ This package It contains the storage implementation to integrate Silverback with
     <Product>Silverback.Core.EntityFrameworkCore</Product>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.EFCore30.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.EFCore30.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
   </ItemGroup>
 
 </Project>

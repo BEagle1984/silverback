@@ -8,39 +8,38 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Inbound.ExactlyOnce
+namespace Silverback.Messaging.Inbound.ExactlyOnce;
+
+/// <summary>
+///     Uses an <see cref="IInboundLog" /> to keep track of the processed message identifiers and guarantee
+///     that each message is processed only once.
+/// </summary>
+public class LogExactlyOnceStrategy : IExactlyOnceStrategy
 {
-    /// <summary>
-    ///     Uses an <see cref="IInboundLog" /> to keep track of the processed message identifiers and guarantee
-    ///     that each message is processed only once.
-    /// </summary>
-    public class LogExactlyOnceStrategy : IExactlyOnceStrategy
+    /// <inheritdoc cref="IExactlyOnceStrategy.Build" />
+    public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
+        new LogExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IInboundLog>());
+
+    private sealed class LogExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
     {
-        /// <inheritdoc cref="IExactlyOnceStrategy.Build" />
-        public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            new LogExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IInboundLog>());
+        private readonly IInboundLog _inboundLog;
 
-        private sealed class LogExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
+        public LogExactlyOnceStrategyImplementation(IInboundLog inboundLog)
         {
-            private readonly IInboundLog _inboundLog;
+            _inboundLog = inboundLog;
+        }
 
-            public LogExactlyOnceStrategyImplementation(IInboundLog inboundLog)
-            {
-                _inboundLog = inboundLog;
-            }
+        public async Task<bool> CheckIsAlreadyProcessedAsync(ConsumerPipelineContext context)
+        {
+            Check.NotNull(context, nameof(context));
 
-            public async Task<bool> CheckIsAlreadyProcessedAsync(ConsumerPipelineContext context)
-            {
-                Check.NotNull(context, nameof(context));
+            if (await _inboundLog.ExistsAsync(context.Envelope).ConfigureAwait(false))
+                return true;
 
-                if (await _inboundLog.ExistsAsync(context.Envelope).ConfigureAwait(false))
-                    return true;
+            context.TransactionManager.Enlist(_inboundLog);
 
-                context.TransactionManager.Enlist(_inboundLog);
-
-                await _inboundLog.AddAsync(context.Envelope).ConfigureAwait(false);
-                return false;
-            }
+            await _inboundLog.AddAsync(context.Envelope).ConfigureAwait(false);
+            return false;
         }
     }
 }

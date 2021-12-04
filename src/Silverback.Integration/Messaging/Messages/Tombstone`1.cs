@@ -3,26 +3,25 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     A tombstone message (a message with null body).
+/// </summary>
+/// <typeparam name="TMessage">
+///     The type of the message that was expected.
+/// </typeparam>
+[SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for routing")]
+public class Tombstone<TMessage> : Tombstone
 {
     /// <summary>
-    ///     A tombstone message (a message with null body).
+    ///     Initializes a new instance of the <see cref="Tombstone{TMessage}" /> class.
     /// </summary>
-    /// <typeparam name="TMessage">
-    ///     The type of the message that was expected.
-    /// </typeparam>
-    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for routing")]
-    public class Tombstone<TMessage> : Tombstone
+    /// <param name="messageId">
+    ///     The message identifier.
+    /// </param>
+    public Tombstone(string messageId)
+        : base(messageId)
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Tombstone{TMessage}" /> class.
-        /// </summary>
-        /// <param name="messageId">
-        ///     The message identifier.
-        /// </param>
-        public Tombstone(string messageId)
-            : base(messageId)
-        {
-        }
     }
 }

@@ -28,9 +28,6 @@ public class ProducersHealthCheckService : IProducersHealthCheckService
     /// <param name="brokerCollection">
     ///     The collection containing the available brokers.
     /// </param>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" />.
-    /// </param>
     public ProducersHealthCheckService(IOutboundRoutingConfiguration outboundRoutingConfiguration, IBrokerCollection brokerCollection)
     {
         _outboundRoutingConfiguration = Check.NotNull(outboundRoutingConfiguration, nameof(outboundRoutingConfiguration));

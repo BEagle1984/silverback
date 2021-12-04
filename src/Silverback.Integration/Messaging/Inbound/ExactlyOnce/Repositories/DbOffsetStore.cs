@@ -112,10 +112,7 @@ public sealed class DbOffsetStore : RepositoryBase<StoredOffset>, IOffsetStore
     private static IBrokerMessageOffset InstantiateOffset(string clrType, string key, string value)
     {
         Type offsetType = TypesCache.GetType(clrType);
-        IBrokerMessageOffset offset = (IBrokerMessageOffset)Activator.CreateInstance(
-            offsetType,
-            key,
-            value);
+        IBrokerMessageOffset offset = (IBrokerMessageOffset)Activator.CreateInstance(offsetType, key, value)!;
         return offset;
     }
 

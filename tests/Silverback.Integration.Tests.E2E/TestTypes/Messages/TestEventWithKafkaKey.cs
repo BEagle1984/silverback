@@ -3,13 +3,12 @@
 
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.E2E.TestTypes.Messages
-{
-    public class TestEventWithKafkaKey : IIntegrationEvent
-    {
-        [KafkaKeyMember]
-        public int? KafkaKey { get; set; }
+namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
-        public string? Content { get; set; }
-    }
+public class TestEventWithKafkaKey : IIntegrationEvent
+{
+    [KafkaKeyMember]
+    public int? KafkaKey { get; set; }
+
+    public string? Content { get; set; }
 }

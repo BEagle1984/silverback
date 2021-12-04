@@ -6,83 +6,82 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.Kafka.Messaging;
+
+public class KafkaConsumerEndpointTests
 {
-    public class KafkaConsumerEndpointTests
+    [Fact]
+    public void RawName_TopicNameReturned()
     {
-        [Fact]
-        public void RawName_TopicNameReturned()
-        {
-            KafkaConsumerEndpoint endpoint = new("topic", 42, new KafkaConsumerConfiguration());
+        KafkaConsumerEndpoint endpoint = new("topic", 42, new KafkaConsumerConfiguration());
 
-            endpoint.RawName.Should().Be("topic");
-        }
+        endpoint.RawName.Should().Be("topic");
+    }
 
-        [Fact]
-        public void Equals_SameInstance_TrueReturned()
-        {
-            KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
-            KafkaConsumerEndpoint endpoint2 = endpoint1;
+    [Fact]
+    public void Equals_SameInstance_TrueReturned()
+    {
+        KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
+        KafkaConsumerEndpoint endpoint2 = endpoint1;
 
-            bool result = endpoint1.Equals(endpoint2);
+        bool result = endpoint1.Equals(endpoint2);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_SameTopic_TrueReturned()
-        {
-            KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
-            KafkaConsumerEndpoint endpoint2 = new("topic", 42, new KafkaConsumerConfiguration());
+    [Fact]
+    public void Equals_SameTopic_TrueReturned()
+    {
+        KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
+        KafkaConsumerEndpoint endpoint2 = new("topic", 42, new KafkaConsumerConfiguration());
 
-            bool result = endpoint1.Equals(endpoint2);
+        bool result = endpoint1.Equals(endpoint2);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_DifferentTopic_FalseReturned()
-        {
-            KafkaConsumerEndpoint endpoint1 = new("topic1", 42, new KafkaConsumerConfiguration());
-            KafkaConsumerEndpoint endpoint2 = new("topic2", 42, new KafkaConsumerConfiguration());
+    [Fact]
+    public void Equals_DifferentTopic_FalseReturned()
+    {
+        KafkaConsumerEndpoint endpoint1 = new("topic1", 42, new KafkaConsumerConfiguration());
+        KafkaConsumerEndpoint endpoint2 = new("topic2", 42, new KafkaConsumerConfiguration());
 
-            bool result = endpoint1.Equals(endpoint2);
+        bool result = endpoint1.Equals(endpoint2);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void Equals_DifferentPartition_FalseReturned()
-        {
-            KafkaConsumerEndpoint endpoint1 = new("topic", 1, new KafkaConsumerConfiguration());
-            KafkaConsumerEndpoint endpoint2 = new("topic", 2, new KafkaConsumerConfiguration());
+    [Fact]
+    public void Equals_DifferentPartition_FalseReturned()
+    {
+        KafkaConsumerEndpoint endpoint1 = new("topic", 1, new KafkaConsumerConfiguration());
+        KafkaConsumerEndpoint endpoint2 = new("topic", 2, new KafkaConsumerConfiguration());
 
-            bool result = endpoint1.Equals(endpoint2);
+        bool result = endpoint1.Equals(endpoint2);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public void Equals_DifferentEndpointConfiguration_FalseReturned()
-        {
-            KafkaConsumerEndpoint endpoint1 = new(
-                "topic",
-                42,
-                new KafkaConsumerConfiguration()
-                {
-                    BackpressureLimit = 42
-                });
-            KafkaConsumerEndpoint endpoint2 = new(
-                "topic",
-                42,
-                new KafkaConsumerConfiguration()
-                {
-                    ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
-                });
+    [Fact]
+    public void Equals_DifferentEndpointConfiguration_FalseReturned()
+    {
+        KafkaConsumerEndpoint endpoint1 = new(
+            "topic",
+            42,
+            new KafkaConsumerConfiguration
+            {
+                BackpressureLimit = 42
+            });
+        KafkaConsumerEndpoint endpoint2 = new(
+            "topic",
+            42,
+            new KafkaConsumerConfiguration
+            {
+                ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
+            });
 
-            bool result = endpoint1.Equals(endpoint2);
+        bool result = endpoint1.Equals(endpoint2);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
     }
 }

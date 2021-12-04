@@ -12,132 +12,130 @@ using MQTTnet.Client.Options;
 using MQTTnet.Client.Receiving;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Mqtt.Mocks
+namespace Silverback.Messaging.Broker.Mqtt.Mocks;
+
+[SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 {
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-    internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
+    private readonly Dictionary<string, ClientSession> _sessions = new();
+
+    private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = new();
+
+    private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
+
+    [SuppressMessage(
+        "ReSharper",
+        "InconsistentlySynchronizedField",
+        Justification = "Lock (dis-)connect only")]
+    public IClientSession GetClientSession(string clientId) => _sessions[clientId];
+
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
+    public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic) =>
+        _messagesByTopic.ContainsKey(topic)
+            ? _messagesByTopic[topic]
+            : Array.Empty<MqttApplicationMessage>();
+
+    public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
     {
-        private readonly Dictionary<string, ClientSession> _sessions = new();
+        Check.NotNull(clientOptions, nameof(clientOptions));
+        Check.NotNull(handler, nameof(handler));
 
-        private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = new();
-
-        private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
-
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Lock (dis-)connect only")]
-        public IClientSession GetClientSession(string clientId) => _sessions[clientId];
-
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-        public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic) =>
-            _messagesByTopic.ContainsKey(topic)
-                ? _messagesByTopic[topic]
-                : Array.Empty<MqttApplicationMessage>();
-
-        public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
+        lock (_sessions)
         {
-            Check.NotNull(clientOptions, nameof(clientOptions));
-            Check.NotNull(handler, nameof(handler));
+            Disconnect(clientOptions.ClientId);
 
-            lock (_sessions)
-            {
-                Disconnect(clientOptions.ClientId);
+            if (!_sessions.TryGetValue(clientOptions.ClientId, out ClientSession? session))
+                session = new ClientSession(clientOptions, handler, _sharedSubscriptionsManager);
 
-                if (!_sessions.TryGetValue(clientOptions.ClientId, out ClientSession? session))
-                    session = new ClientSession(clientOptions, handler, _sharedSubscriptionsManager);
-
-                _sessions.Add(clientOptions.ClientId, session);
-                session.Connect();
-            }
+            _sessions.Add(clientOptions.ClientId, session);
+            session.Connect();
         }
+    }
 
-        public void Disconnect(string clientId)
+    public void Disconnect(string clientId)
+    {
+        lock (_sessions)
         {
-            lock (_sessions)
-            {
-                if (!_sessions.TryGetValue(clientId, out var session))
-                    return;
+            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+                return;
 
-                session.Disconnect();
+            session.Disconnect();
 
-                if (session.ClientOptions.CleanSession)
-                    _sessions.Remove(clientId);
-            }
+            if (session.ClientOptions.CleanSession)
+                _sessions.Remove(clientId);
         }
+    }
 
-        public void Subscribe(string clientId, IReadOnlyCollection<string> topics)
+    public void Subscribe(string clientId, IReadOnlyCollection<string> topics)
+    {
+        lock (_sessions)
         {
-            lock (_sessions)
-            {
-                if (!_sessions.TryGetValue(clientId, out var session))
-                    return;
+            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+                return;
 
-                session.Subscribe(topics);
-            }
+            session.Subscribe(topics);
         }
+    }
 
-        public void Unsubscribe(string clientId, IReadOnlyCollection<string> topics)
+    public void Unsubscribe(string clientId, IReadOnlyCollection<string> topics)
+    {
+        lock (_sessions)
         {
-            lock (_sessions)
-            {
-                if (!_sessions.TryGetValue(clientId, out var session))
-                    return;
+            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+                return;
 
-                session.Unsubscribe(topics);
-            }
+            session.Unsubscribe(topics);
         }
+    }
 
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Lock (dis-)connect only")]
-        public Task PublishAsync(
-            string clientId,
-            MqttApplicationMessage message,
-            IMqttClientOptions clientOptions)
+    [SuppressMessage(
+        "ReSharper",
+        "InconsistentlySynchronizedField",
+        Justification = "Lock (dis-)connect only")]
+    public Task PublishAsync(
+        string clientId,
+        MqttApplicationMessage message,
+        IMqttClientOptions clientOptions)
+    {
+        if (!_sessions.TryGetValue(clientId, out ClientSession? publisherSession) || !publisherSession.IsConnected)
+            throw new InvalidOperationException("The client is not connected.");
+
+        StoreMessage(message);
+
+        return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions).AsTask());
+    }
+
+    [SuppressMessage(
+        "ReSharper",
+        "InconsistentlySynchronizedField",
+        Justification = "Lock (dis-)connect only.")]
+    public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
+    {
+        while (!cancellationToken.IsCancellationRequested)
         {
-            if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
-                throw new InvalidOperationException("The client is not connected.");
+            if (_sessions.Values.All(
+                    session => session.PendingMessagesCount == 0 ||
+                               session.IsConsumerDisconnected ||
+                               !session.IsConnected))
+                return;
 
-            StoreMessage(message);
-
-            return _sessions.Values.ForEachAsync(
-                session => session.PushAsync(message, clientOptions).AsTask());
+            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
         }
+    }
 
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Lock (dis-)connect only.")]
-        public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
+    public void Dispose()
+    {
+        _sessions.Values.ForEach(session => session.Dispose());
+    }
+
+    private void StoreMessage(MqttApplicationMessage message)
+    {
+        lock (_messagesByTopic)
         {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (_sessions.Values.All(
-                        session => session.PendingMessagesCount == 0 ||
-                                   session.IsConsumerDisconnected ||
-                                   !session.IsConnected))
-                    return;
+            if (!_messagesByTopic.ContainsKey(message.Topic))
+                _messagesByTopic[message.Topic] = new List<MqttApplicationMessage>();
 
-                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
-            }
-        }
-
-        public void Dispose()
-        {
-            _sessions.Values.ForEach(session => session.Dispose());
-        }
-
-        private void StoreMessage(MqttApplicationMessage message)
-        {
-            lock (_messagesByTopic)
-            {
-                if (!_messagesByTopic.ContainsKey(message.Topic))
-                    _messagesByTopic[message.Topic] = new List<MqttApplicationMessage>();
-
-                _messagesByTopic[message.Topic].Add(message);
-            }
+            _messagesByTopic[message.Topic].Add(message);
         }
     }
 }

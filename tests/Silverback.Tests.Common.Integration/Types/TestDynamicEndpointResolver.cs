@@ -20,7 +20,7 @@ public sealed record TestDynamicEndpointResolver : DynamicProducerEndpointResolv
 
     public override ValueTask<TestProducerEndpoint> DeserializeAsync(
         byte[] serializedEndpoint,
-        TestProducerConfiguration endpointConfiguration) =>
+        TestProducerConfiguration configuration) =>
         throw new NotImplementedException();
 
     public override ValueTask<byte[]> SerializeAsync(TestProducerEndpoint endpoint) =>
@@ -28,7 +28,7 @@ public sealed record TestDynamicEndpointResolver : DynamicProducerEndpointResolv
 
     protected override TestProducerEndpoint GetEndpointCore(
         object? message,
-        TestProducerConfiguration endpointConfiguration,
+        TestProducerConfiguration configuration,
         IServiceProvider serviceProvider) =>
-        new(_topicName, endpointConfiguration);
+        new(_topicName, configuration);
 }

@@ -174,6 +174,8 @@ public partial class ConsumerConfigurationBuilderTests
     {
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class BinaryFileMessageWithoutDefaultConstructor : BinaryFileMessage
     {
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Required for testing.")]

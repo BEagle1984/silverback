@@ -4,13 +4,12 @@
 using System.ComponentModel.DataAnnotations;
 using Silverback.EventStore;
 
-namespace Silverback.Tests.EventSourcing.TestTypes
-{
-    public class PersonEventStore : EventStoreEntity<PersonEvent>
-    {
-        [Key]
-        public int Id { get; set; }
+namespace Silverback.Tests.EventSourcing.TestTypes;
 
-        public string? Ssn { get; set; }
-    }
+public class PersonEventStore : EventStoreEntity<PersonEvent>
+{
+    [Key]
+    public int Id { get; set; }
+
+    public string? Ssn { get; set; }
 }

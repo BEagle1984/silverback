@@ -9,175 +9,174 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences.Chunking
+namespace Silverback.Messaging.Sequences.Chunking;
+
+/// <summary>
+///     The <see cref="Stream" /> implementation used to read the chunked messages. This stream is used by the
+///     <see cref="ChunkSequenceReader" /> and it is asynchronously pushed with the chunks being
+///     consumed.
+/// </summary>
+public sealed class ChunkStream : Stream
 {
+    private readonly IMessageStreamEnumerable<IRawInboundEnvelope> _source;
+
+    private IEnumerator<IRawInboundEnvelope>? _syncEnumerator;
+
+    private IAsyncEnumerator<IRawInboundEnvelope>? _asyncEnumerator;
+
+    private byte[]? _currentChunk;
+
+    private int _position;
+
     /// <summary>
-    ///     The <see cref="Stream" /> implementation used to read the chunked messages. This stream is used by the
-    ///     <see cref="ChunkSequenceReader" /> and it is asynchronously pushed with the chunks being
-    ///     consumed.
+    ///     Initializes a new instance of the <see cref="ChunkStream" /> class.
     /// </summary>
-    public sealed class ChunkStream : Stream
+    /// <param name="source">
+    ///     The chunks composing this stream.
+    /// </param>
+    public ChunkStream(IMessageStreamEnumerable<IRawInboundEnvelope> source)
     {
-        private readonly IMessageStreamEnumerable<IRawInboundEnvelope> _source;
+        Check.NotNull(source, nameof(source));
 
-        private IEnumerator<IRawInboundEnvelope>? _syncEnumerator;
+        _source = source;
+    }
 
-        private IAsyncEnumerator<IRawInboundEnvelope>? _asyncEnumerator;
+    /// <inheritdoc cref="Stream.CanRead" />
+    public override bool CanRead => true;
 
-        private byte[]? _currentChunk;
+    /// <inheritdoc cref="Stream.CanSeek" />
+    public override bool CanSeek => false;
 
-        private int _position;
+    /// <inheritdoc cref="Stream.CanTimeout" />
+    public override bool CanTimeout => false;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ChunkStream" /> class.
-        /// </summary>
-        /// <param name="source">
-        ///     The chunks composing this stream.
-        /// </param>
-        public ChunkStream(IMessageStreamEnumerable<IRawInboundEnvelope> source)
+    /// <inheritdoc cref="Stream.CanWrite" />
+    public override bool CanWrite => false;
+
+    /// <inheritdoc cref="Stream.Length" />
+    public override long Length => throw new NotSupportedException();
+
+    /// <inheritdoc cref="Stream.Position" />
+    public override long Position
+    {
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
+    }
+
+    /// <inheritdoc cref="Stream.Flush" />
+    public override void Flush() => throw new NotSupportedException();
+
+    /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        Check.NotNull(buffer, nameof(buffer));
+
+        _syncEnumerator ??= _source.GetEnumerator();
+
+        if (_currentChunk == null || _position == _currentChunk.Length)
         {
-            Check.NotNull(source, nameof(source));
-
-            _source = source;
-        }
-
-        /// <inheritdoc cref="Stream.CanRead" />
-        public override bool CanRead => true;
-
-        /// <inheritdoc cref="Stream.CanSeek" />
-        public override bool CanSeek => false;
-
-        /// <inheritdoc cref="Stream.CanTimeout" />
-        public override bool CanTimeout => false;
-
-        /// <inheritdoc cref="Stream.CanWrite" />
-        public override bool CanWrite => false;
-
-        /// <inheritdoc cref="Stream.Length" />
-        public override long Length => throw new NotSupportedException();
-
-        /// <inheritdoc cref="Stream.Position" />
-        public override long Position
-        {
-            get => throw new NotSupportedException();
-            set => throw new NotSupportedException();
-        }
-
-        /// <inheritdoc cref="Stream.Flush" />
-        public override void Flush() => throw new NotSupportedException();
-
-        /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            Check.NotNull(buffer, nameof(buffer));
-
-            _syncEnumerator ??= _source.GetEnumerator();
-
-            if (_currentChunk == null || _position == _currentChunk.Length)
+            if (_syncEnumerator.MoveNext())
             {
-                if (_syncEnumerator.MoveNext())
-                {
-                    _currentChunk = _syncEnumerator.Current!.RawMessage.ReadAll();
-                    _position = 0;
-                }
-                else
-                {
-                    return 0;
-                }
+                _currentChunk = _syncEnumerator.Current!.RawMessage.ReadAll();
+                _position = 0;
             }
-
-            return FillBuffer(buffer, offset, count);
-        }
-
-        /// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
-        public override async Task<int> ReadAsync(
-            byte[] buffer,
-            int offset,
-            int count,
-            CancellationToken cancellationToken)
-        {
-            // If cancellation was requested, bail early with an already completed task.
-            // Otherwise, return a task that represents the Begin/End methods.
-            cancellationToken.ThrowIfCancellationRequested();
-
-            _asyncEnumerator ??= _source.GetAsyncEnumerator(cancellationToken);
-
-            Check.NotNull(buffer, nameof(buffer));
-
-            if (_currentChunk == null || _position == _currentChunk.Length)
+            else
             {
-                if (await _asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
-                {
-                    _currentChunk = await _asyncEnumerator.Current.RawMessage.ReadAllAsync().ConfigureAwait(false);
-                    _position = 0;
-                }
-                else
-                {
-                    return 0;
-                }
+                return 0;
             }
-
-            return FillBuffer(buffer, offset, count);
         }
 
-        /// <inheritdoc cref="Stream.Seek" />
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotSupportedException();
-        }
+        return FillBuffer(buffer, offset, count);
+    }
 
-        /// <inheritdoc cref="Stream.SetLength" />
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException();
-        }
+    /// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
+    public override async Task<int> ReadAsync(
+        byte[] buffer,
+        int offset,
+        int count,
+        CancellationToken cancellationToken)
+    {
+        // If cancellation was requested, bail early with an already completed task.
+        // Otherwise, return a task that represents the Begin/End methods.
+        cancellationToken.ThrowIfCancellationRequested();
 
-        /// <inheritdoc cref="Stream.Write(byte[], int, int)" />
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
+        _asyncEnumerator ??= _source.GetAsyncEnumerator(cancellationToken);
 
-        /// <inheritdoc cref="Stream.Close" />
-        public override void Close()
-        {
-            // Nothing to close
-        }
+        Check.NotNull(buffer, nameof(buffer));
 
-        /// <inheritdoc cref="Stream.DisposeAsync" />
-        public override async ValueTask DisposeAsync()
+        if (_currentChunk == null || _position == _currentChunk.Length)
         {
-            if (_asyncEnumerator != null)
+            if (await _asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
             {
-                await _asyncEnumerator.DisposeAsync().ConfigureAwait(false);
-                _asyncEnumerator = null;
+                _currentChunk = await _asyncEnumerator.Current.RawMessage.ReadAllAsync().ConfigureAwait(false);
+                _position = 0;
             }
-
-            await base.DisposeAsync().ConfigureAwait(false);
+            else
+            {
+                return 0;
+            }
         }
 
-        /// <inheritdoc cref="Stream.Dispose(bool)" />
-        protected override void Dispose(bool disposing)
+        return FillBuffer(buffer, offset, count);
+    }
+
+    /// <inheritdoc cref="Stream.Seek" />
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+        throw new NotSupportedException();
+    }
+
+    /// <inheritdoc cref="Stream.SetLength" />
+    public override void SetLength(long value)
+    {
+        throw new NotSupportedException();
+    }
+
+    /// <inheritdoc cref="Stream.Write(byte[], int, int)" />
+    public override void Write(byte[] buffer, int offset, int count)
+    {
+        throw new NotSupportedException();
+    }
+
+    /// <inheritdoc cref="Stream.Close" />
+    public override void Close()
+    {
+        // Nothing to close
+    }
+
+    /// <inheritdoc cref="Stream.DisposeAsync" />
+    public override async ValueTask DisposeAsync()
+    {
+        if (_asyncEnumerator != null)
         {
-            _asyncEnumerator?.DisposeAsync().AsTask().Wait();
+            await _asyncEnumerator.DisposeAsync().ConfigureAwait(false);
             _asyncEnumerator = null;
-            _syncEnumerator?.Dispose();
-            _syncEnumerator = null;
-
-            base.Dispose(disposing);
         }
 
-        private int FillBuffer(byte[] buffer, int offset, int count)
-        {
-            if (_currentChunk == null)
-                throw new InvalidOperationException("_currentChunk is null");
+        await base.DisposeAsync().ConfigureAwait(false);
+    }
 
-            int numberOfBytesToRead = Math.Min(
-                buffer.Length - offset,
-                Math.Min(count, _currentChunk.Length - _position));
-            Buffer.BlockCopy(_currentChunk, _position, buffer, offset, numberOfBytesToRead);
-            _position += numberOfBytesToRead;
-            return numberOfBytesToRead;
-        }
+    /// <inheritdoc cref="Stream.Dispose(bool)" />
+    protected override void Dispose(bool disposing)
+    {
+        _asyncEnumerator?.DisposeAsync().AsTask().Wait();
+        _asyncEnumerator = null;
+        _syncEnumerator?.Dispose();
+        _syncEnumerator = null;
+
+        base.Dispose(disposing);
+    }
+
+    private int FillBuffer(byte[] buffer, int offset, int count)
+    {
+        if (_currentChunk == null)
+            throw new InvalidOperationException("_currentChunk is null");
+
+        int numberOfBytesToRead = Math.Min(
+            buffer.Length - offset,
+            Math.Min(count, _currentChunk.Length - _position));
+        Buffer.BlockCopy(_currentChunk, _position, buffer, offset, numberOfBytesToRead);
+        _position += numberOfBytesToRead;
+        return numberOfBytesToRead;
     }
 }

@@ -3,21 +3,20 @@
 
 using System;
 
-namespace Silverback.Messaging.Outbound.Routing
+namespace Silverback.Messaging.Outbound.Routing;
+
+/// <summary>
+///     A configured outbound route, defining the destination endpoint for a specific message type.
+/// </summary>
+public interface IOutboundRoute
 {
     /// <summary>
-    ///     A configured outbound route, defining the destination endpoint for a specific message type.
+    ///     Gets the type of the messages to be routed.
     /// </summary>
-    public interface IOutboundRoute
-    {
-        /// <summary>
-        ///     Gets the type of the messages to be routed.
-        /// </summary>
-        Type MessageType { get; }
+    Type MessageType { get; }
 
-        /// <summary>
-        ///     Gets the producer configuration.
-        /// </summary>
-        ProducerConfiguration ProducerConfiguration { get; }
-    }
+    /// <summary>
+    ///     Gets the producer configuration.
+    /// </summary>
+    ProducerConfiguration ProducerConfiguration { get; }
 }

@@ -57,7 +57,7 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
     ///     The <see cref="IBroker" /> that is instantiating the consumer.
     /// </param>
     /// <param name="configuration">
-    ///     The <see cref="KafkaConsumerConfiguration"/>.
+    ///     The <see cref="KafkaConsumerConfiguration" />.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
@@ -335,13 +335,14 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
     }
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("ReSharper", "RedundantSuppressNullableWarningExpression", Justification = "Needed to avoid other false positives")]
     private async Task RestartConsumeLoopAfterRollbackAsync(
         IEnumerable<Task?> channelsManagerStoppingTasks,
         IReadOnlyCollection<TopicPartitionOffset> latestTopicPartitionOffsets)
     {
         try
         {
-            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null))
+            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null)!)
                 .ConfigureAwait(false);
 
             IEnumerable<TopicPartition> topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);

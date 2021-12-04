@@ -13,101 +13,100 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.BinaryFiles
+namespace Silverback.Tests.Integration.Messaging.BinaryFiles;
+
+public class BinaryFileHandlerProducerBehaviorTests
 {
-    public class BinaryFileHandlerProducerBehaviorTests
+    [Fact]
+    public async Task HandleAsync_BinaryFileMessage_RawContentProduced()
     {
-        [Fact]
-        public async Task HandleAsync_BinaryFileMessage_RawContentProduced()
-        {
-            BinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
-            OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+        BinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
 
-            IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().HandleAsync(
-                new ProducerPipelineContext(
-                    envelope,
-                    Substitute.For<IProducer>(),
-                    Substitute.For<IServiceProvider>()),
-                context =>
-                {
-                    result = context.Envelope;
-                    return Task.CompletedTask;
-                });
-
-            result.Should().NotBeNull();
-            result!.RawMessage.Should().BeSameAs(message.Content);
-        }
-
-        [Fact]
-        public async Task HandleAsync_InheritedBinaryFileMessage_RawContentProduced()
-        {
-            InheritedBinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
-            OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
-
-            IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().HandleAsync(
-                new ProducerPipelineContext(
-                    envelope,
-                    Substitute.For<IProducer>(),
-                    Substitute.For<IServiceProvider>()),
-                context =>
-                {
-                    result = context.Envelope;
-                    return Task.CompletedTask;
-                });
-
-            result.Should().NotBeNull();
-            result!.RawMessage.Should().BeSameAs(message.Content);
-        }
-
-        [Fact]
-        public async Task HandleAsync_NonBinaryFileMessage_EnvelopeUntouched()
-        {
-            BinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
-            TestProducerConfiguration endpointConfiguration = new("test")
+        IOutboundEnvelope? result = null;
+        await new BinaryFileHandlerProducerBehavior().HandleAsync(
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                Substitute.For<IServiceProvider>()),
+            context =>
             {
-                Serializer = new BinaryFileMessageSerializer()
-            };
-            OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint());
+                result = context.Envelope;
+                return Task.CompletedTask;
+            });
 
-            IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().HandleAsync(
-                new ProducerPipelineContext(
-                    envelope,
-                    Substitute.For<IProducer>(),
-                    Substitute.For<IServiceProvider>()),
-                context =>
-                {
-                    result = context.Envelope;
-                    return Task.CompletedTask;
-                });
+        result.Should().NotBeNull();
+        result!.RawMessage.Should().BeSameAs(message.Content);
+    }
 
-            result.Should().NotBeNull();
-            result!.Should().BeSameAs(envelope);
-        }
+    [Fact]
+    public async Task HandleAsync_InheritedBinaryFileMessage_RawContentProduced()
+    {
+        InheritedBinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
 
-        [Fact]
-        public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        IOutboundEnvelope? result = null;
+        await new BinaryFileHandlerProducerBehavior().HandleAsync(
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                Substitute.For<IServiceProvider>()),
+            context =>
+            {
+                result = context.Envelope;
+                return Task.CompletedTask;
+            });
+
+        result.Should().NotBeNull();
+        result!.RawMessage.Should().BeSameAs(message.Content);
+    }
+
+    [Fact]
+    public async Task HandleAsync_NonBinaryFileMessage_EnvelopeUntouched()
+    {
+        BinaryFileMessage message = new() { Content = BytesUtil.GetRandomStream() };
+        TestProducerConfiguration endpointConfiguration = new("test")
         {
-            TestEventOne message = new() { Content = "hey!" };
-            OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+            Serializer = new BinaryFileMessageSerializer()
+        };
+        OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint());
 
-            IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().HandleAsync(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                context =>
-                {
-                    result = context.Envelope;
-                    return Task.CompletedTask;
-                });
+        IOutboundEnvelope? result = null;
+        await new BinaryFileHandlerProducerBehavior().HandleAsync(
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                Substitute.For<IServiceProvider>()),
+            context =>
+            {
+                result = context.Envelope;
+                return Task.CompletedTask;
+            });
 
-            result.Should().NotBeNull();
-            result!.Should().BeSameAs(envelope);
-        }
+        result.Should().NotBeNull();
+        result!.Should().BeSameAs(envelope);
+    }
 
-        private sealed class InheritedBinaryFileMessage : BinaryFileMessage
-        {
-        }
+    [Fact]
+    public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+    {
+        TestEventOne message = new() { Content = "hey!" };
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+
+        IOutboundEnvelope? result = null;
+        await new BinaryFileHandlerProducerBehavior().HandleAsync(
+            new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+            context =>
+            {
+                result = context.Envelope;
+                return Task.CompletedTask;
+            });
+
+        result.Should().NotBeNull();
+        result!.Should().BeSameAs(envelope);
+    }
+
+    private sealed class InheritedBinaryFileMessage : BinaryFileMessage
+    {
     }
 }

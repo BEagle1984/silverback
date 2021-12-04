@@ -28,13 +28,11 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
 
     /// <summary>
     ///     <para>
-    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer" /> (or
-    ///         <see cref="JsonMessageSerializer{TMessage}" />) to deserialize the consumed JSON.
+    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer{TMessage}" /> to deserialize the consumed JSON.
     ///     </para>
     ///     <para>
-    ///         By default this serializer relies on the message type header to determine the type of the message
-    ///         to be deserialized. This behavior can be changed using the builder action and specifying a fixed
-    ///         message type.
+    ///         By default this serializer relies on the message type header to determine the type of the message to be deserialized. This
+    ///         behavior can be changed using the builder action and specifying a fixed message type.
     ///     </para>
     /// </summary>
     /// <param name="serializerBuilderAction">

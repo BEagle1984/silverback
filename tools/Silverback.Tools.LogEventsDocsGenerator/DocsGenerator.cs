@@ -3,36 +3,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Silverback.Diagnostics;
 
-namespace Silverback.Tools.LogEventsDocsGenerator
+namespace Silverback.Tools.LogEventsDocsGenerator;
+
+internal static class DocsGenerator
 {
-    internal static class DocsGenerator
+    private static readonly HashSet<int> EventIdSet = new();
+
+    public static void GenerateDocsTable(Type logEventsType)
     {
-        private static readonly HashSet<int> EventIdSet = new();
+        Console.WriteLine("Id | Level | Message | Reference");
+        Console.WriteLine(":-- | :-- | :-- | :--");
 
-        public static void GenerateDocsTable(Type logEventsType)
+        foreach (PropertyInfo property in logEventsType.GetProperties())
         {
-            Console.WriteLine("Id | Level | Message | Reference");
-            Console.WriteLine(":-- | :-- | :-- | :--");
+            LogEvent logEvent = (LogEvent)property.GetValue(null)!;
 
-            foreach (var property in logEventsType.GetProperties())
-            {
-                var logEvent = (LogEvent)property.GetValue(null)!;
+            EventIdSet.Add(logEvent.EventId.Id);
 
-                EventIdSet.Add(logEvent.EventId.Id);
+            string apiReferenceLink =
+                $"[{property.Name}]" +
+                $"(xref:{logEventsType.FullName}" +
+                $"#{logEventsType.FullName!.Replace(".", "_", StringComparison.Ordinal)}" +
+                $"_{property.Name})";
 
-                var apiReferenceLink =
-                    $"[{property.Name}]" +
-                    $"(xref:{logEventsType.FullName}" +
-                    $"#{logEventsType.FullName!.Replace(".", "_", StringComparison.Ordinal)}" +
-                    $"_{property.Name})";
+            string message = logEvent.Message.Replace("|", "&#124;", StringComparison.Ordinal);
 
-                var message = logEvent.Message.Replace("|", "&#124;", StringComparison.Ordinal);
-
-                Console.WriteLine(
-                    $"{logEvent.EventId.Id} | {logEvent.Level} | {message} | {apiReferenceLink}");
-            }
+            Console.WriteLine($"{logEvent.EventId.Id} | {logEvent.Level} | {message} | {apiReferenceLink}");
         }
     }
 }

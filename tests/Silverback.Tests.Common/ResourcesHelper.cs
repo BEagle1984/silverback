@@ -5,24 +5,23 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Silverback.Tests
+namespace Silverback.Tests;
+
+public class ResourcesHelper
 {
-    public class ResourcesHelper
+    private readonly Assembly _assembly;
+
+    public ResourcesHelper(Assembly assembly)
     {
-        private readonly Assembly _assembly;
+        _assembly = assembly;
+    }
 
-        public ResourcesHelper(Assembly assembly)
-        {
-            _assembly = assembly;
-        }
+    public string GetAsString(string resourceName)
+    {
+        using Stream? resource = _assembly.GetManifestResourceStream(resourceName);
 
-        public string GetAsString(string resourceName)
-        {
-            using var resource = _assembly.GetManifestResourceStream(resourceName);
+        using StreamReader reader = new(resource ?? throw new InvalidOperationException());
 
-            using var reader = new StreamReader(resource ?? throw new InvalidOperationException());
-
-            return reader.ReadToEnd();
-        }
+        return reader.ReadToEnd();
     }
 }

@@ -4,17 +4,16 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Silverback.Domain
-{
-    /// <inheritdoc cref="IEntityEvent" />
-    public abstract class EntityEvent : IEntityEvent
-    {
-        /// <inheritdoc cref="IEntityEvent.Timestamp" />
-        [JsonIgnore]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+namespace Silverback.Domain;
 
-        /// <inheritdoc cref="IEntityEvent.Sequence" />
-        [JsonIgnore]
-        public int Sequence { get; set; } = 0;
-    }
+/// <inheritdoc cref="IEntityEvent" />
+public abstract class EntityEvent : IEntityEvent
+{
+    /// <inheritdoc cref="IEntityEvent.Timestamp" />
+    [JsonIgnore]
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+    /// <inheritdoc cref="IEntityEvent.Sequence" />
+    [JsonIgnore]
+    public int Sequence { get; set; } = 0;
 }

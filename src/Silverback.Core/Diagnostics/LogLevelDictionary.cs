@@ -5,9 +5,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Diagnostics
+namespace Silverback.Diagnostics;
+
+internal sealed class LogLevelDictionary : Dictionary<EventId, Func<Exception?, LogLevel, Lazy<string>, LogLevel>>
 {
-    internal sealed class LogLevelDictionary : Dictionary<EventId, Func<Exception?, LogLevel, Lazy<string>, LogLevel>>
-    {
-    }
 }

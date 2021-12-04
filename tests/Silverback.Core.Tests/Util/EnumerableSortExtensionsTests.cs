@@ -1,55 +1,55 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Globalization;
 using FluentAssertions;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Core.Util
+namespace Silverback.Tests.Core.Util;
+
+public class EnumerableSortExtensionsTests
 {
-    public class EnumerableSortExtensionsTests
+    [Fact]
+    public void SortBySortIndex_SomeItems_SortedAsExpected()
     {
-        [Fact]
-        public void SortBySortIndex_SomeItems_SortedAsExpected()
+        Item[] items =
         {
-            var items = new[]
+            new SortedItem(100),
+            new SortedItem(-50),
+            new SortedItem(50),
+            new SortedItem(-100),
+            new("unsorted3"),
+            new("unsorted2")
+        };
+
+        IEnumerable<Item> sorted = items.SortBySortIndex();
+
+        sorted.Should().BeEquivalentTo(
+            new[]
             {
-                new SortedItem(100),
-                new SortedItem(-50),
-                new SortedItem(50),
                 new SortedItem(-100),
+                new SortedItem(-50),
                 new Item("unsorted3"),
-                new Item("unsorted2")
-            };
+                new Item("unsorted2"),
+                new SortedItem(50),
+                new SortedItem(100)
+            });
+    }
 
-            var sorted = items.SortBySortIndex();
+    private class Item
+    {
+        public Item(string id) => Id = id;
 
-            sorted.Should().BeEquivalentTo(
-                new[]
-                {
-                    new SortedItem(-100),
-                    new SortedItem(-50),
-                    new Item("unsorted3"),
-                    new Item("unsorted2"),
-                    new SortedItem(50),
-                    new SortedItem(100)
-                });
-        }
+        public string Id { get; }
+    }
 
-        private class Item
-        {
-            public Item(string id) => Id = id;
+    private sealed class SortedItem : Item, ISorted
+    {
+        public SortedItem(int sortIndex)
+            : base(sortIndex.ToString(CultureInfo.InvariantCulture)) => SortIndex = sortIndex;
 
-            public string Id { get; }
-        }
-
-        private sealed class SortedItem : Item, ISorted
-        {
-            public SortedItem(int sortIndex)
-                : base(sortIndex.ToString(CultureInfo.InvariantCulture)) => SortIndex = sortIndex;
-
-            public int SortIndex { get; }
-        }
+        public int SortIndex { get; }
     }
 }

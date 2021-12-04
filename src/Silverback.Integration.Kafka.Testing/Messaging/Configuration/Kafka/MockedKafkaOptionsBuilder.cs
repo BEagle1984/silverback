@@ -5,38 +5,36 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration.Kafka
+namespace Silverback.Messaging.Configuration.Kafka;
+
+internal sealed class MockedKafkaOptionsBuilder : IMockedKafkaOptionsBuilder
 {
-    internal sealed class MockedKafkaOptionsBuilder : IMockedKafkaOptionsBuilder
+    public MockedKafkaOptionsBuilder(IServiceCollection services)
     {
-        public MockedKafkaOptionsBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
+        Services = services;
+    }
 
-        public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; }
 
-        public IMockedKafkaOptions MockedKafkaOptions =>
-            Services.GetSingletonServiceInstance<IMockedKafkaOptions>() ??
-            throw new InvalidOperationException(
-                "IMockedKafkaOptions not found, AddMockedKafka has not been called.");
+    public IMockedKafkaOptions MockedKafkaOptions =>
+        Services.GetSingletonServiceInstance<IMockedKafkaOptions>() ??
+        throw new InvalidOperationException("IMockedKafkaOptions not found, AddMockedKafka has not been called.");
 
-        public IMockedKafkaOptionsBuilder WithDefaultPartitionsCount(int partitionsCount)
-        {
-            MockedKafkaOptions.DefaultPartitionsCount = partitionsCount;
-            return this;
-        }
+    public IMockedKafkaOptionsBuilder WithDefaultPartitionsCount(int partitionsCount)
+    {
+        MockedKafkaOptions.DefaultPartitionsCount = partitionsCount;
+        return this;
+    }
 
-        public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
-        {
-            MockedKafkaOptions.OverriddenAutoCommitIntervalMs = intervalMs;
-            return this;
-        }
+    public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
+    {
+        MockedKafkaOptions.OverriddenAutoCommitIntervalMs = intervalMs;
+        return this;
+    }
 
-        public IMockedKafkaOptionsBuilder DelayPartitionsAssignment(TimeSpan delay)
-        {
-            MockedKafkaOptions.PartitionsAssignmentDelay = delay;
-            return this;
-        }
+    public IMockedKafkaOptionsBuilder DelayPartitionsAssignment(TimeSpan delay)
+    {
+        MockedKafkaOptions.PartitionsAssignmentDelay = delay;
+        return this;
     }
 }

@@ -5,24 +5,23 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences
-{
-    internal static class SequenceEnumerableExtensions
-    {
-        public static Task AbortAllAsync(
-            this IEnumerable<ISequence> sequences,
-            SequenceAbortReason abortReason) =>
-            sequences
-                .ParallelForEachAsync(
-                    async sequence =>
-                    {
-                        if (sequence.IsPending)
-                        {
-                            await sequence.AbortAsync(abortReason)
-                                .ConfigureAwait(false);
-                        }
+namespace Silverback.Messaging.Sequences;
 
-                        await SequenceExtensions.AwaitProcessingAsync(sequence, false).ConfigureAwait(false);
-                    });
-    }
+internal static class SequenceEnumerableExtensions
+{
+    public static Task AbortAllAsync(
+        this IEnumerable<ISequence> sequences,
+        SequenceAbortReason abortReason) =>
+        sequences
+            .ParallelForEachAsync(
+                async sequence =>
+                {
+                    if (sequence.IsPending)
+                    {
+                        await sequence.AbortAsync(abortReason)
+                            .ConfigureAwait(false);
+                    }
+
+                    await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
+                });
 }

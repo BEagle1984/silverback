@@ -7,24 +7,23 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
 
-namespace Silverback.Tests.Core.TestTypes.Subscribers
-{
-    public class TestExceptionSubscriber
-    {
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private void OnMessageReceived(TestEventOne message) => throw new InvalidOperationException("Test");
+namespace Silverback.Tests.Core.TestTypes.Subscribers;
 
-        [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-        private Task OnMessageReceivedAsync(TestEventTwo message) => throw new InvalidOperationException("Test");
-    }
+public class TestExceptionSubscriber
+{
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private void OnMessageReceived(TestEventOne message) => throw new InvalidOperationException("Test");
+
+    [Subscribe]
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    private Task OnMessageReceivedAsync(TestEventTwo message) => throw new InvalidOperationException("Test");
 }

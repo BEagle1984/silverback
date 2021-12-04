@@ -6,110 +6,108 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Silverback.Tests.Logging
+namespace Silverback.Tests.Logging;
+
+public class LoggerSubstitute : ILogger
 {
-    public class LoggerSubstitute : ILogger
+    private readonly LoggerSubstituteFactory _factory;
+
+    private readonly List<ReceivedCall> _receivedCalls = new();
+
+    public LoggerSubstitute(ILoggerFactory factory)
     {
-        private readonly LoggerSubstituteFactory _factory;
+        _factory = (LoggerSubstituteFactory)factory;
+    }
 
-        private readonly List<ReceivedCall> _receivedCalls = new();
+    public LogLevel MinLevel => _factory.MinLevel;
 
-        public LoggerSubstitute(ILoggerFactory factory)
+    public void Received(
+        LogLevel logLevel,
+        Type? exceptionType,
+        string? message = null,
+        int? eventId = null,
+        string? exceptionMessage = null)
+    {
+        bool containsMatchingCall = ContainsMatchingCall(
+            logLevel,
+            exceptionType,
+            message,
+            eventId,
+            exceptionMessage);
+
+        if (!containsMatchingCall)
         {
-            _factory = (LoggerSubstituteFactory)factory;
+            string receivedCallsDump = string.Join(
+                ", ",
+                _receivedCalls.Select(
+                    call =>
+                        $"\r\n* {call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
+            throw new InvalidOperationException($"No matching call received. Received calls: {receivedCallsDump}");
         }
+    }
 
-        public LogLevel MinLevel => _factory.MinLevel;
+    public bool DidNotReceive(
+        LogLevel logLevel,
+        Type? exceptionType,
+        string? message = null,
+        int? eventId = null,
+        string? exceptionMessage = null) =>
+        !ContainsMatchingCall(
+            logLevel,
+            exceptionType,
+            message,
+            eventId,
+            exceptionMessage);
 
-        public void Received(
-            LogLevel logLevel,
-            Type? exceptionType,
-            string? message = null,
-            int? eventId = null,
-            string? exceptionMessage = null)
-        {
-            bool containsMatchingCall = ContainsMatchingCall(
+    public void Log<TState>(
+        LogLevel logLevel,
+        EventId eventId,
+        TState state,
+        Exception? exception,
+        Func<TState, Exception?, string> formatter)
+    {
+        _receivedCalls.Add(
+            new ReceivedCall(
                 logLevel,
-                exceptionType,
-                message,
-                eventId,
-                exceptionMessage);
+                exception,
+                formatter.Invoke(state, exception),
+                eventId.Id));
+    }
 
-            if (!containsMatchingCall)
-            {
-                var receivedCallsDump = string.Join(
-                    ", ",
-                    _receivedCalls.Select(
-                        call =>
-                            $"\r\n* {call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
-                throw new InvalidOperationException(
-                    $"No matching call received. Received calls: {receivedCallsDump}");
-            }
-        }
+    public bool IsEnabled(LogLevel logLevel) => logLevel >= _factory.MinLevel;
 
-        public bool DidNotReceive(
-            LogLevel logLevel,
-            Type? exceptionType,
-            string? message = null,
-            int? eventId = null,
-            string? exceptionMessage = null) =>
-            !ContainsMatchingCall(
-                logLevel,
-                exceptionType,
-                message,
-                eventId,
-                exceptionMessage);
+    public IDisposable BeginScope<TState>(TState state) => null!;
 
-        public void Log<TState>(
-            LogLevel logLevel,
-            EventId eventId,
-            TState state,
-            Exception? exception,
-            Func<TState, Exception?, string> formatter)
+    private bool ContainsMatchingCall(
+        LogLevel logLevel,
+        Type? exceptionType,
+        string? message,
+        int? eventId,
+        string? exceptionMessage) =>
+        _receivedCalls.Any(
+            call =>
+                call.LogLevel == logLevel &&
+                call.Exception?.GetType() == exceptionType
+                && (message == null || call.Message == message)
+                && (eventId == null || call.EventId == eventId)
+                && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
+
+    private sealed class ReceivedCall
+    {
+        public ReceivedCall(LogLevel logLevel, Exception? exception, string message, int eventId)
         {
-            _receivedCalls.Add(
-                new ReceivedCall(
-                    logLevel,
-                    exception,
-                    formatter.Invoke(state, exception),
-                    eventId.Id));
+            LogLevel = logLevel;
+            Exception = exception;
+            Message = message;
+            EventId = eventId;
         }
 
-        public bool IsEnabled(LogLevel logLevel) => logLevel >= _factory.MinLevel;
+        public LogLevel LogLevel { get; }
 
-        public IDisposable BeginScope<TState>(TState state) => null!;
+        public Exception? Exception { get; }
 
-        private bool ContainsMatchingCall(
-            LogLevel logLevel,
-            Type? exceptionType,
-            string? message,
-            int? eventId,
-            string? exceptionMessage) =>
-            _receivedCalls.Any(
-                call =>
-                    call.LogLevel == logLevel &&
-                    call.Exception?.GetType() == exceptionType
-                    && (message == null || call.Message == message)
-                    && (eventId == null || call.EventId == eventId)
-                    && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
+        public int EventId { get; }
 
-        private sealed class ReceivedCall
-        {
-            public ReceivedCall(LogLevel logLevel, Exception? exception, string message, int eventId)
-            {
-                LogLevel = logLevel;
-                Exception = exception;
-                Message = message;
-                EventId = eventId;
-            }
-
-            public LogLevel LogLevel { get; }
-
-            public Exception? Exception { get; }
-
-            public int EventId { get; }
-
-            public string Message { get; }
-        }
+        public string Message { get; }
     }
 }
