@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Heal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Kafka.Testing.Tests", "tests\Silverback.Integration.Kafka.Testing.Tests\Silverback.Integration.Kafka.Testing.Tests.csproj", "{76337F92-F6A2-4735-AA21-DFE70059D7FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.MQTT.Testing.Tests", "tests\Silverback.Integration.MQTT.Testing.Tests\Silverback.Integration.MQTT.Testing.Tests.csproj", "{B5732F14-A64B-4A5A-9941-FD615ACDF76F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +241,10 @@ Global
 		{76337F92-F6A2-4735-AA21-DFE70059D7FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76337F92-F6A2-4735-AA21-DFE70059D7FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76337F92-F6A2-4735-AA21-DFE70059D7FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5732F14-A64B-4A5A-9941-FD615ACDF76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5732F14-A64B-4A5A-9941-FD615ACDF76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5732F14-A64B-4A5A-9941-FD615ACDF76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5732F14-A64B-4A5A-9941-FD615ACDF76F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -265,6 +271,7 @@ Global
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{7FD94CD1-2A5B-4F26-8926-F893FFA31713} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{76337F92-F6A2-4735-AA21-DFE70059D7FF} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{B5732F14-A64B-4A5A-9941-FD615ACDF76F} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}
