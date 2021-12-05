@@ -8,16 +8,16 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.BinaryFiles;
+namespace Silverback.Messaging.BinaryMessages;
 
 /// <summary>
-///     Switches to the <see cref="BinaryFileMessageSerializer" /> if the message being consumed is a binary
+///     Switches to the <see cref="BinaryMessageSerializer{TModel}" /> if the message being consumed is a binary
 ///     message (according to the x-message-type header).
 /// </summary>
-public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior
+public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
-    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;
+    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryMessageHandler;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     public async Task HandleAsync(
@@ -34,20 +34,15 @@ public class BinaryFileHandlerConsumerBehavior : IConsumerBehavior
 
     private static async Task<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
     {
-        if (envelope.Endpoint.Configuration.Serializer is BinaryFileMessageSerializer ||
-            envelope.Endpoint.Configuration.Serializer.GetType().IsGenericType &&
-            envelope.Endpoint.Configuration.Serializer.GetType().GetGenericTypeDefinition() ==
-            typeof(BinaryFileMessageSerializer<>))
-        {
+        if (envelope.Endpoint.Configuration.Serializer is IBinaryMessageSerializer)
             return envelope;
-        }
 
         Type? messageType = SerializationHelper.GetTypeFromHeaders(envelope.Headers, false);
-        if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType))
+        if (messageType == null || !typeof(IBinaryMessage).IsAssignableFrom(messageType))
             return envelope;
 
         (object? deserializedObject, Type deserializedType) =
-            await BinaryFileMessageSerializer.Default.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint)
+            await DefaultSerializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint)
                 .ConfigureAwait(false);
 
         // Create typed envelope for easier specific subscription

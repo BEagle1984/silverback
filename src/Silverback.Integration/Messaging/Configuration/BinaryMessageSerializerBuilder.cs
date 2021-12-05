@@ -3,34 +3,34 @@
 
 using System;
 using System.Reflection;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Builds the <see cref="BinaryFileMessageSerializer" /> or <see cref="BinaryFileMessageSerializer{TMessage}" />.
+///     Builds the <see cref="BinaryMessageSerializer{TMessage}" />.
 /// </summary>
-public sealed class BinaryFileMessageSerializerBuilder
+public sealed class BinaryMessageSerializerBuilder
 {
     private IMessageSerializer? _serializer;
 
     private MethodInfo? _useModelMethodInfo;
 
     /// <summary>
-    ///     Specifies a custom model to wrap the binary file.
+    ///     Specifies a custom model to wrap the binary message.
     /// </summary>
     /// <typeparam name="TModel">
-    ///     The type of the <see cref="IBinaryFileMessage" /> implementation.
+    ///     The type of the <see cref="IBinaryMessage" /> implementation.
     /// </typeparam>
     /// <returns>
-    ///     The <see cref="BinaryFileMessageSerializerBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="BinaryMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public BinaryFileMessageSerializerBuilder UseModel<TModel>()
-        where TModel : IBinaryFileMessage, new()
+    public BinaryMessageSerializerBuilder UseModel<TModel>()
+        where TModel : IBinaryMessage, new()
     {
-        _serializer = new BinaryFileMessageSerializer<TModel>();
+        _serializer = new BinaryMessageSerializer<TModel>();
         return this;
     }
 
@@ -40,14 +40,14 @@ public sealed class BinaryFileMessageSerializerBuilder
     /// <returns>
     ///     The <see cref="IMessageSerializer" />.
     /// </returns>
-    public IMessageSerializer Build() => _serializer ?? new BinaryFileMessageSerializer();
+    public IMessageSerializer Build() => _serializer ?? new BinaryMessageSerializer<BinaryMessage>();
 
     internal void UseModel(Type type)
     {
-        if (!typeof(IBinaryFileMessage).IsAssignableFrom(type))
+        if (!typeof(IBinaryMessage).IsAssignableFrom(type))
         {
             throw new ArgumentException(
-                $"The type {type.FullName} does not implement {nameof(IBinaryFileMessage)}.",
+                $"The type {type.FullName} does not implement {nameof(IBinaryMessage)}.",
                 nameof(type));
         }
 

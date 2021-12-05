@@ -81,7 +81,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<IIntegrationEvent>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName, 3))))
             .Run();
 
@@ -257,7 +257,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(
                                         testEventOne =>
                                         {
@@ -313,7 +313,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(
                                         testEventOne =>
                                         {
@@ -388,7 +388,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(
                                         "topic{0}",
                                         testEventOne =>

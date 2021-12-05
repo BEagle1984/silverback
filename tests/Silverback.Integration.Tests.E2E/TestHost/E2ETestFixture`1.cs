@@ -4,6 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Serialization;
 using Silverback.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,8 +24,7 @@ public abstract class E2ETestFixture<THelper> : IDisposable
 
     protected TestApplicationHost<THelper> Host { get; }
 
-    protected THelper Helper =>
-        _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();
+    protected THelper Helper => _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();
 
     public void Dispose()
     {

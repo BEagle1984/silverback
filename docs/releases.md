@@ -16,6 +16,7 @@ uid: releases
   * WithKafkaKey overloads with only message
   * AddInbound/AddOoutbound with message type (influencing AddHeader etc.)
   * Default serializer is typed and now works with sub-typed (document in serializer page)
+  * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
 
 
 ### Breaking Changes
@@ -45,6 +46,7 @@ uid: releases
   * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
   * Broker -> BrokerBase
   * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
+  * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
 
 ### Deprecation Notice
 

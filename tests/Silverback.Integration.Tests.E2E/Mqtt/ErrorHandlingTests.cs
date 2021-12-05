@@ -315,7 +315,7 @@ public class ErrorHandlingTests : MqttTestFixture
     public async Task SkipPolicy_JsonDeserializationError_MessageSkipped()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
 
@@ -337,7 +337,7 @@ public class ErrorHandlingTests : MqttTestFixture
             .Run();
 
         MqttProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration => configuration
@@ -371,7 +371,7 @@ public class ErrorHandlingTests : MqttTestFixture
     public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        Stream rawMessageStream = EndpointConfiguration.DefaultSerializer.Serialize(message);
+        Stream rawMessageStream = DefaultSerializers.Json.Serialize(message);
         int tryCount = 0;
 
         Host.ConfigureServices(

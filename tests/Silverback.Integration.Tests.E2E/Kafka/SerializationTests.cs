@@ -23,46 +23,6 @@ public class SerializationTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task JsonSerializer_WithHardcodedMessageType_ProducedAndConsumed()
-    {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>()))
-                            .AddInbound<TestEventOne>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
-
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne());
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-    }
-
-    [Fact]
     public async Task NewtonsoftSerializer_DefaultSettings_ProducedAndConsumed()
     {
         Host.ConfigureServices(

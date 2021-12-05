@@ -1,13 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -20,23 +20,23 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public class BinaryFileTests : KafkaTestFixture
+public class BinaryMessageTests : KafkaTestFixture
 {
-    public BinaryFileTests(ITestOutputHelper testOutputHelper)
+    public BinaryMessageTests(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }
 
     [Fact]
-    public async Task BinaryFile_DefaultSettings_ProducedAndConsumed()
+    public async Task BinaryMessage_DefaultSettings_ProducedAndConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "text/plain"
@@ -59,8 +59,8 @@ public class BinaryFileTests : KafkaTestFixture
                                     {
                                         configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IBinaryFileMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound(
+                                .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                                .AddInbound<BinaryMessage>(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .ConfigureClient(
@@ -69,11 +69,11 @@ public class BinaryFileTests : KafkaTestFixture
                                                 configuration.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
+                            (BinaryMessage binaryMessage) =>
                             {
                                 lock (receivedFiles)
                                 {
-                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                    receivedFiles.Add(binaryMessage.Content.ReadAll());
                                 }
                             })
                         .AddIntegrationSpy();
@@ -88,7 +88,7 @@ public class BinaryFileTests : KafkaTestFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
+            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
             .Should().BeEquivalentTo("application/pdf", "text/plain");
 
         receivedFiles.Should().HaveCount(2);
@@ -101,82 +101,90 @@ public class BinaryFileTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task BinaryFile_ForcingBinaryFileSerializer_ProducedAndConsumed()
+    public async Task BinaryMessage_InSameTopicWithJsonMessages_ProducedAndConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage binaryMessage = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf"
         };
-
-        BinaryFileMessage message2 = new()
+        TestEventOne jsonMessage = new()
         {
-            Content = BytesUtil.GetRandomStream(),
-            ContentType = "text/plain"
+            Content = "test"
         };
 
-        ConcurrentBag<byte[]?> receivedFiles = new();
+        List<BinaryMessage> receivedBinaryMessages = new();
+        List<TestEventOne> receivedJsonMessages = new();
 
         Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
+                services =>
+                {
+                    services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .ConfigureClient(
+                                    configuration =>
+                                    {
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    consumer => consumer
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConfigureClient(
+                                            configuration =>
+                                            {
+                                                configuration.GroupId = DefaultConsumerGroupId;
+                                            })))
+                        .AddDelegateSubscriber(
+                            (BinaryMessage message) =>
+                            {
+                                lock (receivedBinaryMessages)
                                 {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
-                            .AddOutbound<IBinaryFileMessage>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceBinaryFiles())
-                            .AddInbound(
-                                endpoint => endpoint
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
-                                    .ConsumeBinaryFiles()))
-                    .AddDelegateSubscriber((BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                    .AddIntegrationSpy())
+                                    receivedBinaryMessages.Add(message);
+                                }
+                            })
+                        .AddDelegateSubscriber(
+                            (TestEventOne message) =>
+                            {
+                                lock (receivedJsonMessages)
+                                {
+                                    receivedJsonMessages.Add(message);
+                                }
+                            })
+                        .AddIntegrationSpy();
+                })
             .Run();
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        await publisher.PublishAsync(binaryMessage);
+        await publisher.PublishAsync(jsonMessage);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
 
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
-            new[]
-            {
-                message1.Content.ReReadAll(),
-                message2.Content.ReReadAll()
-            });
+        receivedBinaryMessages.Should().HaveCount(1);
+        receivedJsonMessages.Should().HaveCount(1);
+
+        receivedBinaryMessages[0].Content.ReReadAll().Should().BeEquivalentTo(binaryMessage.Content.ReReadAll());
+        receivedJsonMessages[0].Should().BeEquivalentTo(jsonMessage);
     }
 
     [Fact]
-    public async Task BinaryFile_ForcingBinaryFileSerializerWithoutTypeHeader_Consumed()
+    public async Task BinaryMessage_ForcingBinaryMessageSerializerWithoutTypeHeader_Consumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf"
         };
-
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "text/plain"
@@ -197,36 +205,31 @@ public class BinaryFileTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceBinaryFiles(
-                                        serializer => serializer
-                                            .UseModel<BinaryFileMessage>()))
-                            .AddInbound(
-                                endpoint => endpoint
+                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<BinaryMessage>(
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
                                         {
                                             configuration.GroupId = DefaultConsumerGroupId;
-                                        })
-                                    .ConsumeBinaryFiles()))
+                                        })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             lock (receivedFiles)
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                         })
                     .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
                     .AddIntegrationSpy())
             .Run();
 
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+        await producer.ProduceAsync(message1);
+        await producer.ProduceAsync(message2);
+
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
@@ -236,7 +239,7 @@ public class BinaryFileTests : KafkaTestFixture
             envelope =>
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
         Helper.Spy.OutboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
+            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
             .Should().BeEquivalentTo("application/pdf", "text/plain");
 
         receivedFiles.Should().HaveCount(2);
@@ -249,99 +252,16 @@ public class BinaryFileTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task BinaryFile_ForcingTypedBinaryFileSerializerWithWrongTypeHeader_Consumed()
+    public async Task BinaryMessage_WithCustomHeaders_ProducedAndConsumed()
     {
-        BinaryFileMessage message1 = new()
-        {
-            Content = BytesUtil.GetRandomStream(),
-            ContentType = "application/pdf"
-        };
-
-        BinaryFileMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(),
-            ContentType = "text/plain"
-        };
-
-        List<byte[]?> receivedFiles = new();
-
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
-                            .AddOutbound<IBinaryFileMessage>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceBinaryFiles())
-                            .AddInbound(
-                                endpoint => endpoint
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
-                                    .ConsumeBinaryFiles(
-                                        serializer => serializer
-                                            .UseModel<CustomBinaryFileMessage>())))
-                    .AddDelegateSubscriber(
-                        (CustomBinaryFileMessage binaryFile) =>
-                        {
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
-
-        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(
-            envelope =>
-            {
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().NotBeNull();
-                envelope.Message.Should().BeOfType<CustomBinaryFileMessage>();
-                envelope.Headers.GetValue("x-custom-header").Should().BeNull();
-            });
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
-            .Should().BeEquivalentTo("application/pdf", "text/plain");
-
-        receivedFiles.Should().HaveCount(2);
-        receivedFiles.Should().BeEquivalentTo(
-            new[]
-            {
-                message1.Content.ReReadAll(),
-                message2.Content.ReReadAll()
-            });
-    }
-
-    [Fact]
-    public async Task BinaryFile_WithCustomHeaders_ProducedAndConsumed()
-    {
-        CustomBinaryFileMessage message1 = new()
+        CustomBinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf",
             CustomHeader = "one"
         };
 
-        CustomBinaryFileMessage message2 = new()
+        CustomBinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "text/plain",
@@ -363,24 +283,21 @@ public class BinaryFileTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
                                         {
                                             configuration.GroupId = DefaultConsumerGroupId;
-                                        })
-                                    .ConsumeBinaryFiles(
-                                        serializer => serializer
-                                            .UseModel<CustomBinaryFileMessage>())))
+                                        })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             lock (receivedFiles)
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                         })
                     .AddIntegrationSpy())
@@ -393,15 +310,15 @@ public class BinaryFileTests : KafkaTestFixture
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<CustomBinaryFileMessage>());
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<CustomBinaryMessage>());
         Helper.Spy.InboundEnvelopes
             .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
             .Should().BeEquivalentTo("one", "two");
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<CustomBinaryFileMessage>().CustomHeader)
+            .Select(envelope => envelope.Message.As<CustomBinaryMessage>().CustomHeader)
             .Should().BeEquivalentTo("one", "two");
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
+            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
             .Should().BeEquivalentTo("application/pdf", "text/plain");
 
         receivedFiles.Should().HaveCount(2);
@@ -414,16 +331,16 @@ public class BinaryFileTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task BinaryFile_WithoutTypeHeaderAndWithCustomHeaders_Consumed()
+    public async Task BinaryMessage_WithoutTypeHeaderAndWithCustomHeaders_Consumed()
     {
-        CustomBinaryFileMessage message1 = new()
+        CustomBinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf",
             CustomHeader = "one"
         };
 
-        CustomBinaryFileMessage message2 = new()
+        CustomBinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "text/plain",
@@ -445,22 +362,21 @@ public class BinaryFileTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                endpoint => endpoint
+                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<CustomBinaryMessage>(
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
                                         {
                                             configuration.GroupId = DefaultConsumerGroupId;
-                                        })
-                                    .ConsumeBinaryFiles(serializer => serializer.UseModel<CustomBinaryFileMessage>())))
+                                        })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             lock (receivedFiles)
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                         })
                     .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
@@ -475,15 +391,15 @@ public class BinaryFileTests : KafkaTestFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.OutboundEnvelopes.ForEach(envelope => envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<CustomBinaryFileMessage>());
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<CustomBinaryMessage>());
         Helper.Spy.InboundEnvelopes
             .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
             .Should().BeEquivalentTo("one", "two");
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<CustomBinaryFileMessage>().CustomHeader)
+            .Select(envelope => envelope.Message.As<CustomBinaryMessage>().CustomHeader)
             .Should().BeEquivalentTo("one", "two");
         Helper.Spy.InboundEnvelopes
-            .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
+            .Select(envelope => envelope.Message.As<BinaryMessage>().ContentType)
             .Should().BeEquivalentTo("application/pdf", "text/plain");
 
         receivedFiles.Should().HaveCount(2);

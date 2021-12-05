@@ -5,19 +5,19 @@ using System.IO;
 
 namespace Silverback.Messaging.Messages;
 
-/// <inheritdoc cref="IBinaryFileMessage" />
-public class BinaryFileMessage : IBinaryFileMessage
+/// <inheritdoc cref="IBinaryMessage" />
+public class BinaryMessage : IBinaryMessage
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class.
+    ///     Initializes a new instance of the <see cref="BinaryMessage" /> class.
     /// </summary>
-    public BinaryFileMessage()
+    public BinaryMessage()
         : this((Stream?)null)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class with the specified content.
+    ///     Initializes a new instance of the <see cref="BinaryMessage" /> class with the specified content.
     /// </summary>
     /// <param name="content">
     ///     The binary content.
@@ -25,13 +25,13 @@ public class BinaryFileMessage : IBinaryFileMessage
     /// <param name="contentType">
     ///     The optional MIME type.
     /// </param>
-    public BinaryFileMessage(byte[] content, string contentType = "application/octet-stream")
+    public BinaryMessage(byte[] content, string contentType = "application/octet-stream")
         : this(new MemoryStream(content), contentType)
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class with the specified content.
+    ///     Initializes a new instance of the <see cref="BinaryMessage" /> class with the specified content.
     /// </summary>
     /// <param name="content">
     ///     The binary content.
@@ -39,7 +39,7 @@ public class BinaryFileMessage : IBinaryFileMessage
     /// <param name="contentType">
     ///     The optional MIME type.
     /// </param>
-    public BinaryFileMessage(Stream? content, string contentType = "application/octet-stream")
+    public BinaryMessage(Stream? content, string contentType = "application/octet-stream")
     {
         Content = content;
         ContentType = contentType;
@@ -51,6 +51,6 @@ public class BinaryFileMessage : IBinaryFileMessage
     [Header(DefaultMessageHeaders.ContentType)]
     public string ContentType { get; set; }
 
-    /// <inheritdoc cref="IBinaryFileMessage.Content" />
+    /// <inheritdoc cref="IBinaryMessage.Content" />
     public Stream? Content { get; set; }
 }

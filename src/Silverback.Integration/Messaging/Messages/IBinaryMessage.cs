@@ -6,9 +6,9 @@ using System.IO;
 namespace Silverback.Messaging.Messages;
 
 /// <summary>
-///     A binary file that is being transferred over the message broker.
+///     A binary message that is being transferred over the message broker without serializing and deserializing it.
 /// </summary>
-public interface IBinaryFileMessage
+public interface IBinaryMessage
 {
     /// <summary>
     ///     Gets or sets the binary content.

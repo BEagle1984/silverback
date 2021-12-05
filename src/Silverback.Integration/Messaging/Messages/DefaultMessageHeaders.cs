@@ -82,7 +82,7 @@ public static class DefaultMessageHeaders
     public const string TraceBaggage = "tracebaggage";
 
     /// <summary>
-    ///     The MIME type of a binary file. See <see cref="IBinaryFileMessage" />.
+    ///     The MIME type of a binary message. See <see cref="IBinaryMessage" />.
     /// </summary>
     public const string ContentType = "content-type";
 

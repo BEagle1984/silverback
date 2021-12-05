@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silverback.Configuration;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -84,7 +84,7 @@ public sealed partial class BrokerOptionsBuilder
                 .Services
                 .AddSingleton<ICustomHeadersMappings>(new CustomHeadersMappings());
 
-            // Pipeline - Sequences (Chunking, Batch, ...)
+            // Pipeline - Sequences (chunking, batch, ...)
             SilverbackBuilder
                 .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
                 .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
@@ -95,10 +95,10 @@ public sealed partial class BrokerOptionsBuilder
                 .Services
                 .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore));
 
-            // Pipeline - Binary File
+            // Pipeline - Binary message
             SilverbackBuilder
-                .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
-                .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>();
+                .AddSingletonBrokerBehavior<BinaryMessageHandlerProducerBehavior>()
+                .AddSingletonBrokerBehavior<BinaryMessageHandlerConsumerBehavior>();
 
             // Pipeline - Producer basic logic
             SilverbackBuilder

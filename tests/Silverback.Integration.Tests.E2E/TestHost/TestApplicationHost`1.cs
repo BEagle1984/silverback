@@ -24,8 +24,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost;
 public sealed class TestApplicationHost<THelper> : IDisposable
     where THelper : ITestingHelper<IBroker>
 {
-    private readonly List<Action<IServiceCollection>>
-        _configurationActions = new();
+    private readonly List<Action<IServiceCollection>> _configurationActions = new();
 
     private SqliteConnection? _sqliteConnection;
 

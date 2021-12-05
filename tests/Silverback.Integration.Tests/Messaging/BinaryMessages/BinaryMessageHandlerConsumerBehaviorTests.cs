@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -14,17 +14,17 @@ using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.BinaryFiles;
+namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
 
-public class BinaryFileHandlerConsumerBehaviorTests
+public class BinaryMessageHandlerConsumerBehaviorTests
 {
     [Fact]
-    public async Task HandleAsync_BinaryFileMessage_BinaryFileMessageReturned()
+    public async Task HandleAsync_BinaryMessage_BinaryMessageReturned()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =
         {
-            new("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
+            new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         };
         RawInboundEnvelope envelope = new(
             rawContent,
@@ -33,7 +33,7 @@ public class BinaryFileHandlerConsumerBehaviorTests
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+        await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
                 Substitute.For<IConsumer>(),
@@ -45,13 +45,13 @@ public class BinaryFileHandlerConsumerBehaviorTests
                 return Task.CompletedTask;
             });
 
-        result.Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
-        BinaryFileMessage binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message!;
-        binaryFileMessage.Content.ReadAll().Should().BeEquivalentTo(rawContent);
+        result.Should().BeAssignableTo<IInboundEnvelope<BinaryMessage>>();
+        BinaryMessage binaryMessage = result.As<IInboundEnvelope<BinaryMessage>>().Message!;
+        binaryMessage.Content.ReadAll().Should().BeEquivalentTo(rawContent);
     }
 
     [Fact]
-    public async Task HandleAsync_NoBinaryFileHeaders_EnvelopeUntouched()
+    public async Task HandleAsync_NoBinaryMessageHeaders_EnvelopeUntouched()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         RawInboundEnvelope envelope = new(
@@ -61,7 +61,7 @@ public class BinaryFileHandlerConsumerBehaviorTests
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+        await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
                 Substitute.For<IConsumer>(),
@@ -77,16 +77,16 @@ public class BinaryFileHandlerConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+    public async Task HandleAsync_EndpointWithBinaryMessageSerializer_EnvelopeUntouched()
     {
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =
         {
-            new("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
+            new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         };
         TestConsumerConfiguration endpointConfiguration = new("test")
         {
-            Serializer = new BinaryFileMessageSerializer()
+            Serializer = new BinaryMessageSerializer<BinaryMessage>()
         };
 
         RawInboundEnvelope envelope = new(
@@ -96,7 +96,7 @@ public class BinaryFileHandlerConsumerBehaviorTests
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+        await new BinaryMessageHandlerConsumerBehavior().HandleAsync(
             new ConsumerPipelineContext(
                 envelope,
                 Substitute.For<IConsumer>(),

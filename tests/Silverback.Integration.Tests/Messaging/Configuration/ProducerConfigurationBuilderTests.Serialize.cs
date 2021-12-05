@@ -4,7 +4,7 @@
 using System.Text.Json;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -23,7 +23,7 @@ public partial class ProducerConfigurationBuilderTests
         TestProducerConfiguration endpoint = builder.Build();
 
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
-        endpoint.Serializer.Should().NotBeSameAs(EndpointConfiguration.DefaultSerializer);
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -37,6 +37,27 @@ public partial class ProducerConfigurationBuilderTests
     }
 
     [Fact]
+    public void ImplicitSerializeBinary_Default_SerializerSet()
+    {
+        TestProducerConfigurationBuilder<BinaryMessage> builder = new();
+
+        TestProducerConfiguration endpoint = builder.Build();
+
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<BinaryMessage>>();
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Binary);
+    }
+
+    [Fact]
+    public void ImplicitSerializeBinary_WithCustomMessageType_TypedSerializerSet()
+    {
+        TestProducerConfigurationBuilder<CustomBinaryMessage> builder = new();
+
+        TestProducerConfiguration endpoint = builder.Build();
+
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<CustomBinaryMessage>>();
+    }
+
+    [Fact]
     public void SerializeAsJson_Default_SerializerSet()
     {
         TestProducerConfigurationBuilder<object> builder = new();
@@ -44,7 +65,7 @@ public partial class ProducerConfigurationBuilderTests
         TestProducerConfiguration endpoint = builder.SerializeAsJson().Build();
 
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
-        endpoint.Serializer.Should().NotBeSameAs(EndpointConfiguration.DefaultSerializer);
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -115,27 +136,28 @@ public partial class ProducerConfigurationBuilderTests
     }
 
     [Fact]
-    public void ProduceBinaryFiles_Default_SerializerSet()
+    public void ProduceBinaryMessages_Default_SerializerSet()
     {
         TestProducerConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration endpoint = builder.ProduceBinaryFiles().Build();
+        TestProducerConfiguration endpoint = builder.ProduceBinaryMessages().Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer>();
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<BinaryMessage>>();
     }
 
     [Fact]
-    public void ProduceBinaryFiles_UseFixedType_SerializerSet()
+    public void ProduceBinaryMessages_UseFixedType_SerializerSet()
     {
         TestProducerConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration endpoint = builder.ProduceBinaryFiles(serializer => serializer.UseModel<CustomBinaryFileMessage>())
+        TestProducerConfiguration endpoint = builder
+            .ProduceBinaryMessages(serializer => serializer.UseModel<CustomBinaryMessage>())
             .Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer<CustomBinaryFileMessage>>();
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<CustomBinaryMessage>>();
     }
 
-    private sealed class CustomBinaryFileMessage : BinaryFileMessage
+    private sealed class CustomBinaryMessage : BinaryMessage
     {
     }
 }

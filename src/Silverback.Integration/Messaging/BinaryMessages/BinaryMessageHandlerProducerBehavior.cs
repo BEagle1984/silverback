@@ -6,18 +6,16 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.BinaryFiles;
+namespace Silverback.Messaging.BinaryMessages;
 
 /// <summary>
-///     Switches to the <see cref="BinaryFileMessageSerializer" /> if the message being produced implements
-///     the <see cref="IBinaryFileMessage" /> interface.
+///     Switches to the <see cref="BinaryMessageSerializer{TModel}" /> if the message being produced implements the
+///     <see cref="IBinaryMessage" /> interface.
 /// </summary>
-public class BinaryFileHandlerProducerBehavior : IProducerBehavior
+public class BinaryMessageHandlerProducerBehavior : IProducerBehavior
 {
-    private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new();
-
     /// <inheritdoc cref="ISorted.SortIndex" />
-    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryFileHandler;
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryMessageHandler;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
@@ -25,10 +23,9 @@ public class BinaryFileHandlerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Message is IBinaryFileMessage &&
-            context.Envelope.Endpoint.Configuration.Serializer is not BinaryFileMessageSerializer)
+        if (context.Envelope.Message is IBinaryMessage && context.Envelope.Endpoint.Configuration.Serializer is not IBinaryMessageSerializer)
         {
-            context.Envelope.RawMessage = await _binaryFileMessageSerializer.SerializeAsync(
+            context.Envelope.RawMessage = await DefaultSerializers.Binary.SerializeAsync(
                     context.Envelope.Message,
                     context.Envelope.Headers,
                     context.Envelope.Endpoint)

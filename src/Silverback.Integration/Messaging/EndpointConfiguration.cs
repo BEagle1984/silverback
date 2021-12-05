@@ -17,11 +17,6 @@ public abstract record EndpointConfiguration
     private readonly string? _friendlyName;
 
     /// <summary>
-    ///     Gets the default serializer (a <see cref="JsonMessageSerializer{TMessage}" /> with default settings).
-    /// </summary>
-    public static IMessageSerializer DefaultSerializer { get; } = new JsonMessageSerializer<object>();
-
-    /// <summary>
     ///     Gets an optional friendly name to be used to identify the endpoint. This name can be used to filter or retrieve the endpoints and
     ///     will also be included in the <see cref="DisplayName" />, to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </summary>
@@ -68,7 +63,7 @@ public abstract record EndpointConfiguration
     ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages being produced or consumed.
     ///     The default is the <see cref="JsonMessageSerializer{TMessage}" />.
     /// </summary>
-    public virtual IMessageSerializer Serializer { get; init; } = DefaultSerializer;
+    public virtual IMessageSerializer Serializer { get; init; } = DefaultSerializers.Json;
 
     /// <summary>
     ///     Gets the encryption settings. This optional settings enables the transparent end-to-end message encryption.

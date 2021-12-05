@@ -184,7 +184,7 @@ public class MqttLastWillMessageBuilder<TMessage>
         if (string.IsNullOrEmpty(_topic))
             throw new EndpointConfigurationException("The topic name was not specified.");
 
-        _serializer ??= EndpointConfiguration.DefaultSerializer;
+        _serializer ??= DefaultSerializers.Json;
         MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerConfiguration());
         Stream? payloadStream = AsyncHelper
             .RunSynchronously(() => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint).AsTask());

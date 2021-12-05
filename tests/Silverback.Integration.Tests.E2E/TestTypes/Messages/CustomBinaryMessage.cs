@@ -5,7 +5,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
-public class CustomBinaryFileMessage : BinaryFileMessage
+public class CustomBinaryMessage : BinaryMessage
 {
     [KafkaKeyMember]
     public int? KafkaKey { get; set; }

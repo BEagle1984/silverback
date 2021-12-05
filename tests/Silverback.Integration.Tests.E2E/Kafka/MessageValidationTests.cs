@@ -151,7 +151,7 @@ public class MessageValidationTests : KafkaTestFixture
                                     })
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .ValidateMessage(true)
                                         .ConfigureClient(
@@ -205,7 +205,7 @@ public class MessageValidationTests : KafkaTestFixture
                                     })
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DisableMessageValidation()
                                         .ConfigureClient(
@@ -257,7 +257,7 @@ public class MessageValidationTests : KafkaTestFixture
                                     })
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .ValidateMessage(false)
                                         .ConfigureClient(

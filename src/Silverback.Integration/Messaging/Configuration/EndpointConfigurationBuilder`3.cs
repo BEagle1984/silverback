@@ -154,7 +154,7 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
         TConfiguration endpoint = CreateConfiguration() with
         {
             FriendlyName = _friendlyName,
-            Serializer = _serializer ?? EndpointConfiguration.DefaultSerializer,
+            Serializer = _serializer ?? DefaultSerializers.Json,
             Encryption = _encryptionSettings,
             MessageValidationMode = _messageValidationMode
         };

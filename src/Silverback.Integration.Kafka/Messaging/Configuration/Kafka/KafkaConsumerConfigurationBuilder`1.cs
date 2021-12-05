@@ -50,9 +50,6 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
         : base(endpointsConfigurationBuilder)
     {
         _clientConfiguration = clientConfiguration;
-
-        // Initialize default serializer according to TMessage type parameter
-        DeserializeJson();
     }
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />

@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <content>
-///     Adds the Deserialize (and ConsumeBinaryFiles) methods to the
+///     Adds the Deserialize (and ConsumeBinaryMessages) methods to the
 ///     <see cref="ConsumerConfigurationBuilder{TMessage,TConfiguration,TBuilder}" />.
 /// </content>
 public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder>
@@ -54,26 +54,25 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
 
     /// <summary>
     ///     <para>
-    ///         Sets the serializer to an instance of <see cref="BinaryFileMessageSerializer" />
-    ///         (or <see cref="BinaryFileMessageSerializer{TModel}" />) to wrap the consumed binary files into a
-    ///         <see cref="BinaryFileMessage" />.
+    ///         Sets the serializer to an instance of <see cref="BinaryMessageSerializer{TModel}" /> to wrap the consumed binary messages
+    ///         into a <see cref="BinaryMessage" />.
     ///     </para>
     ///     <para>
-    ///         This settings will force the <see cref="BinaryFileMessageSerializer" /> to be used regardless of the message type header.
+    ///         This settings will force the <see cref="BinaryMessageSerializer{TModel}" /> to be used regardless of the message type header.
     ///     </para>
     /// </summary>
     /// <remarks>
-    ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary files.
+    ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary messages.
     /// </remarks>
     /// <param name="serializerBuilderAction">
-    ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryFileMessageSerializerBuilder" /> and configures it.
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryMessageSerializerBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ConsumeBinaryFiles(Action<BinaryFileMessageSerializerBuilder>? serializerBuilderAction = null)
+    public TBuilder ConsumeBinaryMessages(Action<BinaryMessageSerializerBuilder>? serializerBuilderAction = null)
     {
-        BinaryFileMessageSerializerBuilder serializerBuilder = new();
+        BinaryMessageSerializerBuilder serializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
             serializerBuilder.UseModel(typeof(TMessage));

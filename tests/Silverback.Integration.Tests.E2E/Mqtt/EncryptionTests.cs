@@ -200,9 +200,9 @@ public class EncryptionTests : MqttTestFixture
     }
 
     [Fact]
-    public async Task Encryption_BinaryFile_EncryptedAndDecrypted()
+    public async Task Encryption_BinaryMessage_EncryptedAndDecrypted()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = new MemoryStream(
                 new byte[]
@@ -214,7 +214,7 @@ public class EncryptionTests : MqttTestFixture
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = new MemoryStream(
                 new byte[]
@@ -242,17 +242,17 @@ public class EncryptionTests : MqttTestFixture
                                     configuration => configuration
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IBinaryFileMessage>(
-                                    endpoint => endpoint
+                                .AddOutbound<BinaryMessage>(
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EncryptUsingAes(AesEncryptionKey))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DecryptUsingAes(AesEncryptionKey)))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
-                                receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryMessage binaryMessage) =>
+                                receivedFiles.Add(binaryMessage.Content.ReadAll()))
                         .AddIntegrationSpy();
                 })
             .Run();

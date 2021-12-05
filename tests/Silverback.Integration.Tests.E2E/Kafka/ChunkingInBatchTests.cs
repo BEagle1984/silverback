@@ -127,7 +127,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileConsumedInBatch_ProducedAndConsumed()
+    public async Task Chunking_BinaryMessageConsumedInBatch_ProducedAndConsumed()
     {
         List<List<string?>> batches = new();
         string? failedCommit = null;
@@ -148,7 +148,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -164,12 +164,12 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
+                        async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
                         {
                             List<string?> list = new();
                             batches.ThreadSafeAdd(list);
 
-                            await foreach (BinaryFileMessage message in streamEnumerable)
+                            await foreach (BinaryMessage message in streamEnumerable)
                             {
                                 long actualCommittedOffsets =
                                     DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
@@ -199,7 +199,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
 
         for (int i = 1; i <= 15; i++)
         {
-            await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+            await publisher.PublishAsync(new BinaryMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -334,7 +334,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_SingleChunkBinaryFileConsumedInBatch_ProducedAndConsumed()
+    public async Task Chunking_SingleChunkBinaryMessageConsumedInBatch_ProducedAndConsumed()
     {
         List<List<string?>> batches = new();
         string? failedCommit = null;
@@ -355,7 +355,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(50))
@@ -371,12 +371,12 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
+                        async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
                         {
                             List<string?> list = new();
                             batches.ThreadSafeAdd(list);
 
-                            await foreach (BinaryFileMessage message in streamEnumerable)
+                            await foreach (BinaryMessage message in streamEnumerable)
                             {
                                 long actualCommittedOffsets =
                                     DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
@@ -406,7 +406,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
 
         for (int i = 1; i <= 15; i++)
         {
-            await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+            await publisher.PublishAsync(new BinaryMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -447,7 +447,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
     }
 
     [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_DisconnectWhileBinaryFileConsumedInBatch_SequencesAborted()
+    public Task Chunking_DisconnectWhileBinaryMessageConsumedInBatch_SequencesAborted()
     {
         throw new NotImplementedException();
     }
@@ -467,7 +467,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
     }
 
     [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ProcessingErrorWhileBinaryFileConsumedInBatch_SequencesAborted()
+    public Task Chunking_ProcessingErrorWhileBinaryMessageConsumedInBatch_SequencesAborted()
     {
         // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
         throw new NotImplementedException();

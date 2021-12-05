@@ -32,7 +32,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task Produce_Message_Produced()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -80,7 +80,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task Produce_MessageWithHeaders_Produced()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -130,7 +130,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task Produce_Envelope_Produced()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -196,7 +196,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -266,7 +266,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -457,7 +457,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -530,7 +530,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -600,7 +600,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task ProduceAsync_Message_Produced()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -648,7 +648,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task ProduceAsync_MessageWithHeaders_ProducedAndConsumed()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -704,7 +704,7 @@ public class ProducerTests : KafkaTestFixture
     public async Task ProduceAsync_Envelope_ProducedAndConsumed()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -770,7 +770,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -954,7 +954,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1029,7 +1029,7 @@ public class ProducerTests : KafkaTestFixture
         int errors = 0;
 
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1101,7 +1101,7 @@ public class ProducerTests : KafkaTestFixture
 
         TestEventOne message = new() { Content = "Hello E2E!" };
         MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message, headers);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message, headers);
 
         Host.ConfigureServices(
                 services => services
@@ -1166,7 +1166,7 @@ public class ProducerTests : KafkaTestFixture
 
         TestEventOne message = new() { Content = "Hello E2E!" };
         MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message, headers);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message, headers);
 
         Host.ConfigureServices(
                 services => services

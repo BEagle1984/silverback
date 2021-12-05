@@ -31,7 +31,7 @@ public class BasicTests : KafkaTestFixture
     public async Task Outbound_DefaultSettings_SerializedAndProduced()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -61,7 +61,7 @@ public class BasicTests : KafkaTestFixture
     public async Task Outbound_AllowDuplicateEndpoints_SerializedAndProducedTwice()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -108,11 +108,11 @@ public class BasicTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<IIntegrationEvent>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithName("OUT"))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .WithName("IN")
                                     .ConfigureClient(
@@ -163,7 +163,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -224,7 +224,7 @@ public class BasicTests : KafkaTestFixture
                             .AddOutbound<TestEventOne>(producer => producer.ProduceTo("topic1"))
                             .AddOutbound<TestEventTwo>(producer => producer.ProduceTo("topic2"))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom("topic1")
                                     .ConfigureClient(
                                         configuration =>
@@ -232,7 +232,7 @@ public class BasicTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         }))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom("topic2")
                                     .ConfigureClient(
                                         configuration =>
@@ -305,7 +305,7 @@ public class BasicTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo("topic1"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo("topic2"))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom("topic1")
                                     .ConfigureClient(
                                         configuration =>
@@ -313,7 +313,7 @@ public class BasicTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         }))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom("topic2")
                                     .ConfigureClient(
                                         configuration =>
@@ -367,7 +367,7 @@ public class BasicTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo("topic1"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo("topic2"))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom("topic1", "topic2")
                                     .ConfigureClient(
                                         configuration =>
@@ -421,7 +421,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -429,7 +429,7 @@ public class BasicTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         }))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -476,7 +476,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -484,7 +484,7 @@ public class BasicTests : KafkaTestFixture
                                             configuration.GroupId = "group1";
                                         }))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -528,7 +528,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -578,7 +578,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -637,7 +637,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -677,7 +677,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -728,7 +728,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -780,7 +780,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -822,7 +822,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -888,7 +888,7 @@ public class BasicTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>

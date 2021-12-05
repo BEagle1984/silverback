@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -120,15 +119,15 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFile_ProducedAndConsumed()
+    public async Task Chunking_BinaryMessage_ProducedAndConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(25),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -151,7 +150,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -164,9 +163,9 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
-                            receivedFiles.Add(binaryFile.Content.ReadAll());
+                            receivedFiles.Add(binaryMessage.Content.ReadAll());
                         })
                     .AddIntegrationSpy())
             .Run();
@@ -180,7 +179,7 @@ public class ChunkingTests : KafkaTestFixture
         Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
         Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
-        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
+        Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryMessage>());
 
         receivedFiles.Should().HaveCount(2);
         receivedFiles.Should().BeEquivalentTo(new[] { message1.Content.ReReadAll(), message2.Content.ReReadAll() });
@@ -190,7 +189,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_JsonWithIsLastChunkHeader_Consumed()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -221,7 +220,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -253,7 +252,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_JsonWithChunksCountHeader_Consumed()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -284,7 +283,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -316,7 +315,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_JsonWithMessageIdHeader_Consumed()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -347,7 +346,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -376,7 +375,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileWithIsLastChunkHeader_Consumed()
+    public async Task Chunking_BinaryMessageWithIsLastChunkHeader_Consumed()
     {
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
@@ -396,10 +395,9 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddInbound(
+                            .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -409,12 +407,12 @@ public class ChunkingTests : KafkaTestFixture
                                         })))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -443,7 +441,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileWithChunksCountHeader_Consumed()
+    public async Task Chunking_BinaryMessageWithChunksCountHeader_Consumed()
     {
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
@@ -463,10 +461,9 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddInbound(
+                            .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -476,12 +473,12 @@ public class ChunkingTests : KafkaTestFixture
                                         })))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -510,7 +507,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileWithMessageIdHeader_Consumed()
+    public async Task Chunking_BinaryMessageWithMessageIdHeader_Consumed()
     {
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
@@ -530,10 +527,9 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddInbound(
+                            .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -543,12 +539,12 @@ public class ChunkingTests : KafkaTestFixture
                                         })))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -577,7 +573,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileWithMessageTypeHeader_Consumed()
+    public async Task Chunking_BinaryMessageWithMessageTypeHeader_Consumed()
     {
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
@@ -609,12 +605,12 @@ public class ChunkingTests : KafkaTestFixture
                                         })))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -623,13 +619,13 @@ public class ChunkingTests : KafkaTestFixture
                     }));
         await producer.RawProduceAsync(
             rawMessage.Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage.Skip(3).Take(3).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage.Skip(6).ToArray(),
-            HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(BinaryMessage)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -646,9 +642,9 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_JsonWithDuplicatedChunks_DuplicatesIgnored()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -679,7 +675,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -733,7 +729,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileWithDuplicatedChunks_DuplicatesIgnored()
+    public async Task Chunking_BinaryMessageWithDuplicatedChunks_DuplicatesIgnored()
     {
         byte[] rawMessage1 = Encoding.UTF8.GetBytes("Message 1");
         byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
@@ -754,10 +750,9 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddInbound(
+                            .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -767,12 +762,12 @@ public class ChunkingTests : KafkaTestFixture
                                         })))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -825,15 +820,15 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileReadAborted_CommittedAndNextMessageConsumed()
+    public async Task Chunking_BinaryMessageReadAborted_CommittedAndNextMessageConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -856,7 +851,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -869,17 +864,17 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
-                            if (binaryFile.ContentType != "text/plain")
+                            if (binaryMessage.ContentType != "text/plain")
                             {
                                 // Read first chunk only
                                 byte[] buffer = new byte[10];
-                                binaryFile.Content!.Read(buffer, 0, 10);
+                                binaryMessage.Content!.Read(buffer, 0, 10);
                                 return;
                             }
 
-                            receivedFiles.Add(binaryFile.Content.ReadAll());
+                            receivedFiles.Add(binaryMessage.Content.ReadAll());
                         })
                     .AddIntegrationSpy())
             .Run();
@@ -897,8 +892,8 @@ public class ChunkingTests : KafkaTestFixture
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
 
         receivedFiles.Should().HaveCount(1);
         receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
@@ -907,15 +902,15 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileReadAbortedMidChunk_CommittedAndNextMessageConsumed()
+    public async Task Chunking_BinaryMessageReadAbortedMidChunk_CommittedAndNextMessageConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -938,7 +933,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -951,17 +946,17 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
-                            if (binaryFile.ContentType != "text/plain")
+                            if (binaryMessage.ContentType != "text/plain")
                             {
                                 // Read only part of first chunk
                                 byte[] buffer = new byte[5];
-                                binaryFile.Content!.Read(buffer, 0, 10);
+                                binaryMessage.Content!.Read(buffer, 0, 10);
                                 return;
                             }
 
-                            receivedFiles.Add(binaryFile.Content.ReadAll());
+                            receivedFiles.Add(binaryMessage.Content.ReadAll());
                         })
                     .AddIntegrationSpy())
             .Run();
@@ -979,9 +974,9 @@ public class ChunkingTests : KafkaTestFixture
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should()
+        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should()
             .Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should()
+        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should()
             .Be("text/plain");
 
         receivedFiles.Should().HaveCount(1);
@@ -991,7 +986,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileProcessingFailedAfterFirstChunk_DisconnectedAndNotCommitted()
+    public async Task Chunking_BinaryMessageProcessingFailedAfterFirstChunk_DisconnectedAndNotCommitted()
     {
         Host.ConfigureServices(
                 services => services
@@ -1008,7 +1003,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -1021,11 +1016,11 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             // Read first chunk only
                             byte[] buffer = new byte[10];
-                            binaryFile.Content!.Read(buffer, 0, 10);
+                            binaryMessage.Content!.Read(buffer, 0, 10);
 
                             throw new InvalidOperationException("Test");
                         })
@@ -1035,7 +1030,7 @@ public class ChunkingTests : KafkaTestFixture
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(
-            new BinaryFileMessage
+            new BinaryMessage
             {
                 Content = BytesUtil.GetRandomStream(),
                 ContentType = "application/pdf"
@@ -1049,7 +1044,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileProcessingFailedImmediately_DisconnectedAndNotCommitted()
+    public async Task Chunking_BinaryMessageProcessingFailedImmediately_DisconnectedAndNotCommitted()
     {
         Host.ConfigureServices(
                 services => services
@@ -1066,7 +1061,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -1078,14 +1073,14 @@ public class ChunkingTests : KafkaTestFixture
                                         {
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
-                    .AddDelegateSubscriber((BinaryFileMessage _) => throw new InvalidOperationException("Test"))
+                    .AddDelegateSubscriber((BinaryMessage _) => throw new InvalidOperationException("Test"))
                     .AddIntegrationSpy())
             .Run();
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(
-            new BinaryFileMessage
+            new BinaryMessage
             {
                 Content = BytesUtil.GetRandomStream(),
                 ContentType = "application/pdf"
@@ -1103,9 +1098,9 @@ public class ChunkingTests : KafkaTestFixture
         Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedWhenOtherSequenceStarts()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -1136,7 +1131,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1175,9 +1170,9 @@ public class ChunkingTests : KafkaTestFixture
         Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -1208,7 +1203,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1241,9 +1236,9 @@ public class ChunkingTests : KafkaTestFixture
         Chunking_EnforcingConsecutiveJsonChunks_ErrorPolicyIgnoredWhenIncompleteSequenceDiscarded()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -1275,7 +1270,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1313,7 +1308,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_IncompleteJsonResent_SecondMessageConsumedAndCommitted()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1344,7 +1339,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1394,7 +1389,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_IncompleteJson_AbortedAfterTimeoutAndCommitted()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1426,7 +1421,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1485,7 +1480,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_IncompleteBinaryFile_AbortedAfterTimeoutAndCommitted()
+    public async Task Chunking_IncompleteBinaryMessage_AbortedAfterTimeoutAndCommitted()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         bool enumerationAborted = false;
@@ -1509,7 +1504,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
+                                    .ConsumeBinaryMessages()
                                     .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
                                     .ConfigureClient(
                                         configuration =>
@@ -1519,11 +1514,11 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             try
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                             catch (OperationCanceledException)
                             {
@@ -1535,7 +1530,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1597,9 +1592,9 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_JsonMissingFirstChunk_NextMessageConsumedAndCommitted()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -1630,7 +1625,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1666,7 +1661,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
+    public async Task Chunking_BinaryMessageMissingFirstChunk_NextMessageConsumedAndCommitted()
     {
         byte[] rawMessage1 = BytesUtil.GetRandomBytes();
         byte[] rawMessage2 = BytesUtil.GetRandomBytes();
@@ -1699,12 +1694,12 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
-                            receivedFiles.Add(binaryFile.Content.ReadAll())))
+                        (BinaryMessage binaryMessage) =>
+                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1714,19 +1709,19 @@ public class ChunkingTests : KafkaTestFixture
 
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 1, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeaders("1", 1, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage1.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("1", 2, true, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeaders("1", 2, true, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage2.Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 0, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeaders("2", 0, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(10).Take(10).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 1, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeaders("2", 1, typeof(BinaryMessage)));
         await producer.RawProduceAsync(
             rawMessage2.Skip(20).ToArray(),
-            HeadersHelper.GetChunkHeaders("2", 2, true, typeof(BinaryFileMessage)));
+            HeadersHelper.GetChunkHeaders("2", 2, true, typeof(BinaryMessage)));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -1743,7 +1738,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_DisconnectWithIncompleteJson_AbortedAndNotCommitted()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1774,7 +1769,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1809,7 +1804,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_DisconnectWithIncompleteBinaryFile_AbortedAndNotCommitted()
+    public async Task Chunking_DisconnectWithIncompleteBinaryMessage_AbortedAndNotCommitted()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         bool enumerationAborted = false;
@@ -1832,7 +1827,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
+                                    .ConsumeBinaryMessages()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -1841,11 +1836,11 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        async (BinaryFileMessage binaryFile) =>
+                        async (BinaryMessage binaryMessage) =>
                         {
                             try
                             {
-                                await binaryFile.Content.ReadAllAsync();
+                                await binaryMessage.Content.ReadAllAsync();
                             }
                             catch (OperationCanceledException)
                             {
@@ -1857,7 +1852,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1897,7 +1892,7 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_RebalanceWithIncompleteJson_AbortedAndNotCommitted()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1928,7 +1923,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -1965,7 +1960,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_RebalanceWithIncompleteBinaryFile_AbortedAndNotCommitted()
+    public async Task Chunking_RebalanceWithIncompleteBinaryMessage_AbortedAndNotCommitted()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         bool enumerationAborted = false;
@@ -1988,7 +1983,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
+                                    .ConsumeBinaryMessages()
                                     .ConfigureClient(
                                         configuration =>
                                         {
@@ -1997,11 +1992,11 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        async (BinaryFileMessage binaryFile) =>
+                        async (BinaryMessage binaryMessage) =>
                         {
                             try
                             {
-                                await binaryFile.Content.ReadAllAsync();
+                                await binaryMessage.Content.ReadAllAsync();
                             }
                             catch (OperationCanceledException)
                             {
@@ -2013,7 +2008,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -2105,7 +2100,7 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
+    public async Task Chunking_BinaryMessagesFromMultiplePartitions_ConcurrentlyConsumed()
     {
         byte[] rawMessage1 = BytesUtil.GetRandomBytes(30);
         byte[] rawMessage2 = BytesUtil.GetRandomBytes(30);
@@ -2132,18 +2127,18 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryFiles()
+                                    .ConsumeBinaryMessages()
                                     .ConfigureClient(
                                         configuration =>
                                         {
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             Interlocked.Increment(ref receivedFilesCount);
 
-                            byte[]? fileContent = binaryFile.Content.ReadAll();
+                            byte[]? fileContent = binaryMessage.Content.ReadAll();
 
                             lock (receivedFiles)
                             {
@@ -2153,7 +2148,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -2206,9 +2201,9 @@ public class ChunkingTests : KafkaTestFixture
     public async Task Chunking_SingleChunkJson_ProducedAndConsumed()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        byte[] rawMessage1 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message1);
+        byte[] rawMessage1 = DefaultSerializers.Json.SerializeToBytes(message1);
         TestEventOne message2 = new() { Content = "Message 2" };
-        byte[] rawMessage2 = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message2);
+        byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -2241,7 +2236,7 @@ public class ChunkingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -2264,15 +2259,15 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_SingleChunkBinaryFile_ProducedAndConsumed()
+    public async Task Chunking_SingleChunkBinaryMessage_ProducedAndConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(8),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(8),
             ContentType = "text/plain"
@@ -2295,7 +2290,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -2308,11 +2303,11 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
                             lock (receivedFiles)
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                         })
                     .AddIntegrationSpy())
@@ -2332,15 +2327,15 @@ public class ChunkingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Chunking_SingleChunkBinaryFileReadAborted_CommittedAndNextMessageConsumed()
+    public async Task Chunking_SingleChunkBinaryMessageReadAborted_CommittedAndNextMessageConsumed()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(8),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -2363,7 +2358,7 @@ public class ChunkingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -2376,17 +2371,17 @@ public class ChunkingTests : KafkaTestFixture
                                             configuration.GroupId = DefaultConsumerGroupId;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
-                            if (binaryFile.ContentType != "text/plain")
+                            if (binaryMessage.ContentType != "text/plain")
                             {
                                 // Read first chunk only
                                 byte[] buffer = new byte[10];
-                                binaryFile.Content!.Read(buffer, 0, 10);
+                                binaryMessage.Content!.Read(buffer, 0, 10);
                                 return;
                             }
 
-                            receivedFiles.Add(binaryFile.Content.ReadAll());
+                            receivedFiles.Add(binaryMessage.Content.ReadAll());
                         })
                     .AddIntegrationSpy())
             .Run();
@@ -2404,8 +2399,8 @@ public class ChunkingTests : KafkaTestFixture
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
 
         receivedFiles.Should().HaveCount(1);
         receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());

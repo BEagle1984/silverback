@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
@@ -241,10 +240,10 @@ public class EncryptionTests : KafkaTestFixture
     public async Task Encryption_ChunkedMessages_EncryptedAndDecrypted()
     {
         TestEventOne message1 = new() { Content = "Message 1" };
-        Stream rawMessageStream1 = EndpointConfiguration.DefaultSerializer.Serialize(message1);
+        Stream rawMessageStream1 = DefaultSerializers.Json.Serialize(message1);
 
         TestEventOne message2 = new() { Content = "Message 2" };
-        Stream rawMessageStream2 = EndpointConfiguration.DefaultSerializer.Serialize(message2);
+        Stream rawMessageStream2 = DefaultSerializers.Json.Serialize(message2);
 
         Host.ConfigureServices(
                 services => services
@@ -312,15 +311,15 @@ public class EncryptionTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Encryption_BinaryFile_EncryptedAndDecrypted()
+    public async Task Encryption_BinaryMessage_EncryptedAndDecrypted()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(),
             ContentType = "text/plain"
@@ -345,12 +344,12 @@ public class EncryptionTests : KafkaTestFixture
                                     {
                                         configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IBinaryFileMessage>(
-                                    endpoint => endpoint
+                                .AddOutbound<BinaryMessage>(
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EncryptUsingAes(AesEncryptionKey))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DecryptUsingAes(AesEncryptionKey)
                                         .ConfigureClient(
@@ -359,8 +358,8 @@ public class EncryptionTests : KafkaTestFixture
                                                 configuration.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
-                                receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryMessage binaryMessage) =>
+                                receivedFiles.Add(binaryMessage.Content.ReadAll()))
                         .AddIntegrationSpy();
                 })
             .Run();
@@ -384,15 +383,15 @@ public class EncryptionTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task Encryption_ChunkedBinaryFile_EncryptedAndDecrypted()
+    public async Task Encryption_ChunkedBinaryMessage_EncryptedAndDecrypted()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -417,13 +416,13 @@ public class EncryptionTests : KafkaTestFixture
                                     {
                                         configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IBinaryFileMessage>(
-                                    endpoint => endpoint
+                                .AddOutbound<BinaryMessage>(
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(10)
                                         .EncryptUsingAes(AesEncryptionKey))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DecryptUsingAes(AesEncryptionKey)
                                         .ConfigureClient(
@@ -432,8 +431,8 @@ public class EncryptionTests : KafkaTestFixture
                                                 configuration.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
-                                receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryMessage binaryMessage) =>
+                                receivedFiles.Add(binaryMessage.Content.ReadAll()))
                         .AddIntegrationSpy();
                 })
             .Run();

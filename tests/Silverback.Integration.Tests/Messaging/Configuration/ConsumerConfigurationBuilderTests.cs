@@ -4,10 +4,11 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 using Silverback.Tests.Types;
@@ -41,7 +42,7 @@ public partial class ConsumerConfigurationBuilderTests
     public void DeserializeUsing_Serializer_SerializerSet()
     {
         TestConsumerConfigurationBuilder<object> builder = new();
-        BinaryFileMessageSerializer serializer = new();
+        BinaryMessageSerializer<BinaryMessage> serializer = new();
 
         TestConsumerConfiguration endpoint = builder.DeserializeUsing(serializer).Build();
 

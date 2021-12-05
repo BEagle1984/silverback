@@ -12,7 +12,6 @@ using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
@@ -255,16 +254,15 @@ public class ErrorHandlingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task
-        RetryPolicy_BinaryFileChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+    public async Task RetryPolicy_BinaryMessageChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
     {
-        BinaryFileMessage message1 = new()
+        BinaryMessage message1 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "application/pdf"
         };
 
-        BinaryFileMessage message2 = new()
+        BinaryMessage message2 = new()
         {
             Content = BytesUtil.GetRandomStream(30),
             ContentType = "text/plain"
@@ -288,7 +286,7 @@ public class ErrorHandlingTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
+                            .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .EnableChunking(10))
@@ -304,9 +302,9 @@ public class ErrorHandlingTests : KafkaTestFixture
                                             configuration.CommitOffsetEach = 1;
                                         })))
                     .AddDelegateSubscriber(
-                        (BinaryFileMessage binaryFile) =>
+                        (BinaryMessage binaryMessage) =>
                         {
-                            if (binaryFile.ContentType != "text/plain")
+                            if (binaryMessage.ContentType != "text/plain")
                             {
                                 tryCount++;
 
@@ -314,14 +312,14 @@ public class ErrorHandlingTests : KafkaTestFixture
                                 {
                                     // Read first chunk only
                                     byte[] buffer = new byte[10];
-                                    binaryFile.Content!.Read(buffer, 0, 10);
+                                    binaryMessage.Content!.Read(buffer, 0, 10);
                                     throw new InvalidOperationException("Retry!");
                                 }
                             }
 
                             lock (receivedFiles)
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                receivedFiles.Add(binaryMessage.Content.ReadAll());
                             }
                         })
                     .AddIntegrationSpy())
@@ -339,9 +337,9 @@ public class ErrorHandlingTests : KafkaTestFixture
         Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
         Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
 
-        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-        Helper.Spy.InboundEnvelopes[2].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+        Helper.Spy.InboundEnvelopes[0].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
+        Helper.Spy.InboundEnvelopes[1].Message.As<BinaryMessage>().ContentType.Should().Be("application/pdf");
+        Helper.Spy.InboundEnvelopes[2].Message.As<BinaryMessage>().ContentType.Should().Be("text/plain");
 
         receivedFiles.Should().HaveCount(2);
         receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
@@ -505,7 +503,7 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task SkipPolicy_JsonDeserializationError_MessageSkipped()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
 
@@ -539,7 +537,7 @@ public class ErrorHandlingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -573,7 +571,7 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task SkipPolicy_ChunkedJsonDeserializationError_SequenceSkipped()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!><what?!><what?!>");
 
@@ -607,7 +605,7 @@ public class ErrorHandlingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -647,7 +645,7 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task SkipPolicy_BatchJsonDeserializationError_MessageSkipped()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
@@ -696,7 +694,7 @@ public class ErrorHandlingTests : KafkaTestFixture
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
-            endpoint => endpoint
+            producer => producer
                 .ProduceTo(DefaultTopicName)
                 .ConfigureClient(
                     configuration =>
@@ -760,7 +758,7 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        Stream rawMessage = EndpointConfiguration.DefaultSerializer.Serialize(message);
+        Stream rawMessage = DefaultSerializers.Json.Serialize(message);
         int tryCount = 0;
 
         Host.ConfigureServices(
@@ -818,7 +816,7 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task RetryPolicy_EncryptedAndChunkedMessage_RetriedMultipleTimes()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        Stream rawMessage = EndpointConfiguration.DefaultSerializer.Serialize(message);
+        Stream rawMessage = DefaultSerializers.Json.Serialize(message);
         int tryCount = 0;
 
         Host.ConfigureServices(

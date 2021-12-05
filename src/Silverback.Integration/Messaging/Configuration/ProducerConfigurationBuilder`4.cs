@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Collections;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -55,7 +56,10 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
         : base(endpointsConfigurationBuilder)
     {
         // Initialize default serializer according to TMessage type parameter
-        SerializeAsJson();
+        if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))
+            ProduceBinaryMessages();
+        else
+            SerializeAsJson();
     }
 
     /// <summary>

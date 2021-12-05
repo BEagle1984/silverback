@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
@@ -55,9 +55,9 @@ public static class BrokerBehaviorsSortIndexes
         public const int BrokerKeyHeaderInitializer = 400;
 
         /// <summary>
-        ///     The <see cref="BinaryFileHandlerProducerBehavior" /> sort index.
+        ///     The <see cref="BinaryMessageHandlerProducerBehavior" /> sort index.
         /// </summary>
-        public const int BinaryFileHandler = 500;
+        public const int BinaryMessageHandler = 500;
 
         /// <summary>
         ///     The <see cref="ValidatorProducerBehavior" /> sort index.
@@ -126,9 +126,9 @@ public static class BrokerBehaviorsSortIndexes
         public const int Decryptor = 700;
 
         /// <summary>
-        ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.
+        ///     The <see cref="BinaryMessageHandlerConsumerBehavior" /> sort index.
         /// </summary>
-        public const int BinaryFileHandler = 800;
+        public const int BinaryMessageHandler = 800;
 
         /// <summary>
         ///     The <see cref="DeserializerConsumerBehavior" /> sort index.

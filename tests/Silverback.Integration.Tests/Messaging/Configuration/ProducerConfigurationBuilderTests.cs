@@ -4,8 +4,9 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Validation;
@@ -40,7 +41,7 @@ public partial class ProducerConfigurationBuilderTests
     public void SerializeUsing_Serializer_SerializerSet()
     {
         TestProducerConfigurationBuilder<object> builder = new();
-        BinaryFileMessageSerializer serializer = new();
+        BinaryMessageSerializer<BinaryMessage> serializer = new();
 
         TestProducerConfiguration endpoint = builder.SerializeUsing(serializer).Build();
 

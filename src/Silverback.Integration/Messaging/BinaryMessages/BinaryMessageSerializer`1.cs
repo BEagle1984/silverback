@@ -9,28 +9,28 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.BinaryFiles;
+namespace Silverback.Messaging.BinaryMessages;
 
 /// <summary>
-///     Handles the <see cref="IBinaryFileMessage" />. It's not really a serializer, since the raw
-///     binary content is transmitted as-is.
+///     Handles the <see cref="IBinaryMessage" />. It's not really a serializer, since the raw binary content is transmitted as-is.
 /// </summary>
 /// <typeparam name="TModel">
-///     The type of the <see cref="IBinaryFileMessage" /> implementation.
+///     The type of the <see cref="IBinaryMessage" /> implementation.
 /// </typeparam>
-public class BinaryFileMessageSerializer<TModel> : IMessageSerializer
-    where TModel : IBinaryFileMessage, new()
+public class BinaryMessageSerializer<TModel> : IBinaryMessageSerializer
+    where TModel : IBinaryMessage, new()
 {
     private readonly Type _type = typeof(TModel);
 
     /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
     public bool RequireHeaders => false;
 
-    /// <inheritdoc cref="BinaryFileMessageSerializer.SerializeAsync" />
+    /// <inheritdoc cref="BinaryMessageSerializer{TModel}.SerializeAsync" />
     [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         Check.NotNull(headers, nameof(headers));
+        Check.NotNull(endpoint, nameof(endpoint));
 
         if (message == null)
             return ValueTaskFactory.FromResult<Stream?>(null);
@@ -41,12 +41,14 @@ public class BinaryFileMessageSerializer<TModel> : IMessageSerializer
         if (message is byte[] inputBytes)
             return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
-        IBinaryFileMessage? binaryFileMessage = message as IBinaryFileMessage;
+        IBinaryMessage? binaryMessage = message as IBinaryMessage;
 
-        if (binaryFileMessage == null)
-            throw new ArgumentException("The message is not implementing the IBinaryFileMessage interface.", nameof(message));
+        if (binaryMessage == null)
+            throw new ArgumentException("The message is not implementing the IBinaryMessage interface.", nameof(message));
 
-        return ValueTaskFactory.FromResult(binaryFileMessage.Content);
+        headers.AddOrReplace(DefaultMessageHeaders.MessageType, message.GetType().AssemblyQualifiedName);
+
+        return ValueTaskFactory.FromResult(binaryMessage.Content);
     }
 
     /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
@@ -55,8 +57,14 @@ public class BinaryFileMessageSerializer<TModel> : IMessageSerializer
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
     {
-        TModel binaryFileMessage = new() { Content = messageStream };
+        Check.NotNull(headers, nameof(headers));
+        Check.NotNull(endpoint, nameof(endpoint));
 
-        return ValueTaskFactory.FromResult(new DeserializedMessage(binaryFileMessage, _type));
+        Type type = SerializationHelper.GetTypeFromHeaders(headers) ?? _type;
+
+        TModel binaryMessage = type == _type ? new TModel() : (TModel)Activator.CreateInstance(type)!;
+        binaryMessage.Content = messageStream;
+
+        return ValueTaskFactory.FromResult(new DeserializedMessage(binaryMessage, type));
     }
 }

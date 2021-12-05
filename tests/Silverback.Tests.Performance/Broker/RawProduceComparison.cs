@@ -311,7 +311,7 @@ public static class RawProduceComparison
                                     configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
                                 })
                             .AddOutbound<object>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
                                         configuration =>
@@ -386,7 +386,7 @@ public static class RawProduceComparison
                                     configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
                                 })
                             .AddOutbound<object>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
                                         configuration =>
@@ -459,7 +459,7 @@ public static class RawProduceComparison
                                     configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
                                 })
                             .AddOutbound<object>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
                                         configuration =>
@@ -536,7 +536,7 @@ public static class RawProduceComparison
                                     configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
                                 })
                             .AddOutbound<object>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
                                         configuration =>

@@ -54,7 +54,10 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
         : base(endpointsConfigurationBuilder)
     {
         // Initialize default serializer according to TMessage type parameter
-        DeserializeJson();
+        if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))
+            ConsumeBinaryMessages();
+        else
+            DeserializeJson();
     }
 
     /// <summary>

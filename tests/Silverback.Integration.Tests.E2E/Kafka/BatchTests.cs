@@ -50,7 +50,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -130,7 +130,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -209,7 +209,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -289,7 +289,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -367,7 +367,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -449,7 +449,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -510,7 +510,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -565,7 +565,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -617,7 +617,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -687,7 +687,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -763,7 +763,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -848,11 +848,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -929,11 +929,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1005,7 +1005,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1070,7 +1070,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1127,11 +1127,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1199,11 +1199,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1262,7 +1262,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1332,7 +1332,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1389,9 +1389,9 @@ public class BatchTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task BatchOfBinaryFiles_SubscribingToStream_MessagesReceivedAndCommittedInBatch()
+    public async Task BatchOfBinaryMessages_SubscribingToStream_MessagesReceivedAndCommittedInBatch()
     {
-        List<List<IBinaryFileMessage>> receivedBatches = new();
+        List<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
         Host.ConfigureServices(
@@ -1409,12 +1409,11 @@ public class BatchTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceBinaryFiles())
-                            .AddInbound(
-                                endpoint => endpoint
+                            .AddOutbound<BinaryMessage>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName))
+                            .AddInbound<BinaryMessage>(
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1423,15 +1422,14 @@ public class BatchTests : KafkaTestFixture
                                             configuration.EnableAutoCommit = false;
                                             configuration.CommitOffsetEach = 1;
                                         })
-                                    .EnableBatchProcessing(10)
-                                    .ConsumeBinaryFiles()))
+                                    .EnableBatchProcessing(10)))
                     .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IBinaryFileMessage> eventsStream) =>
+                        async (IAsyncEnumerable<IBinaryMessage> eventsStream) =>
                         {
-                            List<IBinaryFileMessage> list = new();
+                            List<IBinaryMessage> list = new();
                             receivedBatches.ThreadSafeAdd(list);
 
-                            await foreach (IBinaryFileMessage message in eventsStream)
+                            await foreach (IBinaryMessage message in eventsStream)
                             {
                                 list.Add(message);
                             }
@@ -1445,7 +1443,7 @@ public class BatchTests : KafkaTestFixture
         for (int i = 1; i <= 15; i++)
         {
             await publisher.PublishAsync(
-                new BinaryFileMessage
+                new BinaryMessage
                 {
                     Content = BytesUtil.GetRandomStream(),
                     ContentType = "application/pdf"
@@ -1464,7 +1462,7 @@ public class BatchTests : KafkaTestFixture
         for (int i = 16; i <= 20; i++)
         {
             await publisher.PublishAsync(
-                new BinaryFileMessage
+                new BinaryMessage
                 {
                     Content = BytesUtil.GetRandomStream(),
                     ContentType = "application/pdf"
@@ -1482,10 +1480,9 @@ public class BatchTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task
-        BatchOfBinaryFiles_SubscribingToEnvelopesStream_MessagesReceivedAndCommittedInBatch()
+    public async Task BatchOfBinaryMessages_SubscribingToEnvelopesStream_MessagesReceivedAndCommittedInBatch()
     {
-        List<List<IBinaryFileMessage>> receivedBatches = new();
+        List<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
         Host.ConfigureServices(
@@ -1503,12 +1500,11 @@ public class BatchTests : KafkaTestFixture
                                 {
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
-                            .AddOutbound<IBinaryFileMessage>(
-                                endpoint => endpoint
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceBinaryFiles())
-                            .AddInbound(
-                                endpoint => endpoint
+                            .AddOutbound<BinaryMessage>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName))
+                            .AddInbound<BinaryMessage>(
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1517,15 +1513,14 @@ public class BatchTests : KafkaTestFixture
                                             configuration.EnableAutoCommit = false;
                                             configuration.CommitOffsetEach = 1;
                                         })
-                                    .EnableBatchProcessing(10)
-                                    .ConsumeBinaryFiles()))
+                                    .EnableBatchProcessing(10)))
                     .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IInboundEnvelope<IBinaryFileMessage>> eventsStream) =>
+                        async (IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>> eventsStream) =>
                         {
-                            List<IBinaryFileMessage> list = new();
+                            List<IBinaryMessage> list = new();
                             receivedBatches.ThreadSafeAdd(list);
 
-                            await foreach (IInboundEnvelope<IBinaryFileMessage> envelope in eventsStream)
+                            await foreach (IInboundEnvelope<IBinaryMessage> envelope in eventsStream)
                             {
                                 list.Add(envelope.Message!);
                             }
@@ -1539,7 +1534,7 @@ public class BatchTests : KafkaTestFixture
         for (int i = 1; i <= 15; i++)
         {
             await publisher.PublishAsync(
-                new BinaryFileMessage
+                new BinaryMessage
                 {
                     Content = BytesUtil.GetRandomStream(),
                     ContentType = "application/pdf"
@@ -1558,7 +1553,7 @@ public class BatchTests : KafkaTestFixture
         for (int i = 16; i <= 20; i++)
         {
             await publisher.PublishAsync(
-                new BinaryFileMessage
+                new BinaryMessage
                 {
                     Content = BytesUtil.GetRandomStream(),
                     ContentType = "application/pdf"
@@ -1598,7 +1593,7 @@ public class BatchTests : KafkaTestFixture
                                 })
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1659,11 +1654,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>
@@ -1720,11 +1715,11 @@ public class BatchTests : KafkaTestFixture
                                     configuration.BootstrapServers = "PLAINTEXT://e2e";
                                 })
                             .AddOutbound<TestEventOne>(
-                                endpoint => endpoint
+                                producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content))
                             .AddInbound(
-                                endpoint => endpoint
+                                consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration =>

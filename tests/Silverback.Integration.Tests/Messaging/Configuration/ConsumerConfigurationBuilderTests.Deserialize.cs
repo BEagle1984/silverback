@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -25,7 +25,7 @@ public partial class ConsumerConfigurationBuilderTests
         TestConsumerConfiguration endpoint = builder.Build();
 
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
-        endpoint.Serializer.Should().NotBeSameAs(EndpointConfiguration.DefaultSerializer);
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -39,6 +39,27 @@ public partial class ConsumerConfigurationBuilderTests
     }
 
     [Fact]
+    public void ImplicitDeserializeBinary_Default_SerializerSet()
+    {
+        TestConsumerConfigurationBuilder<BinaryMessage> builder = new();
+
+        TestConsumerConfiguration endpoint = builder.Build();
+
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<BinaryMessage>>();
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
+    }
+
+    [Fact]
+    public void ImplicitDeserializeBinary_WithCustomMessageType_TypedSerializerSet()
+    {
+        TestConsumerConfigurationBuilder<CustomBinaryMessage> builder = new();
+
+        TestConsumerConfiguration endpoint = builder.Build();
+
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<CustomBinaryMessage>>();
+    }
+
+    [Fact]
     public void DeserializeJson_Default_SerializerSet()
     {
         TestConsumerConfigurationBuilder<object> builder = new();
@@ -46,7 +67,7 @@ public partial class ConsumerConfigurationBuilderTests
         TestConsumerConfiguration endpoint = builder.DeserializeJson().Build();
 
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
-        endpoint.Serializer.Should().NotBeSameAs(EndpointConfiguration.DefaultSerializer);
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Json);
     }
 
     [Fact]
@@ -116,70 +137,72 @@ public partial class ConsumerConfigurationBuilderTests
     }
 
     [Fact]
-    public void ConsumeBinaryFiles_Default_SerializerSet()
+    public void ConsumeBinaryMessages_Default_SerializerSet()
     {
         TestConsumerConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration endpoint = builder.ConsumeBinaryFiles().Build();
+        TestConsumerConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer>();
-        endpoint.Serializer.Should().NotBeSameAs(BinaryFileMessageSerializer.Default);
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<BinaryMessage>>();
+        endpoint.Serializer.Should().NotBeSameAs(DefaultSerializers.Binary);
     }
 
     [Fact]
-    public void ConsumeBinaryFiles_WithSetMessageType_SerializerSet()
+    public void ConsumeBinaryMessages_WithSetMessageType_SerializerSet()
     {
-        TestConsumerConfigurationBuilder<CustomBinaryFileMessage> builder = new();
+        TestConsumerConfigurationBuilder<CustomBinaryMessage> builder = new();
 
-        TestConsumerConfiguration endpoint = builder.ConsumeBinaryFiles().Build();
+        TestConsumerConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer<CustomBinaryFileMessage>>();
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<CustomBinaryMessage>>();
     }
 
     [Fact]
-    public void ConsumeBinaryFiles_WithInvalidMessageType_ExceptionThrown()
+    public void ConsumeBinaryMessages_WithInvalidMessageType_ExceptionThrown()
     {
         TestConsumerConfigurationBuilder<TestEventOne> builder = new();
 
-        Action act = () => builder.ConsumeBinaryFiles();
+        Action act = () => builder.ConsumeBinaryMessages();
 
         act.Should().ThrowExactly<ArgumentException>()
-            .WithMessage("The type *.TestEventOne does not implement IBinaryFileMessage. *");
+            .WithMessage("The type *.TestEventOne does not implement IBinaryMessage. *");
     }
 
     [Fact]
-    public void ConsumeBinaryFiles_MessageTypeWithoutEmptyConstructor_ExceptionThrown()
+    public void ConsumeBinaryMessages_MessageTypeWithoutEmptyConstructor_ExceptionThrown()
     {
-        TestConsumerConfigurationBuilder<BinaryFileMessageWithoutDefaultConstructor> builder = new();
-
-        Action act = () => builder.ConsumeBinaryFiles();
+        Action act = () =>
+        {
+            TestConsumerConfigurationBuilder<BinaryMessageWithoutDefaultConstructor> builder = new();
+            builder.ConsumeBinaryMessages();
+        };
 
         act.Should().ThrowExactly<ArgumentException>()
-            .WithMessage("The type *+BinaryFileMessageWithoutDefaultConstructor does not have a default constructor. *");
+            .WithMessage("The type *+BinaryMessageWithoutDefaultConstructor does not have a default constructor. *");
     }
 
     [Fact]
-    public void ConsumeBinaryFiles_UseModel_SerializerSet()
+    public void ConsumeBinaryMessages_UseModel_SerializerSet()
     {
         TestConsumerConfigurationBuilder<object> builder = new();
 
         TestConsumerConfiguration endpoint = builder
-            .ConsumeBinaryFiles(serializer => serializer.UseModel<CustomBinaryFileMessage>())
+            .ConsumeBinaryMessages(serializer => serializer.UseModel<CustomBinaryMessage>())
             .Build();
 
-        endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer<CustomBinaryFileMessage>>();
+        endpoint.Serializer.Should().BeOfType<BinaryMessageSerializer<CustomBinaryMessage>>();
     }
 
-    private sealed class CustomBinaryFileMessage : BinaryFileMessage
+    private sealed class CustomBinaryMessage : BinaryMessage
     {
     }
 
     [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
-    private sealed class BinaryFileMessageWithoutDefaultConstructor : BinaryFileMessage
+    private sealed class BinaryMessageWithoutDefaultConstructor : BinaryMessage
     {
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Required for testing.")]
-        public BinaryFileMessageWithoutDefaultConstructor(string value)
+        public BinaryMessageWithoutDefaultConstructor(string value)
         {
         }
     }

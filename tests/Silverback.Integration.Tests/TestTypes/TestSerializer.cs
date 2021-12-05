@@ -34,6 +34,6 @@ public class TestSerializer : IMessageSerializer
             throw new InvalidOperationException("Test failure");
         }
 
-        return EndpointConfiguration.DefaultSerializer.DeserializeAsync(messageStream, headers, endpoint);
+        return DefaultSerializers.Json.DeserializeAsync(messageStream, headers, endpoint);
     }
 }
