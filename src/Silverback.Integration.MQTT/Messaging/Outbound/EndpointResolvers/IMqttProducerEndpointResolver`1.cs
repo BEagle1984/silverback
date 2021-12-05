@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Outbound.EndpointResolvers;
 /// <typeparam name="TMessage">
 ///     The type of the messages being produced.
 /// </typeparam>
-public interface IMqttProducerEndpointResolver<TMessage>
+public interface IMqttProducerEndpointResolver<in TMessage>
 {
     /// <summary>
     ///     Gets the target topic for the message being produced.

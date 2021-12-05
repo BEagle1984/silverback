@@ -175,11 +175,11 @@ public class OutboxWorker : IOutboxWorker
                 message.MessageType,
                 message.EndpointRawName,
                 message.EndpointFriendlyName);
-            ProducerEndpoint actualEndpoint = await GetEndpointAsync(message, producerConfiguration, serviceProvider).ConfigureAwait(false);
+            ProducerEndpoint endpoint = await GetEndpointAsync(message, producerConfiguration, serviceProvider).ConfigureAwait(false);
 
             IProducer producer = await _brokerCollection.GetProducerAsync(producerConfiguration).ConfigureAwait(false);
             await producer.RawProduceAsync(
-                    actualEndpoint,
+                    endpoint,
                     message.Content,
                     message.Headers,
                     _ => Interlocked.Decrement(ref _pendingProduceOperations),
@@ -192,7 +192,7 @@ public class OutboxWorker : IOutboxWorker
                             new OutboundEnvelope(
                                 message.Content,
                                 message.Headers,
-                                actualEndpoint),
+                                endpoint),
                             exception);
                     })
                 .ConfigureAwait(false);

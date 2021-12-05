@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Outbound.EndpointResolvers;
 /// <typeparam name="TMessage">
 ///     The type of the messages being produced.
 /// </typeparam>
-public interface IKafkaProducerEndpointResolver<TMessage>
+public interface IKafkaProducerEndpointResolver<in TMessage>
 {
     /// <summary>
     ///     Gets the target topic and partition for the message being produced.

@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 ///     applying the message side effects to the local database. The <see cref="IOutboxWorker" /> takes care of asynchronously sending
 ///     the messages to the message broker.
 /// </summary>
-public class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
+public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
     /// <inheritdoc cref="op_Equality" />
     public static bool operator ==(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => Equals(left, right);

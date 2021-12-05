@@ -27,24 +27,24 @@ internal sealed class OutboundLogger<TCategoryName> : SilverbackLogger<TCategory
             .LogProduced(this, envelope);
 
     public void LogProduced(
-        ProducerEndpoint actualEndpoint,
+        ProducerEndpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-        _loggerFactory.GetOutboundLogger(actualEndpoint.Configuration)
-            .LogProduced(this, actualEndpoint, headers, brokerMessageIdentifier);
+        _loggerFactory.GetOutboundLogger(endpoint.Configuration)
+            .LogProduced(this, endpoint, headers, brokerMessageIdentifier);
 
     public void LogProduceError(IOutboundEnvelope envelope, Exception exception) =>
         _loggerFactory.GetOutboundLogger(envelope.Endpoint.Configuration)
             .LogProduceError(this, envelope, exception);
 
     public void LogProduceError(
-        ProducerEndpoint actualEndpoint,
+        ProducerEndpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         Exception exception) =>
-        _loggerFactory.GetOutboundLogger(actualEndpoint.Configuration)
+        _loggerFactory.GetOutboundLogger(endpoint.Configuration)
             .LogProduceError(
                 this,
-                actualEndpoint,
+                endpoint,
                 headers,
                 exception);
 

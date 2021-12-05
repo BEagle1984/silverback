@@ -18,7 +18,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}" />
+/// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}" />
 public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfiguration, KafkaProducerEndpoint>, IDisposable
 {
     private readonly IConfluentProducersCache _confluentClientsCache;
@@ -74,7 +74,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         DisposeConfluentProducer();
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
         object? message,
         Stream? messageStream,
@@ -82,7 +82,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         KafkaProducerEndpoint endpoint) =>
         AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageStream, headers, endpoint));
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
         object? message,
         byte[]? messageBytes,
@@ -90,7 +90,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         KafkaProducerEndpoint endpoint) =>
         AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageBytes, headers, endpoint));
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
         object? message,
         Stream? messageStream,
@@ -100,7 +100,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         Action<Exception> onError) =>
         ProduceCore(message, messageStream.ReadAll(), headers, endpoint, onSuccess, onError);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("", "CA1031", Justification = "Exception forwarded")]
     protected override void ProduceCore(
         object? message,
@@ -151,7 +151,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
             });
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -159,7 +159,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         KafkaProducerEndpoint endpoint) =>
         await ProduceCoreAsync(message, await messageStream.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         byte[]? messageBytes,
@@ -200,7 +200,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         }
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override async Task ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -217,7 +217,7 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
                 onError)
             .ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
     protected override Task ProduceCoreAsync(
         object? message,

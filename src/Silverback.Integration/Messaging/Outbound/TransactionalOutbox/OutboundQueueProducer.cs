@@ -58,7 +58,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         _queueWriter = queueWriter;
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier ProduceCore(
         object? message,
         Stream? messageStream,
@@ -66,7 +66,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         ProducerEndpoint endpoint) =>
         throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier ProduceCore(
         object? message,
         byte[]? messageBytes,
@@ -74,7 +74,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         ProducerEndpoint endpoint) =>
         throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
         object? message,
         Stream? messageStream,
@@ -84,7 +84,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         Action<Exception> onError) =>
         throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
         object? message,
         byte[]? messageBytes,
@@ -94,7 +94,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         Action<Exception> onError) =>
         throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -107,7 +107,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
                 endpoint)
             .ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         byte[]? messageBytes,
@@ -128,7 +128,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
         return null;
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override async Task ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -145,7 +145,7 @@ public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, Produce
                 onError)
             .ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override async Task ProduceCoreAsync(
         object? message,
         byte[]? messageBytes,

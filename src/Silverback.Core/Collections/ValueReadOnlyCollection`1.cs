@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Collections;
 
 /// <inheritdoc cref="IValueReadOnlyCollection{T}" />
-public class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatable<ValueReadOnlyCollection<T>>
+public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatable<ValueReadOnlyCollection<T>>
 {
     private readonly IEqualityComparer<T> _equalityComparer = EqualityComparer<T>.Default;
 
@@ -37,6 +37,9 @@ public class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatabl
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
     public int Count => _collection.Count;
 
+    /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
+    public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
+
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
     public bool Equals(ValueReadOnlyCollection<T>? other)
     {
@@ -57,9 +60,6 @@ public class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatabl
 
         return !enumerator2.MoveNext();
     }
-
-    /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
-    public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj) =>

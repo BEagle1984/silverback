@@ -17,7 +17,7 @@ internal static class KafkaHeadersMappingExtensions
         headers.ForEach(
             header =>
             {
-                if (header.Name is KafkaMessageHeaders.KafkaMessageKey)
+                if (header.Name == KafkaMessageHeaders.KafkaMessageKey)
                     return;
 
                 kafkaHeaders.Add(header.Name, Encode(header.Value));

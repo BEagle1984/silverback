@@ -77,7 +77,7 @@ public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, Mqtt
             ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties.ToSilverbackHeaders())
             : new MessageHeaderCollection();
 
-        MqttConsumerEndpoint actualEndpoint = _endpointsCache.GetOrAdd(message.ApplicationMessage.Topic, _endpointFactory);
+        MqttConsumerEndpoint endpoint = _endpointsCache.GetOrAdd(message.ApplicationMessage.Topic, _endpointFactory);
 
         headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
@@ -88,7 +88,7 @@ public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, Mqtt
         await HandleMessageAsync(
                 message.ApplicationMessage.Payload,
                 headers,
-                actualEndpoint,
+                endpoint,
                 new MqttMessageIdentifier(Configuration.Client.ClientId, message.Id))
             .ConfigureAwait(false);
     }

@@ -14,10 +14,10 @@ internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
     public OutboundEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint actualEndpoint,
+        ProducerEndpoint endpoint,
         bool autoUnwrap = false,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(headers, actualEndpoint, brokerMessageIdentifier)
+        : base(headers, endpoint, brokerMessageIdentifier)
     {
         _message = message;
 

@@ -19,8 +19,7 @@ public class MqttClientConfigurationBuilder
 {
     private readonly IServiceProvider? _serviceProvider;
 
-    private readonly MqttClientOptionsBuilder _builder =
-        new MqttClientOptionsBuilder().WithProtocolVersion(MqttProtocolVersion.V500);
+    private readonly MqttClientOptionsBuilder _builder = new MqttClientOptionsBuilder().WithProtocolVersion(MqttProtocolVersion.V500);
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
@@ -51,17 +50,8 @@ public class MqttClientConfigurationBuilder
 
         UseProtocolVersion(baseConfiguration.ProtocolVersion);
         WithCommunicationTimeout(baseConfiguration.CommunicationTimeout);
-
-        if (baseConfiguration.CleanSession)
-            RequestCleanSession();
-        else
-            RequestPersistentSession();
-
-        if (baseConfiguration.KeepAlivePeriod == TimeSpan.Zero)
-            DisableKeepAlive();
-        else
-            SendKeepAlive(baseConfiguration.KeepAlivePeriod);
-
+        _builder.WithCleanSession(baseConfiguration.CleanSession);
+        SendKeepAlive(baseConfiguration.KeepAlivePeriod);
         WithClientId(baseConfiguration.ClientId);
 
         if (baseConfiguration.WillMessage != null)
@@ -69,33 +59,12 @@ public class MqttClientConfigurationBuilder
 
         WithAuthentication(baseConfiguration.AuthenticationMethod, baseConfiguration.AuthenticationData);
 
-        if (baseConfiguration.TopicAliasMaximum != null)
-            LimitTopicAlias(baseConfiguration.TopicAliasMaximum.Value);
-
-        if (baseConfiguration.MaximumPacketSize != null)
-            LimitPacketSize(baseConfiguration.MaximumPacketSize.Value);
-
-        if (baseConfiguration.ReceiveMaximum != null)
-            LimitUnacknowledgedPublications(baseConfiguration.ReceiveMaximum.Value);
-
-        if (baseConfiguration.RequestProblemInformation != null)
-        {
-            if (baseConfiguration.RequestProblemInformation.Value)
-                RequestProblemInformation();
-            else
-                DisableProblemInformation();
-        }
-
-        if (baseConfiguration.RequestResponseInformation != null)
-        {
-            if (baseConfiguration.RequestResponseInformation.Value)
-                RequestResponseInformation();
-            else
-                DisableResponseInformation();
-        }
-
-        if (baseConfiguration.SessionExpiryInterval != null)
-            WithSessionExpiration(baseConfiguration.SessionExpiryInterval.Value);
+        _builder.WithTopicAliasMaximum(baseConfiguration.TopicAliasMaximum);
+        _builder.WithMaximumPacketSize(baseConfiguration.MaximumPacketSize);
+        _builder.WithReceiveMaximum(baseConfiguration.ReceiveMaximum);
+        _builder.WithRequestProblemInformation(baseConfiguration.RequestProblemInformation);
+        _builder.WithRequestResponseInformation(baseConfiguration.RequestResponseInformation);
+        _builder.WithSessionExpiryInterval(baseConfiguration.SessionExpiryInterval);
 
         baseConfiguration.UserProperties.ForEach(property => AddUserProperty(property.Name, property.Value));
 

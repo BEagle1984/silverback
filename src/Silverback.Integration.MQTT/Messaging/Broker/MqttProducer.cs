@@ -20,7 +20,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}" />
+/// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}" />
 public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguration, MqttProducerEndpoint>, IDisposable
 {
     [SuppressMessage("", "CA2213", Justification = "Disposed by the MqttClientCache")]
@@ -83,15 +83,15 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         }
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ConnectCoreAsync" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ConnectCoreAsync" />
     protected override Task ConnectCoreAsync() =>
         _clientWrapper.ConnectAsync(this);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.DisconnectCoreAsync" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.DisconnectCoreAsync" />
     protected override Task DisconnectCoreAsync() =>
         _clientWrapper.DisconnectAsync(this);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
         object? message,
         Stream? messageStream,
@@ -99,7 +99,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         MqttProducerEndpoint endpoint) =>
         AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageStream, headers, endpoint));
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
         object? message,
         byte[]? messageBytes,
@@ -107,7 +107,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         MqttProducerEndpoint endpoint) =>
         AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageBytes, headers, endpoint));
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
         object? message,
         Stream? messageStream,
@@ -117,7 +117,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         Action<Exception> onError) =>
         ProduceCore(message, messageStream.ReadAll(), headers, endpoint, onSuccess, onError);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
         object? message,
         byte[]? messageBytes,
@@ -130,7 +130,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         AsyncHelper.RunSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage).AsTask());
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -138,7 +138,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         MqttProducerEndpoint endpoint) =>
         await ProduceCoreAsync(message, await messageStream.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint)" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
         object? message,
         byte[]? messageBytes,
@@ -153,7 +153,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
         return null;
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override async Task ProduceCoreAsync(
         object? message,
         Stream? messageStream,
@@ -169,7 +169,7 @@ public sealed class MqttProducer : Producer<MqttBroker, MqttProducerConfiguratio
             onSuccess,
             onError).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TEndpoint,TActualEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TActualEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override async Task ProduceCoreAsync(
         object? message,
         byte[]? messageBytes,

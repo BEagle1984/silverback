@@ -34,7 +34,7 @@ internal sealed class NullOutbox : IOutboxReader, IOutboxWriter
         IReadOnlyCollection<MessageHeader>? headers,
         string endpointRawName,
         string? endpointFriendlyName,
-        byte[]? endpoint) =>
+        byte[]? serializedEndpoint) =>
         throw new NotSupportedException();
 
     public Task CommitAsync() => Task.CompletedTask;

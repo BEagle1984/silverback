@@ -33,8 +33,6 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     where TConfiguration : ConsumerConfiguration
     where TIdentifier : class, IBrokerMessageIdentifier
 {
-    private static readonly TimeSpan ReconnectRetryDelay = TimeSpan.FromSeconds(5);
-
     private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
     private readonly ISilverbackLogger<IConsumer> _logger;
@@ -179,12 +177,9 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogErrorReconnectingConsumer(ReconnectRetryDelay, this, ex);
+                        _logger.LogErrorReconnectingConsumer(BrokerConstants.ConsumerReconnectRetryDelay, this, ex);
 
-                        await Task.Delay(
-                                ReconnectRetryDelay,
-                                _disconnectCancellationTokenSource.Token)
-                            .ConfigureAwait(false);
+                        await Task.Delay(BrokerConstants.ConsumerReconnectRetryDelay, _disconnectCancellationTokenSource.Token).ConfigureAwait(false);
 
                         if (_disconnectCancellationTokenSource.Token.IsCancellationRequested)
                             return;
@@ -415,7 +410,7 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     /// <param name="headers">
     ///     The headers of the consumed message.
     /// </param>
-    /// <param name="actualEndpoint">
+    /// <param name="endpoint">
     ///     The endpoint from which the message was consumed.
     /// </param>
     /// <param name="brokerMessageIdentifier">
@@ -428,13 +423,13 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     protected virtual async Task HandleMessageAsync(
         byte[]? message,
         IReadOnlyCollection<MessageHeader> headers,
-        ConsumerEndpoint actualEndpoint,
+        ConsumerEndpoint endpoint,
         IBrokerMessageIdentifier brokerMessageIdentifier)
     {
         RawInboundEnvelope envelope = new(
             message,
             headers,
-            actualEndpoint,
+            endpoint,
             brokerMessageIdentifier);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
