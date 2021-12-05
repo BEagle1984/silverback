@@ -29,9 +29,9 @@ public class OutboundEndpointsHealthCheckServiceTests
         IProducer? producer1 = Substitute.For<IProducer>();
         IProducer? producer2 = Substitute.For<IProducer>();
         IProducer? producer3 = Substitute.For<IProducer>();
-        broker.GetProducer(new TestProducerConfiguration("endpoint1")).Returns(producer1);
-        broker.GetProducer(new TestProducerConfiguration("endpoint2")).Returns(producer2);
-        broker.GetProducer(new TestProducerConfiguration("endpoint3")).Returns(producer3);
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint1")).Returns(Task.FromResult(producer1));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint2")).Returns(Task.FromResult(producer2));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint3")).Returns(Task.FromResult(producer3));
         IOutboundRoutingConfiguration? configuration = Substitute.For<IOutboundRoutingConfiguration>();
         configuration.Routes.Returns(
             new List<IOutboundRoute>
@@ -60,9 +60,9 @@ public class OutboundEndpointsHealthCheckServiceTests
         IProducer? producer1 = Substitute.For<IProducer>();
         IProducer? producer2 = Substitute.For<IProducer>();
         IProducer? producer3 = Substitute.For<IProducer>();
-        broker.GetProducer(new TestProducerConfiguration("endpoint1")).Returns(producer1);
-        broker.GetProducer(new TestProducerConfiguration("endpoint2")).Returns(producer2);
-        broker.GetProducer(new TestProducerConfiguration("endpoint3")).Returns(producer3);
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint1")).Returns(Task.FromResult(producer1));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint2")).Returns(Task.FromResult(producer2));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint3")).Returns(Task.FromResult(producer3));
         IOutboundRoutingConfiguration? configuration = Substitute.For<IOutboundRoutingConfiguration>();
         configuration.Routes.Returns(
             new List<IOutboundRoute>
@@ -90,9 +90,9 @@ public class OutboundEndpointsHealthCheckServiceTests
         IProducer? producer2 = Substitute.For<IProducer>();
         producer2.ProduceAsync((PingMessage?)null).ThrowsForAnyArgs<ProduceException>();
         IProducer? producer3 = Substitute.For<IProducer>();
-        broker.GetProducer(new TestProducerConfiguration("endpoint1")).Returns(producer1);
-        broker.GetProducer(new TestProducerConfiguration("endpoint2")).Returns(producer2);
-        broker.GetProducer(new TestProducerConfiguration("endpoint3")).Returns(producer3);
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint1")).Returns(Task.FromResult(producer1));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint2")).Returns(Task.FromResult(producer2));
+        broker.GetProducerAsync(new TestProducerConfiguration("endpoint3")).Returns(Task.FromResult(producer3));
         IOutboundRoutingConfiguration? configuration = Substitute.For<IOutboundRoutingConfiguration>();
         configuration.Routes.Returns(
             new List<IOutboundRoute>

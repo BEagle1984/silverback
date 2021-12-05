@@ -44,6 +44,7 @@ uid: releases
   * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
   * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
   * Broker -> BrokerBase
+  * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
 
 ### Deprecation Notice
 

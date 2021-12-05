@@ -103,7 +103,7 @@ public class OutboxWorker : IOutboxWorker
     }
 
     // TODO: Test all cases
-    private static async Task<ProducerEndpoint> GetEndpointAsync(
+    private static async ValueTask<ProducerEndpoint> GetEndpointAsync(
         OutboxStoredMessage message,
         ProducerConfiguration configuration,
         IServiceProvider serviceProvider)
@@ -171,18 +171,14 @@ public class OutboxWorker : IOutboxWorker
     {
         try
         {
-            ProducerEndpoint actualEndpoint = await GetEndpointAsync(
-                    message,
-                    GetProducerSettings(message.MessageType, message.EndpointRawName, message.EndpointFriendlyName),
-                    serviceProvider)
-                .ConfigureAwait(false);
+            ProducerConfiguration producerConfiguration = GetProducerConfiguration(
+                message.MessageType,
+                message.EndpointRawName,
+                message.EndpointFriendlyName);
+            ProducerEndpoint actualEndpoint = await GetEndpointAsync(message, producerConfiguration, serviceProvider).ConfigureAwait(false);
 
-            await _brokerCollection.GetProducer(
-                    GetProducerSettings(
-                        message.MessageType,
-                        message.EndpointRawName,
-                        message.EndpointFriendlyName))
-                .RawProduceAsync(
+            IProducer producer = await _brokerCollection.GetProducerAsync(producerConfiguration).ConfigureAwait(false);
+            await producer.RawProduceAsync(
                     actualEndpoint,
                     message.Content,
                     message.Headers,
@@ -217,7 +213,7 @@ public class OutboxWorker : IOutboxWorker
     }
 
     // TODO: Test all cases
-    private ProducerConfiguration GetProducerSettings(Type? messageType, string rawName, string? friendlyName)
+    private ProducerConfiguration GetProducerConfiguration(Type? messageType, string rawName, string? friendlyName)
     {
         IReadOnlyCollection<IOutboundRoute> outboundRoutes = messageType != null
             ? _routingConfiguration.GetRoutesForMessage(messageType)

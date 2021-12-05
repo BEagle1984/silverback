@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -85,7 +86,9 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
 
         private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
-        private readonly IProducer _producer;
+        private readonly SemaphoreSlim _producerInitSemaphore = new(1, 1);
+
+        private IProducer? _producer;
 
         public MoveMessageErrorPolicyImplementation(
             ProducerConfiguration producerConfiguration,
@@ -111,8 +114,6 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
             _transformationAction = transformationAction;
             _enricherFactory = enricherFactory;
             _logger = logger;
-
-            _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(producerConfiguration);
         }
 
         public override bool CanHandle(ConsumerPipelineContext context, Exception exception)
@@ -161,7 +162,24 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
 
             _transformationAction?.Invoke(outboundEnvelope, exception);
 
+            _producer ??= await InitProducerAsync(serviceProvider).ConfigureAwait(false);
+
             await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
+        }
+
+        private async Task<IProducer> InitProducerAsync(IServiceProvider serviceProvider)
+        {
+            await _producerInitSemaphore.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                IBrokerCollection brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
+                _producer = await brokerCollection.GetProducerAsync(_producerConfiguration).ConfigureAwait(false);
+                return _producer;
+            }
+            finally
+            {
+                _producerInitSemaphore.Release();
+            }
         }
     }
 }

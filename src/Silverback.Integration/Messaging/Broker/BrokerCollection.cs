@@ -46,6 +46,20 @@ public class BrokerCollection : IBrokerCollection
     /// <inheritdoc cref="IReadOnlyList{T}.this" />
     public IBroker this[int index] => _brokers[index];
 
+    /// <inheritdoc cref="IBrokerCollection.GetProducerAsync" />
+    public Task<IProducer> GetProducerAsync(ProducerConfiguration configuration)
+    {
+        Check.NotNull(configuration, nameof(configuration));
+
+        Type endpointType = configuration.GetType();
+
+        return FindBroker(
+                broker => broker.ProducerConfigurationType,
+                endpointType,
+                _producerEndpointTypeMap)
+            .GetProducerAsync(configuration);
+    }
+
     /// <inheritdoc cref="IBrokerCollection.GetProducer" />
     public IProducer GetProducer(ProducerConfiguration configuration)
     {

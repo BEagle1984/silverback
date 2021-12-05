@@ -88,9 +88,8 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
 
     private IEnumerable<IBrokerConnectedObject> ConnectedObjects => _producers.Cast<IBrokerConnectedObject>().Concat(_consumers);
 
-    /// <inheritdoc cref="IBroker.GetProducer(ProducerConfiguration)" />
-    // TODO: Make this async?
-    public virtual IProducer GetProducer(ProducerConfiguration configuration)
+    /// <inheritdoc cref="IBroker.GetProducerAsync(ProducerConfiguration)" />
+    public virtual async Task<IProducer> GetProducerAsync(ProducerConfiguration configuration)
     {
         Check.NotNull(configuration, nameof(configuration));
 
@@ -100,10 +99,14 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
         IProducer producer = GetOrInstantiateProducer(configuration);
 
         if (!producer.IsConnected && IsConnected)
-            AsyncHelper.RunSynchronously(() => producer.ConnectAsync());
+            await producer.ConnectAsync().ConfigureAwait(false);
 
         return producer;
     }
+
+    /// <inheritdoc cref="IBroker.GetProducer(ProducerConfiguration)" />
+    public IProducer GetProducer(ProducerConfiguration configuration) =>
+        AsyncHelper.RunSynchronously(() => GetProducerAsync(configuration));
 
     /// <inheritdoc cref="IBroker.GetProducer(string)" />
     public IProducer GetProducer(string endpointName)
@@ -137,7 +140,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
         }
 
         if (IsConnected)
-            AsyncHelper.RunSynchronously(() => consumer.ConnectAsync());
+            consumer.ConnectAsync().FireAndForget();
 
         return consumer;
     }

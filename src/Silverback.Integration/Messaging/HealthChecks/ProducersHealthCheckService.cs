@@ -54,7 +54,8 @@ public class ProducersHealthCheckService : IProducersHealthCheckService
     {
         try
         {
-            await _brokerCollection.GetProducer(producerConfiguration).ProduceAsync(PingMessage.New()).ConfigureAwait(false);
+            IProducer producer = await _brokerCollection.GetProducerAsync(producerConfiguration).ConfigureAwait(false);
+            await producer.ProduceAsync(PingMessage.New()).ConfigureAwait(false);
             return new EndpointCheckResult(producerConfiguration.DisplayName, true);
         }
         catch (Exception ex)

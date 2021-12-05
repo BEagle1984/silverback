@@ -49,11 +49,12 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
             _brokerCollection = brokerCollection;
         }
 
-        public Task ProduceAsync(IOutboundEnvelope envelope)
+        public async Task ProduceAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            return _brokerCollection.GetProducer(envelope.Endpoint.Configuration).ProduceAsync(envelope);
+            IProducer producer = await _brokerCollection.GetProducerAsync(envelope.Endpoint.Configuration).ConfigureAwait(false);
+            await producer.ProduceAsync(envelope).ConfigureAwait(false);
         }
     }
 }
