@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
@@ -11,6 +12,8 @@ namespace Silverback.Messaging.Outbound.Routing;
 internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
 {
     private readonly List<OutboundRoute> _routes = new();
+
+    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IOutboundRoute>> _routesByMessageType = new();
 
     public IReadOnlyCollection<IOutboundRoute> Routes => _routes.AsReadOnly();
 
@@ -25,9 +28,10 @@ internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfigurati
         GetRoutesForMessage(message.GetType());
 
     public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType) =>
-        _routes.Where(
-            route => route.MessageType.IsAssignableFrom(messageType) ||
-                     IsCompatibleTombstone(route, messageType)).ToList();
+        _routesByMessageType.GetOrAdd(
+            messageType,
+            static (keyMessageType, routes) => GetRoutesForMessage(routes, keyMessageType),
+            _routes);
 
     public bool IsAlreadyRegistered(Type messageType, ProducerConfiguration producerConfiguration)
     {
@@ -49,6 +53,8 @@ internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfigurati
 
         return true;
     }
+
+    private static List<OutboundRoute> GetRoutesForMessage(List<OutboundRoute> routes, Type messageType) => routes.Where(route => route.MessageType.IsAssignableFrom(messageType) || IsCompatibleTombstone(route, messageType)).ToList();
 
     private static bool IsCompatibleTombstone(OutboundRoute route, Type messageType) =>
         typeof(Tombstone).IsAssignableFrom(messageType) &&
