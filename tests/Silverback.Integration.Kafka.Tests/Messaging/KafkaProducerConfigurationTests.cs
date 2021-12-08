@@ -19,7 +19,7 @@ public class KafkaProducerConfigurationTests
         KafkaProducerConfiguration configuration = new()
         {
             Endpoint = new KafkaStaticProducerEndpointResolver("topic", 42),
-            Client =
+            Client = new KafkaClientProducerConfiguration
             {
                 Acks = Acks.Leader
             }
@@ -34,7 +34,7 @@ public class KafkaProducerConfigurationTests
         KafkaProducerConfiguration configuration1 = new()
         {
             Endpoint = new KafkaStaticProducerEndpointResolver("topic", 42),
-            Client =
+            Client = new KafkaClientProducerConfiguration
             {
                 Acks = Acks.Leader
             }
@@ -42,7 +42,7 @@ public class KafkaProducerConfigurationTests
         KafkaProducerConfiguration configuration2 = new()
         {
             Endpoint = new KafkaStaticProducerEndpointResolver("topic", 42),
-            Client =
+            Client = new KafkaClientProducerConfiguration
             {
                 Acks = Acks.Leader
             }
@@ -104,7 +104,7 @@ public class KafkaProducerConfigurationTests
         KafkaProducerConfiguration configuration1 = new()
         {
             Endpoint = new KafkaStaticProducerEndpointResolver("topic", 42),
-            Client =
+            Client = new KafkaClientProducerConfiguration
             {
                 Acks = Acks.Leader
             }
@@ -112,7 +112,7 @@ public class KafkaProducerConfigurationTests
         KafkaProducerConfiguration configuration2 = new()
         {
             Endpoint = new KafkaStaticProducerEndpointResolver("topic", 42),
-            Client =
+            Client = new KafkaClientProducerConfiguration
             {
                 Acks = Acks.All
             }

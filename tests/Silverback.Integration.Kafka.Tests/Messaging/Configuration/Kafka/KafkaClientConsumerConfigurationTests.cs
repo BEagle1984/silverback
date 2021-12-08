@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 
-public class KafkaConsumerConfigTests
+public class KafkaClientConsumerConfigurationTests
 {
     [Theory]
     [InlineData(true, true)]
@@ -38,9 +38,10 @@ public class KafkaConsumerConfigTests
     [Fact]
     public void Validate_MissingBootstrapServers_ExceptionThrown()
     {
-        KafkaClientConsumerConfiguration config = GetValidConfig();
-
-        config.BootstrapServers = string.Empty;
+        KafkaClientConsumerConfiguration config = GetValidConfig() with
+        {
+            BootstrapServers = string.Empty
+        };
 
         Action act = () => config.Validate();
 
@@ -50,10 +51,11 @@ public class KafkaConsumerConfigTests
     [Fact]
     public void Validate_AutoCommitWithCommitOffsetEach_ExceptionThrown()
     {
-        KafkaClientConsumerConfiguration config = GetValidConfig();
-
-        config.EnableAutoCommit = true;
-        config.CommitOffsetEach = 10;
+        KafkaClientConsumerConfiguration config = GetValidConfig() with
+        {
+            EnableAutoCommit = true,
+            CommitOffsetEach = 10
+        };
 
         Action act = () => config.Validate();
 
@@ -63,22 +65,11 @@ public class KafkaConsumerConfigTests
     [Fact]
     public void Validate_NoAutoCommitAndNoCommitOffsetEach_ExceptionThrown()
     {
-        KafkaClientConsumerConfiguration config = GetValidConfig();
-
-        config.EnableAutoCommit = false;
-        config.CommitOffsetEach = 0;
-
-        Action act = () => config.Validate();
-
-        act.Should().ThrowExactly<EndpointConfigurationException>();
-    }
-
-    [Fact]
-    public void Validate_AutoOffsetStoreEnabled_ExceptionThrown()
-    {
-        KafkaClientConsumerConfiguration config = GetValidConfig();
-
-        config.EnableAutoOffsetStore = true;
+        KafkaClientConsumerConfiguration config = GetValidConfig() with
+        {
+            EnableAutoCommit = false,
+            CommitOffsetEach = 0
+        };
 
         Action act = () => config.Validate();
 

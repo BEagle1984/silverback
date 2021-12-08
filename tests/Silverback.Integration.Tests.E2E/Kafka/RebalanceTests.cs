@@ -42,20 +42,12 @@ public class RebalanceTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        }),
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)),
                                 2))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -103,20 +95,12 @@ public class RebalanceTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber()
                     .AddSingletonBrokerCallbackHandler(partitionCallbacksHandler))
             .Run();
@@ -181,22 +165,15 @@ public class RebalanceTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.PartitionAssignmentStrategy =
-                                                PartitionAssignmentStrategy.CooperativeSticky;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithPartitionAssignmentStrategy(PartitionAssignmentStrategy.CooperativeSticky))))
                     .AddIntegrationSpyAndSubscriber()
                     .AddSingletonBrokerCallbackHandler(partitionCallbacksHandler))
             .Run();
@@ -257,22 +234,15 @@ public class RebalanceTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 10;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(10))))
                     .AddDelegateSubscriber((TestEventOne _) => Interlocked.Increment(ref receivedMessages)))
             .Run();
 
@@ -303,22 +273,16 @@ public class RebalanceTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .DisableAutoCommit()
+                                            .CommitOffsetEach(1))
                                     .EnableBatchProcessing(10)))
                     .AddDelegateSubscriber(
                         async (IAsyncEnumerable<TestEventOne> eventsStream) =>

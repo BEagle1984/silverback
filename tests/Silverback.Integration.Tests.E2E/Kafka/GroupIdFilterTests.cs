@@ -40,28 +40,16 @@ public class GroupIdFilterTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group1";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group2";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddSingletonSubscriber<DecoratedSubscriber>()
                     .AddIntegrationSpy())
             .Run();
@@ -92,34 +80,22 @@ public class GroupIdFilterTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                config =>
-                                {
-                                    config.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        config =>
-                                        {
-                                            config.GroupId = "consumer1";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1")))
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        config =>
-                                        {
-                                            config.GroupId = "consumer2";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddSingletonSubscriber<Subscriber>(
                         new TypeSubscriptionOptions
                         {
                             Filters = new[]
                             {
-                                new KafkaGroupIdFilterAttribute("consumer1")
+                                new KafkaGroupIdFilterAttribute("group1")
                             }
                         })
                     .AddIntegrationSpy())
@@ -153,35 +129,23 @@ public class GroupIdFilterTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                config =>
-                                {
-                                    config.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        config =>
-                                        {
-                                            config.GroupId = "consumer1";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1")))
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        config =>
-                                        {
-                                            config.GroupId = "consumer2";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddDelegateSubscriber(
                         (IEvent _) => Interlocked.Increment(ref received1),
                         new SubscriptionOptions
                         {
                             Filters = new[]
                             {
-                                new KafkaGroupIdFilterAttribute("consumer1")
+                                new KafkaGroupIdFilterAttribute("group1")
                             }
                         })
                     .AddDelegateSubscriber(
@@ -190,7 +154,7 @@ public class GroupIdFilterTests : KafkaTestFixture
                         {
                             Filters = new[]
                             {
-                                new KafkaGroupIdFilterAttribute("consumer2")
+                                new KafkaGroupIdFilterAttribute("group2")
                             }
                         })
                     .AddIntegrationSpy())
@@ -223,30 +187,18 @@ public class GroupIdFilterTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group1";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group2";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddSingletonSubscriber<StreamSubscriber>()
                     .AddIntegrationSpy())
             .Run();

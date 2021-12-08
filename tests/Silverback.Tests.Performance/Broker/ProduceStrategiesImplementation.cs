@@ -32,11 +32,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
                 .WithConnectionToMessageBroker(options => options.AddKafka())
                 .AddKafkaEndpoints(
                     endpoints => endpoints
-                        .ConfigureClient(
-                            configuration =>
-                            {
-                                configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                            })
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
 
                         // Produce each SampleMessage to a samples-perf topic
                         .AddOutbound<SampleMessage1>(producer => producer.ProduceTo("samples-perf-1"))

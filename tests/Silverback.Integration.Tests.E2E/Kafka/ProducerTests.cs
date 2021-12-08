@@ -42,19 +42,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -90,19 +82,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -140,19 +124,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -206,19 +182,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -276,19 +244,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -351,19 +311,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -407,19 +359,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -467,19 +411,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -540,19 +476,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -610,19 +538,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -658,19 +578,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -714,19 +626,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -780,19 +684,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -848,19 +744,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -904,19 +792,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -964,19 +844,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -1039,19 +911,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -1111,19 +975,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -1176,19 +1032,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -1233,7 +1081,7 @@ public class ProducerTests : KafkaTestFixture
         {
             Content = "Hello E2E!"
         };
-        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+        byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
         Host.ConfigureServices(
                 services => services
@@ -1243,19 +1091,11 @@ public class ProducerTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                config =>
-                                {
-                                    config.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(
-                                        config =>
-                                        {
-                                            config.GroupId = "consumer1";
-                                        })
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
                     .AddIntegrationSpyAndSubscriber())
@@ -1286,8 +1126,7 @@ public class ProducerTests : KafkaTestFixture
         foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
             envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-            envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should()
-                .BeTrue();
+            envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should().BeTrue();
         }
     }
 }

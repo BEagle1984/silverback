@@ -22,9 +22,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 public sealed class KafkaProducerConfigurationBuilder<TMessage>
     : ProducerConfigurationBuilder<TMessage, KafkaProducerConfiguration, KafkaProducerEndpoint, KafkaProducerConfigurationBuilder<TMessage>>
 {
-    private readonly KafkaClientConfiguration? _clientConfiguration;
-
-    private readonly List<Action<KafkaClientProducerConfiguration>> _clientConfigurationActions = new();
+    private KafkaClientProducerConfiguration _clientConfiguration;
 
     private IProducerEndpointResolver<KafkaProducerEndpoint>? _endpointResolver;
 
@@ -44,7 +42,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
         KafkaEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         : base(endpointsConfigurationBuilder)
     {
-        _clientConfiguration = clientConfiguration;
+        _clientConfiguration = new KafkaClientProducerConfiguration(clientConfiguration);
     }
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
@@ -257,15 +255,37 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     ///     Configures the Kafka client settings.
     /// </summary>
     /// <param name="clientConfigurationAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientProducerConfiguration" /> and configures it.
+    ///     A <see cref="Func{T,TResult}" /> that takes the <see cref="KafkaClientProducerConfiguration" /> and configures it.
     /// </param>
     /// <returns>
-    ///     The <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(Action<KafkaClientProducerConfiguration> clientConfigurationAction)
+    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(
+        Func<KafkaClientProducerConfiguration, KafkaClientProducerConfiguration> clientConfigurationAction)
     {
         Check.NotNull(clientConfigurationAction, nameof(clientConfigurationAction));
-        _clientConfigurationActions.Add(clientConfigurationAction);
+        _clientConfiguration = clientConfigurationAction.Invoke(_clientConfiguration);
+        return this;
+    }
+
+    /// <summary>
+    ///     Configures the Kafka client settings.
+    /// </summary>
+    /// <param name="clientConfigurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientProducerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(
+        Action<KafkaClientProducerConfigurationBuilder> clientConfigurationBuilderAction)
+    {
+        Check.NotNull(clientConfigurationBuilderAction, nameof(clientConfigurationBuilderAction));
+
+        KafkaClientProducerConfigurationBuilder builder = new(_clientConfiguration);
+        clientConfigurationBuilderAction.Invoke(builder);
+        _clientConfiguration = builder.Build();
+
         return this;
     }
 
@@ -278,7 +298,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
         KafkaProducerConfiguration configuration = new()
         {
             Endpoint = _endpointResolver,
-            Client = GetClientConfiguration(),
+            Client = _clientConfiguration,
             MessageEnrichers = _kafkaKeyEnricher == null
                 ? ValueReadOnlyCollection<IOutboundMessageEnricher>.Empty
                 : new ValueReadOnlyCollection<IOutboundMessageEnricher>(
@@ -288,15 +308,6 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
                     })
         };
 
-        _clientConfigurationActions.ForEach(action => action.Invoke(configuration.Client));
-
         return configuration;
-    }
-
-    private KafkaClientProducerConfiguration GetClientConfiguration()
-    {
-        KafkaClientProducerConfiguration config = new(_clientConfiguration);
-        _clientConfigurationActions.ForEach(action => action.Invoke(config));
-        return config.AsReadOnly();
     }
 }

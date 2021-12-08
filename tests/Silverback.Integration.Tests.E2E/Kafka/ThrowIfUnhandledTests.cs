@@ -37,22 +37,15 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (TestEventOne message) =>
@@ -111,23 +104,16 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .IgnoreUnhandledMessages()
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (TestEventOne message) =>
@@ -188,23 +174,16 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         (IEnumerable<TestEventOne> messages) =>
                         {

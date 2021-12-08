@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
@@ -33,7 +34,7 @@ public class KafkaGroupIdFilterAttributeTests
                 1,
                 new KafkaConsumerConfiguration
                 {
-                    Client =
+                    Client = new KafkaClientConsumerConfiguration
                     {
                         GroupId = envelopeGroupId
                     }

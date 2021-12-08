@@ -41,22 +41,15 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
 
@@ -99,11 +92,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
@@ -114,12 +103,9 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                         new TopicPartition(DefaultTopicName, 3),
                                         new TopicPartition(DefaultTopicName, 4))
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
 
@@ -152,21 +138,15 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoRecovery = false;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .DisableAutoRecovery())))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
 
@@ -202,21 +182,15 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoRecovery = true;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .EnableAutoRecovery())))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
 
@@ -259,22 +233,15 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
 
@@ -319,22 +286,15 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 

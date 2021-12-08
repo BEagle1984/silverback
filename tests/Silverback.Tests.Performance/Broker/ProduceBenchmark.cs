@@ -62,16 +62,12 @@ public class ProduceBenchmark
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaEndpoints(
                     endpoints => endpoints
-                        .ConfigureClient(
-                            configuration =>
-                            {
-                                configuration.BootstrapServers = "PLAINTEXT://benchmark";
-                            })
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://benchmark"))
                         .AddOutbound<IIntegrationEvent>(
                             producer => producer
                                 .ProduceTo("benchmarks"))
                         .AddOutbound<IIntegrationEvent>(
-                            consumer => consumer
+                            producer => producer
                                 .ProduceTo("benchmarks-2")
                                 .DisableMessageValidation())));
 

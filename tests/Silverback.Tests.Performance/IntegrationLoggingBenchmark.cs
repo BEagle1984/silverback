@@ -63,11 +63,9 @@ public class IntegrationLoggingBenchmark
             42,
             new KafkaConsumerConfigurationBuilder<TestEventOne>()
                 .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://performance:9092";
-                        configuration.ClientId = "test-client";
-                    })
+                    configuration => configuration
+                        .WithBootstrapServers("PLAINTEXT://performance:9092")
+                        .WithClientId("test-client"))
                 .ConsumeFrom("test-topic")
                 .Build());
 
@@ -88,11 +86,7 @@ public class IntegrationLoggingBenchmark
             "test-topic",
             Partition.Any,
             new KafkaProducerConfigurationBuilder<TestEventOne>()
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://performance:9092";
-                    })
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://performance:9092"))
                 .ProduceTo("test-topic")
                 .Build());
 

@@ -35,11 +35,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo("topic1", 1))
@@ -85,11 +81,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo("topic1", 0))
@@ -130,11 +122,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo("topic1", 1))

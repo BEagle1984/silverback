@@ -39,36 +39,20 @@ public class HealthCheckTests : KafkaTestFixture
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic3")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .Services
                     .AddHealthChecks()
                     .AddConsumersCheck())
@@ -91,36 +75,20 @@ public class HealthCheckTests : KafkaTestFixture
                                 .DelayPartitionsAssignment(TimeSpan.FromMilliseconds(10000)))) // Delay the assignment on purpose
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic3")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .Services
                     .AddHealthChecks()
                     .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(100)))
@@ -148,38 +116,22 @@ public class HealthCheckTests : KafkaTestFixture
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(200))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
                                     .WithName("one")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group1";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
                                     .WithName("two")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group2";
-                                        }))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic3")
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group3";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group3"))))
                     .Services
                     .AddHealthChecks()
                     .AddConsumersCheck(

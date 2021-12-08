@@ -39,20 +39,12 @@ public class OffsetManipulationTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddTransientBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>()
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -86,20 +78,12 @@ public class OffsetManipulationTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddTransientBrokerCallbackHandler<NoResetPartitionsAssignedCallbackHandler>()
                     .AddIntegrationSpyAndSubscriber())
             .Run();

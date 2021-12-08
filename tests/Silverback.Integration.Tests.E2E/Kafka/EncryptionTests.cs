@@ -48,11 +48,7 @@ public class EncryptionTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -61,11 +57,7 @@ public class EncryptionTests : KafkaTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .DecryptUsingAes(AesEncryptionKey)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -110,11 +102,7 @@ public class EncryptionTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -137,11 +125,7 @@ public class EncryptionTests : KafkaTestFixture
                                                     return AesEncryptionKey2;
                                             }
                                         })
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -182,11 +166,7 @@ public class EncryptionTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -203,11 +183,7 @@ public class EncryptionTests : KafkaTestFixture
                                                 _ => AesEncryptionKey
                                             };
                                         })
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -255,11 +231,7 @@ public class EncryptionTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -270,12 +242,10 @@ public class EncryptionTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .DecryptUsingAes(AesEncryptionKey)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .DisableAutoCommit()
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -339,11 +309,7 @@ public class EncryptionTests : KafkaTestFixture
                                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<BinaryMessage>(
                                     producer => producer
                                         .ProduceTo(DefaultTopicName)
@@ -352,11 +318,7 @@ public class EncryptionTests : KafkaTestFixture
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DecryptUsingAes(AesEncryptionKey)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (BinaryMessage binaryMessage) =>
                                 receivedFiles.Add(binaryMessage.Content.ReadAll()))
@@ -411,11 +373,7 @@ public class EncryptionTests : KafkaTestFixture
                                 .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<BinaryMessage>(
                                     producer => producer
                                         .ProduceTo(DefaultTopicName)
@@ -425,11 +383,7 @@ public class EncryptionTests : KafkaTestFixture
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DecryptUsingAes(AesEncryptionKey)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (BinaryMessage binaryMessage) =>
                                 receivedFiles.Add(binaryMessage.Content.ReadAll()))

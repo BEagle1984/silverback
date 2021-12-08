@@ -37,8 +37,7 @@ namespace Silverback.Util;
 ///         </list>
 ///     </para>
 /// </summary>
-internal sealed class ConfigurationDictionaryEqualityComparer<TKey, TValue>
-    : IEqualityComparer<IEnumerable<KeyValuePair<TKey, TValue>>>
+internal sealed class ConfigurationDictionaryEqualityComparer<TKey, TValue> : IEqualityComparer<IEnumerable<KeyValuePair<TKey, TValue>>>
 {
     public bool Equals(IEnumerable<KeyValuePair<TKey, TValue>>? x, IEnumerable<KeyValuePair<TKey, TValue>>? y)
     {

@@ -238,22 +238,16 @@ public static class RawProduceComparison
                 endpoints => endpoints
                     .AddKafkaEndpoints(
                         kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
                             .AddOutbound<object>(
                                 producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.LingerMs = lingerMs;
-                                            configuration.BatchSize = batchSize;
-                                            configuration.QueueBufferingMaxMessages = 10_000_000;
-                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                        }))))
+                                        configuration => configuration
+                                            .WithLingerMs(lingerMs)
+                                            .WithBatchSize(batchSize)
+                                            .WithQueueBufferingMaxMessages(10_000_000)
+                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
             .Services.BuildServiceProvider();
 
         IBroker broker = serviceProvider.GetRequiredService<IBroker>();
@@ -305,22 +299,16 @@ public static class RawProduceComparison
                 endpoints => endpoints
                     .AddKafkaEndpoints(
                         kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
                             .AddOutbound<object>(
                                 producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.LingerMs = lingerMs;
-                                            configuration.BatchSize = batchSize;
-                                            configuration.QueueBufferingMaxMessages = 10_000_000;
-                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                        }))))
+                                        configuration => configuration
+                                            .WithLingerMs(lingerMs)
+                                            .WithBatchSize(batchSize)
+                                            .WithQueueBufferingMaxMessages(10_000_000)
+                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
             .Services.BuildServiceProvider();
 
         IBroker broker = serviceProvider.GetRequiredService<IBroker>();
@@ -380,22 +368,16 @@ public static class RawProduceComparison
                 endpoints => endpoints
                     .AddKafkaEndpoints(
                         kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
                             .AddOutbound<object>(
                                 producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.LingerMs = lingerMs;
-                                            configuration.BatchSize = batchSize;
-                                            configuration.QueueBufferingMaxMessages = 10_000_000;
-                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                        }))))
+                                        configuration => configuration
+                                            .WithLingerMs(lingerMs)
+                                            .WithBatchSize(batchSize)
+                                            .WithQueueBufferingMaxMessages(10_000_000)
+                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
             .Services.BuildServiceProvider();
 
         IBroker broker = serviceProvider.GetRequiredService<IBroker>();
@@ -453,22 +435,16 @@ public static class RawProduceComparison
                 endpoints => endpoints
                     .AddKafkaEndpoints(
                         kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
                             .AddOutbound<object>(
                                 producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.LingerMs = lingerMs;
-                                            configuration.BatchSize = batchSize;
-                                            configuration.QueueBufferingMaxMessages = 10_000_000;
-                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                        }))))
+                                        configuration => configuration
+                                            .WithLingerMs(lingerMs)
+                                            .WithBatchSize(batchSize)
+                                            .WithQueueBufferingMaxMessages(10_000_000)
+                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
             .Services.BuildServiceProvider();
 
         IBroker broker = serviceProvider.GetRequiredService<IBroker>();
@@ -530,22 +506,16 @@ public static class RawProduceComparison
                 endpoints => endpoints
                     .AddKafkaEndpoints(
                         kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://localhost:9092";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
                             .AddOutbound<object>(
                                 producer => producer
                                     .ProduceTo("test")
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.LingerMs = lingerMs;
-                                            configuration.BatchSize = batchSize;
-                                            configuration.QueueBufferingMaxMessages = 10_000_000;
-                                            configuration.QueueBufferingMaxKbytes = TargetTotalBytes;
-                                        }))))
+                                        configuration => configuration
+                                            .WithLingerMs(lingerMs)
+                                            .WithBatchSize(batchSize)
+                                            .WithQueueBufferingMaxMessages(10_000_000)
+                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
             .Services.BuildServiceProvider();
 
         IBroker broker = serviceProvider.GetRequiredService<IBroker>();

@@ -54,20 +54,12 @@ public class BinaryMessageTests : KafkaTestFixture
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<BinaryMessage>(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (BinaryMessage binaryMessage) =>
                             {
@@ -126,21 +118,13 @@ public class BinaryMessageTests : KafkaTestFixture
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (BinaryMessage message) =>
                             {
@@ -200,20 +184,12 @@ public class BinaryMessageTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -278,20 +254,12 @@ public class BinaryMessageTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -357,20 +325,12 @@ public class BinaryMessageTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound<CustomBinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {

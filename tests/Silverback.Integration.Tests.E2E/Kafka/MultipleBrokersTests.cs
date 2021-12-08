@@ -33,36 +33,22 @@ public class MultipleBrokersTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests-1";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e-1"))
                             .AddOutbound<Broker1Message>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group1";
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId("group1"))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests-2";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e-2"))
                             .AddOutbound<Broker2Message>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = "group2";
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -78,10 +64,10 @@ public class MultipleBrokersTests : KafkaTestFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
         Helper.Spy.InboundEnvelopes[0].Endpoint.Configuration.As<KafkaConsumerConfiguration>()
-            .Client.BootstrapServers.Should().Be("PLAINTEXT://tests-1");
+            .Client.BootstrapServers.Should().Be("PLAINTEXT://e2e-1");
         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
         Helper.Spy.InboundEnvelopes[1].Endpoint.Configuration.As<KafkaConsumerConfiguration>()
-            .Client.BootstrapServers.Should().Be("PLAINTEXT://tests-2");
+            .Client.BootstrapServers.Should().Be("PLAINTEXT://e2e-2");
     }
 
     [Fact]
@@ -95,36 +81,20 @@ public class MultipleBrokersTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests-1";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e-1"))
                             .AddOutbound<Broker1Message>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests-2";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e-2"))
                             .AddOutbound<Broker2Message>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -140,10 +110,10 @@ public class MultipleBrokersTests : KafkaTestFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
         Helper.Spy.InboundEnvelopes[0].Endpoint.Configuration.As<KafkaConsumerConfiguration>()
-            .Client.BootstrapServers.Should().Be("PLAINTEXT://tests-1");
+            .Client.BootstrapServers.Should().Be("PLAINTEXT://e2e-1");
         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
         Helper.Spy.InboundEnvelopes[1].Endpoint.Configuration.As<KafkaConsumerConfiguration>()
-            .Client.BootstrapServers.Should().Be("PLAINTEXT://tests-2");
+            .Client.BootstrapServers.Should().Be("PLAINTEXT://e2e-2");
     }
 
     private sealed class Broker1Message : IIntegrationMessage

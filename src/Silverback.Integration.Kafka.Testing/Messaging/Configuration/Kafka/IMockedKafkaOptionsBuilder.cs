@@ -25,7 +25,7 @@ public interface IMockedKafkaOptionsBuilder
 
     /// <summary>
     ///     Specifies the value to be used instead of the default 5 seconds or the configured
-    ///     <see cref="ConfluentConsumerConfigProxy.AutoCommitIntervalMs" /> for the inbound topics. Set it to
+    ///     <see cref="KafkaClientConsumerConfiguration.AutoCommitIntervalMs" /> for the inbound topics. Set it to
     ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
     /// </summary>
     /// <remarks>

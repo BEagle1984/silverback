@@ -88,7 +88,7 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
         Check.NotNull(serviceProvider, nameof(serviceProvider));
 
         _confluentConsumerBuilder = Check.NotNull(confluentConsumerBuilder, nameof(confluentConsumerBuilder));
-        _confluentConsumerBuilder.SetConfig(configuration.Client.GetConfluentConfig());
+        _confluentConsumerBuilder.SetConfig(configuration.Client.GetConfluentClientConfig());
         _confluentConsumerBuilder.SetEventsHandlers(this, callbacksInvoker, logger);
 
         _serializer = configuration.Serializer as IKafkaMessageSerializer ?? new DefaultKafkaMessageSerializer(configuration.Serializer);
@@ -393,7 +393,7 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
         {
             using IAdminClient adminClient = ServiceProvider
                 .GetRequiredService<IConfluentAdminClientBuilder>()
-                .Build(Configuration.Client.GetConfluentConfig());
+                .Build(Configuration.Client.GetConfluentClientConfig());
 
             List<TopicPartition> availablePartitions = Configuration.TopicPartitions
                 .Where(topicPartition => topicPartition.Partition == Partition.Any) // TODO: Test

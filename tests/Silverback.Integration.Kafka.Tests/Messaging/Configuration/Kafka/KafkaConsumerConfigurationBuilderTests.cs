@@ -63,11 +63,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic");
         KafkaConsumerConfiguration configuration = builder.Build();
@@ -84,11 +82,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic1", "topic2");
         KafkaConsumerConfiguration configuration = builder.Build();
@@ -298,12 +294,12 @@ public class KafkaConsumerConfigurationBuilderTests
         builder
             .ConsumeFrom("topic")
             .ConfigureClient(
-                config =>
+                config => config with
                 {
-                    config.BootstrapServers = "PLAINTEXT://tests";
-                    config.EnableAutoCommit = false;
-                    config.CommitOffsetEach = 42;
-                    config.GroupId = "group1";
+                    BootstrapServers = "PLAINTEXT://tests",
+                    EnableAutoCommit = false,
+                    CommitOffsetEach = 42,
+                    GroupId = "group1"
                 });
         KafkaConsumerConfiguration configuration = builder.Build();
 
@@ -325,12 +321,12 @@ public class KafkaConsumerConfigurationBuilderTests
         builder
             .ConsumeFrom("topic")
             .ConfigureClient(
-                config =>
+                config => config with
                 {
-                    config.EnableAutoCommit = false;
-                    config.CommitOffsetEach = 42;
-                    config.GroupId = "group1";
-                    config.MessageMaxBytes = 4242;
+                    EnableAutoCommit = false,
+                    CommitOffsetEach = 42,
+                    GroupId = "group1",
+                    MessageMaxBytes = 4242
                 });
         KafkaConsumerConfiguration configuration = builder.Build();
 
@@ -350,19 +346,90 @@ public class KafkaConsumerConfigurationBuilderTests
         builder
             .ConsumeFrom("topic")
             .ConfigureClient(
-                config =>
+                config => config with
                 {
-                    config.BootstrapServers = "PLAINTEXT://tests";
-                    config.EnableAutoCommit = false;
+                    BootstrapServers = "PLAINTEXT://tests",
+                    EnableAutoCommit = false
                 })
             .ConfigureClient(
-                config =>
+                config => config with
                 {
-                    config.CommitOffsetEach = 42;
-                    config.GroupId = "group1";
+                    CommitOffsetEach = 42,
+                    GroupId = "group1"
                 });
         KafkaConsumerConfiguration configuration = builder.Build();
 
+        configuration.Client.EnableAutoCommit.Should().Be(false);
+        configuration.Client.CommitOffsetEach.Should().Be(42);
+        configuration.Client.GroupId.Should().Be("group1");
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderConfigurationAction_ClientConfigurationSet()
+    {
+        KafkaConsumerConfigurationBuilder<object> builder = new();
+
+        builder
+            .ConsumeFrom("topic")
+            .ConfigureClient(
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://tests")
+                    .WithEnableAutoCommit(false)
+                    .CommitOffsetEach(42)
+                    .WithGroupId("group1"));
+        KafkaConsumerConfiguration configuration = builder.Build();
+
+        configuration.Client.EnableAutoCommit.Should().Be(false);
+        configuration.Client.CommitOffsetEach.Should().Be(42);
+        configuration.Client.GroupId.Should().Be("group1");
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderWithBaseConfig_ClientonfigurationMerged()
+    {
+        KafkaClientConfiguration baseConfiguration = new()
+        {
+            BootstrapServers = "PLAINTEXT://tests",
+            MessageMaxBytes = 42
+        };
+        KafkaConsumerConfigurationBuilder<object> builder = new(baseConfiguration);
+
+        builder
+            .ConsumeFrom("topic")
+            .ConfigureClient(
+                config => config
+                    .WithEnableAutoCommit(false)
+                    .CommitOffsetEach(42)
+                    .WithGroupId("group1")
+                    .WithMessageMaxBytes(4242));
+        KafkaConsumerConfiguration configuration = builder.Build();
+
+        configuration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        configuration.Client.EnableAutoCommit.Should().Be(false);
+        configuration.Client.CommitOffsetEach.Should().Be(42);
+        configuration.Client.GroupId.Should().Be("group1");
+        configuration.Client.MessageMaxBytes.Should().Be(4242);
+        baseConfiguration.MessageMaxBytes.Should().Be(42);
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderMultipleConfigurationActions_MergedClientConfigurationSet()
+    {
+        KafkaConsumerConfigurationBuilder<object> builder = new();
+
+        builder
+            .ConsumeFrom("topic")
+            .ConfigureClient(
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://tests")
+                    .CommitOffsetEach(42)
+                    .WithEnableAutoCommit(false))
+            .ConfigureClient(
+                config => config
+                    .WithGroupId("group1"));
+        KafkaConsumerConfiguration configuration = builder.Build();
+
+        configuration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
         configuration.Client.EnableAutoCommit.Should().Be(false);
         configuration.Client.CommitOffsetEach.Should().Be(42);
         configuration.Client.GroupId.Should().Be("group1");
@@ -373,11 +440,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic").ProcessPartitionsIndependently();
         KafkaConsumerConfiguration configuration = builder.Build();
@@ -390,11 +455,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic").ProcessAllPartitionsTogether();
         KafkaConsumerConfiguration configuration = builder.Build();
@@ -407,11 +470,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic").LimitParallelism(42);
         KafkaConsumerConfiguration configuration = builder.Build();
@@ -424,11 +485,9 @@ public class KafkaConsumerConfigurationBuilderTests
     {
         KafkaConsumerConfigurationBuilder<object> builder = new();
         builder.ConfigureClient(
-            config =>
-            {
-                config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                config.GroupId = "group1";
-            });
+            config => config
+                .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                .WithGroupId("group1"));
 
         builder.ConsumeFrom("topic").LimitBackpressure(42);
         KafkaConsumerConfiguration configuration = builder.Build();

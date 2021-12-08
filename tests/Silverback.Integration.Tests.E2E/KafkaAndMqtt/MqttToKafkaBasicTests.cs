@@ -46,19 +46,13 @@ public class MqttToKafkaBasicTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                                configuration => configuration
+                                    .WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventTwo>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (TestEventOne eventOne) =>
                         {

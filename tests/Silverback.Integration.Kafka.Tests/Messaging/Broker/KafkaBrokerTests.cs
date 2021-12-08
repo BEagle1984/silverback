@@ -35,10 +35,8 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaProducerConfiguration endpoint = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111"))
             .Build();
 
         IProducer producer = _broker.GetProducer(endpoint);
@@ -52,10 +50,8 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaProducerConfiguration endpoint = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111"))
             .Build();
 
         IProducer producer1 = _broker.GetProducer(endpoint);
@@ -70,20 +66,18 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaProducerConfiguration endpoint1 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.MessageTimeoutMs = 2000;
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111"))
+            .ConfigureClient(
+                config => config
+                    .WithMessageTimeoutMs(2000))
             .Build();
         KafkaProducerConfiguration endpoint2 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.MessageTimeoutMs = 2000;
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithMessageTimeoutMs(2000))
             .Build();
 
         IProducer producer1 = _broker.GetProducer(endpoint1);
@@ -98,18 +92,14 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaProducerConfiguration endpoint1 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111"))
             .Build();
         KafkaProducerConfiguration endpoint2 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("other-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111"))
             .Build();
 
         IProducer producer1 = _broker.GetProducer(endpoint1);
@@ -124,20 +114,16 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaProducerConfiguration endpoint1 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.MessageTimeoutMs = 2000;
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithMessageTimeoutMs(2000))
             .Build();
         KafkaProducerConfiguration endpoint2 = new KafkaProducerConfigurationBuilder<object>()
             .ProduceTo("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.MessageTimeoutMs = 9999;
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithMessageTimeoutMs(9999))
             .Build();
 
         IProducer producer1 = _broker.GetProducer(endpoint1);
@@ -152,11 +138,9 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaConsumerConfiguration endpoint = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
 
         IConsumer consumer = _broker.AddConsumer(endpoint);
@@ -170,11 +154,9 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaConsumerConfiguration endpoint = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
 
         IConsumer consumer1 = _broker.AddConsumer(endpoint);
@@ -189,20 +171,16 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaConsumerConfiguration endpoint1 = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
         KafkaConsumerConfiguration endpoint2 = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
 
         IConsumer consumer1 = _broker.AddConsumer(endpoint1);
@@ -217,20 +195,16 @@ public sealed class KafkaBrokerTests : IDisposable
         KafkaConsumerConfiguration endpoint1 = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("test-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
         KafkaConsumerConfiguration endpoint2 = new KafkaConsumerConfigurationBuilder<object>()
             .ConsumeFrom("other-endpoint")
             .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://whatever:1111";
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithBootstrapServers("PLAINTEXT://whatever:1111")
+                    .WithGroupId("group1"))
             .Build();
 
         IConsumer consumer1 = _broker.AddConsumer(endpoint1);

@@ -36,13 +36,13 @@ internal sealed class ConfluentProducersCache : IConfluentProducersCache
 
     public IProducer<byte[]?, byte[]?> GetProducer(KafkaClientProducerConfiguration configuration, KafkaProducer owner) =>
         _producersCache.GetOrAdd(
-            configuration.GetConfluentConfig(),
+            configuration.GetConfluentClientConfig(),
             _ => CreateConfluentProducer(configuration, owner));
 
     public void DisposeProducer(KafkaClientProducerConfiguration configuration)
     {
         // Dispose only if still in cache to avoid ObjectDisposedException
-        if (!_producersCache.TryRemove(configuration.GetConfluentConfig(), out IProducer<byte[]?, byte[]?>? producer))
+        if (!_producersCache.TryRemove(configuration.GetConfluentClientConfig(), out IProducer<byte[]?, byte[]?>? producer))
             return;
 
         producer.Flush(configuration.FlushTimeout);
@@ -56,7 +56,7 @@ internal sealed class ConfluentProducersCache : IConfluentProducersCache
         _logger.LogCreatingConfluentProducer(ownerProducer);
 
         IConfluentProducerBuilder? builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
-        builder.SetConfig(configuration.GetConfluentConfig());
+        builder.SetConfig(configuration.GetConfluentClientConfig());
         builder.SetEventsHandlers(ownerProducer, _callbacksInvoker, _logger);
         return builder.Build();
     }

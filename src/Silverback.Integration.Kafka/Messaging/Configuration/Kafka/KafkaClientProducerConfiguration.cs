@@ -4,15 +4,18 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
 /// <summary>
-///     Extends the <see cref="Confluent.Kafka.ProducerConfig" /> adding the Silverback specific settings.
+///     Wraps the <see cref="Confluent.Kafka.ProducerConfig" /> adding the Silverback specific settings.
 /// </summary>
 [SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
-public sealed class KafkaClientProducerConfiguration : ConfluentProducerConfigProxy, IEquatable<KafkaClientProducerConfiguration>
+public sealed partial record KafkaClientProducerConfiguration
 {
+    private readonly ProducerConfig _clientConfig;
+
     private const bool KafkaDefaultEnableDeliveryReports = true;
 
     /// <summary>
@@ -22,8 +25,20 @@ public sealed class KafkaClientProducerConfiguration : ConfluentProducerConfigPr
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientProducerConfiguration" />.
     /// </param>
     public KafkaClientProducerConfiguration(KafkaClientConfiguration? clientConfig = null)
-        : base(clientConfig?.GetConfluentConfig())
+        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
     {
+    }
+
+    internal KafkaClientProducerConfiguration(ClientConfig clientConfig)
+        : this(new ProducerConfig(clientConfig.Clone()))
+    {
+    }
+
+    private KafkaClientProducerConfiguration(ProducerConfig clientConfig)
+        : base(clientConfig)
+    {
+        _clientConfig = clientConfig;
+
         // Optimization: by default limit delivery report to just key and status since no other field is needed
         DeliveryReportFields = "key,status";
     }
@@ -37,18 +52,18 @@ public sealed class KafkaClientProducerConfiguration : ConfluentProducerConfigPr
     ///     Specifies whether an exception must be thrown by the producer if the persistence is not acknowledge
     ///     by the broker. The default is <c>true</c>.
     /// </summary>
-    public bool ThrowIfNotAcknowledged { get; set; } = true;
+    public bool ThrowIfNotAcknowledged { get; init; } = true;
 
     /// <summary>
     ///     Specifies whether the producer has to be disposed and recreated if a <see cref="KafkaException" />
     ///     is thrown. The default is <c>true</c>.
     /// </summary>
-    public bool DisposeOnException { get; set; } = true;
+    public bool DisposeOnException { get; init; } = true;
 
     /// <summary>
     ///     Specifies the flush operation timeout. The default is 30 seconds.
     /// </summary>
-    public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(30);
+    public TimeSpan FlushTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
     ///     Gets a value indicating whether the persistence status will be returned as part of the
@@ -87,32 +102,14 @@ public sealed class KafkaClientProducerConfiguration : ConfluentProducerConfigPr
         if (ReferenceEquals(this, other))
             return true;
 
-        return ConfluentConfigEqualityComparer.Equals(ConfluentConfig, other.ConfluentConfig);
-    }
-
-    /// <inheritdoc cref="object.Equals(object)" />
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (obj.GetType() != GetType())
-            return false;
-
-        return Equals((KafkaClientProducerConfiguration)obj);
+        return ThrowIfNotAcknowledged == other.ThrowIfNotAcknowledged &&
+               DisposeOnException == other.DisposeOnException &&
+               FlushTimeout == other.FlushTimeout &&
+               ConfigurationDictionaryEqualityComparer.StringString.Equals(_clientConfig, other._clientConfig);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(BootstrapServers);
 
-    /// <summary>
-    ///     Returns a read-only copy of the <see cref="KafkaClientProducerConfiguration" />.
-    /// </summary>
-    /// <returns>
-    ///     A read-only copy of the <see cref="KafkaClientProducerConfiguration" />.
-    /// </returns>
-    public KafkaClientProducerConfiguration AsReadOnly() => this;
+    internal new ProducerConfig GetConfluentClientConfig() => _clientConfig;
 }

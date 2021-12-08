@@ -44,10 +44,8 @@ public class KafkaLoggerExtensionsTests
 
         _consumerConfiguration = new KafkaConsumerConfigurationBuilder<object>(clientConfiguration)
             .ConfigureClient(
-                config =>
-                {
-                    config.GroupId = "group1";
-                })
+                config => config
+                    .WithGroupId("group1"))
             .ConsumeFrom("test")
             .Build();
 

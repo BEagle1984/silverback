@@ -19,11 +19,7 @@ public class ErrorPolicyChainBuilderMoveToKafkaTopicExtensionsFixture
     public ErrorPolicyChainBuilderMoveToKafkaTopicExtensionsFixture()
     {
         _endpointsConfigurationBuilder = new KafkaEndpointsConfigurationBuilder(Substitute.For<IServiceProvider>())
-            .ConfigureClient(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://tests";
-                });
+            .ConfigureClient(config => config.WithBootstrapServers("PLAINTEXT://tests"));
     }
 
     [Fact]

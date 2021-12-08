@@ -43,11 +43,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -57,12 +53,9 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                         {
@@ -143,11 +136,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -157,12 +146,9 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(5)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
                         {
@@ -250,11 +236,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -264,12 +246,9 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                         {
@@ -350,11 +329,7 @@ public class ChunkingInBatchTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -364,12 +339,9 @@ public class ChunkingInBatchTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(5)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
                         {

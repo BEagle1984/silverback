@@ -68,9 +68,10 @@ public class KafkaClientProducerConfigurationTests
     [Fact]
     public void Validate_MissingBootstrapServers_ExceptionThrown()
     {
-        KafkaClientProducerConfiguration config = GetValidConfig();
-
-        config.BootstrapServers = string.Empty;
+        KafkaClientProducerConfiguration config = GetValidConfig() with
+        {
+            BootstrapServers = string.Empty
+        };
 
         Action act = () => config.Validate();
 
@@ -82,14 +83,13 @@ public class KafkaClientProducerConfigurationTests
     [InlineData(null, "some,fields")]
     [InlineData(false, "all")]
     [InlineData(false, "status")]
-    public void Validate_ThrowIfNotAcknowledgedWithoutStatusReport_ExceptionThrown(
-        bool? enableDeliveryReports,
-        string deliveryReportFields)
+    public void Validate_ThrowIfNotAcknowledgedWithoutStatusReport_ExceptionThrown(bool? enableDeliveryReports, string deliveryReportFields)
     {
-        KafkaClientProducerConfiguration config = GetValidConfig();
-
-        config.EnableDeliveryReports = enableDeliveryReports;
-        config.DeliveryReportFields = deliveryReportFields;
+        KafkaClientProducerConfiguration config = GetValidConfig() with
+        {
+            EnableDeliveryReports = enableDeliveryReports,
+            DeliveryReportFields = deliveryReportFields
+        };
 
         Action act = () => config.Validate();
 
@@ -103,14 +103,13 @@ public class KafkaClientProducerConfigurationTests
     [InlineData(null, "")]
     [InlineData(null, "all")]
     [InlineData(null, "status")]
-    public void Validate_ThrowIfNotAcknowledgedWithStatusReport_NoExceptionThrown(
-        bool? enableDeliveryReports,
-        string deliveryReportFields)
+    public void Validate_ThrowIfNotAcknowledgedWithStatusReport_NoExceptionThrown(bool? enableDeliveryReports, string deliveryReportFields)
     {
-        KafkaClientProducerConfiguration config = GetValidConfig();
-
-        config.EnableDeliveryReports = enableDeliveryReports;
-        config.DeliveryReportFields = deliveryReportFields;
+        KafkaClientProducerConfiguration config = GetValidConfig() with
+        {
+            EnableDeliveryReports = enableDeliveryReports,
+            DeliveryReportFields = deliveryReportFields,
+        };
 
         Action act = () => config.Validate();
 

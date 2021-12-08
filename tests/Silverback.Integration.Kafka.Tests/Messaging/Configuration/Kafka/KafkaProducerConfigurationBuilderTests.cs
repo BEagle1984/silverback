@@ -47,7 +47,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicName_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -55,11 +55,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo("some-topic")
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
+        configuration.RawName.Should().Be("some-topic");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", Partition.Any));
     }
@@ -67,7 +67,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicNameAndPartition_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -75,11 +75,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo("some-topic", 42)
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic[42]");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
+        configuration.RawName.Should().Be("some-topic[42]");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", 42));
     }
@@ -87,7 +87,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicPartition_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -95,11 +95,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo(new TopicPartition("some-topic", 42))
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic[42]");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaStaticProducerEndpointResolver>();
+        configuration.RawName.Should().Be("some-topic[42]");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", 42));
     }
@@ -107,7 +107,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicNameAndPartitionFunction_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -115,11 +115,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo("some-topic", _ => 42)
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().Be("some-topic");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", 42));
     }
@@ -127,7 +127,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicNameFunction_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -135,11 +135,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo(_ => "some-topic")
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().StartWith("dynamic-");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", Partition.Any));
     }
@@ -147,7 +147,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicNameFunctionAndPartitionFunction_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -155,11 +155,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo(_ => "some-topic", _ => 42)
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().StartWith("dynamic-");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", new Partition(42)));
     }
@@ -167,7 +167,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicPartitionFunction_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -175,11 +175,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo(_ => new TopicPartition("some-topic", 42))
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().StartWith("dynamic-");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic", new Partition(42)));
     }
@@ -187,7 +187,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void ProduceTo_TopicNameFormat_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -195,11 +195,11 @@ public class KafkaProducerConfigurationBuilderTests
             .ProduceTo("some-topic-{0}", _ => new[] { "123" }, _ => 42)
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().Be("some-topic-{0}");
-        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().Be("some-topic-{0}");
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
-            endpointConfiguration,
+            configuration,
             Substitute.For<IServiceProvider>());
         endpoint.TopicPartition.Should().Be(new TopicPartition("some-topic-123", new Partition(42)));
     }
@@ -237,7 +237,7 @@ public class KafkaProducerConfigurationBuilderTests
     [Fact]
     public void UseEndpointResolver_EndpointSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
@@ -245,79 +245,142 @@ public class KafkaProducerConfigurationBuilderTests
             .UseEndpointResolver<TestTypedEndpointResolver>()
             .Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
-        endpointConfiguration.RawName.Should().StartWith("dynamic-TestTypedEndpointResolver-");
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.RawName.Should().StartWith("dynamic-TestTypedEndpointResolver-");
     }
 
     [Fact]
-    public void Configure_ConfigurationAction_ConfigurationSet()
+    public void ConfigureClient_ConfigurationAction_ConfigurationSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
                 })
             .ProduceTo("some-topic")
             .ConfigureClient(
-                config =>
+                clientConfiguration => clientConfiguration with
                 {
-                    config.ThrowIfNotAcknowledged = false;
-                    config.MessageTimeoutMs = 42;
+                    ThrowIfNotAcknowledged = false,
+                    MessageTimeoutMs = 42
                 })
             .Build();
 
-        endpointConfiguration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
-        endpointConfiguration.Client.MessageTimeoutMs.Should().Be(42);
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
     }
 
     [Fact]
-    public void Configure_WithBaseConfig_ConfigurationMerged()
+    public void ConfigureClient_WithBaseConfig_ConfigurationMerged()
     {
         KafkaClientConfiguration baseConfiguration = new()
         {
             BootstrapServers = "PLAINTEXT://tests",
             MessageMaxBytes = 42
         };
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(baseConfiguration)
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(baseConfiguration)
             .ProduceTo("some-topic")
             .ConfigureClient(
-                config =>
+                clientConfiguration => clientConfiguration with
                 {
-                    config.ThrowIfNotAcknowledged = false;
-                    config.MessageTimeoutMs = 42;
-                    config.MessageMaxBytes = 4242;
-                }).Build();
+                    ThrowIfNotAcknowledged = false,
+                    MessageTimeoutMs = 42,
+                    MessageMaxBytes = 4242
+                })
+            .Build();
 
-        endpointConfiguration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
-        endpointConfiguration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
-        endpointConfiguration.Client.MessageTimeoutMs.Should().Be(42);
-        endpointConfiguration.Client.MessageMaxBytes.Should().Be(4242);
+        configuration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
+        configuration.Client.MessageMaxBytes.Should().Be(4242);
         baseConfiguration.MessageMaxBytes.Should().Be(42);
     }
 
     [Fact]
-    public void Configure_MultipleConfigurationActions_MergedConfigurationSet()
+    public void ConfigureClient_MultipleConfigurationActions_MergedConfigurationSet()
     {
-        KafkaProducerConfiguration endpointConfiguration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
                 new KafkaClientConfiguration
                 {
                     BootstrapServers = "PLAINTEXT://tests"
                 })
             .ProduceTo("some-topic")
             .ConfigureClient(
-                config =>
+                clientConfiguration => clientConfiguration with
                 {
-                    config.ThrowIfNotAcknowledged = false;
+                    ThrowIfNotAcknowledged = false
                 })
             .ConfigureClient(
-                config =>
+                clientConfiguration => clientConfiguration with
                 {
-                    config.MessageTimeoutMs = 42;
+                    MessageTimeoutMs = 42
                 })
             .Build();
 
-        endpointConfiguration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
-        endpointConfiguration.Client.MessageTimeoutMs.Should().Be(42);
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderConfigurationAction_ConfigurationSet()
+    {
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(
+                new KafkaClientConfiguration
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                })
+            .ProduceTo("some-topic")
+            .ConfigureClient(
+                clientConfiguration => clientConfiguration
+                    .IgnoreIfNotAcknowledged()
+                    .WithMessageTimeoutMs(42))
+            .Build();
+
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderWithBaseConfig_ConfigurationMerged()
+    {
+        KafkaClientConfiguration baseConfiguration = new()
+        {
+            BootstrapServers = "PLAINTEXT://tests",
+            MessageMaxBytes = 42
+        };
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>(baseConfiguration)
+            .ProduceTo("some-topic")
+            .ConfigureClient(
+                clientConfiguration => clientConfiguration
+                    .IgnoreIfNotAcknowledged()
+                    .WithMessageTimeoutMs(42)
+                    .WithMessageMaxBytes(4242))
+            .Build();
+
+        configuration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
+        configuration.Client.MessageMaxBytes.Should().Be(4242);
+        baseConfiguration.MessageMaxBytes.Should().Be(42);
+    }
+
+    [Fact]
+    public void ConfigureClient_BuilderMultipleConfigurationActions_MergedConfigurationSet()
+    {
+        KafkaProducerConfiguration configuration = new KafkaProducerConfigurationBuilder<TestEventOne>()
+            .ProduceTo("some-topic")
+            .ConfigureClient(
+                clientConfiguration => clientConfiguration
+                    .WithBootstrapServers("PLAINTEXT://tests")
+                    .IgnoreIfNotAcknowledged())
+            .ConfigureClient(
+                clientConfiguration => clientConfiguration
+                    .WithMessageTimeoutMs(42))
+            .Build();
+
+        configuration.Client.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        configuration.Client.ThrowIfNotAcknowledged.Should().BeFalse();
+        configuration.Client.MessageTimeoutMs.Should().Be(42);
     }
 
     [SuppressMessage("", "CA1812", Justification = "Class used via DI")]

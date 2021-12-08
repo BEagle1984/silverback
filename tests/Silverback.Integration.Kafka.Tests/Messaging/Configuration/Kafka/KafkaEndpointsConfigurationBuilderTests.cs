@@ -28,17 +28,11 @@ public class KafkaEndpointsConfigurationBuilderTests
                 .AddKafkaEndpoints(
                     endpoints => endpoints
                         .ConfigureClient(
-                            config =>
-                            {
-                                config.BootstrapServers = "PLAINTEXT://unittest";
-                            })
+                            clientConfiguration => clientConfiguration
+                                .WithBootstrapServers("PLAINTEXT://unittest"))
                         .AddInbound(
-                            endpoint => endpoint
-                                .ConfigureClient(
-                                    config =>
-                                    {
-                                        config.GroupId = "group";
-                                    })
+                            consumer => consumer
+                                .ConfigureClient(clientConfiguration => clientConfiguration.WithGroupId("group"))
                                 .ConsumeFrom("test"))));
 
         KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();
@@ -59,17 +53,11 @@ public class KafkaEndpointsConfigurationBuilderTests
                 .AddKafkaEndpoints(
                     endpoints => endpoints
                         .ConfigureClient(
-                            config =>
-                            {
-                                config.BootstrapServers = "PLAINTEXT://unittest";
-                            })
+                            clientConfiguration => clientConfiguration
+                                .WithBootstrapServers("PLAINTEXT://unittest"))
                         .AddInbound<TestEventOne>(
-                            endpoint => endpoint
-                                .ConfigureClient(
-                                    config =>
-                                    {
-                                        config.GroupId = "group";
-                                    })
+                            consumer => consumer
+                                .ConfigureClient(clientConfiguration => clientConfiguration.WithGroupId("group"))
                                 .ConsumeFrom("test"))));
 
         KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();
@@ -90,46 +78,30 @@ public class KafkaEndpointsConfigurationBuilderTests
                 .AddKafkaEndpoints(
                     endpoints => endpoints
                         .ConfigureClient(
-                            config =>
-                            {
-                                config.BootstrapServers = "PLAINTEXT://unittest";
-                            })
+                            clientConfiguration => clientConfiguration
+                                .WithBootstrapServers("PLAINTEXT://unittest"))
                         .AddOutbound<TestEventOne>(
                             endpoint => endpoint
                                 .ProduceTo("test1"))
                         .AddInbound(
-                            endpoint => endpoint
-                                .ConfigureClient(
-                                    config =>
-                                    {
-                                        config.GroupId = "group1";
-                                    })
+                            consumer => consumer
+                                .ConfigureClient(clientConfiguration => clientConfiguration.WithGroupId("group1"))
                                 .ConsumeFrom(string.Empty))
                         .AddInbound(
-                            endpoint => endpoint
-                                .ConfigureClient(
-                                    config =>
-                                    {
-                                        config.GroupId = "group1";
-                                    })
+                            consumer => consumer
+                                .ConfigureClient(clientConfiguration => clientConfiguration.WithGroupId("group2"))
                                 .ConsumeFrom("test1")))
                 .AddKafkaEndpoints(_ => throw new InvalidOperationException())
                 .AddKafkaEndpoints(
                     endpoints => endpoints
                         .ConfigureClient(
-                            config =>
-                            {
-                                config.BootstrapServers = "PLAINTEXT://unittest";
-                            })
+                            clientConfiguration => clientConfiguration
+                                .WithBootstrapServers("PLAINTEXT://unittest"))
                         .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo(string.Empty))
                         .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo("test2"))
                         .AddInbound(
-                            endpoint => endpoint
-                                .ConfigureClient(
-                                    config =>
-                                    {
-                                        config.GroupId = "group1";
-                                    })
+                            consumer => consumer
+                                .ConfigureClient(clientConfiguration => clientConfiguration.WithGroupId("group1"))
                                 .ConsumeFrom("test2"))));
 
         KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();

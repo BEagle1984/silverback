@@ -25,22 +25,41 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     {
     }
 
-    internal KafkaClientConfiguration ClientConfiguration { get; } = new();
+    internal KafkaClientConfiguration ClientConfiguration { get; private set; } = new();
 
     /// <summary>
     ///     Configures the Kafka client properties that are shared between the producers and consumers.
     /// </summary>
-    /// <param name="configAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConfiguration" /> and configures it.
+    /// <param name="clientConfigurationAction">
+    ///     A <see cref="Func{T,TResult}" /> that takes the <see cref="KafkaClientConfiguration" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaEndpointsConfigurationBuilder ConfigureClient(Action<KafkaClientConfiguration> configAction)
+    public KafkaEndpointsConfigurationBuilder ConfigureClient(
+        Func<KafkaClientConfiguration, KafkaClientConfiguration> clientConfigurationAction)
     {
-        Check.NotNull(configAction, nameof(configAction));
+        Check.NotNull(clientConfigurationAction, nameof(clientConfigurationAction));
+        ClientConfiguration = clientConfigurationAction.Invoke(ClientConfiguration);
+        return this;
+    }
 
-        configAction.Invoke(ClientConfiguration);
+    /// <summary>
+    ///     Configures the Kafka client properties that are shared between the producers and consumers.
+    /// </summary>
+    /// <param name="clientConfigurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaEndpointsConfigurationBuilder ConfigureClient(Action<KafkaClientConfigurationBuilder> clientConfigurationBuilderAction)
+    {
+        Check.NotNull(clientConfigurationBuilderAction, nameof(clientConfigurationBuilderAction));
+
+        KafkaClientConfigurationBuilder builder = new(ClientConfiguration);
+        clientConfigurationBuilderAction.Invoke(builder);
+        ClientConfiguration = builder.Build();
 
         return this;
     }
@@ -51,7 +70,7 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced to this endpoint.
     /// </typeparam>
-    /// <param name="configurationBuilderAction">
+    /// <param name="producerBuilderAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
     /// <param name="preloadProducers">
@@ -62,12 +81,12 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-        Action<KafkaProducerConfigurationBuilder<TMessage>> configurationBuilderAction,
+        Action<KafkaProducerConfigurationBuilder<TMessage>> producerBuilderAction,
         bool preloadProducers = true)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(producerBuilderAction, nameof(producerBuilderAction));
 
-        KafkaProducerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(configurationBuilderAction);
+        KafkaProducerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(producerBuilderAction);
 
         if (endpointConfiguration != null)
             AddOutbound<TMessage>(endpointConfiguration, preloadProducers);
@@ -83,7 +102,7 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     ///     and more resources being used. The <see cref="KafkaConsumerEndpoint" /> allows to define multiple topics to be consumed, to
     ///     efficiently instantiate a single consumer for all of them.
     /// </remarks>
-    /// <param name="configurationBuilderAction">
+    /// <param name="consumerBuilderAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
     /// <param name="consumersCount">
@@ -93,9 +112,9 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaEndpointsConfigurationBuilder AddInbound(
-        Action<KafkaConsumerConfigurationBuilder<object>> configurationBuilderAction,
+        Action<KafkaConsumerConfigurationBuilder<object>> consumerBuilderAction,
         int consumersCount = 1) =>
-        AddInbound<object>(configurationBuilderAction, consumersCount);
+        AddInbound<object>(consumerBuilderAction, consumersCount);
 
     /// <summary>
     ///     Configures an inbound endpoint with the specified consumer configuration.
@@ -109,7 +128,7 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     ///     The type of the messages that will be consumed from this endpoint. Specifying the message type will usually automatically switch to the typed message serializer and deserialize this specific type,
     ///     regardless of the message headers.
     /// </typeparam>
-    /// <param name="configurationBuilderAction">
+    /// <param name="consumerBuilderAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
     /// <param name="consumersCount">
@@ -119,12 +138,12 @@ public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationB
     ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaEndpointsConfigurationBuilder AddInbound<TMessage>(
-        Action<KafkaConsumerConfigurationBuilder<TMessage>> configurationBuilderAction,
+        Action<KafkaConsumerConfigurationBuilder<TMessage>> consumerBuilderAction,
         int consumersCount = 1)
     {
-        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+        Check.NotNull(consumerBuilderAction, nameof(consumerBuilderAction));
 
-        KafkaConsumerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(configurationBuilderAction);
+        KafkaConsumerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(consumerBuilderAction);
 
         if (endpointConfiguration != null)
             AddInbound(endpointConfiguration, consumersCount);

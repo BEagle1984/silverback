@@ -4,15 +4,18 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
 /// <summary>
-///     Extends the <see cref="Confluent.Kafka.ConsumerConfig" /> adding the Silverback specific settings.
+///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> adding the Silverback specific settings.
 /// </summary>
 [SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
-public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigProxy, IEquatable<KafkaClientConsumerConfiguration>
+public sealed partial record KafkaClientConsumerConfiguration
 {
+    private readonly ConsumerConfig _clientConfig;
+
     private const bool KafkaDefaultAutoCommitEnabled = true;
 
     /// <summary>
@@ -22,8 +25,20 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
     /// </param>
     public KafkaClientConsumerConfiguration(KafkaClientConfiguration? clientConfig = null)
-        : base(clientConfig?.GetConfluentConfig())
+        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
     {
+    }
+
+    internal KafkaClientConsumerConfiguration(ClientConfig clientConfig)
+        : this(new ConsumerConfig(clientConfig.Clone()))
+    {
+    }
+
+    private KafkaClientConsumerConfiguration(ConsumerConfig clientConfig)
+        : base(clientConfig)
+    {
+        _clientConfig = clientConfig;
+        _clientConfig.EnableAutoOffsetStore = false;
     }
 
     /// <summary>
@@ -36,14 +51,14 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
     ///     Defines the number of message to be processed before committing the offset to the server. The most
     ///     reliable level is 1 but it reduces throughput.
     /// </summary>
-    public int CommitOffsetEach { get; set; } = -1;
+    public int? CommitOffsetEach { get; init; }
 
     /// <summary>
     ///     Specifies whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
     ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default
     ///     is <c>true</c>.
     /// </summary>
-    public bool EnableAutoRecovery { get; set; } = true;
+    public bool EnableAutoRecovery { get; init; } = true;
 
     /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
     public override void Validate()
@@ -65,14 +80,12 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
             throw new EndpointConfigurationException("CommitOffSetEach must be greater or equal to 1 when auto-commit is disabled.");
         }
 
-        if (EnableAutoOffsetStore == true)
+        if (_clientConfig.EnableAutoOffsetStore == true)
         {
             throw new EndpointConfigurationException(
                 "EnableAutoOffsetStore is not supported. " +
                 "Silverback must have control over the offset storing to work properly.");
         }
-
-        EnableAutoOffsetStore = false;
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
@@ -85,32 +98,12 @@ public sealed class KafkaClientConsumerConfiguration : ConfluentConsumerConfigPr
             return true;
 
         return CommitOffsetEach == other.CommitOffsetEach &&
-               ConfluentConfigEqualityComparer.Equals(ConfluentConfig, other.ConfluentConfig);
-    }
-
-    /// <inheritdoc cref="object.Equals(object)" />
-    public override bool Equals(object? obj)
-    {
-        if (obj is null)
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (obj.GetType() != GetType())
-            return false;
-
-        return Equals((KafkaClientConsumerConfiguration)obj);
+               EnableAutoRecovery == other.EnableAutoRecovery &&
+               ConfigurationDictionaryEqualityComparer.StringString.Equals(_clientConfig, other._clientConfig);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(BootstrapServers);
 
-    /// <summary>
-    ///     Returns a read-only copy of the <see cref="KafkaClientConsumerConfiguration" />.
-    /// </summary>
-    /// <returns>
-    ///     A read-only copy of the <see cref="KafkaClientConsumerConfiguration" />.
-    /// </returns>
-    public KafkaClientConsumerConfiguration AsReadOnly() => this;
+    internal new ConsumerConfig GetConfluentClientConfig() => _clientConfig;
 }

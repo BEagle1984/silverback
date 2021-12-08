@@ -42,11 +42,7 @@ public class MessageValidationTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ValidateMessage(true)
@@ -76,11 +72,7 @@ public class MessageValidationTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .DisableMessageValidation()
@@ -109,11 +101,7 @@ public class MessageValidationTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ValidateMessage(false)
@@ -144,21 +132,13 @@ public class MessageValidationTests : KafkaTestFixture
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://tests";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .ValidateMessage(true)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (IInboundEnvelope _) =>
                             {
@@ -198,21 +178,13 @@ public class MessageValidationTests : KafkaTestFixture
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://tests";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .DisableMessageValidation()
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (IInboundEnvelope _) =>
                             {
@@ -250,21 +222,13 @@ public class MessageValidationTests : KafkaTestFixture
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .ConfigureClient(
-                                    configuration =>
-                                    {
-                                        configuration.BootstrapServers = "PLAINTEXT://tests";
-                                    })
+                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                                 .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestValidationMessage>(
                                     consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .ValidateMessage(false)
-                                        .ConfigureClient(
-                                            configuration =>
-                                            {
-                                                configuration.GroupId = DefaultConsumerGroupId;
-                                            })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                         .AddDelegateSubscriber(
                             (IInboundEnvelope _) =>
                             {

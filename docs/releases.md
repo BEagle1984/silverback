@@ -17,6 +17,7 @@ uid: releases
   * AddInbound/AddOoutbound with message type (influencing AddHeader etc.)
   * Default serializer is typed and now works with sub-typed (document in serializer page)
   * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
+  * Builders for client config?
 
 
 ### Breaking Changes

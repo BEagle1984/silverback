@@ -49,11 +49,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -61,11 +57,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -145,11 +137,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -157,11 +145,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -201,32 +185,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
@@ -264,32 +237,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -327,32 +289,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
             HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(TestEventOne)));
@@ -390,21 +341,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
@@ -414,11 +358,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(3).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, false));
@@ -456,21 +396,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
@@ -480,11 +413,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(3).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, 3));
@@ -522,21 +451,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
@@ -546,11 +468,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(3).ToArray(),
             HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3));
@@ -588,21 +506,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
@@ -612,11 +523,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage.Take(3).ToArray(),
             HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryMessage)));
@@ -656,32 +563,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
@@ -745,21 +641,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound<BinaryMessage>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
@@ -769,11 +658,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.Take(3).ToArray(),
@@ -846,11 +731,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -858,11 +739,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -928,11 +805,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -940,11 +813,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -998,11 +867,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -1010,11 +875,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -1056,11 +917,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -1068,11 +925,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber((BinaryMessage _) => throw new InvalidOperationException("Test"))
                     .AddIntegrationSpy())
             .Run();
@@ -1112,32 +965,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1184,32 +1026,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1250,33 +1081,22 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Retry(5))
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1320,32 +1140,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1401,33 +1210,22 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1496,23 +1294,16 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConsumeBinaryMessages()
                                     .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -1532,11 +1323,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1606,32 +1393,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
@@ -1678,21 +1454,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                             receivedFiles.Add(binaryMessage.Content.ReadAll())))
@@ -1701,11 +1470,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.Skip(10).Take(10).ToArray(),
@@ -1750,32 +1515,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1819,22 +1573,15 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConsumeBinaryMessages()
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (BinaryMessage binaryMessage) =>
                         {
@@ -1854,11 +1601,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1904,32 +1647,21 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddIntegrationSpy())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -1975,22 +1707,15 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConsumeBinaryMessages()
                                     .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                            configuration.EnableAutoCommit = false;
-                                            configuration.CommitOffsetEach = 1;
-                                        })))
+                                        configuration => configuration
+                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .CommitOffsetEach(1))))
                     .AddDelegateSubscriber(
                         async (BinaryMessage binaryMessage) =>
                         {
@@ -2010,11 +1735,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage.Take(10).ToArray(),
@@ -2062,11 +1783,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -2074,11 +1791,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -2119,20 +1832,12 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConsumeBinaryMessages()
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -2150,11 +1855,7 @@ public class ChunkingTests : KafkaTestFixture
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.Take(10).ToArray(),
@@ -2215,11 +1916,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -2227,22 +1924,14 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
                 .ProduceTo(DefaultTopicName)
-                .ConfigureClient(
-                    configuration =>
-                    {
-                        configuration.BootstrapServers = "PLAINTEXT://e2e";
-                    }));
+                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e")));
 
         await producer.RawProduceAsync(
             rawMessage1.ToArray(),
@@ -2285,11 +1974,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -2297,11 +1982,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {
@@ -2353,11 +2034,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<BinaryMessage>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
@@ -2365,11 +2042,7 @@ public class ChunkingTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration =>
-                                        {
-                                            configuration.GroupId = DefaultConsumerGroupId;
-                                        })))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddDelegateSubscriber(
                         (BinaryMessage binaryMessage) =>
                         {

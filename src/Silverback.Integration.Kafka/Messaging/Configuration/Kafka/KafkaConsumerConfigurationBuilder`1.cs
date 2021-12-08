@@ -8,7 +8,7 @@ using Confluent.Kafka;
 using Silverback.Collections;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Util;
+using Check = Silverback.Util.Check;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
@@ -21,9 +21,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 public class KafkaConsumerConfigurationBuilder<TMessage>
     : ConsumerConfigurationBuilder<TMessage, KafkaConsumerConfiguration, KafkaConsumerConfigurationBuilder<TMessage>>
 {
-    private readonly KafkaClientConfiguration? _clientConfiguration;
-
-    private readonly List<Action<KafkaClientConsumerConfiguration>> _clientConfigurationActions = new();
+    private KafkaClientConsumerConfiguration _clientConfiguration;
 
     private TopicPartitionOffset[]? _topicPartitionOffsets;
 
@@ -49,7 +47,7 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
         EndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         : base(endpointsConfigurationBuilder)
     {
-        _clientConfiguration = clientConfiguration;
+        _clientConfiguration = new KafkaClientConsumerConfiguration(clientConfiguration);
     }
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
@@ -238,16 +236,38 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
     ///     Configures the Kafka client settings.
     /// </summary>
     /// <param name="clientConfigurationAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConsumerConfiguration" /> and configures it.
+    ///     A <see cref="Func{T,TResult}" /> that takes the <see cref="KafkaClientConsumerConfiguration" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaConsumerConfigurationBuilder<TMessage> ConfigureClient(Action<KafkaClientConsumerConfiguration> clientConfigurationAction)
+    public KafkaConsumerConfigurationBuilder<TMessage> ConfigureClient(
+        Func<KafkaClientConsumerConfiguration, KafkaClientConsumerConfiguration> clientConfigurationAction)
     {
         Check.NotNull(clientConfigurationAction, nameof(clientConfigurationAction));
 
-        _clientConfigurationActions.Add(clientConfigurationAction);
+        _clientConfiguration = clientConfigurationAction.Invoke(_clientConfiguration);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Configures the Kafka client settings.
+    /// </summary>
+    /// <param name="clientConfigurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConsumerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder<TMessage> ConfigureClient(
+        Action<KafkaClientConsumerConfigurationBuilder> clientConfigurationBuilderAction)
+    {
+        Check.NotNull(clientConfigurationBuilderAction, nameof(clientConfigurationBuilderAction));
+
+        KafkaClientConsumerConfigurationBuilder builder = new(_clientConfiguration);
+        clientConfigurationBuilderAction.Invoke(builder);
+        _clientConfiguration = builder.Build();
 
         return this;
     }
@@ -323,7 +343,7 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
         {
             TopicPartitions = _topicPartitionOffsets?.AsValueReadOnlyCollection() ?? configuration.TopicPartitions,
             PartitionOffsetsProvider = _partitionOffsetsProvider,
-            Client = GetClientConfiguration(),
+            Client = _clientConfiguration,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,
             ProcessPartitionsIndependently = _processPartitionsIndependently ?? configuration.ProcessPartitionsIndependently
         };
@@ -338,12 +358,5 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
         }
 
         return configuration;
-    }
-
-    private KafkaClientConsumerConfiguration GetClientConfiguration()
-    {
-        KafkaClientConsumerConfiguration config = new(_clientConfiguration);
-        _clientConfigurationActions.ForEach(action => action.Invoke(config));
-        return config.AsReadOnly();
     }
 }

@@ -39,15 +39,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -79,15 +75,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -118,15 +110,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeJsonUsingNewtonsoft()))
                     .AddIntegrationSpyAndSubscriber())
@@ -158,15 +146,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound<TestEventOne>(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -197,15 +181,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .UseLegacyNullMessageHandling()))
                     .AddIntegrationSpyAndSubscriber())
@@ -239,15 +219,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .SkipNullMessages()))
                     .AddIntegrationSpyAndSubscriber())
@@ -279,15 +255,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationMessage>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeUsing(new CustomSerializer())))
                     .AddIntegrationSpyAndSubscriber())
@@ -318,16 +290,12 @@ public class NullMessageHandlingTests : KafkaTestFixture
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddOutbound<IIntegrationCommand>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
@@ -358,15 +326,11 @@ public class NullMessageHandlingTests : KafkaTestFixture
                     .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .ConfigureClient(
-                                configuration =>
-                                {
-                                    configuration.BootstrapServers = "PLAINTEXT://tests";
-                                })
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<Tombstone>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.GroupId = "group1")
+                                    .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
