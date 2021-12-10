@@ -2,11 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Confluent.Kafka;
+using Silverback.Tools.Generators.Common;
 
-namespace Silverback.Tools.KafkaConfigClassGenerator;
+namespace Silverback.Tools.Generators.KafkaConfigProxies;
 
 internal sealed class ProxyClassGenerator
 {
@@ -14,22 +17,15 @@ internal sealed class ProxyClassGenerator
 
     private readonly string _generatedClassName;
 
-    private readonly string? _baseClassName;
-
-    private readonly string _proxiedTypeName;
+    private readonly bool _isChildType;
 
     private readonly StringBuilder _stringBuilder = new();
 
     public ProxyClassGenerator(Type proxiedType)
     {
         _proxiedType = proxiedType;
-
-        _proxiedTypeName = _proxiedType.Name;
-
-        _generatedClassName = _proxiedType == typeof(ClientConfig)
-            ? "KafkaClientConfiguration"
-            : $"KafkaClient{_proxiedTypeName}uration";
-        _baseClassName = proxiedType == typeof(ClientConfig) ? null : "KafkaClientConfiguration";
+        _isChildType = _proxiedType != typeof(ClientConfig);
+        _generatedClassName = _isChildType ? $"KafkaClient{proxiedType.Name}uration" : "KafkaClientConfiguration";
     }
 
     public string Generate()
@@ -52,11 +48,9 @@ internal sealed class ProxyClassGenerator
         _stringBuilder.AppendLine("[SuppressMessage(\"\", \"SA1623\", Justification = \"Summary copied from wrapped class\")]");
         _stringBuilder.AppendLine("[SuppressMessage(\"\", \"SA1629\", Justification = \"Summary copied from wrapped class\")]");
         _stringBuilder.AppendLine("[SuppressMessage(\"\", \"CA1044\", Justification = \"Accessors generated according to wrapped class\")]");
-
-        _stringBuilder.AppendLine(
-            _baseClassName == null
-                ? $"public partial record {_generatedClassName} : IValidatableEndpointSettings"
-                : $"public partial record {_generatedClassName} : {_baseClassName}");
+        _stringBuilder.AppendLine(_isChildType
+        ? $"public partial record {_generatedClassName}"
+        : $"public partial record {_generatedClassName}<TClientConfig>");
 
         _stringBuilder.AppendLine("{");
         _stringBuilder.AppendLine();
@@ -64,7 +58,11 @@ internal sealed class ProxyClassGenerator
 
     private void MapProperties()
     {
-        foreach (PropertyInfo property in ReflectionHelper.GetProperties(_proxiedType, _baseClassName == null))
+        IEnumerable<PropertyInfo> properties =
+            ReflectionHelper.GetProperties(_proxiedType, !_isChildType)
+                .Where(property => property.Name != "EnableAutoOffsetStore");
+
+        foreach (PropertyInfo property in properties)
         {
             string propertyType = ReflectionHelper.GetPropertyTypeString(property.PropertyType);
 
@@ -74,19 +72,19 @@ internal sealed class ProxyClassGenerator
             _stringBuilder.AppendLine("    {");
 
             if (property.GetGetMethod() != null)
-                _stringBuilder.AppendLine($"        get => _clientConfig.{property.Name};");
+                _stringBuilder.AppendLine($"        get => ClientConfig.{property.Name};");
 
             if (property.Name == "DeliveryReportFields")
             {
                 _stringBuilder.AppendLine("        init");
                 _stringBuilder.AppendLine("        {");
                 _stringBuilder.AppendLine("            if (value != null)");
-                _stringBuilder.AppendLine($"                _clientConfig.{property.Name} = value;");
+                _stringBuilder.AppendLine($"                ClientConfig.{property.Name} = value;");
                 _stringBuilder.AppendLine("        }");
             }
             else if (property.GetSetMethod() != null)
             {
-                _stringBuilder.AppendLine($"        init => _clientConfig.{property.Name} = value;");
+                _stringBuilder.AppendLine($"        init => ClientConfig.{property.Name} = value;");
             }
 
             _stringBuilder.AppendLine("    }");
@@ -96,7 +94,7 @@ internal sealed class ProxyClassGenerator
 
     private void WritePropertySummary(PropertyInfo property)
     {
-        SummaryText summaryText = ReflectionHelper.GetSummary(property);
+        SummaryText summaryText = DocumentationHelper.GetSummary(property);
 
         _stringBuilder.AppendLine("    /// <summary>");
         _stringBuilder.Append(summaryText.Main);

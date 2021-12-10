@@ -10,9 +10,8 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Builds the <see cref="KafkaClientProducerConfiguration" />.
 /// </summary>
 public partial class KafkaClientProducerConfigurationBuilder
+    : KafkaClientConfigurationBuilder<ProducerConfig, KafkaClientProducerConfigurationBuilder>
 {
-    private readonly ProducerConfig _clientConfig;
-
     private bool? _throwIfNotAcknowledged;
 
     private bool? _disposeOnException;
@@ -25,28 +24,33 @@ public partial class KafkaClientProducerConfigurationBuilder
     /// <param name="clientConfig">
     ///     The <see cref="KafkaClientProducerConfiguration" /> to be used to initialize the <see cref="KafkaClientProducerConfiguration" />.
     /// </param>
-    public KafkaClientProducerConfigurationBuilder(KafkaClientProducerConfiguration? clientConfig = null)
-        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
+    public KafkaClientProducerConfigurationBuilder(KafkaClientProducerConfiguration clientConfig)
+        : base(clientConfig)
     {
         // TODO: test to ensure we don't forget any assignment
         _throwIfNotAcknowledged = clientConfig?.ThrowIfNotAcknowledged;
         _disposeOnException = clientConfig?.DisposeOnException;
         _flushTimeout = clientConfig?.FlushTimeout;
+
+        ProducerConfig = new ProducerConfig(ClientConfig);
     }
 
-    internal KafkaClientProducerConfigurationBuilder(ClientConfig clientConfig)
-        : this(new ProducerConfig(clientConfig.Clone()))
-    {
-    }
-
-    private KafkaClientProducerConfigurationBuilder(ProducerConfig clientConfig)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaClientProducerConfigurationBuilder" /> class.
+    /// </summary>
+    /// <param name="clientConfig">
+    ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientProducerConfiguration" />.
+    /// </param>
+    public KafkaClientProducerConfigurationBuilder(KafkaClientConfiguration? clientConfig = null)
         : base(clientConfig)
     {
-        _clientConfig = clientConfig;
+        ProducerConfig = new ProducerConfig(ClientConfig);
     }
 
-    /// <inheritdoc cref="KafkaClientConfigurationBuilder{ClientConfig}.This" />
+    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaClientProducerConfigurationBuilder This => this;
+
+    private ProducerConfig ProducerConfig { get; }
 
     /// <summary>
     ///     Specifies that an exception must be thrown by the producer if the persistence is not acknowledge by the broker.
@@ -156,7 +160,7 @@ public partial class KafkaClientProducerConfigurationBuilder
     /// </returns>
     public KafkaClientProducerConfiguration Build()
     {
-        KafkaClientProducerConfiguration config = new(_clientConfig);
+        KafkaClientProducerConfiguration config = new(ProducerConfig);
 
         return config with
         {

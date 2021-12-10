@@ -1,5 +1,21 @@
 [*]
 
+# Microsoft.CodeAnalysis.NetAnalyzers
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+# CA1305: Specify IFormatProvider
+dotnet_diagnostic.CA1305.severity = none
+# CA2000: Dispose objects before losing scope
+dotnet_diagnostic.CA2000.severity = none
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+
 # StyleCop.Analyzers
-# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration
-dotnet_diagnostic.SA0001.severity = none
+# SA1600: A C# code element is missing a documentation header
+dotnet_diagnostic.SA1600.severity = none
+# SA1601: A C# partial element is missing a documentation header.
+dotnet_diagnostic.SA1601.severity = none
+# SA1602: Enumeration items should be documented
+dotnet_diagnostic.SA1602.severity = none

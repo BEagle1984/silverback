@@ -8,34 +8,20 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <summary>
 ///     Builds the <see cref="KafkaClientConfiguration" />.
 /// </summary>
-public partial class KafkaClientConfigurationBuilder
+public partial class KafkaClientConfigurationBuilder : KafkaClientConfigurationBuilder<ClientConfig, KafkaClientConfigurationBuilder>
 {
-    private readonly ClientConfig _clientConfig;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder" /> class.
     /// </summary>
-    /// <param name="clientConfig">
+    /// <param name="clientConfiguration">
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
     /// </param>
-    public KafkaClientConfigurationBuilder(KafkaClientConfiguration? clientConfig = null)
-        : this(clientConfig?.GetConfluentClientConfig().Clone() ?? new ClientConfig())
+    public KafkaClientConfigurationBuilder(KafkaClientConfiguration? clientConfiguration = null)
+        : base(clientConfiguration)
     {
     }
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder" /> class.
-    /// </summary>
-    /// <param name="clientConfig">
-    ///     The <see cref="ClientConfig" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
-    /// </param>
-    protected internal KafkaClientConfigurationBuilder(ClientConfig clientConfig)
-        : base(clientConfig)
-    {
-        _clientConfig = clientConfig;
-    }
-
-    /// <inheritdoc cref="KafkaClientConfigurationBuilder{ClientConfig}.This" />
+    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaClientConfigurationBuilder This => this;
 
     /// <summary>
@@ -44,5 +30,5 @@ public partial class KafkaClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaClientConsumerConfiguration" />.
     /// </returns>
-    public KafkaClientConfiguration Build() => new(_clientConfig);
+    public KafkaClientConfiguration Build() => new(ClientConfig.Clone());
 }

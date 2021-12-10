@@ -9,8 +9,7 @@ namespace Silverback.Util;
 internal static class ComparisonHelper
 {
     /// <summary>
-    ///     Determines whether the specified object instances are considered equal comparing their JSON
-    ///     representations.
+    ///     Determines whether the specified object instances are considered equal comparing their JSON representations.
     /// </summary>
     /// <param name="objA">
     ///     The first of the two objects to be compared.

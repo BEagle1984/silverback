@@ -29,8 +29,6 @@ dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.CA5398.severity = none
 
 # StyleCop.Analyzers
-# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration
-dotnet_diagnostic.SA0001.severity = none
 # SA1600: A C# code element is missing a documentation header
 dotnet_diagnostic.SA1600.severity = none
 # SA1601: A C# partial element is missing a documentation header.

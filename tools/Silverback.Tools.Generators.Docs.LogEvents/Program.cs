@@ -1,10 +1,7 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-using System;
+﻿using System;
 using Silverback.Diagnostics;
 
-namespace Silverback.Tools.LogEventsDocsGenerator;
+namespace Silverback.Tools.Generators.Docs.LogEvents;
 
 internal static class Program
 {

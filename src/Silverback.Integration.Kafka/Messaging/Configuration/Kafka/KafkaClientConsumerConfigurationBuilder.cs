@@ -10,9 +10,8 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Builds the <see cref="KafkaClientConsumerConfiguration" />.
 /// </summary>
 public partial class KafkaClientConsumerConfigurationBuilder
+    : KafkaClientConfigurationBuilder<ConsumerConfig, KafkaClientConsumerConfigurationBuilder>
 {
-    private readonly ConsumerConfig _clientConfig;
-
     private int? _commitOffsetEach;
 
     private bool? _enableAutoRecovery;
@@ -23,27 +22,32 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// <param name="clientConfig">
     ///     The <see cref="KafkaClientConsumerConfiguration" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
     /// </param>
-    public KafkaClientConsumerConfigurationBuilder(KafkaClientConsumerConfiguration? clientConfig = null)
-        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
-    {
-        // TODO: test to ensure we don't forget any assignment
-        _commitOffsetEach = clientConfig?.CommitOffsetEach;
-        _enableAutoRecovery = clientConfig?.EnableAutoRecovery;
-    }
-
-    internal KafkaClientConsumerConfigurationBuilder(ClientConfig clientConfig)
-        : this(new ConsumerConfig(clientConfig.Clone()))
-    {
-    }
-
-    private KafkaClientConsumerConfigurationBuilder(ConsumerConfig clientConfig)
+    public KafkaClientConsumerConfigurationBuilder(KafkaClientConsumerConfiguration clientConfig)
         : base(clientConfig)
     {
-        _clientConfig = clientConfig;
+        // TODO: test to ensure we don't forget any assignment
+        _commitOffsetEach = clientConfig.CommitOffsetEach;
+        _enableAutoRecovery = clientConfig.EnableAutoRecovery;
+
+        ConsumerConfig = new ConsumerConfig(ClientConfig);
     }
 
-    /// <inheritdoc cref="KafkaClientConfigurationBuilder{ClientConfig}.This" />
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaClientConsumerConfigurationBuilder" /> class.
+    /// </summary>
+    /// <param name="clientConfig">
+    ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
+    /// </param>
+    public KafkaClientConsumerConfigurationBuilder(KafkaClientConfiguration? clientConfig = null)
+        : base(clientConfig)
+    {
+        ConsumerConfig = new ConsumerConfig(ClientConfig);
+    }
+
+    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaClientConsumerConfigurationBuilder This => this;
+
+    private ConsumerConfig ConsumerConfig { get; }
 
     /// <summary>
     ///     Defines the number of message to be processed before committing the offset to the server. The most
@@ -162,7 +166,7 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// </returns>
     public KafkaClientConsumerConfiguration Build()
     {
-        KafkaClientConsumerConfiguration config = new(_clientConfig);
+        KafkaClientConsumerConfiguration config = new(ConsumerConfig);
 
         return config with
         {

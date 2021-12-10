@@ -12,35 +12,29 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Wraps the <see cref="Confluent.Kafka.ProducerConfig" /> adding the Silverback specific settings.
 /// </summary>
 [SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
-public sealed partial record KafkaClientProducerConfiguration
+public sealed partial record KafkaClientProducerConfiguration : KafkaClientConfiguration<ProducerConfig>
 {
-    private readonly ProducerConfig _clientConfig;
-
     private const bool KafkaDefaultEnableDeliveryReports = true;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaClientProducerConfiguration" /> class.
     /// </summary>
-    /// <param name="clientConfig">
+    /// <param name="clientConfiguration">
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientProducerConfiguration" />.
     /// </param>
-    public KafkaClientProducerConfiguration(KafkaClientConfiguration? clientConfig = null)
-        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
+    public KafkaClientProducerConfiguration(KafkaClientConfiguration? clientConfiguration = null)
+        : base(
+            clientConfiguration == null
+                ? new ProducerConfig()
+                : new ProducerConfig(clientConfiguration.GetConfluentClientConfig().Clone()))
     {
-    }
-
-    internal KafkaClientProducerConfiguration(ClientConfig clientConfig)
-        : this(new ProducerConfig(clientConfig.Clone()))
-    {
-    }
-
-    private KafkaClientProducerConfiguration(ProducerConfig clientConfig)
-        : base(clientConfig)
-    {
-        _clientConfig = clientConfig;
-
         // Optimization: by default limit delivery report to just key and status since no other field is needed
         DeliveryReportFields = "key,status";
+    }
+
+    internal KafkaClientProducerConfiguration(ProducerConfig producerConfig)
+        : base(producerConfig)
+    {
     }
 
     /// <summary>
@@ -105,11 +99,9 @@ public sealed partial record KafkaClientProducerConfiguration
         return ThrowIfNotAcknowledged == other.ThrowIfNotAcknowledged &&
                DisposeOnException == other.DisposeOnException &&
                FlushTimeout == other.FlushTimeout &&
-               ConfigurationDictionaryEqualityComparer.StringString.Equals(_clientConfig, other._clientConfig);
+               ConfigurationDictionaryEqualityComparer.StringString.Equals(ClientConfig, other.ClientConfig);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(BootstrapServers);
-
-    internal new ProducerConfig GetConfluentClientConfig() => _clientConfig;
 }

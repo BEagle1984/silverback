@@ -4,7 +4,7 @@
 using System;
 using Confluent.Kafka;
 
-namespace Silverback.Tools.KafkaConfigClassGenerator;
+namespace Silverback.Tools.Generators.KafkaConfigProxies;
 
 internal static class Program
 {

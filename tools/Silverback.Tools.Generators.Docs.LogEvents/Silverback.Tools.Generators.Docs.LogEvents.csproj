@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
+    <RootNamespace>Silverback.Tools.Generators.Docs.LogEvents</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+  </ItemGroup>
+
+</Project>

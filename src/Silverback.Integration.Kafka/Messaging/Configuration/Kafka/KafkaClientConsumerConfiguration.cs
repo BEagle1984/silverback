@@ -12,33 +12,31 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> adding the Silverback specific settings.
 /// </summary>
 [SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
-public sealed partial record KafkaClientConsumerConfiguration
+public sealed partial record KafkaClientConsumerConfiguration : KafkaClientConfiguration<ConsumerConfig>
 {
-    private readonly ConsumerConfig _clientConfig;
-
     private const bool KafkaDefaultAutoCommitEnabled = true;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaClientConsumerConfiguration" /> class.
     /// </summary>
-    /// <param name="clientConfig">
+    /// <param name="clientConfiguration">
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientConsumerConfiguration" />.
     /// </param>
-    public KafkaClientConsumerConfiguration(KafkaClientConfiguration? clientConfig = null)
-        : this(clientConfig?.GetConfluentClientConfig() ?? new ClientConfig())
+    public KafkaClientConsumerConfiguration(KafkaClientConfiguration? clientConfiguration = null)
+        : base(
+            clientConfiguration == null
+                ? new ConsumerConfig()
+                : new ConsumerConfig(clientConfiguration.GetConfluentClientConfig().Clone()))
     {
+        // This property is not exposed and it's hardcoded to false
+        ClientConfig.EnableAutoOffsetStore = false;
     }
 
-    internal KafkaClientConsumerConfiguration(ClientConfig clientConfig)
-        : this(new ConsumerConfig(clientConfig.Clone()))
+    internal KafkaClientConsumerConfiguration(ConsumerConfig consumerConfig)
+        : base(consumerConfig)
     {
-    }
-
-    private KafkaClientConsumerConfiguration(ConsumerConfig clientConfig)
-        : base(clientConfig)
-    {
-        _clientConfig = clientConfig;
-        _clientConfig.EnableAutoOffsetStore = false;
+        // This property is not exposed and it's hardcoded to false
+        ClientConfig.EnableAutoOffsetStore = false;
     }
 
     /// <summary>
@@ -80,7 +78,7 @@ public sealed partial record KafkaClientConsumerConfiguration
             throw new EndpointConfigurationException("CommitOffSetEach must be greater or equal to 1 when auto-commit is disabled.");
         }
 
-        if (_clientConfig.EnableAutoOffsetStore == true)
+        if (ClientConfig.EnableAutoOffsetStore == true)
         {
             throw new EndpointConfigurationException(
                 "EnableAutoOffsetStore is not supported. " +
@@ -99,11 +97,9 @@ public sealed partial record KafkaClientConsumerConfiguration
 
         return CommitOffsetEach == other.CommitOffsetEach &&
                EnableAutoRecovery == other.EnableAutoRecovery &&
-               ConfigurationDictionaryEqualityComparer.StringString.Equals(_clientConfig, other._clientConfig);
+               ConfigurationDictionaryEqualityComparer.StringString.Equals(ClientConfig, other.ClientConfig);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(BootstrapServers);
-
-    internal new ConsumerConfig GetConfluentClientConfig() => _clientConfig;
 }

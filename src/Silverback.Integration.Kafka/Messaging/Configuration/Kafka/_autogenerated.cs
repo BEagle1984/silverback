@@ -20,15 +20,15 @@ namespace Silverback.Messaging.Configuration.Kafka;
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "CA1044", Justification = "Accessors generated according to wrapped class")]
-public partial record KafkaClientConfiguration : IValidatableEndpointSettings
+public partial record KafkaClientConfiguration<TClientConfig>
 {
     /// <summary>
     ///     SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512. **NOTE**: Despite the name, you may not configure more than one mechanism.
     /// </summary>
     public SaslMechanism? SaslMechanism
     {
-        get => _clientConfig.SaslMechanism;
-        init => _clientConfig.SaslMechanism = value;
+        get => ClientConfig.SaslMechanism;
+        init => ClientConfig.SaslMechanism = value;
     }
 
     /// <summary>
@@ -41,8 +41,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public Acks? Acks
     {
-        get => _clientConfig.Acks;
-        init => _clientConfig.Acks = value;
+        get => ClientConfig.Acks;
+        init => ClientConfig.Acks = value;
     }
 
     /// <summary>
@@ -52,8 +52,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string ClientId
     {
-        get => _clientConfig.ClientId;
-        init => _clientConfig.ClientId = value;
+        get => ClientConfig.ClientId;
+        init => ClientConfig.ClientId = value;
     }
 
     /// <summary>
@@ -63,8 +63,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string BootstrapServers
     {
-        get => _clientConfig.BootstrapServers;
-        init => _clientConfig.BootstrapServers = value;
+        get => ClientConfig.BootstrapServers;
+        init => ClientConfig.BootstrapServers = value;
     }
 
     /// <summary>
@@ -74,8 +74,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? MessageMaxBytes
     {
-        get => _clientConfig.MessageMaxBytes;
-        init => _clientConfig.MessageMaxBytes = value;
+        get => ClientConfig.MessageMaxBytes;
+        init => ClientConfig.MessageMaxBytes = value;
     }
 
     /// <summary>
@@ -85,8 +85,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? MessageCopyMaxBytes
     {
-        get => _clientConfig.MessageCopyMaxBytes;
-        init => _clientConfig.MessageCopyMaxBytes = value;
+        get => ClientConfig.MessageCopyMaxBytes;
+        init => ClientConfig.MessageCopyMaxBytes = value;
     }
 
     /// <summary>
@@ -96,8 +96,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ReceiveMessageMaxBytes
     {
-        get => _clientConfig.ReceiveMessageMaxBytes;
-        init => _clientConfig.ReceiveMessageMaxBytes = value;
+        get => ClientConfig.ReceiveMessageMaxBytes;
+        init => ClientConfig.ReceiveMessageMaxBytes = value;
     }
 
     /// <summary>
@@ -107,8 +107,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? MaxInFlight
     {
-        get => _clientConfig.MaxInFlight;
-        init => _clientConfig.MaxInFlight = value;
+        get => ClientConfig.MaxInFlight;
+        init => ClientConfig.MaxInFlight = value;
     }
 
     /// <summary>
@@ -118,8 +118,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? TopicMetadataRefreshIntervalMs
     {
-        get => _clientConfig.TopicMetadataRefreshIntervalMs;
-        init => _clientConfig.TopicMetadataRefreshIntervalMs = value;
+        get => ClientConfig.TopicMetadataRefreshIntervalMs;
+        init => ClientConfig.TopicMetadataRefreshIntervalMs = value;
     }
 
     /// <summary>
@@ -129,8 +129,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? MetadataMaxAgeMs
     {
-        get => _clientConfig.MetadataMaxAgeMs;
-        init => _clientConfig.MetadataMaxAgeMs = value;
+        get => ClientConfig.MetadataMaxAgeMs;
+        init => ClientConfig.MetadataMaxAgeMs = value;
     }
 
     /// <summary>
@@ -140,8 +140,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? TopicMetadataRefreshFastIntervalMs
     {
-        get => _clientConfig.TopicMetadataRefreshFastIntervalMs;
-        init => _clientConfig.TopicMetadataRefreshFastIntervalMs = value;
+        get => ClientConfig.TopicMetadataRefreshFastIntervalMs;
+        init => ClientConfig.TopicMetadataRefreshFastIntervalMs = value;
     }
 
     /// <summary>
@@ -151,8 +151,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? TopicMetadataRefreshSparse
     {
-        get => _clientConfig.TopicMetadataRefreshSparse;
-        init => _clientConfig.TopicMetadataRefreshSparse = value;
+        get => ClientConfig.TopicMetadataRefreshSparse;
+        init => ClientConfig.TopicMetadataRefreshSparse = value;
     }
 
     /// <summary>
@@ -162,8 +162,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? TopicMetadataPropagationMaxMs
     {
-        get => _clientConfig.TopicMetadataPropagationMaxMs;
-        init => _clientConfig.TopicMetadataPropagationMaxMs = value;
+        get => ClientConfig.TopicMetadataPropagationMaxMs;
+        init => ClientConfig.TopicMetadataPropagationMaxMs = value;
     }
 
     /// <summary>
@@ -173,8 +173,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string TopicBlacklist
     {
-        get => _clientConfig.TopicBlacklist;
-        init => _clientConfig.TopicBlacklist = value;
+        get => ClientConfig.TopicBlacklist;
+        init => ClientConfig.TopicBlacklist = value;
     }
 
     /// <summary>
@@ -184,8 +184,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string Debug
     {
-        get => _clientConfig.Debug;
-        init => _clientConfig.Debug = value;
+        get => ClientConfig.Debug;
+        init => ClientConfig.Debug = value;
     }
 
     /// <summary>
@@ -195,8 +195,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? SocketTimeoutMs
     {
-        get => _clientConfig.SocketTimeoutMs;
-        init => _clientConfig.SocketTimeoutMs = value;
+        get => ClientConfig.SocketTimeoutMs;
+        init => ClientConfig.SocketTimeoutMs = value;
     }
 
     /// <summary>
@@ -206,8 +206,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? SocketSendBufferBytes
     {
-        get => _clientConfig.SocketSendBufferBytes;
-        init => _clientConfig.SocketSendBufferBytes = value;
+        get => ClientConfig.SocketSendBufferBytes;
+        init => ClientConfig.SocketSendBufferBytes = value;
     }
 
     /// <summary>
@@ -217,8 +217,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? SocketReceiveBufferBytes
     {
-        get => _clientConfig.SocketReceiveBufferBytes;
-        init => _clientConfig.SocketReceiveBufferBytes = value;
+        get => ClientConfig.SocketReceiveBufferBytes;
+        init => ClientConfig.SocketReceiveBufferBytes = value;
     }
 
     /// <summary>
@@ -228,8 +228,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? SocketKeepaliveEnable
     {
-        get => _clientConfig.SocketKeepaliveEnable;
-        init => _clientConfig.SocketKeepaliveEnable = value;
+        get => ClientConfig.SocketKeepaliveEnable;
+        init => ClientConfig.SocketKeepaliveEnable = value;
     }
 
     /// <summary>
@@ -239,8 +239,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? SocketNagleDisable
     {
-        get => _clientConfig.SocketNagleDisable;
-        init => _clientConfig.SocketNagleDisable = value;
+        get => ClientConfig.SocketNagleDisable;
+        init => ClientConfig.SocketNagleDisable = value;
     }
 
     /// <summary>
@@ -250,8 +250,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? SocketMaxFails
     {
-        get => _clientConfig.SocketMaxFails;
-        init => _clientConfig.SocketMaxFails = value;
+        get => ClientConfig.SocketMaxFails;
+        init => ClientConfig.SocketMaxFails = value;
     }
 
     /// <summary>
@@ -261,8 +261,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? BrokerAddressTtl
     {
-        get => _clientConfig.BrokerAddressTtl;
-        init => _clientConfig.BrokerAddressTtl = value;
+        get => ClientConfig.BrokerAddressTtl;
+        init => ClientConfig.BrokerAddressTtl = value;
     }
 
     /// <summary>
@@ -272,8 +272,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public BrokerAddressFamily? BrokerAddressFamily
     {
-        get => _clientConfig.BrokerAddressFamily;
-        init => _clientConfig.BrokerAddressFamily = value;
+        get => ClientConfig.BrokerAddressFamily;
+        init => ClientConfig.BrokerAddressFamily = value;
     }
 
     /// <summary>
@@ -283,8 +283,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ConnectionsMaxIdleMs
     {
-        get => _clientConfig.ConnectionsMaxIdleMs;
-        init => _clientConfig.ConnectionsMaxIdleMs = value;
+        get => ClientConfig.ConnectionsMaxIdleMs;
+        init => ClientConfig.ConnectionsMaxIdleMs = value;
     }
 
     /// <summary>
@@ -294,8 +294,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ReconnectBackoffMs
     {
-        get => _clientConfig.ReconnectBackoffMs;
-        init => _clientConfig.ReconnectBackoffMs = value;
+        get => ClientConfig.ReconnectBackoffMs;
+        init => ClientConfig.ReconnectBackoffMs = value;
     }
 
     /// <summary>
@@ -305,8 +305,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ReconnectBackoffMaxMs
     {
-        get => _clientConfig.ReconnectBackoffMaxMs;
-        init => _clientConfig.ReconnectBackoffMaxMs = value;
+        get => ClientConfig.ReconnectBackoffMaxMs;
+        init => ClientConfig.ReconnectBackoffMaxMs = value;
     }
 
     /// <summary>
@@ -316,8 +316,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? StatisticsIntervalMs
     {
-        get => _clientConfig.StatisticsIntervalMs;
-        init => _clientConfig.StatisticsIntervalMs = value;
+        get => ClientConfig.StatisticsIntervalMs;
+        init => ClientConfig.StatisticsIntervalMs = value;
     }
 
     /// <summary>
@@ -327,8 +327,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? LogQueue
     {
-        get => _clientConfig.LogQueue;
-        init => _clientConfig.LogQueue = value;
+        get => ClientConfig.LogQueue;
+        init => ClientConfig.LogQueue = value;
     }
 
     /// <summary>
@@ -338,8 +338,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? LogThreadName
     {
-        get => _clientConfig.LogThreadName;
-        init => _clientConfig.LogThreadName = value;
+        get => ClientConfig.LogThreadName;
+        init => ClientConfig.LogThreadName = value;
     }
 
     /// <summary>
@@ -349,8 +349,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? EnableRandomSeed
     {
-        get => _clientConfig.EnableRandomSeed;
-        init => _clientConfig.EnableRandomSeed = value;
+        get => ClientConfig.EnableRandomSeed;
+        init => ClientConfig.EnableRandomSeed = value;
     }
 
     /// <summary>
@@ -360,8 +360,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? LogConnectionClose
     {
-        get => _clientConfig.LogConnectionClose;
-        init => _clientConfig.LogConnectionClose = value;
+        get => ClientConfig.LogConnectionClose;
+        init => ClientConfig.LogConnectionClose = value;
     }
 
     /// <summary>
@@ -371,8 +371,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? InternalTerminationSignal
     {
-        get => _clientConfig.InternalTerminationSignal;
-        init => _clientConfig.InternalTerminationSignal = value;
+        get => ClientConfig.InternalTerminationSignal;
+        init => ClientConfig.InternalTerminationSignal = value;
     }
 
     /// <summary>
@@ -382,8 +382,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? ApiVersionRequest
     {
-        get => _clientConfig.ApiVersionRequest;
-        init => _clientConfig.ApiVersionRequest = value;
+        get => ClientConfig.ApiVersionRequest;
+        init => ClientConfig.ApiVersionRequest = value;
     }
 
     /// <summary>
@@ -393,8 +393,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ApiVersionRequestTimeoutMs
     {
-        get => _clientConfig.ApiVersionRequestTimeoutMs;
-        init => _clientConfig.ApiVersionRequestTimeoutMs = value;
+        get => ClientConfig.ApiVersionRequestTimeoutMs;
+        init => ClientConfig.ApiVersionRequestTimeoutMs = value;
     }
 
     /// <summary>
@@ -404,8 +404,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? ApiVersionFallbackMs
     {
-        get => _clientConfig.ApiVersionFallbackMs;
-        init => _clientConfig.ApiVersionFallbackMs = value;
+        get => ClientConfig.ApiVersionFallbackMs;
+        init => ClientConfig.ApiVersionFallbackMs = value;
     }
 
     /// <summary>
@@ -415,8 +415,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string BrokerVersionFallback
     {
-        get => _clientConfig.BrokerVersionFallback;
-        init => _clientConfig.BrokerVersionFallback = value;
+        get => ClientConfig.BrokerVersionFallback;
+        init => ClientConfig.BrokerVersionFallback = value;
     }
 
     /// <summary>
@@ -426,8 +426,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public SecurityProtocol? SecurityProtocol
     {
-        get => _clientConfig.SecurityProtocol;
-        init => _clientConfig.SecurityProtocol = value;
+        get => ClientConfig.SecurityProtocol;
+        init => ClientConfig.SecurityProtocol = value;
     }
 
     /// <summary>
@@ -437,8 +437,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCipherSuites
     {
-        get => _clientConfig.SslCipherSuites;
-        init => _clientConfig.SslCipherSuites = value;
+        get => ClientConfig.SslCipherSuites;
+        init => ClientConfig.SslCipherSuites = value;
     }
 
     /// <summary>
@@ -448,8 +448,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCurvesList
     {
-        get => _clientConfig.SslCurvesList;
-        init => _clientConfig.SslCurvesList = value;
+        get => ClientConfig.SslCurvesList;
+        init => ClientConfig.SslCurvesList = value;
     }
 
     /// <summary>
@@ -459,8 +459,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslSigalgsList
     {
-        get => _clientConfig.SslSigalgsList;
-        init => _clientConfig.SslSigalgsList = value;
+        get => ClientConfig.SslSigalgsList;
+        init => ClientConfig.SslSigalgsList = value;
     }
 
     /// <summary>
@@ -470,8 +470,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslKeyLocation
     {
-        get => _clientConfig.SslKeyLocation;
-        init => _clientConfig.SslKeyLocation = value;
+        get => ClientConfig.SslKeyLocation;
+        init => ClientConfig.SslKeyLocation = value;
     }
 
     /// <summary>
@@ -481,8 +481,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslKeyPassword
     {
-        get => _clientConfig.SslKeyPassword;
-        init => _clientConfig.SslKeyPassword = value;
+        get => ClientConfig.SslKeyPassword;
+        init => ClientConfig.SslKeyPassword = value;
     }
 
     /// <summary>
@@ -492,8 +492,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslKeyPem
     {
-        get => _clientConfig.SslKeyPem;
-        init => _clientConfig.SslKeyPem = value;
+        get => ClientConfig.SslKeyPem;
+        init => ClientConfig.SslKeyPem = value;
     }
 
     /// <summary>
@@ -503,8 +503,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCertificateLocation
     {
-        get => _clientConfig.SslCertificateLocation;
-        init => _clientConfig.SslCertificateLocation = value;
+        get => ClientConfig.SslCertificateLocation;
+        init => ClientConfig.SslCertificateLocation = value;
     }
 
     /// <summary>
@@ -514,8 +514,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCertificatePem
     {
-        get => _clientConfig.SslCertificatePem;
-        init => _clientConfig.SslCertificatePem = value;
+        get => ClientConfig.SslCertificatePem;
+        init => ClientConfig.SslCertificatePem = value;
     }
 
     /// <summary>
@@ -525,8 +525,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCaLocation
     {
-        get => _clientConfig.SslCaLocation;
-        init => _clientConfig.SslCaLocation = value;
+        get => ClientConfig.SslCaLocation;
+        init => ClientConfig.SslCaLocation = value;
     }
 
     /// <summary>
@@ -536,8 +536,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCaPem
     {
-        get => _clientConfig.SslCaPem;
-        init => _clientConfig.SslCaPem = value;
+        get => ClientConfig.SslCaPem;
+        init => ClientConfig.SslCaPem = value;
     }
 
     /// <summary>
@@ -547,8 +547,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCaCertificateStores
     {
-        get => _clientConfig.SslCaCertificateStores;
-        init => _clientConfig.SslCaCertificateStores = value;
+        get => ClientConfig.SslCaCertificateStores;
+        init => ClientConfig.SslCaCertificateStores = value;
     }
 
     /// <summary>
@@ -558,8 +558,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslCrlLocation
     {
-        get => _clientConfig.SslCrlLocation;
-        init => _clientConfig.SslCrlLocation = value;
+        get => ClientConfig.SslCrlLocation;
+        init => ClientConfig.SslCrlLocation = value;
     }
 
     /// <summary>
@@ -569,8 +569,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslKeystoreLocation
     {
-        get => _clientConfig.SslKeystoreLocation;
-        init => _clientConfig.SslKeystoreLocation = value;
+        get => ClientConfig.SslKeystoreLocation;
+        init => ClientConfig.SslKeystoreLocation = value;
     }
 
     /// <summary>
@@ -580,8 +580,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslKeystorePassword
     {
-        get => _clientConfig.SslKeystorePassword;
-        init => _clientConfig.SslKeystorePassword = value;
+        get => ClientConfig.SslKeystorePassword;
+        init => ClientConfig.SslKeystorePassword = value;
     }
 
     /// <summary>
@@ -591,8 +591,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslEngineLocation
     {
-        get => _clientConfig.SslEngineLocation;
-        init => _clientConfig.SslEngineLocation = value;
+        get => ClientConfig.SslEngineLocation;
+        init => ClientConfig.SslEngineLocation = value;
     }
 
     /// <summary>
@@ -602,8 +602,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SslEngineId
     {
-        get => _clientConfig.SslEngineId;
-        init => _clientConfig.SslEngineId = value;
+        get => ClientConfig.SslEngineId;
+        init => ClientConfig.SslEngineId = value;
     }
 
     /// <summary>
@@ -613,8 +613,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? EnableSslCertificateVerification
     {
-        get => _clientConfig.EnableSslCertificateVerification;
-        init => _clientConfig.EnableSslCertificateVerification = value;
+        get => ClientConfig.EnableSslCertificateVerification;
+        init => ClientConfig.EnableSslCertificateVerification = value;
     }
 
     /// <summary>
@@ -624,8 +624,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public SslEndpointIdentificationAlgorithm? SslEndpointIdentificationAlgorithm
     {
-        get => _clientConfig.SslEndpointIdentificationAlgorithm;
-        init => _clientConfig.SslEndpointIdentificationAlgorithm = value;
+        get => ClientConfig.SslEndpointIdentificationAlgorithm;
+        init => ClientConfig.SslEndpointIdentificationAlgorithm = value;
     }
 
     /// <summary>
@@ -635,8 +635,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslKerberosServiceName
     {
-        get => _clientConfig.SaslKerberosServiceName;
-        init => _clientConfig.SaslKerberosServiceName = value;
+        get => ClientConfig.SaslKerberosServiceName;
+        init => ClientConfig.SaslKerberosServiceName = value;
     }
 
     /// <summary>
@@ -646,8 +646,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslKerberosPrincipal
     {
-        get => _clientConfig.SaslKerberosPrincipal;
-        init => _clientConfig.SaslKerberosPrincipal = value;
+        get => ClientConfig.SaslKerberosPrincipal;
+        init => ClientConfig.SaslKerberosPrincipal = value;
     }
 
     /// <summary>
@@ -657,8 +657,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslKerberosKinitCmd
     {
-        get => _clientConfig.SaslKerberosKinitCmd;
-        init => _clientConfig.SaslKerberosKinitCmd = value;
+        get => ClientConfig.SaslKerberosKinitCmd;
+        init => ClientConfig.SaslKerberosKinitCmd = value;
     }
 
     /// <summary>
@@ -668,8 +668,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslKerberosKeytab
     {
-        get => _clientConfig.SaslKerberosKeytab;
-        init => _clientConfig.SaslKerberosKeytab = value;
+        get => ClientConfig.SaslKerberosKeytab;
+        init => ClientConfig.SaslKerberosKeytab = value;
     }
 
     /// <summary>
@@ -679,8 +679,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int? SaslKerberosMinTimeBeforeRelogin
     {
-        get => _clientConfig.SaslKerberosMinTimeBeforeRelogin;
-        init => _clientConfig.SaslKerberosMinTimeBeforeRelogin = value;
+        get => ClientConfig.SaslKerberosMinTimeBeforeRelogin;
+        init => ClientConfig.SaslKerberosMinTimeBeforeRelogin = value;
     }
 
     /// <summary>
@@ -690,8 +690,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslUsername
     {
-        get => _clientConfig.SaslUsername;
-        init => _clientConfig.SaslUsername = value;
+        get => ClientConfig.SaslUsername;
+        init => ClientConfig.SaslUsername = value;
     }
 
     /// <summary>
@@ -701,8 +701,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslPassword
     {
-        get => _clientConfig.SaslPassword;
-        init => _clientConfig.SaslPassword = value;
+        get => ClientConfig.SaslPassword;
+        init => ClientConfig.SaslPassword = value;
     }
 
     /// <summary>
@@ -712,8 +712,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string SaslOauthbearerConfig
     {
-        get => _clientConfig.SaslOauthbearerConfig;
-        init => _clientConfig.SaslOauthbearerConfig = value;
+        get => ClientConfig.SaslOauthbearerConfig;
+        init => ClientConfig.SaslOauthbearerConfig = value;
     }
 
     /// <summary>
@@ -723,8 +723,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool? EnableSaslOauthbearerUnsecureJwt
     {
-        get => _clientConfig.EnableSaslOauthbearerUnsecureJwt;
-        init => _clientConfig.EnableSaslOauthbearerUnsecureJwt = value;
+        get => ClientConfig.EnableSaslOauthbearerUnsecureJwt;
+        init => ClientConfig.EnableSaslOauthbearerUnsecureJwt = value;
     }
 
     /// <summary>
@@ -734,8 +734,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string PluginLibraryPaths
     {
-        get => _clientConfig.PluginLibraryPaths;
-        init => _clientConfig.PluginLibraryPaths = value;
+        get => ClientConfig.PluginLibraryPaths;
+        init => ClientConfig.PluginLibraryPaths = value;
     }
 
     /// <summary>
@@ -745,8 +745,8 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public string ClientRack
     {
-        get => _clientConfig.ClientRack;
-        init => _clientConfig.ClientRack = value;
+        get => ClientConfig.ClientRack;
+        init => ClientConfig.ClientRack = value;
     }
 
     /// <summary>
@@ -758,7 +758,7 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
     /// </summary>
     public int CancellationDelayMaxMs
     {
-        init => _clientConfig.CancellationDelayMaxMs = value;
+        init => ClientConfig.CancellationDelayMaxMs = value;
     }
 }
 
@@ -771,7 +771,7 @@ public partial record KafkaClientConfiguration : IValidatableEndpointSettings
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "CA1044", Justification = "Accessors generated according to wrapped class")]
-public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguration
+public partial record KafkaClientConsumerConfiguration
 {
     /// <summary>
     ///     A comma separated list of fields that may be optionally set
@@ -786,7 +786,7 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public string ConsumeResultFields
     {
-        init => _clientConfig.ConsumeResultFields = value;
+        init => ClientConfig.ConsumeResultFields = value;
     }
 
     /// <summary>
@@ -796,8 +796,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public AutoOffsetReset? AutoOffsetReset
     {
-        get => _clientConfig.AutoOffsetReset;
-        init => _clientConfig.AutoOffsetReset = value;
+        get => ClientConfig.AutoOffsetReset;
+        init => ClientConfig.AutoOffsetReset = value;
     }
 
     /// <summary>
@@ -807,8 +807,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public string GroupId
     {
-        get => _clientConfig.GroupId;
-        init => _clientConfig.GroupId = value;
+        get => ClientConfig.GroupId;
+        init => ClientConfig.GroupId = value;
     }
 
     /// <summary>
@@ -818,8 +818,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public string GroupInstanceId
     {
-        get => _clientConfig.GroupInstanceId;
-        init => _clientConfig.GroupInstanceId = value;
+        get => ClientConfig.GroupInstanceId;
+        init => ClientConfig.GroupInstanceId = value;
     }
 
     /// <summary>
@@ -829,8 +829,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public PartitionAssignmentStrategy? PartitionAssignmentStrategy
     {
-        get => _clientConfig.PartitionAssignmentStrategy;
-        init => _clientConfig.PartitionAssignmentStrategy = value;
+        get => ClientConfig.PartitionAssignmentStrategy;
+        init => ClientConfig.PartitionAssignmentStrategy = value;
     }
 
     /// <summary>
@@ -840,8 +840,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? SessionTimeoutMs
     {
-        get => _clientConfig.SessionTimeoutMs;
-        init => _clientConfig.SessionTimeoutMs = value;
+        get => ClientConfig.SessionTimeoutMs;
+        init => ClientConfig.SessionTimeoutMs = value;
     }
 
     /// <summary>
@@ -851,8 +851,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? HeartbeatIntervalMs
     {
-        get => _clientConfig.HeartbeatIntervalMs;
-        init => _clientConfig.HeartbeatIntervalMs = value;
+        get => ClientConfig.HeartbeatIntervalMs;
+        init => ClientConfig.HeartbeatIntervalMs = value;
     }
 
     /// <summary>
@@ -862,8 +862,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public string GroupProtocolType
     {
-        get => _clientConfig.GroupProtocolType;
-        init => _clientConfig.GroupProtocolType = value;
+        get => ClientConfig.GroupProtocolType;
+        init => ClientConfig.GroupProtocolType = value;
     }
 
     /// <summary>
@@ -873,8 +873,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? CoordinatorQueryIntervalMs
     {
-        get => _clientConfig.CoordinatorQueryIntervalMs;
-        init => _clientConfig.CoordinatorQueryIntervalMs = value;
+        get => ClientConfig.CoordinatorQueryIntervalMs;
+        init => ClientConfig.CoordinatorQueryIntervalMs = value;
     }
 
     /// <summary>
@@ -884,8 +884,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? MaxPollIntervalMs
     {
-        get => _clientConfig.MaxPollIntervalMs;
-        init => _clientConfig.MaxPollIntervalMs = value;
+        get => ClientConfig.MaxPollIntervalMs;
+        init => ClientConfig.MaxPollIntervalMs = value;
     }
 
     /// <summary>
@@ -895,8 +895,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnableAutoCommit
     {
-        get => _clientConfig.EnableAutoCommit;
-        init => _clientConfig.EnableAutoCommit = value;
+        get => ClientConfig.EnableAutoCommit;
+        init => ClientConfig.EnableAutoCommit = value;
     }
 
     /// <summary>
@@ -906,8 +906,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? AutoCommitIntervalMs
     {
-        get => _clientConfig.AutoCommitIntervalMs;
-        init => _clientConfig.AutoCommitIntervalMs = value;
+        get => ClientConfig.AutoCommitIntervalMs;
+        init => ClientConfig.AutoCommitIntervalMs = value;
     }
 
     /// <summary>
@@ -917,8 +917,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? QueuedMinMessages
     {
-        get => _clientConfig.QueuedMinMessages;
-        init => _clientConfig.QueuedMinMessages = value;
+        get => ClientConfig.QueuedMinMessages;
+        init => ClientConfig.QueuedMinMessages = value;
     }
 
     /// <summary>
@@ -928,8 +928,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? QueuedMaxMessagesKbytes
     {
-        get => _clientConfig.QueuedMaxMessagesKbytes;
-        init => _clientConfig.QueuedMaxMessagesKbytes = value;
+        get => ClientConfig.QueuedMaxMessagesKbytes;
+        init => ClientConfig.QueuedMaxMessagesKbytes = value;
     }
 
     /// <summary>
@@ -939,8 +939,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? FetchWaitMaxMs
     {
-        get => _clientConfig.FetchWaitMaxMs;
-        init => _clientConfig.FetchWaitMaxMs = value;
+        get => ClientConfig.FetchWaitMaxMs;
+        init => ClientConfig.FetchWaitMaxMs = value;
     }
 
     /// <summary>
@@ -950,8 +950,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? MaxPartitionFetchBytes
     {
-        get => _clientConfig.MaxPartitionFetchBytes;
-        init => _clientConfig.MaxPartitionFetchBytes = value;
+        get => ClientConfig.MaxPartitionFetchBytes;
+        init => ClientConfig.MaxPartitionFetchBytes = value;
     }
 
     /// <summary>
@@ -961,8 +961,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? FetchMaxBytes
     {
-        get => _clientConfig.FetchMaxBytes;
-        init => _clientConfig.FetchMaxBytes = value;
+        get => ClientConfig.FetchMaxBytes;
+        init => ClientConfig.FetchMaxBytes = value;
     }
 
     /// <summary>
@@ -972,8 +972,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? FetchMinBytes
     {
-        get => _clientConfig.FetchMinBytes;
-        init => _clientConfig.FetchMinBytes = value;
+        get => ClientConfig.FetchMinBytes;
+        init => ClientConfig.FetchMinBytes = value;
     }
 
     /// <summary>
@@ -983,8 +983,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? FetchErrorBackoffMs
     {
-        get => _clientConfig.FetchErrorBackoffMs;
-        init => _clientConfig.FetchErrorBackoffMs = value;
+        get => ClientConfig.FetchErrorBackoffMs;
+        init => ClientConfig.FetchErrorBackoffMs = value;
     }
 
     /// <summary>
@@ -994,8 +994,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public IsolationLevel? IsolationLevel
     {
-        get => _clientConfig.IsolationLevel;
-        init => _clientConfig.IsolationLevel = value;
+        get => ClientConfig.IsolationLevel;
+        init => ClientConfig.IsolationLevel = value;
     }
 
     /// <summary>
@@ -1005,8 +1005,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnablePartitionEof
     {
-        get => _clientConfig.EnablePartitionEof;
-        init => _clientConfig.EnablePartitionEof = value;
+        get => ClientConfig.EnablePartitionEof;
+        init => ClientConfig.EnablePartitionEof = value;
     }
 
     /// <summary>
@@ -1016,8 +1016,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? CheckCrcs
     {
-        get => _clientConfig.CheckCrcs;
-        init => _clientConfig.CheckCrcs = value;
+        get => ClientConfig.CheckCrcs;
+        init => ClientConfig.CheckCrcs = value;
     }
 
     /// <summary>
@@ -1027,8 +1027,8 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? AllowAutoCreateTopics
     {
-        get => _clientConfig.AllowAutoCreateTopics;
-        init => _clientConfig.AllowAutoCreateTopics = value;
+        get => ClientConfig.AllowAutoCreateTopics;
+        init => ClientConfig.AllowAutoCreateTopics = value;
     }
 }
 
@@ -1041,7 +1041,7 @@ public partial record KafkaClientConsumerConfiguration : KafkaClientConfiguratio
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "CA1044", Justification = "Accessors generated according to wrapped class")]
-public partial record KafkaClientProducerConfiguration : KafkaClientConfiguration
+public partial record KafkaClientProducerConfiguration
 {
     /// <summary>
     ///     Specifies whether or not the producer should start a background poll
@@ -1053,8 +1053,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnableBackgroundPoll
     {
-        get => _clientConfig.EnableBackgroundPoll;
-        init => _clientConfig.EnableBackgroundPoll = value;
+        get => ClientConfig.EnableBackgroundPoll;
+        init => ClientConfig.EnableBackgroundPoll = value;
     }
 
     /// <summary>
@@ -1066,8 +1066,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnableDeliveryReports
     {
-        get => _clientConfig.EnableDeliveryReports;
-        init => _clientConfig.EnableDeliveryReports = value;
+        get => ClientConfig.EnableDeliveryReports;
+        init => ClientConfig.EnableDeliveryReports = value;
     }
 
     /// <summary>
@@ -1084,11 +1084,11 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </remarks>
     public string DeliveryReportFields
     {
-        get => _clientConfig.DeliveryReportFields;
+        get => ClientConfig.DeliveryReportFields;
         init
         {
             if (value != null)
-                _clientConfig.DeliveryReportFields = value;
+                ClientConfig.DeliveryReportFields = value;
         }
     }
 
@@ -1099,8 +1099,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? RequestTimeoutMs
     {
-        get => _clientConfig.RequestTimeoutMs;
-        init => _clientConfig.RequestTimeoutMs = value;
+        get => ClientConfig.RequestTimeoutMs;
+        init => ClientConfig.RequestTimeoutMs = value;
     }
 
     /// <summary>
@@ -1110,8 +1110,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? MessageTimeoutMs
     {
-        get => _clientConfig.MessageTimeoutMs;
-        init => _clientConfig.MessageTimeoutMs = value;
+        get => ClientConfig.MessageTimeoutMs;
+        init => ClientConfig.MessageTimeoutMs = value;
     }
 
     /// <summary>
@@ -1121,8 +1121,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public Partitioner? Partitioner
     {
-        get => _clientConfig.Partitioner;
-        init => _clientConfig.Partitioner = value;
+        get => ClientConfig.Partitioner;
+        init => ClientConfig.Partitioner = value;
     }
 
     /// <summary>
@@ -1132,8 +1132,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? CompressionLevel
     {
-        get => _clientConfig.CompressionLevel;
-        init => _clientConfig.CompressionLevel = value;
+        get => ClientConfig.CompressionLevel;
+        init => ClientConfig.CompressionLevel = value;
     }
 
     /// <summary>
@@ -1143,8 +1143,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public string TransactionalId
     {
-        get => _clientConfig.TransactionalId;
-        init => _clientConfig.TransactionalId = value;
+        get => ClientConfig.TransactionalId;
+        init => ClientConfig.TransactionalId = value;
     }
 
     /// <summary>
@@ -1154,8 +1154,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? TransactionTimeoutMs
     {
-        get => _clientConfig.TransactionTimeoutMs;
-        init => _clientConfig.TransactionTimeoutMs = value;
+        get => ClientConfig.TransactionTimeoutMs;
+        init => ClientConfig.TransactionTimeoutMs = value;
     }
 
     /// <summary>
@@ -1165,8 +1165,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnableIdempotence
     {
-        get => _clientConfig.EnableIdempotence;
-        init => _clientConfig.EnableIdempotence = value;
+        get => ClientConfig.EnableIdempotence;
+        init => ClientConfig.EnableIdempotence = value;
     }
 
     /// <summary>
@@ -1176,8 +1176,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public bool? EnableGaplessGuarantee
     {
-        get => _clientConfig.EnableGaplessGuarantee;
-        init => _clientConfig.EnableGaplessGuarantee = value;
+        get => ClientConfig.EnableGaplessGuarantee;
+        init => ClientConfig.EnableGaplessGuarantee = value;
     }
 
     /// <summary>
@@ -1187,8 +1187,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? QueueBufferingMaxMessages
     {
-        get => _clientConfig.QueueBufferingMaxMessages;
-        init => _clientConfig.QueueBufferingMaxMessages = value;
+        get => ClientConfig.QueueBufferingMaxMessages;
+        init => ClientConfig.QueueBufferingMaxMessages = value;
     }
 
     /// <summary>
@@ -1198,8 +1198,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? QueueBufferingMaxKbytes
     {
-        get => _clientConfig.QueueBufferingMaxKbytes;
-        init => _clientConfig.QueueBufferingMaxKbytes = value;
+        get => ClientConfig.QueueBufferingMaxKbytes;
+        init => ClientConfig.QueueBufferingMaxKbytes = value;
     }
 
     /// <summary>
@@ -1209,8 +1209,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public double? LingerMs
     {
-        get => _clientConfig.LingerMs;
-        init => _clientConfig.LingerMs = value;
+        get => ClientConfig.LingerMs;
+        init => ClientConfig.LingerMs = value;
     }
 
     /// <summary>
@@ -1220,8 +1220,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? MessageSendMaxRetries
     {
-        get => _clientConfig.MessageSendMaxRetries;
-        init => _clientConfig.MessageSendMaxRetries = value;
+        get => ClientConfig.MessageSendMaxRetries;
+        init => ClientConfig.MessageSendMaxRetries = value;
     }
 
     /// <summary>
@@ -1231,8 +1231,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? RetryBackoffMs
     {
-        get => _clientConfig.RetryBackoffMs;
-        init => _clientConfig.RetryBackoffMs = value;
+        get => ClientConfig.RetryBackoffMs;
+        init => ClientConfig.RetryBackoffMs = value;
     }
 
     /// <summary>
@@ -1242,8 +1242,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? QueueBufferingBackpressureThreshold
     {
-        get => _clientConfig.QueueBufferingBackpressureThreshold;
-        init => _clientConfig.QueueBufferingBackpressureThreshold = value;
+        get => ClientConfig.QueueBufferingBackpressureThreshold;
+        init => ClientConfig.QueueBufferingBackpressureThreshold = value;
     }
 
     /// <summary>
@@ -1253,8 +1253,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public CompressionType? CompressionType
     {
-        get => _clientConfig.CompressionType;
-        init => _clientConfig.CompressionType = value;
+        get => ClientConfig.CompressionType;
+        init => ClientConfig.CompressionType = value;
     }
 
     /// <summary>
@@ -1264,8 +1264,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? BatchNumMessages
     {
-        get => _clientConfig.BatchNumMessages;
-        init => _clientConfig.BatchNumMessages = value;
+        get => ClientConfig.BatchNumMessages;
+        init => ClientConfig.BatchNumMessages = value;
     }
 
     /// <summary>
@@ -1275,8 +1275,8 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? BatchSize
     {
-        get => _clientConfig.BatchSize;
-        init => _clientConfig.BatchSize = value;
+        get => ClientConfig.BatchSize;
+        init => ClientConfig.BatchSize = value;
     }
 
     /// <summary>
@@ -1286,47 +1286,22 @@ public partial record KafkaClientProducerConfiguration : KafkaClientConfiguratio
     /// </summary>
     public int? StickyPartitioningLingerMs
     {
-        get => _clientConfig.StickyPartitioningLingerMs;
-        init => _clientConfig.StickyPartitioningLingerMs = value;
+        get => ClientConfig.StickyPartitioningLingerMs;
+        init => ClientConfig.StickyPartitioningLingerMs = value;
     }
 }
 
-/// <summary>
-///     The base class for all Kafka client configuration builders.
-/// </summary>
-/// <typeparam name="TBuilder">
-///     The actual builder type.
-/// </typeparam>
+/// <content>
+///     The autogenerated part of the <see cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}" /> class.
+/// </content>
 [SuppressMessage("", "SA1649", Justification = "Autogenerated all at once")]
 [SuppressMessage("", "SA1402", Justification = "Autogenerated all at once")]
 [SuppressMessage("", "CA1200", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1625:Element documentation should not be copied and pasted", Justification = "Summary copied from wrapped class")]
-public abstract class KafkaClientConfigurationBuilder<TBuilder>
-    where TBuilder : KafkaClientConfigurationBuilder<TBuilder>
+public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
 {
-    private readonly ClientConfig _clientConfig;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder{TBuilder}" /> class.
-    /// </summary>
-    /// <param name="clientConfig">
-    ///     The <see cref="ClientConfig" /> to be used to initialize the builder.
-    /// </param>
-    protected KafkaClientConfigurationBuilder(ClientConfig clientConfig)
-    {
-        _clientConfig = clientConfig;
-    }
-
-    /// <summary>
-    ///     Gets this instance.
-    /// </summary>
-    /// <remarks>
-    ///     This is necessary to work around casting in the base classes.
-    /// </remarks>
-    protected abstract TBuilder This { get; }
-
     /// <summary>
     ///     SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512. **NOTE**: Despite the name, you may not configure more than one mechanism.
     /// </summary>
@@ -1338,7 +1313,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslMechanism(SaslMechanism? saslMechanism)
     {
-        _clientConfig.SaslMechanism = saslMechanism;
+        ClientConfig.SaslMechanism = saslMechanism;
         return This;
     }
 
@@ -1363,7 +1338,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithAcks(Acks? acks)
     {
-        _clientConfig.Acks = acks;
+        ClientConfig.Acks = acks;
         return This;
     }
 
@@ -1378,7 +1353,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithClientId(string clientId)
     {
-        _clientConfig.ClientId = clientId;
+        ClientConfig.ClientId = clientId;
         return This;
     }
 
@@ -1393,7 +1368,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithBootstrapServers(string bootstrapServers)
     {
-        _clientConfig.BootstrapServers = bootstrapServers;
+        ClientConfig.BootstrapServers = bootstrapServers;
         return This;
     }
 
@@ -1408,7 +1383,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithMessageMaxBytes(int? messageMaxBytes)
     {
-        _clientConfig.MessageMaxBytes = messageMaxBytes;
+        ClientConfig.MessageMaxBytes = messageMaxBytes;
         return This;
     }
 
@@ -1423,7 +1398,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithMessageCopyMaxBytes(int? messageCopyMaxBytes)
     {
-        _clientConfig.MessageCopyMaxBytes = messageCopyMaxBytes;
+        ClientConfig.MessageCopyMaxBytes = messageCopyMaxBytes;
         return This;
     }
 
@@ -1438,7 +1413,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithReceiveMessageMaxBytes(int? receiveMessageMaxBytes)
     {
-        _clientConfig.ReceiveMessageMaxBytes = receiveMessageMaxBytes;
+        ClientConfig.ReceiveMessageMaxBytes = receiveMessageMaxBytes;
         return This;
     }
 
@@ -1453,7 +1428,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithMaxInFlight(int? maxInFlight)
     {
-        _clientConfig.MaxInFlight = maxInFlight;
+        ClientConfig.MaxInFlight = maxInFlight;
         return This;
     }
 
@@ -1468,7 +1443,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithTopicMetadataRefreshIntervalMs(int? topicMetadataRefreshIntervalMs)
     {
-        _clientConfig.TopicMetadataRefreshIntervalMs = topicMetadataRefreshIntervalMs;
+        ClientConfig.TopicMetadataRefreshIntervalMs = topicMetadataRefreshIntervalMs;
         return This;
     }
 
@@ -1483,7 +1458,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithMetadataMaxAgeMs(int? metadataMaxAgeMs)
     {
-        _clientConfig.MetadataMaxAgeMs = metadataMaxAgeMs;
+        ClientConfig.MetadataMaxAgeMs = metadataMaxAgeMs;
         return This;
     }
 
@@ -1498,7 +1473,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithTopicMetadataRefreshFastIntervalMs(int? topicMetadataRefreshFastIntervalMs)
     {
-        _clientConfig.TopicMetadataRefreshFastIntervalMs = topicMetadataRefreshFastIntervalMs;
+        ClientConfig.TopicMetadataRefreshFastIntervalMs = topicMetadataRefreshFastIntervalMs;
         return This;
     }
 
@@ -1513,7 +1488,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithTopicMetadataRefreshSparse(bool? topicMetadataRefreshSparse)
     {
-        _clientConfig.TopicMetadataRefreshSparse = topicMetadataRefreshSparse;
+        ClientConfig.TopicMetadataRefreshSparse = topicMetadataRefreshSparse;
         return This;
     }
 
@@ -1528,7 +1503,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithTopicMetadataPropagationMaxMs(int? topicMetadataPropagationMaxMs)
     {
-        _clientConfig.TopicMetadataPropagationMaxMs = topicMetadataPropagationMaxMs;
+        ClientConfig.TopicMetadataPropagationMaxMs = topicMetadataPropagationMaxMs;
         return This;
     }
 
@@ -1543,7 +1518,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithTopicBlacklist(string topicBlacklist)
     {
-        _clientConfig.TopicBlacklist = topicBlacklist;
+        ClientConfig.TopicBlacklist = topicBlacklist;
         return This;
     }
 
@@ -1558,7 +1533,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithDebug(string debug)
     {
-        _clientConfig.Debug = debug;
+        ClientConfig.Debug = debug;
         return This;
     }
 
@@ -1573,7 +1548,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketTimeoutMs(int? socketTimeoutMs)
     {
-        _clientConfig.SocketTimeoutMs = socketTimeoutMs;
+        ClientConfig.SocketTimeoutMs = socketTimeoutMs;
         return This;
     }
 
@@ -1588,7 +1563,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketSendBufferBytes(int? socketSendBufferBytes)
     {
-        _clientConfig.SocketSendBufferBytes = socketSendBufferBytes;
+        ClientConfig.SocketSendBufferBytes = socketSendBufferBytes;
         return This;
     }
 
@@ -1603,7 +1578,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketReceiveBufferBytes(int? socketReceiveBufferBytes)
     {
-        _clientConfig.SocketReceiveBufferBytes = socketReceiveBufferBytes;
+        ClientConfig.SocketReceiveBufferBytes = socketReceiveBufferBytes;
         return This;
     }
 
@@ -1618,7 +1593,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketKeepaliveEnable(bool? socketKeepaliveEnable)
     {
-        _clientConfig.SocketKeepaliveEnable = socketKeepaliveEnable;
+        ClientConfig.SocketKeepaliveEnable = socketKeepaliveEnable;
         return This;
     }
 
@@ -1633,7 +1608,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketNagleDisable(bool? socketNagleDisable)
     {
-        _clientConfig.SocketNagleDisable = socketNagleDisable;
+        ClientConfig.SocketNagleDisable = socketNagleDisable;
         return This;
     }
 
@@ -1648,7 +1623,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSocketMaxFails(int? socketMaxFails)
     {
-        _clientConfig.SocketMaxFails = socketMaxFails;
+        ClientConfig.SocketMaxFails = socketMaxFails;
         return This;
     }
 
@@ -1663,7 +1638,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithBrokerAddressTtl(int? brokerAddressTtl)
     {
-        _clientConfig.BrokerAddressTtl = brokerAddressTtl;
+        ClientConfig.BrokerAddressTtl = brokerAddressTtl;
         return This;
     }
 
@@ -1678,7 +1653,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithBrokerAddressFamily(BrokerAddressFamily? brokerAddressFamily)
     {
-        _clientConfig.BrokerAddressFamily = brokerAddressFamily;
+        ClientConfig.BrokerAddressFamily = brokerAddressFamily;
         return This;
     }
 
@@ -1693,7 +1668,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithConnectionsMaxIdleMs(int? connectionsMaxIdleMs)
     {
-        _clientConfig.ConnectionsMaxIdleMs = connectionsMaxIdleMs;
+        ClientConfig.ConnectionsMaxIdleMs = connectionsMaxIdleMs;
         return This;
     }
 
@@ -1708,7 +1683,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithReconnectBackoffMs(int? reconnectBackoffMs)
     {
-        _clientConfig.ReconnectBackoffMs = reconnectBackoffMs;
+        ClientConfig.ReconnectBackoffMs = reconnectBackoffMs;
         return This;
     }
 
@@ -1723,7 +1698,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithReconnectBackoffMaxMs(int? reconnectBackoffMaxMs)
     {
-        _clientConfig.ReconnectBackoffMaxMs = reconnectBackoffMaxMs;
+        ClientConfig.ReconnectBackoffMaxMs = reconnectBackoffMaxMs;
         return This;
     }
 
@@ -1738,7 +1713,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithStatisticsIntervalMs(int? statisticsIntervalMs)
     {
-        _clientConfig.StatisticsIntervalMs = statisticsIntervalMs;
+        ClientConfig.StatisticsIntervalMs = statisticsIntervalMs;
         return This;
     }
 
@@ -1753,7 +1728,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithLogQueue(bool? logQueue)
     {
-        _clientConfig.LogQueue = logQueue;
+        ClientConfig.LogQueue = logQueue;
         return This;
     }
 
@@ -1768,7 +1743,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithLogThreadName(bool? logThreadName)
     {
-        _clientConfig.LogThreadName = logThreadName;
+        ClientConfig.LogThreadName = logThreadName;
         return This;
     }
 
@@ -1783,7 +1758,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithEnableRandomSeed(bool? enableRandomSeed)
     {
-        _clientConfig.EnableRandomSeed = enableRandomSeed;
+        ClientConfig.EnableRandomSeed = enableRandomSeed;
         return This;
     }
 
@@ -1798,7 +1773,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithLogConnectionClose(bool? logConnectionClose)
     {
-        _clientConfig.LogConnectionClose = logConnectionClose;
+        ClientConfig.LogConnectionClose = logConnectionClose;
         return This;
     }
 
@@ -1813,7 +1788,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithInternalTerminationSignal(int? internalTerminationSignal)
     {
-        _clientConfig.InternalTerminationSignal = internalTerminationSignal;
+        ClientConfig.InternalTerminationSignal = internalTerminationSignal;
         return This;
     }
 
@@ -1828,7 +1803,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithApiVersionRequest(bool? apiVersionRequest)
     {
-        _clientConfig.ApiVersionRequest = apiVersionRequest;
+        ClientConfig.ApiVersionRequest = apiVersionRequest;
         return This;
     }
 
@@ -1843,7 +1818,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithApiVersionRequestTimeoutMs(int? apiVersionRequestTimeoutMs)
     {
-        _clientConfig.ApiVersionRequestTimeoutMs = apiVersionRequestTimeoutMs;
+        ClientConfig.ApiVersionRequestTimeoutMs = apiVersionRequestTimeoutMs;
         return This;
     }
 
@@ -1858,7 +1833,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithApiVersionFallbackMs(int? apiVersionFallbackMs)
     {
-        _clientConfig.ApiVersionFallbackMs = apiVersionFallbackMs;
+        ClientConfig.ApiVersionFallbackMs = apiVersionFallbackMs;
         return This;
     }
 
@@ -1873,7 +1848,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithBrokerVersionFallback(string brokerVersionFallback)
     {
-        _clientConfig.BrokerVersionFallback = brokerVersionFallback;
+        ClientConfig.BrokerVersionFallback = brokerVersionFallback;
         return This;
     }
 
@@ -1888,7 +1863,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSecurityProtocol(SecurityProtocol? securityProtocol)
     {
-        _clientConfig.SecurityProtocol = securityProtocol;
+        ClientConfig.SecurityProtocol = securityProtocol;
         return This;
     }
 
@@ -1903,7 +1878,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCipherSuites(string sslCipherSuites)
     {
-        _clientConfig.SslCipherSuites = sslCipherSuites;
+        ClientConfig.SslCipherSuites = sslCipherSuites;
         return This;
     }
 
@@ -1918,7 +1893,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCurvesList(string sslCurvesList)
     {
-        _clientConfig.SslCurvesList = sslCurvesList;
+        ClientConfig.SslCurvesList = sslCurvesList;
         return This;
     }
 
@@ -1933,7 +1908,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslSigalgsList(string sslSigalgsList)
     {
-        _clientConfig.SslSigalgsList = sslSigalgsList;
+        ClientConfig.SslSigalgsList = sslSigalgsList;
         return This;
     }
 
@@ -1948,7 +1923,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslKeyLocation(string sslKeyLocation)
     {
-        _clientConfig.SslKeyLocation = sslKeyLocation;
+        ClientConfig.SslKeyLocation = sslKeyLocation;
         return This;
     }
 
@@ -1963,7 +1938,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslKeyPassword(string sslKeyPassword)
     {
-        _clientConfig.SslKeyPassword = sslKeyPassword;
+        ClientConfig.SslKeyPassword = sslKeyPassword;
         return This;
     }
 
@@ -1978,7 +1953,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslKeyPem(string sslKeyPem)
     {
-        _clientConfig.SslKeyPem = sslKeyPem;
+        ClientConfig.SslKeyPem = sslKeyPem;
         return This;
     }
 
@@ -1993,7 +1968,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCertificateLocation(string sslCertificateLocation)
     {
-        _clientConfig.SslCertificateLocation = sslCertificateLocation;
+        ClientConfig.SslCertificateLocation = sslCertificateLocation;
         return This;
     }
 
@@ -2008,7 +1983,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCertificatePem(string sslCertificatePem)
     {
-        _clientConfig.SslCertificatePem = sslCertificatePem;
+        ClientConfig.SslCertificatePem = sslCertificatePem;
         return This;
     }
 
@@ -2023,7 +1998,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCaLocation(string sslCaLocation)
     {
-        _clientConfig.SslCaLocation = sslCaLocation;
+        ClientConfig.SslCaLocation = sslCaLocation;
         return This;
     }
 
@@ -2038,7 +2013,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCaPem(string sslCaPem)
     {
-        _clientConfig.SslCaPem = sslCaPem;
+        ClientConfig.SslCaPem = sslCaPem;
         return This;
     }
 
@@ -2053,7 +2028,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCaCertificateStores(string sslCaCertificateStores)
     {
-        _clientConfig.SslCaCertificateStores = sslCaCertificateStores;
+        ClientConfig.SslCaCertificateStores = sslCaCertificateStores;
         return This;
     }
 
@@ -2068,7 +2043,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslCrlLocation(string sslCrlLocation)
     {
-        _clientConfig.SslCrlLocation = sslCrlLocation;
+        ClientConfig.SslCrlLocation = sslCrlLocation;
         return This;
     }
 
@@ -2083,7 +2058,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslKeystoreLocation(string sslKeystoreLocation)
     {
-        _clientConfig.SslKeystoreLocation = sslKeystoreLocation;
+        ClientConfig.SslKeystoreLocation = sslKeystoreLocation;
         return This;
     }
 
@@ -2098,7 +2073,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslKeystorePassword(string sslKeystorePassword)
     {
-        _clientConfig.SslKeystorePassword = sslKeystorePassword;
+        ClientConfig.SslKeystorePassword = sslKeystorePassword;
         return This;
     }
 
@@ -2113,7 +2088,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslEngineLocation(string sslEngineLocation)
     {
-        _clientConfig.SslEngineLocation = sslEngineLocation;
+        ClientConfig.SslEngineLocation = sslEngineLocation;
         return This;
     }
 
@@ -2128,7 +2103,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslEngineId(string sslEngineId)
     {
-        _clientConfig.SslEngineId = sslEngineId;
+        ClientConfig.SslEngineId = sslEngineId;
         return This;
     }
 
@@ -2143,7 +2118,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithEnableSslCertificateVerification(bool? enableSslCertificateVerification)
     {
-        _clientConfig.EnableSslCertificateVerification = enableSslCertificateVerification;
+        ClientConfig.EnableSslCertificateVerification = enableSslCertificateVerification;
         return This;
     }
 
@@ -2158,7 +2133,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSslEndpointIdentificationAlgorithm(SslEndpointIdentificationAlgorithm? sslEndpointIdentificationAlgorithm)
     {
-        _clientConfig.SslEndpointIdentificationAlgorithm = sslEndpointIdentificationAlgorithm;
+        ClientConfig.SslEndpointIdentificationAlgorithm = sslEndpointIdentificationAlgorithm;
         return This;
     }
 
@@ -2173,7 +2148,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslKerberosServiceName(string saslKerberosServiceName)
     {
-        _clientConfig.SaslKerberosServiceName = saslKerberosServiceName;
+        ClientConfig.SaslKerberosServiceName = saslKerberosServiceName;
         return This;
     }
 
@@ -2188,7 +2163,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslKerberosPrincipal(string saslKerberosPrincipal)
     {
-        _clientConfig.SaslKerberosPrincipal = saslKerberosPrincipal;
+        ClientConfig.SaslKerberosPrincipal = saslKerberosPrincipal;
         return This;
     }
 
@@ -2203,7 +2178,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslKerberosKinitCmd(string saslKerberosKinitCmd)
     {
-        _clientConfig.SaslKerberosKinitCmd = saslKerberosKinitCmd;
+        ClientConfig.SaslKerberosKinitCmd = saslKerberosKinitCmd;
         return This;
     }
 
@@ -2218,7 +2193,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslKerberosKeytab(string saslKerberosKeytab)
     {
-        _clientConfig.SaslKerberosKeytab = saslKerberosKeytab;
+        ClientConfig.SaslKerberosKeytab = saslKerberosKeytab;
         return This;
     }
 
@@ -2233,7 +2208,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslKerberosMinTimeBeforeRelogin(int? saslKerberosMinTimeBeforeRelogin)
     {
-        _clientConfig.SaslKerberosMinTimeBeforeRelogin = saslKerberosMinTimeBeforeRelogin;
+        ClientConfig.SaslKerberosMinTimeBeforeRelogin = saslKerberosMinTimeBeforeRelogin;
         return This;
     }
 
@@ -2248,7 +2223,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslUsername(string saslUsername)
     {
-        _clientConfig.SaslUsername = saslUsername;
+        ClientConfig.SaslUsername = saslUsername;
         return This;
     }
 
@@ -2263,7 +2238,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslPassword(string saslPassword)
     {
-        _clientConfig.SaslPassword = saslPassword;
+        ClientConfig.SaslPassword = saslPassword;
         return This;
     }
 
@@ -2278,7 +2253,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithSaslOauthbearerConfig(string saslOauthbearerConfig)
     {
-        _clientConfig.SaslOauthbearerConfig = saslOauthbearerConfig;
+        ClientConfig.SaslOauthbearerConfig = saslOauthbearerConfig;
         return This;
     }
 
@@ -2293,7 +2268,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithEnableSaslOauthbearerUnsecureJwt(bool? enableSaslOauthbearerUnsecureJwt)
     {
-        _clientConfig.EnableSaslOauthbearerUnsecureJwt = enableSaslOauthbearerUnsecureJwt;
+        ClientConfig.EnableSaslOauthbearerUnsecureJwt = enableSaslOauthbearerUnsecureJwt;
         return This;
     }
 
@@ -2308,7 +2283,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithPluginLibraryPaths(string pluginLibraryPaths)
     {
-        _clientConfig.PluginLibraryPaths = pluginLibraryPaths;
+        ClientConfig.PluginLibraryPaths = pluginLibraryPaths;
         return This;
     }
 
@@ -2323,7 +2298,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithClientRack(string clientRack)
     {
-        _clientConfig.ClientRack = clientRack;
+        ClientConfig.ClientRack = clientRack;
         return This;
     }
 
@@ -2342,7 +2317,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
     /// </returns>
     public TBuilder WithCancellationDelayMaxMs(int cancellationDelayMaxMs)
     {
-        _clientConfig.CancellationDelayMaxMs = cancellationDelayMaxMs;
+        ClientConfig.CancellationDelayMaxMs = cancellationDelayMaxMs;
         return This;
     }
 }
@@ -2356,7 +2331,7 @@ public abstract class KafkaClientConfigurationBuilder<TBuilder>
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1625:Element documentation should not be copied and pasted", Justification = "Summary copied from wrapped class")]
-public partial class KafkaClientConfigurationBuilder : KafkaClientConfigurationBuilder<KafkaClientConfigurationBuilder>
+public partial class KafkaClientConfigurationBuilder
 {
 }
 
@@ -2369,7 +2344,7 @@ public partial class KafkaClientConfigurationBuilder : KafkaClientConfigurationB
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1625:Element documentation should not be copied and pasted", Justification = "Summary copied from wrapped class")]
-public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfigurationBuilder<KafkaClientConsumerConfigurationBuilder>
+public partial class KafkaClientConsumerConfigurationBuilder
 {
     /// <summary>
     ///     A comma separated list of fields that may be optionally set
@@ -2394,7 +2369,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithConsumeResultFields(string consumeResultFields)
     {
-        _clientConfig.ConsumeResultFields = consumeResultFields;
+        ConsumerConfig.ConsumeResultFields = consumeResultFields;
         return This;
     }
 
@@ -2409,7 +2384,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithAutoOffsetReset(AutoOffsetReset? autoOffsetReset)
     {
-        _clientConfig.AutoOffsetReset = autoOffsetReset;
+        ConsumerConfig.AutoOffsetReset = autoOffsetReset;
         return This;
     }
 
@@ -2424,7 +2399,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithGroupId(string groupId)
     {
-        _clientConfig.GroupId = groupId;
+        ConsumerConfig.GroupId = groupId;
         return This;
     }
 
@@ -2439,7 +2414,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithGroupInstanceId(string groupInstanceId)
     {
-        _clientConfig.GroupInstanceId = groupInstanceId;
+        ConsumerConfig.GroupInstanceId = groupInstanceId;
         return This;
     }
 
@@ -2454,7 +2429,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithPartitionAssignmentStrategy(PartitionAssignmentStrategy? partitionAssignmentStrategy)
     {
-        _clientConfig.PartitionAssignmentStrategy = partitionAssignmentStrategy;
+        ConsumerConfig.PartitionAssignmentStrategy = partitionAssignmentStrategy;
         return This;
     }
 
@@ -2469,7 +2444,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithSessionTimeoutMs(int? sessionTimeoutMs)
     {
-        _clientConfig.SessionTimeoutMs = sessionTimeoutMs;
+        ConsumerConfig.SessionTimeoutMs = sessionTimeoutMs;
         return This;
     }
 
@@ -2484,7 +2459,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithHeartbeatIntervalMs(int? heartbeatIntervalMs)
     {
-        _clientConfig.HeartbeatIntervalMs = heartbeatIntervalMs;
+        ConsumerConfig.HeartbeatIntervalMs = heartbeatIntervalMs;
         return This;
     }
 
@@ -2499,7 +2474,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithGroupProtocolType(string groupProtocolType)
     {
-        _clientConfig.GroupProtocolType = groupProtocolType;
+        ConsumerConfig.GroupProtocolType = groupProtocolType;
         return This;
     }
 
@@ -2514,7 +2489,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithCoordinatorQueryIntervalMs(int? coordinatorQueryIntervalMs)
     {
-        _clientConfig.CoordinatorQueryIntervalMs = coordinatorQueryIntervalMs;
+        ConsumerConfig.CoordinatorQueryIntervalMs = coordinatorQueryIntervalMs;
         return This;
     }
 
@@ -2529,7 +2504,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithMaxPollIntervalMs(int? maxPollIntervalMs)
     {
-        _clientConfig.MaxPollIntervalMs = maxPollIntervalMs;
+        ConsumerConfig.MaxPollIntervalMs = maxPollIntervalMs;
         return This;
     }
 
@@ -2544,7 +2519,22 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithAutoCommitIntervalMs(int? autoCommitIntervalMs)
     {
-        _clientConfig.AutoCommitIntervalMs = autoCommitIntervalMs;
+        ConsumerConfig.AutoCommitIntervalMs = autoCommitIntervalMs;
+        return This;
+    }
+
+    /// <summary>
+    ///     Automatically store offset of last message provided to application. The offset store is an in-memory store of the next offset to (auto-)commit for each partition.
+    /// </summary>
+    /// <param name="enableAutoOffsetStore">
+    ///     Automatically store offset of last message provided to application. The offset store is an in-memory store of the next offset to (auto-)commit for each partition.
+    /// </param>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientConsumerConfigurationBuilder WithEnableAutoOffsetStore(bool? enableAutoOffsetStore)
+    {
+        ConsumerConfig.EnableAutoOffsetStore = enableAutoOffsetStore;
         return This;
     }
 
@@ -2559,7 +2549,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithQueuedMinMessages(int? queuedMinMessages)
     {
-        _clientConfig.QueuedMinMessages = queuedMinMessages;
+        ConsumerConfig.QueuedMinMessages = queuedMinMessages;
         return This;
     }
 
@@ -2574,7 +2564,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithQueuedMaxMessagesKbytes(int? queuedMaxMessagesKbytes)
     {
-        _clientConfig.QueuedMaxMessagesKbytes = queuedMaxMessagesKbytes;
+        ConsumerConfig.QueuedMaxMessagesKbytes = queuedMaxMessagesKbytes;
         return This;
     }
 
@@ -2589,7 +2579,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithFetchWaitMaxMs(int? fetchWaitMaxMs)
     {
-        _clientConfig.FetchWaitMaxMs = fetchWaitMaxMs;
+        ConsumerConfig.FetchWaitMaxMs = fetchWaitMaxMs;
         return This;
     }
 
@@ -2604,7 +2594,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithMaxPartitionFetchBytes(int? maxPartitionFetchBytes)
     {
-        _clientConfig.MaxPartitionFetchBytes = maxPartitionFetchBytes;
+        ConsumerConfig.MaxPartitionFetchBytes = maxPartitionFetchBytes;
         return This;
     }
 
@@ -2619,7 +2609,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithFetchMaxBytes(int? fetchMaxBytes)
     {
-        _clientConfig.FetchMaxBytes = fetchMaxBytes;
+        ConsumerConfig.FetchMaxBytes = fetchMaxBytes;
         return This;
     }
 
@@ -2634,7 +2624,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithFetchMinBytes(int? fetchMinBytes)
     {
-        _clientConfig.FetchMinBytes = fetchMinBytes;
+        ConsumerConfig.FetchMinBytes = fetchMinBytes;
         return This;
     }
 
@@ -2649,7 +2639,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithFetchErrorBackoffMs(int? fetchErrorBackoffMs)
     {
-        _clientConfig.FetchErrorBackoffMs = fetchErrorBackoffMs;
+        ConsumerConfig.FetchErrorBackoffMs = fetchErrorBackoffMs;
         return This;
     }
 
@@ -2664,7 +2654,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithIsolationLevel(IsolationLevel? isolationLevel)
     {
-        _clientConfig.IsolationLevel = isolationLevel;
+        ConsumerConfig.IsolationLevel = isolationLevel;
         return This;
     }
 
@@ -2679,7 +2669,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientConsumerConfigurationBuilder WithCheckCrcs(bool? checkCrcs)
     {
-        _clientConfig.CheckCrcs = checkCrcs;
+        ConsumerConfig.CheckCrcs = checkCrcs;
         return This;
     }
 
@@ -2694,7 +2684,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     internal KafkaClientConsumerConfigurationBuilder WithEnableAutoCommit(bool? enableAutoCommit)
     {
-        _clientConfig.EnableAutoCommit = enableAutoCommit;
+        ConsumerConfig.EnableAutoCommit = enableAutoCommit;
         return This;
     }
 
@@ -2709,7 +2699,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     internal KafkaClientConsumerConfigurationBuilder WithEnablePartitionEof(bool? enablePartitionEof)
     {
-        _clientConfig.EnablePartitionEof = enablePartitionEof;
+        ConsumerConfig.EnablePartitionEof = enablePartitionEof;
         return This;
     }
 
@@ -2724,7 +2714,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     internal KafkaClientConsumerConfigurationBuilder WithAllowAutoCreateTopics(bool? allowAutoCreateTopics)
     {
-        _clientConfig.AllowAutoCreateTopics = allowAutoCreateTopics;
+        ConsumerConfig.AllowAutoCreateTopics = allowAutoCreateTopics;
         return This;
     }
 }
@@ -2738,7 +2728,7 @@ public partial class KafkaClientConsumerConfigurationBuilder : KafkaClientConfig
 [SuppressMessage("", "SA1623", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("", "SA1629", Justification = "Summary copied from wrapped class")]
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1625:Element documentation should not be copied and pasted", Justification = "Summary copied from wrapped class")]
-public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfigurationBuilder<KafkaClientProducerConfigurationBuilder>
+public partial class KafkaClientProducerConfigurationBuilder
 {
     /// <summary>
     ///     Specifies whether or not the producer should start a background poll
@@ -2757,7 +2747,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithEnableBackgroundPoll(bool? enableBackgroundPoll)
     {
-        _clientConfig.EnableBackgroundPoll = enableBackgroundPoll;
+        ProducerConfig.EnableBackgroundPoll = enableBackgroundPoll;
         return This;
     }
 
@@ -2778,7 +2768,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithDeliveryReportFields(string deliveryReportFields)
     {
-        _clientConfig.DeliveryReportFields = deliveryReportFields;
+        ProducerConfig.DeliveryReportFields = deliveryReportFields;
         return This;
     }
 
@@ -2793,7 +2783,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs)
     {
-        _clientConfig.RequestTimeoutMs = requestTimeoutMs;
+        ProducerConfig.RequestTimeoutMs = requestTimeoutMs;
         return This;
     }
 
@@ -2808,7 +2798,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithMessageTimeoutMs(int? messageTimeoutMs)
     {
-        _clientConfig.MessageTimeoutMs = messageTimeoutMs;
+        ProducerConfig.MessageTimeoutMs = messageTimeoutMs;
         return This;
     }
 
@@ -2823,7 +2813,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithPartitioner(Partitioner? partitioner)
     {
-        _clientConfig.Partitioner = partitioner;
+        ProducerConfig.Partitioner = partitioner;
         return This;
     }
 
@@ -2838,7 +2828,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithCompressionLevel(int? compressionLevel)
     {
-        _clientConfig.CompressionLevel = compressionLevel;
+        ProducerConfig.CompressionLevel = compressionLevel;
         return This;
     }
 
@@ -2853,7 +2843,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithTransactionalId(string transactionalId)
     {
-        _clientConfig.TransactionalId = transactionalId;
+        ProducerConfig.TransactionalId = transactionalId;
         return This;
     }
 
@@ -2868,7 +2858,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithTransactionTimeoutMs(int? transactionTimeoutMs)
     {
-        _clientConfig.TransactionTimeoutMs = transactionTimeoutMs;
+        ProducerConfig.TransactionTimeoutMs = transactionTimeoutMs;
         return This;
     }
 
@@ -2883,7 +2873,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithEnableGaplessGuarantee(bool? enableGaplessGuarantee)
     {
-        _clientConfig.EnableGaplessGuarantee = enableGaplessGuarantee;
+        ProducerConfig.EnableGaplessGuarantee = enableGaplessGuarantee;
         return This;
     }
 
@@ -2898,7 +2888,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithQueueBufferingMaxMessages(int? queueBufferingMaxMessages)
     {
-        _clientConfig.QueueBufferingMaxMessages = queueBufferingMaxMessages;
+        ProducerConfig.QueueBufferingMaxMessages = queueBufferingMaxMessages;
         return This;
     }
 
@@ -2913,7 +2903,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithQueueBufferingMaxKbytes(int? queueBufferingMaxKbytes)
     {
-        _clientConfig.QueueBufferingMaxKbytes = queueBufferingMaxKbytes;
+        ProducerConfig.QueueBufferingMaxKbytes = queueBufferingMaxKbytes;
         return This;
     }
 
@@ -2928,7 +2918,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithLingerMs(double? lingerMs)
     {
-        _clientConfig.LingerMs = lingerMs;
+        ProducerConfig.LingerMs = lingerMs;
         return This;
     }
 
@@ -2943,7 +2933,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithMessageSendMaxRetries(int? messageSendMaxRetries)
     {
-        _clientConfig.MessageSendMaxRetries = messageSendMaxRetries;
+        ProducerConfig.MessageSendMaxRetries = messageSendMaxRetries;
         return This;
     }
 
@@ -2958,7 +2948,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithRetryBackoffMs(int? retryBackoffMs)
     {
-        _clientConfig.RetryBackoffMs = retryBackoffMs;
+        ProducerConfig.RetryBackoffMs = retryBackoffMs;
         return This;
     }
 
@@ -2973,7 +2963,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithQueueBufferingBackpressureThreshold(int? queueBufferingBackpressureThreshold)
     {
-        _clientConfig.QueueBufferingBackpressureThreshold = queueBufferingBackpressureThreshold;
+        ProducerConfig.QueueBufferingBackpressureThreshold = queueBufferingBackpressureThreshold;
         return This;
     }
 
@@ -2988,7 +2978,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithCompressionType(CompressionType? compressionType)
     {
-        _clientConfig.CompressionType = compressionType;
+        ProducerConfig.CompressionType = compressionType;
         return This;
     }
 
@@ -3003,7 +2993,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithBatchNumMessages(int? batchNumMessages)
     {
-        _clientConfig.BatchNumMessages = batchNumMessages;
+        ProducerConfig.BatchNumMessages = batchNumMessages;
         return This;
     }
 
@@ -3018,7 +3008,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithBatchSize(int? batchSize)
     {
-        _clientConfig.BatchSize = batchSize;
+        ProducerConfig.BatchSize = batchSize;
         return This;
     }
 
@@ -3033,7 +3023,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     public KafkaClientProducerConfigurationBuilder WithStickyPartitioningLingerMs(int? stickyPartitioningLingerMs)
     {
-        _clientConfig.StickyPartitioningLingerMs = stickyPartitioningLingerMs;
+        ProducerConfig.StickyPartitioningLingerMs = stickyPartitioningLingerMs;
         return This;
     }
 
@@ -3052,7 +3042,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     internal KafkaClientProducerConfigurationBuilder WithEnableDeliveryReports(bool? enableDeliveryReports)
     {
-        _clientConfig.EnableDeliveryReports = enableDeliveryReports;
+        ProducerConfig.EnableDeliveryReports = enableDeliveryReports;
         return This;
     }
 
@@ -3067,7 +3057,7 @@ public partial class KafkaClientProducerConfigurationBuilder : KafkaClientConfig
     /// </returns>
     internal KafkaClientProducerConfigurationBuilder WithEnableIdempotence(bool? enableIdempotence)
     {
-        _clientConfig.EnableIdempotence = enableIdempotence;
+        ProducerConfig.EnableIdempotence = enableIdempotence;
         return This;
     }
 }

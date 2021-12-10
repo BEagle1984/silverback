@@ -9,27 +9,27 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> and contains the properties shared between the
 ///     <see cref="KafkaClientProducerConfiguration" /> and <see cref="KafkaClientConsumerConfiguration" />.
 /// </summary>
-public partial record KafkaClientConfiguration
+public partial record KafkaClientConfiguration : KafkaClientConfiguration<ClientConfig>
 {
-    private readonly ClientConfig _clientConfig;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaClientConfiguration" /> class.
     /// </summary>
-    /// <param name="clientConfig">
+    /// <param name="clientConfiguration">
     ///     The <see cref="KafkaClientConfiguration" /> to be used to initialize the <see cref="KafkaClientConfiguration" />.
     /// </param>
-    public KafkaClientConfiguration(ClientConfig? clientConfig = null)
+    public KafkaClientConfiguration(KafkaClientConfiguration? clientConfiguration = null)
+        : base(clientConfiguration)
     {
-        //_clientConfig = clientConfig?.Clone() ?? new ClientConfig();
-        _clientConfig = clientConfig ?? new ClientConfig();
+    }
+
+    internal KafkaClientConfiguration(ClientConfig clientConfig)
+        : base(clientConfig)
+    {
     }
 
     /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
-    public virtual void Validate()
+    public override void Validate()
     {
         // Don't validate anything, leave it to the KafkaProducerConfig and KafkaConsumerConfig
     }
-
-    internal ClientConfig GetConfluentClientConfig() => _clientConfig;
 }
