@@ -8,7 +8,8 @@
 
   <PropertyGroup Label="Build">
     <DefaultTargetFrameworks>netstandard2.1;net5.0</DefaultTargetFrameworks>
-    <TestsTargetFramework>net5.0</TestsTargetFramework>
+    <TestsTargetFramework>net6.0</TestsTargetFramework>
+    <ToolsTargetFramework>net6.0</ToolsTargetFramework>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>
