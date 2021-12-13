@@ -195,6 +195,61 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
+        public async Task Publish_DelegateSubscriberReturnsMessagesAsyncEnumerable_MessagesRepublished()
+        {
+            var republishedMessages = new List<object>();
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AddDelegateSubscriber(
+                        (TestEventTwo _) => new ICommand[]
+                        {
+                            new TestCommandOne(),
+                            new TestCommandTwo(),
+                            new TestCommandOne()
+                        }.ToAsyncEnumerable())
+                    .AddDelegateSubscriber((ICommand message) => republishedMessages.Add(message)));
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+
+            republishedMessages.Should().HaveCount(6);
+        }
+
+        [Fact]
+        public async Task Publish_MultipleDelegateSubscribersReturnMessagesAsyncEnumerable_MessagesRepublished()
+        {
+            var republishedMessages = new List<object>();
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AddDelegateSubscriber(
+                        (TestEventTwo _) => new ICommand[]
+                        {
+                            new TestCommandOne(),
+                            new TestCommandTwo(),
+                            new TestCommandOne()
+                        }.ToAsyncEnumerable())
+                    .AddDelegateSubscriber(
+                        (TestEventTwo _) => new List<ICommand>
+                        {
+                            new TestCommandOne(),
+                            new TestCommandTwo(),
+                            new TestCommandOne()
+                        }.ToAsyncEnumerable())
+                    .AddDelegateSubscriber((ICommand message) => republishedMessages.Add(message)));
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+
+            republishedMessages.Should().HaveCount(12);
+        }
+
+        [Fact]
         public async Task Publish_SubscriberClassReturnsValues_ResultsReturned()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
