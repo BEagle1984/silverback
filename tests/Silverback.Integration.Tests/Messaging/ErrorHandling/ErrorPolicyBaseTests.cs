@@ -243,6 +243,31 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             await publisher.Received().PublishAsync(Arg.Any<TestEventTwo>());
         }
 
+        [Fact]
+        public async Task HandleErrorAsync_WithPublishReturningNull_NoMessagePublished()
+        {
+            var publisher = Substitute.For<IPublisher>();
+            var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
+                .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            var policy = new TestErrorPolicy()
+                .Publish(_ => null)
+                .Build(serviceProvider);
+
+            var envelope = new InboundEnvelope(
+                new MemoryStream(),
+                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
+                new ArgumentNullException());
+
+            await publisher.DidNotReceive().PublishAsync(Arg.Any<object>());
+        }
+
         // TODO: Test with multiple messages (batch) --> TODO2: Do we still need to?
     }
 }

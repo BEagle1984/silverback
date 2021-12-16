@@ -89,7 +89,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 ICollection<Type> excludedExceptions,
                 ICollection<Type> includedExceptions,
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-                Func<IRawInboundEnvelope, object>? messageToPublishFactory,
+                Func<IRawInboundEnvelope, object?>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
                 IInboundLogger<MoveMessageErrorPolicy> logger)
                 : base(

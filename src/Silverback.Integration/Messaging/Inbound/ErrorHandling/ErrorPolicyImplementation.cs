@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
         private readonly Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
 
-        private readonly Func<IRawInboundEnvelope, object>? _messageToPublishFactory;
+        private readonly Func<IRawInboundEnvelope, object?>? _messageToPublishFactory;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             ICollection<Type> excludedExceptions,
             ICollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-            Func<IRawInboundEnvelope, object>? messageToPublishFactory,
+            Func<IRawInboundEnvelope, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
             IInboundLogger<ErrorPolicyBase> logger)
         {
@@ -155,11 +155,16 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             if (_messageToPublishFactory != null)
             {
-                using (var scope = _serviceProvider.CreateScope())
+                object? message = _messageToPublishFactory.Invoke(context.Envelope);
+
+                if (message != null)
                 {
-                    await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                        .PublishAsync(_messageToPublishFactory.Invoke(context.Envelope))
-                        .ConfigureAwait(false);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                            .PublishAsync(message)
+                            .ConfigureAwait(false);
+                    }
                 }
             }
 
