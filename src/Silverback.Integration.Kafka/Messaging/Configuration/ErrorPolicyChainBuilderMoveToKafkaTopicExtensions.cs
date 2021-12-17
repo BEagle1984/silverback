@@ -39,7 +39,8 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
             var kafkaClientConfig =
-                ((builder as ErrorPolicyChainBuilder)?.EndpointsConfigurationBuilder as KafkaEndpointsConfigurationBuilder)
+                ((builder as ErrorPolicyChainBuilder)?.EndpointsConfigurationBuilder as
+                    KafkaEndpointsConfigurationBuilder)
                 ?.ClientConfig;
 
             var endpointBuilder = new KafkaProducerEndpointBuilder(kafkaClientConfig);

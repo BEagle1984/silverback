@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Messages
@@ -29,8 +30,8 @@ namespace Silverback.Messaging.Messages
         public const string FailedAttempts = "x-failed-attempts";
 
         /// <summary>
-        ///     This will be set by the Move error policy and will contain the name of the endpoint the failed
-        ///     message is being moved from.
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the name of the
+        ///     endpoint the failed message is being moved from.
         /// </summary>
         public const string SourceEndpoint = "x-source-endpoint";
 
@@ -99,5 +100,11 @@ namespace Silverback.Messaging.Messages
         ///     consumer side to determine the correct key to be used to decrypt the message.
         /// </remarks>
         public const string EncryptionKeyId = "x-encryption-key-id";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the reason why
+        ///     the message failed to be processed.
+        /// </summary>
+        public const string FailureReason = "x-failure-reason";
     }
 }

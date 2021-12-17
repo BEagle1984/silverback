@@ -1594,5 +1594,78 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "42-42-42"));
             }
         }
+
+        [Fact]
+        public async Task RawProduce_ByDefault_TimestampKeySet()
+        {
+            var produced = 0;
+            var errors = 0;
+
+            var message = new TestEventOne
+            {
+                Content = "Hello E2E!"
+            };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+            for (var i = 0; i < 5; i++)
+            {
+                await producer.RawProduceAsync(
+                    rawMessage,
+                    new MessageHeaderCollection(),
+                    _ => Interlocked.Increment(ref produced),
+                    _ => Interlocked.Increment(ref errors));
+            }
+
+            produced.Should().BeLessThan(3);
+
+            await AsyncTestingUtil.WaitAsync(() => produced == 5);
+
+            produced.Should().Be(5);
+            errors.Should().Be(0);
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
+            {
+                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+                envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should()
+                    .BeTrue();
+            }
+        }
     }
 }

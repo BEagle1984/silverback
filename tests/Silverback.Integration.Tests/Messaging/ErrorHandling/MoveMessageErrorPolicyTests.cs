@@ -273,33 +273,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
-            newHeaders.Should().HaveCount(5); // key, x-source-endpoint, error, traceparent, message-id
-        }
-
-        [Fact]
-        public async Task HandleErrorAsync_SingleMessage_SourceEndpointHeaderIsSet()
-        {
-            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
-            var envelope = new InboundEnvelope(
-                "hey oh!",
-                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
-                null,
-                new TestOffset(),
-                new TestConsumerEndpoint("source-endpoint"),
-                "source-endpoint");
-
-            await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-                new InvalidOperationException("test"));
-
-            var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
-
-            producer.ProducedMessages.Last()
-                .Headers
-                .Should().ContainEquivalentOf(
-                    new MessageHeader(
-                        DefaultMessageHeaders.SourceEndpoint,
-                        "source-endpoint"));
+            newHeaders.Should().HaveCount(4); // key, error, traceparent, message-id
         }
 
         [Fact]

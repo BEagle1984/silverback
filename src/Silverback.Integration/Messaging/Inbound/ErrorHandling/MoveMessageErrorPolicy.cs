@@ -9,6 +9,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.ErrorHandling
@@ -68,6 +69,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 IncludedExceptions,
                 ApplyRule,
                 MessageToPublishFactory,
+                serviceProvider
+                    .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
                 serviceProvider,
                 serviceProvider
                     .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
@@ -80,6 +83,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private readonly IInboundLogger<MoveMessageErrorPolicy> _logger;
 
+            private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
+
             private readonly IProducer _producer;
 
             public MoveMessageErrorPolicyImplementation(
@@ -90,6 +95,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 ICollection<Type> includedExceptions,
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object?>? messageToPublishFactory,
+                IBrokerOutboundMessageEnrichersFactory enricherFactory,
                 IServiceProvider serviceProvider,
                 IInboundLogger<MoveMessageErrorPolicy> logger)
                 : base(
@@ -103,6 +109,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
                 _endpoint = Check.NotNull(endpoint, nameof(endpoint));
                 _transformationAction = transformationAction;
+                _enricherFactory = enricherFactory;
                 _logger = logger;
 
                 _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(endpoint);
@@ -139,8 +146,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
             {
-                envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.ActualEndpointName);
-
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope
                         ? new OutboundEnvelope(
@@ -148,6 +153,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                             deserializedEnvelope.Headers,
                             _endpoint)
                         : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
+
+                var enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
+                enricher.Enrich(envelope, outboundEnvelope, exception);
 
                 _transformationAction?.Invoke(outboundEnvelope, exception);
 
