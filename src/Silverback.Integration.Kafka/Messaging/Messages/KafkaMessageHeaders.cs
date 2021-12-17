@@ -1,6 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Inbound.ErrorHandling;
+
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
@@ -23,5 +25,35 @@ namespace Silverback.Messaging.Messages
         ///     The header that will be filled with the timestamp of the message consumed from Kafka.
         /// </summary>
         public const string TimestampKey = "x-kafka-message-timestamp";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the group ID of
+        ///     the message that failed to be processed.
+        /// </summary>
+        public const string SourceConsumerGroupId = "x-source-consumer-group-id";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the topic of
+        ///     the message that failed to be processed.
+        /// </summary>
+        public const string SourceTopic = "x-source-topic";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the partition of
+        ///     the message that failed to be processed.
+        /// </summary>
+        public const string SourcePartition = "x-source-partition";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the offset of
+        ///     the message that failed to be processed.
+        /// </summary>
+        public const string SourceOffset = "x-source-offset";
+
+        /// <summary>
+        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the timestamp of
+        ///     the message that failed to be processed.
+        /// </summary>
+        public const string SourceTimestamp = "x-source-timestamp";
     }
 }
