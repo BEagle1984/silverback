@@ -48,6 +48,7 @@ uid: releases
   * Broker -> BrokerBase
   * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
   * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
+* `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 
 ### Deprecation Notice
 

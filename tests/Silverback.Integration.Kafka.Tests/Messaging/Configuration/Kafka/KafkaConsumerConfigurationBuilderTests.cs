@@ -14,6 +14,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 
 public class KafkaConsumerConfigurationBuilderTests
 {
+    // TODO: Test cloning of the wrapped dictionary
+
     [Fact]
     public void Build_WithoutTopic_ExceptionThrown()
     {

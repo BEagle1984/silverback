@@ -20,7 +20,7 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
 {
     private readonly bool _processPartitionsIndependently = true;
 
-    private readonly IValueReadOnlyCollection<TopicPartitionOffset> _topicPartitions = ValueReadOnlyCollection<TopicPartitionOffset>.Empty;
+    private readonly IValueReadOnlyCollection<TopicPartitionOffset> _topicPartitions = ValueReadOnlyCollection.Empty<TopicPartitionOffset>();
 
     private readonly Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>? _partitionOffsetsProvider;
 
@@ -124,45 +124,76 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
         base.ValidateCore();
 
         if (Client == null)
-            throw new EndpointConfigurationException("Client cannot be null.");
+        {
+            throw new EndpointConfigurationException(
+                "The client configuration is required.",
+                Client,
+                nameof(Client));
+        }
 
         if (MaxDegreeOfParallelism < 1)
-            throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
+        {
+            throw new EndpointConfigurationException(
+                "The specified degree of parallelism must be greater or equal to 1.",
+                MaxDegreeOfParallelism,
+                nameof(MaxDegreeOfParallelism));
+        }
 
         if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
         {
             throw new EndpointConfigurationException(
-                "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't " +
-                "processed independently.");
+                $"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.",
+                MaxDegreeOfParallelism,
+                nameof(MaxDegreeOfParallelism));
         }
 
         if (BackpressureLimit < 1)
-            throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
+        {
+            throw new EndpointConfigurationException(
+                "The backpressure limit must be greater or equal to 1.",
+                BackpressureLimit,
+                nameof(BackpressureLimit));
+        }
 
         ValidateTopicPartitions();
 
-        // TODO: TO BE REFINED to include other cases where the GroupId is needed
-        if (!IsStaticAssignment && string.IsNullOrEmpty(Client.GroupId))
-            throw new EndpointConfigurationException("GroupId must be specified when the partitions are assigned dynamically.");
-
-        Client.Validate();
+        Client.Validate(IsStaticAssignment);
     }
 
     private void ValidateTopicPartitions()
     {
         if (TopicPartitions == null || TopicPartitions.Count == 0)
-            throw new EndpointConfigurationException("At least 1 topic must be specified.");
+        {
+            throw new EndpointConfigurationException(
+                "At least 1 topic must be specified.",
+                TopicPartitions,
+                nameof(TopicPartitions));
+        }
 
         if (TopicPartitions.Any(topicPartition => string.IsNullOrEmpty(topicPartition.Topic)))
-            throw new EndpointConfigurationException("The topic name cannot be null or empty.");
+        {
+            throw new EndpointConfigurationException(
+                "The topic name cannot be null or empty.",
+                TopicPartitions,
+                nameof(TopicPartitions));
+        }
 
         if (TopicPartitions.Any(topicPartition => topicPartition.Partition.Value < Partition.Any))
-            throw new EndpointConfigurationException("The partition must be a value greater or equal to 0, or Partition.Any.");
+        {
+            throw new EndpointConfigurationException(
+                "The partition must be a value greater or equal to 0, or Partition.Any.",
+                TopicPartitions,
+                nameof(TopicPartitions));
+        }
 
         if (PartitionOffsetsProvider != null &&
             TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any))
         {
-            throw new EndpointConfigurationException("Cannot specify a PartitionOffsetsProvider if the partitions are already specified. Use Partition.Any when specifying the topic partition or remove the resolver.");
+            throw new EndpointConfigurationException(
+                $"Cannot specify a {nameof(PartitionOffsetsProvider)} if the partitions are already specified. " +
+                $"Use Partition.Any when specifying the topic partition or remove the resolver.",
+                TopicPartitions,
+                nameof(TopicPartitions));
         }
 
         foreach (IGrouping<string, TopicPartitionOffset> groupedPartitions in TopicPartitions.GroupBy(topicPartition => topicPartition.Topic))
@@ -171,11 +202,19 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
             List<TopicPartition> topicPartitionsWithoutOffset = groupedPartitions.Select(offset => offset.TopicPartition).ToList();
 
             if (topicPartitionsWithoutOffset.Count != topicPartitionsWithoutOffset.Distinct().Count())
-                throw new EndpointConfigurationException("Each partition must be specified only once.");
+            {
+                throw new EndpointConfigurationException(
+                    "Each partition must be specified only once.",
+                    TopicPartitions,
+                    nameof(TopicPartitions));
+            }
 
             if (partitions.Any(partition => partition == Partition.Any) && partitions.Count > 1)
             {
-                throw new EndpointConfigurationException("Cannot mix Partition.Any with a specific partition assignment for the same topic.");
+                throw new EndpointConfigurationException(
+                    "Cannot mix Partition.Any with a specific partition assignment for the same topic.",
+                    TopicPartitions,
+                    nameof(TopicPartitions));
             }
         }
 

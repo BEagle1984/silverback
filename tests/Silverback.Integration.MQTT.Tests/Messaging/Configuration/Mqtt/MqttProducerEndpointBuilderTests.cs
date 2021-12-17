@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
-using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
 using NSubstitute;
 using Silverback.Messaging;
@@ -19,7 +18,7 @@ public class MqttProducerEndpointBuilderTests
 {
     private readonly MqttClientConfiguration _clientConfiguration = new()
     {
-        ChannelOptions = new MqttClientTcpOptions
+        Channel = new MqttClientTcpConfiguration
         {
             Server = "tests-server"
         }
@@ -114,8 +113,8 @@ public class MqttProducerEndpointBuilderTests
             .ConfigureClient(configuration => configuration.WithClientId("client42"));
         MqttProducerConfiguration configuration = builder.Build();
 
-        configuration.Client.ChannelOptions.Should().NotBeNull();
-        configuration.Client.ChannelOptions.Should().BeEquivalentTo(_clientConfiguration.ChannelOptions);
+        configuration.Client.Channel.Should().NotBeNull();
+        configuration.Client.Channel.Should().BeEquivalentTo((MqttClientTcpConfiguration?)_clientConfiguration.Channel);
         configuration.Client.ClientId.Should().Be("client42");
     }
 

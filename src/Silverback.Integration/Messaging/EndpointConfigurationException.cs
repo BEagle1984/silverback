@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
@@ -49,6 +50,26 @@ public class EndpointConfigurationException : SilverbackException
     }
 
     /// <summary>
+    ///     Initializes a new instance of the <see cref="EndpointConfigurationException" /> class with the specified message.
+    /// </summary>
+    /// <param name="message">
+    ///     The exception message.
+    /// </param>
+    /// <param name="propertyValue">
+    ///     The value of the configuration property that caused the exception.
+    /// </param>
+    /// <param name="propertyName">
+    ///     The name of the configuration property that caused the exception.
+    /// </param>
+    public EndpointConfigurationException(string message, object? propertyValue, string propertyName)
+        : base(GetMessage(message, propertyValue, propertyName))
+    {
+        ConfigurationType = new StackFrame(1).GetMethod()?.DeclaringType;
+        PropertyName = propertyName;
+        PropertyValue = propertyValue;
+    }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="EndpointConfigurationException" /> class with the
     ///     serialized data.
     /// </summary>
@@ -63,5 +84,33 @@ public class EndpointConfigurationException : SilverbackException
     protected EndpointConfigurationException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
+    }
+
+    /// <summary>
+    ///     Gets the <see cref="Type" /> containing the configuration property that caused the exception.
+    /// </summary>
+    public Type? ConfigurationType { get; }
+
+    /// <summary>
+    ///     Gets the name of the property that caused the exception.
+    /// </summary>
+    public string? PropertyName { get; }
+
+    /// <summary>
+    ///     Gets the value of the property that caused the exception.
+    /// </summary>
+    public object? PropertyValue { get; }
+
+    private static string GetMessage(string message, object? propertyValue, string propertyName)
+    {
+        Type? configurationType = new StackFrame(2).GetMethod()?.DeclaringType;
+
+        return configurationType == null
+            ? $"{message}{Environment.NewLine}" +
+              $"Configuration property: {propertyName}{Environment.NewLine}" +
+              $"Value: {propertyValue ?? "null"}"
+            : $"{message}{Environment.NewLine}" +
+              $"Configuration property: {configurationType.Name}.{propertyName}{Environment.NewLine}" +
+              $"Value: {propertyValue ?? "null"}";
     }
 }

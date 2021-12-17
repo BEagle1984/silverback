@@ -83,14 +83,19 @@ public abstract record EndpointConfiguration
     public void Validate()
     {
         if (Serializer == null)
-            throw new EndpointConfigurationException("Serializer cannot be null.");
+            throw new EndpointConfigurationException("A serializer is required.", Serializer, nameof(Serializer));
 
         Encryption?.Validate();
 
         ValidateCore();
 
         if (string.IsNullOrEmpty(RawName))
-            throw new EndpointConfigurationException("RawName is null. There could be an error in the endpoint implementation.");
+        {
+            throw new EndpointConfigurationException(
+                $"{nameof(RawName)} is null or empty. There could be an error in the endpoint implementation.",
+                RawName,
+                nameof(RawName));
+        }
     }
 
     /// <inheritdoc cref="Validate" />

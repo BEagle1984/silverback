@@ -2,9 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
-using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
+using Silverback.Collections;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -36,7 +37,7 @@ public class MqttClientConfigurationTests
     {
         MqttClientConfiguration configuration = new()
         {
-            ChannelOptions = new MqttClientTcpOptions
+            Channel = new MqttClientTcpConfiguration
             {
                 Server = "test-server"
             },
@@ -45,20 +46,22 @@ public class MqttClientConfigurationTests
 
         Action act = () => configuration.Validate();
 
-        act.Should().ThrowExactly<EndpointConfigurationException>().WithMessage("ClientId cannot be empty.");
+        act.Should().ThrowExactly<EndpointConfigurationException>()
+            .WithMessage("A ClientId is required to connect with the message broker.*");
     }
 
     [Fact]
-    public void Validate_MissingChannelOptions_ExceptionThrown()
+    public void Validate_MissingChannelConfiguration_ExceptionThrown()
     {
         MqttClientConfiguration configuration = new()
         {
-            ChannelOptions = null
+            Channel = null
         };
 
         Action act = () => configuration.Validate();
 
-        act.Should().ThrowExactly<EndpointConfigurationException>();
+        act.Should().ThrowExactly<EndpointConfigurationException>()
+            .WithMessage("The channel configuration is required*");
     }
 
     [Fact]
@@ -66,12 +69,46 @@ public class MqttClientConfigurationTests
     {
         MqttClientConfiguration configuration = new()
         {
-            ChannelOptions = new MqttClientTcpOptions()
+            Channel = new MqttClientTcpConfiguration()
         };
 
         Action act = () => configuration.Validate();
 
-        act.Should().ThrowExactly<EndpointConfigurationException>();
+        act.Should().ThrowExactly<EndpointConfigurationException>()
+            .WithMessage("The server is required*");
+    }
+
+    [Fact]
+    public void Validate_MissingTopicForLastWillMessage_ExceptionThrown()
+    {
+        MqttClientConfiguration configuration = GetValidConfigBuilder()
+            .SendLastWillMessage<object>(
+                _ =>
+                {
+                })
+            .Build();
+
+        Action act = () => configuration.Validate();
+
+        act.Should().ThrowExactly<EndpointConfigurationException>()
+            .WithMessage("The topic is required*");
+    }
+
+    [Fact]
+    public void GetMqttClientOptions_ShouldReturnUserProperties()
+    {
+        List<MqttUserProperty> mqttUserProperties = new()
+        {
+            new MqttUserProperty("key1", "value1"),
+            new MqttUserProperty("key2", "value2")
+        };
+
+        MqttClientConfiguration configuration = new()
+        {
+            UserProperties = mqttUserProperties.AsValueReadOnlyCollection()
+        };
+
+        configuration.GetMqttClientOptions().UserProperties.Should().BeEquivalentTo(mqttUserProperties);
     }
 
     private static MqttClientConfigurationBuilder GetValidConfigBuilder() =>

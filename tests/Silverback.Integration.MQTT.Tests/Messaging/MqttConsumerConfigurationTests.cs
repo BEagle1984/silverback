@@ -3,7 +3,6 @@
 
 using System;
 using FluentAssertions;
-using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Messaging;
@@ -163,7 +162,7 @@ public class MqttConsumerConfigurationTests
         {
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }
@@ -184,7 +183,7 @@ public class MqttConsumerConfigurationTests
         {
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }
@@ -205,7 +204,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -228,7 +227,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -251,7 +250,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -274,7 +273,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -297,7 +296,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -319,7 +318,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -341,7 +340,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -363,7 +362,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -386,7 +385,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -408,7 +407,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -430,7 +429,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -450,7 +449,7 @@ public class MqttConsumerConfigurationTests
             Topics = new ValueReadOnlyCollection<string>(new[] { "test" }),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }
@@ -463,7 +462,7 @@ public class MqttConsumerConfigurationTests
             Endpoint = new MqttStaticProducerEndpointResolver("test"),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }

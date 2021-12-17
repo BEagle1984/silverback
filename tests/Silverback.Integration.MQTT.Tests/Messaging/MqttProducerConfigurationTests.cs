@@ -3,7 +3,6 @@
 
 using System;
 using FluentAssertions;
-using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -220,7 +219,7 @@ public class MqttProducerConfigurationTests
         {
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }
@@ -240,7 +239,7 @@ public class MqttProducerConfigurationTests
             Endpoint = new MqttStaticProducerEndpointResolver("topic"),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 },
@@ -265,7 +264,7 @@ public class MqttProducerConfigurationTests
             Endpoint = new MqttStaticProducerEndpointResolver("topic"),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }
@@ -287,7 +286,7 @@ public class MqttProducerConfigurationTests
             Endpoint = new MqttStaticProducerEndpointResolver("topic"),
             Client = new MqttClientConfiguration
             {
-                ChannelOptions = new MqttClientTcpOptions
+                Channel = new MqttClientTcpConfiguration
                 {
                     Server = "test-server"
                 }

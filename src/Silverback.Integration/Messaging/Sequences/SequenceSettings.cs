@@ -26,11 +26,14 @@ public sealed record SequenceSettings : IValidatableEndpointSettings
     public void Validate()
     {
         if (Timeout <= TimeSpan.Zero)
-            throw new EndpointConfigurationException("Sequence.Timeout must be greater than 0.");
+            throw new EndpointConfigurationException("The timeout must be greater than 0.", Timeout, nameof(Timeout));
 
         if (Timeout.TotalMilliseconds > int.MaxValue)
         {
-            throw new EndpointConfigurationException("Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
+            throw new EndpointConfigurationException(
+                "The timeout in milliseconds must be lower or equal to Int32.MaxValue.",
+                Timeout,
+                nameof(Timeout));
         }
     }
 }

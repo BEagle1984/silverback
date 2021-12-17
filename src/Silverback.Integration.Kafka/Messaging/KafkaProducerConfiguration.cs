@@ -22,7 +22,12 @@ public sealed record KafkaProducerConfiguration : ProducerConfiguration<KafkaPro
         base.ValidateCore();
 
         if (Client == null)
-            throw new EndpointConfigurationException("Client cannot be null.");
+        {
+            throw new EndpointConfigurationException(
+                "The client configuration is required.",
+                Client,
+                nameof(Client));
+        }
 
         Client.Validate();
     }

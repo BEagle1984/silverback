@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Collections;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Outbound.Enrichers;
@@ -48,7 +49,7 @@ public abstract record ProducerConfiguration : EndpointConfiguration
     ///     Gets the collection of <see cref="IOutboundMessageEnricher" /> to be used to enrich the outbound message.
     /// </summary>
     public IValueReadOnlyCollection<IOutboundMessageEnricher> MessageEnrichers { get; init; } =
-        ValueReadOnlyCollection<IOutboundMessageEnricher>.Empty;
+        ValueReadOnlyCollection.Empty<IOutboundMessageEnricher>();
 
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()
@@ -56,10 +57,16 @@ public abstract record ProducerConfiguration : EndpointConfiguration
         base.ValidateCore();
 
         if (Endpoint == null || Endpoint == NullProducerEndpointResolver.Instance)
-            throw new EndpointConfigurationException("Endpoint cannot be null.");
+        {
+            throw new EndpointConfigurationException(
+                    "An endpoint resolver is required. " +
+                    $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.",
+                    Endpoint,
+                    nameof(Endpoint));
+        }
 
         if (Strategy == null)
-            throw new EndpointConfigurationException("Strategy cannot be null.");
+            throw new EndpointConfigurationException("A produce strategy is required.", Strategy, nameof(Strategy));
 
         Chunk?.Validate();
     }

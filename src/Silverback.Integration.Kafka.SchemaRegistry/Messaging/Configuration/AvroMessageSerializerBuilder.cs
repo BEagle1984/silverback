@@ -69,9 +69,7 @@ public class AvroMessageSerializerBuilder
     public IMessageSerializer Build()
     {
         if (_serializer == null)
-        {
             throw new InvalidOperationException("The message type was not specified. Please call UseType<TMessage>.");
-        }
 
         _configureSchemaRegistryAction?.Invoke(_serializer.SchemaRegistryConfig);
         _configureSerializerAction?.Invoke(_serializer.AvroSerializerConfig);

@@ -34,5 +34,4 @@ internal static class ClientConfigCloneExtensions
 
         return (TClientConfig)clone;
     }
-
 }

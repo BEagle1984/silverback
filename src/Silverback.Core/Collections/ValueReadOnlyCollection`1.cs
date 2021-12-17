@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Util;
 
@@ -27,12 +26,6 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
     {
         _collection = Check.NotNull(collection, nameof(collection)).AsArray();
     }
-
-    /// <summary>
-    ///     Gets a static instance of the <see cref="ValueReadOnlyCollection{T}" /> wrapping an empty array.
-    /// </summary>
-    [SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "OK to have an instance per actual type")]
-    public static ValueReadOnlyCollection<T> Empty { get; } = new(Array.Empty<T>());
 
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
     public int Count => _collection.Count;

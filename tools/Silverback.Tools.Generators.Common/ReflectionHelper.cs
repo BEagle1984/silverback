@@ -4,7 +4,6 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,17 +21,30 @@ public static class ReflectionHelper
         if (!includeInherited)
             bindingFlags |= BindingFlags.DeclaredOnly;
 
-        return type.GetProperties(bindingFlags).ToArray();
+        return type.GetProperties(bindingFlags)
+            .Where(property => !property.GetCustomAttributes().OfType<ObsoleteAttribute>().Any())
+            .ToArray();
     }
 
-    public static string GetPropertyTypeString(Type propertyType)
+    public static MethodInfo[] GetMethods(Type type)
+    {
+        BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly;
+        return type.GetMethods(bindingFlags).ToArray();
+    }
+
+    public static string GetTypeString(Type propertyType, bool forceReferenceTypeNullability)
     {
         Type? nullableType = Nullable.GetUnderlyingType(propertyType);
         if (nullableType != null)
             return GetTypeName(nullableType) + "?";
 
+        if (forceReferenceTypeNullability && !propertyType.IsValueType)
+            return GetTypeName(propertyType) + "?";
+
         return GetTypeName(propertyType);
     }
+
+    public static object? GetDefaultValue(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
 
     private static string GetTypeName(Type type)
     {

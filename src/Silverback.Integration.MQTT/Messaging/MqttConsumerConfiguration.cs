@@ -16,7 +16,7 @@ namespace Silverback.Messaging;
 /// </summary>
 public sealed record MqttConsumerConfiguration : ConsumerConfiguration
 {
-    private readonly IValueReadOnlyCollection<string> _topics = ValueReadOnlyCollection<string>.Empty;
+    private readonly IValueReadOnlyCollection<string> _topics = ValueReadOnlyCollection.Empty<string>();
 
     /// <summary>
     ///     Gets the name of the topics or the topic filter strings.
@@ -54,13 +54,28 @@ public sealed record MqttConsumerConfiguration : ConsumerConfiguration
         base.ValidateCore();
 
         if (Client == null)
-            throw new EndpointConfigurationException("Client cannot be null.");
+        {
+            throw new EndpointConfigurationException(
+                "The client configuration is required.",
+                Client,
+                nameof(Client));
+        }
 
         if (Topics == null || Topics.Count == 0)
-            throw new EndpointConfigurationException("At least 1 topic must be specified.");
+        {
+            throw new EndpointConfigurationException(
+                "At least 1 topic must be specified.",
+                Topics,
+                nameof(Topics));
+        }
 
-        if (Topics.Any(topic => string.IsNullOrEmpty(topic)))
-            throw new EndpointConfigurationException("The topic name cannot be null or empty.");
+        if (Topics.Any(string.IsNullOrEmpty))
+        {
+            throw new EndpointConfigurationException(
+                "A topic name cannot be null or empty.",
+                Topics,
+                nameof(Topics));
+        }
 
         if (!Client.AreHeadersSupported)
         {

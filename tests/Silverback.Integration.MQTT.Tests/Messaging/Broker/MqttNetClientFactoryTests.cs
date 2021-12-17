@@ -4,7 +4,6 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client.Options;
 using MQTTnet.Diagnostics;
 using NSubstitute;
 using Silverback.Collections;
@@ -45,7 +44,7 @@ public class MqttNetClientFactoryTests
     {
         MqttClientConfiguration configuration = new()
         {
-            ChannelOptions = new MqttClientTcpOptions
+            Channel = new MqttClientTcpConfiguration
             {
                 Server = "mqtt-server"
             }
@@ -86,7 +85,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -99,7 +98,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -128,7 +127,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -141,7 +140,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -170,7 +169,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -183,7 +182,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -212,7 +211,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -226,7 +225,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -246,7 +245,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -259,7 +258,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server2"
                     }
@@ -279,7 +278,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client1",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }
@@ -292,7 +291,7 @@ public class MqttNetClientFactoryTests
                 Client = new MqttClientConfiguration
                 {
                     ClientId = "client2",
-                    ChannelOptions = new MqttClientTcpOptions
+                    Channel = new MqttClientTcpConfiguration
                     {
                         Server = "mqtt-server"
                     }

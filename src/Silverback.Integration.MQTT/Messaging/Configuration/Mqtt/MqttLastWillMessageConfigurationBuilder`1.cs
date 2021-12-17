@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// <typeparam name="TMessage">
 ///     The LWT message type.
 /// </typeparam>
-public class MqttLastWillMessageBuilder<TMessage>
+public class MqttLastWillMessageConfigurationBuilder<TMessage>
 {
     private string? _topic;
 
@@ -42,9 +42,9 @@ public class MqttLastWillMessageBuilder<TMessage>
     ///     The name of the topic.
     /// </param>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> ProduceTo(string topicName)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> ProduceTo(string topicName)
     {
         _topic = Check.NotEmpty(topicName, nameof(topicName));
         return this;
@@ -57,9 +57,9 @@ public class MqttLastWillMessageBuilder<TMessage>
     ///     The actual LWT message to be published.
     /// </param>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> Message(TMessage message)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> Message(TMessage message)
     {
         _message = Check.NotNull(message, nameof(message));
         return this;
@@ -73,9 +73,9 @@ public class MqttLastWillMessageBuilder<TMessage>
     ///     The <see cref="TimeSpan" /> representing the delay.
     /// </param>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> WithDelay(TimeSpan delay)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithDelay(TimeSpan delay)
     {
         Check.Range(delay, nameof(delay), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
 
@@ -90,9 +90,9 @@ public class MqttLastWillMessageBuilder<TMessage>
     ///     The <see cref="MqttQualityOfServiceLevel" />.
     /// </param>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> WithQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)
     {
         _qosLevel = qosLevel;
         return this;
@@ -102,36 +102,36 @@ public class MqttLastWillMessageBuilder<TMessage>
     ///     Specifies that the LWT message has to be sent with the <i>at most once</i> quality of service level.
     /// </summary>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> WithAtMostOnceQoS() =>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithAtMostOnceQoS() =>
         WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtMostOnce);
 
     /// <summary>
     ///     Specifies that the LWT message has to be sent with the <i>at least once</i> quality of service level.
     /// </summary>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> WithAtLeastOnceQoS() =>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithAtLeastOnceQoS() =>
         WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
 
     /// <summary>
     ///     Specifies that the LWT message has to be sent with the <i>exactly once</i> quality of service level.
     /// </summary>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> WithExactlyOnceQoS() =>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithExactlyOnceQoS() =>
         WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce);
 
     /// <summary>
     ///     Specifies that the LWT message will be sent with the retain flag, causing it to be persisted on the broker.
     /// </summary>
     /// <returns>
-    ///     The <see cref="MqttLastWillMessageBuilder{TMessage}" /> so that additional calls can be chained.
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> Retain()
+    public MqttLastWillMessageConfigurationBuilder<TMessage> Retain()
     {
         _retain = true;
         return this;
@@ -146,7 +146,7 @@ public class MqttLastWillMessageBuilder<TMessage>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> SerializeUsing(IMessageSerializer serializer)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> SerializeUsing(IMessageSerializer serializer)
     {
         _serializer = serializer;
         return this;
@@ -162,7 +162,7 @@ public class MqttLastWillMessageBuilder<TMessage>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageBuilder<TMessage> SerializeAsJson(Action<JsonMessageSerializerBuilder>? serializerBuilderAction = null)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> SerializeAsJson(Action<JsonMessageSerializerBuilder>? serializerBuilderAction = null)
     {
         JsonMessageSerializerBuilder serializerBuilder = new();
 
@@ -179,19 +179,21 @@ public class MqttLastWillMessageBuilder<TMessage>
     /// <returns>
     ///     The <see cref="MqttApplicationMessage" />.
     /// </returns>
-    public MqttApplicationMessage Build()
+    public MqttLastWillMessageConfiguration Build()
     {
-        if (string.IsNullOrEmpty(_topic))
-            throw new EndpointConfigurationException("The topic name was not specified.");
-
         _serializer ??= DefaultSerializers.Json;
-        MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerConfiguration());
-        Stream? payloadStream = AsyncHelper
-            .RunSynchronously(() => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint).AsTask());
+        Stream? payloadStream = null;
 
-        return new MqttApplicationMessage
+        if (!string.IsNullOrEmpty(_topic))
         {
-            Topic = _topic,
+            MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerConfiguration());
+            payloadStream = AsyncHelper
+                .RunSynchronously(() => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint).AsTask());
+        }
+
+        return new MqttLastWillMessageConfiguration
+        {
+            Topic = _topic ?? string.Empty,
             Payload = payloadStream.ReadAll(),
             QualityOfServiceLevel = _qosLevel,
             Retain = _retain

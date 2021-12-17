@@ -58,31 +58,57 @@ public sealed partial record KafkaClientConsumerConfiguration : KafkaClientConfi
     /// </summary>
     public bool EnableAutoRecovery { get; init; } = true;
 
+    /// <summary>
+    ///     Throws an <see cref="EndpointConfigurationException" /> if the current configuration is not valid.
+    /// </summary>
+    internal void Validate(bool isStaticAssignment)
+    {
+        // TODO: TO BE REFINED to include other cases where the GroupId is needed
+        if (!isStaticAssignment && string.IsNullOrEmpty(GroupId))
+        {
+            throw new EndpointConfigurationException(
+                "A group id must be specified when the partitions are assigned dynamically.",
+                GroupId,
+                nameof(GroupId));
+        }
+
+        Validate();
+    }
+
     /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
     public override void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))
         {
-            throw new EndpointConfigurationException("BootstrapServers is required to connect with the message broker.");
+            throw new EndpointConfigurationException(
+                "The bootstrap servers are required to connect with the message broker.",
+                BootstrapServers,
+                nameof(BootstrapServers));
         }
 
         if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
         {
             throw new EndpointConfigurationException(
-                "CommitOffsetEach cannot be used when auto-commit is enabled. " +
-                "Explicitly disable it setting Configuration.EnableAutoCommit = false.");
+                $"{nameof(CommitOffsetEach)} cannot be used when auto-commit is enabled. " +
+                $"Explicitly disable it setting {nameof(EnableAutoCommit)} to false.",
+                CommitOffsetEach,
+                nameof(CommitOffsetEach));
         }
 
         if (!IsAutoCommitEnabled && CommitOffsetEach <= 0)
         {
-            throw new EndpointConfigurationException("CommitOffSetEach must be greater or equal to 1 when auto-commit is disabled.");
+            throw new EndpointConfigurationException(
+                $"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.",
+                CommitOffsetEach,
+                nameof(CommitOffsetEach));
         }
 
-        if (ClientConfig.EnableAutoOffsetStore == true)
+        if (ClientConfig == null)
         {
             throw new EndpointConfigurationException(
-                "EnableAutoOffsetStore is not supported. " +
-                "Silverback must have control over the offset storing to work properly.");
+                "The client configuration is required to connect with the message broker.",
+                ClientConfig,
+                nameof(ClientConfig));
         }
     }
 

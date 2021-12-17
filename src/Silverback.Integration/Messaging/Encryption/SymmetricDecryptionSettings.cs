@@ -19,12 +19,12 @@ public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase
     public override void Validate()
     {
         if (string.IsNullOrEmpty(AlgorithmName))
-            throw new EndpointConfigurationException("AlgorithmName cannot be empty.");
+            throw new EndpointConfigurationException("The algorithm name is required.", AlgorithmName, nameof(AlgorithmName));
 
         if (KeyProvider == null && Key == null)
-            throw new EndpointConfigurationException("Key or DecryptionKey are required.");
+            throw new EndpointConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");
 
         if (KeyProvider != null && Key != null)
-            throw new EndpointConfigurationException("Cannot set both Key or DecryptionKey.");
+            throw new EndpointConfigurationException($"Cannot set both the {nameof(Key)} and the {nameof(KeyProvider)}.");
     }
 }

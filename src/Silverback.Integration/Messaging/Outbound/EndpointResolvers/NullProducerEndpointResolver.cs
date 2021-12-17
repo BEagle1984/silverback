@@ -9,8 +9,10 @@ internal class NullProducerEndpointResolver : IProducerEndpointResolver
 {
     public static NullProducerEndpointResolver Instance { get; } = new();
 
-    public string RawName => throw new NotSupportedException();
+    public string RawName => string.Empty;
 
     public ProducerEndpoint GetEndpoint(object? message, ProducerConfiguration configuration, IServiceProvider serviceProvider) =>
         throw new NotSupportedException();
+
+    public override string ToString() => "null";
 }

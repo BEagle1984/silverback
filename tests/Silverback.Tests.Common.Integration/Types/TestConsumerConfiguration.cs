@@ -10,7 +10,7 @@ namespace Silverback.Tests.Types;
 
 public sealed record TestConsumerConfiguration : ConsumerConfiguration
 {
-    private readonly IValueReadOnlyCollection<string> _topicNames = ValueReadOnlyCollection<string>.Empty;
+    private readonly IValueReadOnlyCollection<string> _topicNames = ValueReadOnlyCollection.Empty<string>();
 
     public TestConsumerConfiguration(params string[] topicNames)
     {
@@ -43,9 +43,9 @@ public sealed record TestConsumerConfiguration : ConsumerConfiguration
         base.ValidateCore();
 
         if (TopicNames == null || TopicNames.Count == 0)
-            throw new EndpointConfigurationException("At least one topic name is required.");
+            throw new EndpointConfigurationException($"At least 1 topic name is required.");
 
         if (TopicNames.Any(string.IsNullOrWhiteSpace))
-            throw new EndpointConfigurationException("The topic names cannot be null or empty.");
+            throw new EndpointConfigurationException($"The topic name cannot be null or empty.");
     }
 }

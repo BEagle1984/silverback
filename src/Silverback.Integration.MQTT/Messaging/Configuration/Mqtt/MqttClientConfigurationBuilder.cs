@@ -2,12 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet;
 using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Client.Options;
+using MQTTnet.Diagnostics.PacketInspection;
 using MQTTnet.Formatter;
+using Silverback.Collections;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -15,11 +16,17 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// <summary>
 ///     Builds the <see cref="MqttClientConfiguration" />.
 /// </summary>
-public class MqttClientConfigurationBuilder
+public partial class MqttClientConfigurationBuilder
 {
     private readonly IServiceProvider? _serviceProvider;
 
-    private readonly MqttClientOptionsBuilder _builder = new MqttClientOptionsBuilder().WithProtocolVersion(MqttProtocolVersion.V500);
+    private readonly List<MqttUserProperty> _userProperties = new();
+
+    private MqttClientConfiguration _configuration;
+
+    private MqttClientWebSocketProxyConfiguration? _webSocketProxyConfiguration;
+
+    private MqttClientTlsConfiguration _tlsConfiguration;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
@@ -31,6 +38,8 @@ public class MqttClientConfigurationBuilder
     public MqttClientConfigurationBuilder(IServiceProvider? serviceProvider = null)
     {
         _serviceProvider = serviceProvider;
+        _configuration = new MqttClientConfiguration();
+        _tlsConfiguration = new MqttClientTlsConfiguration();
     }
 
     /// <summary>
@@ -48,59 +57,10 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(baseConfiguration, nameof(baseConfiguration));
 
-        UseProtocolVersion(baseConfiguration.ProtocolVersion);
-        WithCommunicationTimeout(baseConfiguration.CommunicationTimeout);
-        _builder.WithCleanSession(baseConfiguration.CleanSession);
-        SendKeepAlive(baseConfiguration.KeepAlivePeriod);
-        WithClientId(baseConfiguration.ClientId);
-
-        if (baseConfiguration.WillMessage != null)
-            SendLastWillMessage(baseConfiguration.WillMessage, baseConfiguration.WillDelayInterval);
-
-        WithAuthentication(baseConfiguration.AuthenticationMethod, baseConfiguration.AuthenticationData);
-
-        _builder.WithTopicAliasMaximum(baseConfiguration.TopicAliasMaximum);
-        _builder.WithMaximumPacketSize(baseConfiguration.MaximumPacketSize);
-        _builder.WithReceiveMaximum(baseConfiguration.ReceiveMaximum);
-        _builder.WithRequestProblemInformation(baseConfiguration.RequestProblemInformation);
-        _builder.WithRequestResponseInformation(baseConfiguration.RequestResponseInformation);
-        _builder.WithSessionExpiryInterval(baseConfiguration.SessionExpiryInterval);
-
-        baseConfiguration.UserProperties.ForEach(property => AddUserProperty(property.Name, property.Value));
-
-        if (baseConfiguration.Credentials != null)
-            WithCredentials(baseConfiguration.Credentials);
-
-        if (baseConfiguration.ExtendedAuthenticationExchangeHandler != null)
-            UseExtendedAuthenticationExchangeHandler(baseConfiguration.ExtendedAuthenticationExchangeHandler);
-
-        if (baseConfiguration.ChannelOptions is MqttClientTcpOptions tcpOptions)
-        {
-            ConnectViaTcp(
-                options =>
-                {
-                    options.Port = tcpOptions.Port;
-                    options.Server = tcpOptions.Server;
-                    options.AddressFamily = tcpOptions.AddressFamily;
-                    options.BufferSize = tcpOptions.BufferSize;
-                    options.DualMode = tcpOptions.DualMode;
-                    options.NoDelay = tcpOptions.NoDelay;
-                    options.TlsOptions = tcpOptions.TlsOptions;
-                });
-        }
-        else if (baseConfiguration.ChannelOptions is MqttClientWebSocketOptions webSocketOptions)
-        {
-            ConnectViaWebSocket(
-                options =>
-                {
-                    options.Uri = webSocketOptions.Uri;
-                    options.CookieContainer = webSocketOptions.CookieContainer;
-                    options.ProxyOptions = webSocketOptions.ProxyOptions;
-                    options.RequestHeaders = webSocketOptions.RequestHeaders;
-                    options.SubProtocols = webSocketOptions.SubProtocols;
-                    options.TlsOptions = webSocketOptions.TlsOptions;
-                });
-        }
+        _configuration = baseConfiguration with { };
+        _userProperties = new List<MqttUserProperty>(_configuration.UserProperties);
+        _webSocketProxyConfiguration = (_configuration.Channel as MqttClientWebSocketConfiguration)?.Proxy;
+        _tlsConfiguration = _configuration.Channel?.Tls ?? new MqttClientTlsConfiguration();
     }
 
     /// <summary>
@@ -114,7 +74,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder UseProtocolVersion(MqttProtocolVersion value)
     {
-        _builder.WithProtocolVersion(value);
+        _configuration = _configuration with { ProtocolVersion = value };
         return this;
     }
 
@@ -131,7 +91,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.Range(timeout, nameof(timeout), TimeSpan.Zero, TimeSpan.MaxValue);
 
-        _builder.WithCommunicationTimeout(timeout);
+        _configuration = _configuration with { CommunicationTimeout = timeout };
         return this;
     }
 
@@ -144,7 +104,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder RequestCleanSession()
     {
-        _builder.WithCleanSession();
+        _configuration = _configuration with { CleanSession = true };
         return this;
     }
 
@@ -156,7 +116,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder RequestPersistentSession()
     {
-        _builder.WithCleanSession(false);
+        _configuration = _configuration with { CleanSession = false };
         return this;
     }
 
@@ -168,7 +128,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder DisableKeepAlive()
     {
-        _builder.WithNoKeepAlive();
+        _configuration = _configuration with { KeepAlivePeriod = TimeSpan.Zero };
         return this;
     }
 
@@ -186,7 +146,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.Range(interval, nameof(interval), TimeSpan.Zero, TimeSpan.MaxValue);
 
-        _builder.WithKeepAlivePeriod(interval);
+        _configuration = _configuration with { KeepAlivePeriod = interval };
         return this;
     }
 
@@ -203,7 +163,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotEmpty(value, nameof(value));
 
-        _builder.WithClientId(value);
+        _configuration = _configuration with { ClientId = value };
         return this;
     }
 
@@ -214,18 +174,22 @@ public class MqttClientConfigurationBuilder
     ///     The LWT message type.
     /// </typeparam>
     /// <param name="lastWillBuilderAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttLastWillMessageBuilder{TMessage}" /> and configures it.
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder SendLastWillMessage<TLwtMessage>(Action<MqttLastWillMessageBuilder<TLwtMessage>> lastWillBuilderAction)
+    public MqttClientConfigurationBuilder SendLastWillMessage<TLwtMessage>(Action<MqttLastWillMessageConfigurationBuilder<TLwtMessage>> lastWillBuilderAction)
     {
         Check.NotNull(lastWillBuilderAction, nameof(lastWillBuilderAction));
 
-        MqttLastWillMessageBuilder<TLwtMessage> builder = new();
-        lastWillBuilderAction.Invoke(builder);
-        SendLastWillMessage(builder.Build(), builder.Delay);
+        MqttLastWillMessageConfigurationBuilder<TLwtMessage> lastWillMessageConfigurationBuilder = new();
+        lastWillBuilderAction.Invoke(lastWillMessageConfigurationBuilder);
+        _configuration = _configuration with
+        {
+            WillMessage = lastWillMessageConfigurationBuilder.Build(),
+            WillDelayInterval = lastWillMessageConfigurationBuilder.Delay
+        };
         return this;
     }
 
@@ -241,9 +205,13 @@ public class MqttClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder WithAuthentication(string? method, byte[]? data)
+    public partial MqttClientConfigurationBuilder WithAuthentication(string? method, byte[]? data)
     {
-        _builder.WithAuthentication(method, data);
+        _configuration = _configuration with
+        {
+            AuthenticationMethod = method,
+            AuthenticationData = data
+        };
         return this;
     }
 
@@ -261,7 +229,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.Range(topicAliasMaximum, nameof(topicAliasMaximum), 0, ushort.MaxValue);
 
-        _builder.WithTopicAliasMaximum((ushort)topicAliasMaximum);
+        _configuration = _configuration with { TopicAliasMaximum = (ushort)topicAliasMaximum };
         return this;
     }
 
@@ -278,7 +246,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.Range(maximumPacketSize, nameof(maximumPacketSize), 1, uint.MaxValue);
 
-        _builder.WithMaximumPacketSize((uint)maximumPacketSize);
+        _configuration = _configuration with { MaximumPacketSize = (uint)maximumPacketSize };
         return this;
     }
 
@@ -299,7 +267,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.Range(receiveMaximum, nameof(receiveMaximum), 1, ushort.MaxValue);
 
-        _builder.WithReceiveMaximum((ushort)receiveMaximum);
+        _configuration = _configuration with { ReceiveMaximum = (ushort)receiveMaximum };
         return this;
     }
 
@@ -311,7 +279,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder RequestProblemInformation()
     {
-        _builder.WithRequestProblemInformation();
+        _configuration = _configuration with { RequestProblemInformation = true };
         return this;
     }
 
@@ -323,7 +291,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder DisableProblemInformation()
     {
-        _builder.WithRequestProblemInformation(false);
+        _configuration = _configuration with { RequestProblemInformation = false };
         return this;
     }
 
@@ -335,7 +303,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder RequestResponseInformation()
     {
-        _builder.WithRequestResponseInformation();
+        _configuration = _configuration with { RequestResponseInformation = true };
         return this;
     }
 
@@ -348,7 +316,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder DisableResponseInformation()
     {
-        _builder.WithRequestResponseInformation(false);
+        _configuration = _configuration with { RequestResponseInformation = false };
         return this;
     }
 
@@ -364,13 +332,9 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder WithSessionExpiration(TimeSpan sessionExpiryInterval)
     {
-        Check.Range(
-            sessionExpiryInterval,
-            nameof(sessionExpiryInterval),
-            TimeSpan.Zero,
-            TimeSpan.MaxValue);
+        Check.Range(sessionExpiryInterval, nameof(sessionExpiryInterval), TimeSpan.Zero, TimeSpan.MaxValue);
 
-        WithSessionExpiration((uint)sessionExpiryInterval.TotalSeconds);
+        _configuration = _configuration with { SessionExpiryInterval = (uint)sessionExpiryInterval.TotalSeconds };
         return this;
     }
 
@@ -391,7 +355,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(name, nameof(name));
 
-        _builder.WithUserProperty(name, value);
+        _userProperties.Add(new MqttUserProperty(name, value));
         return this;
     }
 
@@ -411,7 +375,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(username, nameof(username));
 
-        _builder.WithCredentials(username, password);
+        _configuration = _configuration with { Credentials = new MqttClientCredentials(username, password) };
         return this;
     }
 
@@ -431,7 +395,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(username, nameof(username));
 
-        _builder.WithCredentials(username, password);
+        _configuration = _configuration with { Credentials = new MqttClientCredentials(username, password) };
         return this;
     }
 
@@ -439,16 +403,16 @@ public class MqttClientConfigurationBuilder
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
     /// <param name="credentials">
-    ///     The <see cref="IMqttClientCredentials" />.
+    ///     The <see cref="MqttClientCredentials" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder WithCredentials(IMqttClientCredentials credentials)
+    public MqttClientConfigurationBuilder WithCredentials(MqttClientCredentials credentials)
     {
         Check.NotNull(credentials, nameof(credentials));
 
-        _builder.WithCredentials(credentials);
+        _configuration = _configuration with { Credentials = credentials };
         return this;
     }
 
@@ -465,7 +429,7 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(handler, nameof(handler));
 
-        _builder.WithExtendedAuthenticationExchangeHandler(handler);
+        _configuration = _configuration with { ExtendedAuthenticationExchangeHandler = handler };
         return this;
     }
 
@@ -473,8 +437,8 @@ public class MqttClientConfigurationBuilder
     ///     Sets the handler to be used to handle the custom authentication data exchange.
     /// </summary>
     /// <typeparam name="THandler">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance
-    ///     will be resolved via <see cref="IServiceProvider" />.
+    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     <see cref="IServiceProvider" />.
     /// </typeparam>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -487,8 +451,8 @@ public class MqttClientConfigurationBuilder
     ///     Sets the handler to be used to handle the custom authentication data exchange.
     /// </summary>
     /// <param name="handlerType">
-    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance
-    ///     will be resolved via <see cref="IServiceProvider" />.
+    ///     The type of the <see cref="IMqttExtendedAuthenticationExchangeHandler" /> to be used. The instance will be resolved via the
+    ///     <see cref="IServiceProvider" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -498,7 +462,7 @@ public class MqttClientConfigurationBuilder
         if (_serviceProvider == null)
             throw new InvalidOperationException("The service provider is not set.");
 
-        _builder.WithExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)_serviceProvider.GetRequiredService(handlerType));
+        UseExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)_serviceProvider.GetRequiredService(handlerType));
         return this;
     }
 
@@ -518,24 +482,31 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(server, nameof(server));
 
-        _builder.WithTcpServer(server, port);
+        _configuration = _configuration with
+        {
+            Channel = new MqttClientTcpConfiguration
+            {
+                Server = server,
+                Port = port
+            }
+        };
         return this;
     }
 
     /// <summary>
     ///     Specifies the TCP connection settings.
     /// </summary>
-    /// <param name="optionsAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientTcpOptions" /> and configures it.
+    /// <param name="configuration">
+    ///     The <see cref="MqttClientTcpConfiguration" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaTcp(Action<MqttClientTcpOptions> optionsAction)
+    public MqttClientConfigurationBuilder ConnectViaTcp(MqttClientTcpConfiguration configuration)
     {
-        Check.NotNull(optionsAction, nameof(optionsAction));
+        Check.NotNull(configuration, nameof(configuration));
 
-        _builder.WithTcpServer(optionsAction);
+        _configuration = _configuration with { Channel = configuration };
         return this;
     }
 
@@ -545,65 +516,88 @@ public class MqttClientConfigurationBuilder
     /// <param name="uri">
     ///     The server URI.
     /// </param>
-    /// <param name="parametersAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientOptionsBuilderWebSocketParameters" />
-    ///     and configures it.
-    /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("", "CA1054", Justification = "URI declared as string in the underlying library")]
-    public MqttClientConfigurationBuilder ConnectViaWebSocket(
-        string uri,
-        Action<MqttClientOptionsBuilderWebSocketParameters> parametersAction)
+    public MqttClientConfigurationBuilder ConnectViaWebSocket(string uri)
     {
         Check.NotNull(uri, nameof(uri));
-        Check.NotNull(parametersAction, nameof(parametersAction));
 
-        MqttClientOptionsBuilderWebSocketParameters parameters = new();
-        parametersAction.Invoke(parameters);
-
-        _builder.WithWebSocketServer(uri, parameters);
+        _configuration = _configuration with
+        {
+            Channel = new MqttClientWebSocketConfiguration
+            {
+                Uri = uri
+            }
+        };
         return this;
     }
 
     /// <summary>
     ///     Specifies the WebSocket connection settings.
     /// </summary>
-    /// <param name="uri">
-    ///     The server URI.
-    /// </param>
-    /// <param name="parameters">
-    ///     The optional <see cref="MqttClientOptionsBuilderWebSocketParameters" />.
+    /// <param name="configuration">
+    ///     The <see cref="MqttClientWebSocketConfiguration" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    [SuppressMessage("", "CA1054", Justification = "URI declared as string in the underlying library")]
-    public MqttClientConfigurationBuilder ConnectViaWebSocket(
-        string uri,
-        MqttClientOptionsBuilderWebSocketParameters? parameters = null)
+    public MqttClientConfigurationBuilder ConnectViaWebSocket(MqttClientWebSocketConfiguration configuration)
     {
-        Check.NotNull(uri, nameof(uri));
+        Check.NotNull(configuration, nameof(configuration));
 
-        _builder.WithWebSocketServer(uri, parameters);
+        _configuration = _configuration with { Channel = configuration };
         return this;
     }
 
     /// <summary>
-    ///     Specifies the WebSocket connection settings.
+    ///     Sets the package inspector to be used.
     /// </summary>
-    /// <param name="optionsAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientWebSocketOptions" /> and configures it.
+    /// <param name="inspector">
+    ///     The <see cref="IMqttPacketInspector" /> instance to be used.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaWebSocket(Action<MqttClientWebSocketOptions> optionsAction)
+    public MqttClientConfigurationBuilder UsePacketInspector(IMqttPacketInspector inspector)
     {
-        Check.NotNull(optionsAction, nameof(optionsAction));
+        Check.NotNull(inspector, nameof(inspector));
 
-        _builder.WithWebSocketServer(optionsAction);
+        _configuration = _configuration with { PacketInspector = inspector };
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the package inspector to be used.
+    /// </summary>
+    /// <typeparam name="TInspector">
+    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
+    ///     <see cref="IServiceProvider" />.
+    /// </typeparam>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder UsePacketInspector<TInspector>()
+        where TInspector : IMqttPacketInspector =>
+        UsePacketInspector(typeof(TInspector));
+
+    /// <summary>
+    ///     Sets the package inspector to be used.
+    /// </summary>
+    /// <param name="handlerType">
+    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
+    ///     <see cref="IServiceProvider" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder UsePacketInspector(Type handlerType)
+    {
+        if (_serviceProvider == null)
+            throw new InvalidOperationException("The service provider is not set.");
+
+        UsePacketInspector((IMqttPacketInspector)_serviceProvider.GetRequiredService(handlerType));
         return this;
     }
 
@@ -641,24 +635,30 @@ public class MqttClientConfigurationBuilder
     {
         Check.NotNull(address, nameof(address));
 
-        _builder.WithProxy(address, username, password, domain, bypassOnLocal, bypassList);
+        _webSocketProxyConfiguration = new MqttClientWebSocketProxyConfiguration()
+        {
+            Address = address,
+            Username = username,
+            Password = password,
+            Domain = domain,
+            BypassOnLocal = bypassOnLocal,
+            BypassList = bypassList
+        };
         return this;
     }
 
     /// <summary>
     ///     Specifies the WebSocket connection settings.
     /// </summary>
-    /// <param name="optionsAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientWebSocketProxyOptions" /> and configures it.
+    /// <param name="settings">
+    ///     The <see cref="MqttClientWebSocketProxyConfiguration" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder UseProxy(Action<MqttClientWebSocketProxyOptions> optionsAction)
+    public MqttClientConfigurationBuilder UseProxy(MqttClientWebSocketProxyConfiguration? settings)
     {
-        Check.NotNull(optionsAction, nameof(optionsAction));
-
-        _builder.WithProxy(optionsAction);
+        _webSocketProxyConfiguration = settings;
         return this;
     }
 
@@ -670,11 +670,7 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder DisableTls()
     {
-        _builder.WithTls(
-            parameters =>
-            {
-                parameters.UseTls = false;
-            });
+        _tlsConfiguration = new MqttClientTlsConfiguration { UseTls = false };
         return this;
     }
 
@@ -686,49 +682,24 @@ public class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder EnableTls()
     {
-        _builder.WithTls();
+        _tlsConfiguration = new MqttClientTlsConfiguration { UseTls = true };
         return this;
     }
 
     /// <summary>
     ///     Specifies that TLS has to be used to encrypt the network traffic.
     /// </summary>
-    /// <param name="parameters">
-    ///     The <see cref="MqttClientOptionsBuilderTlsParameters" />.
+    /// <param name="configuration">
+    ///     The <see cref="MqttClientTlsConfiguration" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)
+    public MqttClientConfigurationBuilder EnableTls(MqttClientTlsConfiguration configuration)
     {
-        Check.NotNull(parameters, nameof(parameters));
+        Check.NotNull(configuration, nameof(configuration));
 
-        _builder.WithTls(parameters);
-        return this;
-    }
-
-    /// <summary>
-    ///     Specifies that TLS has to be used to encrypt the network traffic.
-    /// </summary>
-    /// <param name="parametersAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientOptionsBuilderTlsParameters" /> and
-    ///     configures it.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder EnableTls(Action<MqttClientOptionsBuilderTlsParameters> parametersAction)
-    {
-        Check.NotNull(parametersAction, nameof(parametersAction));
-
-        MqttClientOptionsBuilderTlsParameters parameters = new()
-        {
-            UseTls = true
-        };
-
-        parametersAction.Invoke(parameters);
-
-        _builder.WithTls(parameters);
+        _tlsConfiguration = configuration;
         return this;
     }
 
@@ -738,14 +709,34 @@ public class MqttClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientConfiguration" />.
     /// </returns>
-    public MqttClientConfiguration Build() => new((MqttClientOptions)_builder.Build());
-
-    private void SendLastWillMessage(MqttApplicationMessage message, uint? delay)
+    public MqttClientConfiguration Build()
     {
-        _builder.WithWillMessage(message);
-        _builder.WithWillDelayInterval(delay);
-    }
+        _configuration = _configuration with
+        {
+            UserProperties = _userProperties.AsValueReadOnlyCollection()
+        };
 
-    private void WithSessionExpiration(uint totalSeconds) =>
-        _builder.WithSessionExpiryInterval(totalSeconds);
+        switch (_configuration.Channel)
+        {
+            case MqttClientTcpConfiguration tcpChannel:
+                return _configuration with
+                {
+                    Channel = tcpChannel with
+                    {
+                        Tls = _tlsConfiguration
+                    }
+                };
+            case MqttClientWebSocketConfiguration webSocketChannel:
+                return _configuration with
+                {
+                    Channel = webSocketChannel with
+                    {
+                        Proxy = _webSocketProxyConfiguration,
+                        Tls = _tlsConfiguration
+                    }
+                };
+            default:
+                return _configuration;
+        }
+    }
 }

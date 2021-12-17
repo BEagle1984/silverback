@@ -3,7 +3,6 @@
 
 using System;
 using FluentAssertions;
-using MQTTnet.Client.Options;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
@@ -34,8 +33,7 @@ public class ErrorPolicyBuilderMoveToMqttTopicExtensionsTests
         policy.Should().BeOfType<MoveMessageErrorPolicy>();
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration
-            .As<MqttProducerConfiguration>().Client.ChannelOptions
-            .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
+            .As<MqttProducerConfiguration>().Client.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
     }
 
     [Fact]
@@ -51,7 +49,6 @@ public class ErrorPolicyBuilderMoveToMqttTopicExtensionsTests
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
         policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration
-            .As<MqttProducerConfiguration>().Client.ChannelOptions
-            .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
+            .As<MqttProducerConfiguration>().Client.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
     }
 }

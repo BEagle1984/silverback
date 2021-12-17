@@ -29,6 +29,6 @@ public sealed record ChunkSettings : IValidatableEndpointSettings
     public void Validate()
     {
         if (Size < 1)
-            throw new EndpointConfigurationException("Chunk.Size must be greater or equal to 1.");
+            throw new EndpointConfigurationException("The chunk size must be greater or equal to 1.", Size, nameof(Size));
     }
 }

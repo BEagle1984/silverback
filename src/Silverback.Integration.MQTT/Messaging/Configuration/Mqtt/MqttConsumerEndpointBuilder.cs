@@ -32,12 +32,16 @@ public class MqttConsumerConfigurationBuilder<TMessage>
     /// <param name="endpointsConfigurationBuilder">
     ///     The optional <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
     /// </param>
+    // TODO: Test wrapped config is cloned (in Kafka as well)
     public MqttConsumerConfigurationBuilder(
         MqttClientConfiguration? clientConfig = null,
         EndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         : base(endpointsConfigurationBuilder)
     {
-        _clientConfiguration = clientConfig ?? new MqttClientConfiguration();
+        if (clientConfig != null)
+            _clientConfiguration = clientConfig with { };
+        else
+            _clientConfiguration = new MqttClientConfiguration();
     }
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />

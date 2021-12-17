@@ -8,6 +8,7 @@ using MQTTnet.Client.Options;
 using Silverback.Configuration;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -58,12 +59,12 @@ public class MultipleBrokersTests : MqttTestFixture
         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
         Helper.Spy.InboundEnvelopes[0]
             .Endpoint.As<MqttConsumerEndpoint>()
-            .Configuration.Client.ChannelOptions.As<MqttClientTcpOptions>()
+            .Configuration.Client.Channel.As<MqttClientTcpConfiguration>()
             .Server.Should().Be("e2e-mqtt-broker-1");
         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
         Helper.Spy.InboundEnvelopes[1]
             .Endpoint.As<MqttConsumerEndpoint>()
-            .Configuration.Client.ChannelOptions.As<MqttClientTcpOptions>()
+            .Configuration.Client.Channel.As<MqttClientTcpConfiguration>()
             .Server.Should().Be("e2e-mqtt-broker-2");
     }
 

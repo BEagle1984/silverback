@@ -250,14 +250,11 @@ public class MqttProducerConfigurationBuilder<TMessage>
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.CreateConfiguration" />
     protected override MqttProducerConfiguration CreateConfiguration()
     {
-        if (_endpointResolver == null)
-            throw new EndpointConfigurationException("Endpoint not set. Use ProduceTo or UseEndpointResolver to set it.");
-
         MqttProducerConfiguration configuration = new();
 
         return configuration with
         {
-            Endpoint = _endpointResolver,
+            Endpoint = _endpointResolver ?? NullProducerEndpointResolver<MqttProducerEndpoint>.Instance,
             Client = _clientConfiguration,
             QualityOfServiceLevel = _qualityOfServiceLevel ?? configuration.QualityOfServiceLevel,
             Retain = _retain ?? configuration.Retain,

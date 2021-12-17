@@ -73,8 +73,8 @@ internal sealed class BuilderGenerator
     {
         foreach (PropertyInfo property in ReflectionHelper.GetProperties(_proxiedType, !_isChildType))
         {
-            string propertyType = ReflectionHelper.GetPropertyTypeString(property.PropertyType);
-            string valueVariableName = $"{property.Name[..1].ToLowerInvariant()}{property.Name[1..]}";
+            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType, true);
+            string valueVariableName = property.Name.ToCamelCase();
             string visibility = MustBeInternal(property.Name) ? "internal" : "public";
 
             WriteMethodSummary(property, valueVariableName);

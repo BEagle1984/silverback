@@ -50,7 +50,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: rdkafka
     ///     <br />importance: low
     /// </summary>
-    public string ClientId
+    public string? ClientId
     {
         get => ClientConfig.ClientId;
         init => ClientConfig.ClientId = value;
@@ -61,7 +61,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: high
     /// </summary>
-    public string BootstrapServers
+    public string? BootstrapServers
     {
         get => ClientConfig.BootstrapServers;
         init => ClientConfig.BootstrapServers = value;
@@ -171,7 +171,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string TopicBlacklist
+    public string? TopicBlacklist
     {
         get => ClientConfig.TopicBlacklist;
         init => ClientConfig.TopicBlacklist = value;
@@ -182,7 +182,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: medium
     /// </summary>
-    public string Debug
+    public string? Debug
     {
         get => ClientConfig.Debug;
         init => ClientConfig.Debug = value;
@@ -413,7 +413,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: 0.10.0
     ///     <br />importance: medium
     /// </summary>
-    public string BrokerVersionFallback
+    public string? BrokerVersionFallback
     {
         get => ClientConfig.BrokerVersionFallback;
         init => ClientConfig.BrokerVersionFallback = value;
@@ -435,7 +435,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCipherSuites
+    public string? SslCipherSuites
     {
         get => ClientConfig.SslCipherSuites;
         init => ClientConfig.SslCipherSuites = value;
@@ -446,7 +446,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCurvesList
+    public string? SslCurvesList
     {
         get => ClientConfig.SslCurvesList;
         init => ClientConfig.SslCurvesList = value;
@@ -457,7 +457,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslSigalgsList
+    public string? SslSigalgsList
     {
         get => ClientConfig.SslSigalgsList;
         init => ClientConfig.SslSigalgsList = value;
@@ -468,7 +468,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslKeyLocation
+    public string? SslKeyLocation
     {
         get => ClientConfig.SslKeyLocation;
         init => ClientConfig.SslKeyLocation = value;
@@ -479,7 +479,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslKeyPassword
+    public string? SslKeyPassword
     {
         get => ClientConfig.SslKeyPassword;
         init => ClientConfig.SslKeyPassword = value;
@@ -490,7 +490,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslKeyPem
+    public string? SslKeyPem
     {
         get => ClientConfig.SslKeyPem;
         init => ClientConfig.SslKeyPem = value;
@@ -501,7 +501,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCertificateLocation
+    public string? SslCertificateLocation
     {
         get => ClientConfig.SslCertificateLocation;
         init => ClientConfig.SslCertificateLocation = value;
@@ -512,7 +512,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCertificatePem
+    public string? SslCertificatePem
     {
         get => ClientConfig.SslCertificatePem;
         init => ClientConfig.SslCertificatePem = value;
@@ -523,7 +523,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCaLocation
+    public string? SslCaLocation
     {
         get => ClientConfig.SslCaLocation;
         init => ClientConfig.SslCaLocation = value;
@@ -534,7 +534,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCaPem
+    public string? SslCaPem
     {
         get => ClientConfig.SslCaPem;
         init => ClientConfig.SslCaPem = value;
@@ -545,7 +545,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: Root
     ///     <br />importance: low
     /// </summary>
-    public string SslCaCertificateStores
+    public string? SslCaCertificateStores
     {
         get => ClientConfig.SslCaCertificateStores;
         init => ClientConfig.SslCaCertificateStores = value;
@@ -556,7 +556,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslCrlLocation
+    public string? SslCrlLocation
     {
         get => ClientConfig.SslCrlLocation;
         init => ClientConfig.SslCrlLocation = value;
@@ -567,7 +567,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslKeystoreLocation
+    public string? SslKeystoreLocation
     {
         get => ClientConfig.SslKeystoreLocation;
         init => ClientConfig.SslKeystoreLocation = value;
@@ -578,7 +578,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslKeystorePassword
+    public string? SslKeystorePassword
     {
         get => ClientConfig.SslKeystorePassword;
         init => ClientConfig.SslKeystorePassword = value;
@@ -589,7 +589,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SslEngineLocation
+    public string? SslEngineLocation
     {
         get => ClientConfig.SslEngineLocation;
         init => ClientConfig.SslEngineLocation = value;
@@ -600,7 +600,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: dynamic
     ///     <br />importance: low
     /// </summary>
-    public string SslEngineId
+    public string? SslEngineId
     {
         get => ClientConfig.SslEngineId;
         init => ClientConfig.SslEngineId = value;
@@ -633,7 +633,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: kafka
     ///     <br />importance: low
     /// </summary>
-    public string SaslKerberosServiceName
+    public string? SaslKerberosServiceName
     {
         get => ClientConfig.SaslKerberosServiceName;
         init => ClientConfig.SaslKerberosServiceName = value;
@@ -644,7 +644,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: kafkaclient
     ///     <br />importance: low
     /// </summary>
-    public string SaslKerberosPrincipal
+    public string? SaslKerberosPrincipal
     {
         get => ClientConfig.SaslKerberosPrincipal;
         init => ClientConfig.SaslKerberosPrincipal = value;
@@ -655,7 +655,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: kinit -R -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal} || kinit -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal}
     ///     <br />importance: low
     /// </summary>
-    public string SaslKerberosKinitCmd
+    public string? SaslKerberosKinitCmd
     {
         get => ClientConfig.SaslKerberosKinitCmd;
         init => ClientConfig.SaslKerberosKinitCmd = value;
@@ -666,7 +666,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SaslKerberosKeytab
+    public string? SaslKerberosKeytab
     {
         get => ClientConfig.SaslKerberosKeytab;
         init => ClientConfig.SaslKerberosKeytab = value;
@@ -688,7 +688,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: high
     /// </summary>
-    public string SaslUsername
+    public string? SaslUsername
     {
         get => ClientConfig.SaslUsername;
         init => ClientConfig.SaslUsername = value;
@@ -699,7 +699,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: high
     /// </summary>
-    public string SaslPassword
+    public string? SaslPassword
     {
         get => ClientConfig.SaslPassword;
         init => ClientConfig.SaslPassword = value;
@@ -710,7 +710,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string SaslOauthbearerConfig
+    public string? SaslOauthbearerConfig
     {
         get => ClientConfig.SaslOauthbearerConfig;
         init => ClientConfig.SaslOauthbearerConfig = value;
@@ -732,7 +732,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string PluginLibraryPaths
+    public string? PluginLibraryPaths
     {
         get => ClientConfig.PluginLibraryPaths;
         init => ClientConfig.PluginLibraryPaths = value;
@@ -743,7 +743,7 @@ public partial record KafkaClientConfiguration<TClientConfig>
     ///     <br /><br />default: ''
     ///     <br />importance: low
     /// </summary>
-    public string ClientRack
+    public string? ClientRack
     {
         get => ClientConfig.ClientRack;
         init => ClientConfig.ClientRack = value;
@@ -784,7 +784,7 @@ public partial record KafkaClientConsumerConfiguration
     ///     <br /><br />default: all
     ///     <br />importance: low
     /// </summary>
-    public string ConsumeResultFields
+    public string? ConsumeResultFields
     {
         init => ClientConfig.ConsumeResultFields = value;
     }
@@ -805,7 +805,7 @@ public partial record KafkaClientConsumerConfiguration
     ///     <br /><br />default: ''
     ///     <br />importance: high
     /// </summary>
-    public string GroupId
+    public string? GroupId
     {
         get => ClientConfig.GroupId;
         init => ClientConfig.GroupId = value;
@@ -816,7 +816,7 @@ public partial record KafkaClientConsumerConfiguration
     ///     <br /><br />default: ''
     ///     <br />importance: medium
     /// </summary>
-    public string GroupInstanceId
+    public string? GroupInstanceId
     {
         get => ClientConfig.GroupInstanceId;
         init => ClientConfig.GroupInstanceId = value;
@@ -860,7 +860,7 @@ public partial record KafkaClientConsumerConfiguration
     ///     <br /><br />default: consumer
     ///     <br />importance: low
     /// </summary>
-    public string GroupProtocolType
+    public string? GroupProtocolType
     {
         get => ClientConfig.GroupProtocolType;
         init => ClientConfig.GroupProtocolType = value;
@@ -1082,7 +1082,7 @@ public partial record KafkaClientProducerConfiguration
     ///     Silverback overrides this value by default setting it to &quot;key,status&quot; as an optimization,
     ///     since the other fields aren't used.
     /// </remarks>
-    public string DeliveryReportFields
+    public string? DeliveryReportFields
     {
         get => ClientConfig.DeliveryReportFields;
         init
@@ -1141,7 +1141,7 @@ public partial record KafkaClientProducerConfiguration
     ///     <br /><br />default: ''
     ///     <br />importance: high
     /// </summary>
-    public string TransactionalId
+    public string? TransactionalId
     {
         get => ClientConfig.TransactionalId;
         init => ClientConfig.TransactionalId = value;
@@ -1351,7 +1351,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithClientId(string clientId)
+    public TBuilder WithClientId(string? clientId)
     {
         ClientConfig.ClientId = clientId;
         return This;
@@ -1366,7 +1366,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithBootstrapServers(string bootstrapServers)
+    public TBuilder WithBootstrapServers(string? bootstrapServers)
     {
         ClientConfig.BootstrapServers = bootstrapServers;
         return This;
@@ -1516,7 +1516,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithTopicBlacklist(string topicBlacklist)
+    public TBuilder WithTopicBlacklist(string? topicBlacklist)
     {
         ClientConfig.TopicBlacklist = topicBlacklist;
         return This;
@@ -1531,7 +1531,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithDebug(string debug)
+    public TBuilder WithDebug(string? debug)
     {
         ClientConfig.Debug = debug;
         return This;
@@ -1846,7 +1846,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithBrokerVersionFallback(string brokerVersionFallback)
+    public TBuilder WithBrokerVersionFallback(string? brokerVersionFallback)
     {
         ClientConfig.BrokerVersionFallback = brokerVersionFallback;
         return This;
@@ -1876,7 +1876,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCipherSuites(string sslCipherSuites)
+    public TBuilder WithSslCipherSuites(string? sslCipherSuites)
     {
         ClientConfig.SslCipherSuites = sslCipherSuites;
         return This;
@@ -1891,7 +1891,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCurvesList(string sslCurvesList)
+    public TBuilder WithSslCurvesList(string? sslCurvesList)
     {
         ClientConfig.SslCurvesList = sslCurvesList;
         return This;
@@ -1906,7 +1906,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslSigalgsList(string sslSigalgsList)
+    public TBuilder WithSslSigalgsList(string? sslSigalgsList)
     {
         ClientConfig.SslSigalgsList = sslSigalgsList;
         return This;
@@ -1921,7 +1921,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslKeyLocation(string sslKeyLocation)
+    public TBuilder WithSslKeyLocation(string? sslKeyLocation)
     {
         ClientConfig.SslKeyLocation = sslKeyLocation;
         return This;
@@ -1936,7 +1936,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslKeyPassword(string sslKeyPassword)
+    public TBuilder WithSslKeyPassword(string? sslKeyPassword)
     {
         ClientConfig.SslKeyPassword = sslKeyPassword;
         return This;
@@ -1951,7 +1951,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslKeyPem(string sslKeyPem)
+    public TBuilder WithSslKeyPem(string? sslKeyPem)
     {
         ClientConfig.SslKeyPem = sslKeyPem;
         return This;
@@ -1966,7 +1966,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCertificateLocation(string sslCertificateLocation)
+    public TBuilder WithSslCertificateLocation(string? sslCertificateLocation)
     {
         ClientConfig.SslCertificateLocation = sslCertificateLocation;
         return This;
@@ -1981,7 +1981,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCertificatePem(string sslCertificatePem)
+    public TBuilder WithSslCertificatePem(string? sslCertificatePem)
     {
         ClientConfig.SslCertificatePem = sslCertificatePem;
         return This;
@@ -1996,7 +1996,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCaLocation(string sslCaLocation)
+    public TBuilder WithSslCaLocation(string? sslCaLocation)
     {
         ClientConfig.SslCaLocation = sslCaLocation;
         return This;
@@ -2011,7 +2011,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCaPem(string sslCaPem)
+    public TBuilder WithSslCaPem(string? sslCaPem)
     {
         ClientConfig.SslCaPem = sslCaPem;
         return This;
@@ -2026,7 +2026,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCaCertificateStores(string sslCaCertificateStores)
+    public TBuilder WithSslCaCertificateStores(string? sslCaCertificateStores)
     {
         ClientConfig.SslCaCertificateStores = sslCaCertificateStores;
         return This;
@@ -2041,7 +2041,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslCrlLocation(string sslCrlLocation)
+    public TBuilder WithSslCrlLocation(string? sslCrlLocation)
     {
         ClientConfig.SslCrlLocation = sslCrlLocation;
         return This;
@@ -2056,7 +2056,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslKeystoreLocation(string sslKeystoreLocation)
+    public TBuilder WithSslKeystoreLocation(string? sslKeystoreLocation)
     {
         ClientConfig.SslKeystoreLocation = sslKeystoreLocation;
         return This;
@@ -2071,7 +2071,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslKeystorePassword(string sslKeystorePassword)
+    public TBuilder WithSslKeystorePassword(string? sslKeystorePassword)
     {
         ClientConfig.SslKeystorePassword = sslKeystorePassword;
         return This;
@@ -2086,7 +2086,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslEngineLocation(string sslEngineLocation)
+    public TBuilder WithSslEngineLocation(string? sslEngineLocation)
     {
         ClientConfig.SslEngineLocation = sslEngineLocation;
         return This;
@@ -2101,7 +2101,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSslEngineId(string sslEngineId)
+    public TBuilder WithSslEngineId(string? sslEngineId)
     {
         ClientConfig.SslEngineId = sslEngineId;
         return This;
@@ -2146,7 +2146,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslKerberosServiceName(string saslKerberosServiceName)
+    public TBuilder WithSaslKerberosServiceName(string? saslKerberosServiceName)
     {
         ClientConfig.SaslKerberosServiceName = saslKerberosServiceName;
         return This;
@@ -2161,7 +2161,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslKerberosPrincipal(string saslKerberosPrincipal)
+    public TBuilder WithSaslKerberosPrincipal(string? saslKerberosPrincipal)
     {
         ClientConfig.SaslKerberosPrincipal = saslKerberosPrincipal;
         return This;
@@ -2176,7 +2176,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslKerberosKinitCmd(string saslKerberosKinitCmd)
+    public TBuilder WithSaslKerberosKinitCmd(string? saslKerberosKinitCmd)
     {
         ClientConfig.SaslKerberosKinitCmd = saslKerberosKinitCmd;
         return This;
@@ -2191,7 +2191,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslKerberosKeytab(string saslKerberosKeytab)
+    public TBuilder WithSaslKerberosKeytab(string? saslKerberosKeytab)
     {
         ClientConfig.SaslKerberosKeytab = saslKerberosKeytab;
         return This;
@@ -2221,7 +2221,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslUsername(string saslUsername)
+    public TBuilder WithSaslUsername(string? saslUsername)
     {
         ClientConfig.SaslUsername = saslUsername;
         return This;
@@ -2236,7 +2236,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslPassword(string saslPassword)
+    public TBuilder WithSaslPassword(string? saslPassword)
     {
         ClientConfig.SaslPassword = saslPassword;
         return This;
@@ -2251,7 +2251,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithSaslOauthbearerConfig(string saslOauthbearerConfig)
+    public TBuilder WithSaslOauthbearerConfig(string? saslOauthbearerConfig)
     {
         ClientConfig.SaslOauthbearerConfig = saslOauthbearerConfig;
         return This;
@@ -2281,7 +2281,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithPluginLibraryPaths(string pluginLibraryPaths)
+    public TBuilder WithPluginLibraryPaths(string? pluginLibraryPaths)
     {
         ClientConfig.PluginLibraryPaths = pluginLibraryPaths;
         return This;
@@ -2296,7 +2296,7 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithClientRack(string clientRack)
+    public TBuilder WithClientRack(string? clientRack)
     {
         ClientConfig.ClientRack = clientRack;
         return This;
@@ -2367,7 +2367,7 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientConsumerConfigurationBuilder WithConsumeResultFields(string consumeResultFields)
+    public KafkaClientConsumerConfigurationBuilder WithConsumeResultFields(string? consumeResultFields)
     {
         ConsumerConfig.ConsumeResultFields = consumeResultFields;
         return This;
@@ -2397,7 +2397,7 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientConsumerConfigurationBuilder WithGroupId(string groupId)
+    public KafkaClientConsumerConfigurationBuilder WithGroupId(string? groupId)
     {
         ConsumerConfig.GroupId = groupId;
         return This;
@@ -2412,7 +2412,7 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientConsumerConfigurationBuilder WithGroupInstanceId(string groupInstanceId)
+    public KafkaClientConsumerConfigurationBuilder WithGroupInstanceId(string? groupInstanceId)
     {
         ConsumerConfig.GroupInstanceId = groupInstanceId;
         return This;
@@ -2472,7 +2472,7 @@ public partial class KafkaClientConsumerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientConsumerConfigurationBuilder WithGroupProtocolType(string groupProtocolType)
+    public KafkaClientConsumerConfigurationBuilder WithGroupProtocolType(string? groupProtocolType)
     {
         ConsumerConfig.GroupProtocolType = groupProtocolType;
         return This;
@@ -2766,7 +2766,7 @@ public partial class KafkaClientProducerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientProducerConfigurationBuilder WithDeliveryReportFields(string deliveryReportFields)
+    public KafkaClientProducerConfigurationBuilder WithDeliveryReportFields(string? deliveryReportFields)
     {
         ProducerConfig.DeliveryReportFields = deliveryReportFields;
         return This;
@@ -2841,7 +2841,7 @@ public partial class KafkaClientProducerConfigurationBuilder
     /// <returns>
     ///     The client configuration builder so that additional calls can be chained.
     /// </returns>
-    public KafkaClientProducerConfigurationBuilder WithTransactionalId(string transactionalId)
+    public KafkaClientProducerConfigurationBuilder WithTransactionalId(string? transactionalId)
     {
         ProducerConfig.TransactionalId = transactionalId;
         return This;

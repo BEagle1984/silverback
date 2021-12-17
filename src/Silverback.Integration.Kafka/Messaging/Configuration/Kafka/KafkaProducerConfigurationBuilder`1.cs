@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
@@ -260,8 +259,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(
-        Func<KafkaClientProducerConfiguration, KafkaClientProducerConfiguration> clientConfigurationAction)
+    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(Func<KafkaClientProducerConfiguration, KafkaClientProducerConfiguration> clientConfigurationAction)
     {
         Check.NotNull(clientConfigurationAction, nameof(clientConfigurationAction));
         _clientConfiguration = clientConfigurationAction.Invoke(_clientConfiguration);
@@ -277,8 +275,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(
-        Action<KafkaClientProducerConfigurationBuilder> clientConfigurationBuilderAction)
+    public KafkaProducerConfigurationBuilder<TMessage> ConfigureClient(Action<KafkaClientProducerConfigurationBuilder> clientConfigurationBuilderAction)
     {
         Check.NotNull(clientConfigurationBuilderAction, nameof(clientConfigurationBuilderAction));
 
@@ -292,15 +289,12 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.CreateConfiguration" />
     protected override KafkaProducerConfiguration CreateConfiguration()
     {
-        if (_endpointResolver == null)
-            throw new EndpointConfigurationException("Endpoint not set. Use ProduceTo or UseEndpointResolver to set it.");
-
         KafkaProducerConfiguration configuration = new()
         {
-            Endpoint = _endpointResolver,
+            Endpoint = _endpointResolver ?? NullProducerEndpointResolver<KafkaProducerEndpoint>.Instance,
             Client = _clientConfiguration,
             MessageEnrichers = _kafkaKeyEnricher == null
-                ? ValueReadOnlyCollection<IOutboundMessageEnricher>.Empty
+                ? ValueReadOnlyCollection.Empty<IOutboundMessageEnricher>()
                 : new ValueReadOnlyCollection<IOutboundMessageEnricher>(
                     new[]
                     {

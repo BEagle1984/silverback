@@ -64,7 +64,7 @@ internal sealed class ProxyClassGenerator
 
         foreach (PropertyInfo property in properties)
         {
-            string propertyType = ReflectionHelper.GetPropertyTypeString(property.PropertyType);
+            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType, true);
 
             WritePropertySummary(property);
 

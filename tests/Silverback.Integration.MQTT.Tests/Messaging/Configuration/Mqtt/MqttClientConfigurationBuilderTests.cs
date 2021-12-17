@@ -8,9 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Client.Options;
+using MQTTnet.Diagnostics.PacketInspection;
 using MQTTnet.Formatter;
-using MQTTnet.Packets;
 using NSubstitute;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Types.Domain;
@@ -395,12 +394,7 @@ public class MqttClientConfigurationBuilderTests
 
         builder
             .ConnectViaTcp("tests-server")
-            .WithCredentials(
-                new MqttClientCredentials
-                {
-                    Username = "user",
-                    Password = passwordBytes
-                });
+            .WithCredentials(new MqttClientCredentials("user", passwordBytes));
 
         MqttClientConfiguration config = builder.Build();
         config.Credentials.Should().NotBeNull();
@@ -459,92 +453,67 @@ public class MqttClientConfigurationBuilderTests
     }
 
     [Fact]
-    public void ConnectViaTcp_ServerAndPort_ChannelOptionsSet()
+    public void ConnectViaTcp_ServerAndPort_ChannelSet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder.ConnectViaTcp("tests-server", 1234);
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.Should().BeOfType<MqttClientTcpOptions>();
-        config.ChannelOptions.As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
-        config.ChannelOptions.As<MqttClientTcpOptions>().Port.Should().Be(1234);
+        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
+        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
+        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
     }
 
     [Fact]
-    public void ConnectViaTcp_Action_ChannelOptionsSet()
+    public void ConnectViaTcp_Options_ChannelSet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder.ConnectViaTcp(
-            options =>
+            new MqttClientTcpConfiguration
             {
-                options.Server = "tests-server";
-                options.Port = 1234;
+                Server = "tests-server",
+                Port = 1234
             });
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.Should().BeOfType<MqttClientTcpOptions>();
-        config.ChannelOptions.As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
-        config.ChannelOptions.As<MqttClientTcpOptions>().Port.Should().Be(1234);
+        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
+        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
+        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
     }
 
     [Fact]
-    public void ConnectViaWebSocket_Uri_ChannelOptionsSet()
+    public void ConnectViaWebSocket_Uri_ChannelSet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder.ConnectViaWebSocket("uri");
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.Should().BeOfType<MqttClientWebSocketOptions>();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("uri");
+        config.Channel.Should().BeOfType<MqttClientWebSocketConfiguration>();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be("uri");
     }
 
     [Fact]
-    public void ConnectViaWebSocket_UriAndAction_ChannelOptionsSet()
+    public void ConnectViaWebSocket_Options_ChannelSet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder.ConnectViaWebSocket(
-            "uri",
-            parameters =>
+            new MqttClientWebSocketConfiguration
             {
-                parameters.RequestHeaders = new Dictionary<string, string>
+                Uri = "uri",
+                RequestHeaders = new Dictionary<string, string>
                 {
                     { "header", "value" }
-                };
+                }
             });
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.Should().BeOfType<MqttClientWebSocketOptions>();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("uri");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().RequestHeaders.Should().BeEquivalentTo(
-            new Dictionary<string, string>
-            {
-                { "header", "value" }
-            });
-    }
-
-    [Fact]
-    public void ConnectViaWebSocket_Action_ChannelOptionsSet()
-    {
-        MqttClientConfigurationBuilder builder = new();
-
-        builder.ConnectViaWebSocket(
-            options =>
-            {
-                options.Uri = "uri";
-                options.RequestHeaders = new Dictionary<string, string>
-                {
-                    { "header", "value" }
-                };
-            });
-
-        MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.Should().BeOfType<MqttClientWebSocketOptions>();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("uri");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().RequestHeaders.Should().BeEquivalentTo(
+        config.Channel.Should().BeOfType<MqttClientWebSocketConfiguration>();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be("uri");
+        config.Channel.As<MqttClientWebSocketConfiguration>().RequestHeaders.Should().BeEquivalentTo(
             new Dictionary<string, string>
             {
                 { "header", "value" }
@@ -567,51 +536,45 @@ public class MqttClientConfigurationBuilderTests
                 new[] { "local1", "local2" });
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Should().NotBeNull();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should()
-            .Be("address");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Username.Should().Be("user");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Password.Should().Be("pass");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Domain.Should().Be("domain");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should()
-            .BeTrue();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassList.Should()
-            .BeEquivalentTo("local1", "local2");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy.Should().NotBeNull();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Address.Should().Be("address");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Username.Should().Be("user");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Password.Should().Be("pass");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Domain.Should().Be("domain");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassOnLocal.Should().BeTrue();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassList.Should().BeEquivalentTo("local1", "local2");
     }
 
     [Fact]
-    public void UseProxy_Action_ProxySet()
+    public void UseProxy_Options_ProxySet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder
             .ConnectViaWebSocket("uri")
             .UseProxy(
-                options =>
+                new MqttClientWebSocketProxyConfiguration
                 {
-                    options.Address = "address";
-                    options.Username = "user";
-                    options.Password = "pass";
-                    options.Domain = "domain";
-                    options.BypassOnLocal = true;
-                    options.BypassList = new[] { "local1", "local2" };
+                    Address = "address",
+                    Username = "user",
+                    Password = "pass",
+                    Domain = "domain",
+                    BypassOnLocal = true,
+                    BypassList = new[] { "local1", "local2" }
                 });
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Should().NotBeNull();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should()
-            .Be("address");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Username.Should().Be("user");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Password.Should().Be("pass");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Domain.Should().Be("domain");
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should()
-            .BeTrue();
-        config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassList.Should()
-            .BeEquivalentTo("local1", "local2");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy.Should().NotBeNull();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Address.Should().Be("address");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Username.Should().Be("user");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Password.Should().Be("pass");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.Domain.Should().Be("domain");
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassOnLocal.Should().BeTrue();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Proxy!.BypassList.Should().BeEquivalentTo("local1", "local2");
     }
 
     [Fact]
-    public void EnableTls_UseTlsSetToTrue()
+    public void EnableTls_Tcp_UseTlsSetToTrue()
     {
         MqttClientConfigurationBuilder builder = new();
 
@@ -620,11 +583,11 @@ public class MqttClientConfigurationBuilderTests
             .EnableTls();
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions!.TlsOptions.UseTls.Should().BeTrue();
+        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
     }
 
     [Fact]
-    public void DisableTls_UseTlsSetToFalse()
+    public void DisableTls_Tcp_UseTlsSetToFalse()
     {
         MqttClientConfigurationBuilder builder = new();
 
@@ -633,18 +596,44 @@ public class MqttClientConfigurationBuilderTests
             .DisableTls();
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions!.TlsOptions.UseTls.Should().BeFalse();
+        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
     }
 
     [Fact]
-    public void EnableTls_Parameters_TlsParametersSet()
+    public void EnableTls_WebSocket_UseTlsSetToTrue()
+    {
+        MqttClientConfigurationBuilder builder = new();
+
+        builder
+            .ConnectViaWebSocket("tests-server")
+            .EnableTls();
+
+        MqttClientConfiguration config = builder.Build();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeTrue();
+    }
+
+    [Fact]
+    public void DisableTls_WebSocket_UseTlsSetToFalse()
+    {
+        MqttClientConfigurationBuilder builder = new();
+
+        builder
+            .ConnectViaWebSocket("tests-server")
+            .DisableTls();
+
+        MqttClientConfiguration config = builder.Build();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeFalse();
+    }
+
+    [Fact]
+    public void EnableTls_Options_TlsParametersSet()
     {
         MqttClientConfigurationBuilder builder = new();
 
         builder
             .ConnectViaTcp("tests-server")
             .EnableTls(
-                new MqttClientOptionsBuilderTlsParameters
+                new MqttClientTlsConfiguration
                 {
                     UseTls = true,
                     SslProtocol = SslProtocols.Tls12,
@@ -652,29 +641,55 @@ public class MqttClientConfigurationBuilderTests
                 });
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions!.TlsOptions.UseTls.Should().BeTrue();
-        config.ChannelOptions.TlsOptions.SslProtocol.Should().Be(SslProtocols.Tls12);
-        config.ChannelOptions.TlsOptions.AllowUntrustedCertificates.Should().BeTrue();
+        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
+        config.Channel.As<MqttClientTcpConfiguration>().Tls.SslProtocol.Should().Be(SslProtocols.Tls12);
+        config.Channel.As<MqttClientTcpConfiguration>().Tls.AllowUntrustedCertificates.Should().BeTrue();
     }
 
     [Fact]
-    public void EnableTls_Action_TlsParametersSet()
+    public void UsePacketInspector_Instance_InspectorSet()
     {
+        TestPacketInspector instance = new();
         MqttClientConfigurationBuilder builder = new();
 
         builder
             .ConnectViaTcp("tests-server")
-            .EnableTls(
-                parameters =>
-                {
-                    parameters.SslProtocol = SslProtocols.Tls12;
-                    parameters.AllowUntrustedCertificates = true;
-                });
+            .UsePacketInspector(instance);
 
         MqttClientConfiguration config = builder.Build();
-        config.ChannelOptions!.TlsOptions.UseTls.Should().BeTrue();
-        config.ChannelOptions.TlsOptions.SslProtocol.Should().Be(SslProtocols.Tls12);
-        config.ChannelOptions.TlsOptions.AllowUntrustedCertificates.Should().BeTrue();
+        config.PacketInspector.Should().BeSameAs(instance);
+    }
+
+    [Fact]
+    public void UsePacketInspector_GenericTypeArgument_InspectorSet()
+    {
+        IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
+        serviceProvider.GetService(typeof(TestPacketInspector)).Returns(new TestPacketInspector());
+
+        MqttClientConfigurationBuilder builder = new(serviceProvider);
+
+        builder
+            .ConnectViaTcp("tests-server")
+            .UsePacketInspector<TestPacketInspector>();
+
+        MqttClientConfiguration config = builder.Build();
+        config.PacketInspector.Should().BeOfType<TestPacketInspector>();
+    }
+
+    [Fact]
+    public void UsePacketInspector_Type_InspectorSet()
+    {
+        IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
+        serviceProvider.GetService(typeof(TestPacketInspector)).Returns(new TestPacketInspector());
+
+        MqttClientConfigurationBuilder builder = new(serviceProvider);
+
+        builder
+            .ConnectViaTcp("tests-server")
+            .UsePacketInspector(typeof(TestPacketInspector));
+
+        MqttClientConfiguration config = builder.Build();
+        config.PacketInspector.Should().BeOfType<TestPacketInspector>();
     }
 
     [Fact]
@@ -685,12 +700,7 @@ public class MqttClientConfigurationBuilderTests
         builder
             .UseProtocolVersion(MqttProtocolVersion.V311)
             .ConnectViaTcp("tests-server", 1234)
-            .EnableTls(
-                parameters =>
-                {
-                    parameters.SslProtocol = SslProtocols.Tls12;
-                    parameters.AllowUntrustedCertificates = true;
-                })
+            .EnableTls()
             .UseExtendedAuthenticationExchangeHandler(new TestExtendedAuthenticationExchangeHandler());
 
         MqttClientConfiguration baseConfig = builder.Build();
@@ -709,20 +719,21 @@ public class MqttClientConfigurationBuilderTests
             .UseProtocolVersion(MqttProtocolVersion.V311)
             .ConnectViaWebSocket("uri")
             .UseProxy(
-                options =>
+                new MqttClientWebSocketProxyConfiguration
                 {
-                    options.Address = "address";
-                    options.Username = "user";
-                    options.Password = "pass";
-                    options.Domain = "domain";
-                    options.BypassOnLocal = true;
-                    options.BypassList = new[] { "local1", "local2" };
+                    Address = "address",
+                    Username = "user",
+                    Password = "pass",
+                    Domain = "domain",
+                    BypassOnLocal = true,
+                    BypassList = new[] { "local1", "local2" }
                 })
             .EnableTls(
-                parameters =>
+                new MqttClientTlsConfiguration
                 {
-                    parameters.SslProtocol = SslProtocols.Tls12;
-                    parameters.AllowUntrustedCertificates = true;
+                    UseTls = true,
+                    SslProtocol = SslProtocols.Tls12,
+                    AllowUntrustedCertificates = true
                 })
             .UseExtendedAuthenticationExchangeHandler(new TestExtendedAuthenticationExchangeHandler());
 
@@ -735,7 +746,13 @@ public class MqttClientConfigurationBuilderTests
 
     private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
     {
-        public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) =>
-            Task.CompletedTask;
+        public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) => Task.CompletedTask;
+    }
+
+    private sealed class TestPacketInspector : IMqttPacketInspector
+    {
+        public void ProcessMqttPacket(ProcessMqttPacketContext context)
+        {
+        }
     }
 }

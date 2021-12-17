@@ -7,9 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Options;
 using MQTTnet.Exceptions;
-using MQTTnet.Packets;
+using MQTTnet.Formatter;
 using NSubstitute;
 using Silverback.Collections;
 using Silverback.Configuration;
@@ -39,10 +38,12 @@ public class MqttLoggerExtensionsTests
         Topics = new ValueReadOnlyCollection<string>(new[] { "test" }),
         Client = new MqttClientConfiguration
         {
-            ChannelOptions = new MqttClientTcpOptions
+            ClientId = "test",
+            Channel = new MqttClientTcpConfiguration
             {
                 Server = "test-server"
-            }
+            },
+            ProtocolVersion = MqttProtocolVersion.V500
         }
     };
 
@@ -77,7 +78,7 @@ public class MqttLoggerExtensionsTests
                 new MqttApplicationMessage
                 {
                     Topic = "actual",
-                    UserProperties = new List<MqttUserProperty>
+                    UserProperties = new List<MQTTnet.Packets.MqttUserProperty>
                     {
                         new(DefaultMessageHeaders.MessageId, "123")
                     }

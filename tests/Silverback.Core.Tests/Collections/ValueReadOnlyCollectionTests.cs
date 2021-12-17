@@ -43,8 +43,8 @@ public class ValueReadOnlyCollectionTests
     [Fact]
     public void Empty_StaticEmptyCollectionReturned()
     {
-        ValueReadOnlyCollection<string> empty1 = ValueReadOnlyCollection<string>.Empty;
-        ValueReadOnlyCollection<string> empty2 = ValueReadOnlyCollection<string>.Empty;
+        ValueReadOnlyCollection<string> empty1 = ValueReadOnlyCollection.Empty<string>();
+        ValueReadOnlyCollection<string> empty2 = ValueReadOnlyCollection.Empty<string>();
 
         empty1.Should().BeEmpty();
         empty1.Should().BeSameAs(empty2);

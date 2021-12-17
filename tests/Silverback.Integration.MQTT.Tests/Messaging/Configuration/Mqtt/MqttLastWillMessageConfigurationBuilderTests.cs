@@ -20,26 +20,16 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt;
 
-public class MqttLastWillMessageBuilderTests
+public class MqttLastWillMessageConfigurationBuilderTests
 {
-    [Fact]
-    public void Build_WithoutTopicName_ExceptionThrown()
-    {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
-
-        Action act = () => builder.Build();
-
-        act.Should().ThrowExactly<EndpointConfigurationException>();
-    }
-
     [Fact]
     public void ProduceTo_TopicName_TopicSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder.ProduceTo("testaments");
+        configurationBuilder.ProduceTo("testaments");
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Topic.Should().Be("testaments");
     }
 
@@ -47,17 +37,17 @@ public class MqttLastWillMessageBuilderTests
     public async Task Message_SomeMessage_PayloadSet()
     {
         TestEventOne message = new() { Content = "Hello MQTT!" };
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .Message(message);
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Payload.Should().NotBeNullOrEmpty();
 
         (object? deserializedMessage, Type _) = await new JsonMessageSerializer<TestEventOne>().DeserializeAsync(
-            new MemoryStream(willMessage.Payload),
+            new MemoryStream(willMessage.Payload!),
             new MessageHeaderCollection(),
             TestConsumerEndpoint.GetDefault());
 
@@ -67,77 +57,77 @@ public class MqttLastWillMessageBuilderTests
     [Fact]
     public void WithDelay_TimeSpam_DelaySet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .WithDelay(TimeSpan.FromSeconds(42));
 
-        builder.Delay.Should().Be(42);
+        configurationBuilder.Delay.Should().Be(42);
     }
 
     [Fact]
     public void WithQualityOfServiceLevel_QosLevelSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce);
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
     public void WithAtMostOnceQoS_QosLevelSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .WithAtMostOnceQoS();
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
     }
 
     [Fact]
     public void WithAtLeastOnceQoS_QosLevelSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .WithAtLeastOnceQoS();
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
     public void WithExactlyOnceQoS_QosLevelSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .WithExactlyOnceQoS();
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
     [Fact]
     public void WithRetain_RetainFlagSet()
     {
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .Retain();
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Retain.Should().BeTrue();
     }
 
@@ -157,14 +147,14 @@ public class MqttLastWillMessageBuilderTests
             message,
             new MessageHeaderCollection(),
             TestProducerEndpoint.GetDefault())).ReadAll();
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .SerializeUsing(serializer)
             .Message(message);
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Payload.Should().NotBeNullOrEmpty();
         willMessage.Payload.Should().BeEquivalentTo(messageBytes);
     }
@@ -184,9 +174,9 @@ public class MqttLastWillMessageBuilderTests
             message,
             new MessageHeaderCollection(),
             TestProducerEndpoint.GetDefault())).ReadAll();
-        MqttLastWillMessageBuilder<TestEventOne> builder = new();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
-        builder
+        configurationBuilder
             .ProduceTo("testaments")
             .SerializeAsJson(
                 serializerBuilder => serializerBuilder
@@ -197,7 +187,7 @@ public class MqttLastWillMessageBuilderTests
                         }))
             .Message(message);
 
-        MqttApplicationMessage willMessage = builder.Build();
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Payload.Should().NotBeNullOrEmpty();
         willMessage.Payload.Should().BeEquivalentTo(messageBytes);
     }

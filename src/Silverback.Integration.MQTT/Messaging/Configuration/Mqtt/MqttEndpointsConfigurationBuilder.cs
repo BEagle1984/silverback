@@ -153,7 +153,8 @@ public sealed class MqttEndpointsConfigurationBuilder : EndpointsConfigurationBu
         return this;
     }
 
-    private MqttProducerConfiguration? BuildAndValidateConfiguration<TMessage>(Action<MqttProducerConfigurationBuilder<TMessage>> configurationBuilderAction)
+    private MqttProducerConfiguration? BuildAndValidateConfiguration<TMessage>(
+        Action<MqttProducerConfigurationBuilder<TMessage>> configurationBuilderAction)
     {
         MqttProducerConfigurationBuilder<TMessage> builder = new(ClientConfiguration, this);
         MqttProducerConfiguration? endpointConfiguration = builder.BuildAndValidate(
@@ -162,7 +163,8 @@ public sealed class MqttEndpointsConfigurationBuilder : EndpointsConfigurationBu
         return endpointConfiguration;
     }
 
-    private MqttConsumerConfiguration? BuildAndValidateConfiguration<TMessage>(Action<MqttConsumerConfigurationBuilder<TMessage>> configurationBuilderAction)
+    private MqttConsumerConfiguration? BuildAndValidateConfiguration<TMessage>(
+        Action<MqttConsumerConfigurationBuilder<TMessage>> configurationBuilderAction)
     {
         MqttConsumerConfigurationBuilder<TMessage> builder = new(ClientConfiguration, this);
         MqttConsumerConfiguration? endpointConfiguration = builder.BuildAndValidate(
