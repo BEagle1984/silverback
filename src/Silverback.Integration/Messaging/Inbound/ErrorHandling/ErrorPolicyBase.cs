@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <summary>
         ///     Gets the factory that builds the message to be published after the policy is applied.
         /// </summary>
-        public Func<IRawInboundEnvelope, object>? MessageToPublishFactory { get; private set; }
+        public Func<IRawInboundEnvelope, object?>? MessageToPublishFactory { get; private set; }
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <returns>
         ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
         /// </returns>
-        public ErrorPolicyBase Publish(Func<IRawInboundEnvelope, object> factory)
+        public ErrorPolicyBase Publish(Func<IRawInboundEnvelope, object?> factory)
         {
             MessageToPublishFactory = factory;
             return this;

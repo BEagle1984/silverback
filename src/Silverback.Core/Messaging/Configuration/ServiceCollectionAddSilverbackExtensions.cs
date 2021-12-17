@@ -69,6 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddScoped<ReturnValueHandlerService>()
             .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
             .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
-            .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>();
+            .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>()
+            .AddScoped<IReturnValueHandler, AsyncEnumerableMessagesReturnValueHandler>();
     }
 }
