@@ -565,10 +565,7 @@ public class StreamingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventWithKafkaKey>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
+                            .AddOutbound<TestEventWithKafkaKey>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -579,11 +576,7 @@ public class StreamingTests : KafkaTestFixture
                         {
                             await foreach (TestEventWithKafkaKey message in eventsStream)
                             {
-                                lock (receivedMessages)
-                                {
-                                    receivedMessages.Add(message);
-                                }
-
+                                receivedMessages.ThreadSafeAdd(message);
                                 await taskCompletionSource.Task;
                             }
                         }))
