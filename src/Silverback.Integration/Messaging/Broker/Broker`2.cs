@@ -253,7 +253,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
     /// </param>
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposing)
+        if (!disposing || _disposed)
             return;
 
         _disposed = true;
