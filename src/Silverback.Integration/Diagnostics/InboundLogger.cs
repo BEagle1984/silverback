@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Messages;
@@ -289,6 +290,8 @@ internal sealed class InboundLogger
             null);
     }
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public void LogInboundTrace(
         ISilverbackLogger logger,
         LogLevel logLevel,

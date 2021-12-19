@@ -47,7 +47,6 @@ public class KafkaClientConsumerConfigurationBuilderFixture
         configuration.GroupId.Should().Be("group1");
     }
 
-
     [Fact]
     public void Build_ShouldReturnNewConfiguration_WhenReused()
     {

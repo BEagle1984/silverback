@@ -23,7 +23,7 @@ public static class ValueReadOnlyCollection
     /// </returns>
     public static ValueReadOnlyCollection<T> Empty<T>() => EmptyValueReadOnlyCollection<T>.Instance;
 
-    internal class EmptyValueReadOnlyCollection<T>
+    private static class EmptyValueReadOnlyCollection<T>
     {
         public static readonly ValueReadOnlyCollection<T> Instance = new(Array.Empty<T>());
     }

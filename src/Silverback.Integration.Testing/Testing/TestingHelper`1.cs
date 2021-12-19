@@ -81,7 +81,7 @@ public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         }
         catch (OperationCanceledException)
         {
-            const string message = "The timeout elapsed before the consumers successfully established a connection.";
+            const string message = "Timeout elapsed before the consumers successfully established a connection";
 
             if (throwTimeoutException)
                 throw new TimeoutException(message);
@@ -123,7 +123,7 @@ public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         }
         catch (OperationCanceledException)
         {
-            const string message = "The timeout elapsed before all messages could be consumed and processed.";
+            const string message = "Timeout elapsed before all messages could be consumed and processed";
 
             if (throwTimeoutException)
                 throw new TimeoutException(message);
@@ -164,7 +164,7 @@ public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "An error occurred while checking whether the Outbox is empty.");
+            _logger.LogWarning(ex, "Error occurred while checking whether the Outbox is empty");
 
             return false;
         }

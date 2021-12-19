@@ -66,36 +66,12 @@ internal sealed class ProxyClassGenerator
         StringBuilder propertiesStringBuilder = new();
         StringBuilder buildMethodStringBuilder = new();
 
-        IEnumerable<PropertyInfo> properties =
-            ReflectionHelper.GetProperties(_proxiedType, true)
-                .Where(
-                    property => property.DeclaringType != typeof(MqttClientOptions) ||
-                                property.Name
-                                    is not nameof(MqttClientOptions.UserProperties)
-                                    and not nameof(MqttClientOptions.ProtocolVersion)
-                                    and not nameof(MqttClientOptions.ClientId)
-                                    and not nameof(MqttClientOptions.ChannelOptions))
-                .Where(
-                    property => property.DeclaringType != typeof(MqttClientTlsOptions) ||
-                                property.Name
-                                    is not nameof(MqttClientTlsOptions.ApplicationProtocols)
-                                    and not nameof(MqttClientTlsOptions.Certificates))
-                .Where(
-                    property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
-                                property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
-                .Where(
-                    property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
-                                property.Name
-                                    is not nameof(MqttClientWebSocketOptions.TlsOptions)
-                                    and not nameof(MqttClientWebSocketOptions.ProxyOptions));
-
-        foreach (PropertyInfo property in properties)
+        foreach (PropertyInfo property in GetProxiedTypeProperties())
         {
             if (property.PropertyType.Namespace!.StartsWith("MQTTnet") && property.PropertyType.IsClass)
                 _state.AddType(property.PropertyType);
 
             (string propertyType, bool isMapped) = TypesMapper.GetMappedPropertyTypeString(property.PropertyType);
-            string fieldName = $"_{property.Name.ToCamelCase()}";
 
             propertiesStringBuilder.AppendLine("    /// <summary>");
             propertiesStringBuilder.Append(DocumentationProvider.GetSummary(property));
@@ -139,6 +115,29 @@ internal sealed class ProxyClassGenerator
         _stringBuilder.Append(buildMethodStringBuilder);
         _stringBuilder.AppendLine("        };");
     }
+
+    private IEnumerable<PropertyInfo> GetProxiedTypeProperties() =>
+        ReflectionHelper.GetProperties(_proxiedType, true)
+            .Where(
+                property => property.DeclaringType != typeof(MqttClientOptions) ||
+                            property.Name
+                                is not nameof(MqttClientOptions.UserProperties)
+                                and not nameof(MqttClientOptions.ProtocolVersion)
+                                and not nameof(MqttClientOptions.ClientId)
+                                and not nameof(MqttClientOptions.ChannelOptions))
+            .Where(
+                property => property.DeclaringType != typeof(MqttClientTlsOptions) ||
+                            property.Name
+                                is not nameof(MqttClientTlsOptions.ApplicationProtocols)
+                                and not nameof(MqttClientTlsOptions.Certificates))
+            .Where(
+                property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
+                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
+            .Where(
+                property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
+                            property.Name
+                                is not nameof(MqttClientWebSocketOptions.TlsOptions)
+                                and not nameof(MqttClientWebSocketOptions.ProxyOptions));
 
     private void GenerateFooter()
     {

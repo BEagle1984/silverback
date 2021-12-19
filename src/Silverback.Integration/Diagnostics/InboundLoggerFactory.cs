@@ -21,5 +21,7 @@ internal sealed class InboundLoggerFactory
     public InboundLogger GetInboundLogger(EndpointConfiguration endpointConfiguration) =>
         _inboundLoggers.GetOrAdd(
             endpointConfiguration.GetType(),
-            _ => new InboundLogger(_enricherFactory.GetLogEnricher(endpointConfiguration)));
+            static (_, args) =>
+                new InboundLogger(args._enricherFactory.GetLogEnricher(args.endpointConfiguration)),
+            (endpointConfiguration, _enricherFactory));
 }

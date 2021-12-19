@@ -99,7 +99,7 @@ internal static class SubscribedMethodInvoker
     {
         message = UnwrapEnvelopeIfNeeded(message, subscribedMethod);
 
-        object? target = subscribedMethod.ResolveTargetType(serviceProvider);
+        object target = subscribedMethod.ResolveTargetType(serviceProvider);
         arguments[0] = singleResolver.GetValue(message);
         return subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, arguments, executeAsync);
     }
@@ -111,7 +111,7 @@ internal static class SubscribedMethodInvoker
         IStreamEnumerableMessageArgumentResolver streamEnumerableResolver,
         IServiceProvider serviceProvider)
     {
-        object? target = subscribedMethod.ResolveTargetType(serviceProvider);
+        object target = subscribedMethod.ResolveTargetType(serviceProvider);
 
         ILazyArgumentValue lazyStream = streamEnumerableResolver.GetValue(
             messageStreamProvider,

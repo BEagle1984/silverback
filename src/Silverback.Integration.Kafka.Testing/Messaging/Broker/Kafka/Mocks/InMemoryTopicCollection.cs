@@ -30,14 +30,10 @@ internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
     public IInMemoryTopic Get(string name, string bootstrapServers) =>
         _topics.GetOrAdd(
             $"{bootstrapServers.ToUpperInvariant()}|{name}",
-            static (_, parameters) => new InMemoryTopic(parameters.Name, parameters.BootstrapServers, parameters.PartitionsCount),
-            new NewTopicParameters(name, bootstrapServers, _options.DefaultPartitionsCount));
+            static (_, args) => new InMemoryTopic(args.name, args.bootstrapServers, args.DefaultPartitionsCount),
+            (name, bootstrapServers, _options.DefaultPartitionsCount));
 
     public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "False positive, remove suppression once record struct is handled properly")]
-    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "False positive, remove suppression once record struct is handled properly")]
-    private record struct NewTopicParameters(string Name, string BootstrapServers, int PartitionsCount);
 }

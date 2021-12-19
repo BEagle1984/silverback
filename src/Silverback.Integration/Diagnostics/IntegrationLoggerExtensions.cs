@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -398,6 +399,8 @@ internal static class IntegrationLoggerExtensions
     public static void LogEndpointBuilderError(this ISilverbackLogger logger, string? endpointName, Exception exception) =>
         EndpointBuilderError(logger.InnerLogger, endpointName, exception);
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public static void LogLowLevelTrace(this ISilverbackLogger logger, string message, Func<object[]> argumentsProvider)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
@@ -410,6 +413,8 @@ internal static class IntegrationLoggerExtensions
             argumentsProvider.Invoke());
     }
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public static void LogLowLevelTrace(
         this ISilverbackLogger logger,
         Exception? exception,
@@ -427,6 +432,8 @@ internal static class IntegrationLoggerExtensions
             argumentsProvider.Invoke());
     }
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public static void LogConsumerLowLevelTrace(
         this ISilverbackLogger logger,
         IConsumer? consumer,
@@ -463,6 +470,8 @@ internal static class IntegrationLoggerExtensions
             exitMessage,
             argumentsProvider);
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public static void ExecuteAndTraceConsumerAction(
         this ISilverbackLogger logger,
         IConsumer? consumer,
@@ -527,6 +536,8 @@ internal static class IntegrationLoggerExtensions
             exitMessage,
             argumentsProvider);
 
+    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
     public static async Task ExecuteAndTraceConsumerActionAsync(
         this ISilverbackLogger logger,
         IConsumer? consumer,

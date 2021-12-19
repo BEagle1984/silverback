@@ -105,10 +105,12 @@ public class BrokerCollection : IBrokerCollection
         ConcurrentDictionary<Type, IBroker> configurationTypeMap) =>
         configurationTypeMap.GetOrAdd(
             endpointType,
-            _ => _brokers.FirstOrDefault(
-                     broker => configurationTypePropertySelector.Invoke(broker)
-                         .IsAssignableFrom(endpointType)) ??
-                 throw new InvalidOperationException(
-                     $"No message broker could be found to handle the endpoint of type {endpointType.Name}. " +
-                     "Please register the necessary IBroker implementation with the DI container."));
+            static (keyEndpointType, args) =>
+                args._brokers.FirstOrDefault(
+                    broker => args.configurationTypePropertySelector.Invoke(broker)
+                        .IsAssignableFrom(keyEndpointType)) ??
+                throw new InvalidOperationException(
+                    $"No message broker could be found to handle the endpoint of type {keyEndpointType.Name}. " +
+                    "Please register the necessary IBroker implementation with the DI container."),
+            (_brokers, configurationTypePropertySelector));
 }

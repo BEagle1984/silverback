@@ -29,14 +29,10 @@ internal class MockedConsumerGroupsCollection : IMockedConsumerGroupsCollection
     public IMockedConsumerGroup Get(string name, string bootstrapServers) =>
         _groups.GetOrAdd(
             $"{name}|{bootstrapServers}",
-            static (_, parameters) => new MockedConsumerGroup(parameters.Name, parameters.BootstrapServers, parameters.TopicCollection),
-            new NewConsumerGroupParameters(name, bootstrapServers, _topicCollection));
+            static (_, args) => new MockedConsumerGroup(args.name, args.bootstrapServers, args._topicCollection),
+            (name, bootstrapServers, _topicCollection));
 
     public IEnumerator<IMockedConsumerGroup> GetEnumerator() => _groups.Values.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:Elements should appear in the correct order", Justification = "False positive, remove suppression once record struct is handled properly")]
-    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1313:Parameter names should begin with lower-case letter", Justification = "False positive, remove suppression once record struct is handled properly")]
-    private record struct NewConsumerGroupParameters(string Name, string BootstrapServers, IInMemoryTopicCollection TopicCollection);
 }

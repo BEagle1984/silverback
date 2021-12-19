@@ -9,7 +9,7 @@ using MQTTnet.Client.Options;
 namespace Silverback.Tools.Generators.MqttConfigProxies;
 
 [SuppressMessage("ReSharper", "CognitiveComplexity", Justification = "Don't care")]
-internal class DocumentationProvider
+internal static class DocumentationProvider
 {
     public static string GetSummary(PropertyInfo property)
     {

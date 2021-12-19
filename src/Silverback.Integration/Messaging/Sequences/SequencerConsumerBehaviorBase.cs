@@ -250,7 +250,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ConsumerPipelineContext context,
         ISequenceReader sequenceReader)
     {
-        ISequence? sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
+        ISequence sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
         if (sequence.IsComplete)
             return null;

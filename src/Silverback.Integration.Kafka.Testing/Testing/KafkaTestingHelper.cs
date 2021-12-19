@@ -81,7 +81,7 @@ public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelpe
             case > 1:
                 throw new InvalidOperationException($"More than one topic '{name}' found. Try specifying the bootstrap servers.");
             case 0 when bootstrapServers == null:
-                string[] distinctBootstrapServers =
+                string?[] distinctBootstrapServers =
                     _kafkaBroker.Producers.Select(producer => ((KafkaProducerConfiguration)producer.Configuration).Client.BootstrapServers)
                         .Union(_kafkaBroker.Consumers.Select(consumer => ((KafkaConsumerConfiguration)consumer.Configuration).Client.BootstrapServers))
                         .Distinct(StringComparer.OrdinalIgnoreCase)

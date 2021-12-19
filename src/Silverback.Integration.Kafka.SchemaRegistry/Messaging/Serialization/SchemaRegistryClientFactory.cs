@@ -16,5 +16,5 @@ internal static class SchemaRegistryClientFactory
         new(ConfluentConfigEqualityComparer);
 
     public static ISchemaRegistryClient GetClient(SchemaRegistryConfig config) =>
-        Clients.GetOrAdd(config, keySchemaRegistryConfig => new CachedSchemaRegistryClient(keySchemaRegistryConfig));
+        Clients.GetOrAdd(config, static keySchemaRegistryConfig => new CachedSchemaRegistryClient(keySchemaRegistryConfig));
 }

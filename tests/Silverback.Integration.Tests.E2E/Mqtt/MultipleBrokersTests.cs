@@ -4,7 +4,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client.Options;
 using Silverback.Configuration;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;

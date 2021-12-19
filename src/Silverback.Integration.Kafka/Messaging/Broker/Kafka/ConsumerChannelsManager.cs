@@ -269,6 +269,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
         return _partitionChannels.GetOrAdd(
             topicPartition,
-            new PartitionChannel(_consumer, topicPartition, _logger));
+            static (keyTopicPartition, args) => new PartitionChannel(args._consumer, keyTopicPartition, args._logger),
+            (_consumer, _logger));
     }
 }

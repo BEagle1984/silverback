@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Collections;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Outbound.Enrichers;

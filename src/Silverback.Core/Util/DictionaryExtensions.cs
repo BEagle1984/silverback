@@ -25,5 +25,5 @@ internal static class DictionaryExtensions
         TKey key)
         where TKey : notnull
         where TValue : new() =>
-        dictionary.GetOrAdd(key, _ => new TValue());
+        dictionary.GetOrAdd(key, static _ => new TValue());
 }

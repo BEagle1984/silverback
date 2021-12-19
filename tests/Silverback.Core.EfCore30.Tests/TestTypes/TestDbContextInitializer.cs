@@ -21,7 +21,7 @@ public sealed class TestDbContextInitializer : IDisposable
             _connection.Open();
         }
 
-        DbContextOptions<TestDbContext>? dbOptions = new DbContextOptionsBuilder<TestDbContext>()
+        DbContextOptions<TestDbContext> dbOptions = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite(_connection.ConnectionString)
             .Options;
 

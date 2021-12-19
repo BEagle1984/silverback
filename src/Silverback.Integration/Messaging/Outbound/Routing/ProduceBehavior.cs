@@ -43,7 +43,7 @@ public class ProduceBehavior : IBehavior, ISorted
 
         if (message is IOutboundEnvelope envelope)
         {
-            IProduceStrategyImplementation? strategyImplementation = _produceStrategyImplementations.GetOrAdd(
+            IProduceStrategyImplementation strategyImplementation = _produceStrategyImplementations.GetOrAdd(
                 envelope.Endpoint.Configuration,
                 static (endpoint, serviceProvider) => endpoint.Strategy.Build(serviceProvider),
                 _serviceProvider);

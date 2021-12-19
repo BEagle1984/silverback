@@ -49,11 +49,11 @@ public static class ProduceStrategiesComparisonRunner
         int? startStrategyIndex = null,
         int? endStrategyIndex = null)
     {
-        List<ProduceStrategiesImplementation.Stats> statsCollection = new List<ProduceStrategiesImplementation.Stats>();
+        List<ProduceStrategiesImplementation.Stats> statsCollection = new();
 
         if (MustExecute(1, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Publisher.PublishAsync...");
             statsCollection.Add(await implementation.RunPublishAsync(iterations));
             implementation.Dispose();
@@ -61,7 +61,7 @@ public static class ProduceStrategiesComparisonRunner
 
         if (MustExecute(2, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Producer.ProduceAsync...");
             statsCollection.Add(await implementation.RunProduceAsync(iterations));
             implementation.Dispose();
@@ -69,7 +69,7 @@ public static class ProduceStrategiesComparisonRunner
 
         if (MustExecute(3, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Publisher.PublishAsync no await...");
             statsCollection.Add(await implementation.RunNoAwaitPublishAsync(iterations));
             implementation.Dispose();
@@ -77,7 +77,7 @@ public static class ProduceStrategiesComparisonRunner
 
         if (MustExecute(4, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Producer.ProduceAsync no await...");
             statsCollection.Add(await implementation.RunNoAwaitProduceAsync(iterations));
             implementation.Dispose();
@@ -85,7 +85,7 @@ public static class ProduceStrategiesComparisonRunner
 
         if (MustExecute(5, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Producer.Produce with callbacks...");
             statsCollection.Add(await implementation.RunProduceWithCallbacksAsync(iterations));
             implementation.Dispose();
@@ -93,7 +93,7 @@ public static class ProduceStrategiesComparisonRunner
 
         if (MustExecute(6, startStrategyIndex, endStrategyIndex))
         {
-            ProduceStrategiesImplementation implementation = new ProduceStrategiesImplementation();
+            ProduceStrategiesImplementation implementation = new();
             Console.WriteLine($"Producing {iterations} messages using Producer.Produce with callbacks, wrapped in Task.Run...");
             statsCollection.Add(await implementation.RunWrappedProduceWithCallbacksAsync(iterations));
             implementation.Dispose();

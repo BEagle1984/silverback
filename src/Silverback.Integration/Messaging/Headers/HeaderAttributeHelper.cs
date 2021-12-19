@@ -13,8 +13,7 @@ namespace Silverback.Messaging.Headers;
 
 internal static class HeaderAttributeHelper
 {
-    private static readonly ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>> PropertiesCache =
-        new();
+    private static readonly ConcurrentDictionary<Type, IReadOnlyCollection<DecoratedProperty>> PropertiesCache = new();
 
     public static IEnumerable<MessageHeader> GetHeaders(object? message)
     {
@@ -66,9 +65,9 @@ internal static class HeaderAttributeHelper
 
     private static IReadOnlyCollection<DecoratedProperty> GetDecoratedProperties(Type type) =>
         PropertiesCache.GetOrAdd(
-            type.Name,
-            _ =>
-                type.GetProperties()
+            type,
+            static key =>
+                key.GetProperties()
                     .Select(propertyInfo => new DecoratedProperty(propertyInfo, propertyInfo.GetCustomAttribute<HeaderAttribute>(true)!))
                     .Where(decoratedProperty => decoratedProperty.Attribute != null)
                     .ToList());

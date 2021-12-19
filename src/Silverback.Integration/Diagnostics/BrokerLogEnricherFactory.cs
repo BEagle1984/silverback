@@ -25,9 +25,9 @@ internal sealed class BrokerLogEnricherFactory
 
     public IBrokerLogEnricher GetLogEnricher(EndpointConfiguration endpointConfiguration)
     {
-        Type? enricherType = _enricherTypeCache.GetOrAdd(
+        Type enricherType = _enricherTypeCache.GetOrAdd(
             endpointConfiguration.GetType(),
-            type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
+            static type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
 
         IBrokerLogEnricher? logEnricher = (IBrokerLogEnricher?)_serviceProvider.GetService(enricherType);
 

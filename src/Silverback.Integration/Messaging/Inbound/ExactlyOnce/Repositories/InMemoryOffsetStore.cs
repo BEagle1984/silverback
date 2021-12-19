@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -40,6 +41,7 @@ public class InMemoryOffsetStore : TransactionalDictionary<string, IBrokerMessag
     }
 
     /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
+    [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod", Justification = "Needed because of nullability")]
     public Task<IBrokerMessageOffset?> GetLatestValueAsync(string offsetKey, ConsumerConfiguration consumerConfiguration) =>
         Task.FromResult(
             Items.Union(UncommittedItems)

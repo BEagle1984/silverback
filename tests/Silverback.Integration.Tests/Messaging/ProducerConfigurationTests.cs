@@ -3,6 +3,7 @@
 
 using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Collections;
@@ -93,7 +94,7 @@ public class ProducerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -117,7 +118,7 @@ public class ProducerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -167,7 +168,7 @@ public class ProducerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -191,7 +192,7 @@ public class ProducerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },

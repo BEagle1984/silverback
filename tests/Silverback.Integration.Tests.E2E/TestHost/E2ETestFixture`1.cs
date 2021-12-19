@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Serialization;
 using Silverback.Testing;
 using Xunit;
 using Xunit.Abstractions;

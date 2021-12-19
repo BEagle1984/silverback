@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,6 +68,7 @@ public sealed class ChunkStream : Stream
     public override void Flush() => throw new NotSupportedException();
 
     /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
+    [SuppressMessage("ReSharper", "RedundantSuppressNullableWarningExpression", Justification = "Needed for .NET standard target")]
     public override int Read(byte[] buffer, int offset, int count)
     {
         Check.NotNull(buffer, nameof(buffer));

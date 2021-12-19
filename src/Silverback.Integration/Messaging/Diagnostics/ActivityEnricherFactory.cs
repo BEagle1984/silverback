@@ -23,10 +23,9 @@ internal sealed class ActivityEnricherFactory : IActivityEnricherFactory
 
     public IBrokerActivityEnricher GetActivityEnricher(EndpointConfiguration endpointConfiguration)
     {
-        Type? enricherType = _enricherTypeCache.GetOrAdd(
+        Type enricherType = _enricherTypeCache.GetOrAdd(
             endpointConfiguration.GetType(),
-            type => typeof(IBrokerActivityEnricher<>)
-                .MakeGenericType(type));
+            static type => typeof(IBrokerActivityEnricher<>).MakeGenericType(type));
 
         IBrokerActivityEnricher? activityEnricher = (IBrokerActivityEnricher?)_serviceProvider.GetService(enricherType);
 

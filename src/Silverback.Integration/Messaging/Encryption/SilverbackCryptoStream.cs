@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -9,8 +10,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Encryption;
 
 /// <summary>
-///     The base class for the <see cref="Stream" /> implementations used to encrypt and decrypt the
-///     integration messages.
+///     The base class for the <see cref="Stream" /> implementations used to encrypt and decrypt the integration messages.
 /// </summary>
 public abstract class SilverbackCryptoStream : Stream
 {
@@ -42,20 +42,21 @@ public abstract class SilverbackCryptoStream : Stream
     public override void Flush() => CryptoStream.Flush();
 
     /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.FlushAsync(CancellationToken)" />
-    public override Task FlushAsync(CancellationToken cancellationToken) =>
-        CryptoStream.FlushAsync(cancellationToken);
+    public override Task FlushAsync(CancellationToken cancellationToken) => CryptoStream.FlushAsync(cancellationToken);
 
     /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Read(byte[],int,int)" />
-    public override int Read(byte[] buffer, int offset, int count) =>
-        CryptoStream.Read(buffer, offset, count);
+    public override int Read(byte[] buffer, int offset, int count) => CryptoStream.Read(buffer, offset, count);
+
+    /// <inheritdoc cref="Stream.Read(Span{byte})" />
+    public override int Read(Span<byte> buffer) => CryptoStream.Read(buffer);
 
     /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.ReadAsync(byte[],int,int,CancellationToken)" />
-    public override Task<int> ReadAsync(
-        byte[] buffer,
-        int offset,
-        int count,
-        CancellationToken cancellationToken) =>
+    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
         CryptoStream.ReadAsync(buffer, offset, count, cancellationToken);
+
+    /// <inheritdoc cref="Stream.ReadAsync(Memory{byte},CancellationToken)" />
+    public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+        CryptoStream.ReadAsync(buffer, cancellationToken);
 
     /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Seek" />
     public override long Seek(long offset, SeekOrigin origin) => CryptoStream.Seek(offset, origin);
@@ -69,6 +70,10 @@ public abstract class SilverbackCryptoStream : Stream
     /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.WriteAsync(byte[],int,int,CancellationToken)" />
     public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
         CryptoStream.WriteAsync(buffer, offset, count, cancellationToken);
+
+    /// <inheritdoc cref="Stream.WriteAsync(ReadOnlyMemory{byte},CancellationToken)" />
+    public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default) =>
+        CryptoStream.WriteAsync(buffer, cancellationToken);
 
     /// <inheritdoc cref="Stream.Close" />
     public override void Close() => CryptoStream.Close();

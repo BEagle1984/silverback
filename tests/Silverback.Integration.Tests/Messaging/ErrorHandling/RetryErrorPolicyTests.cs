@@ -55,9 +55,7 @@ public class RetryErrorPolicyTests
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         {
-            new(
-                DefaultMessageHeaders.FailedAttempts,
-                failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         };
 
         InboundEnvelope envelope = new(

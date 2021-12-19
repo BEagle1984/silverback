@@ -45,6 +45,7 @@ public partial record MqttClientCredentials : IValidatableEndpointSettings
     /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
     public void Validate()
     {
+        // Nothing to validate
     }
 
     internal MQTTnet.Client.Options.MqttClientCredentials ToMqttNetType() => MapCore();

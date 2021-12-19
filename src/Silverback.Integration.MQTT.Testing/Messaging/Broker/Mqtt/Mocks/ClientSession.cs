@@ -197,7 +197,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
         private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
         {
-            string? pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
+            string pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
                 .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
                 .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
 

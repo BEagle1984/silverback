@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> and contains the properties shared between the
 ///     <see cref="KafkaClientProducerConfiguration" /> and <see cref="KafkaClientConsumerConfiguration" />.
 /// </summary>
-public partial record KafkaClientConfiguration : KafkaClientConfiguration<ClientConfig>
+public record KafkaClientConfiguration : KafkaClientConfiguration<ClientConfig>
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaClientConfiguration" /> class.

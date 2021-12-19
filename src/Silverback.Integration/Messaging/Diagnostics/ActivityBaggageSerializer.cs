@@ -24,7 +24,7 @@ internal static class ActivityBaggageSerializer
         if (string.IsNullOrEmpty(baggage))
             return Array.Empty<KeyValuePair<string, string>>();
 
-        string[]? baggageItemsAsStrings = baggage.Split(BaggageItemSeparator);
+        string[] baggageItemsAsStrings = baggage.Split(BaggageItemSeparator);
         return Deserialize(baggageItemsAsStrings).ToList();
     }
 
@@ -32,7 +32,7 @@ internal static class ActivityBaggageSerializer
     {
         foreach (string baggageItem in baggageItemsAsStrings)
         {
-            string[]? parts = baggageItem.Split(ItemKeyValueSeparator);
+            string[] parts = baggageItem.Split(ItemKeyValueSeparator);
             if (parts.Length == 2)
                 yield return new KeyValuePair<string, string>(parts[0].Trim(), parts[1].Trim());
         }

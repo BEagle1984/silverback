@@ -9,14 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
 
 internal sealed class ConfluentProducersCache : IConfluentProducersCache
 {
-    private readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> _producersCache =
-        new(new ConfigurationDictionaryEqualityComparer<string, string>());
+    private readonly ConcurrentDictionary<KafkaClientProducerConfiguration, IProducer<byte[]?, byte[]?>> _producersCache = new();
 
     private readonly IBrokerCallbacksInvoker _callbacksInvoker;
 
@@ -36,13 +34,14 @@ internal sealed class ConfluentProducersCache : IConfluentProducersCache
 
     public IProducer<byte[]?, byte[]?> GetProducer(KafkaClientProducerConfiguration configuration, KafkaProducer owner) =>
         _producersCache.GetOrAdd(
-            configuration.GetConfluentClientConfig(),
-            _ => CreateConfluentProducer(configuration, owner));
+            configuration,
+            (keyConfiguration, ownerArgument) => CreateConfluentProducer(keyConfiguration, ownerArgument),
+            owner);
 
     public void DisposeProducer(KafkaClientProducerConfiguration configuration)
     {
         // Dispose only if still in cache to avoid ObjectDisposedException
-        if (!_producersCache.TryRemove(configuration.GetConfluentClientConfig(), out IProducer<byte[]?, byte[]?>? producer))
+        if (!_producersCache.TryRemove(configuration, out IProducer<byte[]?, byte[]?>? producer))
             return;
 
         producer.Flush(configuration.FlushTimeout);

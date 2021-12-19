@@ -3,6 +3,7 @@
 
 using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Encryption;
@@ -63,7 +64,7 @@ public class ConsumerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -92,7 +93,7 @@ public class ConsumerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -143,7 +144,7 @@ public class ConsumerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 42
                 }
             },
@@ -172,7 +173,7 @@ public class ConsumerConfigurationTests
             {
                 Options = new JsonSerializerOptions
                 {
-                    IgnoreNullValues = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     MaxDepth = 1
                 }
             },

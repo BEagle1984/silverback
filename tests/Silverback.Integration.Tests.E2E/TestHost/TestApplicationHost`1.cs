@@ -116,8 +116,8 @@ public sealed class TestApplicationHost<THelper> : IDisposable
         if (waitUntilBrokerConnected)
             WaitUntilBrokerIsConnected();
 
-        ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>()
-            ?.LogInformation($"Starting end-to-end test {_testMethodName}.");
+        ILogger<TestApplicationHost<THelper>>? logger = ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>();
+        logger?.LogInformation("Starting end-to-end test {testMethod}", _testMethodName);
     }
 
     public void PauseBackgroundServices() => ServiceProvider.PauseSilverbackBackgroundServices();
@@ -127,14 +127,14 @@ public sealed class TestApplicationHost<THelper> : IDisposable
     public void Dispose()
     {
         ILogger<TestApplicationHost<THelper>>? logger = _scopedServiceProvider?.GetService<ILogger<TestApplicationHost<THelper>>>();
-        logger?.LogInformation($"Disposing test host ({_testMethodName}).");
+        logger?.LogInformation("Disposing test host ({testMethod})", _testMethodName);
 
         _sqliteConnection?.SafeClose();
         _sqliteConnection?.Dispose();
         _httpClient?.Dispose();
         _applicationFactory?.Dispose();
 
-        logger?.LogInformation($"Test host disposed ({_testMethodName}).");
+        logger?.LogInformation("Test host disposed ({testMethod})", _testMethodName);
     }
 
     private void WaitUntilBrokerIsConnected()

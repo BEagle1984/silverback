@@ -30,7 +30,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
 
         _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
         _connection.Open();
-        DbContextOptions<TestDbContext>? dbOptions = new DbContextOptionsBuilder<TestDbContext>()
+        DbContextOptions<TestDbContext> dbOptions = new DbContextOptionsBuilder<TestDbContext>()
             .UseSqlite(_connection.ConnectionString)
             .Options;
 
@@ -42,7 +42,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public void SaveChanges_SomeEventsAdded_PublishCalled()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         entity.Entity.AddEvent<TestDomainEventOne>();
         entity.Entity.AddEvent<TestDomainEventTwo>();
@@ -58,7 +58,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public async Task SaveChangesAsync_SomeEventsAdded_PublishCalled()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         entity.Entity.AddEvent<TestDomainEventOne>();
         entity.Entity.AddEvent<TestDomainEventTwo>();
@@ -74,7 +74,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public void SaveChanges_SomeEventsAdded_PublishingChainCalled()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         _publisher
             .When(publisher => publisher.Publish(Arg.Any<TestDomainEventOne>()))
@@ -90,7 +90,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public async Task SaveChangesAsync_SomeEventsAdded_PublishingChainCalled()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         _publisher
             .When(publisher => publisher.PublishAsync(Arg.Any<TestDomainEventOne>()))
@@ -106,7 +106,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public async Task SaveChangesAsync_Successful_StartedAndCompleteEventsFired()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         entity.Entity.AddEvent<TestDomainEventOne>();
 
@@ -119,7 +119,7 @@ public sealed class DbContextEventsPublisherTests : IDisposable
     [Fact]
     public async Task SaveChangesAsync_Error_StartedAndAbortedEventsFired()
     {
-        EntityEntry<TestAggregateRoot>? entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
+        EntityEntry<TestAggregateRoot> entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
         _publisher
             .When(publisher => publisher.PublishAsync(Arg.Any<TestDomainEventOne>()))
