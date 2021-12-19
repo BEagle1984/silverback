@@ -25,7 +25,7 @@ public sealed class ChunkStream : Stream
 
     private IAsyncEnumerator<IRawInboundEnvelope>? _asyncEnumerator;
 
-    private byte[]? _currentChunk;
+    private Memory<byte> _currentChunk;
 
     private int _position;
 
@@ -68,58 +68,39 @@ public sealed class ChunkStream : Stream
     public override void Flush() => throw new NotSupportedException();
 
     /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
-    [SuppressMessage("ReSharper", "RedundantSuppressNullableWarningExpression", Justification = "Needed for .NET standard target")]
-    public override int Read(byte[] buffer, int offset, int count)
+    public override int Read(byte[] buffer, int offset, int count) =>
+        Read(Check.NotNull(buffer, nameof(buffer)).AsSpan(offset, count));
+
+    /// <inheritdoc cref="Stream.Read(Span{byte})" />
+    public override int Read(Span<byte> buffer)
     {
-        Check.NotNull(buffer, nameof(buffer));
+        if (!ReadCurrentMessage())
+            return 0;
 
-        _syncEnumerator ??= _source.GetEnumerator();
-
-        if (_currentChunk == null || _position == _currentChunk.Length)
-        {
-            if (_syncEnumerator.MoveNext())
-            {
-                _currentChunk = _syncEnumerator.Current!.RawMessage.ReadAll();
-                _position = 0;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        return FillBuffer(buffer, offset, count);
+        int numberOfBytesToRead = GetNumberOfBytesToRead(buffer.Length);
+        _currentChunk.Span.Slice(_position, numberOfBytesToRead).CopyTo(buffer);
+        _position += numberOfBytesToRead;
+        return numberOfBytesToRead;
     }
 
     /// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
-    public override async Task<int> ReadAsync(
-        byte[] buffer,
-        int offset,
-        int count,
-        CancellationToken cancellationToken)
-    {
-        // If cancellation was requested, bail early with an already completed task.
-        // Otherwise, return a task that represents the Begin/End methods.
-        cancellationToken.ThrowIfCancellationRequested();
+    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
+        await ReadAsync(buffer.AsMemory(offset, count), cancellationToken).ConfigureAwait(false);
 
-        _asyncEnumerator ??= _source.GetAsyncEnumerator(cancellationToken);
+    /// <inheritdoc cref="Stream.ReadAsync(Memory{byte}, CancellationToken)" />
+    public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
 
         Check.NotNull(buffer, nameof(buffer));
 
-        if (_currentChunk == null || _position == _currentChunk.Length)
-        {
-            if (await _asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
-            {
-                _currentChunk = await _asyncEnumerator.Current.RawMessage.ReadAllAsync().ConfigureAwait(false);
-                _position = 0;
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        if (!await ReadCurrentMessageAsync(cancellationToken).ConfigureAwait(false))
+            return 0;
 
-        return FillBuffer(buffer, offset, count);
+        int numberOfBytesToRead = GetNumberOfBytesToRead(buffer.Length);
+        _currentChunk.Slice(_position, numberOfBytesToRead).CopyTo(buffer);
+        _position += numberOfBytesToRead;
+        return numberOfBytesToRead;
     }
 
     /// <inheritdoc cref="Stream.Seek" />
@@ -169,16 +150,51 @@ public sealed class ChunkStream : Stream
         base.Dispose(disposing);
     }
 
-    private int FillBuffer(byte[] buffer, int offset, int count)
+    private bool ReadCurrentMessage()
     {
-        if (_currentChunk == null)
-            throw new InvalidOperationException("_currentChunk is null");
+        _syncEnumerator ??= _source.GetEnumerator();
 
-        int numberOfBytesToRead = Math.Min(
-            buffer.Length - offset,
-            Math.Min(count, _currentChunk.Length - _position));
-        Buffer.BlockCopy(_currentChunk, _position, buffer, offset, numberOfBytesToRead);
-        _position += numberOfBytesToRead;
-        return numberOfBytesToRead;
+        if (_currentChunk.Length > 0 && _position < _currentChunk.Length)
+            return true;
+
+        while (_syncEnumerator.MoveNext())
+        {
+            if (_syncEnumerator.Current?.RawMessage == null)
+                continue;
+
+            _currentChunk = new Memory<byte>(_syncEnumerator.Current.RawMessage.ReadAll());
+            _position = 0;
+
+            return true;
+        }
+
+        return false;
     }
+
+    private async Task<bool> ReadCurrentMessageAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        _asyncEnumerator ??= _source.GetAsyncEnumerator(cancellationToken);
+
+        if (_currentChunk.Length > 0 && _position < _currentChunk.Length)
+            return true;
+
+        while (await _asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (_asyncEnumerator.Current.RawMessage == null)
+                continue;
+
+            _currentChunk = new Memory<byte>(await _asyncEnumerator.Current.RawMessage.ReadAllAsync().ConfigureAwait(false));
+            _position = 0;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private int GetNumberOfBytesToRead(int count) => Math.Min(count, _currentChunk.Length - _position);
 }

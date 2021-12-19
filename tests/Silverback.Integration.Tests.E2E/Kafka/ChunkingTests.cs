@@ -821,7 +821,7 @@ public class ChunkingTests : KafkaTestFixture
                             {
                                 // Read only part of first chunk
                                 byte[] buffer = new byte[5];
-                                binaryMessage.Content!.Read(buffer, 0, 10);
+                                binaryMessage.Content!.Read(buffer, 0, 5);
                                 return;
                             }
 
