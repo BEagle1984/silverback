@@ -47,13 +47,9 @@ internal static class TaskExtensions
         this Task task,
         CancellationTokenSource cancellationTokenSource)
     {
-        // TODO: Array pool?
-        Task[] tasks = { task, cancellationTokenSource.Token.AsTask() };
-        await Task.WhenAny(tasks).ConfigureAwait(false);
+        Task completedTask = await Task.WhenAny(task, cancellationTokenSource.Token.AsTask()).ConfigureAwait(false);
 
-        AggregateException? exception = tasks.Where(t => t.IsFaulted).Select(t => t.Exception).FirstOrDefault();
-
-        if (exception != null)
+        if (completedTask == task && task.IsFaulted)
         {
             try
             {
@@ -84,13 +80,9 @@ internal static class TaskExtensions
         this Task<T> task,
         CancellationTokenSource cancellationTokenSource)
     {
-        // TODO: Array pool?
-        Task[] tasks = { task, cancellationTokenSource.Token.AsTask() };
-        await Task.WhenAny(tasks).ConfigureAwait(false);
+        Task completedTask = await Task.WhenAny(task, cancellationTokenSource.Token.AsTask()).ConfigureAwait(false);
 
-        AggregateException? exception = tasks.Where(t => t.IsFaulted).Select(t => t.Exception).FirstOrDefault();
-
-        if (exception != null)
+        if (completedTask == task && task.IsFaulted)
         {
             try
             {
@@ -105,22 +97,22 @@ internal static class TaskExtensions
         return await task.ConfigureAwait(false);
     }
 
-    public static void FireAndForget(this ValueTask task)
-    {
-        // This method is used just to trick the compiler and avoid CS4014
-    }
-
     public static void FireAndForget(this Task task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }
 
-    public static void FireAndForget<T>(this ValueTask<T> task)
+    public static void FireAndForget(this ValueTask task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }
 
     public static void FireAndForget<T>(this Task<T> task)
+    {
+        // This method is used just to trick the compiler and avoid CS4014
+    }
+
+    public static void FireAndForget<T>(this ValueTask<T> task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }

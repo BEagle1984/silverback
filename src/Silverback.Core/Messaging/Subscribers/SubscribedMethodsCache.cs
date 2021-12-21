@@ -22,9 +22,6 @@ internal sealed class SubscribedMethodsCache
     // TODO: check by type
     public bool HasAnyMessageStreamSubscriber => _cacheSingleton.HasAnyMessageStreamSubscriber(_serviceProvider);
 
-    // TODO: DELETE? USED/USEFUL?
-    public bool IsSubscribed(object message) => _cacheSingleton.IsSubscribed(message, _serviceProvider);
-
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(object message) =>
         _cacheSingleton.GetExclusiveMethods(message, _serviceProvider);
 

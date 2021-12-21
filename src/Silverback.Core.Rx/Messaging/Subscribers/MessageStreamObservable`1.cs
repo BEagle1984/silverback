@@ -70,10 +70,13 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 
     IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)
     {
-        if (_subscription != null)
-            throw new InvalidOperationException("This observable can be subscribed only once.");
+        lock (_subject)
+        {
+            if (_subscription != null)
+                throw new InvalidOperationException("This observable can be subscribed only once.");
 
-        _subscription = _subject.Subscribe(observer);
+            _subscription = _subject.Subscribe(observer);
+        }
 
         _subscribeSemaphoreSlim.Release();
         _completeSemaphoreSlim.Wait(); // TODO: Needs cancellation token?

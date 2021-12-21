@@ -17,7 +17,6 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: E2E test this!
     public SilverbackBuilder AddDbDistributedLockManager()
     {
         Services.AddSingleton<IDistributedLockManager, DbDistributedLockManager>();

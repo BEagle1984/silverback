@@ -30,9 +30,6 @@ internal sealed class SubscribedMethodsCacheSingleton
         _hasAnyMessageStreamSubscriber ??=
             GetAllSubscribedMethods(serviceProvider).Any(method => method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver);
 
-    public bool IsSubscribed(object message, IServiceProvider serviceProvider) =>
-        GetMethods(message, serviceProvider).Count > 0;
-
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
