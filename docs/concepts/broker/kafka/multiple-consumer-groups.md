@@ -72,6 +72,21 @@ public class MySubscriber
 ```
 ***
 
+> [!Note]
+> The filters can be added dynamically using the overloads of `AddSubscriber` accepting a <xref:Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions> or <xref:Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions> and this allows you to use a variable for the group id.
+> 
+> ```csharp
+> .AddSingletonSubscriber<MySubscriber>(
+>     new TypeSubscriptionOptions
+>     {
+>         Filters = new[]
+>         {
+>             new KafkaGroupIdFilterAttribute("consumer1")
+>         }
+>     })
+> ```
+
+
 Using the <xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute> is the cleanest and easiest approach but alternatively you can always subscribe to the <xref:Silverback.Messaging.Messages.IInboundEnvelope`1> and perform different tasks according to the `GroupId` value.
 
 ```csharp

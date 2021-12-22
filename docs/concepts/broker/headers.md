@@ -119,8 +119,17 @@ Header Key | Description
 `tracestate` | Used for distributed tracing. It corresponds to the [Activity.TraceStateString](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity). The header is implemented according to the [W3C Trace Context proposal](https://www.w3.org/TR/trace-context-1/#tracestate-header).
 `tracebaggage` | Used for distributed tracing. It corresponds to the string representation of the [Activity.Baggage](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity) dictionary. This is not part of the w3c standard.
 `content-type` | The content type of the [binary file](xref:binary-files), used when producing or consuming an <xref:Silverback.Messaging.Messages.IBinaryFileMessage>.
+`x-failure-reason` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the reason why the message failed to be processed.
+
+### Kafka specific
+
 `x-kafka-message-key` | The header that will be filled with the [key](xref:kafka-partitioning) of the message consumed from Kafka.
 `x-kafka-message-timestamp` | The header that will be filled with the timestamp of the message consumed from Kafka.
+`x-source-consumer-group-id` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the GroupId the consumer that consumed the message that failed to be processed.
+`x-source-topic` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the source topic of the message that failed to be processed.
+`x-source-partition` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the source partition of the message that failed to be processed.
+`x-source-offset` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the offset of the message that failed to be processed.
+`x-source-timestamp` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the timestamp of the message that failed to be processed.
 
 The static classes <xref:Silverback.Messaging.Messages.DefaultMessageHeaders> and <xref:Silverback.Messaging.Messages.KafkaMessageHeaders> contain all default header names constants.
 

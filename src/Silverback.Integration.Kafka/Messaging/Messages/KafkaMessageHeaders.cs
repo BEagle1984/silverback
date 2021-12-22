@@ -27,31 +27,31 @@ namespace Silverback.Messaging.Messages
         public const string TimestampKey = "x-kafka-message-timestamp";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the group ID of
-        ///     the message that failed to be processed.
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the GroupId of
+        ///     the consumer that consumed the message that failed to be processed.
         /// </summary>
         public const string SourceConsumerGroupId = "x-source-consumer-group-id";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the topic of
-        ///     the message that failed to be processed.
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the source
+        ///     topic of the message that failed to be processed.
         /// </summary>
         public const string SourceTopic = "x-source-topic";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the partition of
-        ///     the message that failed to be processed.
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the source
+        ///     partition of the message that failed to be processed.
         /// </summary>
         public const string SourcePartition = "x-source-partition";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the offset of
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the offset of
         ///     the message that failed to be processed.
         /// </summary>
         public const string SourceOffset = "x-source-offset";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the timestamp of
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the timestamp of
         ///     the message that failed to be processed.
         /// </summary>
         public const string SourceTimestamp = "x-source-timestamp";

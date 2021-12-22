@@ -30,12 +30,6 @@ namespace Silverback.Messaging.Messages
         public const string FailedAttempts = "x-failed-attempts";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the name of the
-        ///     endpoint the failed message is being moved from.
-        /// </summary>
-        public const string SourceEndpoint = "x-source-endpoint";
-
-        /// <summary>
         ///     The message chunk index, used when chunking is enabled.
         /// </summary>
         public const string ChunkIndex = "x-chunk-index";
@@ -102,7 +96,7 @@ namespace Silverback.Messaging.Messages
         public const string EncryptionKeyId = "x-encryption-key-id";
 
         /// <summary>
-        ///     This will be set by <see cref="MoveMessageErrorPolicy" /> and will contain the reason why
+        ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the reason why
         ///     the message failed to be processed.
         /// </summary>
         public const string FailureReason = "x-failure-reason";

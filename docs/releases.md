@@ -4,6 +4,20 @@ uid: releases
 
 # Releases
 
+## [3.6.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.1)
+
+### What's new
+
+* Handle `IAsyncEnumerable<T>` returned by the subscriber and republished the contained messages
+* Enrich Kafka messages moved by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> adding some extra headers containing some information about the source topic, partition, offset, etc. (see <xref:headers>) 
+* Allow filters such as the <xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute> or <xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute> to be added to the subscribers at runtime via the configuration API (see <xref:kafka-consumer-groups> and <xref:mqtt-client-ids>)
+
+### Fixes
+
+* Fix <xref:Silverback.Messaging.Broker.MqttConsumer> reconnection issues
+* Handle edge cases related to MQTT acknowledgment timeout in <xref:Silverback.Messaging.Broker.MqttConsumer>
+* Allow max retries specification and error policies chains with MQTT V3
+
 ## [3.5.0](https://github.com/BEagle1984/silverback/releases/tag/v3.5.0)
 
 ### What's new
