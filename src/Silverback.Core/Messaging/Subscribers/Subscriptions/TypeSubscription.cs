@@ -15,14 +15,14 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     /// </summary>
     internal sealed class TypeSubscription : ISubscription
     {
-        private readonly bool _autoSubscribeAllPublicMethods;
+        private readonly TypeSubscriptionOptions _options;
 
         private IReadOnlyCollection<SubscribedMethod>? _subscribedMethods;
 
-        public TypeSubscription(Type subscribedType, bool autoSubscribeAllPublicMethods = true)
+        public TypeSubscription(Type subscribedType, TypeSubscriptionOptions options)
         {
             SubscribedType = Check.NotNull(subscribedType, nameof(subscribedType));
-            _autoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods;
+            _options = Check.NotNull(options, nameof(options));
         }
 
         public Type SubscribedType { get; }
@@ -33,14 +33,24 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
                 .ToList();
 
-        private static SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
+        private SubscribedMethod GetSubscribedMethod(Type targetType, MethodInfo methodInfo)
         {
             var subscribeAttribute = methodInfo.GetCustomAttribute<SubscribeAttribute>();
+
+            // TODO: Migrate to records
+            var methodOptions = new TypeSubscriptionOptions
+            {
+                Filters = _options.Filters
+                    .Union(methodInfo.GetCustomAttributes<MessageFilterAttribute>(false))
+                    .Distinct().ToList(),
+                Exclusive = subscribeAttribute?.Exclusive ?? _options.Exclusive,
+                AutoSubscribeAllPublicMethods = _options.AutoSubscribeAllPublicMethods
+            };
 
             return new SubscribedMethod(
                 serviceProvider => serviceProvider.GetRequiredService(targetType),
                 methodInfo,
-                subscribeAttribute?.Exclusive);
+                methodOptions);
         }
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods(
@@ -68,7 +78,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 .Where(
                     methodInfo =>
                         methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                        _autoSubscribeAllPublicMethods && methodInfo.IsPublic &&
+                        _options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
                         !methodInfo.IsSpecialName &&
                         methodInfo.DeclaringType == type && methodInfo.GetParameters().Any());
     }

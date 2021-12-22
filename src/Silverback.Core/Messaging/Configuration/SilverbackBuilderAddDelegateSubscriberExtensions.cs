@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(handler, nameof(handler));
+            options ??= new SubscriptionOptions();
 
             silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
             return silverbackBuilder;
@@ -56,7 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -64,14 +65,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Action<TMessage> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -86,7 +81,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -94,14 +89,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, Task> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -116,7 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -124,14 +113,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, object> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -146,7 +129,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -154,14 +137,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, Task<object>> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -176,7 +153,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -184,14 +161,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Action<IEnumerable<TMessage>> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -206,7 +177,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -214,14 +185,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, Task> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -236,7 +201,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -244,14 +209,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, object> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -266,7 +225,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -274,14 +233,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, Task<object>> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -296,7 +249,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -304,14 +257,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Action<TMessage, IServiceProvider> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -326,7 +273,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -334,14 +281,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, IServiceProvider, Task> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -356,7 +297,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -364,14 +305,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<TMessage, IServiceProvider, object> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -386,7 +321,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -394,14 +329,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Action<IEnumerable<TMessage>, IServiceProvider> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
 
         /// <summary>
         ///     Subscribes the specified delegate to the messages being published into the bus.
@@ -416,7 +345,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The message handler delegate.
         /// </param>
         /// <param name="options">
-        ///     A <see cref="SubscriptionOptions" /> specifying parallelism options.
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
@@ -424,13 +353,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddDelegateSubscriber<TMessage>(
             this ISilverbackBuilder silverbackBuilder,
             Func<IEnumerable<TMessage>, IServiceProvider, object> handler,
-            SubscriptionOptions? options = null)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
-            Check.NotNull(handler, nameof(handler));
-
-            silverbackBuilder.BusOptions.Subscriptions.Add(new DelegateSubscription(handler, options));
-            return silverbackBuilder;
-        }
+            SubscriptionOptions? options = null) =>
+            AddDelegateSubscriber(silverbackBuilder, (Delegate)handler, options);
     }
 }

@@ -16,8 +16,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers.Subscriptions
         {
             var collection = new List<ISubscription>();
 
-            collection.AddTypedSubscriptionIfNotExists(typeof(TestSubscriber), true);
-            collection.AddTypedSubscriptionIfNotExists(typeof(TestCommandReplier), true);
+            collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
+            collection.AddTypeSubscriptionIfNotExists(typeof(TestCommandReplier), new TypeSubscriptionOptions());
 
             collection.Should().HaveCount(2);
         }
@@ -27,8 +27,8 @@ namespace Silverback.Tests.Core.Messaging.Subscribers.Subscriptions
         {
             var collection = new List<ISubscription>();
 
-            collection.AddTypedSubscriptionIfNotExists(typeof(TestSubscriber), true);
-            collection.AddTypedSubscriptionIfNotExists(typeof(TestSubscriber), true);
+            collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
+            collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
 
             collection.Should().HaveCount(1);
         }

@@ -14,11 +14,12 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     {
         private readonly SubscribedMethod _method;
 
-        public DelegateSubscription(Delegate handler, SubscriptionOptions? options)
+        public DelegateSubscription(Delegate handler, SubscriptionOptions options)
         {
             Check.NotNull(handler, nameof(handler));
+            Check.NotNull(options, nameof(options));
 
-            _method = new SubscribedMethod(_ => handler.Target, handler.Method, options?.Exclusive);
+            _method = new SubscribedMethod(_ => handler.Target, handler.Method, options);
         }
 
         public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)

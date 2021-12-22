@@ -38,15 +38,45 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddTransientSubscriber(
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddTransientSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register and the implementation to use.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddTransient(subscriberType);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -77,6 +107,29 @@ namespace Microsoft.Extensions.DependencyInjection
             AddTransientSubscriber(silverbackBuilder, typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
         /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            TypeSubscriptionOptions options)
+            where TSubscriber : class =>
+            AddTransientSubscriber(silverbackBuilder, typeof(TSubscriber), options);
+
+        /// <summary>
         ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
         ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
@@ -102,16 +155,51 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddTransientSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            Func<IServiceProvider, object> implementationFactory,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddTransient(subscriberType, implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -142,15 +230,49 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, TSubscriber> implementationFactory,
             bool autoSubscribeAllPublicMethods = true)
+            where TSubscriber : class =>
+            AddTransientSubscriber(
+                silverbackBuilder,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<IServiceProvider, TSubscriber> implementationFactory,
+            TypeSubscriptionOptions options)
             where TSubscriber : class
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddTransient(implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 typeof(TSubscriber),
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -177,15 +299,45 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddScopedSubscriber(
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddScopedSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register and the implementation to use.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddScopedSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddScoped(subscriberType);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -216,6 +368,29 @@ namespace Microsoft.Extensions.DependencyInjection
             AddScopedSubscriber(silverbackBuilder, typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
         /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddScopedSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            TypeSubscriptionOptions options)
+            where TSubscriber : class =>
+            AddScopedSubscriber(silverbackBuilder, typeof(TSubscriber), options);
+
+        /// <summary>
         ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
         ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
         /// </summary>
@@ -241,16 +416,51 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddScopedSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <paramref name="subscriberType" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddScopedSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            Func<IServiceProvider, object> implementationFactory,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddScoped(subscriberType, implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -281,15 +491,49 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, TSubscriber> implementationFactory,
             bool autoSubscribeAllPublicMethods = true)
+            where TSubscriber : class =>
+            AddScopedSubscriber(
+                silverbackBuilder,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a scoped subscriber of the type specified in <typeparamref name="TSubscriber" /> with a factory
+        ///     specified in <paramref name="implementationFactory" /> to the <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddScopedSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<IServiceProvider, TSubscriber> implementationFactory,
+            TypeSubscriptionOptions options)
             where TSubscriber : class
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddScoped(implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 typeof(TSubscriber),
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -316,15 +560,45 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddSingletonSubscriber(
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddSingletonSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register and the implementation to use.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddSingleton(subscriberType);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -355,6 +629,29 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSingletonSubscriber(silverbackBuilder, typeof(TSubscriber), autoSubscribeAllPublicMethods);
 
         /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> to this
+        ///     <see cref="ISilverbackBuilder" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            TypeSubscriptionOptions options)
+            where TSubscriber : class =>
+            AddSingletonSubscriber(silverbackBuilder, typeof(TSubscriber), options);
+
+        /// <summary>
         ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
         ///     factory specified in <paramref name="implementationFactory" /> to the
         ///     <see cref="IServiceCollection" />.
@@ -381,16 +678,52 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
             Func<IServiceProvider, object> implementationFactory,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddSingletonSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            Func<IServiceProvider, object> implementationFactory,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddSingleton(subscriberType, implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -422,15 +755,50 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Func<IServiceProvider, TSubscriber> implementationFactory,
             bool autoSubscribeAllPublicMethods = true)
+            where TSubscriber : class =>
+            AddSingletonSubscriber(
+                silverbackBuilder,
+                implementationFactory,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with a
+        ///     factory specified in <paramref name="implementationFactory" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<IServiceProvider, TSubscriber> implementationFactory,
+            TypeSubscriptionOptions options)
             where TSubscriber : class
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(implementationFactory, nameof(implementationFactory));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddSingleton(implementationFactory);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 typeof(TSubscriber),
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -462,16 +830,52 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             Type subscriberType,
             object implementationInstance,
-            bool autoSubscribeAllPublicMethods = true)
+            bool autoSubscribeAllPublicMethods = true) =>
+            AddSingletonSubscriber(
+                silverbackBuilder,
+                subscriberType,
+                implementationInstance,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <paramref name="subscriberType" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="subscriberType">
+        ///     The type of the subscriber to register.
+        /// </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber(
+            this ISilverbackBuilder silverbackBuilder,
+            Type subscriberType,
+            object implementationInstance,
+            TypeSubscriptionOptions options)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(subscriberType, nameof(subscriberType));
             Check.NotNull(implementationInstance, nameof(implementationInstance));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddSingleton(subscriberType, implementationInstance);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 subscriberType,
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -503,15 +907,50 @@ namespace Microsoft.Extensions.DependencyInjection
             this ISilverbackBuilder silverbackBuilder,
             TSubscriber implementationInstance,
             bool autoSubscribeAllPublicMethods = true)
+            where TSubscriber : class =>
+            AddSingletonSubscriber(
+                silverbackBuilder,
+                implementationInstance,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Adds a singleton subscriber of the type specified in <typeparamref name="TSubscriber" /> with an
+        ///     instance specified in <paramref name="implementationInstance" /> to the
+        ///     <see cref="IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The type of the subscriber to register.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="implementationInstance">
+        ///     The instance of the service.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddSingletonSubscriber<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            TSubscriber implementationInstance,
+            TypeSubscriptionOptions options)
             where TSubscriber : class
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
             Check.NotNull(implementationInstance, nameof(implementationInstance));
+            Check.NotNull(options, nameof(options));
 
             silverbackBuilder.Services.AddSingleton(implementationInstance);
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 typeof(TSubscriber),
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }
@@ -542,12 +981,46 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ISilverbackBuilder AddSubscribers<TSubscriber>(
             this ISilverbackBuilder silverbackBuilder,
             bool autoSubscribeAllPublicMethods = true)
+            where TSubscriber : class =>
+            AddSubscribers<TSubscriber>(
+                silverbackBuilder,
+                new TypeSubscriptionOptions
+                {
+                    AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+                });
+
+        /// <summary>
+        ///     Registers the base type to be resolved as subscriber. The actual types have to be added to the
+        ///     <see cref="IServiceCollection" /> separately.
+        /// </summary>
+        /// <typeparam name="TSubscriber">
+        ///     The base type of the subscribers (class or interface).
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the subscriber to.
+        /// </param>
+        /// <param name="options">
+        ///     The <see cref="TypeSubscriptionOptions" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        /// <remarks>
+        ///     The subscribers will have to be registered twice (with the base type and the type itself:
+        ///     <c>.AddScoped&lt;BaseType, Subscriber&gt;.AddScoped&lt;Subscriber&gt;</c>).
+        /// </remarks>
+        public static ISilverbackBuilder AddSubscribers<TSubscriber>(
+            this ISilverbackBuilder silverbackBuilder,
+            TypeSubscriptionOptions options)
+            where TSubscriber : class
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+            Check.NotNull(options, nameof(options));
 
-            silverbackBuilder.BusOptions.Subscriptions.AddTypedSubscriptionIfNotExists(
+            silverbackBuilder.BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(
                 typeof(TSubscriber),
-                autoSubscribeAllPublicMethods);
+                options);
 
             return silverbackBuilder;
         }

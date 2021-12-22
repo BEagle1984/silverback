@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Subscribers
             IServiceProvider serviceProvider,
             bool executeAsync)
         {
-            if (IsFiltered(subscribedMethod.Filters, message))
+            if (IsFiltered(subscribedMethod.Options.Filters, message))
                 return MethodInvocationResult.NotInvoked;
 
             var arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider);
@@ -116,7 +116,7 @@ namespace Silverback.Messaging.Subscribers
             var lazyStream = streamEnumerableResolver.GetValue(
                 messageStreamProvider,
                 subscribedMethod.MessageType,
-                subscribedMethod.Filters);
+                subscribedMethod.Options.Filters);
 
             return Task.Run(
                 async () =>

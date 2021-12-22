@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
+using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
@@ -35,19 +36,18 @@ namespace Silverback.Messaging.Subscribers
         /// <param name="methodInfo">
         ///     The <see cref="MethodInfo" /> related to the subscribed method.
         /// </param>
-        /// <param name="exclusive">
-        ///     A boolean value indicating whether the method can be executed concurrently to other methods handling
-        ///     the <b>
-        ///         same message
-        ///     </b>.
+        /// <param name="options">
+        ///     The <see cref="SubscriptionOptions" />.
         /// </param>
         public SubscribedMethod(
             Func<IServiceProvider, object> targetTypeFactory,
             MethodInfo methodInfo,
-            bool? exclusive)
+            SubscriptionOptions options)
         {
             _targetTypeFactory = Check.NotNull(targetTypeFactory, nameof(targetTypeFactory));
             MethodInfo = Check.NotNull(methodInfo, nameof(methodInfo));
+            Options = Check.NotNull(options, nameof(options));
+
             Parameters = methodInfo.GetParameters();
 
             if (Parameters.Count == 0)
@@ -56,10 +56,6 @@ namespace Silverback.Messaging.Subscribers
                     methodInfo,
                     "The subscribed method must have at least 1 argument.");
             }
-
-            Filters = methodInfo.GetCustomAttributes<MessageFilterAttribute>(false).ToList();
-
-            IsExclusive = exclusive ?? true;
         }
 
         /// <summary>
@@ -73,15 +69,9 @@ namespace Silverback.Messaging.Subscribers
         public IReadOnlyList<ParameterInfo> Parameters { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether the method can be executed concurrently to other methods handling
-        ///     the <b>same message</b>. This value is set via the <see cref="SubscribeAttribute" />.
+        ///     Gets the <see cref="SubscriptionOptions"/>.
         /// </summary>
-        public bool IsExclusive { get; }
-
-        /// <summary>
-        ///     Gets the filters to be applied. The filters are set via <see cref="MessageFilterAttribute" />.
-        /// </summary>
-        public IReadOnlyCollection<IMessageFilter> Filters { get; }
+        public SubscriptionOptions Options { get; }
 
         /// <summary>
         ///     Gets the type of the message argument (e.g. <c>MyMessage</c> or <c>IEnumerable&lt;MyMessage&gt;</c>).

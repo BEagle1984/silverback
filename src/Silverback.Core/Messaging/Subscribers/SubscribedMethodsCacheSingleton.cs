@@ -37,12 +37,12 @@ namespace Silverback.Messaging.Subscribers
         public IEnumerable<SubscribedMethod> GetExclusiveMethods(
             object message,
             IServiceProvider serviceProvider) =>
-            GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.IsExclusive);
+            GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.Exclusive);
 
         public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(
             object message,
             IServiceProvider serviceProvider) =>
-            GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.IsExclusive);
+            GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.Exclusive);
 
         public IReadOnlyCollection<SubscribedMethod> GetMethods(
             object message,
