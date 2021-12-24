@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
@@ -108,6 +109,9 @@ namespace Silverback.Messaging.Broker.Kafka
             TaskCompletionSource<bool> taskCompletionSource,
             CancellationToken cancellationToken)
         {
+            // Clear the current activity to ensure we don't propagate the previous traceId
+            Activity.Current = null;
+
             _logger.LogConsumerLowLevelTrace(
                 _consumer,
                 "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",

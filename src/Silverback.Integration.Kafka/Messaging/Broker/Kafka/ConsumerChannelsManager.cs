@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -164,6 +165,9 @@ namespace Silverback.Messaging.Broker.Kafka
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void StartReading(int channelIndex)
         {
+            // Clear the current activity to ensure we don't propagate the previous traceId (e.g. when restarting because of a rollback)
+            Activity.Current = null;
+
             if (_readCancellationTokenSource[channelIndex].IsCancellationRequested &&
                 !_readTaskCompletionSources[channelIndex].Task.IsCompleted)
             {

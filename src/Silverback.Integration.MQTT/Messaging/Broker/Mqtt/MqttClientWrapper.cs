@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,6 +128,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             if (_consumer == null)
                 throw new InvalidOperationException("No consumer was bound.");
 
+            // Clear the current activity to ensure we don't propagate the previous traceId
+            Activity.Current = null;
+
             return _consumer.HandleMessageAsync(consumedMessage);
         }
 
@@ -134,11 +138,14 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             _connectCancellationTokenSource ??= new CancellationTokenSource();
 
-            _ = Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token));
+            Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token)).FireAndForget();
         }
 
         private async Task MonitorConnectionAsync(CancellationToken cancellationToken)
         {
+            // Clear the current activity to ensure we don't propagate the previous traceId
+            Activity.Current = null;
+
             bool isFirstTry = true;
 
             while (!cancellationToken.IsCancellationRequested)

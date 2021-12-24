@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
@@ -114,6 +115,9 @@ namespace Silverback.Messaging.Broker.Mqtt
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ReadChannelAsync()
         {
+            // Clear the current activity to ensure we don't propagate the previous traceId
+            Activity.Current = null;
+
             try
             {
                 _logger.LogConsumerLowLevelTrace(Consumer, "Starting channel processing loop...");

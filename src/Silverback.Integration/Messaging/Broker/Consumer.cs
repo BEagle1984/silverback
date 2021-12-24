@@ -149,10 +149,6 @@ namespace Silverback.Messaging.Broker
             Task.Run(
                     async () =>
                     {
-                        // Clear trace context to avoid the consume loop to be tracked under the current
-                        // message traceId
-                        Activity.Current = null;
-
                         try
                         {
                             await StopAndDisconnectAsync().ConfigureAwait(false);

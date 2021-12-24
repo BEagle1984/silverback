@@ -14,9 +14,7 @@ uid: releases
 
 ### Fixes
 
-* Fix <xref:Silverback.Messaging.Broker.MqttConsumer> reconnection issues
-* Handle edge cases related to MQTT acknowledgment timeout in <xref:Silverback.Messaging.Broker.MqttConsumer>
-* Allow max retries specification and error policies chains with MQTT V3
+* Ensure each consumed message gets a unique traceId (when the traceparent header is not present)
 
 ## [3.5.0](https://github.com/BEagle1984/silverback/releases/tag/v3.5.0)
 
