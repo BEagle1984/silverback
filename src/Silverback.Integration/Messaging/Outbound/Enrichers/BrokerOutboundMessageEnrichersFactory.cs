@@ -34,11 +34,9 @@ namespace Silverback.Messaging.Outbound.Enrichers
 
         private sealed class NullEnricher : IMovePolicyMessageEnricher
         {
-            public void Enrich(
-                IRawInboundEnvelope inboundEnvelope,
-                IOutboundEnvelope outboundEnvelope,
-                Exception exception)
+            public void Enrich(IRawInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
             {
+                // Do nothing
             }
         }
     }
