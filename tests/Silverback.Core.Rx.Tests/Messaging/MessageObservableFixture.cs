@@ -108,22 +108,30 @@ public sealed class MessageObservableFixture : IDisposable
 
         Task.Run(() => _observable.Subscribe(_ => Interlocked.Increment(ref count))).FireAndForget();
 
+        CountdownEvent countdownEvent = new(3);
+
         await Task.WhenAll(
             Task.Run(
                 async () =>
                 {
+                    countdownEvent.Signal();
+                    countdownEvent.Wait();
                     await _streamProvider.PushAsync(1);
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
                 }),
             Task.Run(
                 async () =>
                 {
+                    countdownEvent.Signal();
+                    countdownEvent.Wait();
                     await _streamProvider.PushAsync(2);
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
                 }),
             Task.Run(
                 async () =>
                 {
+                    countdownEvent.Signal();
+                    countdownEvent.Wait();
                     await _streamProvider.PushAsync(3);
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
                 }));

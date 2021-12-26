@@ -1560,7 +1560,7 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_DisconnectWithIncompleteBinaryMessage_AbortedAndNotCommitted()
     {
-        byte[] rawMessage = BytesUtil.GetRandomBytes();
+        byte[] rawMessage = BytesUtil.GetRandomBytes(50);
         bool enumerationAborted = false;
 
         Host.ConfigureServices(
