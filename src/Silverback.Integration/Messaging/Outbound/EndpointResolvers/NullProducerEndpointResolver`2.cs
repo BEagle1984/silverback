@@ -6,7 +6,7 @@ namespace Silverback.Messaging.Outbound.EndpointResolvers;
 internal class NullProducerEndpointResolver<TEndpoint> : NullProducerEndpointResolver, IProducerEndpointResolver<TEndpoint>
     where TEndpoint : ProducerEndpoint
 {
-    public new static readonly NullProducerEndpointResolver<TEndpoint> Instance = new();
+    public static new readonly NullProducerEndpointResolver<TEndpoint> Instance = new();
 
     private NullProducerEndpointResolver()
     {

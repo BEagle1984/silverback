@@ -157,6 +157,40 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.AbortReason" />
     public SequenceAbortReason AbortReason { get; private set; }
 
+    /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+    void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
+
+    /// <inheritdoc cref="ISequenceImplementation.SetParentSequence" />
+    void ISequenceImplementation.SetParentSequence(ISequence parentSequence) =>
+        ParentSequence = parentSequence;
+
+    /// <inheritdoc cref="ISequenceImplementation.CompleteSequencerBehaviorsTask" />
+    void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
+        _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+
+    /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
+    void ISequenceImplementation.NotifyProcessingCompleted()
+    {
+        _processingCompleteTaskCompletionSource.TrySetResult(true);
+        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+    }
+
+    /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
+    void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
+    {
+        _processingCompleteTaskCompletionSource.TrySetException(exception);
+
+        // Don't forward the error, it's enough to handle it once
+        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
+        _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+    }
+
+    /// <inheritdoc cref="ISequenceImplementation.SetActivity" />
+    void ISequenceImplementation.SetActivity(Activity activity)
+    {
+        Activity = activity;
+    }
+
     /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
     public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
         StreamProvider.CreateStream<TMessage>(filters);
@@ -424,40 +458,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
-
-    /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-    void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
-
-    /// <inheritdoc cref="ISequenceImplementation.SetParentSequence" />
-    void ISequenceImplementation.SetParentSequence(ISequence parentSequence) =>
-        ParentSequence = parentSequence;
-
-    /// <inheritdoc cref="ISequenceImplementation.CompleteSequencerBehaviorsTask" />
-    void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
-        _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
-
-    /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
-    void ISequenceImplementation.NotifyProcessingCompleted()
-    {
-        _processingCompleteTaskCompletionSource.TrySetResult(true);
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
-    }
-
-    /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
-    void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
-    {
-        _processingCompleteTaskCompletionSource.TrySetException(exception);
-
-        // Don't forward the error, it's enough to handle it once
-        _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
-        _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
-    }
-
-    /// <inheritdoc cref="ISequenceImplementation.SetActivity" />
-    void ISequenceImplementation.SetActivity(Activity activity)
-    {
-        Activity = activity;
-    }
 
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {

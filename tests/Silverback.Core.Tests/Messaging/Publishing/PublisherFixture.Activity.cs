@@ -16,10 +16,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-public class PublisherActivityTests
+public partial class PublisherFixture
 {
     [Fact]
-    public async Task Publish_WithActivityListener_StartActivity()
+    public async Task PublishAndPublishAsync_ShouldStartActivity()
     {
         using TestActivityListener activityListener = new();
 

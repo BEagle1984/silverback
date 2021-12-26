@@ -56,7 +56,7 @@ public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     /// </param>
     /// <param name="bootstrapServers">
     ///     The bootstrap servers string used to identify the target broker. This must be specified when testing with
-    ///     multiple brokers
+    ///     multiple brokers.
     /// </param>
     /// <returns>
     ///     The <see cref="IInMemoryTopic" />.

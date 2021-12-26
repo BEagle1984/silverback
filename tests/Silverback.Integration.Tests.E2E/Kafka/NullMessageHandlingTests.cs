@@ -241,7 +241,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.RawInboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
     }
 
     [Fact]

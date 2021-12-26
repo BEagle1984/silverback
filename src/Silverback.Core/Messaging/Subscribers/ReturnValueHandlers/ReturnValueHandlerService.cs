@@ -28,14 +28,14 @@ internal sealed class ReturnValueHandlerService
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
             return false;
 
-        IReturnValueHandler? handler = _returnValueHandlers.FirstOrDefault(h => h.CanHandle(returnValue));
+        IReturnValueHandler? returnValueHandler = _returnValueHandlers.FirstOrDefault(handler => handler.CanHandle(returnValue));
 
-        if (handler != null)
+        if (returnValueHandler != null)
         {
             if (executeAsync)
-                await handler.HandleAsync(returnValue).ConfigureAwait(false);
+                await returnValueHandler.HandleAsync(returnValue).ConfigureAwait(false);
             else
-                handler.Handle(returnValue);
+                returnValueHandler.Handle(returnValue);
 
             return true;
         }

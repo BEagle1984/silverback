@@ -43,7 +43,7 @@ public class InMemoryOffsetStore : TransactionalDictionary<string, IBrokerMessag
     /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
     [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod", Justification = "Needed because of nullability")]
     public Task<IBrokerMessageOffset?> GetLatestValueAsync(string offsetKey, ConsumerConfiguration consumerConfiguration) =>
-        Task.FromResult(
+        Task.FromResult<IBrokerMessageOffset?>(
             Items.Union(UncommittedItems)
                 .Where(pair => pair.Key == GetKey(offsetKey, consumerConfiguration))
                 .Select(pair => pair.Value)

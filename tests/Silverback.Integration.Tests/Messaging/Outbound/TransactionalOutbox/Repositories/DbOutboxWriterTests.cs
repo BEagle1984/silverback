@@ -93,7 +93,7 @@ public sealed class DbOutboxWriterTests : IDisposable
             _sampleOutboundEnvelope.Endpoint.Configuration.FriendlyName,
             new byte[10]);
 
-        _dbContext.Outbox.Should().HaveCount(0);
+        _dbContext.Outbox.Should().BeEmpty();
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public sealed class DbOutboxWriterTests : IDisposable
             new byte[10]);
         await _queueWriter.RollbackAsync();
 
-        _dbContext.Outbox.Should().HaveCount(0);
+        _dbContext.Outbox.Should().BeEmpty();
     }
 
     [Fact]

@@ -208,6 +208,6 @@ public class CoreLoggerExtensionsTests
         }
 
         protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) =>
-            throw new NotImplementedException();
+            throw new NotSupportedException();
     }
 }

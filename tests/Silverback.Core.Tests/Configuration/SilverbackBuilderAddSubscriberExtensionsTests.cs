@@ -14,6 +14,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Configuration;
 
+// TODO: Test all methods
 public class SilverbackBuilderAddSubscriberExtensionsTests
 {
     [Fact]

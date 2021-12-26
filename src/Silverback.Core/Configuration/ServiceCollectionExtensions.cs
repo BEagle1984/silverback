@@ -75,6 +75,5 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddReturnValueHandlers(this IServiceCollection services) => services
         .AddScoped<ReturnValueHandlerService>()
         .AddScoped<IReturnValueHandler, SingleMessageReturnValueHandler>()
-        .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>()
-        .AddScoped<IReturnValueHandler, ReadOnlyCollectionMessagesReturnValueHandler>();
+        .AddScoped<IReturnValueHandler, EnumerableMessagesReturnValueHandler>();
 }

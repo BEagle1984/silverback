@@ -16,10 +16,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-public class PublisherBehaviorsTests
+public partial class PublisherFixture
 {
     [Fact]
-    public async Task Publish_WithBehaviors_MessagesReceived()
+    public async Task PublishAndPublishAsync_ShouldPublishMessage_WhenBehaviorsAreConfigured()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
@@ -39,7 +39,7 @@ public class PublisherBehaviorsTests
     }
 
     [Fact]
-    public async Task Publish_WithBehaviors_BehaviorsExecuted()
+    public async Task PublishAndPublishAsync_ShouldExecuteBehaviors()
     {
         TestBehavior behavior1 = new();
         TestBehavior behavior2 = new();
@@ -62,7 +62,7 @@ public class PublisherBehaviorsTests
     }
 
     [Fact]
-    public async Task Publish_WithSortedBehaviors_BehaviorsExecutedInExpectedOrder()
+    public async Task PublishAndPublishAsync_ShouldExecuteSortedBehaviorsInExpectedOrder()
     {
         List<string> callsSequence = new();
         TestSortedBehavior behavior1 = new(100, callsSequence);
@@ -111,5 +111,48 @@ public class PublisherBehaviorsTests
 
         receivedMessages.Should().HaveCount(2);
         receivedMessages.Should().AllBeOfType<TestCommandTwo>();
+    }
+
+    private class ChangeMessageBehavior<TSourceType> : IBehavior
+    {
+        private readonly Func<object, object> _changedMessageFactory;
+
+        public ChangeMessageBehavior(Func<object, object> changedMessageFactory)
+        {
+            _changedMessageFactory = changedMessageFactory;
+        }
+
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
+            next(
+                message is TSourceType
+                    ? _changedMessageFactory(message)
+                    : message);
+    }
+
+    private class TestBehavior : IBehavior
+    {
+        private readonly IList<string>? _calls;
+
+        public TestBehavior(IList<string>? calls = null)
+        {
+            _calls = calls;
+        }
+
+        public int EnterCount { get; private set; }
+
+        public int ExitCount { get; private set; }
+
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        {
+            _calls?.Add("unsorted");
+
+            EnterCount++;
+
+            Task<IReadOnlyCollection<object?>> result = next(message);
+
+            ExitCount++;
+
+            return result;
+        }
     }
 }

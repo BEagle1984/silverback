@@ -155,7 +155,7 @@ public class MessageValidationTests : KafkaTestFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         received.Should().BeFalse();
 

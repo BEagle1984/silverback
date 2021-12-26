@@ -18,25 +18,42 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-public class PublisherEnvelopeTests
+public partial class PublisherFixture
 {
     [Fact]
-    public async Task Publish_Envelope_EnvelopeAndUnwrappedReceived()
+    public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
         List<object> messages = new();
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((object message) => messages.Add(message))
                 .AddDelegateSubscriber((IEnvelope envelope) => messages.Add(envelope)));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-        messages.OfType<TestEnvelope>().Should().HaveCount(2);
-        messages.OfType<TestCommandOne>().Should().HaveCount(2);
+        messages.Should().HaveCount(2);
+        messages.Should().AllBeOfType<TestEnvelope>();
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldUnwrapEnvelope()
+    {
+        List<object> messages = new();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber((object message) => messages.Add(message)));
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEnvelope(new TestCommandOne()));
+        await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
+
+        messages.Should().HaveCount(2);
+        messages.Should().AllBeOfType<TestCommandOne>();
     }
 
     // This test simulates the case where the IRawInboundEnvelope isn't really an IEnvelope
@@ -54,7 +71,8 @@ public class PublisherEnvelopeTests
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-        messages.OfType<TestEnvelope>().Should().HaveCount(2);
+        messages.Should().HaveCount(2);
+        messages.Should().AllBeOfType<TestEnvelope>();
     }
 
     [Fact]

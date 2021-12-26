@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Logging;
@@ -22,10 +21,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-public class StreamPublisherTests
+public class StreamPublisherFixture
 {
     [Fact]
-    public async Task Publish_StreamProvider_MessagesReceived()
+    public async Task PublishAndPublishAsync_ShouldInvokeSubscribers_WhenMessageStreamProviderIsPushedWithMessages()
     {
         int receivedStreams = 0;
         int receivedEvents = 0;
@@ -74,7 +73,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderSubscribedAsEnumerable_MessagesReceived()
+    public async Task PublishAndPublishAsync_ShouldInvokeSubscribersExpectingEnumerable_WhenMessageStreamProviderIsPushedWithMessages()
     {
         int receivedStreams = 0;
         int receivedEvents = 0;
@@ -123,7 +122,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderSubscribedAsAsyncEnumerable_MessagesReceived()
+    public async Task PublishAndPublishAsync_ShouldInvokeSubscribersExpectingAsyncEnumerable_WhenMessageStreamProviderIsPushedWithMessages()
     {
         int receivedStreams = 0;
         int receivedEvents = 0;
@@ -172,7 +171,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProvider_MessagesNotAutomaticallyEnumerated()
+    public async Task PublishAndPublishAsync_ShouldNotAutomaticallyEnumerate_WhenMessageStreamProviderIsPublished()
     {
         int receivedEnumeratedStreams = 0;
 
@@ -200,14 +199,12 @@ public class StreamPublisherTests
 
         await streamProvider.CompleteAsync();
 
-        await AsyncTestingUtil.WaitAsync(
-            () => receivedEnumeratedStreams >= 1,
-            TimeSpan.FromMilliseconds(500));
+        await AsyncTestingUtil.WaitAsync(() => receivedEnumeratedStreams >= 1, TimeSpan.FromMilliseconds(500));
         receivedEnumeratedStreams.Should().Be(0);
     }
 
     [Fact]
-    public async Task Publish_SimpleMessageAndEnumerableOfMessages_StreamSubscribersNotInvoked()
+    public async Task PublishAndPublishAsync_ShouldNotInvokeMessageStreamEnumerableSubscribers_WhenSimpleMessageIsPublished()
     {
         int receivedStreams = 0;
 
@@ -242,7 +239,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProvider_OnlyRequiredStreamsPublished()
+    public async Task PublishAndPublishAsync_ShouldInvokeMatchingSubscribersOnly_WhenMessageStreamIsPublished()
     {
         int receivedStreams = 0;
 
@@ -296,7 +293,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProvider_ProcessExceptionRethrown()
+    public async Task Publish_ShouldRethrow_WhenMessageStreamSubscriberThrows()
     {
         int receivedStreams = 0;
         int received = 0;
@@ -342,7 +339,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task PublishAsync_StreamProvider_ProcessExceptionRethrown()
+    public async Task PublishAsync_ShouldRethrow_WhenMessageStreamSubscriberThrows()
     {
         int received = 0;
 
@@ -382,7 +379,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task PublishAsync_StreamProviderAbortedAfterException_AllPendingTasksCompleted()
+    public async Task PublishAsync_ShouldCompleteStreamProvider_WhenMessageStreamSubscriberThrows()
     {
         int received = 0;
 
@@ -427,7 +424,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderOfEnvelopes_StreamedEnvelopesReceived()
+    public async Task PublishAsync_ShouldInvokeSubscribers_WhenStreamProviderOfEnvelopesIsPublished()
     {
         int receivedStreams = 0;
         int receivedEnvelopes = 0;
@@ -472,7 +469,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderOfEnvelopes_StreamedUnwrappedMessagesReceived()
+    public async Task PublishAsync_ShouldInvokeSubscribersWithUnwrappedMessages_WhenStreamProviderOfEnvelopesIsPublished()
     {
         int receivedStreams = 0;
         int receivedTestEventOnes = 0;
@@ -518,7 +515,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderOfEnvelopes_OnlyMatchingUnwrappedMessagesReceived()
+    public async Task PublishAsync_ShouldInvokeMatchingUnwrappedMessageSubscribersOnly_WhenStreamProviderOfEnvelopesIsPublished()
     {
         int receivedStreamsOfOnes = 0;
         int receivedTestEventOnes = 0;
@@ -575,7 +572,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_StreamProviderOfEnvelopes_OnlyAutoUnwrapMessagesReceived()
+    public async Task PublishAsync_ShouldInvokeUnwrappedMessageSubscribersOnlyWhenEnvelopeIsAutoUnwrap()
     {
         List<IEvent> receivedEvents = new();
 
@@ -606,7 +603,7 @@ public class StreamPublisherTests
     }
 
     [Fact]
-    public async Task Publish_MessageStreamProvidePlusBehavior_MessagesReceived()
+    public async Task PublishAsync_ShouldInvokeSubscribers_WhenBehaviorsAreConfigured()
     {
         int receivedStreams = 0;
         int receivedEvents = 0;
@@ -639,5 +636,34 @@ public class StreamPublisherTests
 
         receivedStreams.Should().Be(1);
         receivedEvents.Should().Be(2);
+        testBehavior.EnterCount.Should().Be(1);
+        testBehavior.ExitCount.Should().Be(1);
+    }
+
+    private class TestBehavior : IBehavior
+    {
+        private readonly IList<string>? _calls;
+
+        public TestBehavior(IList<string>? calls = null)
+        {
+            _calls = calls;
+        }
+
+        public int EnterCount { get; private set; }
+
+        public int ExitCount { get; private set; }
+
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        {
+            _calls?.Add("unsorted");
+
+            EnterCount++;
+
+            Task<IReadOnlyCollection<object?>> result = next(message);
+
+            ExitCount++;
+
+            return result;
+        }
     }
 }

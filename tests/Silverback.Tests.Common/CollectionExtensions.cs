@@ -7,6 +7,7 @@ namespace Silverback.Tests;
 
 public static class CollectionExtensions
 {
+    // TODO: Replace with TestingCollection
     public static void ThreadSafeAdd<T>(this ICollection<T> collection, T item)
     {
         lock (collection)

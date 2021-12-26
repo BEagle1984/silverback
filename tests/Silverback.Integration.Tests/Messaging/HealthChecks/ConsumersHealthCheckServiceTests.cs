@@ -209,7 +209,7 @@ public class ConsumersHealthCheckServiceTests
             TimeSpan.FromMilliseconds(100),
             null);
 
-        result.Should().HaveCount(0);
+        result.Should().BeEmpty();
 
         await Task.Delay(100);
 

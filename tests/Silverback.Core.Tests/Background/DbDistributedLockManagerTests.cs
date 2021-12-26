@@ -84,7 +84,7 @@ public sealed class DbDistributedLockManagerTests : IDisposable
             .AcquireAsync(DistributedLockSettings.NoLock);
 
         TestDbContext dbContext = GetDbContext();
-        dbContext.Locks.Should().HaveCount(0);
+        dbContext.Locks.Should().BeEmpty();
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public sealed class DbDistributedLockManagerTests : IDisposable
         await _serviceProvider.GetRequiredService<DbDistributedLockManager>().ReleaseAsync(settings);
 
         TestDbContext dbContext = GetDbContext();
-        dbContext.Locks.Should().HaveCount(0);
+        dbContext.Locks.Should().BeEmpty();
     }
 
     public void Dispose()
