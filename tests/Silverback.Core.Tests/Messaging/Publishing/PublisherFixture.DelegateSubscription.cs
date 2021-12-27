@@ -92,40 +92,6 @@ public partial class PublisherFixture
     }
 
     [Fact]
-    public void Publish_ShouldInvokeDelegateSubscriberWithServiceProvider()
-    {
-        TestingCollection<IServiceProvider> messages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>((_, serviceProvider) => messages.Add(serviceProvider)));
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new TestEventOne());
-        publisher.Publish(new TestEventOne());
-
-        messages.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public async Task PublishAsync_ShouldInvokeDelegateSubscriberWithServiceProvider()
-    {
-        TestingCollection<IServiceProvider> messages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>((_, serviceProvider) => messages.Add(serviceProvider)));
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        await publisher.PublishAsync(new TestEventOne());
-        await publisher.PublishAsync(new TestEventOne());
-
-        messages.Should().HaveCount(2);
-    }
-
-    [Fact]
     public void Publish_ShouldInvokeDelegateSubscribersSequentially_WhenExclusive()
     {
         TestingCollection<TestEventOne> messages1 = new();
@@ -150,10 +116,10 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages1),
-                    new SubscriptionOptions { Exclusive = true })
+                    new DelegateSubscriptionOptions { Exclusive = true })
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages2),
-                    new SubscriptionOptions { Exclusive = true }));
+                    new DelegateSubscriptionOptions { Exclusive = true }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -187,10 +153,10 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages1),
-                    new SubscriptionOptions { Exclusive = true })
+                    new DelegateSubscriptionOptions { Exclusive = true })
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages2),
-                    new SubscriptionOptions { Exclusive = true }));
+                    new DelegateSubscriptionOptions { Exclusive = true }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());
@@ -221,10 +187,10 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages1),
-                    new SubscriptionOptions { Exclusive = false })
+                    new DelegateSubscriptionOptions { Exclusive = false })
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages2),
-                    new SubscriptionOptions { Exclusive = false }));
+                    new DelegateSubscriptionOptions { Exclusive = false }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -255,10 +221,10 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages1),
-                    new SubscriptionOptions { Exclusive = false })
+                    new DelegateSubscriptionOptions { Exclusive = false })
                 .AddDelegateSubscriber<TestEventOne>(
                     message => ExecuteAsync(message, messages2),
-                    new SubscriptionOptions { Exclusive = false }));
+                    new DelegateSubscriptionOptions { Exclusive = false }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());

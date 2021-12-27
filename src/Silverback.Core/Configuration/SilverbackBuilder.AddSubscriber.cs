@@ -439,9 +439,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddSingletonSubscriber(
-        Type subscriberType,
-        bool autoSubscribeAllPublicMethods = true) =>
+    public SilverbackBuilder AddSingletonSubscriber(Type subscriberType, bool autoSubscribeAllPublicMethods = true) =>
         AddSingletonSubscriber(
             subscriberType,
             new TypeSubscriptionOptions
@@ -462,9 +460,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddSingletonSubscriber(
-        Type subscriberType,
-        TypeSubscriptionOptions options)
+    public SilverbackBuilder AddSingletonSubscriber(Type subscriberType, TypeSubscriptionOptions options)
     {
         Check.NotNull(subscriberType, nameof(subscriberType));
         Check.NotNull(options, nameof(options));
@@ -754,6 +750,58 @@ public partial class SilverbackBuilder
 
         Services.AddSingleton(implementationInstance);
         BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(typeof(TSubscriber), options);
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Registers the base type to be resolved as subscriber. The actual types have to be added to the
+    ///     <see cref="IServiceCollection" /> separately.
+    /// </summary>
+    /// <param name="subscriberType">
+    ///     The type of the subscriber to register.
+    /// </param>
+    /// <param name="autoSubscribeAllPublicMethods">
+    ///     A boolean value indicating whether all public methods of the specified type have to be automatically
+    ///     subscribed. When set to <c>false</c> only the methods decorated with the
+    ///     <see cref="SubscribeAttribute" /> are subscribed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    /// <remarks>
+    ///     The subscribers will have to be registered twice (with the base type and the type itself:
+    ///     <c>.AddScoped&lt;BaseType, Subscriber&gt;.AddScoped&lt;Subscriber&gt;</c>).
+    /// </remarks>
+    public SilverbackBuilder AddSubscribers(Type subscriberType, bool autoSubscribeAllPublicMethods = true) =>
+        AddSubscribers(
+            subscriberType,
+            new TypeSubscriptionOptions
+            {
+                AutoSubscribeAllPublicMethods = autoSubscribeAllPublicMethods
+            });
+
+    /// <summary>
+    ///     Registers the base type to be resolved as subscriber. The actual types have to be added to the
+    ///     <see cref="IServiceCollection" /> separately.
+    /// </summary>
+    /// <param name="subscriberType">
+    ///     The type of the subscriber to register.
+    /// </param>
+    /// <param name="options">
+    ///     The <see cref="TypeSubscriptionOptions" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    /// <remarks>
+    ///     The subscribers will have to be registered twice (with the base type and the type itself:
+    ///     <c>.AddScoped&lt;BaseType, Subscriber&gt;.AddScoped&lt;Subscriber&gt;</c>).
+    /// </remarks>
+    public SilverbackBuilder AddSubscribers(Type subscriberType, TypeSubscriptionOptions options)
+    {
+        Check.NotNull(options, nameof(options));
+        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
 
         return this;
     }

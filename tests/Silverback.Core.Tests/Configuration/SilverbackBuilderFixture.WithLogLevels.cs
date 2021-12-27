@@ -11,10 +11,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Configuration;
 
-public class SilverbackBuilderWithLogLevelsExtensionsTests
+public partial class SilverbackBuilderFixture
 {
     [Fact]
-    public void WithLogLevels_WithLogLevels_LogLevelMappingCorrectlyBuilt()
+    public void WithLogLevels_ShouldMapLogLevels()
     {
         ServiceCollection services = new();
 
@@ -26,8 +26,9 @@ public class SilverbackBuilderWithLogLevelsExtensionsTests
                     .SetLogLevel(CoreLogEvents.DistributedLockAcquired.EventId, LogLevel.Information)
                     .SetLogLevel(CoreLogEvents.FailedToAcquireDistributedLock.EventId, LogLevel.Warning));
 
-        ServiceProvider? serviceProvider = services.BuildServiceProvider();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
 
         serviceProvider.GetRequiredService<ISilverbackLogger<object>>().Should().NotBeNull();
+        serviceProvider.GetRequiredService<LogLevelDictionary>().Should().HaveCount(2);
     }
 }

@@ -16,15 +16,6 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-// TODO: Test all cases...(all delegate types etc.)
-// * Method types
-// * Message type handlers
-// * Streams
-// * Extra parameters
-// * Return value handling
-// * Routing (base class, interface, etc.)
-// * Filters
-// TODO: Test exclusive override via options
 public partial class PublisherFixture
 {
     [Fact]

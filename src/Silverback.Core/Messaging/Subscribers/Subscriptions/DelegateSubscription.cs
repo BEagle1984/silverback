@@ -12,16 +12,19 @@ namespace Silverback.Messaging.Subscribers.Subscriptions;
 /// </summary>
 internal sealed class DelegateSubscription : ISubscription
 {
-    private readonly SubscribedMethod _method;
-
-    public DelegateSubscription(Delegate handler, SubscriptionOptions options)
+    public DelegateSubscription(Delegate handler, DelegateSubscriptionOptions options)
     {
+        Options = options;
         Check.NotNull(handler, nameof(handler));
         Check.NotNull(options, nameof(options));
 
-        _method = new SubscribedMethod(_ => handler.Target!, handler.Method, options);
+        Method = new SubscribedMethod(_ => handler.Target!, handler.Method, options);
     }
 
+    public SubscribedMethod Method { get; }
+
+    public DelegateSubscriptionOptions Options { get; }
+
     public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
-        new[] { _method.EnsureInitialized(serviceProvider) };
+        new[] { Method.EnsureInitialized(serviceProvider) };
 }

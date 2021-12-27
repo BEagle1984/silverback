@@ -416,8 +416,8 @@ public partial class PublisherFixture
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        Action actSync = () => publisher.Publish(new UnhandledMessage());
-        Func<Task> actAsync = () => publisher.PublishAsync(new UnhandledMessage());
+        Action actSync = () => publisher.Publish(new TestCommandOne());
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestCommandOne());
 
         actSync.Should().NotThrow();
         await actAsync.Should().NotThrowAsync();

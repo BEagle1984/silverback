@@ -14,10 +14,10 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Configuration;
 
-public class SilverbackBuilderAddBehaviorFixture
+public partial class SilverbackBuilderFixture
 {
     [Fact]
-    public void AddTransientBehavior_ShouldAddBehavior_WhenTypeIsPassed()
+    public void AddTransientBehavior_ShouldAddBehavior_WhenTypeIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -43,7 +43,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddTransientBehavior_ShouldAddBehavior_WhenFactoryIsPassed()
+    public void AddTransientBehavior_ShouldAddBehavior_WhenFactoryIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -57,7 +57,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddScopedBehavior_ShouldAddBehavior_WhenTypeIsPassed()
+    public void AddScopedBehavior_ShouldAddBehavior_WhenTypeIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -83,7 +83,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddScopedBehavior_ShouldAddBehavior_WhenFactoryIsPassed()
+    public void AddScopedBehavior_ShouldAddBehavior_WhenFactoryIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -97,7 +97,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddSingletonBehavior_ShouldAddBehavior_WhenTypeIsPassed()
+    public void AddSingletonBehavior_ShouldAddBehavior_WhenTypeIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -123,7 +123,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddSingletonBehavior_ShouldAddBehavior_WhenFactoryIsPassed()
+    public void AddSingletonBehavior_ShouldAddBehavior_WhenFactoryIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
 
@@ -137,7 +137,7 @@ public class SilverbackBuilderAddBehaviorFixture
     }
 
     [Fact]
-    public void AddSingletonBehavior_ShouldAddBehavior_WhenInstanceIsPassed()
+    public void AddSingletonBehavior_ShouldAddBehavior_WhenInstanceIsSpecified()
     {
         SilverbackBuilder builder = new ServiceCollection().AddSilverback();
         TestBehavior instance = new();

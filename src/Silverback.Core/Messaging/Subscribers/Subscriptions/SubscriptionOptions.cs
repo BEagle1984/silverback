@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions;
 /// <summary>
 ///     The subscription options such as filters and parallelism settings.
 /// </summary>
-public class SubscriptionOptions
+public abstract class SubscriptionOptions
 {
     /// <summary>
     ///     Gets or sets a value indicating whether the method(s) can be executed concurrently to other methods

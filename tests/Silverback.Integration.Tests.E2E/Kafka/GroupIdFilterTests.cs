@@ -141,7 +141,7 @@ public class GroupIdFilterTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
                     .AddDelegateSubscriber(
                         (IEvent _) => Interlocked.Increment(ref received1),
-                        new SubscriptionOptions
+                        new DelegateSubscriptionOptions
                         {
                             Filters = new[]
                             {
@@ -150,7 +150,7 @@ public class GroupIdFilterTests : KafkaTestFixture
                         })
                     .AddDelegateSubscriber(
                         (IEvent _) => Interlocked.Increment(ref received2),
-                        new SubscriptionOptions
+                        new DelegateSubscriptionOptions
                         {
                             Filters = new[]
                             {

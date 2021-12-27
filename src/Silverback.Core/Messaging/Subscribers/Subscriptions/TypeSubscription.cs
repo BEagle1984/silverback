@@ -15,17 +15,17 @@ namespace Silverback.Messaging.Subscribers.Subscriptions;
 /// </summary>
 internal sealed class TypeSubscription : ISubscription
 {
-    private readonly TypeSubscriptionOptions _options;
-
     private IReadOnlyList<SubscribedMethod>? _subscribedMethods;
 
     public TypeSubscription(Type subscribedType, TypeSubscriptionOptions options)
     {
         SubscribedType = Check.NotNull(subscribedType, nameof(subscribedType));
-        _options = Check.NotNull(options, nameof(options));
+        Options = Check.NotNull(options, nameof(options));
     }
 
     public Type SubscribedType { get; }
+
+    public TypeSubscriptionOptions Options { get; }
 
     public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
         _subscribedMethods ??= serviceProvider
@@ -37,14 +37,13 @@ internal sealed class TypeSubscription : ISubscription
     {
         SubscribeAttribute? subscribeAttribute = methodInfo.GetCustomAttribute<SubscribeAttribute>();
 
-        // TODO: Migrate to records
         TypeSubscriptionOptions methodOptions = new()
         {
-            Filters = _options.Filters
+            Filters = Options.Filters
                 .Union(methodInfo.GetCustomAttributes<MessageFilterAttribute>(false))
                 .Distinct().ToList(),
-            Exclusive = subscribeAttribute?.Exclusive ?? _options.Exclusive,
-            AutoSubscribeAllPublicMethods = _options.AutoSubscribeAllPublicMethods
+            Exclusive = subscribeAttribute?.Exclusive ?? Options.Exclusive,
+            AutoSubscribeAllPublicMethods = Options.AutoSubscribeAllPublicMethods
         };
         return new SubscribedMethod(
             serviceProvider => serviceProvider.GetRequiredService(targetType),
@@ -77,7 +76,7 @@ internal sealed class TypeSubscription : ISubscription
             .Where(
                 methodInfo =>
                     methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                    _options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
+                    Options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
                     !methodInfo.IsSpecialName &&
                     methodInfo.DeclaringType == type && methodInfo.GetParameters().Any());
 }

@@ -18,7 +18,6 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
-// TODO: Test all cases (return types, sync/async, ...)
 public partial class PublisherFixture
 {
     [Fact]
@@ -165,6 +164,51 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestEventOne());
 
         republishedMessages.Should().HaveCount(16);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldNotRepublishCustomType_WhenHandleMessageOfTypeWasNotUsed()
+    {
+        TestingCollection<UnhandledMessage> republishedMessages = new();
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
+                .AddDelegateSubscriber<TestEventOne>(_ => new UnhandledMessage())
+                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new UnhandledMessage()))
+                .AddDelegateSubscriber<UnhandledMessage>(message => republishedMessages.Add(message)));
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        republishedMessages.Should().HaveCount(0);
+    }
+
+    [Fact]
+    public async Task PublishAndPublishAsync_ShouldRepublishCustomType_WhenHandleMessageOfTypeWasUsed()
+    {
+        TestingCollection<UnhandledMessage> republishedMessages = new();
+
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .HandleMessagesOfType<UnhandledMessage>()
+                .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
+                .AddDelegateSubscriber<TestEventOne>(_ => new UnhandledMessage())
+                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new UnhandledMessage()))
+                .AddDelegateSubscriber<UnhandledMessage>(message => republishedMessages.Add(message)));
+
+        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+        publisher.Publish(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne());
+
+        republishedMessages.Should().HaveCount(8);
     }
 
     [Fact]
@@ -659,5 +703,28 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<string[]> HandleAsync(TestQueryTwo message) => Task.FromResult(Array.Empty<string>());
+    }
+
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    private class PublishUnhandledMessageSubscriber
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public UnhandledMessage SyncSubscriber(TestEventOne message) => new();
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public Task<UnhandledMessage> AsyncSubscriber(TestEventOne message) => Task.FromResult(new UnhandledMessage());
+
+        // TODO: Implement ValueTask support
+        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        // public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+    }
+
+    private class UnhandledMessage
+    {
     }
 }

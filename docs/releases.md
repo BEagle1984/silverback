@@ -18,7 +18,8 @@ uid: releases
   * Default serializer is typed and now works with sub-typed (document in serializer page)
   * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
   * Builders for client config?
-
+* Clean up code and increase tests coverage
+* Reduce allocations
 
 ### Breaking Changes
 
@@ -34,6 +35,7 @@ uid: releases
 * Removed all builders interfaces and exposed the actual classes directly (e.g. `ISilverbackBuilder` to `SilverbackBuilder`)
 * Replaced `Endpoint`, `ProducerEndpoint` and `ConsumerEndpoint` with <xref:EndpointConfiguration>, <xref:ProducerConfiguration>, <xref:ConsumerConfiguration>
 * Removed `IEndpoint`, `ProducerEndpoint` and `IConsumerEndpoint` interfaces
+* `SubscriptionOptions` to `TypeSubscriptionOption` / `DelegateSubscriptionOptions`
 * TO-BE-COMPARED / TO-BE-REVIEWED
   * IMessageSerializer
   * IKafkaProducerEndpointNameResolver
