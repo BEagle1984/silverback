@@ -25,7 +25,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
 
     public ProduceStrategiesImplementation()
     {
-        _rootServiceProvider = ServiceProviderHelper.GetServiceProvider(
+        _rootServiceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

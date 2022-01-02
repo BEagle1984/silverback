@@ -20,7 +20,7 @@ public class MqttEndpointsConfigurationBuilderTests
     [Fact]
     public async Task AddInbound_WithoutMessageType_DefaultSerializerSet()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -45,7 +45,7 @@ public class MqttEndpointsConfigurationBuilderTests
     [Fact]
     public async Task AddInbound_WithMessageTypeGenericParameter_TypedDefaultSerializerSet()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

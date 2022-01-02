@@ -29,7 +29,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
 
     public FatalExceptionLoggerConsumerBehaviorTests()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
+using Silverback.Lock;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
@@ -26,11 +27,8 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     /// <param name="outboxWorker">
     ///     The <see cref="IOutboxWorker" /> implementation.
     /// </param>
-    /// <param name="distributedLockSettings">
-    ///     Customizes the lock mechanism settings.
-    /// </param>
-    /// <param name="distributedLockManager">
-    ///     The <see cref="IDistributedLockManager" />.
+    /// <param name="distributedLock">
+    ///     The <see cref="IDistributedLock" />.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
@@ -38,10 +36,9 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     public OutboxWorkerService(
         TimeSpan interval,
         IOutboxWorker outboxWorker,
-        DistributedLockSettings distributedLockSettings,
-        IDistributedLockManager distributedLockManager,
+        IDistributedLock distributedLock,
         ISilverbackLogger<OutboxWorkerService> logger)
-        : base(interval, distributedLockSettings, distributedLockManager, logger)
+        : base(interval, distributedLock, logger)
     {
         _outboxWorker = outboxWorker;
     }

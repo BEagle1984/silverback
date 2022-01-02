@@ -22,12 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
-    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Messaging\Broker\Kafka\Mocks\IPartitionAssignment.cs"/>
+    <Compile Remove="Messaging\Broker\Kafka\Mocks\IPartitionAssignment.cs" />
   </ItemGroup>
 
 </Project>

@@ -76,7 +76,7 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
         return base.ReadAsync(buffer, cancellationToken);
     }
 
-    /// <inheritdoc cref="IDisposable.Dispose" />
+    /// <inheritdoc cref="Stream.Dispose(bool)" />
     protected override void Dispose(bool disposing)
     {
         if (disposing)

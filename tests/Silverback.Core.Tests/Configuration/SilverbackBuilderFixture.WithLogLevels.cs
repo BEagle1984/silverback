@@ -19,12 +19,12 @@ public partial class SilverbackBuilderFixture
         ServiceCollection services = new();
 
         services
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithLogLevels(
                 configurator => configurator
-                    .SetLogLevel(CoreLogEvents.DistributedLockAcquired.EventId, LogLevel.Information)
-                    .SetLogLevel(CoreLogEvents.FailedToAcquireDistributedLock.EventId, LogLevel.Warning));
+                    .SetLogLevel(CoreLogEvents.BackgroundServiceException.EventId, LogLevel.Information)
+                    .SetLogLevel(CoreLogEvents.BackgroundServiceLockAcquired.EventId, LogLevel.Warning));
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 

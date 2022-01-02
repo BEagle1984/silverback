@@ -22,7 +22,7 @@ public class CommandPublisherTests
 
     public CommandPublisherTests()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

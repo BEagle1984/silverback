@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -21,7 +20,7 @@ public partial class PublisherFixture
     {
         Counter counter = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()
@@ -41,7 +40,7 @@ public partial class PublisherFixture
     {
         Counter counter = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSingleton(counter)
                 .AddFakeLogger()

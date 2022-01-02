@@ -23,7 +23,7 @@ public class BrokerOptionsBuilderAddBrokerExtensionsTests
     public void AddBroker_ActivityBehaviorsRegisteredForDI()
     {
         ServiceProvider? serviceProvider = new ServiceCollection()
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
             .Services.BuildServiceProvider();
@@ -38,15 +38,14 @@ public class BrokerOptionsBuilderAddBrokerExtensionsTests
     public void AddBroker_ExceptionLoggerBehaviorRegisteredForDI()
     {
         ServiceProvider? serviceProvider = new ServiceCollection()
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
             .Services.BuildServiceProvider();
 
         List<IBrokerBehavior> registeredBehaviors = serviceProvider.GetServices<IBrokerBehavior>().ToList();
 
-        registeredBehaviors.Should()
-            .Contain(behavior => behavior.GetType() == typeof(FatalExceptionLoggerConsumerBehavior));
+        registeredBehaviors.Should().Contain(behavior => behavior.GetType() == typeof(FatalExceptionLoggerConsumerBehavior));
     }
 
     [Fact]
@@ -54,7 +53,7 @@ public class BrokerOptionsBuilderAddBrokerExtensionsTests
     {
         ServiceProvider? serviceProvider = new ServiceCollection()
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(
                 options => options
@@ -69,7 +68,7 @@ public class BrokerOptionsBuilderAddBrokerExtensionsTests
     public void AddBroker_BrokerOptionsConfiguratorInvoked()
     {
         ServiceProvider? serviceProvider = new ServiceCollection()
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(
                 options => options

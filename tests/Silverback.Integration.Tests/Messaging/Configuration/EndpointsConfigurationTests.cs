@@ -25,7 +25,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddOutbound_MultipleEndpoints_MessagesCorrectlyRouted()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -61,7 +61,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddOutbound_WithMultipleBrokers_MessagesCorrectlyRouted()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -97,7 +97,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddInbound_MultipleEndpoints_ConsumersCorrectlyConnected()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -119,7 +119,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddInbound_WithMultipleBrokers_ConsumersCorrectlyConnected()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -146,7 +146,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddOutbound_WithIdempotentRegistration_RegisterOnlyOnce()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -170,7 +170,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddOutbound_WithIdempotentRegistration_RegisterMultipleTimesWhenAllowed()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -197,7 +197,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddOutbound_WithIdempotentRegistration_LogCriticalWhenConfigurationDiffers()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddLoggerSubstitute()
                 .AddSilverback()
@@ -232,7 +232,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddInbound_WithInvalidEndpoint_ValidEndpointsAdded()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -255,7 +255,7 @@ public class EndpointsConfigurationTests
     [Fact]
     public async Task AddInboundOutbound_MultipleConfiguratorsThrowing_OtherEndpointsAdded()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

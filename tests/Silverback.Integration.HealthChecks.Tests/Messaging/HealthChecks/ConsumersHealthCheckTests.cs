@@ -31,7 +31,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -60,7 +60,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -96,7 +96,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -128,7 +128,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -158,7 +158,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -192,7 +192,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -228,7 +228,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services
@@ -266,7 +266,7 @@ public class ConsumersHealthCheckTests
         broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
         broker.Consumers.Returns(new[] { consumer });
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddSilverback()
                 .Services

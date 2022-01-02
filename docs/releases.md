@@ -18,6 +18,7 @@ uid: releases
   * Default serializer is typed and now works with sub-typed (document in serializer page)
   * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
   * Builders for client config?
+  * New Storage packages (see...)
 * Clean up code and increase tests coverage
 * Reduce allocations
 
@@ -50,7 +51,10 @@ uid: releases
   * Broker -> BrokerBase
   * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
   * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
+  * DistributedBackgroundService / RecurringDBS
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
+* Deprecated EF package
+
 
 ### Deprecation Notice
 

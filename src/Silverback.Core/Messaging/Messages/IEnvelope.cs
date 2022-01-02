@@ -18,7 +18,7 @@ public interface IEnvelope
     bool AutoUnwrap { get; }
 
     /// <summary>
-    ///     Gets or sets the message body.
+    ///     Gets the message body.
     /// </summary>
-    object? Message { get; set; }
+    object? Message { get; }
 }

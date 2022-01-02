@@ -26,7 +26,7 @@ public class InboundLoggerTests
 
     public InboundLoggerTests()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()

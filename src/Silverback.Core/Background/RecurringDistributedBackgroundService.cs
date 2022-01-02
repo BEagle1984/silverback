@@ -4,8 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
+using Silverback.Lock;
 
 namespace Silverback.Background;
 
@@ -22,47 +22,22 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
     private bool _enabled = true;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class using
-    ///     the default settings for the lock mechanism.
-    /// </summary>
-    /// <param name="interval">
-    ///     The interval between each execution.
-    /// </param>
-    /// <param name="distributedLockManager">
-    ///     The <see cref="IDistributedLockManager" />.
-    /// </param>
-    /// <param name="logger">
-    ///     The <see cref="ISilverbackLogger" />.
-    /// </param>
-    protected RecurringDistributedBackgroundService(
-        TimeSpan interval,
-        IDistributedLockManager distributedLockManager,
-        ISilverbackLogger<RecurringDistributedBackgroundService> logger)
-        : this(interval, null, distributedLockManager, logger)
-    {
-    }
-
-    /// <summary>
     ///     Initializes a new instance of the <see cref="RecurringDistributedBackgroundService" /> class.
     /// </summary>
     /// <param name="interval">
     ///     The <see cref="TimeSpan" /> interval between each execution.
     /// </param>
-    /// <param name="distributedLockSettings">
-    ///     Customizes the lock mechanism settings.
-    /// </param>
-    /// <param name="distributedLockManager">
-    ///     The <see cref="IDistributedLockManager" />.
+    /// <param name="distributedLock">
+    ///     The <see cref="IDistributedLock" />.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
     protected RecurringDistributedBackgroundService(
         TimeSpan interval,
-        DistributedLockSettings? distributedLockSettings,
-        IDistributedLockManager distributedLockManager,
+        IDistributedLock distributedLock,
         ISilverbackLogger<RecurringDistributedBackgroundService> logger)
-        : base(distributedLockSettings, distributedLockManager, logger)
+        : base(distributedLock, logger)
     {
         _interval = interval;
         _logger = logger;
@@ -78,51 +53,38 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
     /// </summary>
     public void Resume() => _enabled = true;
 
-    /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
-    protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
+    /// <inheritdoc cref="DistributedBackgroundService.AcquireLockAndExecuteAsync" />
+    protected override async Task AcquireLockAndExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (Lock != null)
-                await Lock.RenewAsync(stoppingToken).ConfigureAwait(false);
+            DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
 
-            if (_enabled)
+            await using (lockHandle)
             {
-                try
+                _logger.LogBackgroundServiceLockAcquired(this);
+
+                while (!lockHandle.IsLost && !stoppingToken.IsCancellationRequested)
                 {
-                    await ExecuteRecurringAsync(stoppingToken).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogRecurringBackgroundServiceException(this, ex);
-                    throw;
+                    if (_enabled)
+                    {
+                        await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
+
+                        if (stoppingToken.IsCancellationRequested)
+                            break;
+
+                        await SleepAsync(_interval, stoppingToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await SleepAsync(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
+                    }
                 }
             }
-
-            if (stoppingToken.IsCancellationRequested)
-                break;
-
-            if (_enabled)
-                await SleepAsync(_interval, stoppingToken).ConfigureAwait(false);
-            else
-                await SleepAsync(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
         }
 
         _logger.LogRecurringBackgroundServiceStopped(this);
     }
-
-    /// <summary>
-    ///     This method is called at regular intervals after the <see cref="IHostedService" /> starts and the
-    ///     lock is acquired. The implementation should return a task that represents the lifetime of the long
-    ///     running operation(s) being performed.
-    /// </summary>
-    /// <param name="stoppingToken">
-    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> that represents the long running operations.
-    /// </returns>
-    protected abstract Task ExecuteRecurringAsync(CancellationToken stoppingToken);
 
     private async Task SleepAsync(TimeSpan delay, CancellationToken stoppingToken)
     {

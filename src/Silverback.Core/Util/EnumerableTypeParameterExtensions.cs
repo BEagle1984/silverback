@@ -23,12 +23,10 @@ internal static class EnumerableTypeParameterExtensions
     public static IEnumerable<object> ToList(this IEnumerable<object> source, Type type) =>
         Invoke(source, type, "ToList");
 
-    private static IEnumerable<object> Invoke(IEnumerable<object> source, Type type, string methodName)
-    {
-        return typeof(Enumerable)
+    private static IEnumerable<object> Invoke(IEnumerable<object> source, Type type, string methodName) =>
+        typeof(Enumerable)
                 .GetMethod(methodName, BindingFlags.Static | BindingFlags.Public)
                 ?.MakeGenericMethod(type)
                 .Invoke(null, new object[] { source })
             as IEnumerable<object> ?? Enumerable.Empty<object>();
-    }
 }

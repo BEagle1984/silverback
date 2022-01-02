@@ -45,7 +45,7 @@ public class SymmetricDecryptStream : SilverbackCryptoStream
     /// <inheritdoc cref="SilverbackCryptoStream.CryptoStream" />
     protected override CryptoStream CryptoStream => _cryptoStream;
 
-    /// <inheritdoc cref="IDisposable.Dispose" />
+    /// <inheritdoc cref="Stream.Dispose(bool)" />
     protected override void Dispose(bool disposing)
     {
         if (disposing)

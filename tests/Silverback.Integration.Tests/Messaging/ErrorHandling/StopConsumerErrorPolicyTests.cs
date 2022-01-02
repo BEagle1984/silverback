@@ -28,7 +28,7 @@ public class StopConsumerErrorPolicyTests
         ServiceCollection services = new();
 
         services
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 

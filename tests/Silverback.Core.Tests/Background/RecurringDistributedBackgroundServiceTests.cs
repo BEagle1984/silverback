@@ -5,52 +5,27 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Background;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
-using Silverback.Tests.Core.TestTypes.Database;
+using Silverback.Lock;
 using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Background;
 
-public sealed class RecurringDistributedBackgroundServiceTests : IDisposable
+public class RecurringDistributedBackgroundServiceTests
 {
-    private readonly SqliteConnection _connection;
-
-    private readonly IServiceProvider _serviceProvider;
-
-    public RecurringDistributedBackgroundServiceTests()
-    {
-        _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
-        _connection.Open();
-
-        ServiceCollection services = new();
-
-        services
-            .AddTransient<DbDistributedLockManager>()
-            .AddDbContext<TestDbContext>(
-                options => options
-                    .UseSqlite(_connection.ConnectionString))
-            .AddLoggerSubstitute()
-            .AddSilverback()
-            .UseDbContext<TestDbContext>();
-
-        _serviceProvider = services.BuildServiceProvider();
-
-        using IServiceScope scope = _serviceProvider.CreateScope();
-        scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
-    }
-
     [Fact]
-    [Trait("CI", "false")]
-    public async Task StartAsync_WithDbLockManager_TaskIsExecuted()
+    public async Task StartAsync_ShouldExecuteJob_WhenNoLockIsUsed()
     {
         bool executed = false;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -58,19 +33,21 @@ public sealed class RecurringDistributedBackgroundServiceTests : IDisposable
                 executed = true;
                 return Task.CompletedTask;
             },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            lockFactory.GetDistributedLock<NullLockSettings>(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-
         executed.Should().BeTrue();
     }
 
     [Fact]
-    [Trait("CI", "false")]
-    public async Task StartAsync_WithNullLockManager_TaskIsExecuted()
+    public async Task StartAsync_ShouldExecuteJob_WhenInMemoryLockIsUsed()
     {
         bool executed = false;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -78,105 +55,127 @@ public sealed class RecurringDistributedBackgroundServiceTests : IDisposable
                 executed = true;
                 return Task.CompletedTask;
             },
-            new NullLockManager());
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("lock")));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
-
         executed.Should().BeTrue();
     }
 
     [Fact]
-    [Trait("CI", "false")]
-    public async Task StartAsync_WithDbLockManager_OnlyOneTaskIsExecutedSimultaneously()
+    public async Task StartAsync_ShouldNotExecuteInParallel_WhenInMemoryLockIsUsed()
     {
         bool executed1 = false;
         bool executed2 = false;
+        int executingCount = 0;
+        bool executedInParallel = false;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service1 = new(
-            _ =>
-            {
-                executed1 = true;
-                return Task.CompletedTask;
-            },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
-        await service1.StartAsync(CancellationToken.None);
-
-        await AsyncTestingUtil.WaitAsync(() => executed1);
-
+            async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
         using TestRecurringDistributedBackgroundService service2 = new(
-            _ =>
-            {
-                executed2 = true;
-                return Task.CompletedTask;
-            },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
+
+        async Task ExecuteTask(CancellationToken stoppingToken, Action execute)
+        {
+            Interlocked.Increment(ref executingCount);
+
+            execute.Invoke();
+
+            if (executingCount > 1)
+                executedInParallel = true;
+
+            await Task.Delay(100, stoppingToken);
+            Interlocked.Decrement(ref executingCount);
+        }
+
+        await service1.StartAsync(CancellationToken.None);
         await service2.StartAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executed2, TimeSpan.FromMilliseconds(100));
+        await AsyncTestingUtil.WaitAsync(() => executed1);
+        await Task.Delay(100);
 
         executed1.Should().BeTrue();
         executed2.Should().BeFalse();
 
         await service1.StopAsync(CancellationToken.None);
+
         await AsyncTestingUtil.WaitAsync(() => executed2);
-
         executed2.Should().BeTrue();
+
+        executedInParallel.Should().BeFalse();
     }
 
     [Fact]
-    [Trait("CI", "false")]
-    public async Task StartAsync_SimpleTask_TaskExecutedMultipleTimes()
+    public async Task StartAsync_ShouldExecuteJobAgainAfterDelay()
     {
-        int executions = 0;
+        DateTime? firstExecution = null;
+        DateTime? secondExecution = null;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
             {
-                executions++;
+                if (firstExecution == null)
+                    firstExecution = DateTime.UtcNow;
+                else if (secondExecution == null)
+                    secondExecution = DateTime.UtcNow;
+
                 return Task.CompletedTask;
             },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            lockFactory.GetDistributedLock<NullLockSettings>(null));
         await service.StartAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executions > 1);
+        await AsyncTestingUtil.WaitAsync(() => secondExecution != null);
 
-        executions.Should().BeGreaterThan(1);
+        (secondExecution - firstExecution).Should().BeGreaterThan(TimeSpan.FromMilliseconds(100));
     }
 
     [Fact]
-    [Trait("CI", "false")]
-    public async Task StopAsync_SimpleTask_ExecutionStopped()
+    public async Task StopAsync_ShouldStopExecution()
     {
         int executions = 0;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
             {
-                executions++;
-                return Task.CompletedTask;
+               executions++;
+               return Task.CompletedTask;
             },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            lockFactory.GetDistributedLock<NullLockSettings>(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
-
         executions.Should().BeGreaterThan(0);
 
         await service.StopAsync(CancellationToken.None);
-        await Task.Delay(50);
-        int executionsBeforeStop = executions;
 
-        await Task.Delay(500);
+        int executionsBeforeStop = executions;
+        await Task.Delay(100);
 
         executions.Should().Be(executionsBeforeStop);
     }
 
     [Fact]
-    [Trait("CI", "false")]
-    public async Task PauseAndResume_SimpleTask_ExecutionPausedAndResumed()
+    public async Task PauseAndResume_ShouldPauseAndResumeExecution()
     {
         int executions = 0;
+
+        IDistributedLockFactory lockFactory = ServiceProviderHelper
+            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
+            .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -184,57 +183,38 @@ public sealed class RecurringDistributedBackgroundServiceTests : IDisposable
                 executions++;
                 return Task.CompletedTask;
             },
-            _serviceProvider.GetRequiredService<DbDistributedLockManager>());
+            lockFactory.GetDistributedLock<NullLockSettings>(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
-
         executions.Should().BeGreaterThan(0);
 
         service.Pause();
-        await Task.Delay(50);
-        int executionsBeforeStop = executions;
 
-        await Task.Delay(500);
-
-        executions.Should().Be(executionsBeforeStop);
+        int executionsBeforePause = executions;
+        await Task.Delay(100);
+        executions.Should().Be(executionsBeforePause);
 
         service.Resume();
 
-        await AsyncTestingUtil.WaitAsync(() => executions > executionsBeforeStop);
-
-        executions.Should().BeGreaterThan(executionsBeforeStop);
-    }
-
-    public void Dispose()
-    {
-        _connection.SafeClose();
-        _connection.Dispose();
+        await AsyncTestingUtil.WaitAsync(() => executions > executionsBeforePause);
+        executions.Should().BeGreaterThan(executionsBeforePause);
     }
 
     private sealed class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService
     {
         private readonly Func<CancellationToken, Task> _task;
 
-        public TestRecurringDistributedBackgroundService(
-            Func<CancellationToken, Task> task,
-            IDistributedLockManager lockManager)
+        public TestRecurringDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLock distributedLock)
             : base(
                 TimeSpan.FromMilliseconds(100),
-                new DistributedLockSettings(
-                    "test",
-                    "unique",
-                    TimeSpan.FromMilliseconds(500),
-                    TimeSpan.FromMilliseconds(100),
-                    TimeSpan.FromSeconds(1),
-                    TimeSpan.FromMilliseconds(100)),
-                lockManager,
+                distributedLock,
                 Substitute.For<ISilverbackLogger<RecurringDistributedBackgroundService>>())
         {
             _task = task;
         }
 
-        protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
+        protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) =>
             _task.Invoke(stoppingToken);
     }
 }

@@ -29,7 +29,7 @@ public class MqttNetClientFactoryTests
 
     public MqttNetClientFactoryTests()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

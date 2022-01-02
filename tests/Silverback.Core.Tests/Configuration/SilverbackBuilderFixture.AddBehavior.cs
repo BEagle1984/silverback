@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Util;
 using Xunit;
 
@@ -149,5 +149,10 @@ public partial class SilverbackBuilderFixture
         descriptors[0].ImplementationInstance.Should().NotBeNull();
         descriptors[0].ImplementationInstance.Should().Be(instance);
         descriptors[0].Lifetime.Should().Be(ServiceLifetime.Singleton);
+    }
+
+    private class TestBehavior : IBehavior
+    {
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) => next.Invoke(message);
     }
 }

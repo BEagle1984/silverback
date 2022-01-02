@@ -28,7 +28,7 @@ public class SkipMessageErrorPolicyTests
         ServiceCollection services = new();
 
         services
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 

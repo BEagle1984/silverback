@@ -8,8 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
-using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -26,7 +24,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -47,7 +45,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -68,7 +66,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -84,14 +82,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -99,7 +93,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -115,14 +109,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -130,7 +120,7 @@ public partial class PublisherFixture
     {
         TestingCollection<IEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -146,14 +136,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -161,7 +147,7 @@ public partial class PublisherFixture
     {
         TestingCollection<IEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -177,14 +163,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -192,7 +174,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -213,7 +195,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -229,14 +211,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -244,7 +222,7 @@ public partial class PublisherFixture
     {
         TestingCollection<IEvent> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -260,14 +238,10 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         messages.Should().HaveCount(4);
-        messages.Should().BeEquivalentTo(
-            new TestEvent[]
-            {
-                new TestEventOne(),
-                new TestEventTwo(),
-                new TestEventOne(),
-                new TestEventTwo()
-            });
+        messages[0].Should().BeOfType<TestEventOne>();
+        messages[1].Should().BeOfType<TestEventTwo>();
+        messages[2].Should().BeOfType<TestEventOne>();
+        messages[3].Should().BeOfType<TestEventTwo>();
     }
 
     [Fact]
@@ -275,7 +249,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSingleton<IService>(new ServiceSubscriber(messages))
@@ -296,7 +270,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSingleton<IService>(new ServiceSubscriber(messages))
@@ -317,7 +291,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldThrow_WhenThrowIfUnhandledIsEnabledAndMessageIsNotSubscribed()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -338,7 +312,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldNotThrow_WhenThrowIfUnhandledIsEnabledAndMessageIsSubscribed()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -359,7 +333,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldNotThrow_WhenThrowIfUnhandledIsDisabledAndMessageIsNotSubscribed()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -384,7 +358,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task Publish_SubscribedMessageWithThrowIfUnhandled_NoExceptionThrown()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -405,7 +379,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task Publish_NotSubscribedMessageWithoutThrowIfUnhandled_NoExceptionThrown()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

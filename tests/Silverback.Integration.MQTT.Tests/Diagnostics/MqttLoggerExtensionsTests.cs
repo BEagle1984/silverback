@@ -49,7 +49,7 @@ public class MqttLoggerExtensionsTests
 
     public MqttLoggerExtensionsTests()
     {
-        _serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        _serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()

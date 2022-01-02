@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
-using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Util;
 using Xunit;
 
@@ -17,13 +15,17 @@ namespace Silverback.Tests.Core.Messaging.Messages;
 
 public class MessageStreamProviderTests
 {
+    private interface IEvent : IMessage
+    {
+    }
+
     [Fact]
     public async Task PushAsync_Messages_RelayedToMatchingStreams()
     {
         MessageStreamProvider<IMessage> provider = new();
 
-        List<IEvent>? eventsList = null;
-        List<TestEventOne>? testEventOnesList = null;
+        List<IEvent> eventsList = new();
+        List<TestEventOne> testEventOnesList = new();
 
         IMessageStreamEnumerable<IEvent> eventsStream = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<TestEventOne> testEventOneStream = provider.CreateStream<TestEventOne>();
@@ -39,8 +41,12 @@ public class MessageStreamProviderTests
 
         await Task.WhenAll(task1, task2);
 
-        eventsList.Should().BeEquivalentTo(new TestEvent[] { new TestEventOne(), new TestEventTwo() });
-        testEventOnesList.Should().BeEquivalentTo(new[] { new TestEventOne() });
+        eventsList.Should().HaveCount(2);
+        eventsList[0].Should().BeOfType<TestEventOne>();
+        eventsList[1].Should().BeOfType<TestEventTwo>();
+
+        testEventOnesList.Should().HaveCount(1);
+        testEventOnesList[0].Should().BeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -122,8 +128,8 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<IEvent> eventsStream = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<TestEventOne> testEventOnesStream = provider.CreateStream<TestEventOne>();
 
-        List<IEvent>? eventsList = null;
-        List<TestEventOne>? testEventOnesList = null;
+        List<IEvent> eventsList = new();
+        List<TestEventOne> testEventOnesList = new();
 
         Task<List<IEvent>> task1 = Task.Run(() => eventsList = eventsStream.ToList());
         Task<List<TestEventOne>> task2 = Task.Run(() => testEventOnesList = testEventOnesStream.ToList());
@@ -136,8 +142,12 @@ public class MessageStreamProviderTests
 
         await Task.WhenAll(task1, task2);
 
-        eventsList.Should().BeEquivalentTo(new TestEvent[] { new TestEventOne(), new TestEventTwo() });
-        testEventOnesList.Should().BeEquivalentTo(new[] { new TestEventOne() });
+        eventsList.Should().HaveCount(2);
+        eventsList[0].Should().BeOfType<TestEventOne>();
+        eventsList[1].Should().BeOfType<TestEventTwo>();
+
+        testEventOnesList.Should().HaveCount(1);
+        testEventOnesList[0].Should().BeOfType<TestEventOne>();
     }
 
     [Fact]
@@ -485,5 +495,33 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<object> stream2 = provider.CreateStream(typeof(IEvent));
 
         stream2.Should().BeOfType(stream1.GetType());
+    }
+
+    private class TestEvent : IEvent
+    {
+    }
+
+    private class TestEventOne : TestEvent
+    {
+    }
+
+    private class TestEventTwo : TestEvent
+    {
+    }
+
+    private class TestCommandOne : IMessage
+    {
+    }
+
+    private class TestEnvelope : IEnvelope
+    {
+        public TestEnvelope(object? message)
+        {
+            Message = message;
+        }
+
+        public bool AutoUnwrap { get; } = true;
+
+        public object? Message { get; set; }
     }
 }

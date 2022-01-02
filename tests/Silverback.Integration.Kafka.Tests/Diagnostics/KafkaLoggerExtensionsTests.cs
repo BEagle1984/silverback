@@ -31,7 +31,7 @@ public class KafkaLoggerExtensionsTests
 
     public KafkaLoggerExtensionsTests()
     {
-        _serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        _serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()

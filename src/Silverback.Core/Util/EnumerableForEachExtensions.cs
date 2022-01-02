@@ -34,22 +34,6 @@ internal static class EnumerableForEachExtensions
         }
     }
 
-    public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Action<T> action)
-    {
-        await foreach (T element in source)
-        {
-            action(element);
-        }
-    }
-
-    public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action)
-    {
-        await foreach (T element in source)
-        {
-            await action(element).ConfigureAwait(false);
-        }
-    }
-
     public static void ParallelForEach<T>(
         this IEnumerable<T> source,
         Action<T> action,
@@ -65,9 +49,9 @@ internal static class EnumerableForEachExtensions
         Func<T, Task> action,
         int? maxDegreeOfParallelism = null) =>
         source.ParallelSelectAsync(
-            async s =>
+            async item =>
             {
-                await action(s).ConfigureAwait(false);
+                await action(item).ConfigureAwait(false);
                 return 0;
             },
             maxDegreeOfParallelism);

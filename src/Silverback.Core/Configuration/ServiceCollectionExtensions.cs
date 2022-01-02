@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
+using Silverback.Lock;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -42,7 +43,9 @@ public static class ServiceCollectionExtensions
                 .AddLogger()
                 .AddArgumentResolvers()
                 .AddReturnValueHandlers()
-                .AddSingleton<IHostedService, SubscribedMethodsLoaderService>();
+                .AddSingleton<IHostedService, SubscribedMethodsLoaderService>()
+                .AddSingleton<IDistributedLockFactory>(serviceProvider => serviceProvider.GetService<DistributedLockFactory>())
+                .AddSingleton(new DistributedLockFactory());
         }
 
         return new SilverbackBuilder(services);

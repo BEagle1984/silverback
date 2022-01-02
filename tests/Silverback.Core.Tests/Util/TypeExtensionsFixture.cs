@@ -16,6 +16,8 @@ public class TypeExtensionsFixture
     [InlineData("System.Nullable`1[[System.Int32]]", null)]
     public void GetDefaultValue_ShouldReturnTypeDefaultValue(string typeName, object expected)
     {
-        Type.GetType(typeName)!.GetDefaultValue().Should().Be(expected);
+        object? result = Type.GetType(typeName)!.GetDefaultValue();
+
+        result.Should().Be(expected);
     }
 }

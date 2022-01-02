@@ -12,8 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
-using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Util;
@@ -23,6 +21,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public class StreamPublisherFixture
 {
+    private interface IEvent : IMessage
+    {
+    }
+
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscribers_WhenMessageStreamProviderIsPushedWithMessages()
     {
@@ -30,7 +32,7 @@ public class StreamPublisherFixture
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -79,7 +81,7 @@ public class StreamPublisherFixture
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -128,7 +130,7 @@ public class StreamPublisherFixture
         int receivedEvents = 0;
         int receivedTestEventOnes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -175,7 +177,7 @@ public class StreamPublisherFixture
     {
         int receivedEnumeratedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -208,7 +210,7 @@ public class StreamPublisherFixture
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -243,7 +245,7 @@ public class StreamPublisherFixture
     {
         int receivedStreams = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -298,7 +300,7 @@ public class StreamPublisherFixture
         int receivedStreams = 0;
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -343,7 +345,7 @@ public class StreamPublisherFixture
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -383,7 +385,7 @@ public class StreamPublisherFixture
     {
         int received = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -430,7 +432,7 @@ public class StreamPublisherFixture
         int receivedEnvelopes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -475,7 +477,7 @@ public class StreamPublisherFixture
         int receivedTestEventOnes = 0;
         int receivedTestEnvelopes = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -522,7 +524,7 @@ public class StreamPublisherFixture
         int receivedStreamsOfTwos = 0;
         int receivedTestEventTwos = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -576,7 +578,7 @@ public class StreamPublisherFixture
     {
         List<IEvent> receivedEvents = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -609,7 +611,7 @@ public class StreamPublisherFixture
         int receivedEvents = 0;
 
         TestBehavior testBehavior = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -638,6 +640,32 @@ public class StreamPublisherFixture
         receivedEvents.Should().Be(2);
         testBehavior.EnterCount.Should().Be(1);
         testBehavior.ExitCount.Should().Be(1);
+    }
+
+    private class TestEventOne : IEvent
+    {
+        public string? Message { get; init; }
+    }
+
+    private class TestEventTwo : IEvent
+    {
+    }
+
+    private class TestCommandOne : IMessage
+    {
+    }
+
+    private class TestEnvelope : IEnvelope
+    {
+        public TestEnvelope(object? message, bool autoUnwrap = true)
+        {
+            Message = message;
+            AutoUnwrap = autoUnwrap;
+        }
+
+        public bool AutoUnwrap { get; }
+
+        public object? Message { get; }
     }
 
     private class TestBehavior : IBehavior

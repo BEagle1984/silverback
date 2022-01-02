@@ -46,7 +46,7 @@ public class IntegrationLoggingBenchmark
 
     public IntegrationLoggingBenchmark()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

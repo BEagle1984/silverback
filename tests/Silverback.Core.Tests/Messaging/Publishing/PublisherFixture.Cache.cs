@@ -13,8 +13,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
-using Silverback.Tests.Core.TestTypes.Messages;
-using Silverback.Tests.Core.TestTypes.Subscribers;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -28,7 +26,7 @@ public partial class PublisherFixture
     {
         int resolved = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             builder => builder
                 .AddFakeLogger()
                 .AddSilverback()
@@ -36,19 +34,18 @@ public partial class PublisherFixture
                     _ =>
                     {
                         resolved++;
-                        return new TestServiceOne();
+                        return new TestSubscriber<ICommand>();
                     })
                 .AddScopedSubscriber(
                     _ =>
                     {
                         resolved++;
-                        return new TestServiceTwo();
+                        return new TestSubscriber<IEvent>();
                     }));
 
         using (IServiceScope scope = serviceProvider.CreateScope())
         {
-            await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                .PublishAsync(new TestCommandOne());
+            await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(new TestCommandOne());
         }
 
         resolved.Should().Be(2);
@@ -90,7 +87,7 @@ public partial class PublisherFixture
     {
         int resolved = 0;
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             builder => builder
                 .AddFakeLogger()
                 .AddSilverback()
@@ -98,13 +95,13 @@ public partial class PublisherFixture
                     _ =>
                     {
                         resolved++;
-                        return new TestServiceOne();
+                        return new TestSubscriber<ICommand>();
                     })
                 .AddScopedSubscriber(
                     _ =>
                     {
                         resolved++;
-                        return new TestServiceTwo();
+                        return new TestSubscriber<IEvent>();
                     }));
 
         await serviceProvider.GetServices<IHostedService>()

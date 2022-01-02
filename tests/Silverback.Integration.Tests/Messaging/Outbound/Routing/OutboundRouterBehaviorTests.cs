@@ -50,7 +50,7 @@ public class OutboundRouterBehaviorTests
 
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute();
+            .AddFakeLogger();
 
         IServiceProvider serviceProvider = services.BuildServiceProvider();
 

@@ -22,7 +22,7 @@ public class BrokerTests
     [Fact]
     public void GetProducer_SomeEndpoint_ProducerReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -39,7 +39,7 @@ public class BrokerTests
     [Fact]
     public void GetProducer_SameEndpoint_SameInstanceReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -57,7 +57,7 @@ public class BrokerTests
     [Fact]
     public void GetProducer_DifferentEndpoint_DifferentInstanceReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -75,7 +75,7 @@ public class BrokerTests
     [Fact]
     public void AddConsumer_SomeEndpoint_ConsumerReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -92,7 +92,7 @@ public class BrokerTests
     [Fact]
     public void AddConsumer_SameEndpoint_DifferentInstanceReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -110,7 +110,7 @@ public class BrokerTests
     [Fact]
     public void AddConsumer_DifferentEndpoint_DifferentInstanceReturned()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -131,7 +131,7 @@ public class BrokerTests
         IEndpointsConfigurator? configurator1 = Substitute.For<IEndpointsConfigurator>();
         IEndpointsConfigurator? configurator2 = Substitute.For<IEndpointsConfigurator>();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -157,7 +157,7 @@ public class BrokerTests
     [Fact]
     public async Task ConnectAsync_WithEndpointConfigurators_EndpointsAreAdded()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

@@ -24,7 +24,7 @@ public class BrokerConnectorServiceTests
     [Fact]
     public async Task StartAsync_ConnectAtStartup_BrokersConnected()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
@@ -49,7 +49,7 @@ public class BrokerConnectorServiceTests
     [Fact]
     public async Task StartAsync_ExceptionWithRetryEnabled_ConnectRetried()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
@@ -81,7 +81,7 @@ public class BrokerConnectorServiceTests
     [Fact]
     public async Task StartAsync_ExceptionWithRetryDisabled_ConnectNotRetried()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
@@ -112,7 +112,7 @@ public class BrokerConnectorServiceTests
         IHostApplicationLifetime? lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
         lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => lifetimeEvents)
                 .AddFakeLogger()
@@ -140,7 +140,7 @@ public class BrokerConnectorServiceTests
     [Fact]
     public async Task StartAsync_AutoConnectDisabled_BrokersNotConnected()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
@@ -174,7 +174,7 @@ public class BrokerConnectorServiceTests
         lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
         lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddTransient(_ => lifetimeEvents)
                 .AddFakeLogger()

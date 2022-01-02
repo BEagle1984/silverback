@@ -34,7 +34,7 @@ public class BrokerCollectionTests
     [InlineData(1, "TestOtherProducer")]
     public void GetProducer_WithMultipleBrokers_RightProducerInstanceReturned(int endpointIndex, string expectedProducerType)
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -59,7 +59,7 @@ public class BrokerCollectionTests
         int endpointIndex,
         string expectedConsumerType)
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -80,7 +80,7 @@ public class BrokerCollectionTests
     [Fact]
     public async Task ConnectAsyncAndDisconnectAsync_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

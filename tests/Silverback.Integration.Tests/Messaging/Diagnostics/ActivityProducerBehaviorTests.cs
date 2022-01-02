@@ -65,7 +65,7 @@ public class ActivityProducerBehaviorTests
         ServiceCollection services = new();
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback().WithConnectionToMessageBroker(
                 options => options
                     .AddBroker<TestBroker>());
@@ -91,7 +91,7 @@ public class ActivityProducerBehaviorTests
         ServiceCollection services = new();
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback().WithConnectionToMessageBroker(
                 options => options
                     .AddBroker<TestBroker>());

@@ -38,7 +38,7 @@ public class MoveMessageErrorPolicyTests
 
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 

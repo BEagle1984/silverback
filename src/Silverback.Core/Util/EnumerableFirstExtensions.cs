@@ -9,7 +9,7 @@ namespace Silverback.Util;
 
 internal static class EnumerableFirstExtensions
 {
-    public static async Task<T> FirstOrDefaultAsync<T>(
+    public static async Task<T?> FirstOrDefaultAsync<T>(
         this IEnumerable<T> source,
         Func<T, Task<bool>> predicate)
     {
@@ -19,8 +19,6 @@ internal static class EnumerableFirstExtensions
                 return item;
         }
 
-        // Should probably use [result:MaybeNull] to suppress the warning but it doesn't work as expected in the
-        // caller side
-        return default!;
+        return default;
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
@@ -25,67 +26,74 @@ public static class CoreLogEvents
         "{expectedType}.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
-    ///     <see cref="IDistributedLockManager" /> start trying to acquire a lock.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent AcquiringDistributedLock { get; } = new(
         LogLevel.Information,
         GetEventId(21, nameof(AcquiringDistributedLock)),
-        "Trying to acquire lock {lockName} ({lockUniqueId})...");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
-    ///     <see cref="IDistributedLockManager" /> acquires a lock.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent DistributedLockAcquired { get; } = new(
         LogLevel.Information,
         GetEventId(22, nameof(DistributedLockAcquired)),
-        "Acquired lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the
-    ///     <see cref="IDistributedLockManager" /> acquires a lock.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent FailedToAcquireDistributedLock { get; } = new(
         LogLevel.Debug,
         GetEventId(23, nameof(FailedToAcquireDistributedLock)),
-        "Failed to acquire lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
-    ///     <see cref="IDistributedLockManager" /> releases a lock.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent DistributedLockReleased { get; } = new(
         LogLevel.Information,
         GetEventId(24, nameof(DistributedLockReleased)),
-        "Released lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the
-    ///     <see cref="IDistributedLockManager" /> releases a lock.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent FailedToReleaseDistributedLock { get; } = new(
         LogLevel.Warning,
         GetEventId(25, nameof(FailedToReleaseDistributedLock)),
-        "Failed to release lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the
-    ///     <see cref="IDistributedLockManager" /> checks whether a lock is still valid.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent FailedToCheckDistributedLock { get; } = new(
         LogLevel.Error,
         GetEventId(26, nameof(FailedToCheckDistributedLock)),
-        "Failed to check lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while the
-    ///     <see cref="IDistributedLockManager" /> tries to send the heartbeat to keep the lock alive.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent FailedToSendDistributedLockHeartbeat { get; } = new(
         LogLevel.Error,
         GetEventId(27, nameof(FailedToSendDistributedLockHeartbeat)),
-        "Failed to send heartbeat for lock {lockName} ({lockUniqueId}).");
+        "Not used anymore.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written the
@@ -134,13 +142,14 @@ public static class CoreLogEvents
         "Background service {backgroundService} sleeping for {delay} milliseconds.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown during
-    ///     an execution of the <see cref="RecurringDistributedBackgroundService" />.
+    ///     Reserved, not used anymore.
     /// </summary>
+    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+    [Obsolete("Not used anymore.", true)]
     public static LogEvent RecurringBackgroundServiceException { get; } = new(
         LogLevel.Warning,
         GetEventId(53, nameof(RecurringBackgroundServiceException)),
-        "Background service {backgroundService} execution failed.");
+        "Not used anymore.");
 
     private static EventId GetEventId(int id, string name) => new(id, $"Silverback.Core_{name}");
 }

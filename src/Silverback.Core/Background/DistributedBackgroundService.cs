@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
+using Silverback.Lock;
 using Silverback.Util;
 
 namespace Silverback.Background;
@@ -17,80 +18,43 @@ namespace Silverback.Background;
 /// </summary>
 public abstract class DistributedBackgroundService : BackgroundService
 {
-    private readonly IDistributedLockManager _distributedLockManager;
-
-    private readonly DistributedLockSettings _distributedLockSettings;
-
     private readonly ISilverbackLogger<DistributedBackgroundService> _logger;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="DistributedBackgroundService" /> class using the
-    ///     default settings for the lock mechanism.
-    /// </summary>
-    /// <param name="distributedLockManager">
-    ///     The <see cref="IDistributedLockManager" />.
-    /// </param>
-    /// <param name="logger">
-    ///     The <see cref="ISilverbackLogger" />.
-    /// </param>
-    protected DistributedBackgroundService(
-        IDistributedLockManager distributedLockManager,
-        ISilverbackLogger<DistributedBackgroundService> logger)
-        : this(null, distributedLockManager, logger)
-    {
-    }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DistributedBackgroundService" /> class.
     /// </summary>
-    /// <param name="distributedLockSettings">
-    ///     Customizes the lock mechanism settings.
-    /// </param>
-    /// <param name="distributedLockManager">
-    ///     The <see cref="IDistributedLockManager" />.
+    /// <param name="distributedLock">
+    ///     The <see cref="IDistributedLock" />.
     /// </param>
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
     protected DistributedBackgroundService(
-        DistributedLockSettings? distributedLockSettings,
-        IDistributedLockManager distributedLockManager,
+        IDistributedLock distributedLock,
         ISilverbackLogger<DistributedBackgroundService> logger)
     {
-        _distributedLockSettings = distributedLockSettings ?? new DistributedLockSettings();
-
-        _distributedLockSettings.EnsureResourceNameIsSet(GetType().FullName!);
-
-        _distributedLockManager = Check.NotNull(distributedLockManager, nameof(distributedLockManager));
+        DistributedLock = Check.NotNull(distributedLock, nameof(distributedLock));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
     /// <summary>
-    ///     Gets the acquired <see cref="DistributedLock" />.
+    ///     Gets the <see cref="IDistributedLock"/> used by this service.
     /// </summary>
-    protected DistributedLock? Lock { get; private set; }
+    protected IDistributedLock DistributedLock { get; }
 
     /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected sealed override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogBackgroundServiceStarting(this);
 
         // Run another task to avoid deadlocks
-        return Task.Factory.StartNew(
+        return Task.Run(
             async () =>
             {
                 try
                 {
-                    Lock = await _distributedLockManager.AcquireAsync(_distributedLockSettings, stoppingToken)
-                        .ConfigureAwait(false);
-
-                    if (Lock != null)
-                    {
-                        _logger.LogBackgroundServiceLockAcquired(this);
-                    }
-
-                    await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
+                    await AcquireLockAndExecuteAsync(stoppingToken).ConfigureAwait(false);
                 }
                 catch (TaskCanceledException)
                 {
@@ -100,27 +64,37 @@ public abstract class DistributedBackgroundService : BackgroundService
                 {
                     _logger.LogBackgroundServiceException(this, ex);
                 }
-                finally
-                {
-                    if (Lock != null)
-                        await Lock.ReleaseAsync().ConfigureAwait(false);
-                }
             },
-            stoppingToken,
-            TaskCreationOptions.LongRunning,
-            TaskScheduler.Default);
+            stoppingToken);
     }
 
     /// <summary>
-    ///     This method is called when the <see cref="IHostedService" /> starts and the lock is acquired. The
-    ///     implementation should return a task that represents the lifetime of the long running operation(s)
-    ///     being performed.
+    ///     Acquires the lock and calls the <see cref="ExecuteLockedAsync" /> method to perform the operation(s).
     /// </summary>
     /// <param name="stoppingToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that represents the long running operations.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    protected virtual async Task AcquireLockAndExecuteAsync(CancellationToken stoppingToken)
+    {
+        await using (await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false))
+        {
+            _logger.LogBackgroundServiceLockAcquired(this);
+            await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    ///     This method is called after the lock is acquired to perform the actual operation(s). The implementation should return a task
+    ///     that represents the lifetime of the operation(s) being performed.
+    /// </summary>
+    /// <param name="stoppingToken">
+    ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     protected abstract Task ExecuteLockedAsync(CancellationToken stoppingToken);
 }

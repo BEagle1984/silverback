@@ -389,12 +389,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     /// <summary>
-    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-    ///     resources.
+    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.
     /// </summary>
     /// <param name="disposing">
-    ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
-    ///     finalizer.
+    ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
     protected virtual void Dispose(bool disposing)
     {

@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -21,7 +20,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -41,7 +40,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> messages = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -62,7 +61,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages = new();
         static Task AsyncSubscriber(TestEventOne message) => throw new InvalidOperationException("test");
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -85,7 +84,7 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages = new();
         static Task AsyncSubscriber(TestEventOne message) => throw new InvalidOperationException("test");
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

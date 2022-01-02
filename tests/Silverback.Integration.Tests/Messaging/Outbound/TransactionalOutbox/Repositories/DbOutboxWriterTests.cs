@@ -48,7 +48,7 @@ public sealed class DbOutboxWriterTests : IDisposable
         ServiceCollection services = new();
 
         services
-            .AddLoggerSubstitute()
+            .AddFakeLogger()
             .AddDbContext<TestDbContext>(
                 options => options
                     .UseSqlite(_connection.ConnectionString))

@@ -41,7 +41,7 @@ public static class ConsumerPipelineContextHelper
         };
 
     private static IServiceProvider GetServiceProvider() =>
-        ServiceProviderHelper.GetServiceProvider(
+        ServiceProviderHelper.GetScopedServiceProvider(
             services =>
                 services
                     .AddSingleton(Substitute.For<IHostApplicationLifetime>())

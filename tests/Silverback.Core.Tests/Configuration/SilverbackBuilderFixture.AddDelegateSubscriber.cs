@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
-using Silverback.Tests.Core.TestTypes.Messages;
 using Xunit;
 
 namespace Silverback.Tests.Core.Configuration;
@@ -543,5 +542,9 @@ public partial class SilverbackBuilderFixture
                 Exclusive = false,
                 Filters = Array.Empty<IMessageFilter>()
             });
+    }
+
+    private class TestEventOne
+    {
     }
 }

@@ -111,6 +111,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tools.Generators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tools.Generators.Docs.LogEvents", "tools\Silverback.Tools.Generators.Docs.LogEvents\Silverback.Tools.Generators.Docs.LogEvents.csproj", "{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Memory", "src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj", "{22E73BB6-6EEB-44C5-8A37-4C33AD3A2153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Memory.Tests", "tests\Silverback.Storage.Memory.Tests\Silverback.Storage.Memory.Tests.csproj", "{E761F928-4E34-4194-BDD9-F12FE2B9D4A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -257,6 +261,14 @@ Global
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E73BB6-6EEB-44C5-8A37-4C33AD3A2153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E73BB6-6EEB-44C5-8A37-4C33AD3A2153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E73BB6-6EEB-44C5-8A37-4C33AD3A2153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E73BB6-6EEB-44C5-8A37-4C33AD3A2153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -286,6 +298,7 @@ Global
 		{B5160370-930E-4A6D-AD9F-673DEBC6B8F6} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{953BF768-C7D2-4039-A4E0-AA4EE9329587} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
+		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

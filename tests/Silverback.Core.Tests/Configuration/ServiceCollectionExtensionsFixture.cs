@@ -4,8 +4,10 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
+using Silverback.Lock;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
 
@@ -29,7 +31,7 @@ public class ServiceCollectionExtensionsFixture
     {
         ServiceCollection serviceCollection = new();
 
-        serviceCollection.AddLogging().AddSilverback();
+        serviceCollection.AddFakeLogger().AddSilverback();
 
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -53,9 +55,24 @@ public class ServiceCollectionExtensionsFixture
     {
         ServiceCollection serviceCollection = new();
 
-        SilverbackBuilder builder = serviceCollection.AddSilverback();
+        SilverbackBuilder builder = serviceCollection.ConfigureSilverback();
 
         builder.Should().BeOfType<SilverbackBuilder>();
         builder.Services.Should().BeSameAs(serviceCollection);
+    }
+
+    [Fact]
+    public void AddSilverback_ShouldRegisterDefaultDistributedLockFactory()
+    {
+        ServiceCollection serviceCollection = new();
+
+        serviceCollection.AddFakeLogger().AddSilverback();
+
+        ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
+
+        IDistributedLockFactory factory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+        DistributedLockFactory defaultFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
+
+        factory.Should().BeSameAs(defaultFactory);
     }
 }

@@ -1,6 +1,8 @@
 [*]
 
 # Microsoft.CodeAnalysis.NetAnalyzers
+# CA1030: Use events where appropriate
+dotnet_diagnostic.CA1030.severity = none
 # CA1031: Do not catch general exception types
 dotnet_diagnostic.CA1031.severity = none
 # CA1040: Avoid empty interfaces

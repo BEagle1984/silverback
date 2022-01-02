@@ -45,7 +45,7 @@ public class ProduceBehaviorTests
 
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-            .AddLoggerSubstitute();
+            .AddFakeLogger();
 
         ServiceProvider? serviceProvider = services.BuildServiceProvider();
 

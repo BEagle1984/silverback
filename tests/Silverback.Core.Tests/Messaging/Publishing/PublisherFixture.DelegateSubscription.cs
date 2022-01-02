@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers.Subscriptions;
-using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -21,7 +20,7 @@ public partial class PublisherFixture
     public void Publish_ShouldInvokeDelegateSubscriber()
     {
         TestingCollection<TestEventOne> messages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -38,7 +37,7 @@ public partial class PublisherFixture
     public async Task PublishAsync_ShouldInvokeDelegateSubscriber()
     {
         TestingCollection<TestEventOne> messages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -56,7 +55,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> syncMessages = new();
         TestingCollection<TestEventOne> asyncMessages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -76,7 +75,7 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> syncMessages = new();
         TestingCollection<TestEventOne> asyncMessages = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -110,7 +109,7 @@ public partial class PublisherFixture
             Interlocked.Decrement(ref executingCount);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -147,7 +146,7 @@ public partial class PublisherFixture
             Interlocked.Decrement(ref executingCount);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -174,14 +173,16 @@ public partial class PublisherFixture
 
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
-            countdownEvent.Signal();
-            if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
-                throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
+            if (!countdownEvent.Signal())
+            {
+                if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
+                    throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
+            }
 
             await messages.AddAsync(message);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -208,14 +209,16 @@ public partial class PublisherFixture
 
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
-            countdownEvent.Signal();
-            if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
-                throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
+            if (!countdownEvent.Signal())
+            {
+                if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
+                    throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
+            }
 
             await messages.AddAsync(message);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()

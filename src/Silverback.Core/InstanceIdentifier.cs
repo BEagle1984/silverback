@@ -18,7 +18,7 @@ namespace Silverback;
 ///         This is also a reference type and passing is around requires less allocations.
 ///     </para>
 /// </remarks>
-public sealed class InstanceIdentifier : IEquatable<InstanceIdentifier>
+public sealed record InstanceIdentifier
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="InstanceIdentifier" /> class.
@@ -47,39 +47,6 @@ public sealed class InstanceIdentifier : IEquatable<InstanceIdentifier>
     /// </returns>
     public static implicit operator string(InstanceIdentifier? identifier) =>
         identifier?.ToString() ?? string.Empty;
-
-    /// <inheritdoc cref="op_Equality" />
-    public static bool operator ==(InstanceIdentifier? left, InstanceIdentifier? right) =>
-        Equals(left, right);
-
-    /// <inheritdoc cref="op_Inequality" />
-    public static bool operator !=(InstanceIdentifier? left, InstanceIdentifier? right) =>
-        !Equals(left, right);
-
-    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(InstanceIdentifier? other)
-    {
-        if (ReferenceEquals(null, other))
-            return false;
-        if (ReferenceEquals(this, other))
-            return true;
-        return Value == other.Value;
-    }
-
-    /// <inheritdoc cref="object.Equals(object)" />
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-        if (obj.GetType() != GetType())
-            return false;
-        return Equals((InstanceIdentifier)obj);
-    }
-
-    /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => HashCode.Combine(Value);
 
     /// <summary>
     ///     Converts the <see cref="InstanceIdentifier" /> to a string.

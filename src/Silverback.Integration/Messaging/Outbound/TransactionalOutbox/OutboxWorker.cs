@@ -36,6 +36,8 @@ public class OutboxWorker : IOutboxWorker
 
     private int _pendingProduceOperations;
 
+    private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
     /// </summary>
@@ -74,6 +76,7 @@ public class OutboxWorker : IOutboxWorker
         _enforceMessageOrder = enforceMessageOrder;
         _batchSize = batchSize;
         _routingConfiguration = routingConfiguration;
+        _onSuccess = _ => Interlocked.Decrement(ref _pendingProduceOperations);
     }
 
     /// <inheritdoc cref="IOutboxWorker.ProcessQueueAsync" />
@@ -182,7 +185,7 @@ public class OutboxWorker : IOutboxWorker
                     endpoint,
                     message.Content,
                     message.Headers,
-                    _ => Interlocked.Decrement(ref _pendingProduceOperations),
+                    _onSuccess,
                     exception =>
                     {
                         failedMessages.Add(message);

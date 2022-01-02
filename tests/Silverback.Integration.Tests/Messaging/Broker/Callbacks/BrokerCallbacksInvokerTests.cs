@@ -45,7 +45,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerTwo callbackOneHandlerTwo = new();
         CallbackTwoHandlerOne callbackTwoHandlerOne = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -67,7 +67,7 @@ public class BrokerCallbacksInvokerTests
     public void Invoke_ScopedHandler_ScopeCreatedAndHandlerInvoked()
     {
         CallbackOneHandlerOne callbackOneHandlerOne = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -84,7 +84,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public void Invoke_WithServiceProvider_HandlerResolvedUsingSpecifiedProvider()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -106,7 +106,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public void Invoke_NoMatchingHandler_TypesResolvedOnlyOnce()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -129,7 +129,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public void Invoke_HandlerThrows_BrokerCallbackHandlerInvocationExceptionThrown()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -149,7 +149,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerOne callbackOneHandlerOne = new();
         FakeHostApplicationLifetime hostApplicationLifetime = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -171,7 +171,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerOne callbackOneHandlerOne = new();
         FakeHostApplicationLifetime hostApplicationLifetime = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -194,7 +194,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerTwoAsync callbackOneHandlerTwo = new();
         CallbackTwoHandlerOneAsync callbackTwoHandlerOne = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -216,7 +216,7 @@ public class BrokerCallbacksInvokerTests
     public async Task InvokeAsync_ScopedHandler_ScopeCreatedAndHandlerInvoked()
     {
         CallbackOneHandlerOneAsync callbackOneHandlerOne = new();
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -233,7 +233,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public async Task InvokeAsync_WithServiceProvider_HandlerResolvedUsingSpecifiedProvider()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -257,7 +257,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public async Task InvokeAsync_NoMatchingHandler_TypesResolvedOnlyOnce()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -286,7 +286,7 @@ public class BrokerCallbacksInvokerTests
     [Fact]
     public async Task InvokeAsync_HandlerThrows_BrokerCallbackHandlerInvocationExceptionThrown()
     {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -307,7 +307,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerOneAsync callbackOneHandlerOne = new();
         FakeHostApplicationLifetime hostApplicationLifetime = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
@@ -329,7 +329,7 @@ public class BrokerCallbacksInvokerTests
         CallbackOneHandlerOneAsync callbackOneHandlerOne = new();
         FakeHostApplicationLifetime hostApplicationLifetime = new();
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
