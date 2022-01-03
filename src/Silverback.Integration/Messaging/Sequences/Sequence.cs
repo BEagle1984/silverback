@@ -27,12 +27,17 @@ namespace Silverback.Messaging.Sequences
         ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
         ///     used.
         /// </param>
+        /// <param name="trackIdentifiers">
+        ///     Specifies whether the message identifiers have to be collected, in order to be used for the commit
+        ///     later on.
+        /// </param>
         protected Sequence(
             string sequenceId,
             ConsumerPipelineContext context,
             bool enforceTimeout = true,
-            TimeSpan? timeout = null)
-            : base(sequenceId, context, enforceTimeout, timeout)
+            TimeSpan? timeout = null,
+            bool trackIdentifiers = true)
+            : base(sequenceId, context, enforceTimeout, timeout, trackIdentifiers: trackIdentifiers)
         {
         }
     }

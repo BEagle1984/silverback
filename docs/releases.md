@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.6.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.1)
+## [3.6.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.2)
 
 ### What's new
 
@@ -15,6 +15,7 @@ uid: releases
 ### Fixes
 
 * Ensure each consumed message gets a unique traceId (when the traceparent header is not present)
+* Fix memory leak related in consumer
 
 ## [3.5.0](https://github.com/BEagle1984/silverback/releases/tag/v3.5.0)
 

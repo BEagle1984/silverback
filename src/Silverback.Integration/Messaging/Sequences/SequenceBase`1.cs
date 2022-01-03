@@ -25,9 +25,9 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
-        private readonly List<IBrokerMessageIdentifier> _messageIdentifiers = new();
-
         private readonly bool _enforceTimeout;
+
+        private readonly bool _trackIdentifiers;
 
         private readonly TimeSpan _timeout;
 
@@ -47,6 +47,8 @@ namespace Silverback.Messaging.Sequences
 
         private CancellationTokenSource? _timeoutCancellationTokenSource;
 
+        private List<IBrokerMessageIdentifier>? _messageIdentifiers;
+
         private ICollection<ISequence>? _sequences;
 
         private bool _disposed;
@@ -62,7 +64,7 @@ namespace Silverback.Messaging.Sequences
         ///     sequence gets published to the internal bus.
         /// </param>
         /// <param name="enforceTimeout">
-        ///     A value indicating whether the timeout has to be enforced.
+        ///     Specifies whether the timeout has to be enforced.
         /// </param>
         /// <param name="timeout">
         ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
@@ -71,12 +73,17 @@ namespace Silverback.Messaging.Sequences
         /// <param name="streamProvider">
         ///     The <see cref="IMessageStreamProvider" /> to be pushed. A new one will be created if not provided.
         /// </param>
+        /// <param name="trackIdentifiers">
+        ///     Specifies whether the message identifiers have to be collected, in order to be used for the commit
+        ///     later on.
+        /// </param>
         protected SequenceBase(
             string sequenceId,
             ConsumerPipelineContext context,
             bool enforceTimeout = true,
             TimeSpan? timeout = null,
-            IMessageStreamProvider? streamProvider = null)
+            IMessageStreamProvider? streamProvider = null,
+            bool trackIdentifiers = true)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
             Context = Check.NotNull(context, nameof(context));
@@ -90,6 +97,8 @@ namespace Silverback.Messaging.Sequences
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
             ResetTimeout();
+
+            _trackIdentifiers = trackIdentifiers;
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
@@ -105,7 +114,6 @@ namespace Silverback.Messaging.Sequences
         public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
         /// <inheritdoc cref="ISequence.Sequences" />
-        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "It works!")]
         public IReadOnlyCollection<ISequence> Sequences =>
             (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
 
@@ -166,8 +174,7 @@ namespace Silverback.Messaging.Sequences
         void ISequenceImplementation.NotifyProcessingCompleted()
         {
             _processingCompleteTaskCompletionSource.TrySetResult(true);
-            _sequences?.OfType<ISequenceImplementation>()
-                .ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
         }
 
         /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
@@ -176,8 +183,7 @@ namespace Silverback.Messaging.Sequences
             _processingCompleteTaskCompletionSource.TrySetException(exception);
 
             // Don't forward the error, it's enough to handle it once
-            _sequences?.OfType<ISequenceImplementation>()
-                .ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequences?.OfType<ISequenceImplementation>().ForEach(CompleteLinkedSequence);
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
         }
 
@@ -223,12 +229,20 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.GetBrokerMessageIdentifiers" />
-        public IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers() =>
-            _sequences != null
-                ? _messageIdentifiers
+        public IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers()
+        {
+            IReadOnlyList<IBrokerMessageIdentifier> identifiers = _messageIdentifiers?.AsReadOnlyList() ??
+                                                                  Array.Empty<IBrokerMessageIdentifier>();
+
+            if (_sequences != null)
+            {
+                identifiers = identifiers
                     .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()))
-                    .ToList()
-                : _messageIdentifiers;
+                    .AsReadOnlyList();
+            }
+
+            return identifiers;
+        }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -270,8 +284,9 @@ namespace Silverback.Messaging.Sequences
                 _sequences.Add(sequence);
                 (sequence as ISequenceImplementation)?.SetParentSequence(this);
             }
-            else
+            else if (_trackIdentifiers)
             {
+                _messageIdentifiers ??= new List<IBrokerMessageIdentifier>();
                 _messageIdentifiers.Add(envelope.BrokerMessageIdentifier);
             }
 
@@ -447,6 +462,17 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
+        private void CompleteLinkedSequence(ISequenceImplementation sequence)
+        {
+            sequence.NotifyProcessingCompleted();
+
+            if (!_trackIdentifiers)
+            {
+                _sequences?.Remove(sequence);
+                sequence.Dispose();
+            }
+        }
+
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void ResetTimeout()
@@ -548,7 +574,7 @@ namespace Silverback.Messaging.Sequences
                 {
                     case SequenceAbortReason.Error:
                         if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
-                            .ConfigureAwait(false))
+                                .ConfigureAwait(false))
                         {
                             await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 

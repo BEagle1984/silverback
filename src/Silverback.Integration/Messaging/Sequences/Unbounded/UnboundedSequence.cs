@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Sequences.Unbounded
     {
         [SuppressMessage("", "CA2000", Justification = "Stream disposed in base class")]
         public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
-            : base(sequenceId, context, false)
+            : base(sequenceId, context, enforceTimeout: false, trackIdentifiers: false)
         {
         }
     }
