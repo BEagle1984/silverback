@@ -15,7 +15,7 @@ uid: releases
 ### Fixes
 
 * Ensure each consumed message gets a unique traceId (when the traceparent header is not present)
-* Fix memory leak related in consumer
+* Fix memory leak in consumer
 
 ## [3.5.0](https://github.com/BEagle1984/silverback/releases/tag/v3.5.0)
 
