@@ -8,7 +8,7 @@
     <title>Kafka - Basic | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka - Basic | Silverback ">
-    <meta name="generator" content="docfx 2.58.4.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -171,7 +171,7 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                         // Produce the SampleMessage to the samples-basic topic
                         .AddOutbound&lt;SampleMessage&gt;(
                             endpoint =&gt; endpoint
-                                .ProduceTo(&quot;samples-basic&quot;)));
+                                .ProduceTo(&quot;samples-basic&quot;, 0)));
         }
     }
 }
@@ -326,7 +326,7 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                         // Consume the samples-basic topic
                         .AddInbound(
                             endpoint =&gt; endpoint
-                                .ConsumeFrom(&quot;samples-basic&quot;)
+                                .ConsumeFrom(new TopicPartitionOffset(&quot;samples-basic&quot;, 0, Offset.Beginning))
                                 .Configure(
                                     config =&gt;
                                     {
@@ -335,12 +335,7 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                                         // to connect
                                         config.GroupId = &quot;sample-consumer&quot;;
 
-                                        // AutoOffsetReset.Earliest means that the
-                                        // consumer must start consuming from the
-                                        // beginning of the topic, if no offset was
-                                        // stored for this consumer group
-                                        config.AutoOffsetReset =
-                                            AutoOffsetReset.Earliest;
+                                        config.EnablePartitionEof = true;
                                     })));
         }
     }

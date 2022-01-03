@@ -8,7 +8,7 @@
     <title>Multiple Clients (in same process) | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Multiple Clients (in same process) | Silverback ">
-    <meta name="generator" content="docfx 2.58.4.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -166,6 +166,19 @@
 </section>
 </div>
 
+<div class="NOTE">
+<h5>Note</h5>
+<p>The filters can be added dynamically using the overloads of <code>AddSubscriber</code> accepting a <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> or <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions.html">TypeSubscriptionOptions</a> and this allows you to use a variable for the client id.</p>
+<pre><code class="lang-csharp">.AddSingletonSubscriber&lt;MySubscriber&gt;(
+    new TypeSubscriptionOptions
+    {
+        Filters = new[]
+        {
+            new MqttClientIdFilterAttribute(&quot;client1&quot;)
+        }
+    })
+</code></pre>
+</div>
 <p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>ClientId</code> value.</p>
 <pre><code class="lang-csharp">public class MySubscriber
 {

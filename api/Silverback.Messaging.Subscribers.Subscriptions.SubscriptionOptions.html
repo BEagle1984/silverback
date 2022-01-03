@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SubscriptionOptions
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.4.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,13 +90,14 @@
   
   <h1 id="Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions" data-uid="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions" class="text-break">Class SubscriptionOptions
   </h1>
-  <div class="markdown level0 summary"><p>The subscription options such as the parallelism settings.</p>
+  <div class="markdown level0 summary"><p>The subscription options such as filters and parallelism settings.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">SubscriptionOptions</span></div>
+      <div class="level2"><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions.html">TypeSubscriptionOptions</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -135,12 +136,12 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Exclusive.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Exclusive%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/Subscriptions/SubscriptionOptions.cs/#L16">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/Subscriptions/SubscriptionOptions.cs/#L20">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Exclusive_" data-uid="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Exclusive*"></a>
   <h4 id="Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Exclusive" data-uid="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Exclusive">Exclusive</h4>
-  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the method can be executed concurrently to other methods
-handling the <strong>same message&gt;</strong>. The default value is <code>true</code> (the method will be executed
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the method(s) can be executed concurrently to other methods
+handling the same message. The default value is <code>true</code> (the method(s) will be executed
 sequentially to other subscribers).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -163,6 +164,37 @@ sequentially to other subscribers).</p>
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Filters.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Filters%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/Subscriptions/SubscriptionOptions.cs/#L25">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Filters_" data-uid="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Filters*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_Filters" data-uid="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.Filters">Filters</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the filters to be applied.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;IMessageFilter&gt; Filters { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Subscribers.IMessageFilter.html">IMessageFilter</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
@@ -174,7 +206,7 @@ sequentially to other subscribers).</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/Subscriptions/SubscriptionOptions.cs/#L9" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/Subscriptions/SubscriptionOptions.cs/#L12" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

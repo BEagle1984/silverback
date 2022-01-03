@@ -8,7 +8,7 @@
     <title>Message Headers | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Message Headers | Silverback ">
-    <meta name="generator" content="docfx 2.58.4.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -248,15 +248,19 @@ Here is the list of the default headers that may be sent.</p>
 <td style="text-align: left;">The content type of the <a class="xref" href="binary-files.html">binary file</a>, used when producing or consuming an <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>x-kafka-message-key</code></td>
-<td style="text-align: left;">The header that will be filled with the <a class="xref" href="kafka/kafka-partitioning.html">key</a> of the message consumed from Kafka.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>x-kafka-message-timestamp</code></td>
-<td style="text-align: left;">The header that will be filled with the timestamp of the message consumed from Kafka.</td>
+<td style="text-align: left;"><code>x-failure-reason</code></td>
+<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the reason why the message failed to be processed.</td>
 </tr>
 </tbody>
 </table>
+<h3 id="kafka-specific">Kafka specific</h3>
+<p><code>x-kafka-message-key</code> | The header that will be filled with the <a class="xref" href="kafka/kafka-partitioning.html">key</a> of the message consumed from Kafka.
+<code>x-kafka-message-timestamp</code> | The header that will be filled with the timestamp of the message consumed from Kafka.
+<code>x-source-consumer-group-id</code> | The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the GroupId the consumer that consumed the message that failed to be processed.
+<code>x-source-topic</code> | The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the source topic of the message that failed to be processed.
+<code>x-source-partition</code> | The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the source partition of the message that failed to be processed.
+<code>x-source-offset</code> | The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the offset of the message that failed to be processed.
+<code>x-source-timestamp</code> | The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the timestamp of the message that failed to be processed.</p>
 <p>The static classes <a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.KafkaMessageHeaders.html">KafkaMessageHeaders</a> contain all default header names constants.</p>
 <h2 id="customizing-header-names">Customizing header names</h2>
 <p>The default header names can be overridden using the <code>WithCustomHeaderName</code> configuration method.</p>

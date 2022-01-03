@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SubscribedMethod
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.4.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -132,19 +132,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod__ctor_System_Func_System_IServiceProvider_System_Object__System_Reflection_MethodInfo_System_Nullable_System_Boolean__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.%23ctor(System.Func%7BSystem.IServiceProvider%2CSystem.Object%7D%2CSystem.Reflection.MethodInfo%2CSystem.Nullable%7BSystem.Boolean%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod__ctor_System_Func_System_IServiceProvider_System_Object__System_Reflection_MethodInfo_Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.%23ctor(System.Func%7BSystem.IServiceProvider%2CSystem.Object%7D%2CSystem.Reflection.MethodInfo%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L44">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L42">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod__ctor_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod__ctor_System_Func_System_IServiceProvider_System_Object__System_Reflection_MethodInfo_System_Nullable_System_Boolean__" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.#ctor(System.Func{System.IServiceProvider,System.Object},System.Reflection.MethodInfo,System.Nullable{System.Boolean})">SubscribedMethod(Func&lt;IServiceProvider, Object&gt;, MethodInfo, Nullable&lt;Boolean&gt;)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod__ctor_System_Func_System_IServiceProvider_System_Object__System_Reflection_MethodInfo_Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.#ctor(System.Func{System.IServiceProvider,System.Object},System.Reflection.MethodInfo,Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">SubscribedMethod(Func&lt;IServiceProvider, Object&gt;, MethodInfo, SubscriptionOptions)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Subscribers.SubscribedMethod.html">SubscribedMethod</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SubscribedMethod(Func&lt;IServiceProvider, object&gt; targetTypeFactory, MethodInfo methodInfo, bool? exclusive)</code></pre>
+    <pre><code class="lang-csharp hljs">public SubscribedMethod(Func&lt;IServiceProvider, object&gt; targetTypeFactory, MethodInfo methodInfo, SubscriptionOptions options)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -169,12 +169,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><span class="parametername">exclusive</span></td>
-        <td><p>A boolean value indicating whether the method can be executed concurrently to other methods handling
-the <strong>
-same message
-</strong>.</p>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -186,7 +183,7 @@ same message
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_AdditionalArgumentsResolvers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.AdditionalArgumentsResolvers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L107">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L97">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_AdditionalArgumentsResolvers_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.AdditionalArgumentsResolvers*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_AdditionalArgumentsResolvers" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.AdditionalArgumentsResolvers">AdditionalArgumentsResolvers</h4>
@@ -214,73 +211,10 @@ same message
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_Filters.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.Filters%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L84">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Subscribers_SubscribedMethod_Filters_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Filters*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_Filters" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Filters">Filters</h4>
-  <div class="markdown level1 summary"><p>Gets the filters to be applied. The filters are set via <a class="xref" href="Silverback.Messaging.Subscribers.MessageFilterAttribute.html">MessageFilterAttribute</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;IMessageFilter&gt; Filters { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Subscribers.IMessageFilter.html">IMessageFilter</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_IsExclusive.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.IsExclusive%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L79">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Subscribers_SubscribedMethod_IsExclusive_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.IsExclusive*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_IsExclusive" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.IsExclusive">IsExclusive</h4>
-  <div class="markdown level1 summary"><p>Gets a value indicating whether the method can be executed concurrently to other methods handling
-the <strong>same message</strong>. This value is set via the <a class="xref" href="Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IsExclusive { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentResolver.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentResolver%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L101">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L91">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentResolver_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentResolver*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentResolver" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentResolver">MessageArgumentResolver</h4>
@@ -311,7 +245,7 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L89">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L79">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentType_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentType*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageArgumentType" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageArgumentType">MessageArgumentType</h4>
@@ -342,7 +276,7 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_MessageType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.MessageType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L95">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L85">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageType_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageType*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_MessageType" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MessageType">MessageType</h4>
@@ -373,7 +307,7 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_MethodInfo.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.MethodInfo%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L68">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L64">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_MethodInfo_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MethodInfo*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_MethodInfo" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.MethodInfo">MethodInfo</h4>
@@ -401,10 +335,41 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_Options.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.Options%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L74">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Subscribers_SubscribedMethod_Options_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Options*"></a>
+  <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_Options" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Options">Options</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SubscriptionOptions Options { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_Parameters.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.Parameters%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L73">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L69">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_Parameters_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Parameters*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_Parameters" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.Parameters">Parameters</h4>
@@ -437,7 +402,7 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod_ResolveTargetType_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod.ResolveTargetType(System.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L119">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L109">View source</a>
   </span>
   <a id="Silverback_Messaging_Subscribers_SubscribedMethod_ResolveTargetType_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.ResolveTargetType*"></a>
   <h4 id="Silverback_Messaging_Subscribers_SubscribedMethod_ResolveTargetType_System_IServiceProvider_" data-uid="Silverback.Messaging.Subscribers.SubscribedMethod.ResolveTargetType(System.IServiceProvider)">ResolveTargetType(IServiceProvider)</h4>
@@ -493,7 +458,7 @@ the <strong>same message</strong>. This value is set via the <a class="xref" hre
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_SubscribedMethod.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.SubscribedMethod%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/release/3.5.0/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L17" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/SubscribedMethod.cs/#L18" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>
