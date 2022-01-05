@@ -244,6 +244,32 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
+        public async Task HandleErrorAsync_WithPublishForwardingException_MessagePublished()
+        {
+            var publisher = Substitute.For<IPublisher>();
+            var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
+                .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+
+            var policy = new TestErrorPolicy()
+                .Publish((_, exception) => new TestEventTwo { Content = exception.Message })
+                .Build(serviceProvider);
+
+            var envelope = new InboundEnvelope(
+                new MemoryStream(),
+                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
+                new TimeoutException("Exception message."));
+
+            await publisher.Received().PublishAsync(
+                Arg.Is<TestEventTwo>(message => message.Content == "Exception message."));
+        }
+
+        [Fact]
         public async Task HandleErrorAsync_WithPublishReturningNull_NoMessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();

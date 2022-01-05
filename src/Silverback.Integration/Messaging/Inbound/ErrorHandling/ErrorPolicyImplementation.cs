@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
         private readonly Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
 
-        private readonly Func<IRawInboundEnvelope, object?>? _messageToPublishFactory;
+        private readonly Func<IRawInboundEnvelope, Exception, object?>? _messageToPublishFactory;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             ICollection<Type> excludedExceptions,
             ICollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-            Func<IRawInboundEnvelope, object?>? messageToPublishFactory,
+            Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
             IInboundLogger<ErrorPolicyBase> logger)
         {
@@ -153,20 +153,17 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             var result = await ApplyPolicyAsync(context, exception).ConfigureAwait(false);
 
-            if (_messageToPublishFactory != null)
-            {
-                object? message = _messageToPublishFactory.Invoke(context.Envelope);
+            if (_messageToPublishFactory == null)
+                return result;
 
-                if (message != null)
-                {
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                            .PublishAsync(message)
-                            .ConfigureAwait(false);
-                    }
-                }
-            }
+            object? message = _messageToPublishFactory.Invoke(context.Envelope, exception);
+            if (message == null)
+                return result;
+
+            using var scope = _serviceProvider.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(message)
+                .ConfigureAwait(false);
 
             return result;
         }
