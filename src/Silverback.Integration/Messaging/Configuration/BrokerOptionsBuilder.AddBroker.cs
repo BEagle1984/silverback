@@ -44,11 +44,6 @@ public sealed partial class BrokerOptionsBuilder
     {
         if (!SilverbackBuilder.Services.ContainsAny<IBroker>())
         {
-            // Configuration IHostedService
-            SilverbackBuilder.Services
-                .AddSingleton<IHostedService, BrokerConnectorService>()
-                .AddSingleton<EndpointsConfiguratorsInvoker>();
-
             // Pipeline
             SilverbackBuilder.Services
                 .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>));

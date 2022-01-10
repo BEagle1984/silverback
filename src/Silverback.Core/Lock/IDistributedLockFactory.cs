@@ -9,7 +9,7 @@ namespace Silverback.Lock;
 public interface IDistributedLockFactory
 {
     /// <summary>
-    ///     Returns a new <see cref="IDistributedLock" /> according to the specified settings.
+    ///     Returns an <see cref="IDistributedLock" /> according to the specified settings.
     /// </summary>
     /// <typeparam name="TSettings">
     ///     The type of the settings.

@@ -7,9 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Testing;
@@ -158,9 +159,13 @@ public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
     {
         try
         {
-            using IServiceScope? scope = _serviceProvider.CreateScope();
-            IOutboxReader? outboxReader = scope.ServiceProvider.GetRequiredService<IOutboxReader>();
-            return await outboxReader.GetLengthAsync().ConfigureAwait(false) == 0;
+            foreach (OutboxWorkerService service in _serviceProvider.GetServices<IHostedService>().OfType<OutboxWorkerService>())
+            {
+                if (await service.OutboxWorker.GetLengthAsync().ConfigureAwait(false) > 0)
+                    return false;
+            }
+
+            return true;
         }
         catch (Exception ex)
         {

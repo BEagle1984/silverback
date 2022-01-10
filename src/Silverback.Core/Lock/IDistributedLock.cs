@@ -18,11 +18,6 @@ public interface IDistributedLock
     DistributedLockSettings Settings { get; }
 
     /// <summary>
-    ///     Gets the lock name.
-    /// </summary>
-    string Name { get; }
-
-    /// <summary>
     ///     Acquires the lock.
     /// </summary>
     /// <param name="cancellationToken">

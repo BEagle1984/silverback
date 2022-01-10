@@ -19,6 +19,13 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 /// </summary>
 public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
+    public OutboxProduceStrategy(OutboxSettings settings)
+    {
+        Settings = settings;
+    }
+
+    public OutboxSettings Settings { get; }
+
     /// <inheritdoc cref="op_Equality" />
     public static bool operator ==(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => Equals(left, right);
 
@@ -26,38 +33,39 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     public static bool operator !=(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => !Equals(left, right);
 
     /// <inheritdoc cref="IProduceStrategy.Build" />
-    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-        new OutboxProduceStrategyImplementation(
-            serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
-            serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
+    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerConfiguration configuration)
+    {
+        OutboxBroker outboxBroker = serviceProvider.GetRequiredService<OutboxBroker>();
+        IProducer producer = AsyncHelper.RunSynchronously(() => outboxBroker.GetProducerAsync(configuration));
+
+        IOutboundLogger<OutboxProduceStrategy> logger = serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>();
+
+        return new OutboxProduceStrategyImplementation(producer, logger);
+    }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(OutboxProduceStrategy? other) => other != null;
+    public bool Equals(OutboxProduceStrategy? other) => other?.Settings == Settings;
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(IProduceStrategy? other) => other is OutboxProduceStrategy;
+    public bool Equals(IProduceStrategy? other) => other is OutboxProduceStrategy otherOutboxStrategy && Equals(otherOutboxStrategy);
 
     /// <inheritdoc cref="object.Equals(object)" />
-    public override bool Equals(object? obj) => obj is OutboxProduceStrategy;
+    public override bool Equals(object? obj) => obj is OutboxProduceStrategy otherOutboxStrategy && Equals(otherOutboxStrategy);
 
     /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => GetType().GetHashCode();
+    public override int GetHashCode() => Settings.GetHashCode();
 
     private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        private readonly TransactionalOutboxBroker _outboundQueueBroker;
+        private readonly IProducer _producer;
 
         private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
 
-        private readonly SemaphoreSlim _producerInitSemaphore = new(1, 1);
-
-        private IProducer? _producer;
-
         public OutboxProduceStrategyImplementation(
-            TransactionalOutboxBroker outboundQueueBroker,
+            IProducer producer,
             IOutboundLogger<OutboxProduceStrategy> logger)
         {
-            _outboundQueueBroker = outboundQueueBroker;
+            _producer = producer;
             _logger = logger;
         }
 
@@ -65,25 +73,9 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            _logger.LogWrittenToOutbox(envelope);
-
-            _producer ??= await InitProducerAsync(envelope.Endpoint.Configuration).ConfigureAwait(false);
-
             await _producer.ProduceAsync(envelope).ConfigureAwait(false);
-        }
 
-        private async Task<IProducer> InitProducerAsync(ProducerConfiguration configuration)
-        {
-            await _producerInitSemaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                _producer = await _outboundQueueBroker.GetProducerAsync(configuration).ConfigureAwait(false);
-                return _producer;
-            }
-            finally
-            {
-                _producerInitSemaphore.Release();
-            }
+            _logger.LogWrittenToOutbox(envelope);
         }
     }
 }

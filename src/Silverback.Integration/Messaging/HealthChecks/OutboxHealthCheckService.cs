@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Messaging.HealthChecks;
 

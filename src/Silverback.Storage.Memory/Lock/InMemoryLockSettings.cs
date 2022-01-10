@@ -25,4 +25,9 @@ public record InMemoryLockSettings : DistributedLockSettings
     {
         LockName = lockName;
     }
+
+    /// <summary>
+    ///     Gets the name of the lock.
+    /// </summary>
+    public string LockName { get; init; } = "default";
 }

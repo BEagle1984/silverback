@@ -67,7 +67,7 @@ public partial class ProducerConfigurationBuilderTests
     public void UseStrategy_Strategy_StrategySet()
     {
         TestProducerConfigurationBuilder<object> builder = new();
-        OutboxProduceStrategy strategy = new();
+        OutboxProduceStrategy strategy = new(new InMemoryOutboxSettings());
 
         TestProducerConfiguration endpoint = builder.UseStrategy(strategy).Build();
 
@@ -89,7 +89,7 @@ public partial class ProducerConfigurationBuilderTests
     {
         TestProducerConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration endpoint = builder.ProduceToOutbox().Build();
+        TestProducerConfiguration endpoint = builder.ProduceToOutbox(new InMemoryOutboxSettings()).Build();
 
         endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
     }

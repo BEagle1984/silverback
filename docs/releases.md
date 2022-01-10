@@ -52,6 +52,7 @@ uid: releases
   * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
   * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
   * DistributedBackgroundService / RecurringDBS
+  * IOutboxReader / IOutboxWriter namespace + move to storage
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 

@@ -21,8 +21,7 @@ public class OutboxHealthCheck : IHealthCheck
     ///     Initializes a new instance of the <see cref="OutboxHealthCheck" /> class.
     /// </summary>
     /// <param name="service">
-    ///     The <see cref="IOutboxHealthCheckService" /> implementation to be used to monitor the
-    ///     outbound queue.
+    ///     The <see cref="IOutboxHealthCheckService" /> implementation to be used to monitor the outbox.
     /// </param>
     public OutboxHealthCheck(IOutboxHealthCheckService service)
     {
@@ -30,14 +29,12 @@ public class OutboxHealthCheck : IHealthCheck
     }
 
     /// <summary>
-    ///     Gets or sets the maximum message age, the check will fail when a message exceeds this age (default
-    ///     is 30 seconds).
+    ///     Gets or sets the maximum message age, the check will fail when a message exceeds this age (default is 30 seconds).
     /// </summary>
     public static TimeSpan MaxMessageAge { get; set; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
-    ///     Gets or sets the maximum amount of messages in the queue. The default is <c>null</c>, meaning
-    ///     unrestricted.
+    ///     Gets or sets the maximum amount of messages in the queue. The default is <c>null</c>, meaning unrestricted.
     /// </summary>
     public static int? MaxQueueLength { get; set; }
 
@@ -51,7 +48,7 @@ public class OutboxHealthCheck : IHealthCheck
         if (await _service.CheckIsHealthyAsync(MaxMessageAge).ConfigureAwait(false))
             return new HealthCheckResult(HealthStatus.Healthy);
 
-        string errorMessage = "The outbound queue exceeded the configured limits " +
+        string errorMessage = "The outbox exceeded the configured limits " +
                               $"(max message age: {MaxMessageAge.ToString()}, " +
                               $"max queue length: {MaxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
 

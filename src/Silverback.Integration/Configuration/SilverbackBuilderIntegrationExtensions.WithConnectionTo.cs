@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Callbacks;
@@ -10,6 +11,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Configuration;
@@ -37,14 +39,25 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
+        // Configuration IHostedService
+        builder.Services
+            .AddSingleton<IHostedService, BrokerConnectorService>()
+            .AddSingleton<EndpointsConfiguratorsInvoker>()
+            .AddSingleton(BrokerConnectionOptions.Default);
+
         // Outbound Routing
         builder
             .AddScopedBehavior<OutboundRouterBehavior>()
-            .AddScopedBehavior<ProduceBehavior>()
+            .AddSingletonBehavior<ProduceBehavior>()
             .Services
             .AddSingleton<IOutboundEnvelopeFactory, OutboundEnvelopeFactory>()
             .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration())
-            .AddSingleton<ProducersPreloader>();
+            .AddSingleton<ProducersPreloader>()
+            .AddSingleton<IOutboxReaderFactory>(serviceProvider => serviceProvider.GetService<OutboxReaderFactory>())
+            .AddSingleton(new OutboxReaderFactory())
+            .AddSingleton<IOutboxWriterFactory>(serviceProvider => serviceProvider.GetService<OutboxWriterFactory>())
+            .AddSingleton(new OutboxWriterFactory())
+            .AddSingleton<OutboxBroker>();
 
         // Broker Collection
         builder.Services
@@ -65,17 +78,11 @@ public static partial class SilverbackBuilderIntegrationExtensions
         // Activities
         builder.Services.AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();
 
-        // Transactional Lists
-        builder.Services
-            .AddSingleton(typeof(TransactionalListSharedItems<>))
-            .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
-
         // Event Handlers
         builder.Services.AddSingleton<IBrokerCallbacksInvoker, BrokerCallbackInvoker>();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);
         optionsAction?.Invoke(optionsBuilder);
-        optionsBuilder.CompleteWithDefaults();
 
         return builder;
     }

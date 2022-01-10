@@ -16,6 +16,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
+using Silverback.Tests.Integration.E2E.Util;
 using Silverback.Util;
 using Xunit.Abstractions;
 
@@ -119,10 +120,6 @@ public sealed class TestApplicationHost<THelper> : IDisposable
         ILogger<TestApplicationHost<THelper>>? logger = ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>();
         logger?.LogInformation("Starting end-to-end test {testMethod}", _testMethodName);
     }
-
-    public void PauseBackgroundServices() => ServiceProvider.PauseSilverbackBackgroundServices();
-
-    public void ResumeBackgroundServices() => ServiceProvider.ResumeSilverbackBackgroundServices();
 
     public void Dispose()
     {

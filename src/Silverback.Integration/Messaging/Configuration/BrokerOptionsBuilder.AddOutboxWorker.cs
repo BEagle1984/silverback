@@ -4,12 +4,12 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Lock;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -70,27 +70,31 @@ public sealed partial class BrokerOptionsBuilder
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public BrokerOptionsBuilder AddOutboxWorker(
-        TimeSpan? interval = null,
-        bool enforceMessageOrder = true,
-        int batchSize = 1000,
-        DistributedLockSettings? distributedLockSettings = null)
+    public BrokerOptionsBuilder AddOutboxWorker(OutboxWorkerSettings settings)
     {
+        Check.NotNull(settings, nameof(settings));
+
         SilverbackBuilder.Services
-            .AddSingleton<IOutboxWorker>(
-                serviceProvider => new OutboxWorker(
-                    serviceProvider.GetRequiredService<IServiceScopeFactory>(),
-                    serviceProvider.GetRequiredService<IBrokerCollection>(),
-                    serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
-                    serviceProvider.GetRequiredService<IOutboundLogger<OutboxWorker>>(),
-                    enforceMessageOrder,
-                    batchSize))
             .AddSingleton<IHostedService>(
-                serviceProvider => new OutboxWorkerService(
-                    interval ?? TimeSpan.FromMilliseconds(500),
-                    serviceProvider.GetRequiredService<IOutboxWorker>(),
-                    serviceProvider.GetRequiredService<IDistributedLockFactory>().GetDistributedLock(distributedLockSettings),
-                    serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorkerService>>()));
+                serviceProvider =>
+                {
+                    OutboxWorker outboxWorker = new OutboxWorker(
+                        settings,
+                        serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox),
+                        serviceProvider.GetRequiredService<IBrokerCollection>(),
+                        serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
+                        serviceProvider.GetRequiredService<IServiceScopeFactory>(),
+                        serviceProvider.GetRequiredService<IOutboundLogger<OutboxWorker>>());
+
+                    IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
+                    IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock);
+
+                    return new OutboxWorkerService(
+                        settings.Interval,
+                        outboxWorker,
+                        distributedLock,
+                        serviceProvider.GetRequiredService<ISilverbackLogger<OutboxWorkerService>>());
+                });
 
         return this;
     }

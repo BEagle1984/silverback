@@ -21,6 +21,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <summary>
     ///     Gets a value indicating whether this consumer is connected and consuming (started).
     /// </summary>
+    // TODO: Rename or make private as it is confusing with ConsumerStatus.Consuming
     bool IsConsuming { get; }
 
     /// <summary>

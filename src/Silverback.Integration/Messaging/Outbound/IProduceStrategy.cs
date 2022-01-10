@@ -16,8 +16,11 @@ public interface IProduceStrategy : IEquatable<IProduceStrategy>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to build the strategy.
     /// </param>
+    /// <param name="configuration">
+    ///     The producer configuration.
+    /// </param>
     /// <returns>
     ///     An instance of <see cref="IProduceStrategyImplementation" /> that can be used to produce the messages.
     /// </returns>
-    IProduceStrategyImplementation Build(IServiceProvider serviceProvider);
+    IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerConfiguration configuration);
 }

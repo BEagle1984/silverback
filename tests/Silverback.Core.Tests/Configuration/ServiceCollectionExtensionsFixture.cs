@@ -73,6 +73,7 @@ public class ServiceCollectionExtensionsFixture
         IDistributedLockFactory factory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         DistributedLockFactory defaultFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
+        factory.Should().NotBeNull();
         factory.Should().BeSameAs(defaultFactory);
     }
 }

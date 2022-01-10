@@ -30,8 +30,8 @@ internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
     public IInMemoryTopic Get(string name, string bootstrapServers) =>
         _topics.GetOrAdd(
             $"{bootstrapServers.ToUpperInvariant()}|{name}",
-            static (_, args) => new InMemoryTopic(args.name, args.bootstrapServers, args.DefaultPartitionsCount),
-            (name, bootstrapServers, _options.DefaultPartitionsCount));
+            static (_, args) => new InMemoryTopic(args.Name, args.BootstrapServers, args.DefaultPartitionsCount),
+            (Name: name, BootstrapServers: bootstrapServers, _options.DefaultPartitionsCount));
 
     public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 

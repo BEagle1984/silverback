@@ -26,9 +26,6 @@ public abstract class DistributedLock : IDistributedLock
     /// <inheritdoc cref="IDistributedLock.Settings" />
     public DistributedLockSettings Settings { get; }
 
-    /// <inheritdoc cref="IDistributedLock.Name" />
-    public virtual string Name => Settings.LockName;
-
     /// <inheritdoc cref="IDistributedLock.AcquireAsync" />
     public ValueTask<DistributedLockHandle> AcquireAsync(CancellationToken cancellationToken = default) =>
         AcquireCoreAsync(cancellationToken);

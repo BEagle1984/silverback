@@ -66,7 +66,7 @@ public class ProducerEndpointTests
             "test",
             new TestProducerConfiguration
             {
-                Strategy = new OutboxProduceStrategy()
+                Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings())
             });
         TestProducerEndpoint configuration2 = new("test", new TestProducerConfiguration());
 

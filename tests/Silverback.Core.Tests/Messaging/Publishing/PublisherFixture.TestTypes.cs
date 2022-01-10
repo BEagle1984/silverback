@@ -68,7 +68,7 @@ public partial class PublisherFixture
 
         public bool AutoUnwrap { get; }
 
-        public object? Message { get; }
+        public object? Message { get; set; }
     }
 
     private class TestSubscriber<TMessage>

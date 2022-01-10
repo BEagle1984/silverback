@@ -12,12 +12,10 @@ using Silverback.Lock;
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
 /// <summary>
-///     The <see cref="IHostedService" /> that triggers the outbound queue worker at regular intervals.
+///     The <see cref="IHostedService" /> that triggers the <see cref="IOutboxWorker" /> at regular intervals.
 /// </summary>
 public class OutboxWorkerService : RecurringDistributedBackgroundService
 {
-    private readonly IOutboxWorker _outboxWorker;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorkerService" /> class.
     /// </summary>
@@ -40,13 +38,22 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
         ISilverbackLogger<OutboxWorkerService> logger)
         : base(interval, distributedLock, logger)
     {
-        _outboxWorker = outboxWorker;
+        OutboxWorker = outboxWorker;
     }
 
     /// <summary>
-    ///     Calls the <see cref="IOutboxWorker" /> to process the queue at regular intervals.
+    ///     Gets the associated <see cref="IOutboxWorker" />.
     /// </summary>
-    /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteRecurringAsync" />
-    protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
-        _outboxWorker.ProcessQueueAsync(stoppingToken);
+    public IOutboxWorker OutboxWorker { get; }
+
+    /// <summary>
+    ///     Calls the <see cref="IOutboxWorker" /> to process the queue.
+    /// </summary>
+    /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteLockedAsync" />
+    protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
+    {
+        while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
+        {
+        }
+    }
 }

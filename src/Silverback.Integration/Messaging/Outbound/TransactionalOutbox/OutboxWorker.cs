@@ -14,8 +14,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
@@ -24,32 +23,38 @@ public class OutboxWorker : IOutboxWorker
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
+    private readonly OutboxWorkerSettings _settings;
+
+    private readonly IOutboxReader _outboxReader;
+
     private readonly IBrokerCollection _brokerCollection;
 
     private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
     private readonly IOutboundLogger<OutboxWorker> _logger;
 
-    private readonly int _batchSize;
+    private readonly ConcurrentBag<OutboxMessage> _failedMessages = new();
 
-    private readonly bool _enforceMessageOrder;
+    private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
+
+    private IReadOnlyCollection<OutboxMessage> _outboxMessages;
 
     private int _pendingProduceOperations;
 
-    private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
+    private IServiceScope? _serviceScope;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
     /// </summary>
-    /// <param name="serviceScopeFactory">
-    ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
-    /// </param>
+    /// <param name="settings"></param>
+    /// <param name="outboxReader"></param>
     /// <param name="brokerCollection">
     ///     The collection containing the available brokers.
     /// </param>
     /// <param name="routingConfiguration">
     ///     The configured outbound routes.
     /// </param>
+    /// <param name="serviceScopeFactory"></param>
     /// <param name="logger">
     ///     The <see cref="IOutboundLogger{TCategoryName}" />.
     /// </param>
@@ -63,96 +68,66 @@ public class OutboxWorker : IOutboxWorker
     ///     The number of messages to be loaded and processed at once.
     /// </param>
     public OutboxWorker(
-        IServiceScopeFactory serviceScopeFactory,
+        OutboxWorkerSettings settings,
+        IOutboxReader outboxReader,
         IBrokerCollection brokerCollection,
         IOutboundRoutingConfiguration routingConfiguration,
-        IOutboundLogger<OutboxWorker> logger,
-        bool enforceMessageOrder,
-        int batchSize)
+        IServiceScopeFactory serviceScopeFactory,
+        IOutboundLogger<OutboxWorker> logger)
     {
-        _serviceScopeFactory = serviceScopeFactory;
-        _brokerCollection = brokerCollection;
-        _logger = logger;
-        _enforceMessageOrder = enforceMessageOrder;
-        _batchSize = batchSize;
-        _routingConfiguration = routingConfiguration;
+        _settings = Check.NotNull(settings, nameof(settings));
+        _outboxReader = Check.NotNull(outboxReader, nameof(outboxReader));
+        _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
+        _routingConfiguration = Check.NotNull(routingConfiguration, nameof(routingConfiguration));
+        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+        _logger = Check.NotNull(logger, nameof(logger));
+
         _onSuccess = _ => Interlocked.Decrement(ref _pendingProduceOperations);
     }
 
-    /// <inheritdoc cref="IOutboxWorker.ProcessQueueAsync" />
+    /// <inheritdoc cref="IOutboxWorker.ProcessOutboxAsync" />
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-    public async Task ProcessQueueAsync(CancellationToken stoppingToken)
+    public async Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken)
     {
         try
         {
-            using IServiceScope? scope = _serviceScopeFactory.CreateScope();
-            await ProcessQueueAsync(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
+            return await TryProcessOutboxAsync(stoppingToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             _logger.LogErrorProcessingOutbox(ex);
+            return false;
         }
-    }
-
-    private static async Task AcknowledgeAllAsync(
-        IOutboxReader outboxReader,
-        List<OutboxStoredMessage> messages,
-        ConcurrentBag<OutboxStoredMessage> failedMessages)
-    {
-        await outboxReader.RetryAsync(failedMessages).ConfigureAwait(false);
-
-        await outboxReader.AcknowledgeAsync(messages.Where(message => !failedMessages.Contains(message)))
-            .ConfigureAwait(false);
-    }
-
-    // TODO: Test all cases
-    private static async ValueTask<ProducerEndpoint> GetEndpointAsync(
-        OutboxStoredMessage message,
-        ProducerConfiguration configuration,
-        IServiceProvider serviceProvider)
-    {
-        switch (configuration.Endpoint)
+        finally
         {
-            case IStaticProducerEndpointResolver staticEndpointProvider:
-                return staticEndpointProvider.GetEndpoint(configuration);
-            case IDynamicProducerEndpointResolver dynamicEndpointProvider when message.Endpoint == null:
-                return dynamicEndpointProvider.GetEndpoint(message.Content, configuration, serviceProvider);
-            case IDynamicProducerEndpointResolver dynamicEndpointProvider:
-                return await dynamicEndpointProvider.DeserializeAsync(message.Endpoint, configuration).ConfigureAwait(false);
+            _serviceScope?.Dispose();
         }
-
-        throw new InvalidOperationException("The IEndpointProvider is neither an IStaticEndpointProvider nor an IDynamicEndpointProvider.");
     }
 
-    private async Task ProcessQueueAsync(IServiceProvider serviceProvider, CancellationToken stoppingToken)
+    /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
+    public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
+
+    private async Task<bool> TryProcessOutboxAsync(CancellationToken stoppingToken)
     {
-        _logger.LogReadingMessagesFromOutbox(_batchSize);
+        _logger.LogReadingMessagesFromOutbox(_settings.BatchSize);
 
-        ConcurrentBag<OutboxStoredMessage> failedMessages = new();
+        _failedMessages.Clear();
+        _outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
-        IOutboxReader? outboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
-        List<OutboxStoredMessage> outboxMessages = (await outboxReader.ReadAsync(_batchSize).ConfigureAwait(false)).ToList();
-
-        if (outboxMessages.Count == 0)
+        if (_outboxMessages.Count == 0)
         {
             _logger.LogOutboxEmpty();
-            return;
+            return false;
         }
 
         try
         {
-            Interlocked.Add(ref _pendingProduceOperations, outboxMessages.Count);
-
-            for (int i = 0; i < outboxMessages.Count; i++)
+            int index = 0;
+            foreach (OutboxMessage outboxMessage in _outboxMessages)
             {
-                _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
+                _logger.LogProcessingOutboxStoredMessage(++index, _outboxMessages.Count);
 
-                await ProcessMessageAsync(
-                        outboxMessages[i],
-                        failedMessages,
-                        outboxReader,
-                        serviceProvider)
-                    .ConfigureAwait(false);
+                await ProcessMessageAsync(outboxMessage).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -161,25 +136,22 @@ public class OutboxWorker : IOutboxWorker
         finally
         {
             await WaitAllAsync().ConfigureAwait(false);
-            await AcknowledgeAllAsync(outboxReader, outboxMessages, failedMessages).ConfigureAwait(false);
+            await AcknowledgeAllAsync().ConfigureAwait(false);
         }
+
+        return true;
     }
 
-    // TODO: Avoid closure allocations
-    private async Task ProcessMessageAsync(
-        OutboxStoredMessage message,
-        ConcurrentBag<OutboxStoredMessage> failedMessages,
-        IOutboxReader outboxReader,
-        IServiceProvider serviceProvider)
+    private async Task ProcessMessageAsync(OutboxMessage message)
     {
         try
         {
-            ProducerConfiguration producerConfiguration = GetProducerConfiguration(
-                message.MessageType,
-                message.EndpointRawName,
-                message.EndpointFriendlyName);
-            ProducerEndpoint endpoint = await GetEndpointAsync(message, producerConfiguration, serviceProvider).ConfigureAwait(false);
+            ProducerConfiguration producerConfiguration = GetProducerConfiguration(message);
+            ProducerEndpoint endpoint = await GetEndpointAsync(message, producerConfiguration).ConfigureAwait(false);
 
+            Interlocked.Increment(ref _pendingProduceOperations);
+
+            // TODO: Avoid closure allocations
             IProducer producer = await _brokerCollection.GetProducerAsync(producerConfiguration).ConfigureAwait(false);
             await producer.RawProduceAsync(
                     endpoint,
@@ -188,7 +160,7 @@ public class OutboxWorker : IOutboxWorker
                     _onSuccess,
                     exception =>
                     {
-                        failedMessages.Add(message);
+                        _failedMessages.Add(message);
                         Interlocked.Decrement(ref _pendingProduceOperations);
 
                         _logger.LogErrorProducingOutboxStoredMessage(
@@ -202,42 +174,40 @@ public class OutboxWorker : IOutboxWorker
         }
         catch (Exception ex)
         {
-            failedMessages.Add(message);
+            _failedMessages.Add(message);
             Interlocked.Decrement(ref _pendingProduceOperations);
 
             _logger.LogErrorProducingOutboxStoredMessage(ex);
 
-            await outboxReader.RetryAsync(message).ConfigureAwait(false);
-
             // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
-            if (_enforceMessageOrder)
+            if (_settings.EnforceMessageOrder)
                 throw;
         }
     }
 
     // TODO: Test all cases
-    private ProducerConfiguration GetProducerConfiguration(Type? messageType, string rawName, string? friendlyName)
+    private ProducerConfiguration GetProducerConfiguration(OutboxMessage outboxMessage)
     {
-        IReadOnlyCollection<IOutboundRoute> outboundRoutes = messageType != null
-            ? _routingConfiguration.GetRoutesForMessage(messageType)
+        IReadOnlyCollection<IOutboundRoute> outboundRoutes = outboxMessage.MessageType != null
+            ? _routingConfiguration.GetRoutesForMessage(outboxMessage.MessageType)
             : _routingConfiguration.Routes;
 
         List<ProducerConfiguration> matchingRawNameEndpoints = outboundRoutes
             .Select(route => route.ProducerConfiguration)
-            .Where(endpoint => endpoint.RawName == rawName)
+            .Where(configuration => configuration.RawName == outboxMessage.Endpoint.RawName)
             .ToList();
 
         if (matchingRawNameEndpoints.Count == 0)
         {
             throw new InvalidOperationException(
-                $"No endpoint with name '{rawName}' could be found for a message " +
-                $"of type '{messageType?.FullName}'.");
+                $"No endpoint with name '{outboxMessage.Endpoint.RawName}' could be found for a message " +
+                $"of type '{outboxMessage.MessageType?.FullName}'.");
         }
 
         if (matchingRawNameEndpoints.Count > 1)
         {
             ProducerConfiguration? matchingFriendlyNameEndpoint =
-                matchingRawNameEndpoints.FirstOrDefault(endpoint => endpoint.FriendlyName == friendlyName);
+                matchingRawNameEndpoints.FirstOrDefault(configuration => configuration.FriendlyName == outboxMessage.Endpoint.FriendlyName);
 
             if (matchingFriendlyNameEndpoint != null)
                 return matchingFriendlyNameEndpoint;
@@ -245,6 +215,26 @@ public class OutboxWorker : IOutboxWorker
 
         return matchingRawNameEndpoints[0];
     }
+
+    // TODO: Test all cases
+    private async ValueTask<ProducerEndpoint> GetEndpointAsync(OutboxMessage outboxMessage, ProducerConfiguration configuration)
+    {
+        switch (configuration.Endpoint)
+        {
+            case IStaticProducerEndpointResolver staticEndpointProvider:
+                return staticEndpointProvider.GetEndpoint(configuration);
+            case IDynamicProducerEndpointResolver dynamicEndpointProvider when outboxMessage.Endpoint.SerializedEndpoint == null:
+                _serviceScope ??= _serviceScopeFactory.CreateScope();
+                return dynamicEndpointProvider.GetEndpoint(outboxMessage.Content, configuration, _serviceScope.ServiceProvider);
+            case IDynamicProducerEndpointResolver dynamicEndpointProvider:
+                return await dynamicEndpointProvider.DeserializeAsync(outboxMessage.Endpoint.SerializedEndpoint, configuration).ConfigureAwait(false);
+        }
+
+        throw new InvalidOperationException("The IEndpointProvider is neither an IStaticEndpointProvider nor an IDynamicEndpointProvider.");
+    }
+
+    private Task AcknowledgeAllAsync() =>
+        _outboxReader.AcknowledgeAsync(_outboxMessages.Where(message => !_failedMessages.Contains(message)));
 
     private async Task WaitAllAsync()
     {

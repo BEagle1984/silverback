@@ -546,7 +546,7 @@ public class MessageHeaderCollectionFixture
     }
 
     [Fact]
-    public void TypedGetValue_ShouldReturnValue()
+    public void GetValue_ShouldReturnNullableValueType_WhenTypeSpecifiedViaGenericArgument()
     {
         MessageHeaderCollection collection = new()
         {
@@ -555,11 +555,13 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValue<int>("two").Should().Be(2);
+        int? result = collection.GetValue<int>("two");
+
+        result.Should().Be(2);
     }
 
     [Fact]
-    public void TypedGetValue_ShouldReturnNull_WhenHeaderDoesNotExist()
+    public void GetValue_ShouldReturnNullableValueType_WhenTypeSpecifiedViaParameter()
     {
         MessageHeaderCollection collection = new()
         {
@@ -568,7 +570,39 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValue<int>("four").Should().Be(null);
+        int? result = (int?)collection.GetValue("two", typeof(int));
+
+        result.Should().Be(2);
+    }
+
+    [Fact]
+    public void GetValue_ShouldReturnNull_WhenTypeSpecifiedViaGenericArgumentAndHeaderDoesNotExist()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", "1" },
+            { "two", "2" },
+            { "three", "3" }
+        };
+
+        int? result = collection.GetValue<int>("four");
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void GetValue_ShouldReturnNull_WhenTypeSpecifiedViaParameterAndHeaderDoesNotExist()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", "1" },
+            { "two", "2" },
+            { "three", "3" }
+        };
+
+        int? result = (int?)collection.GetValue("four", typeof(int));
+
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -598,7 +632,7 @@ public class MessageHeaderCollectionFixture
     }
 
     [Fact]
-    public void TypedGetValueOrDefault_ShouldReturnValue()
+    public void GetValueOrDefault_ShouldReturnConvertedValue_WhenTypeSpecifiedViaGenericArgument()
     {
         MessageHeaderCollection collection = new()
         {
@@ -607,11 +641,13 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault<int>("two").Should().Be(2);
+        int result = collection.GetValueOrDefault<int>("two");
+
+        result.Should().Be(2);
     }
 
     [Fact]
-    public void TypedGetValueOrDefault_ShouldReturnNull_WhenHeaderDoesNotExist()
+    public void GetValueOrDefault_ShouldReturnConvertedValue_WhenTypeSpecifiedViaParameter()
     {
         MessageHeaderCollection collection = new()
         {
@@ -620,6 +656,40 @@ public class MessageHeaderCollectionFixture
             { "three", "3" }
         };
 
-        collection.GetValueOrDefault<int>("four").Should().Be(0);
+        object? result = collection.GetValueOrDefault("two", typeof(int));
+
+        result.Should().BeOfType(typeof(int));
+        result.Should().Be(2);
+    }
+
+    [Fact]
+    public void GetValueOrDefault_ShouldReturnDefaultValue_WhenTypeSpecifiedViaGenericArgumentAndHeaderDoesNotExist()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", "1" },
+            { "two", "2" },
+            { "three", "3" }
+        };
+
+        int result = collection.GetValueOrDefault<int>("four");
+
+        result.Should().Be(0);
+    }
+
+    [Fact]
+    public void GetValueOrDefault_ShouldReturnDefaultValue_WhenTypeSpecifiedViaParameterAndHeaderDoesNotExist()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", "1" },
+            { "two", "2" },
+            { "three", "3" }
+        };
+
+        object? result = collection.GetValueOrDefault("four", typeof(int));
+
+        result.Should().BeOfType(typeof(int));
+        result.Should().Be(0);
     }
 }

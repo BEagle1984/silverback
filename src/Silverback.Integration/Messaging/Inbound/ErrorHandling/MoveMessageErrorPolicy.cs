@@ -146,6 +146,7 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
 
         private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, IServiceProvider serviceProvider, Exception exception)
         {
+            // TODO: Use OutboundEnvelopeFactory
             OutboundEnvelope outboundEnvelope =
                 envelope is IInboundEnvelope deserializedEnvelope
                     ? new OutboundEnvelope(

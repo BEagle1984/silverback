@@ -3,10 +3,4 @@
 
 namespace Silverback.Lock;
 
-internal sealed record NullLockSettings : DistributedLockSettings
-{
-    public NullLockSettings()
-    {
-        LockName = "null";
-    }
-}
+internal sealed record NullLockSettings : DistributedLockSettings;

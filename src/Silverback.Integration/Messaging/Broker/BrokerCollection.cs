@@ -106,11 +106,11 @@ public class BrokerCollection : IBrokerCollection
         configurationTypeMap.GetOrAdd(
             endpointType,
             static (keyEndpointType, args) =>
-                args._brokers.FirstOrDefault(
-                    broker => args.configurationTypePropertySelector.Invoke(broker)
+                args.Brokers.FirstOrDefault(
+                    broker => args.ConfigurationTypePropertySelector.Invoke(broker)
                         .IsAssignableFrom(keyEndpointType)) ??
                 throw new InvalidOperationException(
                     $"No message broker could be found to handle the endpoint of type {keyEndpointType.Name}. " +
                     "Please register the necessary IBroker implementation with the DI container."),
-            (_brokers, configurationTypePropertySelector));
+            (Brokers: _brokers, ConfigurationTypePropertySelector: configurationTypePropertySelector));
 }

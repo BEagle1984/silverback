@@ -665,7 +665,7 @@ public class StreamPublisherFixture
 
         public bool AutoUnwrap { get; }
 
-        public object? Message { get; }
+        public object? Message { get; set; }
     }
 
     private class TestBehavior : IBehavior

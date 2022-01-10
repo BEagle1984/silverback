@@ -98,7 +98,7 @@ public class ProducerConfigurationTests
                     MaxDepth = 42
                 }
             },
-            Strategy = new OutboxProduceStrategy(),
+            Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings()),
             FriendlyName = "my-friend",
             MessageEnrichers = enrichers.AsValueReadOnlyCollection(),
             MessageValidationMode = MessageValidationMode.None
@@ -122,7 +122,7 @@ public class ProducerConfigurationTests
                     MaxDepth = 42
                 }
             },
-            Strategy = new OutboxProduceStrategy(),
+            Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings()),
             FriendlyName = "my-friend",
             MessageEnrichers = enrichers.AsValueReadOnlyCollection(),
             MessageValidationMode = MessageValidationMode.None
@@ -172,7 +172,7 @@ public class ProducerConfigurationTests
                     MaxDepth = 42
                 }
             },
-            Strategy = new OutboxProduceStrategy(),
+            Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings()),
             FriendlyName = "my-friend",
             MessageEnrichers = enrichers.AsValueReadOnlyCollection(),
             MessageValidationMode = MessageValidationMode.None
@@ -196,7 +196,7 @@ public class ProducerConfigurationTests
                     MaxDepth = 42
                 }
             },
-            Strategy = new OutboxProduceStrategy(),
+            Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings()),
             FriendlyName = "my-friend",
             MessageEnrichers = enrichers.AsValueReadOnlyCollection(),
             MessageValidationMode = MessageValidationMode.None

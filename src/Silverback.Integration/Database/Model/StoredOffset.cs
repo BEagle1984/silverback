@@ -9,7 +9,7 @@ namespace Silverback.Database.Model;
 /// <summary>
 ///     The entity stored in the offset storage table.
 /// </summary>
-public class StoredOffset
+public class  StoredOffset
 {
     /// <summary>
     ///     Gets or sets the offset key.

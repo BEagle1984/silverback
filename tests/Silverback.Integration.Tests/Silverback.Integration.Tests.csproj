@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core.EFCore30\Silverback.Core.EFCore30.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
   </ItemGroup>

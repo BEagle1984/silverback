@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -29,13 +29,4 @@ public sealed partial class BrokerOptionsBuilder
     ///     Gets the <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </summary>
     public SilverbackBuilder SilverbackBuilder { get; }
-
-    internal void CompleteWithDefaults()
-    {
-        if (!SilverbackBuilder.Services.ContainsAny<IOutboxReader>())
-            SilverbackBuilder.Services.AddScoped<IOutboxReader, NullOutbox>();
-
-        if (!SilverbackBuilder.Services.ContainsAny<BrokerConnectionOptions>())
-            WithConnectionOptions(new BrokerConnectionOptions());
-    }
 }

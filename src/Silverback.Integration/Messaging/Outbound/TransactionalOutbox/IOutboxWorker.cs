@@ -12,13 +12,24 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 public interface IOutboxWorker
 {
     /// <summary>
-    ///     Processes the outbox.
+    ///     Processes the outbox relaying the stored messages.
     /// </summary>
     /// <param name="stoppingToken">
     ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> that represents the long running operations.
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a value indicating whether
+    ///     the outbox contained at least 1 message and it was processed successfully. The caller should ideally keep invoking this method
+    ///     in a loop, until <c>false</c> is returned.
     /// </returns>
-    Task ProcessQueueAsync(CancellationToken stoppingToken);
+    Task<bool> ProcessOutboxAsync(CancellationToken stoppingToken);
+
+    /// <summary>
+    ///     Returns the total number of messages in the outbox.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the number of messages in the
+    ///     outbox.
+    /// </returns>
+    Task<int> GetLengthAsync();
 }

@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util;
 
+// TODO: Get rid of this class / simplify using GetAwaiter().GetResult()
+// see https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
 internal static class AsyncHelper
 {
     private static readonly TaskFactory TaskFactory = new(

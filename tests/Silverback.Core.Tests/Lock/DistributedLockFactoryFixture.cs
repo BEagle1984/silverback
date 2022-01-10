@@ -27,6 +27,20 @@ public class DistributedLockFactoryFixture
     }
 
     [Fact]
+    public void GetDistributedLock_ShouldReturnDistributedLockAccordingToActualSettingsType()
+    {
+        DistributedLockFactory factory = new();
+        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+
+        IDistributedLock lock1 = factory.GetDistributedLock<DistributedLockSettings>(new LockSettings1());
+        IDistributedLock lock2 = factory.GetDistributedLock<DistributedLockSettings>(new LockSettings2());
+
+        lock1.Should().BeOfType<DistributedLock1>();
+        lock2.Should().BeOfType<DistributedLock2>();
+    }
+
+    [Fact]
     public void GetDistributedLock_ShouldReturnNullLockForNullSettings()
     {
         DistributedLockFactory factory = new();
@@ -175,9 +189,15 @@ public class DistributedLockFactoryFixture
         result.Should().BeFalse();
     }
 
-    private record LockSettings1 : DistributedLockSettings;
+    private record LockSettings1 : DistributedLockSettings
+    {
+        public string? LockName { get; init; }
+    }
 
-    private record LockSettings2 : DistributedLockSettings;
+    private record LockSettings2 : DistributedLockSettings
+    {
+        public string? LockName { get; init; }
+    }
 
     private class DistributedLock1 : DistributedLock
     {

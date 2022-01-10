@@ -21,8 +21,7 @@ internal static class ValueTaskFactory
     public static ValueTask CompletedTask => default;
 
     /// <summary>
-    ///     Creates a <see cref="ValueTask{TResult}" /> that's completed successfully with the specified
-    ///     result.
+    ///     Creates a <see cref="ValueTask{TResult}" /> that's completed successfully with the specified result.
     /// </summary>
     /// <typeparam name="TResult">
     ///     The type of the result returned by the task.
@@ -33,12 +32,10 @@ internal static class ValueTaskFactory
     /// <returns>
     ///     The successfully completed task.
     /// </returns>
-    public static ValueTask<TResult> FromResult<TResult>(TResult result) =>
-        new(result);
+    public static ValueTask<TResult> FromResult<TResult>(TResult result) => new(result);
 
     /// <summary>
-    ///     Creates a <see cref="ValueTask" /> that has completed due to cancellation with the specified
-    ///     cancellation token.
+    ///     Creates a <see cref="ValueTask" /> that has completed due to cancellation with the specified cancellation token.
     /// </summary>
     /// <param name="cancellationToken">
     ///     The cancellation token with which to complete the task.
@@ -46,12 +43,10 @@ internal static class ValueTaskFactory
     /// <returns>
     ///     The canceled task.
     /// </returns>
-    public static ValueTask FromCanceled(CancellationToken cancellationToken) =>
-        new(Task.FromCanceled(cancellationToken));
+    public static ValueTask FromCanceled(CancellationToken cancellationToken) => new(Task.FromCanceled(cancellationToken));
 
     /// <summary>
-    ///     Creates a <see cref="ValueTask{TResult}" /> that has completed due to cancellation with the
-    ///     specified cancellation token.
+    ///     Creates a <see cref="ValueTask{TResult}" /> that has completed due to cancellation with the specified cancellation token.
     /// </summary>
     /// <param name="cancellationToken">
     ///     The cancellation token with which to complete the task.
@@ -71,8 +66,7 @@ internal static class ValueTaskFactory
     /// <returns>
     ///     The faulted task.
     /// </returns>
-    public static ValueTask FromException(Exception exception) =>
-        new(Task.FromException(exception));
+    public static ValueTask FromException(Exception exception) => new(Task.FromException(exception));
 
     /// <summary>
     ///     Creates a <see cref="ValueTask{TResult}" /> that has completed with the specified exception.
@@ -83,6 +77,5 @@ internal static class ValueTaskFactory
     /// <returns>
     ///     The faulted task.
     /// </returns>
-    public static ValueTask<TResult> FromException<TResult>(Exception exception) =>
-        new(Task.FromException<TResult>(exception));
+    public static ValueTask<TResult> FromException<TResult>(Exception exception) => new(Task.FromException<TResult>(exception));
 }

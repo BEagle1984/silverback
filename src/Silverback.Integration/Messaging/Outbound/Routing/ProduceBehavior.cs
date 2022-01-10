@@ -45,7 +45,7 @@ public class ProduceBehavior : IBehavior, ISorted
         {
             IProduceStrategyImplementation strategyImplementation = _produceStrategyImplementations.GetOrAdd(
                 envelope.Endpoint.Configuration,
-                static (endpoint, serviceProvider) => endpoint.Strategy.Build(serviceProvider),
+                static (configuration, serviceProvider) => configuration.Strategy.Build(serviceProvider, configuration),
                 _serviceProvider);
             await strategyImplementation.ProduceAsync(envelope).ConfigureAwait(false);
         }

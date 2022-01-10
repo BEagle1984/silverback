@@ -23,7 +23,7 @@ public class DefaultProduceStrategyTests
     public void Equals_DifferentType_ReturnsFalse()
     {
         DefaultProduceStrategy strategy = new();
-        OutboxProduceStrategy otherStrategy = new();
+        OutboxProduceStrategy otherStrategy = new(new InMemoryOutboxSettings());
 
         strategy.Equals(otherStrategy).Should().BeFalse();
     }

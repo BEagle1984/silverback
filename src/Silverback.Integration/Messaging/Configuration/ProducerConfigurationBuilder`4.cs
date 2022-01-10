@@ -108,9 +108,10 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ProduceToOutbox()
+    // TODO: Builder version
+    public TBuilder ProduceToOutbox(OutboxSettings settings)
     {
-        _strategy = new OutboxProduceStrategy();
+        _strategy = new OutboxProduceStrategy(settings);
         return This;
     }
 

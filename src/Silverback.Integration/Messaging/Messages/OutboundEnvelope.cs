@@ -28,7 +28,7 @@ internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
         AutoUnwrap = autoUnwrap;
     }
 
-    public bool AutoUnwrap { get; }
+    public bool AutoUnwrap { get; set; }
 
-    public object? Message { get; }
+    public object? Message { get; set; }
 }
