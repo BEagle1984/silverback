@@ -276,7 +276,7 @@ attempts.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Func&lt;IRawInboundEnvelope, object&gt; MessageToPublishFactory { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Func&lt;IRawInboundEnvelope, Exception, object&gt; MessageToPublishFactory { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -288,7 +288,7 @@ attempts.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, <span class="xref">System.Exception</span>, <span class="xref">System.Object</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -452,7 +452,7 @@ current message and exception.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Build(System.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/ErrorPolicyBase.cs/#L140">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/ErrorPolicyBase.cs/#L156">View source</a>
   </span>
   <a id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Build_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Build*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Build(System.IServiceProvider)">Build(IServiceProvider)</h4>
@@ -504,7 +504,7 @@ error.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_BuildCore_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.BuildCore(System.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/ErrorPolicyBase.cs/#L144">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/ErrorPolicyBase.cs/#L160">View source</a>
   </span>
   <a id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_BuildCore_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.BuildCore*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_BuildCore_System_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.BuildCore(System.IServiceProvider)">BuildCore(IServiceProvider)</h4>
@@ -648,6 +648,57 @@ combine multiple calls to <code>ApplyTo</code> and <code>Exclude</code>.</p>
       <tr>
         <td><span class="parametername">T</span></td>
         <td><p>The type of the exception to be ignored.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Publish_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Object__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Publish(System.Func%7BSilverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception%2CSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/ErrorPolicyBase.cs/#L149">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Publish_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Publish*"></a>
+  <h4 id="Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Publish_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Object__" data-uid="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.Publish(System.Func{Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception,System.Object})">Publish(Func&lt;IRawInboundEnvelope, Exception, Object&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specify a factory to create a message to be published to the internal bus when this policy is
+applied. Useful to execute some custom code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ErrorPolicyBase Publish(Func&lt;IRawInboundEnvelope, Exception, object&gt; factory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>, <span class="xref">System.Exception</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">factory</span></td>
+        <td><p>The factory returning the message to be published.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>

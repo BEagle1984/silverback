@@ -79,12 +79,13 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="360-beta2"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.2">3.6.0-beta.2</a></h2>
+<h2 id="360-beta3"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.3">3.6.0-beta.3</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Handle <code>IAsyncEnumerable&lt;T&gt;</code> returned by the subscriber and republished the contained messages</li>
 <li>Enrich Kafka messages moved by the <a class="xref" href="api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> adding some extra headers containing some information about the source topic, partition, offset, etc. (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a>)</li>
 <li>Allow filters such as the <a class="xref" href="api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> or <a class="xref" href="api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> to be added to the subscribers at runtime via the configuration API (see <a class="xref" href="concepts/broker/kafka/multiple-consumer-groups.html">Multiple Consumer Groups (in same process)</a> and <a class="xref" href="concepts/broker/mqtt/multiple-clients.html">Multiple Clients (in same process)</a>)</li>
+<li>Add overload for <code>Publish</code> method in the error policies that forwards the exception as well as the envelope</li>
 </ul>
 <h3 id="fixes">Fixes</h3>
 <ul>

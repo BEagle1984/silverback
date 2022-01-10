@@ -171,7 +171,7 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                         // Produce the SampleMessage to the samples-basic topic
                         .AddOutbound&lt;SampleMessage&gt;(
                             endpoint =&gt; endpoint
-                                .ProduceTo(&quot;samples-basic&quot;, 0)));
+                                .ProduceTo(&quot;samples-basic&quot;)));
         }
     }
 }
@@ -326,7 +326,7 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                         // Consume the samples-basic topic
                         .AddInbound(
                             endpoint =&gt; endpoint
-                                .ConsumeFrom(new TopicPartitionOffset(&quot;samples-basic&quot;, 0, Offset.Beginning))
+                                .ConsumeFrom(&quot;samples-basic&quot;)
                                 .Configure(
                                     config =&gt;
                                     {
@@ -335,7 +335,12 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                                         // to connect
                                         config.GroupId = &quot;sample-consumer&quot;;
 
-                                        config.EnablePartitionEof = true;
+                                        // AutoOffsetReset.Earliest means that the
+                                        // consumer must start consuming from the
+                                        // beginning of the topic, if no offset was
+                                        // stored for this consumer group
+                                        config.AutoOffsetReset =
+                                            AutoOffsetReset.Earliest;
                                     })));
         }
     }
