@@ -21,6 +21,12 @@ namespace Silverback.Messaging.Outbound.Enrichers
             outboundEnvelope.Headers.AddOrReplace(
                 KafkaMessageHeaders.SourceConsumerGroupId,
                 ((KafkaConsumerEndpoint)inboundEnvelope.Endpoint).Configuration.GroupId);
+
+            while (exception.InnerException != null)
+            {
+                exception = exception.InnerException;
+            }
+
             outboundEnvelope.Headers.AddOrReplace(
                 DefaultMessageHeaders.FailureReason,
                 $"{exception.GetType().FullName} in {exception.Source}");

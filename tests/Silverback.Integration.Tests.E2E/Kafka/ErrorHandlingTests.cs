@@ -1345,7 +1345,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().ContainEquivalentOf(
                     new MessageHeader(
                         DefaultMessageHeaders.FailureReason,
-                        "System.Reflection.TargetInvocationException in System.Private.CoreLib"));
+                        "System.InvalidOperationException in Silverback.Integration.Tests.E2E"));
             Helper.Spy.OutboundEnvelopes[5].Headers
                 .Count(header => header.Name == KafkaMessageHeaders.SourceTimestamp)
                 .Should().Be(1);
