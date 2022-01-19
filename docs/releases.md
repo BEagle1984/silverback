@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.6.0-beta.4](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.4)
+## [3.6.0-beta.5](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.5)
 
 ### What's new
 
@@ -12,6 +12,7 @@ uid: releases
 * Enrich Kafka messages moved by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> adding some extra headers containing some information about the source topic, partition, offset, etc. (see <xref:headers>) 
 * Allow filters such as the <xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute> or <xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute> to be added to the subscribers at runtime via the configuration API (see <xref:kafka-consumer-groups> and <xref:mqtt-client-ids>)
 * Add overload for `Publish` method in the error policies that forwards the exception as well as the envelope
+* Throw `TimeoutException` from <xref:Silverback.Testing.KafkaTestingHelper> and <xref:Silverback.Testing.MqttTestingHelper> 
 
 ### Fixes
 

@@ -39,8 +39,10 @@ namespace Silverback.Testing
             _logger = logger;
         }
 
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
-        public override async Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
+        public override async Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            TimeSpan? timeout = null)
         {
             if (_inMemoryMqttBroker == null)
                 return;
@@ -63,8 +65,13 @@ namespace Silverback.Testing
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning(
-                    "The timeout elapsed before all messages could be consumed and processed.");
+                const string message =
+                    "The timeout elapsed before all messages could be consumed and processed.";
+
+                if (throwTimeoutException)
+                    throw new TimeoutException(message);
+
+                _logger.LogWarning(message);
             }
         }
 

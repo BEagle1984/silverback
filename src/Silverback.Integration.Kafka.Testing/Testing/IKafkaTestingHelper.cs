@@ -88,5 +88,32 @@ namespace Silverback.Testing
         Task WaitUntilAllMessagesAreConsumedAsync(
             IReadOnlyCollection<string> topicNames,
             TimeSpan? timeout = null);
+
+        /// <summary>
+        ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
+        ///     processed and committed.
+        /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked Kafka broker only. See
+        ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
+        ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+        /// </remarks>
+        /// <param name="throwTimeoutException">
+        ///     A value specifying whether a <see cref="TimeoutException" /> has to be thrown when the messages
+        ///     aren't consumed before the timeout expires.
+        /// </param>
+        /// <param name="topicNames">
+        ///     The name of the topics to be monitored.
+        /// </param>
+        /// <param name="timeout">
+        ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> that completes when all messages have been processed.
+        /// </returns>
+        Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            IReadOnlyCollection<string> topicNames,
+            TimeSpan? timeout = null);
     }
 }

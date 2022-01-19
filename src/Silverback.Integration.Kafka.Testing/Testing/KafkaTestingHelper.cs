@@ -87,18 +87,28 @@ namespace Silverback.Testing
                 .ToList();
         }
 
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
-        public override Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedCoreAsync(null, timeout);
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
+        public override Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            TimeSpan? timeout = null) =>
+            WaitUntilAllMessagesAreConsumedCoreAsync(throwTimeoutException, null, timeout);
 
         /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
         public Task WaitUntilAllMessagesAreConsumedAsync(
             IReadOnlyCollection<string> topicNames,
             TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedCoreAsync(topicNames, timeout);
+            WaitUntilAllMessagesAreConsumedAsync(true, topicNames, timeout);
+
+        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
+        public Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            IReadOnlyCollection<string> topicNames,
+            TimeSpan? timeout = null) =>
+            WaitUntilAllMessagesAreConsumedCoreAsync(true, topicNames, timeout);
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
         private async Task WaitUntilAllMessagesAreConsumedCoreAsync(
+            bool throwTimeoutException,
             IReadOnlyCollection<string>? topicNames,
             TimeSpan? timeout = null)
         {
@@ -130,8 +140,13 @@ namespace Silverback.Testing
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning(
-                    "The timeout elapsed before all messages could be consumed and processed.");
+                const string message =
+                    "The timeout elapsed before all messages could be consumed and processed.";
+
+                if (throwTimeoutException)
+                    throw new TimeoutException(message);
+
+                _logger.LogWarning(message);
             }
         }
     }

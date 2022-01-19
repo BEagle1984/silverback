@@ -29,8 +29,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// </summary>
         /// <remarks>
         ///     This is necessary to speed up the tests, since the
-        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync" /> method waits until the
-        ///     offsets are committed.
+        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> method
+        ///     waits until the offsets are committed.
         /// </remarks>
         /// <param name="intervalMs">
         ///     The desired auto commit interval in milliseconds.

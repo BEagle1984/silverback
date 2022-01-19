@@ -53,8 +53,12 @@ namespace Silverback.Testing
             "The IIntegrationSpy couldn't be resolved. " +
             "Register it calling AddIntegrationSpy or AddIntegrationSpyAndSubscriber.");
 
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync" />
-        public async Task WaitUntilConnectedAsync(TimeSpan? timeout = null)
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync(TimeSpan?)" />
+        public Task WaitUntilConnectedAsync(TimeSpan? timeout = null) =>
+            WaitUntilConnectedAsync(true, timeout);
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync(bool,TimeSpan?)" />
+        public async Task WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
         {
             using var cancellationTokenSource =
                 new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
@@ -62,7 +66,7 @@ namespace Silverback.Testing
             try
             {
                 while (!_broker.IsConnected || _broker.Consumers.Any(
-                    consumer => consumer.StatusInfo.Status < ConsumerStatus.Ready))
+                           consumer => consumer.StatusInfo.Status < ConsumerStatus.Ready))
                 {
                     cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -71,13 +75,24 @@ namespace Silverback.Testing
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning(
-                    "The timeout elapsed before the consumers successfully established a connection.");
+                const string message =
+                    "The timeout elapsed before the consumers successfully established a connection.";
+
+                if (throwTimeoutException)
+                    throw new TimeoutException(message);
+
+                _logger.LogWarning(message);
             }
         }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
-        public abstract Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null);
+        public Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
+            WaitUntilAllMessagesAreConsumedAsync(true, timeout);
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
+        public abstract Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            TimeSpan? timeout = null);
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilOutboxIsEmptyAsync" />
         public async Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)
