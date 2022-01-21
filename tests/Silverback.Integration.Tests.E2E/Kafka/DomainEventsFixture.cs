@@ -16,15 +16,15 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public class DomainEventsTests : KafkaTestFixture
+public class DomainEventsFixture : KafkaTestFixture
 {
-    public DomainEventsTests(ITestOutputHelper testOutputHelper)
+    public DomainEventsFixture(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }
 
     [Fact]
-    public async Task DomainEvents_MappedToOutboundEndpoint_AutomaticallyPublished()
+    public async Task DomainEvents_ShouldBeProduced_WhenMappedToOutboundEndpoint()
     {
         Host.ConfigureServices(
                 services => services

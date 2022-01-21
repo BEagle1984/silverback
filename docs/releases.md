@@ -19,6 +19,7 @@ uid: releases
   * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
   * Builders for client config?
   * New Storage packages (see...)
+  * Outbox supports ambient transaction (TransactionScope)
 * Clean up code and increase tests coverage
 * Reduce allocations
 
@@ -55,6 +56,7 @@ uid: releases
   * IOutboxReader / IOutboxWriter namespace + move to storage
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
+* Changed integration of domain entities / domain events with DbContext
 
 
 ### Deprecation Notice

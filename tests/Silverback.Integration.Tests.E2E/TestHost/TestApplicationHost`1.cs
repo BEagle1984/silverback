@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
@@ -102,7 +103,10 @@ public sealed class TestApplicationHost<THelper> : IDisposable
                             {
                                 services.AddDbContext<TestDbContext>(
                                     options => options
-                                        .UseSqlite(_sqliteConnection.ConnectionString));
+                                        .UseSqlite(_sqliteConnection.ConnectionString)
+
+                                        // TODO: How to test with transactions?
+                                        .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.AmbientTransactionWarning)));
                             }
                         })
                     .UseSolutionRelativeContentRoot(appRoot));
