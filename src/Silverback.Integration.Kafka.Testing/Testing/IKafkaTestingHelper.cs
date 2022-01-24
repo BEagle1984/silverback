@@ -15,8 +15,8 @@ public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     ///     Returns the <see cref="IMockedConsumerGroup" /> representing the consumer group with the specified id.
     /// </summary>
     /// <remarks>
-    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" />
-    ///     or <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderKafkaTestingExtensions.UseMockedKafka" />
+    ///     or <see cref="BrokerOptionsBuilderKafkaTestingExtensions.AddMockedKafka" />.
     /// </remarks>
     /// <param name="groupId">
     ///     The consumer group id.
@@ -30,8 +30,8 @@ public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     ///     Returns the <see cref="IMockedConsumerGroup" /> representing the consumer group with the specified id.
     /// </summary>
     /// <remarks>
-    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" />
-    ///     or <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderKafkaTestingExtensions.UseMockedKafka" />
+    ///     or <see cref="BrokerOptionsBuilderKafkaTestingExtensions.AddMockedKafka" />.
     /// </remarks>
     /// <param name="groupId">
     ///     The consumer group id.
@@ -48,8 +48,8 @@ public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     ///     Returns the <see cref="IInMemoryTopic" /> with the specified name.
     /// </summary>
     /// <remarks>
-    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" />
-    ///     or <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+    ///     This method works with the mocked Kafka broker only. See <see cref="SilverbackBuilderKafkaTestingExtensions.UseMockedKafka" />
+    ///     or <see cref="BrokerOptionsBuilderKafkaTestingExtensions.AddMockedKafka" />.
     /// </remarks>
     /// <param name="name">
     ///     The name of the topic.

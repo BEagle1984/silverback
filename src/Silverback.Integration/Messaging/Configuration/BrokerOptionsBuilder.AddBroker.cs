@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Silverback.Configuration;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;

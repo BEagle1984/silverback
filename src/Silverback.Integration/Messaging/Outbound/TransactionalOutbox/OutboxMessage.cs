@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -58,5 +57,8 @@ public class OutboxMessage
     /// </summary>
     public IReadOnlyCollection<MessageHeader>? Headers { get; }
 
+    /// <summary>
+    ///     Gets the target endpoint.
+    /// </summary>
     public OutboxMessageEndpoint Endpoint { get; }
 }

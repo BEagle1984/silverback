@@ -18,8 +18,8 @@ public interface IMqttTestingHelper : ITestingHelper<MqttBroker>
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked MQTT broker only. See
-    ///     <see cref="SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt" /> or
-    ///     <see cref="BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt" />.
+    ///     <see cref="SilverbackBuilderMqttTestingExtensions.UseMockedMqtt" /> or
+    ///     <see cref="BrokerOptionsBuilderMqttTestingExtensions.AddMockedMqtt" />.
     /// </remarks>
     /// <param name="clientId">
     ///     The client id.
@@ -34,8 +34,8 @@ public interface IMqttTestingHelper : ITestingHelper<MqttBroker>
     /// </summary>
     /// <remarks>
     ///     This method works with the mocked MQTT broker only. See
-    ///     <see cref="SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt" /> or
-    ///     <see cref="BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt" />.
+    ///     <see cref="SilverbackBuilderMqttTestingExtensions.UseMockedMqtt" /> or
+    ///     <see cref="BrokerOptionsBuilderMqttTestingExtensions.AddMockedMqtt" />.
     /// </remarks>
     /// <param name="topic">
     ///     The name of the topic.

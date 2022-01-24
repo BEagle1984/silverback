@@ -4,22 +4,23 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Adds the <c>AddMockedKafka</c> method to the <see cref="BrokerOptionsBuilder" />.
+///     Adds the <c>AddMockedMqtt</c> method to the <see cref="BrokerOptionsBuilder" />.
 /// </summary>
-public static class BrokerOptionsBuilderAddMockedKafkaExtensions
+public static class BrokerOptionsBuilderMqttTestingExtensions
 {
     /// <summary>
-    ///     Registers Apache Kafka as message broker but replaces the Kafka connectivity based on Confluent.Kafka
-    ///     with a mocked in-memory message broker that <b>more or less</b> replicates the Kafka behavior.
+    ///     Registers Apache Mqtt as message broker but replaces the MQTT connectivity based on MQTTnet
+    ///     with a mocked in-memory message broker that <b>more or less</b> replicates the MQTT broker behavior.
     /// </summary>
     /// <param name="brokerOptionsBuilder">
-    ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
+    ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
+    ///     add the services to.
     /// </param>
     /// <param name="optionsAction">
     ///     Configures the mock options.
@@ -27,14 +28,14 @@ public static class BrokerOptionsBuilderAddMockedKafkaExtensions
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static BrokerOptionsBuilder AddMockedKafka(
+    public static BrokerOptionsBuilder AddMockedMqtt(
         this BrokerOptionsBuilder brokerOptionsBuilder,
-        Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
+        Action<IMockedMqttOptionsBuilder>? optionsAction = null)
     {
         Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
-        brokerOptionsBuilder.AddKafka();
-        brokerOptionsBuilder.SilverbackBuilder.UseMockedKafka(optionsAction);
+        brokerOptionsBuilder.AddMqtt();
+        brokerOptionsBuilder.SilverbackBuilder.UseMockedMqtt(optionsAction);
 
         return brokerOptionsBuilder;
     }

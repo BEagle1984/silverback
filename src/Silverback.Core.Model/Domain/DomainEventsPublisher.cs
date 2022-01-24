@@ -94,8 +94,7 @@ public class DomainEventsPublisher
         {
             if (executeAsync)
             {
-                await events.ForEachAsync(message => _publisher.PublishAsync(message))
-                    .ConfigureAwait(false);
+                await events.ForEachAsync(message => _publisher.PublishAsync(message)).ConfigureAwait(false);
             }
             else
             {
@@ -117,14 +116,4 @@ public class DomainEventsPublisher
 
                 return selected ?? Enumerable.Empty<object>();
             }).ToList();
-
-    [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-    private async Task PublishEventAsync<TEvent>(bool executeAsync)
-        where TEvent : new()
-    {
-        if (executeAsync)
-            await _publisher.PublishAsync(new TEvent()).ConfigureAwait(false);
-        else
-            _publisher.Publish(new TEvent());
-    }
 }

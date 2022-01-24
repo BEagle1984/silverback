@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.EntityFrameworkCore;
-using Silverback.Database.Model;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
 
@@ -56,11 +55,5 @@ public class TestDbContext : DbContext
         int result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         transaction.Complete();
         return result;
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<InboundLogEntry>()
-            .HasKey(t => new { t.MessageId, t.ConsumerGroupName });
     }
 }

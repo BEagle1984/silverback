@@ -3,8 +3,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
