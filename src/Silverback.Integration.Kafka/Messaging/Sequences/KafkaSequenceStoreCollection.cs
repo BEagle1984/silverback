@@ -46,7 +46,7 @@ internal class KafkaSequenceStoreCollection : ISequenceStoreCollection
         if (brokerMessageIdentifier is not KafkaOffset offset)
             throw new InvalidOperationException("The identifier is not a KafkaOffset.");
 
-        return GetSequenceStore(offset.AsTopicPartition());
+        return GetSequenceStore(offset.TopicPartition);
     }
 
     public ISequenceStore GetSequenceStore(TopicPartition topicPartition)

@@ -7,7 +7,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
@@ -83,27 +82,6 @@ public partial class ConsumerConfigurationBuilderTests
         TestConsumerConfiguration endpoint = builder.OnError(errorPolicy => errorPolicy.Retry(5).ThenSkip()).Build();
 
         endpoint.ErrorPolicy.Should().BeOfType<ErrorPolicyChain>();
-    }
-
-    [Fact]
-    public void EnsureExactlyOnce_Strategy_ExactlyOnceStrategySet()
-    {
-        TestConsumerConfigurationBuilder<object> builder = new();
-        OffsetStoreExactlyOnceStrategy strategy = new();
-
-        TestConsumerConfiguration endpoint = builder.EnsureExactlyOnce(strategy).Build();
-
-        endpoint.ExactlyOnceStrategy.Should().BeSameAs(strategy);
-    }
-
-    [Fact]
-    public void EnsureExactlyOnce_StrategyBuildAction_ExactlyOnceStrategySet()
-    {
-        TestConsumerConfigurationBuilder<object> builder = new();
-
-        TestConsumerConfiguration endpoint = builder.EnsureExactlyOnce(strategy => strategy.StoreOffsets()).Build();
-
-        endpoint.ExactlyOnceStrategy.Should().BeOfType<OffsetStoreExactlyOnceStrategy>();
     }
 
     [Theory]

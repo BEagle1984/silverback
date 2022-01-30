@@ -5,7 +5,6 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -16,6 +15,19 @@ namespace Silverback.Messaging.Sequences.Chunking;
 /// </summary>
 public class ChunkSequenceWriter : ISequenceWriter
 {
+    private readonly IChunkEnricherFactory _chunkEnricherFactory;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="ChunkSequenceWriter" /> class.
+    /// </summary>
+    /// <param name="chunkEnricherFactory">
+    ///     The <see cref="IChunkEnricherFactory" />.
+    /// </param>
+    public ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory)
+    {
+        _chunkEnricherFactory = Check.NotNull(chunkEnricherFactory, nameof(chunkEnricherFactory));
+    }
+
     /// <inheritdoc cref="ISequenceWriter.CanHandle" />
     public bool CanHandle(IOutboundEnvelope envelope)
     {
@@ -54,7 +66,7 @@ public class ChunkSequenceWriter : ISequenceWriter
             ? (int?)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize)
             : null;
 
-        IBrokerMessageOffset? firstChunkOffset = null;
+        MessageHeader? firstChunkMessageHeader = null;
 
         int chunkIndex = 0;
 
@@ -68,8 +80,8 @@ public class ChunkSequenceWriter : ISequenceWriter
                 bufferMemory.Slice(0, readBytesCount).ToArray(),
                 envelope);
 
-            if (chunkIndex > 0)
-                chunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.FirstChunkOffset, firstChunkOffset?.Value);
+            if (chunkIndex > 0 && firstChunkMessageHeader != null)
+                chunkEnvelope.Headers.Add(firstChunkMessageHeader.Value);
 
             // Read the next chunk and check if we were at the end of the stream (to not rely on Length property)
             readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
@@ -81,7 +93,10 @@ public class ChunkSequenceWriter : ISequenceWriter
 
             // Read and store the offset of the first chunk, after it has been produced (after yield return)
             if (chunkIndex == 0)
-                firstChunkOffset = chunkEnvelope.BrokerMessageIdentifier as IBrokerMessageOffset;
+            {
+                firstChunkMessageHeader =
+                    _chunkEnricherFactory.GetEnricher(chunkEnvelope.Endpoint).GetFirstChunkMessageHeader(chunkEnvelope);
+            }
 
             chunkIndex++;
         }

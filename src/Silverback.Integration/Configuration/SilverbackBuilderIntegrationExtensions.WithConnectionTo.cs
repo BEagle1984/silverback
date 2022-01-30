@@ -49,14 +49,12 @@ public static partial class SilverbackBuilderIntegrationExtensions
         builder
             .AddScopedBehavior<OutboundRouterBehavior>()
             .AddSingletonBehavior<ProduceBehavior>()
+            .AddExtensibleFactory<IOutboxReaderFactory, OutboxReaderFactory>()
+            .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
             .Services
             .AddSingleton<IOutboundEnvelopeFactory, OutboundEnvelopeFactory>()
             .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration())
             .AddSingleton<ProducersPreloader>()
-            .AddSingleton<IOutboxReaderFactory>(serviceProvider => serviceProvider.GetService<OutboxReaderFactory>())
-            .AddSingleton(new OutboxReaderFactory())
-            .AddSingleton<IOutboxWriterFactory>(serviceProvider => serviceProvider.GetService<OutboxWriterFactory>())
-            .AddSingleton(new OutboxWriterFactory())
             .AddSingleton<OutboxBroker>();
 
         // Broker Collection

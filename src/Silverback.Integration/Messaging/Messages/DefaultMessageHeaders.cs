@@ -46,12 +46,6 @@ public static class DefaultMessageHeaders
     public const string IsLastChunk = "x-chunk-last";
 
     /// <summary>
-    ///     The <see cref="IBrokerMessageOffset" /> value of the first chunk of the same message, used when
-    ///     chunking is enabled.
-    /// </summary>
-    public const string FirstChunkOffset = "x-chunk-first-offset";
-
-    /// <summary>
     ///     Used for distributed tracing. It is set by the <see cref="IProducer" /> using the current
     ///     <c>Activity.Id</c>. The <see cref="IConsumer" /> uses it's value to set the
     ///     <c>Activity.ParentId</c>. Note that an <c>Activity</c> is automatically started by the default

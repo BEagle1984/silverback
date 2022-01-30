@@ -11,15 +11,11 @@ public interface IOutboxReaderFactory
     /// <summary>
     ///     Returns an <see cref="IOutboxReader" /> according to the specified settings.
     /// </summary>
-    /// <typeparam name="TSettings">
-    ///     The type of the settings.
-    /// </typeparam>
     /// <param name="settings">
     ///     The settings that will be used to create the <see cref="IOutboxReader" />.
     /// </param>
     /// <returns>
     ///     The <see cref="IOutboxReader" />.
     /// </returns>
-    IOutboxReader GetReader<TSettings>(TSettings? settings)
-        where TSettings : OutboxSettings;
+    IOutboxReader GetReader(OutboxSettings settings);
 }

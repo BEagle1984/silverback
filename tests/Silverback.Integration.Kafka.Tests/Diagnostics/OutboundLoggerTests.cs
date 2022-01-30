@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
@@ -50,7 +51,7 @@ public class OutboundLoggerTests
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerConfiguration()),
             true,
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Message produced. | " +
@@ -84,7 +85,7 @@ public class OutboundLoggerTests
                     FriendlyName = "friendly-name"
                 }),
             true,
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Message produced. | " +
@@ -109,7 +110,7 @@ public class OutboundLoggerTests
             { DefaultMessageHeaders.MessageId, "1234" },
             { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
         };
-        KafkaOffset brokerMessageIdentifier = new("topic2", 2, 42);
+        KafkaOffset brokerMessageIdentifier = new(new TopicPartitionOffset("topic2", 2, 42));
 
         string expectedMessage =
             "Message produced. | " +
@@ -137,7 +138,7 @@ public class OutboundLoggerTests
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerConfiguration()),
             true,
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Error occurred producing the message. | " +
@@ -189,7 +190,7 @@ public class OutboundLoggerTests
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerConfiguration()),
             true,
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Writing the outbound message to the transactional outbox. | " +
@@ -217,7 +218,7 @@ public class OutboundLoggerTests
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerConfiguration()),
             true,
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Failed to produce the message stored in the outbox. | " +

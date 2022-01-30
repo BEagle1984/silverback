@@ -148,8 +148,8 @@ public class BasicTests : KafkaTestFixture
                     .AddDelegateSubscriber(
                         async (IInboundEnvelope<TestEventOne> envelope) =>
                         {
-                            KafkaOffset endpoint = (KafkaOffset)envelope.BrokerMessageIdentifier;
-                            int partitionIndex = endpoint.Partition;
+                            KafkaOffset offset = (KafkaOffset)envelope.BrokerMessageIdentifier;
+                            int partitionIndex = offset.TopicPartition.Partition;
 
                             if (receivedMessages[partitionIndex] != exitedSubscribers[partitionIndex])
                                 areOverlapping = true;

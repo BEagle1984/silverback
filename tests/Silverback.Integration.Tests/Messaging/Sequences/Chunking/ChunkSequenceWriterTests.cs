@@ -18,6 +18,7 @@ public class ChunkSequenceWriterTests
     [Fact]
     public void MustCreateSequence_MessageExceedsChunkSize_TrueReturned()
     {
+        ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
         OutboundEnvelope envelope = new(
             rawMessage,
@@ -30,7 +31,7 @@ public class ChunkSequenceWriterTests
                 }
             }.GetDefaultEndpoint());
 
-        ChunkSequenceWriter writer = new();
+        ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
 
         result.Should().BeTrue();
@@ -41,6 +42,7 @@ public class ChunkSequenceWriterTests
     [InlineData(false)]
     public void MustCreateSequence_MessageSmallerThanChunkSize_ReturnedAccordingToAlwaysAddHeadersFlag(bool alwaysAddHeaders)
     {
+        ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(8);
         OutboundEnvelope envelope = new(
             rawMessage,
@@ -54,7 +56,7 @@ public class ChunkSequenceWriterTests
                 }
             }.GetDefaultEndpoint());
 
-        ChunkSequenceWriter writer = new();
+        ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
 
         result.Should().Be(alwaysAddHeaders);
@@ -63,13 +65,14 @@ public class ChunkSequenceWriterTests
     [Fact]
     public void MustCreateSequence_NoChunking_FalseReturned()
     {
+        ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(42);
         OutboundEnvelope envelope = new(
             rawMessage,
             null,
             new TestProducerConfiguration("test").GetDefaultEndpoint());
 
-        ChunkSequenceWriter writer = new();
+        ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
 
         result.Should().BeFalse();
@@ -78,6 +81,7 @@ public class ChunkSequenceWriterTests
     [Fact]
     public async Task ProcessMessage_LargeMessage_ChunkEnvelopesReturned()
     {
+        ChunkEnricherFactory enricherFactory = new();
         byte[] rawMessage = BytesUtil.GetRandomBytes(10);
         OutboundEnvelope sourceEnvelope = new(
             rawMessage,
@@ -95,7 +99,7 @@ public class ChunkSequenceWriterTests
             }.GetDefaultEndpoint(),
             true);
 
-        ChunkSequenceWriter writer = new();
+        ChunkSequenceWriter writer = new(enricherFactory);
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
         envelopes.Should().HaveCount(4);

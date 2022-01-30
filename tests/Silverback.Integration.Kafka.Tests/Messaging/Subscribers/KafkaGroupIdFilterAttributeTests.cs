@@ -67,10 +67,7 @@ public class KafkaGroupIdFilterAttributeTests
         result.Should().BeFalse();
     }
 
-    private sealed record SomeConsumerConfiguration : ConsumerConfiguration
-    {
-        public override string GetUniqueConsumerGroupName() => throw new NotImplementedException();
-    }
+    private sealed record SomeConsumerConfiguration : ConsumerConfiguration;
 
     private sealed record SomeConsumerEndpoint : ConsumerEndpoint<SomeConsumerConfiguration>
     {

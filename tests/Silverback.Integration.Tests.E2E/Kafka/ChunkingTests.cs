@@ -87,12 +87,12 @@ public class ChunkingTests : KafkaTestFixture
 
             if (envelope == firstEnvelope)
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should().BeNull();
+                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).Should().BeNull();
             }
             else
             {
-                envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should()
-                    .Be(firstEnvelope.BrokerMessageIdentifier!.Value);
+                envelope.Headers.GetValue(KafkaMessageHeaders.FirstChunkOffset).Should()
+                    .Be(((KafkaOffset)firstEnvelope.BrokerMessageIdentifier!).Offset.ToString());
             }
 
             if (envelope == lastEnvelope)

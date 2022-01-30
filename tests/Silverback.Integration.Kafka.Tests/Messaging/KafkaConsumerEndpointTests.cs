@@ -77,7 +77,7 @@ public class KafkaConsumerEndpointTests
             42,
             new KafkaConsumerConfiguration
             {
-                ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
+                ProcessPartitionsIndependently = false
             });
 
         bool result = endpoint1.Equals(endpoint2);

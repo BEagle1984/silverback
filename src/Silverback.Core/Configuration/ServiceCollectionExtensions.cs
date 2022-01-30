@@ -43,12 +43,11 @@ public static class ServiceCollectionExtensions
                 .AddLogger()
                 .AddArgumentResolvers()
                 .AddReturnValueHandlers()
-                .AddSingleton<IHostedService, SubscribedMethodsLoaderService>()
-                .AddSingleton<IDistributedLockFactory>(serviceProvider => serviceProvider.GetService<DistributedLockFactory>())
-                .AddSingleton(new DistributedLockFactory());
+                .AddSingleton<IHostedService, SubscribedMethodsLoaderService>();
         }
 
-        return new SilverbackBuilder(services);
+        return new SilverbackBuilder(services)
+            .AddExtensibleFactory<IDistributedLockFactory, DistributedLockFactory>();
     }
 
     /// <summary>

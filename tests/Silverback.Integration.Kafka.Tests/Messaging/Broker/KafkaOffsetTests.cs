@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging.Broker;
 using Xunit;
@@ -12,29 +13,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker;
 public class KafkaOffsetTests
 {
     [Fact]
-    public void Constructor_WithKeyValueString_ProperlyConstructed()
-    {
-        KafkaOffset offset = new("test-topic[2]", "42");
-
-        offset.Key.Should().Be("test-topic[2]");
-        offset.Value.Should().Be("42");
-
-        offset.Topic.Should().Be("test-topic");
-        offset.Partition.Should().Be(2);
-        offset.Offset.Should().Be(42);
-    }
-
-    [Fact]
     public void Constructor_WithTopicPartitionOffset_ProperlyConstructed()
     {
-        KafkaOffset offset = new("test-topic", 2, 42);
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 2, 42));
 
-        offset.Key.Should().Be("test-topic[2]");
-        offset.Value.Should().Be("42");
-
-        offset.Topic.Should().Be("test-topic");
-        offset.Partition.Should().Be(2);
-        offset.Offset.Should().Be(42);
+        offset.TopicPartition.Topic.Should().Be("test-topic");
+        offset.TopicPartition.Partition.Value.Should().Be(2);
+        offset.Offset.Value.Should().Be(42);
     }
 
     [Theory]
@@ -43,8 +28,8 @@ public class KafkaOffsetTests
     [InlineData(5, 5, false)]
     public void LessThanOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset offsetB = new("test-topic", 2, valueB);
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
 
         bool result = offsetA < offsetB;
 
@@ -57,8 +42,8 @@ public class KafkaOffsetTests
     [InlineData(5, 5, false)]
     public void GreaterThanOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset offsetB = new("test-topic", 2, valueB);
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
 
         bool result = offsetA > offsetB;
 
@@ -71,8 +56,8 @@ public class KafkaOffsetTests
     [InlineData(5, 5, true)]
     public void LessThanOrEqualOperator_SomeOffsets_ProperlyCompared(int valueA, int valueB, bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset offsetB = new("test-topic", 2, valueB);
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
 
         bool result = offsetA <= offsetB;
 
@@ -88,8 +73,8 @@ public class KafkaOffsetTests
         int valueB,
         bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset offsetB = new("test-topic", 2, valueB);
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset offsetB = new(new TopicPartitionOffset("test-topic", 2, valueB));
 
         bool result = offsetA >= offsetB;
 
@@ -103,8 +88,8 @@ public class KafkaOffsetTests
     [InlineData(5, null, false)]
     public void EqualityOperator_SomeOffsets_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset? offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
 
         bool result = offsetA == offsetB!;
 
@@ -118,8 +103,8 @@ public class KafkaOffsetTests
     [InlineData(5, null, true)]
     public void InequalityOperator_SomeOffsets_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset? offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
 
         bool result = offsetA != offsetB!;
 
@@ -133,25 +118,10 @@ public class KafkaOffsetTests
     [InlineData(5, null, 1)]
     public void CompareTo_AnotherKafkaOffset_ProperlyCompared(int valueA, int? valueB, int expectedResult)
     {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset? offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
+        KafkaOffset offsetA = new(new TopicPartitionOffset("test-topic", 2, valueA));
+        KafkaOffset? offsetB = valueB != null ? new KafkaOffset(new TopicPartitionOffset("test-topic", 2, valueB.Value)) : null;
 
         int result = offsetA.CompareTo(offsetB);
-
-        result.Should().Be(expectedResult);
-    }
-
-    [Theory]
-    [InlineData(10, 5, 1)]
-    [InlineData(1, 3, -1)]
-    [InlineData(5, 5, 0)]
-    [InlineData(5, null, 1)]
-    public void CompareTo_AnotherOffset_ProperlyCompared(int valueA, int? valueB, int expectedResult)
-    {
-        KafkaOffset offsetA = new("test-topic", 2, valueA);
-        KafkaOffset? offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
-
-        int result = offsetA.CompareTo((IBrokerMessageOffset?)offsetB);
 
         result.Should().Be(expectedResult);
     }
@@ -159,7 +129,7 @@ public class KafkaOffsetTests
     [Fact]
     public void EqualsOffset_SameInstance_TrueReturned()
     {
-        KafkaOffset offset = new("test-topic", 0, 42);
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 0, 42));
 
         bool result = offset.Equals(offset);
 
@@ -169,7 +139,7 @@ public class KafkaOffsetTests
     [Fact]
     public void EqualsObject_SameInstance_TrueReturned()
     {
-        KafkaOffset offset = new("test-topic", 0, 42);
+        KafkaOffset offset = new(new TopicPartitionOffset("test-topic", 0, 42));
 
         bool result = offset.Equals((object)offset);
 
@@ -190,8 +160,8 @@ public class KafkaOffsetTests
         long offset2,
         bool expected)
     {
-        KafkaOffset kafkaOffset1 = new(topic1, partition1, offset1);
-        KafkaOffset kafkaOffset2 = new(topic2, partition2, offset2);
+        KafkaOffset kafkaOffset1 = new(new TopicPartitionOffset(topic1, partition1, offset1));
+        KafkaOffset kafkaOffset2 = new(new TopicPartitionOffset(topic2, partition2, offset2));
 
         bool result = kafkaOffset1.Equals(kafkaOffset2);
 
@@ -212,8 +182,8 @@ public class KafkaOffsetTests
         long offset2,
         bool expected)
     {
-        KafkaOffset kafkaOffset1 = new(topic1, partition1, offset1);
-        KafkaOffset kafkaOffset2 = new(topic2, partition2, offset2);
+        KafkaOffset kafkaOffset1 = new(new TopicPartitionOffset(topic1, partition1, offset1));
+        KafkaOffset kafkaOffset2 = new(new TopicPartitionOffset(topic2, partition2, offset2));
 
         bool result = kafkaOffset1.Equals((object)kafkaOffset2);
 
@@ -224,7 +194,7 @@ public class KafkaOffsetTests
     [SuppressMessage("", "CA1508", Justification = "Test code")]
     public void EqualsOffset_Null_FalseReturned()
     {
-        KafkaOffset? offset1 = new("test-topic", 0, 42);
+        KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
 
         bool result = offset1.Equals(null);
 
@@ -235,7 +205,7 @@ public class KafkaOffsetTests
     [SuppressMessage("", "CA1508", Justification = "Test code")]
     public void EqualsObject_Null_FalseReturned()
     {
-        KafkaOffset? offset1 = new("test-topic", 0, 42);
+        KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
 
         bool result = offset1.Equals((object?)null);
 
@@ -243,9 +213,10 @@ public class KafkaOffsetTests
     }
 
     [Fact]
-    public void EqualsOffset_DifferentOffsetType_FalseReturned()
+    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
+    public void Equals_DifferentOffsetType_FalseReturned()
     {
-        KafkaOffset offset1 = new("test-topic", 0, 42);
+        KafkaOffset offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
         TestOtherOffset offset2 = new("test-topic", "42");
 
         bool result = offset1.Equals(offset2);
@@ -253,19 +224,7 @@ public class KafkaOffsetTests
         result.Should().BeFalse();
     }
 
-    [Fact]
-    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
-    public void EqualsObject_DifferentOffsetType_FalseReturned()
-    {
-        KafkaOffset offset1 = new("test-topic", 0, 42);
-        TestOtherOffset offset2 = new("test-queue", "42");
-
-        bool result = offset1.Equals((object)offset2);
-
-        result.Should().BeFalse();
-    }
-
-    private sealed class TestOtherOffset : IBrokerMessageOffset
+    private sealed class TestOtherOffset : IBrokerMessageIdentifier
     {
         public TestOtherOffset(string key, string value)
         {
@@ -282,8 +241,5 @@ public class KafkaOffsetTests
         public string ToVerboseLogString() => Value;
 
         public bool Equals(IBrokerMessageIdentifier? other) => false;
-
-        public int CompareTo(IBrokerMessageOffset? other) =>
-            string.Compare(Value, other?.Value, StringComparison.Ordinal);
     }
 }

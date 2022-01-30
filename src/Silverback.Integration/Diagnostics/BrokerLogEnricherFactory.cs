@@ -10,6 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Diagnostics;
 
+// TODO: Use ExtensibleFactory?
 internal sealed class BrokerLogEnricherFactory
 {
     private static readonly NullEnricher NullEnricherInstance = new();

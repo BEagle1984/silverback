@@ -57,6 +57,7 @@ uid: releases
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext
+* Deprecated ExactlyOnceStrategy -> replaced with ???client-side-offset-storage???
 
 
 ### Deprecation Notice

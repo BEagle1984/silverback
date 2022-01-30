@@ -303,10 +303,8 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
         await publisher.PublishAsync(new TestEventOne());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should()
-            .BeOfType<KafkaOffset>();
-        Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset
-            .Should().Be(1);
+        Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();
+        Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset.Value.Should().Be(1);
         Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
     }
 }

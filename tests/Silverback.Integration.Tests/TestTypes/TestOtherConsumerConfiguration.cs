@@ -24,6 +24,4 @@ public sealed record TestOtherConsumerConfiguration : ConsumerConfiguration
 
     [SuppressMessage("", "CA1024", Justification = "Method is appropriate (new instance)")]
     public TestActualOtherConsumerEndpoint GetEndpoint() => new("test", this);
-
-    public override string GetUniqueConsumerGroupName() => $"{RawName}|{GroupId}";
 }

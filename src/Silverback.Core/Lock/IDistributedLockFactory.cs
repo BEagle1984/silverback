@@ -11,15 +11,11 @@ public interface IDistributedLockFactory
     /// <summary>
     ///     Returns an <see cref="IDistributedLock" /> according to the specified settings.
     /// </summary>
-    /// <typeparam name="TSettings">
-    ///     The type of the settings.
-    /// </typeparam>
     /// <param name="settings">
     ///     The settings that will be used to create the <see cref="IDistributedLock" />.
     /// </param>
     /// <returns>
     ///     The <see cref="IDistributedLock" />.
     /// </returns>
-    IDistributedLock GetDistributedLock<TSettings>(TSettings? settings)
-        where TSettings : DistributedLockSettings;
+    IDistributedLock GetDistributedLock(DistributedLockSettings? settings);
 }

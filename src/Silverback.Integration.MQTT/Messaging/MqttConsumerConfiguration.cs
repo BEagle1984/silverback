@@ -45,9 +45,6 @@ public sealed record MqttConsumerConfiguration : ConsumerConfiguration
     /// </summary>
     public MqttQualityOfServiceLevel QualityOfServiceLevel { get; init; }
 
-    /// <inheritdoc cref="ConsumerConfiguration.GetUniqueConsumerGroupName" />
-    public override string GetUniqueConsumerGroupName() => RawName;
-
     /// <inheritdoc cref="ConsumerConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {

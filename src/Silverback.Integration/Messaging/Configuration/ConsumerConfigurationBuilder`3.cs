@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Serialization;
@@ -31,8 +30,6 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
     where TBuilder : ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {
     private IErrorPolicy? _errorPolicy;
-
-    private IExactlyOnceStrategy? _exactlyOnceStrategy;
 
     private int? _batchSize;
 
@@ -92,40 +89,6 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
         errorPolicyBuilderAction.Invoke(errorPolicyBuilder);
 
         return OnError(errorPolicyBuilder.Build());
-    }
-
-    /// <summary>
-    ///     Specifies the strategy to be used to ensure that each message is processed exactly once.
-    /// </summary>
-    /// <param name="strategy">
-    ///     The <see cref="IExactlyOnceStrategy" />.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder EnsureExactlyOnce(IExactlyOnceStrategy strategy)
-    {
-        _exactlyOnceStrategy = Check.NotNull(strategy, nameof(strategy));
-        return This;
-    }
-
-    /// <summary>
-    ///     Specifies the strategy to be used to ensure that each message is processed exactly once.
-    /// </summary>
-    /// <param name="strategyBuilderAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="ExactlyOnceStrategyBuilder" /> and configures it.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder EnsureExactlyOnce(Action<ExactlyOnceStrategyBuilder> strategyBuilderAction)
-    {
-        Check.NotNull(strategyBuilderAction, nameof(strategyBuilderAction));
-
-        ExactlyOnceStrategyBuilder strategyBuilder = new();
-        strategyBuilderAction.Invoke(strategyBuilder);
-
-        return EnsureExactlyOnce(strategyBuilder.Build());
     }
 
     /// <summary>
@@ -248,7 +211,6 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
         return endpoint with
         {
             ErrorPolicy = _errorPolicy ?? endpoint.ErrorPolicy,
-            ExactlyOnceStrategy = _exactlyOnceStrategy,
             Batch = _batchSize == null
                 ? endpoint.Batch
                 : new BatchSettings

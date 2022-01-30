@@ -5,18 +5,33 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Silverback;
+namespace Silverback.ExtensibleFactories;
 
 /// <summary>
 ///     The base class for factories used to allow extension in additional packages, for example adding other storage types.
 /// </summary>
+/// <remarks>
+///     Two versions are available:
+///     <list type="bullet">
+///         <item>
+///             <description>
+///                 <see cref="TypeBasedExtensibleFactory{TService,TDiscriminatorBase}"/>, using just a type as discriminator
+///             </description>
+///         </item>
+///         <item>
+///             <description>
+///                 <see cref="ExtensibleFactory{TService,TDiscriminatorBase}"/>, using a settings record as discriminator
+///             </description>
+///         </item>
+///     </list>
+/// </remarks>
 /// <typeparam name="TService">
 ///     The type of the service to build.
 /// </typeparam>
 /// <typeparam name="TSettingsBase">
 ///     The base type of the settings to use.
 /// </typeparam>
-public abstract class ExtensibleFactory<TService, TSettingsBase>
+public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFactory
     where TService : notnull
     where TSettingsBase : IEquatable<TSettingsBase>
 {
@@ -41,7 +56,7 @@ public abstract class ExtensibleFactory<TService, TSettingsBase>
         if (_factories.ContainsKey(typeof(TSettings)))
             throw new InvalidOperationException("The factory for the specified settings type is already registered.");
 
-        _factories.Add(typeof(TSettings), settings => factory((TSettings)settings));
+        _factories.Add(typeof(TSettings), settings => factory.Invoke((TSettings)settings));
     }
 
     /// <summary>
@@ -75,13 +90,9 @@ public abstract class ExtensibleFactory<TService, TSettingsBase>
     /// <returns>
     ///     The service of type <typeparamref name="TService" />, or <c>null</c> if no factory is registered for the specified settings type.
     /// </returns>
-    protected TService? GetService<TSettings>(TSettings? settings)
-        where TSettings : TSettingsBase
-    {
-        if (settings == null)
-            return default;
-
-        return _cache.GetOrAdd(
+    protected TService GetService<TSettings>(TSettings settings)
+        where TSettings : TSettingsBase =>
+        _cache.GetOrAdd(
             settings,
             static (_, args) =>
             {
@@ -90,11 +101,10 @@ public abstract class ExtensibleFactory<TService, TSettingsBase>
                 if (args.OverrideFactory != null)
                     return args.OverrideFactory.Invoke(args.Settings);
 
-                if (!args.Factories.TryGetValue(settingsType, out Func<TSettingsBase, TService>? factory))
-                    throw new InvalidOperationException($"No factory registered for the specified settings type ({settingsType.Name}).");
+                if (args.Factories.TryGetValue(settingsType, out Func<TSettingsBase, TService>? factory))
+                    return factory.Invoke(args.Settings);
 
-                return factory.Invoke(args.Settings);
+                throw new InvalidOperationException($"No factory registered for the specified settings type ({settingsType.Name}).");
             },
             (Settings: settings, OverrideFactory: _overrideFactory, Factories: _factories));
-    }
 }

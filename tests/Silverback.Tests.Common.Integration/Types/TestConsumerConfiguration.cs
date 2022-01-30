@@ -36,8 +36,6 @@ public sealed record TestConsumerConfiguration : ConsumerConfiguration
 
     public TestConsumerEndpoint GetDefaultEndpoint() => new(TopicNames.First(), this);
 
-    public override string GetUniqueConsumerGroupName() => $"{RawName}|{GroupId}";
-
     protected override void ValidateCore()
     {
         base.ValidateCore();

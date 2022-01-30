@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -27,28 +28,14 @@ public class DistributedLockFactoryFixture
     }
 
     [Fact]
-    public void GetDistributedLock_ShouldReturnDistributedLockAccordingToActualSettingsType()
-    {
-        DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
-
-        IDistributedLock lock1 = factory.GetDistributedLock<DistributedLockSettings>(new LockSettings1());
-        IDistributedLock lock2 = factory.GetDistributedLock<DistributedLockSettings>(new LockSettings2());
-
-        lock1.Should().BeOfType<DistributedLock1>();
-        lock2.Should().BeOfType<DistributedLock2>();
-    }
-
-    [Fact]
     public void GetDistributedLock_ShouldReturnNullLockForNullSettings()
     {
         DistributedLockFactory factory = new();
         factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
         factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
 
-        IDistributedLock nullLock1 = factory.GetDistributedLock<LockSettings1>(null);
-        IDistributedLock nullLock2 = factory.GetDistributedLock<LockSettings2>(null);
+        IDistributedLock nullLock1 = factory.GetDistributedLock(null);
+        IDistributedLock nullLock2 = factory.GetDistributedLock(null);
 
         nullLock1.Should().BeOfType<NullLock>();
         nullLock2.Should().BeSameAs(nullLock1);
@@ -97,18 +84,18 @@ public class DistributedLockFactoryFixture
     }
 
     [Fact]
-    public void GetDistributedLock_ShouldReturnCachedInstanceByLockNameAndType()
+    public void GetDistributedLock_ShouldReturnCachedInstanceBySettingsAndType()
     {
         DistributedLockFactory factory = new();
         factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
         factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
 
-        IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1 { LockName = "A" });
-        IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1 { LockName = "A" });
-        IDistributedLock lock1B1 = factory.GetDistributedLock(new LockSettings1 { LockName = "B" });
-        IDistributedLock lock1B2 = factory.GetDistributedLock(new LockSettings1 { LockName = "B" });
-        IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2 { LockName = "A" });
-        IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2 { LockName = "A" });
+        IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1("A"));
+        IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1("A"));
+        IDistributedLock lock1B1 = factory.GetDistributedLock(new LockSettings1("B"));
+        IDistributedLock lock1B2 = factory.GetDistributedLock(new LockSettings1("B"));
+        IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2("A"));
+        IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2("A"));
 
         lock1A1.Should().BeSameAs(lock1A2);
         lock1B1.Should().BeSameAs(lock1B2);
@@ -118,19 +105,19 @@ public class DistributedLockFactoryFixture
     }
 
     [Fact]
-    public void GetDistributedLock_ShouldReturnCachedInstanceByLockNameAndType_WhenOverridden()
+    public void GetDistributedLock_ShouldReturnCachedInstanceBySettingsAndType_WhenOverridden()
     {
         DistributedLockFactory factory = new();
         factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
         factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
         factory.OverrideFactories(settings => new OverrideLock(settings));
 
-        IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1 { LockName = "A" });
-        IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1 { LockName = "A" });
-        IDistributedLock lock1B1 = factory.GetDistributedLock(new LockSettings1 { LockName = "B" });
-        IDistributedLock lock1B2 = factory.GetDistributedLock(new LockSettings1 { LockName = "B" });
-        IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2 { LockName = "A" });
-        IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2 { LockName = "A" });
+        IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1("A"));
+        IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1("A"));
+        IDistributedLock lock1B1 = factory.GetDistributedLock(new LockSettings1("B"));
+        IDistributedLock lock1B2 = factory.GetDistributedLock(new LockSettings1("B"));
+        IDistributedLock lock2A1 = factory.GetDistributedLock(new LockSettings2("A"));
+        IDistributedLock lock2A2 = factory.GetDistributedLock(new LockSettings2("A"));
 
         lock1A1.Should().BeSameAs(lock1A2);
         lock1B1.Should().BeSameAs(lock1B2);
@@ -189,15 +176,11 @@ public class DistributedLockFactoryFixture
         result.Should().BeFalse();
     }
 
-    private record LockSettings1 : DistributedLockSettings
-    {
-        public string? LockName { get; init; }
-    }
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
+    private record LockSettings1(string? LockName = null) : DistributedLockSettings;
 
-    private record LockSettings2 : DistributedLockSettings
-    {
-        public string? LockName { get; init; }
-    }
+    [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
+    private record LockSettings2(string? LockName = null) : DistributedLockSettings;
 
     private class DistributedLock1 : DistributedLock
     {

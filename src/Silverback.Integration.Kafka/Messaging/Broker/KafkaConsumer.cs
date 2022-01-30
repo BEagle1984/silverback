@@ -264,12 +264,13 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
+        // TODO: Still needs the group by or we can trust the caller?
         IEnumerable<TopicPartitionOffset> lastOffsets = brokerMessageIdentifiers
-            .GroupBy(offset => offset.Key)
+            .GroupBy(offset => offset.TopicPartition)
             .Select(
                 offsetsGroup => offsetsGroup
-                    .OrderByDescending(offset => offset.Offset)
-                    .First()
+                    .OrderBy(offset => offset)
+                    .Last()
                     .AsTopicPartitionOffset());
 
         StoreOffset(
@@ -288,12 +289,13 @@ public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, K
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
+        // TODO: Still needs the group by or we can trust the caller?
         List<TopicPartitionOffset> latestTopicPartitionOffsets =
             brokerMessageIdentifiers
-                .GroupBy(offset => offset.Key)
+                .GroupBy(offset => offset.TopicPartition)
                 .Select(
                     offsetsGroup => offsetsGroup
-                        .OrderBy(offset => offset.Offset)
+                        .OrderBy(offset => offset)
                         .First()
                         .AsTopicPartitionOffset())
                 .ToList();

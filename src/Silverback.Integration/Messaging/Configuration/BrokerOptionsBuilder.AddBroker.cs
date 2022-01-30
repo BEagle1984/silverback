@@ -12,7 +12,6 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
-using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Sequences;
@@ -86,6 +85,7 @@ public sealed partial class BrokerOptionsBuilder
                 .AddSingletonSequenceWriter<ChunkSequenceWriter>()
                 .AddSingletonSequenceReader<ChunkSequenceReader>()
                 .AddTransientSequenceReader<BatchSequenceReader>()
+                .AddTypeBasedExtensibleFactory<IChunkEnricherFactory, ChunkEnricherFactory>()
                 .Services
                 .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore));
 
@@ -103,7 +103,6 @@ public sealed partial class BrokerOptionsBuilder
             SilverbackBuilder
                 .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
                 .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
-                .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                 .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
         }
 

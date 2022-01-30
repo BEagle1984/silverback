@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Inbound.ErrorHandling;
 
 namespace Silverback.Messaging.Messages;
@@ -46,8 +47,13 @@ public static class KafkaMessageHeaders
     public const string SourceOffset = "x-source-offset";
 
     /// <summary>
-    ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the timestamp of
-    ///     the message that failed to be processed.
+    ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the timestamp of the message that failed to be
+    ///     processed.
     /// </summary>
     public const string SourceTimestamp = "x-source-timestamp";
+
+    /// <summary>
+    ///     The <see cref="KafkaOffset" /> value of the first chunk of the same message, set when producing a chunked message.
+    /// </summary>
+    public const string FirstChunkOffset = "x-chunk-first-offset";
 }

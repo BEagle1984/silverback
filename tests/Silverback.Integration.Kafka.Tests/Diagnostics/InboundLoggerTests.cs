@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
@@ -50,7 +51,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Processing inbound message. | " +
@@ -77,7 +78,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Error occurred processing the inbound message. | " +
@@ -104,7 +105,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Fatal error occurred processing the consumed message. The consumer will be stopped. | " +
@@ -131,7 +132,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The message(s) will be processed again. | " +
@@ -158,7 +159,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The message will be moved to the endpoint 'target1'. | " +
@@ -185,7 +186,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The message(s) will be skipped. | " +
@@ -212,7 +213,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The message belongs to a FakeSequence and cannot be moved. | " +
@@ -239,7 +240,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "Message is being skipped since it was already processed. | " +
@@ -266,7 +267,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The RetryErrorPolicy will be skipped because the current failed " +
@@ -297,7 +298,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "The RetryErrorPolicy will be skipped because the current failed " +
@@ -333,7 +334,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "BatchSequence 'batch123' processing has completed... | " +
@@ -367,7 +368,7 @@ public class InboundLoggerTests
                 { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerConfiguration()),
-            new KafkaOffset("topic2", 2, 42));
+            new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         string expectedMessage =
             "BatchSequence 'batch123' processing has failed. | " +

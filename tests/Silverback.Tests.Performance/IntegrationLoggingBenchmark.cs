@@ -80,7 +80,7 @@ public class IntegrationLoggingBenchmark
                 new(KafkaMessageHeaders.KafkaMessageKey, "key1234")
             },
             consumerEndpoint,
-            new KafkaOffset("test", 4, 2));
+            new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
 
         KafkaProducerEndpoint producerEndpoint = new(
             "test-topic",
@@ -99,7 +99,7 @@ public class IntegrationLoggingBenchmark
                 },
                 producerEndpoint,
                 false,
-                new KafkaOffset("test", 4, 2));
+                new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
     }
 
     [Benchmark]

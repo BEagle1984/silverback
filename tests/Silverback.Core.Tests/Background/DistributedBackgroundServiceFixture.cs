@@ -33,7 +33,7 @@ public class DistributedBackgroundServiceFixture
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock<NullLockSettings>(null));
+            lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);

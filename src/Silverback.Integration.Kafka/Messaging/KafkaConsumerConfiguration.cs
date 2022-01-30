@@ -115,9 +115,6 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
 
     internal bool IsStaticAssignment { get; init; }
 
-    /// <inheritdoc cref="ConsumerConfiguration.GetUniqueConsumerGroupName" />
-    public override string GetUniqueConsumerGroupName() => !string.IsNullOrEmpty(Client.GroupId) ? Client.GroupId : DisplayName;
-
     /// <inheritdoc cref="ConsumerConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {

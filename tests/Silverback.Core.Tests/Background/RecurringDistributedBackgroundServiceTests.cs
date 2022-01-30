@@ -33,7 +33,7 @@ public class RecurringDistributedBackgroundServiceTests
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock<NullLockSettings>(null));
+            lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
@@ -131,7 +131,7 @@ public class RecurringDistributedBackgroundServiceTests
 
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock<NullLockSettings>(null));
+            lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => secondExecution != null);
@@ -154,7 +154,7 @@ public class RecurringDistributedBackgroundServiceTests
                executions++;
                return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock<NullLockSettings>(null));
+            lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
@@ -183,7 +183,7 @@ public class RecurringDistributedBackgroundServiceTests
                 executions++;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock<NullLockSettings>(null));
+            lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);

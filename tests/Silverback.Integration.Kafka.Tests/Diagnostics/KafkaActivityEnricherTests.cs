@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using Confluent.Kafka;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Diagnostics;
@@ -23,20 +24,23 @@ public class KafkaActivityEnricherTests
     {
         KafkaActivityEnricher enricher = new();
 
-        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute();
+        KafkaOffset offset = new(new TopicPartitionOffset("topic", 3, 42));
+        ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(identifier: offset);
         context.Envelope.Headers[KafkaMessageHeaders.KafkaMessageKey] = "MessageKey";
 
         Activity activity = new("Test Activity");
 
         enricher.EnrichInboundActivity(activity, context);
 
-        IBrokerMessageIdentifier identifier = context.Envelope.BrokerMessageIdentifier;
-
-        activity.Tags.Should().Contain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey && keyValuePair.Value == "MessageKey");
-        activity.Tags.Should()
-            .Contain(keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition && keyValuePair.Value == "test");
-        activity.Tags.Should()
-            .Contain(keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId && keyValuePair.Value == $"{identifier.Key}@{identifier.Value}");
+        activity.Tags.Should().Contain(
+            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaMessageKey &&
+                            keyValuePair.Value == "MessageKey");
+        activity.Tags.Should().Contain(
+            keyValuePair => keyValuePair.Key == KafkaActivityEnricher.KafkaPartition &&
+                            keyValuePair.Value == "topic[3]");
+        activity.Tags.Should().Contain(
+            keyValuePair => keyValuePair.Key == ActivityTagNames.MessageId &&
+                            keyValuePair.Value == "topic[3]@42");
     }
 
     [Fact]

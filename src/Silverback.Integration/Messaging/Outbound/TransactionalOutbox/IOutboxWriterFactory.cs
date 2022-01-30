@@ -11,15 +11,11 @@ public interface IOutboxWriterFactory
     /// <summary>
     ///     Returns an <see cref="IOutboxWriter" /> according to the specified settings.
     /// </summary>
-    /// <typeparam name="TSettings">
-    ///     The type of the settings.
-    /// </typeparam>
     /// <param name="settings">
     ///     The settings that will be used to create the <see cref="IOutboxWriter" />.
     /// </param>
     /// <returns>
     ///     The <see cref="IOutboxWriter" />.
     /// </returns>
-    IOutboxWriter GetWriter<TSettings>(TSettings? settings)
-        where TSettings : OutboxSettings;
+    IOutboxWriter GetWriter(OutboxSettings settings);
 }
