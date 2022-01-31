@@ -49,6 +49,5 @@ public class KafkaBrokerOptionsConfigurator : IBrokerOptionsConfigurator<KafkaBr
 
         if (!chunkEnricherFactory.HasFactory<KafkaProducerEndpoint>())
             chunkEnricherFactory.AddFactory<KafkaProducerEndpoint>(() => new KafkaChunkEnricher());
-
     }
 }

@@ -115,11 +115,6 @@ public static class BrokerBehaviorsSortIndexes
         public const int RawSequencer = 500;
 
         /// <summary>
-        ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
-        /// </summary>
-        public const int ExactlyOnceGuard = 600;
-
-        /// <summary>
         ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
         /// </summary>
         public const int Decryptor = 700;

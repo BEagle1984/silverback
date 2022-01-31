@@ -48,7 +48,7 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     ///     The type of the settings.
     /// </typeparam>
     /// <param name="factory">
-    ///     The factory building the <see cref="TService" /> according to the specified settings.
+    ///     The factory building the <typeparamref name="TService" /> according to the specified settings.
     /// </param>
     public virtual void AddFactory<TSettings>(Func<TSettings, TService> factory)
         where TSettings : TSettingsBase
@@ -79,7 +79,7 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     public void OverrideFactories(Func<TSettingsBase, TService> factory) => _overrideFactory = factory;
 
     /// <summary>
-    ///     Returns an object of type <see cref="TService" /> according to the specified settings.
+    ///     Returns an object of type <typeparamref name="TService" /> according to the specified settings.
     /// </summary>
     /// <typeparam name="TSettings">
     ///     The type of the settings.

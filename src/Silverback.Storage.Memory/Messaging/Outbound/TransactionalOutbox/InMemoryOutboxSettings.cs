@@ -26,5 +26,8 @@ public record InMemoryOutboxSettings : OutboxSettings
         OutboxName = outboxName;
     }
 
+    /// <summary>
+    ///     Gets the name of the outbox.
+    /// </summary>
     public string OutboxName { get; init; } = "default";
 }

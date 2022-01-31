@@ -278,10 +278,11 @@ public class OutboxWorkerFixture
                     options => options
                         .AddBroker<TestBroker>()
                         .AddInMemoryOutbox()
-                        .AddOutboxWorker(new OutboxWorkerSettings(outboxSettings)
-                        {
-                            BatchSize = 5
-                        }))
+                        .AddOutboxWorker(
+                            new OutboxWorkerSettings(outboxSettings)
+                            {
+                                BatchSize = 5
+                            }))
                 .AddEndpoints(
                     endpoints => endpoints
                         .AddOutbound<TestEventOne>(_configuration1)));
@@ -294,7 +295,7 @@ public class OutboxWorkerFixture
 
         for (int i = 0; i < 10; i++)
         {
-            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 },null, _outboxEndpoint1));
+            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
         }
 
         await outboxWorker.ProcessOutboxAsync(CancellationToken.None);

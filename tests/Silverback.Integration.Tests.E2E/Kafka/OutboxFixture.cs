@@ -194,7 +194,7 @@ public class OutboxFixture : KafkaTestFixture
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        using (TransactionScope transaction = new())
+        using (TransactionScope dummy = new())
         {
             await publisher.PublishAsync(new TestEventOne());
 

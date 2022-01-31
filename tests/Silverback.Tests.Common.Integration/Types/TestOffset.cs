@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Tests.Types;

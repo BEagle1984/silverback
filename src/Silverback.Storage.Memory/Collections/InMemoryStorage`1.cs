@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using Silverback.Util;
@@ -24,8 +25,9 @@ public class InMemoryStorage<T>
 
     private readonly ConcurrentDictionary<Transaction, SinglePhaseNotification> _enlistments = new();
 
-    //public IReadOnlyList<InMemoryStorageItem<T>> Items => _items;
-
+    /// <summary>
+    ///     Gets the number of items in the storage.
+    /// </summary>
     public int ItemsCount
     {
         get
@@ -37,6 +39,12 @@ public class InMemoryStorage<T>
         }
     }
 
+    /// <summary>
+    ///     Gets a <see cref="TimeSpan" /> representing the time elapsed since the oldest message currently in the storage was written.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="TimeSpan" /> representing the time elapsed since the oldest message currently in the storage was written.
+    /// </returns>
     public TimeSpan GetMaxAge()
     {
         lock (_items)
@@ -52,6 +60,15 @@ public class InMemoryStorage<T>
         }
     }
 
+    /// <summary>
+    ///     Gets the specified number of items from the storage, starting from the oldest.
+    /// </summary>
+    /// <param name="count">
+    ///     Specifies the number of items to retrieve.
+    /// </param>
+    /// <returns>
+    ///    The items.
+    /// </returns>
     public IReadOnlyCollection<T> Get(int count)
     {
         lock (_items)
@@ -60,6 +77,13 @@ public class InMemoryStorage<T>
         }
     }
 
+    /// <summary>
+    ///    Adds the specified item to the storage.
+    /// </summary>
+    /// <param name="item">
+    ///    The item to add.
+    /// </param>
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "_items is locked when used inside SinglePhaseNotification")]
     public void Add(T item)
     {
         InMemoryStoredItem<T> inMemoryStoredItem = new(item);
@@ -77,7 +101,7 @@ public class InMemoryStorage<T>
                 Transaction.Current,
                 static (transaction, args) =>
                 {
-                    SinglePhaseNotification singlePhaseNotification = new(args.Items, args.Enlistments);
+                    SinglePhaseNotification singlePhaseNotification = new(args.Items, args.Enlistments, Transaction.Current);
                     transaction.EnlistVolatile(singlePhaseNotification, EnlistmentOptions.None);
 
                     return singlePhaseNotification;
@@ -88,8 +112,16 @@ public class InMemoryStorage<T>
         }
     }
 
+    /// <summary>
+    ///    Removes the specified items from the storage.
+    /// </summary>
+    /// <param name="itemsToRemove">
+    ///   The items to remove.
+    /// </param>
     public void Remove(IEnumerable<T> itemsToRemove)
     {
+        Check.NotNull(itemsToRemove, nameof(itemsToRemove));
+
         lock (_items)
         {
             foreach (T itemToRemove in itemsToRemove)
@@ -114,11 +146,12 @@ public class InMemoryStorage<T>
 
         public SinglePhaseNotification(
             List<InMemoryStoredItem<T>> items,
-            ConcurrentDictionary<Transaction, SinglePhaseNotification> enlistments)
+            ConcurrentDictionary<Transaction, SinglePhaseNotification> enlistments,
+            Transaction transaction)
         {
             _items = items;
             _enlistments = enlistments;
-            _transaction = Transaction.Current;
+            _transaction = transaction;
         }
 
         public List<InMemoryStoredItem<T>> UncommittedItems { get; } = new();

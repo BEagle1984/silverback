@@ -544,6 +544,8 @@ public partial class SilverbackBuilderFixture
             });
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used for testing")]
     private class TestEventOne
     {
     }

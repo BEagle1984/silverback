@@ -62,6 +62,8 @@ public partial class PublisherFixture
             message is TestEventOne { Message: "yes" } or IEnvelope { Message: TestEventOne { Message: "yes" } };
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private class TestFilteredSubscriber
     {
         public TestingCollection<IEvent> ReceivedMessages { get; } = new();

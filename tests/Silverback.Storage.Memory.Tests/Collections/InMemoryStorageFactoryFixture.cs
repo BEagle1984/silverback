@@ -28,12 +28,12 @@ public class InMemoryStorageFactoryFixture
         storage2A1.Should().NotBeSameAs(storage1A1);
     }
 
-    public record Settings1
+    private record Settings1
     {
         public string? Name { get; init; }
     }
 
-    public record Settings2
+    private record Settings2
     {
         public string? Name { get; init; }
     }

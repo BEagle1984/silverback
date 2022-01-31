@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -141,6 +142,7 @@ public class InMemoryOutboxWriterFixture
             });
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
     private class TestMessage
     {
     }

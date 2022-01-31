@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Util;
@@ -54,6 +55,7 @@ public sealed class InMemoryLock : DistributedLock
             _semaphore.Release();
         }
 
+        [SuppressMessage("", "VSTHRD103", Justification = "Intentional")]
         protected override ValueTask DisposeCoreAsync()
         {
             Dispose(false);

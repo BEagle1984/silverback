@@ -43,17 +43,11 @@ public sealed class MqttMessageIdentifier : IBrokerMessageIdentifier
     /// </summary>
     public string MessageId { get; }
 
-    /// <inheritdoc cref="IBrokerMessageIdentifier.Key" />
-    public string Key => ClientId;
-
-    /// <inheritdoc cref="IBrokerMessageIdentifier.Value" />
-    public string Value => MessageId;
-
     /// <inheritdoc cref="IBrokerMessageIdentifier.ToLogString" />
-    public string ToLogString() => Value;
+    public string ToLogString() => MessageId;
 
     /// <inheritdoc cref="IBrokerMessageIdentifier.ToVerboseLogString" />
-    public string ToVerboseLogString() => $"{Key}@{Value}";
+    public string ToVerboseLogString() => $"{ClientId}@{MessageId}";
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
     public bool Equals(IBrokerMessageIdentifier? other)

@@ -49,7 +49,7 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     /// <summary>
     ///     Calls the <see cref="IOutboxWorker" /> to process the queue.
     /// </summary>
-    /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteLockedAsync" />
+    /// <inheritdoc cref="DistributedBackgroundService.ExecuteLockedAsync" />
     protected override async Task ExecuteLockedAsync(CancellationToken stoppingToken)
     {
         while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))

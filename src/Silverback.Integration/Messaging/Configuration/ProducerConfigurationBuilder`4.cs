@@ -105,6 +105,9 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     ///     The operation is therefore included in the database transaction applying the message side effects to the local database.
     ///     The <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
     /// </summary>
+    /// <param name="settings">
+    ///     The outbox settings.
+    /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>

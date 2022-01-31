@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -171,7 +172,7 @@ public partial class PublisherFixture
 
         public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
-            _calls?.Add(SortIndex.ToString());
+            _calls?.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 
             EnterCount++;
 

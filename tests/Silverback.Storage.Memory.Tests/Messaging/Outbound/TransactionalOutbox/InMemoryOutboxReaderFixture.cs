@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -183,7 +184,7 @@ public class InMemoryOutboxReaderFixture
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
 
         int count;
-        using (TransactionScope transaction = new())
+        using (TransactionScope dummy = new())
         {
             storage.Add(new OutboxMessage(typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint));
 
@@ -251,6 +252,7 @@ public class InMemoryOutboxReaderFixture
         maxAge.Should().Be(TimeSpan.Zero);
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
     private class TestMessage
     {
     }

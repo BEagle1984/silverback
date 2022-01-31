@@ -49,7 +49,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     ///     The discriminator implementation type.
     /// </typeparam>
     /// <param name="factory">
-    ///     The factory building the <see cref="TService" /> according to the specified discriminator.
+    ///     The factory building the <typeparamref name="TService" /> according to the specified discriminator.
     /// </param>
     public virtual void AddFactory<TDiscriminator>(Func<TService> factory)
         where TDiscriminator : TDiscriminatorBase
@@ -80,7 +80,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     public void OverrideFactories(Func<TService> factory) => _overrideFactory = factory;
 
     /// <summary>
-    ///     Returns an object of type <see cref="TService" /> according to the specified discriminator.
+    ///     Returns an object of type <typeparamref name="TService" /> according to the specified discriminator.
     /// </summary>
     /// <param name="discriminator">
     ///     The discriminator.
@@ -93,7 +93,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
         GetService(Check.NotNull(discriminator, nameof(discriminator)).GetType());
 
     /// <summary>
-    ///     Returns an object of type <see cref="TService" /> according to the specified discriminator.
+    ///     Returns an object of type <typeparamref name="TService" /> according to the specified discriminator.
     /// </summary>
     /// <param name="discriminatorType">
     ///     The discriminator implementation type.

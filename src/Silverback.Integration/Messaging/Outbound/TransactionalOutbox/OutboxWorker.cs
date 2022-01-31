@@ -37,7 +37,7 @@ public class OutboxWorker : IOutboxWorker
 
     private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
 
-    private IReadOnlyCollection<OutboxMessage> _outboxMessages;
+    private IReadOnlyCollection<OutboxMessage> _outboxMessages = Array.Empty<OutboxMessage>();
 
     private int _pendingProduceOperations;
 
@@ -46,26 +46,23 @@ public class OutboxWorker : IOutboxWorker
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
     /// </summary>
-    /// <param name="settings"></param>
-    /// <param name="outboxReader"></param>
+    /// <param name="settings">
+    ///     The worker settings.
+    /// </param>
+    /// <param name="outboxReader">
+    ///     The <see cref="IOutboxReader"/> to be used to retrieve the pending messages.
+    /// </param>
     /// <param name="brokerCollection">
     ///     The collection containing the available brokers.
     /// </param>
     /// <param name="routingConfiguration">
     ///     The configured outbound routes.
     /// </param>
-    /// <param name="serviceScopeFactory"></param>
+    /// <param name="serviceScopeFactory">
+    ///     The <see cref="IServiceScopeFactory"/>.
+    /// </param>
     /// <param name="logger">
     ///     The <see cref="IOutboundLogger{TCategoryName}" />.
-    /// </param>
-    /// <param name="enforceMessageOrder">
-    ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
-    ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
-    ///     successfully
-    ///     produced.
-    /// </param>
-    /// <param name="batchSize">
-    ///     The number of messages to be loaded and processed at once.
     /// </param>
     public OutboxWorker(
         OutboxWorkerSettings settings,

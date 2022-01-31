@@ -4,7 +4,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Lock;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Tests.Logging;

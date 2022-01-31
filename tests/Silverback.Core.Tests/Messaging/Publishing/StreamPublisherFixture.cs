@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -644,13 +645,14 @@ public class StreamPublisherFixture
 
     private class TestEventOne : IEvent
     {
-        public string? Message { get; init; }
     }
 
     private class TestEventTwo : IEvent
     {
     }
 
+    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used for testing")]
     private class TestCommandOne : IMessage
     {
     }

@@ -18,11 +18,20 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 /// </summary>
 public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="OutboxProduceStrategy" /> class.
+    /// </summary>
+    /// <param name="settings">
+    ///     The outbox settings.
+    /// </param>
     public OutboxProduceStrategy(OutboxSettings settings)
     {
         Settings = settings;
     }
 
+    /// <summary>
+    ///     Gets the outbox settings.
+    /// </summary>
     public OutboxSettings Settings { get; }
 
     /// <inheritdoc cref="op_Equality" />

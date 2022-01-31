@@ -125,7 +125,7 @@ public class InMemoryStorageFixture
         storage.Add("C");
 
         int count;
-        using (TransactionScope transaction = new())
+        using (TransactionScope dummy = new())
         {
             storage.Add("X");
 

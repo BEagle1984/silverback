@@ -1,10 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
-using Silverback.Lock;
 using Silverback.Util;
 
 namespace Silverback.Configuration;

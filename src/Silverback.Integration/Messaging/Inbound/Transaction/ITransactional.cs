@@ -1,5 +1,3 @@
-// TODO: USED?
-
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
@@ -11,6 +9,7 @@ namespace Silverback.Messaging.Inbound.Transaction;
 ///     Declares the <c>CommitAsync</c> and <c>RollbackAsync</c> methods, allowing the service to be enlisted
 ///     into the consumer transaction (see <see cref="ConsumerTransactionManager" />).
 /// </summary>
+// TODO: USED?
 public interface ITransactional
 {
     /// <summary>
