@@ -48,65 +48,129 @@ namespace Silverback.Tests.Integration.Messaging.Validation
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-        public static IEnumerable<object[]> HandleAsync_None_WarningIsNotLogged_TestData =>
-            new[]
+        public static IEnumerable<object[]> HandleAsync_None_WarningIsNotLogged_TestData
+        {
+            get
             {
-                new object[]
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" }
-                },
-                new object[]
+                    {
+                        Id = "1",
+                        String10 = "123456789abc",
+                        IntRange = 5,
+                        NumbersOnly = "123"
+                    }
+                };
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123" }
-                },
-                new object[]
-                {
-                    new TestValidationMessage { String10 = "123456", IntRange = 5, NumbersOnly = "123" }
-                },
-                new object[]
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 30,
+                        NumbersOnly = "123"
+                    }
+                };
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234" }
-                }
-            };
+                    {
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "123"
+                    }
+                };
+                yield return new object[]
+                {
+                    new TestValidationMessage
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "Test1234"
+                    }
+                };
+            }
+        }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
         public static IEnumerable<object[]>
-            HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData =>
-            new[]
+            HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData
+        {
+            get
             {
-                new object[]
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" },
+                    {
+                        Id = "1",
+                        String10 = "123456789abc",
+                        IntRange = 5,
+                        NumbersOnly = "123"
+                    },
                     $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
-                },
-                new object[]
+                };
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123" },
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 30,
+                        NumbersOnly = "123"
+                    },
                     $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field IntRange must be between 5 and 10."
-                },
-                new object[]
+                };
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456789abc", IntRange = 30, NumbersOnly = "123" },
+                    {
+                        Id = "1",
+                        String10 = "123456789abc",
+                        IntRange = 30,
+                        NumbersOnly = "123"
+                    },
                     $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
-                },
-                new object[]
-                {
-                    new TestValidationMessage { String10 = "123456", IntRange = 5, NumbersOnly = "123" },
-                    $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The Id field is required."
-                },
-                new object[]
+                };
+                yield return new object[]
                 {
                     new TestValidationMessage
-                        { Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234" },
+                    {
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "123"
+                    },
+                    $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The Id field is required."
+                };
+                yield return new object[]
+                {
+                    new TestValidationMessage
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "Test1234"
+                    },
                     $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
-                }
-            };
+                };
+                yield return new object[]
+                {
+                    new TestValidationMessage
+                    {
+                        Id = "1",
+                        String10 = "123456",
+                        IntRange = 5,
+                        NumbersOnly = "123",
+                        Nested = new ValidationMessageNestedModel
+                        {
+                            String5 = "123456"
+                        }
+                    },
+                    $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+                };
+            }
+        }
 
         [Theory]
         [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]

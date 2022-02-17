@@ -7,8 +7,8 @@ namespace Silverback.Tests.Types.Domain
 {
     public class TestValidationMessage : IIntegrationEvent
     {
-        public static TestValidationMessage ValidMessage => new()
-            { Id = "1", String10 = "123456789", IntRange = 5, NumbersOnly = "123" };
+        public static TestValidationMessage ValidMessage =>
+            new() { Id = "1", String10 = "123456789", IntRange = 5, NumbersOnly = "123" };
 
         public static TestValidationMessage MessageHavingSinglePropertyInvalid =>
             new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
@@ -27,5 +27,7 @@ namespace Silverback.Tests.Types.Domain
 
         [RegularExpression("^[0-9]*$")]
         public string NumbersOnly { get; set; } = null!;
+
+        public ValidationMessageNestedModel? Nested { get; set; }
     }
 }
