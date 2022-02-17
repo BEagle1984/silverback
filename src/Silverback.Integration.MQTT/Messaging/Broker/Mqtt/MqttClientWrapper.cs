@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 {
     /// <summary>
     ///     Wraps the <see cref="IMqttClient" /> adapting it for usage from the <see cref="MqttProducer" /> and
-    ///     <see cref="MqttConsumer" />.
+    ///     <see cref="MqttConsumer" />. It also handles the connection with the MQTT broker.
     /// </summary>
     internal sealed class MqttClientWrapper : IDisposable
     {
@@ -37,6 +37,8 @@ namespace Silverback.Messaging.Broker.Mqtt
         private MqttConsumer? _consumer;
 
         private bool _isConnected;
+
+        private bool _pendingReconnect;
 
         public MqttClientWrapper(
             IMqttClient mqttClient,
@@ -160,23 +162,27 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
         {
-            bool connectionLost = false;
-
             if (_isConnected)
             {
-                connectionLost = true;
+                _pendingReconnect = true;
                 _isConnected = false;
 
                 _logger.LogConnectionLost(this);
-            }
 
-            if (connectionLost && Consumer != null)
-                await Consumer.OnConnectionLostAsync().ConfigureAwait(false);
+                if (Consumer != null)
+                    await Consumer.OnConnectionLostAsync().ConfigureAwait(false);
+            }
 
             if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
                 return false;
 
             _isConnected = true;
+
+            if (_pendingReconnect)
+            {
+                _pendingReconnect = false;
+                _logger.LogReconnected(this);
+            }
 
             if (Consumer != null)
                 await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);

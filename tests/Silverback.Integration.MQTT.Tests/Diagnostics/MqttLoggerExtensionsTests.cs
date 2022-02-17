@@ -90,13 +90,18 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 Substitute.For<IMqttClient>(),
                 new MqttClientConfig
                 {
-                    ClientId = "test-client"
+                    ClientId = "test-client",
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "mqtt",
+                        Port = 1234
+                    }
                 },
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
-                "Error occurred connecting to the MQTT broker. | clientId: test-client";
+                "Error occurred connecting to the MQTT broker. | clientId: test-client, broker: mqtt:1234";
 
             _silverbackLogger.LogConnectError(mqttClientWrapper, new MqttCommunicationException("test"));
 
@@ -114,13 +119,17 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 Substitute.For<IMqttClient>(),
                 new MqttClientConfig
                 {
-                    ClientId = "test-client"
+                    ClientId = "test-client",
+                    ChannelOptions = new MqttClientWebSocketOptions
+                    {
+                        Uri = "mqtt"
+                    }
                 },
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
-                "Error occurred retrying to connect to the MQTT broker. | clientId: test-client";
+                "Error occurred retrying to connect to the MQTT broker. | clientId: test-client, broker: mqtt";
 
             _silverbackLogger.LogConnectRetryError(mqttClientWrapper, new MqttCommunicationException("test"));
 
@@ -138,14 +147,19 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 Substitute.For<IMqttClient>(),
                 new MqttClientConfig
                 {
-                    ClientId = "test-client"
+                    ClientId = "test-client",
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "mqtt",
+                        Port = 1234
+                    }
                 },
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
                 "Connection with the MQTT broker lost. The client will try to reconnect. | " +
-                "clientId: test-client";
+                "clientId: test-client, broker: mqtt:1234";
 
             _silverbackLogger.LogConnectionLost(mqttClientWrapper);
 
@@ -154,6 +168,35 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 null,
                 expectedMessage,
                 4023);
+        }
+
+        [Fact]
+        public void LogReconnected_Logged()
+        {
+            var mqttClientWrapper = new MqttClientWrapper(
+                Substitute.For<IMqttClient>(),
+                new MqttClientConfig
+                {
+                    ClientId = "test-client",
+                    ChannelOptions = new MqttClientWebSocketOptions
+                    {
+                        Uri = "mqtt"
+                    }
+                },
+                Substitute.For<IBrokerCallbacksInvoker>(),
+                _silverbackLogger);
+
+            var expectedMessage =
+                "Connection with the MQTT broker reestablished. | " +
+                "clientId: test-client, broker: mqtt";
+
+            _silverbackLogger.LogReconnected(mqttClientWrapper);
+
+            _loggerSubstitute.Received(
+                LogLevel.Information,
+                null,
+                expectedMessage,
+                4024);
         }
     }
 }

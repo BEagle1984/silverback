@@ -30,7 +30,7 @@ namespace Silverback.Diagnostics
         public static LogEvent ConnectError { get; } = new(
             LogLevel.Warning,
             GetEventId(21, nameof(ConnectError)),
-            "Error occurred connecting to the MQTT broker. | clientId: {clientId}");
+            "Error occurred connecting to the MQTT broker. | clientId: {clientId}, broker: {broker}");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying
@@ -39,7 +39,7 @@ namespace Silverback.Diagnostics
         public static LogEvent ConnectRetryError { get; } = new(
             LogLevel.Debug,
             GetEventId(22, nameof(ConnectRetryError)),
-            "Error occurred retrying to connect to the MQTT broker. | clientId: {clientId}");
+            "Error occurred retrying to connect to the MQTT broker. | clientId: {clientId}, broker: {broker}");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
@@ -48,7 +48,16 @@ namespace Silverback.Diagnostics
         public static LogEvent ConnectionLost { get; } = new(
             LogLevel.Warning,
             GetEventId(23, nameof(ConnectionLost)),
-            "Connection with the MQTT broker lost. The client will try to reconnect. | clientId: {clientId}");
+            "Connection with the MQTT broker lost. The client will try to reconnect. | clientId: {clientId}, broker: {broker}");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
+        ///     broker is established again after it was lost.
+        /// </summary>
+        public static LogEvent Reconnected { get; } = new(
+            LogLevel.Information,
+            GetEventId(24, nameof(Reconnected)),
+            "Connection with the MQTT broker reestablished. | clientId: {clientId}, broker: {broker}");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer

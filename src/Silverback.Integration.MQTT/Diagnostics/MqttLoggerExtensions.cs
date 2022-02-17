@@ -16,15 +16,17 @@ namespace Silverback.Diagnostics
             SilverbackLoggerMessage.Define<string, string, string, string>(
                 IntegrationLoggerExtensions.EnrichConsumerLogEvent(MqttLogEvents.ConsumingMessage));
 
-        private static readonly Action<ILogger, string, Exception?> ConnectError =
-            SilverbackLoggerMessage.Define<string>(MqttLogEvents.ConnectError);
+        private static readonly Action<ILogger, string, string, Exception?> ConnectError =
+            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectError);
 
-        private static readonly Action<ILogger, string, Exception?> ConnectRetryError =
-            SilverbackLoggerMessage.Define<string>(MqttLogEvents.ConnectRetryError);
+        private static readonly Action<ILogger, string, string, Exception?> ConnectRetryError =
+            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectRetryError);
 
-        private static readonly Action<ILogger, string, Exception?>
-            ConnectionLost =
-                SilverbackLoggerMessage.Define<string>(MqttLogEvents.ConnectionLost);
+        private static readonly Action<ILogger, string, string, Exception?> ConnectionLost =
+            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectionLost);
+
+        private static readonly Action<ILogger, string, string, Exception?> Reconnected =
+            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.Reconnected);
 
         private static readonly Action<ILogger, string, string, Exception?> ProducerQueueProcessingCanceled =
             SilverbackLoggerMessage.Define<string, string>(
@@ -62,6 +64,7 @@ namespace Silverback.Diagnostics
             ConnectError(
                 logger.InnerLogger,
                 client.ClientConfig.ClientId,
+                client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 exception);
 
         public static void LogConnectRetryError(
@@ -71,6 +74,7 @@ namespace Silverback.Diagnostics
             ConnectRetryError(
                 logger.InnerLogger,
                 client.ClientConfig.ClientId,
+                client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 exception);
 
         public static void LogConnectionLost(
@@ -79,6 +83,16 @@ namespace Silverback.Diagnostics
             ConnectionLost(
                 logger.InnerLogger,
                 client.ClientConfig.ClientId,
+                client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
+                null);
+
+        public static void LogReconnected(
+            this ISilverbackLogger logger,
+            MqttClientWrapper client) =>
+            Reconnected(
+                logger.InnerLogger,
+                client.ClientConfig.ClientId,
+                client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 null);
 
         public static void LogProducerQueueProcessingCanceled(
