@@ -51,7 +51,7 @@ public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint)
     {
-        Check.NotEmpty(key, nameof(key));
+        Check.NotNullOrEmpty(key, nameof(key));
 
         byte[]? serializedKey = AsyncHelper.RunSynchronously(() => SerializeAsync<string>(key, MessageComponentType.Key, endpoint).AsTask());
 

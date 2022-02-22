@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
+using Silverback.Lock;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Tests.Logging;
@@ -11,7 +12,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.Memory.Messaging.Configuration;
 
-public partial class BrokerOptionsBuilderMemoryExtensionsFixture
+public class BrokerOptionsBuilderMemoryExtensionsFixture
 {
     [Fact]
     public void AddInMemoryOutbox_ShouldConfigureOutboxFactories()
@@ -60,9 +61,15 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
         writer2.Should().BeOfType<InMemoryOutboxWriter>();
     }
 
-    private record OutboxSettings1 : OutboxSettings;
+    private record OutboxSettings1 : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
-    private record OutboxSettings2 : OutboxSettings;
+    private record OutboxSettings2 : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
     private class OutboxReader1 : IOutboxReader
     {
@@ -88,11 +95,13 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
 
     private class OutboxWriter1 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage) => throw new NotSupportedException();
+        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage) => throw new NotSupportedException();
+        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 }

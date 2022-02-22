@@ -49,7 +49,7 @@ public static class MessageHeaderEnumerableExtensions
     public static bool TryGetValue(this IEnumerable<MessageHeader> headers, string name, out string? value)
     {
         Check.NotNull(headers, nameof(headers));
-        Check.NotEmpty(name, nameof(name));
+        Check.NotNullOrEmpty(name, nameof(name));
 
         MessageHeader header = headers.FirstOrDefault(header => header.Name == name);
 
@@ -154,7 +154,7 @@ public static class MessageHeaderEnumerableExtensions
         bool throwIfNotFound = false)
     {
         Check.NotNull(headers, nameof(headers));
-        Check.NotEmpty(name, nameof(name));
+        Check.NotNullOrEmpty(name, nameof(name));
         Check.NotNull(targetType, nameof(targetType));
 
         bool found = headers.TryGetValue(name, out string? value);

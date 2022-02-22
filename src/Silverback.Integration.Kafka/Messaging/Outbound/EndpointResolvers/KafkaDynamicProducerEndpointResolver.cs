@@ -29,7 +29,7 @@ public sealed record KafkaDynamicProducerEndpointResolver : DynamicProducerEndpo
     ///     The function returning the target partition index for the message being produced.
     /// </param>
     public KafkaDynamicProducerEndpointResolver(string topic, Func<object?, int> partitionFunction)
-        : base(Check.NotEmpty(topic, nameof(topic)))
+        : base(Check.NotNullOrEmpty(topic, nameof(topic)))
     {
         Check.NotNull(partitionFunction, nameof(partitionFunction));
 
@@ -108,9 +108,9 @@ public sealed record KafkaDynamicProducerEndpointResolver : DynamicProducerEndpo
         string topicFormatString,
         Func<object?, string[]> topicArgumentsFunction,
         Func<object?, int>? partitionFunction = null)
-        : base(Check.NotEmpty(topicFormatString, nameof(topicFormatString)))
+        : base(Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString)))
     {
-        Check.NotEmpty(topicFormatString, nameof(topicFormatString));
+        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
         Func<object?, string> topicFunction = message => string.Format(

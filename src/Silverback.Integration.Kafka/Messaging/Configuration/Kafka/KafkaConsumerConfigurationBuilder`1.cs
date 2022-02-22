@@ -69,7 +69,7 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder<TMessage> ConsumeFrom(string topic) =>
-        ConsumeFrom(new[] { Check.NotEmpty(topic, nameof(topic)) });
+        ConsumeFrom(new[] { Check.NotNullOrEmpty(topic, nameof(topic)) });
 
     /// <summary>
     ///     Specifies the topics to be subscribed.
@@ -104,7 +104,7 @@ public class KafkaConsumerConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaConsumerConfigurationBuilder<TMessage> ConsumeFrom(string topic, params int[] partitions)
     {
-        Check.NotEmpty(topic, nameof(topic));
+        Check.NotNullOrEmpty(topic, nameof(topic));
         Check.NotEmpty(partitions, nameof(partitions));
 
         _topicPartitionOffsets = partitions.Select(partition => new TopicPartitionOffset(topic, partition, Offset.Unset)).ToArray();

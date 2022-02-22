@@ -3,10 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using FluentAssertions;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Kafka.Mocks;
@@ -14,6 +15,8 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
+using Silverback.Storage;
+using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -40,10 +43,10 @@ public class OutboxFixture : KafkaTestFixture
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka()
-                            .AddInMemoryOutbox()
-                            // TODO: Replace with builder and SQLite
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
                                 {
                                     Interval = TimeSpan.FromMilliseconds(100)
                                 }))
@@ -53,8 +56,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings()))
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -62,27 +65,23 @@ public class OutboxFixture : KafkaTestFixture
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 10; i++)
         {
-            using TransactionScope transaction = new();
-
-            for (int j = 1; j <= 5; j++)
-            {
-                await publisher.PublishAsync(new TestEventOne { Content = $"{(i * 5) + j}" });
-            }
-
-            transaction.Complete();
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(10);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(10);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .Should().BeEquivalentTo(Enumerable.Range(0, 10).Select(i => $"{i}"));
     }
 
     [Fact]
@@ -97,15 +96,15 @@ public class OutboxFixture : KafkaTestFixture
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka()
-                            .AddInMemoryOutbox()
-                            // TODO: Replace with builder and SQLite
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings("outbox1"))
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"))
                                 {
                                     Interval = TimeSpan.FromMilliseconds(100)
                                 })
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings("outbox2"))
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"))
                                 {
                                     Interval = TimeSpan.FromMilliseconds(100)
                                 }))
@@ -115,13 +114,13 @@ public class OutboxFixture : KafkaTestFixture
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo("topic1")
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings("outbox1")))
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1")))
                             .AddOutbound<TestEventTwo>(
                                 producer => producer
                                     .ProduceTo("topic2")
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings("outbox2")))
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
@@ -133,80 +132,26 @@ public class OutboxFixture : KafkaTestFixture
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"));
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"));
+
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            using TransactionScope transaction = new();
-
-            for (int j = 1; j <= 3; j++)
-            {
-                await publisher.PublishAsync(new TestEventOne { Content = $"{(i * 10) + j}" });
-                await publisher.PublishAsync(new TestEventTwo { Content = $"{(i * 10) + j}" });
-            }
-
-            transaction.Complete();
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventTwo());
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(18);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(18);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
         List<object?> inboundMessages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).ToList();
 
-        inboundMessages.OfType<TestEventOne>().Should().HaveCount(9);
-        inboundMessages.OfType<TestEventTwo>().Should().HaveCount(9);
-    }
-
-    [Fact]
-    public async Task OutboxProduceStrategy_ShouldNotWriteAnyMessage_WhenTransactionAborted()
-    {
-        Host
-            .ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka()
-                            .AddInMemoryOutbox()
-                            // TODO: Replace with builder and SQLite
-                            .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings()))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy())
-            .Run();
-
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-
-        using (TransactionScope dummy = new())
-        {
-            await publisher.PublishAsync(new TestEventOne());
-
-            // Don't commit
-        }
-
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes.Should().BeEmpty();
-
-        DefaultTopic.MessagesCount.Should().Be(0);
+        inboundMessages.OfType<TestEventOne>().Should().HaveCount(3);
+        inboundMessages.OfType<TestEventTwo>().Should().HaveCount(3);
     }
 
     [Fact]
@@ -221,10 +166,10 @@ public class OutboxFixture : KafkaTestFixture
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka()
-                            .AddInMemoryOutbox()
-                            // TODO: Replace with builder and SQLite
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
                                 {
                                     Interval = TimeSpan.FromMilliseconds(100)
                                 }))
@@ -248,10 +193,13 @@ public class OutboxFixture : KafkaTestFixture
                                                     throw new InvalidOperationException();
                                             }
                                         })
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings())))
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -272,8 +220,6 @@ public class OutboxFixture : KafkaTestFixture
                 topic2.MessagesCount >= 1 &&
                 topic3.MessagesCount >= 1);
 
-        // dbContext.Outbox.ForEach(outboxMessage => outboxMessage.EndpointRawName.Should().NotBeNullOrEmpty());
-
         topic1.MessagesCount.Should().Be(1);
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(1);
@@ -291,10 +237,10 @@ public class OutboxFixture : KafkaTestFixture
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka()
-                            .AddInMemoryOutbox()
-                            // TODO: Replace with builder and SQLite
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
                                 {
                                     Interval = TimeSpan.FromMilliseconds(100)
                                 }))
@@ -305,13 +251,258 @@ public class OutboxFixture : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(_ => "some-other-topic")
                                     .WithName("other-topic")
-                                    // TODO: Replace with builder and SQLite
-                                    .ProduceToOutbox(new InMemoryOutboxSettings()))
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo(_ => DefaultTopicName)
                                     .WithName("my-topic")
-                                    // TODO: Replace with builder and SQLite
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.OutboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == DefaultTopicName).Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "some-other-topic").Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task OutboxProduceStrategy_ShouldUseTransaction()
+    {
+        Host
+            .ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka()
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
+                            .AddOutboxWorker(
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
+                                {
+                                    Interval = TimeSpan.FromMilliseconds(100)
+                                }))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
+        await using SqliteConnection connection = new(Host.SqliteConnectionString);
+        await connection.OpenAsync();
+
+        await using (DbTransaction transaction = await connection.BeginTransactionAsync())
+        {
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            publisher.EnlistTransaction(transaction);
+
+            for (int i = 0; i < 3; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"rollback {i}" });
+            }
+
+            await transaction.RollbackAsync();
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
+
+        await using (DbTransaction transaction = await connection.BeginTransactionAsync())
+        {
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            publisher.EnlistTransaction(transaction);
+
+            for (int i = 0; i < 3; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"commit {i}" });
+            }
+
+            await transaction.CommitAsync();
+        }
+
+        await connection.CloseAsync();
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"commit {i}"));
+    }
+
+    [Fact]
+    public async Task OutboxProduceStrategy_ShouldIgnoreTransaction_WhenUsingInMemoryStorage()
+    {
+        Host
+            .ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka()
+                            .UseInMemoryOutbox()
+                            // TODO: Replace with builder
+                            .AddOutboxWorker(
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
+                                {
+                                    Interval = TimeSpan.FromMilliseconds(100)
+                                }))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                    .AddIntegrationSpy())
+            .Run();
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        await using SqliteConnection connection = new(Host.SqliteConnectionString);
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+
+        publisher.EnlistTransaction(transaction);
+        await publisher.PublishAsync(new TestEventOne());
+        await transaction.RollbackAsync();
+        await connection.CloseAsync();
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        DefaultTopic.MessagesCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task OutboxProduceStrategy_ShouldProduceMessages_WhenUsingSqlite()
+    {
+        Host
+            .ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka()
+                            .AddSqliteOutbox()
+                            // TODO: Replace with builder
+                            .AddOutboxWorker(
+                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
+                                {
+                                    Interval = TimeSpan.FromMilliseconds(100)
+                                }))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    // TODO: Replace with builder
+                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task OutboxProduceStrategy_ShouldProduceMessages_WhenUsingInMemoryStorage()
+    {
+        Host
+            .ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka()
+                            .AddInMemoryOutbox()
+                            // TODO: Replace with builder
+                            .AddOutboxWorker(
+                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
+                                {
+                                    Interval = TimeSpan.FromMilliseconds(100)
+                                }))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    // TODO: Replace with builder
                                     .ProduceToOutbox(new InMemoryOutboxSettings()))
                             .AddInbound(
                                 consumer => consumer
@@ -320,28 +511,22 @@ public class OutboxFixture : KafkaTestFixture
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            using TransactionScope transaction = new();
-
-            for (int j = 1; j <= 5; j++)
-            {
-                await publisher.PublishAsync(new TestEventOne { Content = $"{(i * 5) + j}" });
-            }
-
-            transaction.Complete();
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(30);
-        Helper.Spy.OutboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == DefaultTopicName).Should().HaveCount(15);
-        Helper.Spy.OutboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "some-other-topic").Should().HaveCount(15);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
     }
 }

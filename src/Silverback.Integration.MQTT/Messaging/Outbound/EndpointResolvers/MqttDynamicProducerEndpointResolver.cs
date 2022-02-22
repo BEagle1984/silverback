@@ -43,9 +43,9 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
     /// </param>
     [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Not an issue, the array is not modified")]
     public MqttDynamicProducerEndpointResolver(string topicFormatString, Func<object?, string[]> topicArgumentsFunction)
-        : base(Check.NotEmpty(topicFormatString, nameof(topicFormatString)))
+        : base(Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString)))
     {
-        Check.NotEmpty(topicFormatString, nameof(topicFormatString));
+        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
         _topicFunction = (message, _) =>

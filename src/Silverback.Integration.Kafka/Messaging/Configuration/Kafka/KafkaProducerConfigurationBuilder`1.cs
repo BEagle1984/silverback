@@ -66,7 +66,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
     /// </returns>
     public KafkaProducerConfigurationBuilder<TMessage> ProduceTo(string topic, int? partition = null)
     {
-        Check.NotEmpty(topic, nameof(topic));
+        Check.NotNullOrEmpty(topic, nameof(topic));
         _endpointResolver = new KafkaStaticProducerEndpointResolver(topic, partition);
         return this;
     }
@@ -186,7 +186,7 @@ public sealed class KafkaProducerConfigurationBuilder<TMessage>
         Func<TMessage?, string[]> topicArgumentsFunction,
         Func<TMessage?, int>? partitionFunction = null)
     {
-        Check.NotEmpty(topicFormatString, nameof(topicFormatString));
+        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
         _endpointResolver = new KafkaDynamicProducerEndpointResolver(

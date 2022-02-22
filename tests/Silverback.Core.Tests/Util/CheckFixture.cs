@@ -72,7 +72,7 @@ public class CheckFixture
     {
         string str = "test";
 
-        string result = Check.NotEmpty(str, "param");
+        string result = Check.NotNullOrEmpty(str, "param");
 
         result.Should().BeSameAs(str);
     }
@@ -82,7 +82,7 @@ public class CheckFixture
     {
         string str = string.Empty;
 
-        Action act = () => Check.NotEmpty(str, "param");
+        Action act = () => Check.NotNullOrEmpty(str, "param");
 
         act.Should().ThrowExactly<ArgumentException>();
     }
@@ -92,7 +92,7 @@ public class CheckFixture
     {
         string? str = null;
 
-        Action act = () => Check.NotEmpty(str, "param");
+        Action act = () => Check.NotNullOrEmpty(str, "param");
 
         act.Should().ThrowExactly<ArgumentNullException>();
     }

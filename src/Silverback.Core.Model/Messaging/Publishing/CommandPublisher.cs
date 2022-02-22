@@ -23,6 +23,9 @@ public class CommandPublisher : ICommandPublisher
         _publisher = publisher;
     }
 
+    /// <inheritdoc cref="IPublisherBase.Context" />
+    public SilverbackContext Context => _publisher.Context;
+
     /// <inheritdoc cref="ICommandPublisher.Execute(ICommand)" />
     public void Execute(ICommand commandMessage) => _publisher.Publish(commandMessage, true);
 

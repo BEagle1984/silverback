@@ -9,15 +9,8 @@ namespace Silverback.Messaging.Serialization;
 
 internal static class SerializationHelper
 {
-    public static Type? GetTypeFromHeaders(MessageHeaderCollection messageHeaders, bool throwOnError = true)
-    {
-        string? typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
-
-        if (string.IsNullOrEmpty(typeName))
-            return null;
-
-        return TypesCache.GetType(typeName, throwOnError);
-    }
+    public static Type? GetTypeFromHeaders(MessageHeaderCollection messageHeaders, bool throwOnError = true) =>
+        TypesCache.GetType(messageHeaders.GetValue(DefaultMessageHeaders.MessageType), throwOnError);
 
     public static IRawInboundEnvelope CreateTypedInboundEnvelope(
         IRawInboundEnvelope rawInboundEnvelope,

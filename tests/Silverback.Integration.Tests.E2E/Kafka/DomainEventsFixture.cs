@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
@@ -29,6 +30,7 @@ public class DomainEventsFixture : KafkaTestFixture
         Host.ConfigureServices(
                 services => services
                     .AddLogging()
+                    .AddDbContext<TestDbContext>(options => options.UseSqlite(Host.SqliteConnectionString))
                     .AddSilverback()
                     .UseModel()
                     .AddDelegateSubscriber(
@@ -42,8 +44,13 @@ public class DomainEventsFixture : KafkaTestFixture
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)))
                     .AddIntegrationSpyAndSubscriber())
-            .WithTestDbContext()
             .Run();
+
+        using (IServiceScope scope = Host.ServiceProvider.CreateScope())
+        {
+            TestDbContext dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+            await dbContext.Database.EnsureCreatedAsync();
+        }
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {

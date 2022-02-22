@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Publishing;
 /// <summary>
 ///     Publishes the messages implementing <see cref="IQuery{TResult}" />.
 /// </summary>
-public interface IQueryPublisher
+public interface IQueryPublisher : IPublisherBase
 {
     /// <summary>
     ///     Executes the specified query publishing it to the internal bus. The message will be forwarded to its subscribers and the

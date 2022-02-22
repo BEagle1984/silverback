@@ -17,10 +17,10 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Uri))
-            throw new EndpointConfigurationException("The URI is required to connect with the message broker.", Uri, nameof(Uri));
+            throw new EndpointConfigurationException("The URI is required to connect with the message broker.");
 
         if (Tls == null)
-            throw new EndpointConfigurationException("The TLS configuration is required.", Tls, nameof(Tls));
+            throw new EndpointConfigurationException("The TLS configuration is required.");
 
         Proxy?.Validate();
         Tls.Validate();

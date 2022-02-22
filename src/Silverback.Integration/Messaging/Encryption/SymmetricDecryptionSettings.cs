@@ -19,7 +19,7 @@ public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase
     public override void Validate()
     {
         if (string.IsNullOrEmpty(AlgorithmName))
-            throw new EndpointConfigurationException("The algorithm name is required.", AlgorithmName, nameof(AlgorithmName));
+            throw new EndpointConfigurationException("The algorithm name is required.");
 
         if (KeyProvider == null && Key == null)
             throw new EndpointConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");

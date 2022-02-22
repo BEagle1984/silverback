@@ -20,7 +20,7 @@ internal static class Check
     {
         if (ReferenceEquals(value, null))
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
             throw new ArgumentNullException(parameterName);
         }
 
@@ -36,7 +36,7 @@ internal static class Check
 
         if (value.Count == 0)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
             throw new ArgumentException("Value cannot be an empty collection.", parameterName);
         }
 
@@ -44,7 +44,7 @@ internal static class Check
     }
 
     [ContractAnnotation("value:null => halt")]
-    public static string NotEmpty(
+    public static string NotNullOrEmpty(
         [ValidatedNotNull] string? value,
         [InvokerParameterName] string parameterName)
     {
@@ -57,7 +57,7 @@ internal static class Check
 
         if (exception != null)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
 
             throw exception;
         }
@@ -69,7 +69,7 @@ internal static class Check
     {
         if (value != null && value.Length == 0)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
 
             throw new ArgumentException("Value cannot be empty.", parameterName);
         }
@@ -86,7 +86,7 @@ internal static class Check
 
         if (value.Any(element => element == null))
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
 
             throw new ArgumentException("The collection cannot contain null values.", parameterName);
         }
@@ -102,7 +102,7 @@ internal static class Check
 
         if (value.Any(string.IsNullOrEmpty))
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
 
             throw new ArgumentException(
                 "The collection cannot contain null or empty values.",
@@ -117,7 +117,7 @@ internal static class Check
     {
         if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
         {
-            NotEmpty(parameterName, nameof(parameterName));
+            NotNullOrEmpty(parameterName, nameof(parameterName));
 
             throw new ArgumentOutOfRangeException(
                 parameterName,

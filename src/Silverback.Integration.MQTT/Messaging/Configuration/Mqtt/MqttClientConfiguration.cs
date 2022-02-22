@@ -46,20 +46,10 @@ public sealed partial record MqttClientConfiguration : IValidatableEndpointSetti
     public void Validate()
     {
         if (string.IsNullOrEmpty(ClientId))
-        {
-            throw new EndpointConfigurationException(
-                $"A {nameof(ClientId)} is required to connect with the message broker.",
-                ClientId,
-                nameof(ClientId));
-        }
+            throw new EndpointConfigurationException($"A {nameof(ClientId)} is required to connect with the message broker.");
 
         if (Channel == null)
-        {
-            throw new EndpointConfigurationException(
-                "The channel configuration is required to connect with the message broker.",
-                Channel,
-                nameof(Channel));
-        }
+            throw new EndpointConfigurationException("The channel configuration is required to connect with the message broker.");
 
         Channel.Validate();
         UserProperties.ForEach(property => property.Validate());

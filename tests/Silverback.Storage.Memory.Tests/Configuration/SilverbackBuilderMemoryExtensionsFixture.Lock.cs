@@ -22,7 +22,7 @@ public partial class SilverbackBuilderMemoryExtensionsFixture
                 .AddInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
-        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings());
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("lock"));
 
         distributedLock.Should().BeOfType<InMemoryLock>();
     }
@@ -47,9 +47,9 @@ public partial class SilverbackBuilderMemoryExtensionsFixture
         distributedLock2.Should().BeOfType<InMemoryLock>();
     }
 
-    private record LockSettings1 : DistributedLockSettings;
+    private record LockSettings1() : DistributedLockSettings("lock");
 
-    private record LockSettings2 : DistributedLockSettings;
+    private record LockSettings2() : DistributedLockSettings("lock");
 
     private class DistributedLock1 : DistributedLock
     {

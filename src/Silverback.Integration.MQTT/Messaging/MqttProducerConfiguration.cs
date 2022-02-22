@@ -44,10 +44,10 @@ public sealed record MqttProducerConfiguration : ProducerConfiguration<MqttProdu
         base.ValidateCore();
 
         if (Client == null)
-            throw new EndpointConfigurationException("The client configuration is required.", Client, nameof(Client));
+            throw new EndpointConfigurationException("The client configuration is required.");
 
         if (Chunk != null)
-            throw new EndpointConfigurationException("Chunking is not supported over MQTT.", Chunk, nameof(Chunk));
+            throw new EndpointConfigurationException("Chunking is not supported over MQTT.");
 
         Client.Validate();
     }

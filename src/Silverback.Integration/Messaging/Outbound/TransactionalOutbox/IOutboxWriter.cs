@@ -19,8 +19,11 @@ public interface IOutboxWriter
     /// <param name="outboxMessage">
     ///     The message to be stored in the outbox.
     /// </param>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext"/> in the current scope.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(OutboxMessage outboxMessage);
+    Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null);
 }

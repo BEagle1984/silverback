@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using Silverback.Lock;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Xunit;
@@ -39,5 +40,8 @@ public class OutboxProduceStrategyFixture
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing")]
-    private record TestSettings(string Name) : OutboxSettings;
+    private record TestSettings(string Name) : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 }

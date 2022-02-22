@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.Lock;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Xunit;
 
@@ -172,23 +173,32 @@ public class OutboxWriterFactoryFixture
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record OutboxSettings1(string Setting = "") : OutboxSettings;
+    private record OutboxSettings1(string Setting = "") : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record OutboxSettings2(string Setting = "") : OutboxSettings;
+    private record OutboxSettings2(string Setting = "") : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
     private class OutboxWriter1 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage) => throw new NotSupportedException();
+        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage) => throw new NotSupportedException();
+        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OverrideOutboxWriter : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage) => throw new NotSupportedException();
+        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 }

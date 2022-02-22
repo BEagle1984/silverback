@@ -23,7 +23,7 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableEndpoin
     public void Validate()
     {
         if (string.IsNullOrEmpty(Name))
-            throw new EndpointConfigurationException("The name of a user property cannot be empty.", Name, nameof(Name));
+            throw new EndpointConfigurationException("The name of a user property cannot be empty.");
     }
 
     internal MQTTnet.Packets.MqttUserProperty ToMqttNetType() =>

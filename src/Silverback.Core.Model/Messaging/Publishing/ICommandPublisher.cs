@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Publishing;
 /// <summary>
 ///     Publishes the messages implementing <see cref="ICommand" /> or <see cref="ICommand{TResult}" />.
 /// </summary>
-public interface ICommandPublisher
+public interface ICommandPublisher : IPublisherBase
 {
     /// <summary>
     ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the

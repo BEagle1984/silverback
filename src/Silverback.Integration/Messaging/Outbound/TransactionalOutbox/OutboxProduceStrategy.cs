@@ -2,12 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Util;
+using Silverback.Messaging.Outbound.EndpointResolvers;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
@@ -18,6 +18,10 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 /// </summary>
 public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
+    private IOutboxWriter? _outboxWriter;
+
+    private IOutboundLogger<OutboxProduceStrategy>? _logger;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxProduceStrategy" /> class.
     /// </summary>
@@ -43,12 +47,10 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// <inheritdoc cref="IProduceStrategy.Build" />
     public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerConfiguration configuration)
     {
-        OutboxBroker outboxBroker = serviceProvider.GetRequiredService<OutboxBroker>();
-        IProducer producer = AsyncHelper.RunSynchronously(() => outboxBroker.GetProducerAsync(configuration));
+        _outboxWriter ??= serviceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings);
+        _logger ??= serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>();
 
-        IOutboundLogger<OutboxProduceStrategy> logger = serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>();
-
-        return new OutboxProduceStrategyImplementation(producer, logger);
+        return new OutboxProduceStrategyImplementation(_outboxWriter, configuration, serviceProvider, _logger);
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
@@ -65,25 +67,58 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
     private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        private readonly IProducer _producer;
+        private readonly IOutboxWriter _outboxWriter;
+
+        private readonly ProducerConfiguration _configuration;
 
         private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
 
+        private readonly DelegatedProducer _producer;
+
+        private readonly SilverbackContext _context;
+
         public OutboxProduceStrategyImplementation(
-            IProducer producer,
+            IOutboxWriter outboxWriter,
+            ProducerConfiguration configuration,
+            IServiceProvider serviceProvider,
             IOutboundLogger<OutboxProduceStrategy> logger)
         {
-            _producer = producer;
+            _outboxWriter = outboxWriter;
+            _configuration = configuration;
             _logger = logger;
+
+            _producer = new DelegatedProducer(WriteToOutboxAsync, _configuration, serviceProvider);
+            _context = serviceProvider.GetRequiredService<SilverbackContext>();
         }
 
         public async Task ProduceAsync(IOutboundEnvelope envelope)
         {
-            Check.NotNull(envelope, nameof(envelope));
-
             await _producer.ProduceAsync(envelope).ConfigureAwait(false);
-
             _logger.LogWrittenToOutbox(envelope);
         }
+
+        private async Task WriteToOutboxAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            ProducerEndpoint endpoint)
+        {
+            await _outboxWriter.AddAsync(
+                    new OutboxMessage(
+                        message?.GetType(),
+                        messageBytes,
+                        headers,
+                        new OutboxMessageEndpoint(
+                            _configuration.RawName,
+                            _configuration.FriendlyName,
+                            await GetSerializedEndpointAsync(endpoint).ConfigureAwait(false))),
+                    _context)
+                .ConfigureAwait(false);
+        }
+
+        private async ValueTask<byte[]?> GetSerializedEndpointAsync(ProducerEndpoint endpoint) =>
+            _configuration.Endpoint is IDynamicProducerEndpointResolver dynamicEndpointProvider
+                ? await dynamicEndpointProvider.SerializeAsync(endpoint).ConfigureAwait(false)
+                : null;
     }
 }

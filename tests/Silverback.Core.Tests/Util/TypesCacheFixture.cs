@@ -11,12 +11,22 @@ namespace Silverback.Tests.Core.Util;
 
 public class TypesCacheFixture
 {
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void GetType_ShouldReturnNull_WhenTypeNameIsNullOrEmpty(string? typeName)
+    {
+        Type? type = TypesCache.GetType(typeName);
+
+        type.Should().BeNull();
+    }
+
     [Fact]
     public void GetType_ShouldReturnTypeMatchingAssemblyQualifiedName()
     {
         string typeName = typeof(TestObject).AssemblyQualifiedName!;
 
-        Type type = TypesCache.GetType(typeName);
+        Type? type = TypesCache.GetType(typeName);
 
         type.Should().Be(typeof(TestObject));
     }
@@ -26,8 +36,9 @@ public class TypesCacheFixture
     {
         string typeName = "Silverback.Tests.Core.Util.TypesCacheFixture+TestObject, Silverback.Core.Tests, Version=42.42.42.42";
 
-        Type type = TypesCache.GetType(typeName);
+        Type? type = TypesCache.GetType(typeName);
 
+        type.ShouldNotBeNull();
         type.AssemblyQualifiedName.Should().Be(typeof(TestObject).AssemblyQualifiedName);
     }
 
@@ -56,7 +67,7 @@ public class TypesCacheFixture
     {
         string typeName = "Silverback.Tests.Core.Util.TypesCacheFixture+TestObject, Silverback.Core.Tests";
 
-        Type type = TypesCache.GetType(typeName);
+        Type? type = TypesCache.GetType(typeName);
 
         type.Should().Be(typeof(TestObject));
     }

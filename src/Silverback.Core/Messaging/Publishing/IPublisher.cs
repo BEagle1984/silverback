@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Publishing;
 ///         This is the actual mediator that forwards the messages being published to their subscribers.
 ///     </para>
 /// </summary>
-public interface IPublisher
+public interface IPublisher : IPublisherBase
 {
     /// <summary>
     ///     Publishes the specified message to the internal bus. The message will be forwarded to its

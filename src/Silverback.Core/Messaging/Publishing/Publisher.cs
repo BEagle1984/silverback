@@ -23,6 +23,8 @@ public class Publisher : IPublisher
 
     private readonly SubscribedMethodsCache _subscribedMethodsCache;
 
+    private SilverbackContext? _context;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="Publisher" /> class.
     /// </summary>
@@ -46,6 +48,9 @@ public class Publisher : IPublisher
 
         _subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
     }
+
+    /// <inheritdoc cref="IPublisherBase.Context" />
+    public SilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
 
     /// <inheritdoc cref="IPublisher.Publish(object)" />
     public void Publish(object message) =>

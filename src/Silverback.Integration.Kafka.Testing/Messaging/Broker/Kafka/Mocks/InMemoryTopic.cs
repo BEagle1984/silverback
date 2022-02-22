@@ -15,8 +15,8 @@ internal sealed class InMemoryTopic : IInMemoryTopic
 
     public InMemoryTopic(string name, string bootstrapServers, int partitions)
     {
-        Name = Check.NotEmpty(name, nameof(name));
-        BootstrapServers = Check.NotEmpty(bootstrapServers, nameof(bootstrapServers));
+        Name = Check.NotNullOrEmpty(name, nameof(name));
+        BootstrapServers = Check.NotNullOrEmpty(bootstrapServers, nameof(bootstrapServers));
 
         if (partitions < 1)
         {

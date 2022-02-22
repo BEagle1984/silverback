@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -79,11 +80,10 @@ public abstract class DistributedBackgroundService : BackgroundService
     /// </returns>
     protected virtual async Task AcquireLockAndExecuteAsync(CancellationToken stoppingToken)
     {
-        await using (await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false))
-        {
-            _logger.LogBackgroundServiceLockAcquired(this);
-            await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
-        }
+        DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable disposable = lockHandle.ConfigureAwait(false);
+        _logger.LogBackgroundServiceLockAcquired(this);
+        await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
     }
 
     /// <summary>

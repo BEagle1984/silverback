@@ -70,12 +70,12 @@ public partial class PublisherFixture
 
         public TestingCollection<IEnvelope> ReceivedEnvelopes { get; } = new();
 
-        [EventOneFilterAttribute]
+        [EventOneFilter]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnMessageReceived(IEvent message) => ReceivedMessages.Add(message);
 
-        [EventOneFilterAttribute]
+        [EventOneFilter]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnEnvelopeReceived(IEnvelope envelope) => ReceivedEnvelopes.Add(envelope);

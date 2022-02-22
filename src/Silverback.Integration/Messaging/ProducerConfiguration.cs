@@ -59,13 +59,11 @@ public abstract record ProducerConfiguration : EndpointConfiguration
         {
             throw new EndpointConfigurationException(
                     "An endpoint resolver is required. " +
-                    $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.",
-                    Endpoint,
-                    nameof(Endpoint));
+                    $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.");
         }
 
         if (Strategy == null)
-            throw new EndpointConfigurationException("A produce strategy is required.", Strategy, nameof(Strategy));
+            throw new EndpointConfigurationException("A produce strategy is required.");
 
         Chunk?.Validate();
     }

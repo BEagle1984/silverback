@@ -46,7 +46,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     /// </returns>
     public MqttLastWillMessageConfigurationBuilder<TMessage> ProduceTo(string topicName)
     {
-        _topic = Check.NotEmpty(topicName, nameof(topicName));
+        _topic = Check.NotNullOrEmpty(topicName, nameof(topicName));
         return this;
     }
 

@@ -642,6 +642,7 @@ resharper_lambda_expression_must_be_static_highlighting = warning
 resharper_arrange_missing_parentheses_highlighting = warning
 resharper_arrange_object_creation_when_type_evident_highlighting = warning
 resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
+resharper_use_negated_pattern_in_is_expression_highlighting = warning
 
 
 [*.{csproj,props,yml,yaml,json,xml,config}]

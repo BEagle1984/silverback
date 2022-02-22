@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Outbound;
 /// </summary>
 public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<DefaultProduceStrategy>
 {
-    private DefaultProduceStrategyImplementation? _implementation;
+    private DefaultProduceStrategyImplementation? _implementation; // TODO: Can be static. Should it?
 
     /// <inheritdoc cref="op_Equality" />
     public static bool operator ==(DefaultProduceStrategy? left, DefaultProduceStrategy? right) => Equals(left, right);

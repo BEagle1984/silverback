@@ -12,15 +12,10 @@ public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguratio
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Server))
-        {
-            throw new EndpointConfigurationException(
-                "The server is required to connect with the message broker.",
-                Server,
-                nameof(Server));
-        }
+            throw new EndpointConfigurationException("The server is required to connect with the message broker.");
 
         if (Port <= 0)
-            throw new EndpointConfigurationException("The port must be greater than zero.", Port, nameof(Port));
+            throw new EndpointConfigurationException("The port must be greater than zero.");
 
         Tls.Validate();
     }

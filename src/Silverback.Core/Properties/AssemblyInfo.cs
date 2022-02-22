@@ -40,6 +40,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Testing")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Testing")]
 [assembly: InternalsVisibleTo("Silverback.Storage.Memory")]
+[assembly: InternalsVisibleTo("Silverback.Storage.SQLite")]
 
 [assembly: InternalsVisibleTo("Silverback.Tests.Common")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Common.Integration")]

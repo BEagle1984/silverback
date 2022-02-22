@@ -15,7 +15,7 @@ public sealed record TestDynamicEndpointResolver : DynamicProducerEndpointResolv
     public TestDynamicEndpointResolver(string topicName)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
-        _topicName = Check.NotEmpty(topicName, nameof(topicName));
+        _topicName = Check.NotNullOrEmpty(topicName, nameof(topicName));
     }
 
     public override ValueTask<TestProducerEndpoint> DeserializeAsync(

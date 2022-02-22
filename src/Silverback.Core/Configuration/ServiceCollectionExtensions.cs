@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
                 .AddScoped<IBehaviorsProvider, BehaviorsProvider>()
                 .AddSingleton<SubscribedMethodsCacheSingleton>()
                 .AddScoped<SubscribedMethodsCache>()
+                .AddScoped<SilverbackContext>()
                 .AddLogger()
                 .AddArgumentResolvers()
                 .AddReturnValueHandlers()

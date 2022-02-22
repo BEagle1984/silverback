@@ -2,18 +2,15 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Transactions;
 using Silverback.Util;
 
 namespace Silverback.Collections;
 
 /// <summary>
-///     This class is used as in-memory storage for various items. The add operations will be execute in the context of the ambient
-///     transaction (<see cref="Transaction.Current"/>).
+///     This class is used as in-memory storage for various items.
 /// </summary>
 /// <typeparam name="T">
 ///    The type of the entities.
@@ -22,8 +19,6 @@ public class InMemoryStorage<T>
     where T : class
 {
     private readonly List<InMemoryStoredItem<T>> _items = new();
-
-    private readonly ConcurrentDictionary<Transaction, SinglePhaseNotification> _enlistments = new();
 
     /// <summary>
     ///     Gets the number of items in the storage.
@@ -88,27 +83,9 @@ public class InMemoryStorage<T>
     {
         InMemoryStoredItem<T> inMemoryStoredItem = new(item);
 
-        if (Transaction.Current == null)
+        lock (_items)
         {
-            lock (_items)
-            {
-                _items.Add(inMemoryStoredItem);
-            }
-        }
-        else
-        {
-            SinglePhaseNotification singlePhaseNotification = _enlistments.GetOrAdd(
-                Transaction.Current,
-                static (transaction, args) =>
-                {
-                    SinglePhaseNotification singlePhaseNotification = new(args.Items, args.Enlistments, Transaction.Current);
-                    transaction.EnlistVolatile(singlePhaseNotification, EnlistmentOptions.None);
-
-                    return singlePhaseNotification;
-                },
-                (Items: _items, Enlistments: _enlistments));
-
-            singlePhaseNotification.UncommittedItems.Add(inMemoryStoredItem);
+            _items.Add(inMemoryStoredItem);
         }
     }
 
@@ -132,70 +109,5 @@ public class InMemoryStorage<T>
                     _items.RemoveAt(index);
             }
         }
-    }
-
-    private class SinglePhaseNotification : ISinglePhaseNotification
-    {
-        private readonly List<InMemoryStoredItem<T>> _items;
-
-        private readonly ConcurrentDictionary<Transaction, SinglePhaseNotification> _enlistments;
-
-        private readonly Transaction _transaction;
-
-        private bool _pending = true;
-
-        public SinglePhaseNotification(
-            List<InMemoryStoredItem<T>> items,
-            ConcurrentDictionary<Transaction, SinglePhaseNotification> enlistments,
-            Transaction transaction)
-        {
-            _items = items;
-            _enlistments = enlistments;
-            _transaction = transaction;
-        }
-
-        public List<InMemoryStoredItem<T>> UncommittedItems { get; } = new();
-
-        public void Prepare(PreparingEnlistment preparingEnlistment)
-        {
-            preparingEnlistment.Prepared();
-        }
-
-        public void Commit(Enlistment enlistment)
-        {
-            lock (UncommittedItems)
-            {
-                if (!_pending)
-                    throw new InvalidOperationException("The transaction has already been committed.");
-
-                lock (_items)
-                {
-                    _items.AddRange(UncommittedItems);
-                }
-
-                _enlistments.Remove(_transaction, out _);
-
-                _pending = false;
-            }
-
-            enlistment.Done();
-        }
-
-        public void Rollback(Enlistment enlistment)
-        {
-            lock (UncommittedItems)
-            {
-                if (!_pending)
-                    throw new InvalidOperationException("The transaction has already been committed.");
-
-                _pending = false;
-            }
-
-            enlistment.Done();
-        }
-
-        public void InDoubt(Enlistment enlistment) => Rollback(enlistment); // TODO: WTF?
-
-        public void SinglePhaseCommit(SinglePhaseEnlistment singlePhaseEnlistment) => Commit(singlePhaseEnlistment);
     }
 }

@@ -63,7 +63,7 @@ public class MqttProducerConfigurationBuilder<TMessage>
     /// </returns>
     public MqttProducerConfigurationBuilder<TMessage> ProduceTo(string topic)
     {
-        Check.NotEmpty(topic, nameof(topic));
+        Check.NotNullOrEmpty(topic, nameof(topic));
         _endpointResolver = new MqttStaticProducerEndpointResolver(topic);
         return this;
     }
@@ -101,7 +101,7 @@ public class MqttProducerConfigurationBuilder<TMessage>
         string topicFormatString,
         Func<TMessage?, string[]> topicArgumentsFunction)
     {
-        Check.NotEmpty(topicFormatString, nameof(topicFormatString));
+        Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
         _endpointResolver = new MqttDynamicProducerEndpointResolver(

@@ -77,7 +77,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     public bool IsSequenceEnd { get; private set; }
 
     /// <summary>
-    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </summary>
     public IServiceProvider ServiceProvider { get; private set; }
 

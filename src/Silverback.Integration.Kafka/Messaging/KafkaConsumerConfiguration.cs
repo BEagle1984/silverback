@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Util;
 
 namespace Silverback.Messaging;
 
@@ -48,13 +49,11 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
         get => _topicPartitions;
         init
         {
-            _topicPartitions = value;
+            Check.NotNull(value, nameof(value));
 
-            if (value != null)
-            {
-                IsStaticAssignment = GetIsStaticAssignment();
-                RawName = string.Join(",", value.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition.ToDisplayString()));
-            }
+            _topicPartitions = value;
+            IsStaticAssignment = GetIsStaticAssignment();
+            RawName = string.Join(",", value.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition.ToDisplayString()));
         }
     }
 
@@ -113,6 +112,19 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
     /// </summary>
     public int BackpressureLimit { get; init; } = 2;
 
+    // /// <summary>
+    // ///    Gets a value indicating whether the consumed offsets must be committed to the broker. The default is <c>true</c>.
+    // /// </summary>
+    // public bool CommitOffsets { get; init; } = true;
+
+    // /// <summary>
+    // ///     Gets the <see cref="IOffsetStore" /> to be used to store the offsets. The stored offsets will be used during the partitions assignment to determine the starting offset and ensure
+    // /// </summary>
+    // public IOffsetStore? ClientSideOffsetStore { get;init; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer is configured with a static partition assignment.
+    /// </summary>
     internal bool IsStaticAssignment { get; init; }
 
     /// <inheritdoc cref="ConsumerConfiguration.ValidateCore" />
@@ -121,36 +133,19 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
         base.ValidateCore();
 
         if (Client == null)
-        {
-            throw new EndpointConfigurationException(
-                "The client configuration is required.",
-                Client,
-                nameof(Client));
-        }
+            throw new EndpointConfigurationException("The client configuration is required.");
 
         if (MaxDegreeOfParallelism < 1)
-        {
-            throw new EndpointConfigurationException(
-                "The specified degree of parallelism must be greater or equal to 1.",
-                MaxDegreeOfParallelism,
-                nameof(MaxDegreeOfParallelism));
-        }
+            throw new EndpointConfigurationException("The specified degree of parallelism must be greater or equal to 1.");
 
         if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
         {
             throw new EndpointConfigurationException(
-                $"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.",
-                MaxDegreeOfParallelism,
-                nameof(MaxDegreeOfParallelism));
+                $"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.");
         }
 
         if (BackpressureLimit < 1)
-        {
-            throw new EndpointConfigurationException(
-                "The backpressure limit must be greater or equal to 1.",
-                BackpressureLimit,
-                nameof(BackpressureLimit));
-        }
+            throw new EndpointConfigurationException("The backpressure limit must be greater or equal to 1.");
 
         ValidateTopicPartitions();
 
@@ -160,37 +155,20 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
     private void ValidateTopicPartitions()
     {
         if (TopicPartitions == null || TopicPartitions.Count == 0)
-        {
-            throw new EndpointConfigurationException(
-                "At least 1 topic must be specified.",
-                TopicPartitions,
-                nameof(TopicPartitions));
-        }
+            throw new EndpointConfigurationException("At least 1 topic must be specified.");
 
         if (TopicPartitions.Any(topicPartition => string.IsNullOrEmpty(topicPartition.Topic)))
-        {
-            throw new EndpointConfigurationException(
-                "The topic name cannot be null or empty.",
-                TopicPartitions,
-                nameof(TopicPartitions));
-        }
+            throw new EndpointConfigurationException("The topic name cannot be null or empty.");
 
         if (TopicPartitions.Any(topicPartition => topicPartition.Partition.Value < Partition.Any))
-        {
-            throw new EndpointConfigurationException(
-                "The partition must be a value greater or equal to 0, or Partition.Any.",
-                TopicPartitions,
-                nameof(TopicPartitions));
-        }
+            throw new EndpointConfigurationException("The partition must be a value greater or equal to 0, or Partition.Any.");
 
         if (PartitionOffsetsProvider != null &&
             TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any))
         {
             throw new EndpointConfigurationException(
                 $"Cannot specify a {nameof(PartitionOffsetsProvider)} if the partitions are already specified. " +
-                $"Use Partition.Any when specifying the topic partition or remove the resolver.",
-                TopicPartitions,
-                nameof(TopicPartitions));
+                $"Use Partition.Any when specifying the topic partition or remove the resolver.");
         }
 
         foreach (IGrouping<string, TopicPartitionOffset> groupedPartitions in TopicPartitions.GroupBy(topicPartition => topicPartition.Topic))
@@ -200,18 +178,13 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
 
             if (topicPartitionsWithoutOffset.Count != topicPartitionsWithoutOffset.Distinct().Count())
             {
-                throw new EndpointConfigurationException(
-                    "Each partition must be specified only once.",
-                    TopicPartitions,
-                    nameof(TopicPartitions));
+                throw new EndpointConfigurationException("Each partition must be specified only once.");
             }
 
             if (partitions.Any(partition => partition == Partition.Any) && partitions.Count > 1)
             {
                 throw new EndpointConfigurationException(
-                    "Cannot mix Partition.Any with a specific partition assignment for the same topic.",
-                    TopicPartitions,
-                    nameof(TopicPartitions));
+                    "Cannot mix Partition.Any with a specific partition assignment for the same topic.");
             }
         }
 
@@ -226,6 +199,22 @@ public sealed record KafkaConsumerConfiguration : ConsumerConfiguration
     }
 
     private bool GetIsStaticAssignment() =>
-        PartitionOffsetsProvider != null ||
-        TopicPartitions == null || TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any);
+        PartitionOffsetsProvider != null || TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any);
 }
+
+// /// <summary>
+// ///     The offset storage modes.
+// /// </summary>
+// [Flags]
+// public enum OffsetStorageMode
+// {
+//     /// <summary>
+//     ///     The offsets are committed and persisted on the broker. This is the default.
+//     /// </summary>
+//     Server = 0,
+//
+//     /// <summary>
+//     ///     The offsets are stored in the configured
+//     /// </summary>
+//     Client = 1
+// }

@@ -48,14 +48,13 @@ public static partial class SilverbackBuilderIntegrationExtensions
         // Outbound Routing
         builder
             .AddScopedBehavior<OutboundRouterBehavior>()
-            .AddSingletonBehavior<ProduceBehavior>()
+            .AddScopedBehavior<ProduceBehavior>()
             .AddExtensibleFactory<IOutboxReaderFactory, OutboxReaderFactory>()
             .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
             .Services
             .AddSingleton<IOutboundEnvelopeFactory, OutboundEnvelopeFactory>()
             .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration())
-            .AddSingleton<ProducersPreloader>()
-            .AddSingleton<OutboxBroker>();
+            .AddSingleton<ProducersPreloader>();
 
         // Broker Collection
         builder.Services
@@ -78,6 +77,8 @@ public static partial class SilverbackBuilderIntegrationExtensions
 
         // Event Handlers
         builder.Services.AddSingleton<IBrokerCallbacksInvoker, BrokerCallbackInvoker>();
+
+        builder.EnableStorage();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);
         optionsAction?.Invoke(optionsBuilder);

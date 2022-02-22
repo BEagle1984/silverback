@@ -39,7 +39,7 @@ public record MqttLastWillMessageConfiguration : IValidatableEndpointSettings
     public void Validate()
     {
         if (string.IsNullOrEmpty(Topic))
-            throw new EndpointConfigurationException("The topic is required.", Topic, nameof(Topic));
+            throw new EndpointConfigurationException("The topic is required.");
     }
 
     internal MqttApplicationMessage ToMqttNetType() =>

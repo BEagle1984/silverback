@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -18,8 +17,6 @@ namespace Silverback.Messaging.Outbound.Routing;
 public class ProduceBehavior : IBehavior, ISorted
 {
     private readonly IServiceProvider _serviceProvider;
-
-    private readonly ConcurrentDictionary<ProducerConfiguration, IProduceStrategyImplementation> _produceStrategyImplementations = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
@@ -43,11 +40,9 @@ public class ProduceBehavior : IBehavior, ISorted
 
         if (message is IOutboundEnvelope envelope)
         {
-            IProduceStrategyImplementation strategyImplementation = _produceStrategyImplementations.GetOrAdd(
-                envelope.Endpoint.Configuration,
-                static (configuration, serviceProvider) => configuration.Strategy.Build(serviceProvider, configuration),
-                _serviceProvider);
-            await strategyImplementation.ProduceAsync(envelope).ConfigureAwait(false);
+            await envelope.Endpoint.Configuration.Strategy
+                .Build(_serviceProvider, envelope.Endpoint.Configuration)
+                .ProduceAsync(envelope).ConfigureAwait(false);
         }
 
         return await next(message).ConfigureAwait(false);

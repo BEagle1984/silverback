@@ -177,10 +177,22 @@ public class DistributedLockFactoryFixture
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record LockSettings1(string? LockName = null) : DistributedLockSettings;
+    private record LockSettings1 : DistributedLockSettings
+    {
+        public LockSettings1(string lockName = "lock")
+            : base(lockName)
+        {
+        }
+    }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record LockSettings2(string? LockName = null) : DistributedLockSettings;
+    private record LockSettings2 : DistributedLockSettings
+    {
+        public LockSettings2(string lockName = "lock")
+            : base(lockName)
+        {
+        }
+    }
 
     private class DistributedLock1 : DistributedLock
     {

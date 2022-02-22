@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
+using Silverback.Lock;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Xunit;
 
@@ -41,5 +42,16 @@ public class InMemoryOutboxSettingsFixture
         InMemoryOutboxSettings settings2 = new() { OutboxName = "outbox2" };
 
         settings1.Equals(settings2).Should().BeFalse();
+    }
+
+    [Fact]
+    public void GetCompatibleLockSettings_ShouldReturnInMemoryLockSettings()
+    {
+        InMemoryOutboxSettings outboxSettings = new("my-outbox");
+
+        DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
+
+        lockSettings.Should().BeOfType<InMemoryLockSettings>();
+        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.my-outbox");
     }
 }

@@ -9,15 +9,12 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
-using Silverback.Tests.Integration.E2E.Util;
 using Silverback.Util;
 using Xunit.Abstractions;
 
@@ -27,6 +24,8 @@ public sealed class TestApplicationHost<THelper> : IDisposable
     where THelper : ITestingHelper<IBroker>
 {
     private readonly List<Action<IServiceCollection>> _configurationActions = new();
+
+    private readonly string _sqliteConnectionString = $"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared";
 
     private SqliteConnection? _sqliteConnection;
 
@@ -48,17 +47,23 @@ public sealed class TestApplicationHost<THelper> : IDisposable
 
     public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException();
 
+    public string SqliteConnectionString
+    {
+        get
+        {
+            if (_sqliteConnection == null)
+            {
+                _sqliteConnection = new SqliteConnection(_sqliteConnectionString);
+                _sqliteConnection.Open();
+            }
+
+            return _sqliteConnectionString;
+        }
+    }
+
     public TestApplicationHost<THelper> ConfigureServices(Action<IServiceCollection> configurationAction)
     {
         _configurationActions.Add(configurationAction);
-
-        return this;
-    }
-
-    public TestApplicationHost<THelper> WithTestDbContext()
-    {
-        _sqliteConnection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
-        _sqliteConnection.Open();
 
         return this;
     }
@@ -98,16 +103,6 @@ public sealed class TestApplicationHost<THelper> : IDisposable
                             }
 
                             _configurationActions.ForEach(configAction => configAction(services));
-
-                            if (_sqliteConnection != null)
-                            {
-                                services.AddDbContext<TestDbContext>(
-                                    options => options
-                                        .UseSqlite(_sqliteConnection.ConnectionString)
-
-                                        // TODO: How to test with transactions?
-                                        .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.AmbientTransactionWarning)));
-                            }
                         })
                     .UseSolutionRelativeContentRoot(appRoot));
 
@@ -130,7 +125,6 @@ public sealed class TestApplicationHost<THelper> : IDisposable
         ILogger<TestApplicationHost<THelper>>? logger = _scopedServiceProvider?.GetService<ILogger<TestApplicationHost<THelper>>>();
         logger?.LogInformation("Disposing test host ({testMethod})", _testMethodName);
 
-        _sqliteConnection?.SafeClose();
         _sqliteConnection?.Dispose();
         _httpClient?.Dispose();
         _applicationFactory?.Dispose();

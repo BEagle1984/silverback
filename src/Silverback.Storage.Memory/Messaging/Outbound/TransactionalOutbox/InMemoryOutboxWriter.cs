@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Collections;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -26,8 +27,13 @@ public class InMemoryOutboxWriter : IOutboxWriter
     }
 
     /// <inheritdoc cref="AddAsync" />
-    public Task AddAsync(OutboxMessage outboxMessage)
+    public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null)
     {
+        if (context != null && context.TryGetStorageTransaction(out _))
+        {
+            // TODO: Log warning
+        }
+
         _storage.Add(outboxMessage);
         return Task.CompletedTask;
     }

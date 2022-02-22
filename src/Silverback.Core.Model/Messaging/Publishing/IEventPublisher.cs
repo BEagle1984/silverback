@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Publishing;
 /// <summary>
 ///     Publishes the messages implementing <see cref="IEvent" />.
 /// </summary>
-public interface IEventPublisher
+public interface IEventPublisher : IPublisherBase
 {
     /// <summary>
     ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers and the method will not

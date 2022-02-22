@@ -51,10 +51,10 @@ public abstract record ConsumerConfiguration : EndpointConfiguration
         base.ValidateCore();
 
         if (Sequence == null)
-            throw new EndpointConfigurationException("The sequence configuration is required.", Sequence, nameof(Sequence));
+            throw new EndpointConfigurationException("The sequence configuration is required.");
 
         if (ErrorPolicy == null)
-            throw new EndpointConfigurationException("An error policy is required.", ErrorPolicy, nameof(ErrorPolicy));
+            throw new EndpointConfigurationException("An error policy is required.");
 
         Batch?.Validate();
     }

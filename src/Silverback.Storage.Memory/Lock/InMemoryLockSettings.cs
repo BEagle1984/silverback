@@ -11,23 +11,11 @@ public record InMemoryLockSettings : DistributedLockSettings
     /// <summary>
     ///     Initializes a new instance of the <see cref="InMemoryLockSettings" /> class.
     /// </summary>
-    public InMemoryLockSettings()
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="InMemoryLockSettings" /> class.
-    /// </summary>
     /// <param name="lockName">
     ///     The name of the lock.
     /// </param>
     public InMemoryLockSettings(string lockName)
+        : base(lockName)
     {
-        LockName = lockName;
     }
-
-    /// <summary>
-    ///     Gets the name of the lock.
-    /// </summary>
-    public string LockName { get; init; } = "default";
 }

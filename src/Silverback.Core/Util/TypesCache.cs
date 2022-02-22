@@ -11,11 +11,10 @@ internal static class TypesCache
 {
     private static readonly ConcurrentDictionary<string, Type?> Cache = new();
 
-    public static Type GetType(string typeName) => GetType(typeName, true)!;
-
-    public static Type? GetType(string typeName, bool throwOnError)
+    public static Type? GetType(string? typeName, bool throwOnError = true)
     {
-        Check.NotNull(typeName, nameof(typeName));
+        if (string.IsNullOrEmpty(typeName))
+            return null;
 
         Type? type = Cache.GetOrAdd(
             typeName,

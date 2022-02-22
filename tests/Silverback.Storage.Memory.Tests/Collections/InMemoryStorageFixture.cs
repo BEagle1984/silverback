@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Transactions;
 using FluentAssertions;
 using Silverback.Collections;
 using Xunit;
@@ -22,37 +21,6 @@ public class InMemoryStorageFixture
         storage.Add("C");
 
         storage.Get(3).Should().BeEquivalentTo("A", "B", "C");
-    }
-
-    [Fact]
-    public void Add_ShouldJoinAmbientTransaction()
-    {
-        InMemoryStorage<string> storage = new();
-        storage.Add("A");
-        storage.Add("B");
-        storage.Add("C");
-
-        using (TransactionScope dummy = new())
-        {
-            storage.Add("X");
-
-            // Don't commit the transaction
-        }
-
-        storage.Get(10).Should().BeEquivalentTo("A", "B", "C");
-
-        using (TransactionScope transaction = new())
-        {
-            storage.Add("D");
-            storage.Add("E");
-            storage.Add("F");
-
-            storage.Get(10).Should().BeEquivalentTo("A", "B", "C");
-
-            transaction.Complete();
-        }
-
-        storage.Get(10).Should().BeEquivalentTo("A", "B", "C", "D", "E", "F");
     }
 
     [Fact]
@@ -117,20 +85,14 @@ public class InMemoryStorageFixture
     }
 
     [Fact]
-    public void ItemsCount_ShouldReturnCommittedItemsCount()
+    public void ItemsCount_ShouldReturnItemsCount()
     {
         InMemoryStorage<string> storage = new();
         storage.Add("A");
         storage.Add("B");
         storage.Add("C");
 
-        int count;
-        using (TransactionScope dummy = new())
-        {
-            storage.Add("X");
-
-            count = storage.ItemsCount;
-        }
+        int count = storage.ItemsCount;
 
         count.Should().Be(3);
     }

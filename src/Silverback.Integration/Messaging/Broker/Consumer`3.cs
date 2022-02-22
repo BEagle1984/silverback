@@ -119,7 +119,7 @@ public abstract class Consumer<TBroker, TConfiguration, TIdentifier> : IConsumer
     ConsumerConfiguration IConsumer.Configuration => Configuration;
 
     /// <summary>
-    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </summary>
     protected IServiceProvider ServiceProvider { get; }
 

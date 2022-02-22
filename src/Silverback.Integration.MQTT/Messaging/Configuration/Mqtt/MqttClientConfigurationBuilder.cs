@@ -161,7 +161,7 @@ public partial class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder WithClientId(string value)
     {
-        Check.NotEmpty(value, nameof(value));
+        Check.NotNullOrEmpty(value, nameof(value));
 
         _configuration = _configuration with { ClientId = value };
         return this;

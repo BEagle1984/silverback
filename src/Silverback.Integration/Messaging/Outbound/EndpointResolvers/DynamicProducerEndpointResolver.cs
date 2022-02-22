@@ -29,7 +29,7 @@ public abstract record DynamicProducerEndpointResolver<TEndpoint, TConfiguration
     /// </param>
     protected DynamicProducerEndpointResolver(string rawName)
     {
-        RawName = Check.NotEmpty(rawName, nameof(rawName));
+        RawName = Check.NotNullOrEmpty(rawName, nameof(rawName));
     }
 
     /// <inheritdoc cref="IProducerEndpointResolver.RawName" />

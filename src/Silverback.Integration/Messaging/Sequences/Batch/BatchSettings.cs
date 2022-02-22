@@ -27,22 +27,12 @@ public sealed record BatchSettings : IValidatableEndpointSettings
     public void Validate()
     {
         if (Size < 1)
-            throw new EndpointConfigurationException("The batch size must be greater or equal to 1.", Size, nameof(Size));
+            throw new EndpointConfigurationException("The batch size must be greater or equal to 1.");
 
         if (MaxWaitTime != null && MaxWaitTime <= TimeSpan.Zero)
-        {
-            throw new EndpointConfigurationException(
-                "The specified max wait time must be greater than 0.",
-                MaxWaitTime,
-                nameof(MaxWaitTime));
-        }
+            throw new EndpointConfigurationException("The specified max wait time must be greater than 0.");
 
         if (MaxWaitTime is { TotalMilliseconds: > int.MaxValue })
-        {
-            throw new EndpointConfigurationException(
-                "The max wait time in milliseconds must be lower or equal to Int32.MaxValue.",
-                MaxWaitTime,
-                nameof(MaxWaitTime));
-        }
+            throw new EndpointConfigurationException("The max wait time in milliseconds must be lower or equal to Int32.MaxValue.");
     }
 }

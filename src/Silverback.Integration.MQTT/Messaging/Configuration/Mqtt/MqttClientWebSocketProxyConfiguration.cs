@@ -12,7 +12,7 @@ public partial record MqttClientWebSocketProxyConfiguration : IValidatableEndpoi
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Address))
-            throw new EndpointConfigurationException("The proxy address is required.", Address, nameof(Address));
+            throw new EndpointConfigurationException("The proxy address is required.");
     }
 
     internal MQTTnet.Client.Options.MqttClientWebSocketProxyOptions ToMqttNetType() => MapCore();

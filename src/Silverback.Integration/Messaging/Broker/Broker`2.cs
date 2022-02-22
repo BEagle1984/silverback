@@ -111,7 +111,7 @@ public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : I
     /// <inheritdoc cref="IBroker.GetProducer(string)" />
     public IProducer GetProducer(string endpointName)
     {
-        Check.NotEmpty(endpointName, nameof(endpointName));
+        Check.NotNullOrEmpty(endpointName, nameof(endpointName));
 
         if (_disposed)
             throw new ObjectDisposedException(GetType().FullName);

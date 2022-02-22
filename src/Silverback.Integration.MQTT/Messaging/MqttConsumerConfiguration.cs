@@ -51,28 +51,13 @@ public sealed record MqttConsumerConfiguration : ConsumerConfiguration
         base.ValidateCore();
 
         if (Client == null)
-        {
-            throw new EndpointConfigurationException(
-                "The client configuration is required.",
-                Client,
-                nameof(Client));
-        }
+            throw new EndpointConfigurationException("The client configuration is required.");
 
         if (Topics == null || Topics.Count == 0)
-        {
-            throw new EndpointConfigurationException(
-                "At least 1 topic must be specified.",
-                Topics,
-                nameof(Topics));
-        }
+            throw new EndpointConfigurationException("At least 1 topic must be specified.");
 
         if (Topics.Any(string.IsNullOrEmpty))
-        {
-            throw new EndpointConfigurationException(
-                "A topic name cannot be null or empty.",
-                Topics,
-                nameof(Topics));
-        }
+            throw new EndpointConfigurationException("A topic name cannot be null or empty.");
 
         if (!Client.AreHeadersSupported)
         {

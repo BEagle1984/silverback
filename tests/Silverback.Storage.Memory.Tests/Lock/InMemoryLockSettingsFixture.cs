@@ -10,17 +10,9 @@ namespace Silverback.Tests.Storage.Memory.Lock;
 public class InMemoryLockSettingsFixture
 {
     [Fact]
-    public void Constructor_ShouldCreateDefaultSettings()
-    {
-        InMemoryLockSettings settings = new();
-
-        settings.LockName.Should().Be("default");
-    }
-
-    [Fact]
     public void Equals_ShouldReturnTrue_WhenComparingWithSameInstance()
     {
-        InMemoryLockSettings settings = new();
+        InMemoryLockSettings settings = new("lock");
 
         settings.Equals(settings).Should().BeTrue();
     }
@@ -28,8 +20,8 @@ public class InMemoryLockSettingsFixture
     [Fact]
     public void Equals_ShouldReturnTrue_WhenSettingsAreEquivalent()
     {
-        InMemoryLockSettings settings1 = new() { LockName = "lock" };
-        InMemoryLockSettings settings2 = new() { LockName = "lock" };
+        InMemoryLockSettings settings1 = new("lock");
+        InMemoryLockSettings settings2 = new("lock");
 
         settings1.Equals(settings2).Should().BeTrue();
     }
@@ -37,8 +29,8 @@ public class InMemoryLockSettingsFixture
     [Fact]
     public void Equals_ShouldReturnFalse_WhenSettingsAreDifferent()
     {
-        InMemoryLockSettings settings1 = new() { LockName = "lock1" };
-        InMemoryLockSettings settings2 = new() { LockName = "lock2" };
+        InMemoryLockSettings settings1 = new("lock1");
+        InMemoryLockSettings settings2 = new("lock2");
 
         settings1.Equals(settings2).Should().BeFalse();
     }

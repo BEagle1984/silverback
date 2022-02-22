@@ -22,6 +22,9 @@ public class EventPublisher : IEventPublisher
         _publisher = publisher;
     }
 
+    /// <inheritdoc cref="IPublisherBase.Context" />
+    public SilverbackContext Context => _publisher.Context;
+
     /// <inheritdoc cref="IEventPublisher.Publish(IEvent)" />
     public void Publish(IEvent eventMessage) => _publisher.Publish(eventMessage);
 

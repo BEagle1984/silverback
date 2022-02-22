@@ -103,6 +103,8 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
                 });
         }
 
+        builder.SilverbackBuilder.AddInMemoryLock();
+
         return builder;
     }
 }

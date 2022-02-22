@@ -82,7 +82,7 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// </returns>
     public TBuilder WithName(string friendlyName)
     {
-        _friendlyName = Check.NotEmpty(friendlyName, nameof(friendlyName));
+        _friendlyName = Check.NotNullOrEmpty(friendlyName, nameof(friendlyName));
         return This;
     }
 

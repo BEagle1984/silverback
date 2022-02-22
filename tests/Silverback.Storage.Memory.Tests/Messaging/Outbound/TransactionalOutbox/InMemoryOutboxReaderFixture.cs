@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
@@ -165,7 +164,7 @@ public class InMemoryOutboxReaderFixture
     }
 
     [Fact]
-    public async Task GetLengthAsync_ShouldReturnCommittedItemsCount()
+    public async Task GetLengthAsync_ShouldReturnItemsCount()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
@@ -183,13 +182,7 @@ public class InMemoryOutboxReaderFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
 
-        int count;
-        using (TransactionScope dummy = new())
-        {
-            storage.Add(new OutboxMessage(typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint));
-
-            count = await outboxReader.GetLengthAsync();
-        }
+        int count = await outboxReader.GetLengthAsync();
 
         count.Should().Be(3);
     }

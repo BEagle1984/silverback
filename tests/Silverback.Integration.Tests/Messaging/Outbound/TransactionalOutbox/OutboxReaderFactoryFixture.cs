@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Silverback.Lock;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Xunit;
 
@@ -173,10 +174,16 @@ public class OutboxReaderFactoryFixture
     }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record OutboxSettings1(string Setting = "") : OutboxSettings;
+    private record OutboxSettings1(string Setting = "") : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
     [SuppressMessage("ReSharper", "NotAccessedPositionalProperty.Local", Justification = "Used for testing via equality")]
-    private record OutboxSettings2(string Setting = "") : OutboxSettings;
+    private record OutboxSettings2(string Setting = "") : OutboxSettings
+    {
+        public override DistributedLockSettings? GetCompatibleLockSettings() => null;
+    }
 
     private class OutboxReader1 : IOutboxReader
     {

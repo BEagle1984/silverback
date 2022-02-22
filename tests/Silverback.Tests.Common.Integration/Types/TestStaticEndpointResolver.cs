@@ -9,7 +9,7 @@ namespace Silverback.Tests.Types;
 public sealed class TestStaticEndpointResolver : StaticProducerEndpointResolver<TestProducerEndpoint, TestProducerConfiguration>
 {
     public TestStaticEndpointResolver(string topic)
-        : base(Check.NotEmpty(topic, nameof(topic)))
+        : base(Check.NotNullOrEmpty(topic, nameof(topic)))
     {
         Topic = topic;
     }

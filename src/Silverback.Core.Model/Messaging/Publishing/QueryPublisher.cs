@@ -23,6 +23,9 @@ public class QueryPublisher : IQueryPublisher
         _publisher = publisher;
     }
 
+    /// <inheritdoc cref="IPublisherBase.Context" />
+    public SilverbackContext Context => _publisher.Context;
+
     /// <inheritdoc cref="IQueryPublisher.Execute{TResult}(IQuery{TResult})" />
     public TResult Execute<TResult>(IQuery<TResult> queryMessage) =>
         _publisher.Publish<TResult>(queryMessage, true).Single();

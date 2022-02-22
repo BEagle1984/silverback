@@ -5,57 +5,40 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Messaging.Outbound;
 
 /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}" />
-public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, ProducerEndpoint>
+internal class DelegatedProducer : Producer<DelegatedProducer.DelegatedBroker, ProducerConfiguration, ProducerEndpoint>
 {
-    private readonly IOutboxWriter _outboxWriter;
+    private static readonly DelegatedBroker DelegatedBrokerInstance = new();
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="OutboxProducer" /> class.
-    /// </summary>
-    /// <param name="outboxWriter">
-    ///     The <see cref="IOutboxWriter" />.
-    /// </param>
-    /// <param name="broker">
-    ///     The <see cref="IBroker" /> that instantiated this producer.
-    /// </param>
-    /// <param name="configuration">
-    ///     The <see cref="ProducerConfiguration" />.
-    /// </param>
-    /// <param name="behaviorsProvider">
-    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-    /// </param>
-    /// <param name="envelopeFactory">
-    ///     The <see cref="IOutboundEnvelopeFactory" />.
-    /// </param>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
-    /// </param>
-    /// <param name="logger">
-    ///     The <see cref="IOutboundLogger{TCategoryName}" />.
-    /// </param>
-    public OutboxProducer(
-        IOutboxWriter outboxWriter,
-        OutboxBroker broker,
-        ProducerConfiguration configuration,
-        IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
-        IServiceProvider serviceProvider,
-        IOutboundLogger<Producer<OutboxBroker, ProducerConfiguration, ProducerEndpoint>> logger)
-        : base(broker, configuration, behaviorsProvider, envelopeFactory, serviceProvider, logger)
+    private readonly ProduceDelegate _delegate;
+
+    public DelegatedProducer(ProduceDelegate produceDelegate, ProducerConfiguration configuration, IServiceProvider serviceProvider)
+        : base(
+            DelegatedBrokerInstance,
+            configuration,
+            serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
+            serviceProvider.GetRequiredService<IOutboundEnvelopeFactory>(),
+            serviceProvider,
+            serviceProvider.GetRequiredService<IOutboundLogger<Producer<DelegatedBroker, ProducerConfiguration, ProducerEndpoint>>>())
     {
-        _outboxWriter = outboxWriter;
+        _delegate = Check.NotNull(produceDelegate, nameof(produceDelegate));
     }
+
+    protected override Task ConnectCoreAsync() =>
+        throw new NotSupportedException("Don't call this method.");
+
+    protected override Task DisconnectCoreAsync() =>
+        throw new NotSupportedException("Don't call this method.");
 
     /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier ProduceCore(
@@ -63,7 +46,7 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
         Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint) =>
-        throw new InvalidOperationException("Only asynchronous operations are supported.");
+        throw new NotSupportedException("Only asynchronous operations are supported.");
 
     /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier ProduceCore(
@@ -71,7 +54,7 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
         byte[]? messageBytes,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint) =>
-        throw new InvalidOperationException("Only asynchronous operations are supported.");
+        throw new NotSupportedException("Only asynchronous operations are supported.");
 
     /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
@@ -81,7 +64,7 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
         ProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        throw new InvalidOperationException("Only asynchronous operations are supported.");
+        throw new NotSupportedException("Only asynchronous operations are supported.");
 
     /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
@@ -91,7 +74,7 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
         ProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        throw new InvalidOperationException("Only asynchronous operations are supported.");
+        throw new NotSupportedException("Only asynchronous operations are supported.");
 
     /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
@@ -115,7 +98,7 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
     {
         Check.NotNull(endpoint, nameof(endpoint));
 
-        await AddToOutboxAsync(message, messageBytes, headers, endpoint).ConfigureAwait(false);
+        await _delegate.Invoke(message, messageBytes, headers, endpoint).ConfigureAwait(false);
 
         return null;
     }
@@ -149,25 +132,33 @@ public class OutboxProducer : Producer<OutboxBroker, ProducerConfiguration, Prod
         Check.NotNull(onSuccess, nameof(onSuccess));
         Check.NotNull(onError, nameof(onError));
 
-        await AddToOutboxAsync(message, messageBytes, headers, endpoint).ConfigureAwait(false);
+        await _delegate.Invoke(message, messageBytes, headers, endpoint).ConfigureAwait(false);
 
         onSuccess.Invoke(null);
     }
 
-    private async Task AddToOutboxAsync(object? message, byte[]? messageBytes, IReadOnlyCollection<MessageHeader>? headers, ProducerEndpoint endpoint) =>
-        await _outboxWriter.AddAsync(
-                new OutboxMessage(
-                    message?.GetType(),
-                    messageBytes,
-                    headers,
-                    new OutboxMessageEndpoint(
-                        Configuration.RawName,
-                        Configuration.FriendlyName,
-                        await GetSerializedEndpointAsync(endpoint).ConfigureAwait(false))))
-            .ConfigureAwait(false);
+    internal class DelegatedBroker : IBroker
+    {
+        public Type ProducerConfigurationType { get; } = typeof(ProducerConfiguration);
 
-    private async ValueTask<byte[]?> GetSerializedEndpointAsync(ProducerEndpoint endpoint) =>
-        Configuration.Endpoint is IDynamicProducerEndpointResolver dynamicEndpointProvider
-            ? await dynamicEndpointProvider.SerializeAsync(endpoint).ConfigureAwait(false)
-            : null;
+        public Type ConsumerConfigurationType { get; } = typeof(ConsumerConfiguration);
+
+        public IReadOnlyList<IProducer> Producers { get; } = Array.Empty<IProducer>();
+
+        public IReadOnlyList<IConsumer> Consumers { get; } = Array.Empty<IConsumer>();
+
+        public bool IsConnected => false;
+
+        public Task<IProducer> GetProducerAsync(ProducerConfiguration configuration) => throw new NotSupportedException();
+
+        public IProducer GetProducer(ProducerConfiguration configuration) => throw new NotSupportedException();
+
+        public IProducer GetProducer(string endpointName) => throw new NotSupportedException();
+
+        public IConsumer AddConsumer(ConsumerConfiguration configuration) => throw new NotSupportedException();
+
+        public Task ConnectAsync() => throw new NotSupportedException();
+
+        public Task DisconnectAsync() => throw new NotSupportedException();
+    }
 }

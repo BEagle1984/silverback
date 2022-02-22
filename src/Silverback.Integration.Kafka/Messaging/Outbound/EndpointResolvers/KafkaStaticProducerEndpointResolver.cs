@@ -22,7 +22,7 @@ public sealed class KafkaStaticProducerEndpointResolver : StaticProducerEndpoint
     ///     The optional target partition index.
     /// </param>
     public KafkaStaticProducerEndpointResolver(string topic, int? partition = null)
-        : this(new TopicPartition(Check.NotEmpty(topic, nameof(topic)), partition ?? Partition.Any))
+        : this(new TopicPartition(Check.NotNullOrEmpty(topic, nameof(topic)), partition ?? Partition.Any))
     {
     }
 

@@ -65,12 +65,7 @@ public sealed partial record KafkaClientConsumerConfiguration : KafkaClientConfi
     {
         // TODO: TO BE REFINED to include other cases where the GroupId is needed
         if (!isStaticAssignment && string.IsNullOrEmpty(GroupId))
-        {
-            throw new EndpointConfigurationException(
-                "A group id must be specified when the partitions are assigned dynamically.",
-                GroupId,
-                nameof(GroupId));
-        }
+            throw new EndpointConfigurationException("A group id must be specified when the partitions are assigned dynamically.");
 
         Validate();
     }
@@ -79,37 +74,23 @@ public sealed partial record KafkaClientConsumerConfiguration : KafkaClientConfi
     public override void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))
-        {
-            throw new EndpointConfigurationException(
-                "The bootstrap servers are required to connect with the message broker.",
-                BootstrapServers,
-                nameof(BootstrapServers));
-        }
+            throw new EndpointConfigurationException("The bootstrap servers are required to connect with the message broker.");
 
         if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
         {
             throw new EndpointConfigurationException(
                 $"{nameof(CommitOffsetEach)} cannot be used when auto-commit is enabled. " +
-                $"Explicitly disable it setting {nameof(EnableAutoCommit)} to false.",
-                CommitOffsetEach,
-                nameof(CommitOffsetEach));
+                $"Explicitly disable it setting {nameof(EnableAutoCommit)} to false.");
         }
 
         if (!IsAutoCommitEnabled && CommitOffsetEach <= 0)
         {
             throw new EndpointConfigurationException(
-                $"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.",
-                CommitOffsetEach,
-                nameof(CommitOffsetEach));
+                $"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
         }
 
         if (ClientConfig == null)
-        {
-            throw new EndpointConfigurationException(
-                "The client configuration is required to connect with the message broker.",
-                ClientConfig,
-                nameof(ClientConfig));
-        }
+            throw new EndpointConfigurationException("The client configuration is required to connect with the message broker.");
     }
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

@@ -37,7 +37,7 @@ public readonly record struct MessageHeader
     [JsonConstructor]
     public MessageHeader(string name, string? value)
     {
-        Name = Check.NotEmpty(name, nameof(name));
+        Name = Check.NotNullOrEmpty(name, nameof(name));
         Value = value;
     }
 

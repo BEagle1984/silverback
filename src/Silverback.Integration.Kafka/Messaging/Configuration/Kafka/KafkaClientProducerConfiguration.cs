@@ -73,12 +73,7 @@ public sealed partial record KafkaClientProducerConfiguration : KafkaClientConfi
     public override void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))
-        {
-            throw new EndpointConfigurationException(
-                "The bootstrap servers are required to connect with the message broker.",
-                BootstrapServers,
-                nameof(BootstrapServers));
-        }
+            throw new EndpointConfigurationException("The bootstrap servers are required to connect with the message broker.");
 
         if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
         {
@@ -86,9 +81,7 @@ public sealed partial record KafkaClientProducerConfiguration : KafkaClientConfi
                 $"{nameof(ThrowIfNotAcknowledged)} cannot be set to true if delivery reports " +
                 "are not enabled and the status field isn't included. " +
                 $"Set {nameof(EnableDeliveryReports)} and {nameof(DeliveryReportFields)} " +
-                $"accordingly or set {nameof(ThrowIfNotAcknowledged)} to false.",
-                ThrowIfNotAcknowledged,
-                nameof(ThrowIfNotAcknowledged));
+                $"accordingly or set {nameof(ThrowIfNotAcknowledged)} to false.");
         }
     }
 

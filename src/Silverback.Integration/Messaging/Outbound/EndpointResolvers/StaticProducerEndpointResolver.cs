@@ -30,7 +30,7 @@ public abstract class StaticProducerEndpointResolver<TEndpoint, TConfiguration>
     /// </param>
     protected StaticProducerEndpointResolver(string rawName)
     {
-        RawName = Check.NotEmpty(rawName, nameof(rawName));
+        RawName = Check.NotNullOrEmpty(rawName, nameof(rawName));
     }
 
     /// <inheritdoc cref="IProducerEndpointResolver.RawName" />

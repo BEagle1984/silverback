@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
@@ -33,19 +32,16 @@ public class InMemoryOutboxWriterFixture
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
 
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
+        OutboxMessage outboxMessage1 = new(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint);
+        OutboxMessage outboxMessage2 = new(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint);
+        OutboxMessage outboxMessage3 = new(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint);
+        await outboxWriter.AddAsync(outboxMessage1);
+        await outboxWriter.AddAsync(outboxMessage2);
+        await outboxWriter.AddAsync(outboxMessage3);
 
         InMemoryStorageFactory storageFactory = serviceProvider.GetRequiredService<InMemoryStorageFactory>();
         InMemoryStorage<OutboxMessage> storage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(outboxSettings);
-        storage.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                new byte[] { 0x01 },
-                new byte[] { 0x02 },
-                new byte[] { 0x03 }
-            });
+        storage.Get(10).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
     }
 
     [Fact]
@@ -77,68 +73,6 @@ public class InMemoryOutboxWriterFixture
             new[]
             {
                 new byte[] { 0x02 }
-            });
-    }
-
-    [Fact]
-    public async Task Add_ShouldJoinAmbientTransaction()
-    {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
-        IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        InMemoryOutboxSettings outboxSettings = new();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
-        InMemoryStorageFactory storageFactory = serviceProvider.GetRequiredService<InMemoryStorageFactory>();
-        InMemoryStorage<OutboxMessage> storage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(outboxSettings);
-
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
-
-        using (TransactionScope dummy = new())
-        {
-            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint));
-
-            // Don't commit the transaction
-        }
-
-        storage.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                new byte[] { 0x01 },
-                new byte[] { 0x02 },
-                new byte[] { 0x03 }
-            });
-
-        using (TransactionScope transaction = new())
-        {
-            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint));
-            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x05 }, null, Endpoint));
-            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x06 }, null, Endpoint));
-
-            storage.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-                new[]
-                {
-                    new byte[] { 0x01 },
-                    new byte[] { 0x02 },
-                    new byte[] { 0x03 }
-                });
-
-            transaction.Complete();
-        }
-
-        storage.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
-            new[]
-            {
-                new byte[] { 0x01 },
-                new byte[] { 0x02 },
-                new byte[] { 0x03 },
-                new byte[] { 0x04 },
-                new byte[] { 0x05 },
-                new byte[] { 0x06 }
             });
     }
 
