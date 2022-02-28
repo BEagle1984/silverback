@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Configuration;
+using Silverback.Configuration;
 using Silverback.Messaging.Sequences.Batch;
 
 namespace Silverback.Messaging.Sequences;
@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Sequences;
 /// <summary>
 ///     The sequence handling settings.
 /// </summary>
-public sealed record SequenceSettings : IValidatableEndpointSettings
+public sealed record SequenceSettings : IValidatableSettings
 {
     /// <summary>
     ///     Gets the timeout after which an incomplete sequence that isn't pushed with new messages will
@@ -22,7 +22,7 @@ public sealed record SequenceSettings : IValidatableEndpointSettings
     /// </remarks>
     public TimeSpan Timeout { get; init; } = TimeSpan.FromMinutes(30);
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         if (Timeout <= TimeSpan.Zero)

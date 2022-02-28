@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Lock;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -53,5 +54,41 @@ public class SqliteOutboxSettingsFixture
 
         lockSettings.Should().BeOfType<InMemoryLockSettings>();
         lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.connection-string.my-outbox");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenSettingsAreValid()
+    {
+        SqliteOutboxSettings outboxSettings = new("connection-string", "my-outbox");
+
+        Action act = () => outboxSettings.Validate();
+
+        act.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? tableName)
+    {
+        SqliteOutboxSettings outboxSettings = new("connection-string") { TableName = tableName! };
+
+        Action act = () => outboxSettings.Validate();
+
+        act.Should().Throw<SilverbackConfigurationException>();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Validate_ShouldThrow_WhenConnectionStringIsNullOrWhitespace(string? connectionString)
+    {
+        SqliteOutboxSettings outboxSettings = new(connectionString!, "my-outbox");
+
+        Action act = () => outboxSettings.Validate();
+
+        act.Should().Throw<SilverbackConfigurationException>();
     }
 }

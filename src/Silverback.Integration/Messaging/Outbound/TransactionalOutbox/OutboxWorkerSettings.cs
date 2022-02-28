@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Util;
 
@@ -10,7 +11,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 /// <summary>
 ///     The <see cref="OutboxWorker" /> and <see cref="OutboxWorkerService" /> settings.
 /// </summary>
-public record OutboxWorkerSettings
+public record OutboxWorkerSettings : IValidatableSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorkerSettings" /> class.
@@ -27,8 +28,7 @@ public record OutboxWorkerSettings
         {
             throw new SilverbackConfigurationException(
                 $"The distributed lock settings cannot be inferred from the {outboxSettings.GetType().Name} since no matching " +
-                "distributed lock implementation exists. Please specify the distributed lock implementation or explicitly set it to null, " +
-                "using the other constructor overload.");
+                "distributed lock implementation exists. Please specify the distributed lock implementation or explicitly set it to null.");
         }
     }
 
@@ -43,20 +43,20 @@ public record OutboxWorkerSettings
     /// </param>
     public OutboxWorkerSettings(OutboxSettings outboxSettings, DistributedLockSettings? lockSettings)
     {
-        Outbox = Check.NotNull(outboxSettings, nameof(outboxSettings));
+        Outbox = outboxSettings;
         DistributedLock = lockSettings;
     }
 
     /// <summary>
     ///     Gets the outbox settings.
     /// </summary>
-    public OutboxSettings Outbox { get; init; }
+    public OutboxSettings Outbox { get; }
 
     /// <summary>
     ///     Gets the settings for the optional <see cref="IDistributedLock" /> to be used to ensure that only one instance is running at
-    ///     the same time. The default is <c>null</c> but it will be automatically setup  and no locking will be setup unless explicitly configured.
+    ///     the same time. By default it will be automatically inferred from the <see cref="Outbox" /> settings.
     /// </summary>
-    public DistributedLockSettings? DistributedLock { get; init; }
+    public DistributedLockSettings? DistributedLock { get; }
 
     /// <summary>
     ///     Gets the interval between each run. The default is 500 milliseconds.
@@ -73,4 +73,14 @@ public record OutboxWorkerSettings
     ///     Gets the number of messages to be retrieved from the outbox and processed at once. The default is 1000.
     /// </summary>
     public int BatchSize { get; init; } = 1000;
+
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
+    public void Validate()
+    {
+        if (Interval < TimeSpan.Zero)
+            throw new SilverbackConfigurationException("The interval must be greater or equal to 0.");
+
+        if (BatchSize < 1)
+            throw new SilverbackConfigurationException("The batch size must be greater or equal to 1.");
+    }
 }

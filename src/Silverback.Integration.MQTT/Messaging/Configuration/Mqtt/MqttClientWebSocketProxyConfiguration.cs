@@ -1,14 +1,16 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Configuration;
+
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
 ///     The proxy configuration.
 /// </summary>
-public partial record MqttClientWebSocketProxyConfiguration : IValidatableEndpointSettings
+public partial record MqttClientWebSocketProxyConfiguration : IValidatableSettings
 {
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Address))

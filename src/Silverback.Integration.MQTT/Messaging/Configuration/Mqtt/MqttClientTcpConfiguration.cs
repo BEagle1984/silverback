@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguration
 {
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Server))

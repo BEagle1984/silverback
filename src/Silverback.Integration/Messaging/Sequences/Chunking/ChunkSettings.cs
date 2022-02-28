@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Configuration;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Sequences.Chunking;
 
@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Sequences.Chunking;
 ///     The chunking settings. To enable chunking just set the <c>Size</c> property to the desired (maximum)
 ///     chunk size.
 /// </summary>
-public sealed record ChunkSettings : IValidatableEndpointSettings
+public sealed record ChunkSettings : IValidatableSettings
 {
     /// <summary>
     ///     Gets the size in bytes of each chunk. The default is <see cref="int.MaxValue" />, meaning that
@@ -25,7 +25,7 @@ public sealed record ChunkSettings : IValidatableEndpointSettings
     /// </summary>
     public bool AlwaysAddHeaders { get; init; } = true;
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         if (Size < 1)

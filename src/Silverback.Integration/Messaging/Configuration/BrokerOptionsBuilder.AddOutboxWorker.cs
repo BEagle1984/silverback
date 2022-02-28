@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
@@ -17,7 +18,24 @@ namespace Silverback.Messaging.Configuration;
 /// </content>
 public sealed partial class BrokerOptionsBuilder
 {
-    // TODO: Builder version
+    /// <summary>
+    ///     Adds an <see cref="OutboxWorker" /> to publish the messages stored in the outbox to the configured broker.
+    /// </summary>
+    /// <param name="settingsBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="OutboxWorkerSettingsBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public BrokerOptionsBuilder AddOutboxWorker(Action<OutboxWorkerSettingsBuilder> settingsBuilderAction)
+    {
+        Check.NotNull(settingsBuilderAction, nameof(settingsBuilderAction));
+
+        OutboxWorkerSettingsBuilder builder = new();
+        settingsBuilderAction.Invoke(builder);
+
+        return AddOutboxWorker(builder.Build());
+    }
 
     /// <summary>
     ///     Adds an <see cref="OutboxWorker" /> to publish the messages stored in the outbox to the configured broker.

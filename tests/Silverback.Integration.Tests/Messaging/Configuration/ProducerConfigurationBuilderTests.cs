@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.BinaryMessages;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
@@ -92,6 +93,19 @@ public partial class ProducerConfigurationBuilderTests
         TestProducerConfiguration endpoint = builder.ProduceToOutbox(new InMemoryOutboxSettings()).Build();
 
         endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
+    }
+
+    [Fact]
+    public void ProduceToOutbox_StrategySetViaBuilder()
+    {
+        TestProducerConfigurationBuilder<object> builder = new();
+
+        TestProducerConfiguration endpoint = builder
+            .ProduceToOutbox(outbox => outbox.UseMemory().WithName("test-outbox"))
+            .Build();
+
+        endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
+        endpoint.Strategy.As<OutboxProduceStrategy>().Settings.As<InMemoryOutboxSettings>().OutboxName.Should().Be("test-outbox");
     }
 
     [Fact]

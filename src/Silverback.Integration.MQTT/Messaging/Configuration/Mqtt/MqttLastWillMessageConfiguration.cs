@@ -4,13 +4,14 @@
 using System.Diagnostics.CodeAnalysis;
 using MQTTnet;
 using MQTTnet.Protocol;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
 ///     The configuration of the last will message to be sent when the client disconnects ungracefully.
 /// </summary>
-public record MqttLastWillMessageConfiguration : IValidatableEndpointSettings
+public record MqttLastWillMessageConfiguration : IValidatableSettings
 {
     /// <summary>
     ///     Gets the target topic.
@@ -35,7 +36,7 @@ public record MqttLastWillMessageConfiguration : IValidatableEndpointSettings
     /// </summary>
     public bool Retain { get; init; }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         if (string.IsNullOrEmpty(Topic))

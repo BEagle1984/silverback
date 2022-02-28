@@ -29,10 +29,10 @@ public record SqliteOutboxSettings : OutboxSettings
     /// </param>
     public SqliteOutboxSettings(string connectionString, string? tableName = null)
     {
-        ConnectionString = Check.NotNullOrEmpty(connectionString, nameof(connectionString));
+        ConnectionString = connectionString;
 
         if (tableName != null)
-            TableName = Check.NotNullOrEmpty(tableName, nameof(tableName));
+            TableName = tableName;
     }
 
     /// <summary>
@@ -54,4 +54,16 @@ public record SqliteOutboxSettings : OutboxSettings
     /// </returns>
     public override DistributedLockSettings GetCompatibleLockSettings() =>
         new InMemoryLockSettings($"outbox.{ConnectionString}.{TableName}");
+
+    /// <inheritdoc cref="OutboxSettings.Validate" />
+    public override void Validate()
+    {
+        base.Validate();
+
+        if (string.IsNullOrWhiteSpace(ConnectionString))
+            throw new SilverbackConfigurationException("The connection string is required.");
+
+        if (string.IsNullOrWhiteSpace(TableName))
+            throw new SilverbackConfigurationException("The outbox table name is required.");
+    }
 }

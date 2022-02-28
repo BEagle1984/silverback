@@ -6,7 +6,7 @@ using Silverback.Lock;
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
 /// <summary>
-///     The <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader"/> settings.
+///     The <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" /> settings.
 /// </summary>
 public record InMemoryOutboxSettings : OutboxSettings
 {
@@ -34,10 +34,19 @@ public record InMemoryOutboxSettings : OutboxSettings
     public string OutboxName { get; init; } = "default";
 
     /// <summary>
-    ///     Returns an <see cref="InMemoryLockSettings"/> instance using the same database.
+    ///     Returns an <see cref="InMemoryLockSettings" /> instance using the same database.
     /// </summary>
     /// <returns>
-    ///     The <see cref="InMemoryLockSettings"/> instance.
+    ///     The <see cref="InMemoryLockSettings" /> instance.
     /// </returns>
     public override DistributedLockSettings GetCompatibleLockSettings() => new InMemoryLockSettings($"outbox.{OutboxName}");
+
+    /// <inheritdoc cref="OutboxSettings.Validate" />
+    public override void Validate()
+    {
+        base.Validate();
+
+        if (string.IsNullOrWhiteSpace(OutboxName))
+            throw new SilverbackConfigurationException("The outbox name is required.");
+    }
 }

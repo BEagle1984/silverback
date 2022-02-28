@@ -69,7 +69,7 @@ public sealed partial record KafkaClientProducerConfiguration : KafkaClientConfi
          DeliveryReportFields == "all" ||
          DeliveryReportFields.Contains("status", StringComparison.Ordinal));
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))

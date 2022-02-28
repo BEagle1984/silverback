@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Lock;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -53,5 +54,28 @@ public class InMemoryOutboxSettingsFixture
 
         lockSettings.Should().BeOfType<InMemoryLockSettings>();
         lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.my-outbox");
+    }
+
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenSettingsAreValid()
+    {
+        InMemoryOutboxSettings outboxSettings = new("my-outbox");
+
+        Action act = () => outboxSettings.Validate();
+
+        act.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? outboxName)
+    {
+        InMemoryOutboxSettings outboxSettings = new(outboxName!);
+
+        Action act = () => outboxSettings.Validate();
+
+        act.Should().Throw<SilverbackConfigurationException>();
     }
 }

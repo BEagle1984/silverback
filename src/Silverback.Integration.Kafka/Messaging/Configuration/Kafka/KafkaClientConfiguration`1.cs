@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <typeparam name="TClientConfig">
 ///     The type of the wrapped <see cref="ClientConfig" />.
 /// </typeparam>
-public abstract partial record KafkaClientConfiguration<TClientConfig> : IValidatableEndpointSettings
+public abstract partial record KafkaClientConfiguration<TClientConfig> : IValidatableSettings
     where TClientConfig : ClientConfig, new()
 {
     /// <summary>
@@ -42,7 +43,7 @@ public abstract partial record KafkaClientConfiguration<TClientConfig> : IValida
     /// </summary>
     protected TClientConfig ClientConfig { get; }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public abstract void Validate();
 
     internal TClientConfig GetConfluentClientConfig() => ClientConfig;

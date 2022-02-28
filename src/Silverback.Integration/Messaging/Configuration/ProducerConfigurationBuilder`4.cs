@@ -105,15 +105,35 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     ///     The operation is therefore included in the database transaction applying the message side effects to the local database.
     ///     The <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
     /// </summary>
+    /// <param name="settingsBuilderFunc">
+    ///     A <see cref="Func{T}" /> that takes the <see cref="OutboxSettingsBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ProduceToOutbox(Func<OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder> settingsBuilderFunc)
+    {
+        Check.NotNull(settingsBuilderFunc, nameof(settingsBuilderFunc));
+
+        return ProduceToOutbox(settingsBuilderFunc.Invoke(new OutboxSettingsBuilder()).Build());
+    }
+
+    /// <summary>
+    ///     Specifies that the<see cref="OutboxProduceStrategy" /> has to be used, storing the messages into the transactional outbox table.
+    ///     The operation is therefore included in the database transaction applying the message side effects to the local database.
+    ///     The <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
+    /// </summary>
     /// <param name="settings">
     ///     The outbox settings.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    // TODO: Builder version
     public TBuilder ProduceToOutbox(OutboxSettings settings)
     {
+        Check.NotNull(settings, nameof(settings));
+        settings.Validate();
+
         _strategy = new OutboxProduceStrategy(settings);
         return This;
     }

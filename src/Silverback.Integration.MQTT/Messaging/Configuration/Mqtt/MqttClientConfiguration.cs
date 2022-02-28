@@ -6,6 +6,7 @@ using System.Linq;
 using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
 using Silverback.Collections;
+using Silverback.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -14,7 +15,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 ///     The configuration used to connect with the MQTT broker. This is actually a wrapper around the
 ///     <see cref="MqttClientOptions" /> from the MQTTnet library.
 /// </summary>
-public sealed partial record MqttClientConfiguration : IValidatableEndpointSettings
+public sealed partial record MqttClientConfiguration : IValidatableSettings
 {
     /// <summary>
     ///     Gets the client identifier. The default is <c>Guid.NewGuid().ToString()</c>.
@@ -42,7 +43,7 @@ public sealed partial record MqttClientConfiguration : IValidatableEndpointSetti
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         if (string.IsNullOrEmpty(ClientId))

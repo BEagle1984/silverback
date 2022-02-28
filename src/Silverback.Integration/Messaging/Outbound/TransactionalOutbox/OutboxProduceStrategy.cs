@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.EndpointResolvers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox;
 
@@ -30,7 +32,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// </param>
     public OutboxProduceStrategy(OutboxSettings settings)
     {
-        Settings = settings;
+        Settings = Check.NotNull(settings, nameof(settings));
     }
 
     /// <summary>

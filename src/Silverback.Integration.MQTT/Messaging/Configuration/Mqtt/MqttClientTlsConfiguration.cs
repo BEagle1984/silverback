@@ -12,13 +12,14 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using MQTTnet.Client.Options;
 using Silverback.Collections;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
 ///     The TLS configuration.
 /// </summary>
-public partial record MqttClientTlsConfiguration : IValidatableEndpointSettings
+public partial record MqttClientTlsConfiguration : IValidatableSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientTlsConfiguration" /> class.
@@ -45,7 +46,7 @@ public partial record MqttClientTlsConfiguration : IValidatableEndpointSettings
     public IValueReadOnlyCollection<SslApplicationProtocol>? ApplicationProtocols { get; init; }
 #endif
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         // Nothing to validate

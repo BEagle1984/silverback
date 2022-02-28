@@ -27,7 +27,7 @@ public record KafkaClientConfiguration : KafkaClientConfiguration<ClientConfig>
     {
     }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
         // Don't validate anything, leave it to the KafkaProducerConfig and KafkaConsumerConfig

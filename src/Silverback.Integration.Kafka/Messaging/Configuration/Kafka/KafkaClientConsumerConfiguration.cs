@@ -70,7 +70,7 @@ public sealed partial record KafkaClientConsumerConfiguration : KafkaClientConfi
         Validate();
     }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
         if (string.IsNullOrEmpty(BootstrapServers))

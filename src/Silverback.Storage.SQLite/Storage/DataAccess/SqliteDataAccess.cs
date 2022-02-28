@@ -147,7 +147,15 @@ internal class SqliteDataAccess
     private async Task<(DbTransaction Transaction, bool IsNew)> GetTransactionAsync(SilverbackContext? context)
     {
         if (context != null && context.TryGetActiveDbTransaction(out SqliteTransaction? sqliteTransaction))
-            return (sqliteTransaction!, false);
+        {
+            if (sqliteTransaction.Connection.ConnectionString != _connectionString)
+            {
+                throw new InvalidOperationException(
+                    "The connection string of the active transaction does not match the configured connection string.");
+            }
+
+            return (sqliteTransaction, false);
+        }
 
         SqliteConnection connection = new(_connectionString);
         await connection.OpenAsync().ConfigureAwait(false);

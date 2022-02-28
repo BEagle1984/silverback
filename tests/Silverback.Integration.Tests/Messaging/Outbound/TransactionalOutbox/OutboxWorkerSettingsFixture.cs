@@ -46,6 +46,42 @@ public class OutboxWorkerSettingsFixture
         settings.DistributedLock.Should().BeNull();
     }
 
+    [Fact]
+    public void Validate_ShouldNotThrow_WhenSettingsAreValid()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings());
+
+        Action act = () => settings.Validate();
+
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenIntervalIsOutOfRange()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings())
+        {
+            Interval = TimeSpan.FromSeconds(-42)
+        };
+
+        Action act = () => settings.Validate();
+
+        act.Should().Throw<SilverbackConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenBatchSizeIsOutOfRange()
+    {
+        OutboxWorkerSettings settings = new(new TestOutboxSettings())
+        {
+            BatchSize = -42
+        };
+
+        Action act = () => settings.Validate();
+
+        act.Should().Throw<SilverbackConfigurationException>();
+    }
+
     private record TestOutboxSettings : OutboxSettings
     {
         public override DistributedLockSettings GetCompatibleLockSettings() => new TestLockSettings();

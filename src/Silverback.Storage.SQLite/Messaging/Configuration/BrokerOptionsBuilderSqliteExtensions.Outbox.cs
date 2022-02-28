@@ -2,6 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -38,11 +42,8 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         if (readerFactory == null || writerFactory == null)
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
-        // TODO: Map settings to SqliteOutboxSettings: connection string from parameter / outbox name derived from actual settings (hash?)
-        // readerFactory.OverrideFactories(settings => new SqliteOutboxReader(settings));
-        // writerFactory.AddFactory<SqliteOutboxSettings>(settings => new SqliteOutboxWriter(settings));
-
-        throw new NotImplementedException();
+        readerFactory.OverrideFactories(settings => new SqliteOutboxReader(MapSqliteSettings(settings, connectionString)));
+        writerFactory.OverrideFactories(settings => new SqliteOutboxWriter(MapSqliteSettings(settings, connectionString)));
 
         return builder;
     }
@@ -75,5 +76,17 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         builder.SilverbackBuilder.AddInMemoryLock();
 
         return builder;
+    }
+
+    [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms", Justification = "Not security relevant")]
+    private static SqliteOutboxSettings MapSqliteSettings(OutboxSettings settings, string connectionString)
+    {
+        if (settings is SqliteOutboxSettings sqliteSettings)
+            return sqliteSettings;
+
+        using MD5 md5 = MD5.Create();
+        string settingsHash = BitConverter.ToString(md5.ComputeHash(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
+
+        return new SqliteOutboxSettings(connectionString, settingsHash);
     }
 }

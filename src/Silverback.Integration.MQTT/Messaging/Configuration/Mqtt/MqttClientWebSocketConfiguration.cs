@@ -13,7 +13,7 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     /// </summary>
     public MqttClientWebSocketProxyConfiguration? Proxy { get; init; }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Uri))

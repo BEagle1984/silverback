@@ -44,20 +44,17 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -97,30 +94,31 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                })
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox1"))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100)))
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox2"))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo("topic1")
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1")))
+                                    .ProduceToOutbox(
+                                        outbox => outbox
+                                            .UseSqlite(Host.SqliteConnectionString)
+                                            .WithTableName("outbox1")))
                             .AddOutbound<TestEventTwo>(
                                 producer => producer
                                     .ProduceTo("topic2")
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2")))
+                                    .ProduceToOutbox(
+                                        outbox => outbox
+                                            .UseSqlite(Host.SqliteConnectionString)
+                                            .WithTableName("outbox2")))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
@@ -167,12 +165,10 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
@@ -193,8 +189,7 @@ public class OutboxFixture : KafkaTestFixture
                                                     throw new InvalidOperationException();
                                             }
                                         })
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString))))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
                     .AddIntegrationSpyAndSubscriber())
             .Run();
 
@@ -238,12 +233,10 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
@@ -251,14 +244,12 @@ public class OutboxFixture : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(_ => "some-other-topic")
                                     .WithName("other-topic")
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddOutbound<TestEventOne>(
                                 producer => producer
                                     .ProduceTo(_ => DefaultTopicName)
                                     .WithName("my-topic")
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -300,20 +291,17 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -382,20 +370,17 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .UseInMemoryOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -437,20 +422,17 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddSqliteOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new SqliteOutboxSettings(Host.SqliteConnectionString))
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new SqliteOutboxSettings(Host.SqliteConnectionString)))
+                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
@@ -490,20 +472,17 @@ public class OutboxFixture : KafkaTestFixture
                         options => options
                             .AddMockedKafka()
                             .AddInMemoryOutbox()
-                            // TODO: Replace with builder
                             .AddOutboxWorker(
-                                new OutboxWorkerSettings(new InMemoryOutboxSettings())
-                                {
-                                    Interval = TimeSpan.FromMilliseconds(100)
-                                }))
+                                worker => worker
+                                    .ProcessOutbox(outbox => outbox.UseMemory())
+                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
-                                    // TODO: Replace with builder
-                                    .ProduceToOutbox(new InMemoryOutboxSettings()))
+                                    .ProduceToOutbox(outbox => outbox.UseMemory()))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)

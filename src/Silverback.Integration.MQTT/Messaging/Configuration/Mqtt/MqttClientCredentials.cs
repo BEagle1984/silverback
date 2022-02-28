@@ -2,13 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Text;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
 ///     The credentials used to connect to the MQTT broker.
 /// </summary>
-public partial record MqttClientCredentials : IValidatableEndpointSettings
+public partial record MqttClientCredentials : IValidatableSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientCredentials" /> class.
@@ -42,7 +43,7 @@ public partial record MqttClientCredentials : IValidatableEndpointSettings
             Password = Encoding.UTF8.GetBytes(password);
     }
 
-    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
         // Nothing to validate
