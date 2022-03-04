@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.6.0-beta.6](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0-beta.6)
+## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 
 ### What's new
 
@@ -14,6 +14,7 @@ uid: releases
 * Add overload for `Publish` method in the error policies that forwards the exception as well as the envelope
 * Throw `TimeoutException` from <xref:Silverback.Testing.KafkaTestingHelper> and <xref:Silverback.Testing.MqttTestingHelper>
 * Improve MQTT connection related logs (info for successful reconnect and add broker name to log messages)
+* Support shared sessions in mocked MQTT broker
 
 ### Fixes
 

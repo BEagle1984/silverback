@@ -22,6 +22,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
 
+        private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
+
         private readonly Channel<MqttApplicationMessage> _channel =
             Channel.CreateUnbounded<MqttApplicationMessage>();
 
@@ -33,10 +35,14 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         public ClientSession(
             IMqttClientOptions clientOptions,
-            IMqttApplicationMessageReceivedHandler messageHandler)
+            IMqttApplicationMessageReceivedHandler messageHandler,
+            SharedSubscriptionsManager sharedSubscriptionsManager)
         {
             ClientOptions = Check.NotNull(clientOptions, nameof(clientOptions));
             _messageHandler = Check.NotNull(messageHandler, nameof(messageHandler));
+            _sharedSubscriptionsManager = Check.NotNull(
+                sharedSubscriptionsManager,
+                nameof(sharedSubscriptionsManager));
         }
 
         public IMqttClientOptions ClientOptions { get; }
@@ -81,7 +87,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     if (_subscriptions.Any(subscription => subscription.Topic == topic))
                         continue;
 
-                    _subscriptions.Add(new Subscription(ClientOptions, topic));
+                    _subscriptions.Add(new Subscription(ClientOptions, topic, _sharedSubscriptionsManager));
                 }
             }
         }
@@ -98,7 +104,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         {
             lock (_subscriptions)
             {
-                if (_subscriptions.All(subscription => !subscription.IsMatch(message.Topic, clientOptions)))
+                if (_subscriptions.All(subscription => !subscription.IsMatch(message, clientOptions)))
                     return;
             }
 
@@ -140,18 +146,60 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         private sealed class Subscription
         {
-            public Subscription(IMqttClientOptions clientOptions, string topic)
+            private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
+
+            public Subscription(
+                IMqttClientOptions clientOptions,
+                string topic,
+                SharedSubscriptionsManager sharedSubscriptionsManager)
             {
+                _sharedSubscriptionsManager = sharedSubscriptionsManager;
+
+                if (IsSharedSubscription(topic, out string? group, out string? actualTopic))
+                {
+                    sharedSubscriptionsManager.Add(group);
+                    topic = actualTopic;
+                    Group = group;
+                }
+
                 Topic = topic;
+
                 Regex = GetSubscriptionRegex(topic, clientOptions);
             }
 
             public string Topic { get; }
 
+            public string? Group { get; }
+
             public Regex Regex { get; }
 
-            public bool IsMatch(string topic, IMqttClientOptions clientOptions) =>
-                Regex.IsMatch(GetFullTopicName(topic, clientOptions));
+            public bool IsMatch(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+            {
+                if (!Regex.IsMatch(GetFullTopicName(message.Topic, clientOptions)))
+                    return false;
+
+                return Group == null || _sharedSubscriptionsManager.IsFirstMatch(Group, message);
+            }
+
+            private static bool IsSharedSubscription(
+                string topic,
+                [NotNullWhen(true)] out string? group,
+                [NotNullWhen(true)] out string? actualTopic)
+            {
+                const string sharedSubscriptionPrefix = "$share/";
+                if (topic.StartsWith(sharedSubscriptionPrefix, StringComparison.Ordinal))
+                {
+                    group = topic.Substring(
+                        sharedSubscriptionPrefix.Length,
+                        topic.IndexOf('/', sharedSubscriptionPrefix.Length));
+                    actualTopic = topic.Substring(topic.IndexOf('/', sharedSubscriptionPrefix.Length) + 1);
+                    return true;
+                }
+
+                group = null;
+                actualTopic = null;
+                return false;
+            }
 
             private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
             {

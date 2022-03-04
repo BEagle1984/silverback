@@ -21,6 +21,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = new();
 
+        private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
+
         [SuppressMessage(
             "ReSharper",
             "InconsistentlySynchronizedField",
@@ -42,8 +44,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             {
                 Disconnect(clientOptions.ClientId);
 
-                if (!_sessions.TryGetValue(clientOptions.ClientId, out var session))
-                    session = new ClientSession(clientOptions, handler);
+                if (!_sessions.TryGetValue(clientOptions.ClientId, out ClientSession? session))
+                    session = new ClientSession(clientOptions, handler, _sharedSubscriptionsManager);
 
                 _sessions.Add(clientOptions.ClientId, session);
                 session.Connect();
@@ -100,7 +102,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             StoreMessage(message);
 
-            return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions).AsTask());
+            return _sessions.Values.ForEachAsync(
+                session => session.PushAsync(message, clientOptions).AsTask());
         }
 
         [SuppressMessage(
@@ -112,9 +115,9 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             while (!cancellationToken.IsCancellationRequested)
             {
                 if (_sessions.Values.All(
-                    session => session.PendingMessagesCount == 0 ||
-                               session.IsConsumerDisconnected ||
-                               !session.IsConnected))
+                        session => session.PendingMessagesCount == 0 ||
+                                   session.IsConsumerDisconnected ||
+                                   !session.IsConnected))
                     return;
 
                 await Task.Delay(10, cancellationToken).ConfigureAwait(false);
