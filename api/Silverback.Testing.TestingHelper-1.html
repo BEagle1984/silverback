@@ -267,7 +267,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.IsOutboxEmptyAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L95">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L110">View source</a>
   </span>
   <a id="Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync_" data-uid="Silverback.Testing.TestingHelper`1.IsOutboxEmptyAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync" data-uid="Silverback.Testing.TestingHelper`1.IsOutboxEmptyAsync">IsOutboxEmptyAsync()</h4>
@@ -297,10 +297,71 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilAllMessagesAreConsumedAsync(System.Boolean%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L93">View source</a>
+  </span>
+  <a id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync*"></a>
+  <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages routed to the consumers have been
+processed and committed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract Task WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">throwTimeoutException</span></td>
+        <td><p>A value specifying whether a <span class="xref">System.TimeoutException</span> has to be thrown when the messages
+aren't consumed before the timeout expires.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The time to wait for the messages to be consumed and processed. The default is 30 seconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages have been processed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked brokers only.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilAllMessagesAreConsumedAsync(System.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L80">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L89">View source</a>
   </span>
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
@@ -310,7 +371,7 @@ processed and committed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -351,6 +412,63 @@ processed and committed.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilConnectedAsync(System.Boolean%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L61">View source</a>
+  </span>
+  <a id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync*"></a>
+  <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})">WaitUntilConnectedAsync(Boolean, Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all consumers are connected and ready.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public async Task WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">throwTimeoutException</span></td>
+        <td><p>A value specifying whether a <span class="xref">System.TimeoutException</span> has to be thrown when the connection
+isn't established before the timeout expires.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The time to wait for the consumers to connect. The default is 30 seconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all consumers are successfully connected and ready.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilConnectedAsync(System.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
@@ -363,7 +481,7 @@ processed and committed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task WaitUntilConnectedAsync(TimeSpan? timeout = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task WaitUntilConnectedAsync(TimeSpan? timeout = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -404,7 +522,7 @@ processed and committed.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Testing.TestingHelper%601.WaitUntilOutboxIsEmptyAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L83">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Testing/Testing/TestingHelper`1.cs/#L98">View source</a>
   </span>
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilOutboxIsEmptyAsync*"></a>
   <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilOutboxIsEmptyAsync(System.Threading.CancellationToken)">WaitUntilOutboxIsEmptyAsync(CancellationToken)</h4>

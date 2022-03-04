@@ -104,7 +104,13 @@
       <a class="xref" href="Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__">ITestingHelper&lt;KafkaBroker&gt;.WaitUntilConnectedAsync(Nullable&lt;TimeSpan&gt;)</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__">ITestingHelper&lt;KafkaBroker&gt;.WaitUntilConnectedAsync(Boolean, Nullable&lt;TimeSpan&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__">ITestingHelper&lt;KafkaBroker&gt;.WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__">ITestingHelper&lt;KafkaBroker&gt;.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable&lt;TimeSpan&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_">ITestingHelper&lt;KafkaBroker&gt;.WaitUntilOutboxIsEmptyAsync(CancellationToken)</a>
@@ -294,6 +300,75 @@
     </tbody>
   </table>
   <h5 id="Silverback_Testing_IKafkaTestingHelper_GetTopics_System_String_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean%2CSystem.Collections.Generic.IReadOnlyCollection%7BSystem.String%7D%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/IKafkaTestingHelper.cs/#L114">View source</a>
+  </span>
+  <a id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync*"></a>
+  <h4 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection&lt;String&gt;, Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages routed to the consumers have been
+processed and committed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, IReadOnlyCollection&lt;string&gt; topicNames, TimeSpan? timeout = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">throwTimeoutException</span></td>
+        <td><p>A value specifying whether a <span class="xref">System.TimeoutException</span> has to be thrown when the messages
+aren't consumed before the timeout expires.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">topicNames</span></td>
+        <td><p>The name of the topics to be monitored.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The time to wait for the messages to be consumed and processed. The default is 30 seconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages have been processed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
 <a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
 <a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>

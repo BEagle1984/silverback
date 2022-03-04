@@ -5282,6 +5282,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.MqttLogEvents.ProducerQueueProcessingCanceled
   nameWithType: MqttLogEvents.ProducerQueueProcessingCanceled
+- uid: Silverback.Diagnostics.MqttLogEvents.Reconnected
+  name: Reconnected
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_Reconnected
+  commentId: P:Silverback.Diagnostics.MqttLogEvents.Reconnected
+  fullName: Silverback.Diagnostics.MqttLogEvents.Reconnected
+  nameWithType: MqttLogEvents.Reconnected
+- uid: Silverback.Diagnostics.MqttLogEvents.Reconnected*
+  name: Reconnected
+  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_Reconnected_
+  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.Reconnected
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.MqttLogEvents.Reconnected
+  nameWithType: MqttLogEvents.Reconnected
 - uid: Silverback.Diagnostics.RabbitLogEvents
   name: RabbitLogEvents
   href: api/Silverback.Diagnostics.RabbitLogEvents.html
@@ -37500,6 +37513,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Testing.IKafkaTestingHelper.GetTopics
   nameWithType: IKafkaTestingHelper.GetTopics
+- uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection<String>, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection(Of String), Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Collections.Generic.IReadOnlyCollection<System.String>, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Collections.Generic.IReadOnlyCollection(Of System.String), System.Nullable(Of System.TimeSpan))
+  nameWithType: IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection<String>, Nullable<TimeSpan>)
+  nameWithType.vb: IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection(Of String), Nullable(Of TimeSpan))
 - uid: Silverback.Testing.IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
   name: WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<String>, Nullable<TimeSpan>)
   href: api/Silverback.Testing.IKafkaTestingHelper.html#Silverback_Testing_IKafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__
@@ -37782,6 +37804,15 @@ references:
   fullName.vb: Silverback.Testing.ITestingHelper(Of TBroker).Spy
   nameWithType: ITestingHelper<TBroker>.Spy
   nameWithType.vb: ITestingHelper(Of TBroker).Spy
+- uid: Silverback.Testing.ITestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.ITestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.ITestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.ITestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: ITestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: ITestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.ITestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
   name: WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
   href: api/Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__
@@ -37800,6 +37831,15 @@ references:
   fullName.vb: Silverback.Testing.ITestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync
   nameWithType: ITestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync
   nameWithType.vb: ITestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync
+- uid: Silverback.Testing.ITestingHelper`1.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilConnectedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.ITestingHelper`1.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilConnectedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.ITestingHelper<TBroker>.WaitUntilConnectedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.ITestingHelper(Of TBroker).WaitUntilConnectedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: ITestingHelper<TBroker>.WaitUntilConnectedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: ITestingHelper(Of TBroker).WaitUntilConnectedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.ITestingHelper`1.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})
   name: WaitUntilConnectedAsync(Nullable<TimeSpan>)
   href: api/Silverback.Testing.ITestingHelper-1.html#Silverback_Testing_ITestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__
@@ -37889,6 +37929,24 @@ references:
   isSpec: "True"
   fullName: Silverback.Testing.KafkaTestingHelper.GetTopics
   nameWithType: KafkaTestingHelper.GetTopics
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection<String>, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection(Of String), Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Collections.Generic.IReadOnlyCollection<System.String>, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Collections.Generic.IReadOnlyCollection(Of System.String), System.Nullable(Of System.TimeSpan))
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection<String>, Nullable<TimeSpan>)
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, IReadOnlyCollection(Of String), Nullable(Of TimeSpan))
+- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})
   name: WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<String>, Nullable<TimeSpan>)
   href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__
@@ -37898,15 +37956,6 @@ references:
   fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection(Of System.String), System.Nullable(Of System.TimeSpan))
   nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<String>, Nullable<TimeSpan>)
   nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection(Of String), Nullable(Of TimeSpan))
-- uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
-  name: WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
-  href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__
-  commentId: M:Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
-  name.vb: WaitUntilAllMessagesAreConsumedAsync(Nullable(Of TimeSpan))
-  fullName: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable<System.TimeSpan>)
-  fullName.vb: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable(Of System.TimeSpan))
-  nameWithType: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
-  nameWithType.vb: KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Nullable(Of TimeSpan))
 - uid: Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync*
   name: WaitUntilAllMessagesAreConsumedAsync
   href: api/Silverback.Testing.KafkaTestingHelper.html#Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_
@@ -37962,15 +38011,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Testing.MqttTestingHelper.GetMessages
   nameWithType: MqttTestingHelper.GetMessages
-- uid: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
-  name: WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
-  href: api/Silverback.Testing.MqttTestingHelper.html#Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__
-  commentId: M:Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
-  name.vb: WaitUntilAllMessagesAreConsumedAsync(Nullable(Of TimeSpan))
-  fullName: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable<System.TimeSpan>)
-  fullName.vb: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable(Of System.TimeSpan))
-  nameWithType: MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
-  nameWithType.vb: MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Nullable(Of TimeSpan))
+- uid: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.MqttTestingHelper.html#Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync*
   name: WaitUntilAllMessagesAreConsumedAsync
   href: api/Silverback.Testing.MqttTestingHelper.html#Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_
@@ -38191,6 +38240,15 @@ references:
   fullName.vb: Silverback.Testing.TestingHelper(Of TBroker).Spy
   nameWithType: TestingHelper<TBroker>.Spy
   nameWithType.vb: TestingHelper(Of TBroker).Spy
+- uid: Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.TestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.TestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: TestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: TestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})
   name: WaitUntilAllMessagesAreConsumedAsync(Nullable<TimeSpan>)
   href: api/Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__
@@ -38209,6 +38267,15 @@ references:
   fullName.vb: Silverback.Testing.TestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync
   nameWithType: TestingHelper<TBroker>.WaitUntilAllMessagesAreConsumedAsync
   nameWithType.vb: TestingHelper(Of TBroker).WaitUntilAllMessagesAreConsumedAsync
+- uid: Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name: WaitUntilConnectedAsync(Boolean, Nullable<TimeSpan>)
+  href: api/Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: WaitUntilConnectedAsync(Boolean, Nullable(Of TimeSpan))
+  fullName: Silverback.Testing.TestingHelper<TBroker>.WaitUntilConnectedAsync(System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Silverback.Testing.TestingHelper(Of TBroker).WaitUntilConnectedAsync(System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: TestingHelper<TBroker>.WaitUntilConnectedAsync(Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: TestingHelper(Of TBroker).WaitUntilConnectedAsync(Boolean, Nullable(Of TimeSpan))
 - uid: Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})
   name: WaitUntilConnectedAsync(Nullable<TimeSpan>)
   href: api/Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__
