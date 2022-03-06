@@ -7,7 +7,7 @@ namespace Silverback.Tests.Types.Domain;
 
 public class TestValidationMessage : IIntegrationEvent
 {
-    public static TestValidationMessage ValidMessage => 
+    public static TestValidationMessage ValidMessage =>
         new() { Id = "1", String10 = "123456789", IntRange = 5, NumbersOnly = "123" };
 
     public static TestValidationMessage MessageHavingSinglePropertyInvalid =>

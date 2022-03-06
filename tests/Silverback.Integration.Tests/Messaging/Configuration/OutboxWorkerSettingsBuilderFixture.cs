@@ -151,7 +151,7 @@ public class OutboxWorkerSettingsBuilderFixture
 
     private record TestOutboxSettings : OutboxSettings
     {
-        public override DistributedLockSettings? GetCompatibleLockSettings() => new TestLockSettings();
+        public override DistributedLockSettings GetCompatibleLockSettings() => new TestLockSettings();
     }
 
     private record TestLockSettings() : DistributedLockSettings("test");

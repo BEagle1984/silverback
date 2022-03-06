@@ -1,6 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using Silverback.Configuration;
+
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
@@ -12,6 +15,9 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     ///     Gets the proxy configuration.
     /// </summary>
     public MqttClientWebSocketProxyConfiguration? Proxy { get; init; }
+
+    /// <inheritdoc cref="object.ToString" />
+    public override string ToString() => Uri ?? string.Empty;
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()

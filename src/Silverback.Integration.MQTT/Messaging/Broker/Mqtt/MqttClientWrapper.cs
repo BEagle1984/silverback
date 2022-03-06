@@ -167,7 +167,6 @@ internal sealed class MqttClientWrapper : IDisposable
 
             _logger.LogConnectionLost(this);
 
-
             if (Consumer != null)
                 await Consumer.OnConnectionLostAsync().ConfigureAwait(false);
         }

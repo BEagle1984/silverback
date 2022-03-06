@@ -1,6 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using MQTTnet.Client.Options;
+using Silverback.Configuration;
+
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
@@ -20,10 +23,15 @@ public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguratio
         Tls.Validate();
     }
 
-    internal override MQTTnet.Client.Options.IMqttClientChannelOptions ToMqttNetType()
+    /// <inheritdoc cref="object.ToString" />
+    public override string ToString() => $"{Server}:{GetPort()}";
+
+    internal override IMqttClientChannelOptions ToMqttNetType()
     {
-        MQTTnet.Client.Options.MqttClientTcpOptions options = MapCore();
+        MqttClientTcpOptions options = MapCore();
         options.TlsOptions = Tls.ToMqttNetType();
         return options;
     }
+
+    private int GetPort() => Port ?? (Tls.UseTls ? 8883 : 1883);
 }

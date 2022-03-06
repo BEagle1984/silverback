@@ -50,14 +50,14 @@ public static class MqttLogEvents
         GetEventId(23, nameof(ConnectionLost)),
         "Connection with the MQTT broker lost. The client will try to reconnect. | clientId: {clientId}, broker: {broker}");
 
-        /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
-        ///     broker is established again after it was lost.
-        /// </summary>
-        public static LogEvent Reconnected { get; } = new(
-            LogLevel.Information,
-            GetEventId(24, nameof(Reconnected)),
-            "Connection with the MQTT broker reestablished. | clientId: {clientId}, broker: {broker}");
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
+    ///     broker is established again after it was lost.
+    /// </summary>
+    public static LogEvent Reconnected { get; } = new(
+        LogLevel.Information,
+        GetEventId(24, nameof(Reconnected)),
+        "Connection with the MQTT broker reestablished. | clientId: {clientId}, broker: {broker}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer

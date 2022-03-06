@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
+using Silverback.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;

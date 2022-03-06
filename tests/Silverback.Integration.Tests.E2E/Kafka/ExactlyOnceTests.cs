@@ -1,7 +1,7 @@
-﻿// TODO: REIMPLEMENT
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
 
-// // Copyright (c) 2020 Sergio Aquilini
-// // This code is licensed under MIT license (see LICENSE file for details)
+// TODO: REIMPLEMENT
 //
 // using System.Threading.Tasks;
 // using FluentAssertions;

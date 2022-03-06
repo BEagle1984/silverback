@@ -62,7 +62,7 @@ internal static class MqttLoggerExtensions
         ConnectError(
             logger.InnerLogger,
             client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.ChannelOptions?.ToString() ?? string.Empty,
+            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
             exception);
 
     public static void LogConnectRetryError(
@@ -72,7 +72,7 @@ internal static class MqttLoggerExtensions
         ConnectRetryError(
             logger.InnerLogger,
             client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.ChannelOptions?.ToString() ?? string.Empty,
+            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
             exception);
 
     public static void LogConnectionLost(
@@ -81,7 +81,7 @@ internal static class MqttLoggerExtensions
         ConnectionLost(
             logger.InnerLogger,
             client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.ChannelOptions?.ToString() ?? string.Empty,
+            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
             null);
 
     public static void LogReconnected(
@@ -90,7 +90,7 @@ internal static class MqttLoggerExtensions
         Reconnected(
             logger.InnerLogger,
             client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.ChannelOptions?.ToString() ?? string.Empty,
+            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
             null);
 
     public static void LogProducerQueueProcessingCanceled(

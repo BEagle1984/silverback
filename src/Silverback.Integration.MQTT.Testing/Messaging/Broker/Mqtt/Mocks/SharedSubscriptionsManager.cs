@@ -4,48 +4,47 @@
 using System.Collections.Generic;
 using MQTTnet;
 
-namespace Silverback.Messaging.Broker.Mqtt.Mocks
+namespace Silverback.Messaging.Broker.Mqtt.Mocks;
+
+internal class SharedSubscriptionsManager
 {
-    internal class SharedSubscriptionsManager
+    private readonly Dictionary<string, int> _groups = new();
+
+    private readonly Dictionary<string, Dictionary<object, int>> _counters = new();
+
+    public void Add(string group)
     {
-        private readonly Dictionary<string, int> _groups = new();
-
-        private readonly Dictionary<string, Dictionary<object, int>> _counters = new();
-
-        public void Add(string group)
+        lock (_groups)
         {
-            lock (_groups)
+            if (_groups.ContainsKey(group))
             {
-                if (_groups.ContainsKey(group))
-                {
-                    _groups[group]++;
-                }
-                else
-                {
-                    _groups[group] = 0;
-                    _counters[group] = new Dictionary<object, int>();
-                }
+                _groups[group]++;
+            }
+            else
+            {
+                _groups[group] = 0;
+                _counters[group] = new Dictionary<object, int>();
             }
         }
+    }
 
-        public bool IsFirstMatch(string group, MqttApplicationMessage message)
+    public bool IsFirstMatch(string group, MqttApplicationMessage message)
+    {
+        lock (_counters)
         {
-            lock (_counters)
+            Dictionary<object, int> counter = _counters[group];
+
+            if (counter.ContainsKey(message))
             {
-                Dictionary<object, int> counter = _counters[group];
+                counter[message]++;
+                if (counter[message] >= _groups[group])
+                    counter.Remove(message);
 
-                if (counter.ContainsKey(message))
-                {
-                    counter[message]++;
-                    if (counter[message] >= _groups[group])
-                        counter.Remove(message);
-
-                    return false;
-                }
-
-                counter[message] = 1;
-                return true;
+                return false;
             }
+
+            counter[message] = 1;
+            return true;
         }
     }
 }

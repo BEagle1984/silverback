@@ -9,6 +9,9 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
+/// <summary>
+///     Builds the <see cref="OutboxWorkerSettings" />.
+/// </summary>
 public class OutboxWorkerSettingsBuilder
 {
     private OutboxSettings? _outboxSettings;
@@ -96,7 +99,7 @@ public class OutboxWorkerSettingsBuilder
 
     /// <summary>
     ///     Explicitly configure the settings for the optional <see cref="IDistributedLock" /> to be used to ensure that only one instance
-    ///     is running at the same time. By default it will be automatically inferred from the <see cref="Outbox" /> settings.
+    ///     is running at the same time. By default it will be automatically inferred from the outbox settings.
     /// </summary>
     /// <param name="lockSettingsBuilderFunc">
     ///     A <see cref="Func{T}" /> that takes the <see cref="DistributedLockSettingsBuilder" /> and configures it.
@@ -128,7 +131,7 @@ public class OutboxWorkerSettingsBuilder
     ///     Builds <see cref="OutboxWorkerSettings"/>.
     /// </summary>
     /// <returns>
-    ///     The <see cref="OutboxWorkerSettings"/>
+    ///     The <see cref="OutboxWorkerSettings"/>.
     /// </returns>
     public OutboxWorkerSettings Build()
     {

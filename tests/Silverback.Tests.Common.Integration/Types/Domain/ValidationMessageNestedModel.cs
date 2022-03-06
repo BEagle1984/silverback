@@ -3,11 +3,10 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Silverback.Tests.Types.Domain
+namespace Silverback.Tests.Types.Domain;
+
+public class ValidationMessageNestedModel
 {
-    public class ValidationMessageNestedModel
-    {
-        [StringLength(5)]
-        public string String5 { get; set; } = string.Empty;
-    }
+    [StringLength(5)]
+    public string String5 { get; set; } = string.Empty;
 }
