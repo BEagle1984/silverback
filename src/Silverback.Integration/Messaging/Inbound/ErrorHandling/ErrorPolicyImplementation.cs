@@ -19,9 +19,9 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
 {
     private readonly int? _maxFailedAttempts;
 
-    private readonly ICollection<Type> _excludedExceptions;
+    private readonly IReadOnlyCollection<Type> _excludedExceptions;
 
-    private readonly ICollection<Type> _includedExceptions;
+    private readonly IReadOnlyCollection<Type> _includedExceptions;
 
     private readonly Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
 
@@ -59,8 +59,8 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
     /// </param>
     protected ErrorPolicyImplementation(
         int? maxFailedAttempts,
-        ICollection<Type> excludedExceptions,
-        ICollection<Type> includedExceptions,
+        IReadOnlyCollection<Type> excludedExceptions,
+        IReadOnlyCollection<Type> includedExceptions,
         Func<IRawInboundEnvelope, Exception, bool>? applyRule,
         Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
         IServiceProvider serviceProvider,

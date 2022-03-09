@@ -18,49 +18,28 @@ namespace Silverback.Messaging.Inbound.ErrorHandling;
 ///     delay can be specified.
 /// </summary>
 /// TODO: Exponential backoff variant
-public class RetryErrorPolicy : RetryableErrorPolicyBase
+public record RetryErrorPolicy : ErrorPolicyBase
 {
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
-    /// </summary>
-    /// <param name="initialDelay">
-    ///     The optional delay to be applied to the first retry.
-    /// </param>
-    /// <param name="delayIncrement">
-    ///     The optional increment to the delay to be applied at each retry.
-    /// </param>
-    public RetryErrorPolicy(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
+    internal RetryErrorPolicy()
     {
-        InitialDelay = initialDelay ?? TimeSpan.Zero;
-        DelayIncrement = delayIncrement ?? TimeSpan.Zero;
-
-        if (InitialDelay < TimeSpan.Zero)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(initialDelay),
-                initialDelay,
-                "The specified initial delay must be greater than TimeSpan.Zero.");
-        }
-
-        if (DelayIncrement < TimeSpan.Zero)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(delayIncrement),
-                delayIncrement,
-                "The specified delay increment must be greater than TimeSpan.Zero.");
-        }
     }
 
-    internal TimeSpan InitialDelay { get; }
+    /// <summary>
+    ///     Gets the delay to be applied to the first retry.
+    /// </summary>
+    public TimeSpan InitialDelay { get; init; } = TimeSpan.Zero;
 
-    internal TimeSpan DelayIncrement { get; }
+    /// <summary>
+    ///     Gets the increment to the delay to be applied at each retry.
+    /// </summary>
+    public TimeSpan DelayIncrement { get; init; } = TimeSpan.Zero;
 
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new RetryErrorPolicyImplementation(
             InitialDelay,
             DelayIncrement,
-            MaxFailedAttemptsCount,
+            MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
             ApplyRule,
@@ -80,8 +59,8 @@ public class RetryErrorPolicy : RetryableErrorPolicyBase
             TimeSpan initialDelay,
             TimeSpan delayIncrement,
             int? maxFailedAttempts,
-            ICollection<Type> excludedExceptions,
-            ICollection<Type> includedExceptions,
+            IReadOnlyCollection<Type> excludedExceptions,
+            IReadOnlyCollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,

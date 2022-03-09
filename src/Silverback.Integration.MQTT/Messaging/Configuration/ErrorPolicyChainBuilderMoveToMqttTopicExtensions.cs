@@ -20,11 +20,10 @@ public static class ErrorPolicyChainBuilderMoveToMqttTopicExtensions
     ///     The <see cref="ErrorPolicyChainBuilder" />.
     /// </param>
     /// <param name="configurationBuilderAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttProducerConfigurationBuilder{TMessage}" /> and configures
-    ///     it.
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttProducerConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MoveMessageErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
@@ -32,7 +31,7 @@ public static class ErrorPolicyChainBuilderMoveToMqttTopicExtensions
     public static ErrorPolicyChainBuilder ThenMoveToMqttTopic(
         this ErrorPolicyChainBuilder builder,
         Action<MqttProducerConfigurationBuilder<object>> configurationBuilderAction,
-        Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
+        Action<MoveMessageErrorPolicyBuilder>? policyBuilderAction = null)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
@@ -43,6 +42,6 @@ public static class ErrorPolicyChainBuilderMoveToMqttTopicExtensions
         MqttProducerConfigurationBuilder<object> endpointBuilder = new(mqttClientConfig);
         configurationBuilderAction(endpointBuilder);
 
-        return builder.ThenMove(endpointBuilder.Build(), policyConfigurationAction);
+        return builder.ThenMove(endpointBuilder.Build(), policyBuilderAction);
     }
 }

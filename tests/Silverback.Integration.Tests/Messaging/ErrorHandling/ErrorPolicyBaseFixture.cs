@@ -20,12 +20,12 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
-public class ErrorPolicyBaseTests
+public class ErrorPolicyBaseFixture
 {
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
 
-    public static IEnumerable<object[]> ApplyTo_TestData =>
+    public static IEnumerable<object[]> IncludedExceptions_TestData =>
         new[]
         {
             new object[] { new ArgumentException(), true },
@@ -36,7 +36,7 @@ public class ErrorPolicyBaseTests
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> Exclude_TestData =>
+    public static IEnumerable<object[]> ExcludedException_TestData =>
         new[]
         {
             new object[] { new ArgumentException(), false },
@@ -47,7 +47,7 @@ public class ErrorPolicyBaseTests
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> ApplyToAndExclude_TestData =>
+    public static IEnumerable<object[]> IncludedAndExcludedExceptions_TestData =>
         new[]
         {
             new object[] { new ArgumentException(), true },
@@ -59,7 +59,7 @@ public class ErrorPolicyBaseTests
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> ApplyWhen_TestData =>
+    public static IEnumerable<object[]> ApplyRule_TestData =>
         new[]
         {
             new object[]
@@ -95,12 +95,13 @@ public class ErrorPolicyBaseTests
         };
 
     [Theory]
-    [MemberData(nameof(ApplyTo_TestData))]
-    public void CanHandle_WithApplyTo_ExpectedResultReturned(Exception exception, bool mustApply)
+    [MemberData(nameof(IncludedExceptions_TestData))]
+    public void CanHandle_ShouldEvaluateExceptionType_WhenIncludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .ApplyTo<ArgumentException>()
-            .ApplyTo<InvalidCastException>()
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                IncludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+            }
             .Build(Substitute.For<IServiceProvider>());
 
         bool canHandle = policy.CanHandle(
@@ -116,12 +117,13 @@ public class ErrorPolicyBaseTests
     }
 
     [Theory]
-    [MemberData(nameof(Exclude_TestData))]
-    public void CanHandle_WithExclude_ExpectedResultReturned(Exception exception, bool mustApply)
+    [MemberData(nameof(ExcludedException_TestData))]
+    public void CanHandle_ShouldEvaluateExceptionType_WhenExcludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .Exclude<ArgumentException>()
-            .Exclude<InvalidCastException>()
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                ExcludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+            }
             .Build(Substitute.For<IServiceProvider>());
 
         bool canHandle = policy.CanHandle(
@@ -137,15 +139,14 @@ public class ErrorPolicyBaseTests
     }
 
     [Theory]
-    [MemberData(nameof(ApplyToAndExclude_TestData))]
-    public void CanHandle_WithApplyToAndExclude_ExpectedResultReturned(
-        Exception exception,
-        bool mustApply)
+    [MemberData(nameof(IncludedAndExcludedExceptions_TestData))]
+    public void CanHandle_ShouldEvaluateExceptionType_WhenIncludedAndExcludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .ApplyTo<ArgumentException>()
-            .Exclude<ArgumentOutOfRangeException>()
-            .ApplyTo<FormatException>()
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                IncludedExceptions = new[] { typeof(ArgumentException), typeof(FormatException) },
+                ExcludedExceptions = new[] { typeof(ArgumentOutOfRangeException) }
+            }
             .Build(Substitute.For<IServiceProvider>());
 
         bool canHandle = policy.CanHandle(
@@ -161,17 +162,14 @@ public class ErrorPolicyBaseTests
     }
 
     [Theory]
-    [MemberData(nameof(ApplyWhen_TestData))]
-    public void CanHandle_WithApplyWhen_ExpectedResultReturned(
-        IInboundEnvelope envelope,
-        Exception exception,
-        bool mustApply)
+    [MemberData(nameof(ApplyRule_TestData))]
+    public void CanHandle_ShouldEvaluateApplyRule(IInboundEnvelope envelope, Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .ApplyWhen(
-                (msg, ex) =>
-                    msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 &&
-                    ex.Message != "no")
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                ApplyRule = (inboundEnvelope, ex) =>
+                    inboundEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no"
+            }
             .Build(Substitute.For<IServiceProvider>());
 
         bool canHandle = policy.CanHandle(
@@ -186,9 +184,7 @@ public class ErrorPolicyBaseTests
     [InlineData(3, true)]
     [InlineData(4, false)]
     [InlineData(7, false)]
-    public void CanHandle_WithMaxFailedAttempts_ExpectedResultReturned(
-        int failedAttempts,
-        bool expectedResult)
+    public void CanHandle_ShouldEvaluateMaxFailedAttempts(int failedAttempts, bool expectedResult)
     {
         InboundEnvelope envelope = new(
             new MemoryStream(),
@@ -201,8 +197,10 @@ public class ErrorPolicyBaseTests
             new TestOffset(),
             TestConsumerEndpoint.GetDefault());
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .MaxFailedAttempts(3)
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                MaxFailedAttempts = 3
+            }
             .Build(Substitute.For<IServiceProvider>());
 
         bool canHandle = policy.CanHandle(
@@ -213,38 +211,16 @@ public class ErrorPolicyBaseTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_WithPublish_MessagePublished()
+    public async Task HandleErrorAsync_ShouldPublishMessage()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
         ServiceProvider? serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .Publish(_ => new TestEventTwo { Content = "aaa" })
-            .Build(serviceProvider);
-
-        InboundEnvelope envelope = new(
-            new MemoryStream(),
-            new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
-
-        await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
-            new ArgumentNullException());
-
-        await publisher.Received().PublishAsync(Arg.Any<TestEventTwo>());
-    }
-
-    [Fact]
-    public async Task HandleErrorAsync_WithPublishForwardingException_MessagePublished()
-    {
-        IPublisher? publisher = Substitute.For<IPublisher>();
-        ServiceProvider? serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
-            .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .Publish((_, exception) => new TestEventTwo { Content = exception.Message })
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                MessageToPublishFactory = (_, exception) => new TestEventTwo { Content = exception.Message }
+            }
             .Build(serviceProvider);
 
         InboundEnvelope envelope = new(
@@ -261,14 +237,16 @@ public class ErrorPolicyBaseTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_WithPublishReturningNull_NoMessagePublished()
+    public async Task HandleErrorAsync_ShouldNotPublishMessage_WhenFactoryReturnsNull()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
         ServiceProvider? serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy()
-            .Publish(_ => null)
+        IErrorPolicyImplementation policy = new TestErrorPolicy
+            {
+                MessageToPublishFactory = (_, _) => null
+            }
             .Build(serviceProvider);
 
         InboundEnvelope envelope = new(
@@ -285,5 +263,5 @@ public class ErrorPolicyBaseTests
             new ArgumentNullException());
 
         await publisher.DidNotReceive().PublishAsync(Arg.Any<object>());
-    } // TODO: Test with multiple messages (batch) --> TODO2: Do we still need to?
+    }
 }

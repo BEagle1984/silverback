@@ -85,7 +85,7 @@ public sealed record MqttConsumerConfiguration : ConsumerConfiguration
 
     private static void CheckErrorPolicyMaxFailedAttemptsNotSet(ErrorPolicyBase errorPolicyBase)
     {
-        if (errorPolicyBase is not RetryErrorPolicy && errorPolicyBase.MaxFailedAttemptsCount > 1)
+        if (errorPolicyBase is not RetryErrorPolicy && errorPolicyBase.MaxFailedAttempts > 1)
         {
             throw new EndpointConfigurationException(
                 "Cannot set MaxFailedAttempts on the error policies (except for the RetryPolicy) " +

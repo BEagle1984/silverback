@@ -12,7 +12,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes;
 
-public class TestErrorPolicy : RetryableErrorPolicyBase
+public record TestErrorPolicy : ErrorPolicyBase
 {
     private TestErrorPolicyImplementation? _implementation;
 
@@ -21,7 +21,7 @@ public class TestErrorPolicy : RetryableErrorPolicyBase
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider)
     {
         _implementation ??= new TestErrorPolicyImplementation(
-            MaxFailedAttemptsCount,
+            MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
             ApplyRule,
@@ -36,8 +36,8 @@ public class TestErrorPolicy : RetryableErrorPolicyBase
     {
         public TestErrorPolicyImplementation(
             int? maxFailedAttempts,
-            ICollection<Type> excludedExceptions,
-            ICollection<Type> includedExceptions,
+            IReadOnlyCollection<Type> excludedExceptions,
+            IReadOnlyCollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,

@@ -19,7 +19,7 @@ public class ErrorPolicyBuilderMoveToKafkaTopicExtensionsFixture
     public ErrorPolicyBuilderMoveToKafkaTopicExtensionsFixture()
     {
         _endpointsConfigurationBuilder = new KafkaEndpointsConfigurationBuilder(Substitute.For<IServiceProvider>())
-            .ConfigureClient(config => config.WithBootstrapServers("PLAINTEXT://tests"));
+            .ConfigureClient(client => client.WithBootstrapServers("PLAINTEXT://tests"));
     }
 
     [Fact]
@@ -41,12 +41,12 @@ public class ErrorPolicyBuilderMoveToKafkaTopicExtensionsFixture
         ErrorPolicyBuilder builder = new(_endpointsConfigurationBuilder);
         builder.MoveToKafkaTopic(
             endpoint => endpoint.ProduceTo("test-move"),
-            movePolicy => movePolicy.MaxFailedAttempts(42));
+            movePolicy => movePolicy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<MoveMessageErrorPolicy>();
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
-        policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
+        policy.As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.As<KafkaProducerConfiguration>().Client.BootstrapServers
             .Should().Be("PLAINTEXT://tests");
     }

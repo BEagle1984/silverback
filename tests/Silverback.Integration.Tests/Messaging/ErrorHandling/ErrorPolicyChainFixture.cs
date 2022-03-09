@@ -17,11 +17,11 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
-public class ErrorPolicyChainTests
+public class ErrorPolicyChainFixture
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public ErrorPolicyChainTests()
+    public ErrorPolicyChainFixture()
     {
         ServiceCollection services = new();
 
@@ -38,7 +38,7 @@ public class ErrorPolicyChainTests
     [InlineData(3)]
     [InlineData(4)]
     [InlineData(130)]
-    public void CanHandle_Whatever_TrueReturned(int failedAttempts)
+    public void CanHandle_ShouldReturnTrueRegardlessOfFailedAttempts(int failedAttempts)
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
@@ -49,7 +49,10 @@ public class ErrorPolicyChainTests
         TestErrorPolicy testPolicy = new();
 
         IErrorPolicyImplementation chain = new ErrorPolicyChain(
-                new RetryErrorPolicy().MaxFailedAttempts(3),
+                new RetryErrorPolicy
+                {
+                    MaxFailedAttempts = 3
+                },
                 testPolicy)
             .Build(_serviceProvider);
 
@@ -69,7 +72,7 @@ public class ErrorPolicyChainTests
     [InlineData(1)]
     [InlineData(3)]
     [InlineData(4)]
-    public async Task HandleErrorAsync_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
+    public async Task HandleErrorAsync_ShouldApplyPoliciesAccordingToMaxFailedAttempts(int failedAttempts)
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
@@ -80,7 +83,10 @@ public class ErrorPolicyChainTests
         TestErrorPolicy testPolicy = new();
 
         IErrorPolicyImplementation chain = new ErrorPolicyChain(
-                new RetryErrorPolicy().MaxFailedAttempts(3),
+                new RetryErrorPolicy
+                {
+                    MaxFailedAttempts = 3
+                },
                 testPolicy)
             .Build(_serviceProvider);
 
@@ -102,9 +108,7 @@ public class ErrorPolicyChainTests
     [InlineData(3, 1)]
     [InlineData(4, 1)]
     [InlineData(5, 2)]
-    public async Task HandleErrorAsync_MultiplePoliciesWithMaxFailedAttempts_CorrectPolicyApplied(
-        int failedAttempts,
-        int expectedAppliedPolicy)
+    public async Task HandleErrorAsync_ShouldApplyCorrectPolicyAccordingToMaxFailedAttempts(int failedAttempts, int expectedAppliedPolicy)
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
@@ -114,9 +118,9 @@ public class ErrorPolicyChainTests
 
         ErrorPolicyBase[] policies =
         {
-            new TestErrorPolicy().MaxFailedAttempts(2),
-            new TestErrorPolicy().MaxFailedAttempts(2),
-            new TestErrorPolicy().MaxFailedAttempts(2)
+            new TestErrorPolicy { MaxFailedAttempts = 2 },
+            new TestErrorPolicy { MaxFailedAttempts = 2 },
+            new TestErrorPolicy { MaxFailedAttempts = 2 }
         };
 
         IErrorPolicyImplementation chain = new ErrorPolicyChain(policies)

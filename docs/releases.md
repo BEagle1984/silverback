@@ -22,6 +22,7 @@ uid: releases
   * Outbox supports ambient transaction (TransactionScope)
 * Clean up code and increase tests coverage
 * Reduce allocations
+* Better builders for error policies
 
 ### Breaking Changes
 
@@ -58,6 +59,7 @@ uid: releases
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext
 * Deprecated ExactlyOnceStrategy -> replaced with ???client-side-offset-storage???
+* Slight changes to policy builder (e.g. removed some overloads of PolicyBuilder.Retry/ThenRetru)
 
 
 ### Deprecation Notice

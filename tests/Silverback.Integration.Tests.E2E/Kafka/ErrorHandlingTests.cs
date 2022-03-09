@@ -953,7 +953,7 @@ public class ErrorHandlingTests : KafkaTestFixture
                                     .OnError(
                                         policy => policy.MoveToKafkaTopic(
                                             moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
-                                            movePolicy => movePolicy.MaxFailedAttempts(10)))
+                                            movePolicy => movePolicy.WithMaxRetries(10)))
                                     .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(

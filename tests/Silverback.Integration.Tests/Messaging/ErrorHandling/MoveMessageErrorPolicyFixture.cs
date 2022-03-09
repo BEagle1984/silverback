@@ -26,13 +26,13 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
-public class MoveMessageErrorPolicyTests
+public class MoveMessageErrorPolicyFixture
 {
     private readonly IServiceProvider _serviceProvider;
 
     private readonly IBroker _broker;
 
-    public MoveMessageErrorPolicyTests()
+    public MoveMessageErrorPolicyFixture()
     {
         ServiceCollection services = new();
 
@@ -49,7 +49,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public void CanHandle_SingleMessage_TrueReturned()
+    public void CanHandle_ShouldReturnTrue_WhenMessageIsNotInSequence()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -67,7 +67,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public void CanHandle_Sequence_FalseReturned()
+    public void CanHandle_ShouldReturnFalse_WhenMessageIsInSequence()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         TestConsumerConfiguration endpointConfiguration = new("test")
@@ -95,7 +95,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public void CanHandle_RawSequence_FalseReturned()
+    public void CanHandle_ShouldReturnFalse_WhenMessageIsInRawSequence()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -116,7 +116,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_InboundMessage_MessageMoved()
+    public async Task HandleErrorAsync_ShouldProduceMessage()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -135,7 +135,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_InboundMessage_MessagePreserved()
+    public async Task HandleErrorAsync_ShouldPreserveMessageContent()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
 
@@ -170,7 +170,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_NotDeserializedInboundMessage_MessagePreserved()
+    public async Task HandleErrorAsync_ShouldPreserveRawMessageContent_WhenMessageWasNotDeserialized()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -190,7 +190,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_InboundMessage_HeadersPreserved()
+    public async Task HandleErrorAsync_ShouldPreserveHeaders()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         MessageHeaderCollection headers = new()
@@ -215,14 +215,12 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_WithTransform_MessageTranslated()
+    public async Task HandleErrorAsync_ShouldTransformMessage()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault())
-            .Transform(
-                (originalEnvelope, _) =>
-                {
-                    originalEnvelope.Message = new TestEventTwo();
-                })
+            {
+                TransformMessageAction = (outboundEnvelope, _) => outboundEnvelope.Message = new TestEventTwo()
+            }
             .Build(_serviceProvider);
 
         MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("hey oh!"));
@@ -251,14 +249,15 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task Transform_SingleMessage_HeadersProperlyModified()
+    public async Task HandleErrorAsync_ShouldTransformHeaders()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault())
-            .Transform(
-                (outboundEnvelope, ex) =>
+            {
+                TransformMessageAction = (outboundEnvelope, ex) =>
                 {
                     outboundEnvelope.Headers.Add("error", ex.GetType().Name);
-                })
+                }
+            }
             .Build(_serviceProvider);
 
         InboundEnvelope envelope = new(
@@ -278,7 +277,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_SingleMessage_TrueReturned()
+    public async Task HandleErrorAsync_ShouldReturnTrue()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -296,7 +295,7 @@ public class MoveMessageErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_Whatever_ConsumerCommittedButTransactionAborted()
+    public async Task HandleErrorAsync_ShouldCommitOffsetButAbortTransaction()
     {
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
         InboundEnvelope envelope = new(

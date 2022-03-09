@@ -19,11 +19,11 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
-public class StopConsumerErrorPolicyTests
+public class StopConsumerErrorPolicyFixture
 {
     private readonly ServiceProvider _serviceProvider;
 
-    public StopConsumerErrorPolicyTests()
+    public StopConsumerErrorPolicyFixture()
     {
         ServiceCollection services = new();
 
@@ -36,7 +36,7 @@ public class StopConsumerErrorPolicyTests
     }
 
     [Fact]
-    public void CanHandle_Whatever_TrueReturned()
+    public void CanHandle_ShouldReturnTrue()
     {
         IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -54,7 +54,7 @@ public class StopConsumerErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_Whatever_FalseReturned()
+    public async Task HandleErrorAsync_ShouldReturnFalse()
     {
         IErrorPolicyImplementation policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -72,7 +72,7 @@ public class StopConsumerErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_Whatever_TransactionNotCommittedNorAborted()
+    public async Task HandleErrorAsync_ShouldNotCommittedNorAbortedTransaction()
     {
         /* The consumer will be stopped and the transaction aborted by the consumer/behavior */
 
@@ -90,6 +90,7 @@ public class StopConsumerErrorPolicyTests
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
             new InvalidOperationException("test"));
 
+        await transactionManager.ReceivedWithAnyArgs(0).CommitAsync();
         await transactionManager.ReceivedWithAnyArgs(0).RollbackAsync(Arg.Any<InvalidOperationException>());
     }
 }

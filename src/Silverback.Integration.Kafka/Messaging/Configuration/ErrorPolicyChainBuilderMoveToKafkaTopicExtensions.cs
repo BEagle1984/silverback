@@ -22,8 +22,8 @@ public static class ErrorPolicyChainBuilderMoveToKafkaTopicExtensions
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> and configures it.
     /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MoveMessageErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
@@ -31,7 +31,7 @@ public static class ErrorPolicyChainBuilderMoveToKafkaTopicExtensions
     public static ErrorPolicyChainBuilder ThenMoveToKafkaTopic(
         this ErrorPolicyChainBuilder builder,
         Action<KafkaProducerConfigurationBuilder<object>> configurationBuilderAction,
-        Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
+        Action<MoveMessageErrorPolicyBuilder>? policyBuilderAction = null)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
@@ -43,6 +43,6 @@ public static class ErrorPolicyChainBuilderMoveToKafkaTopicExtensions
         KafkaProducerConfigurationBuilder<object> producerConfigurationBuilder = new(kafkaClientConfig);
         configurationBuilderAction(producerConfigurationBuilder);
 
-        return builder.ThenMove(producerConfigurationBuilder.Build(), policyConfigurationAction);
+        return builder.ThenMove(producerConfigurationBuilder.Build(), policyBuilderAction);
     }
 }

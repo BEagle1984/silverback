@@ -474,7 +474,7 @@ public class ErrorHandlingTests : MqttTestFixture
                                     .OnError(
                                         policy => policy.MoveToMqttTopic(
                                             moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
-                                            movePolicy => movePolicy.MaxFailedAttempts(10)))))
+                                            movePolicy => movePolicy.WithMaxRetries(10)))))
                     .AddIntegrationSpy()
                     .AddDelegateSubscriber(
                         (IIntegrationEvent _) =>

@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using MQTTnet.Client.Options;
 using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -32,9 +32,9 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
         Tls.Validate();
     }
 
-    internal override MQTTnet.Client.Options.IMqttClientChannelOptions ToMqttNetType()
+    internal override IMqttClientChannelOptions ToMqttNetType()
     {
-        MQTTnet.Client.Options.MqttClientWebSocketOptions options = MapCore();
+        MqttClientWebSocketOptions options = MapCore();
         options.TlsOptions = Tls.ToMqttNetType();
         return options;
     }

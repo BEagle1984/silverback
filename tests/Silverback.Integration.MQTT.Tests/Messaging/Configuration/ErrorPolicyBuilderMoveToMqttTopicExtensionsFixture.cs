@@ -12,19 +12,18 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration;
 
-public class ErrorPolicyBuilderMoveToMqttTopicExtensionsTests
+public class ErrorPolicyBuilderMoveToMqttTopicExtensionsFixture
 {
     private readonly MqttEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 
-    public ErrorPolicyBuilderMoveToMqttTopicExtensionsTests()
+    public ErrorPolicyBuilderMoveToMqttTopicExtensionsFixture()
     {
-        _endpointsConfigurationBuilder = new MqttEndpointsConfigurationBuilder(Substitute.For<IServiceProvider>());
-
-        _endpointsConfigurationBuilder.ConfigureClient(config => config.ConnectViaTcp("tests-server"));
+        _endpointsConfigurationBuilder = new MqttEndpointsConfigurationBuilder(Substitute.For<IServiceProvider>())
+            .ConfigureClient(client => client.ConnectViaTcp("tests-server"));
     }
 
     [Fact]
-    public void MoveToMqttTopic_EndpointBuilder_MovePolicyCreated()
+    public void MoveToMqttTopic_ShouldAddMovePolicy()
     {
         ErrorPolicyBuilder builder = new(_endpointsConfigurationBuilder);
         builder.MoveToMqttTopic(endpoint => endpoint.ProduceTo("test-move"));
@@ -37,17 +36,17 @@ public class ErrorPolicyBuilderMoveToMqttTopicExtensionsTests
     }
 
     [Fact]
-    public void MoveToMqttTopic_EndpointBuilderWithConfiguration_SkipPolicyCreatedAndConfigurationApplied()
+    public void MoveToMqttTopic_ShouldAddMovePolicyWithSpecifiedConfiguration()
     {
         ErrorPolicyBuilder builder = new(_endpointsConfigurationBuilder);
         builder.MoveToMqttTopic(
             endpoint => endpoint.ProduceTo("test-move"),
-            movePolicy => movePolicy.MaxFailedAttempts(42));
+            movePolicy => movePolicy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<MoveMessageErrorPolicy>();
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
-        policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
+        policy.As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
         policy.As<MoveMessageErrorPolicy>().ProducerConfiguration
             .As<MqttProducerConfiguration>().Client.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
     }

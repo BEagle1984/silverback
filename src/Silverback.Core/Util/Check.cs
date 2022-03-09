@@ -104,9 +104,7 @@ internal static class Check
         {
             NotNullOrEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentException(
-                "The collection cannot contain null or empty values.",
-                parameterName);
+            throw new ArgumentException("The collection cannot contain null or empty values.", parameterName);
         }
 
         return value;
@@ -119,9 +117,33 @@ internal static class Check
         {
             NotNullOrEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentOutOfRangeException(
-                parameterName,
-                $"The value must be between {min} and {max}.");
+            throw new ArgumentOutOfRangeException(parameterName, $"The value must be between {min} and {max}.");
+        }
+
+        return value;
+    }
+
+    public static T GreaterThan<T>(T value, string parameterName, T min)
+        where T : struct, IComparable
+    {
+        if (value.CompareTo(min) <= 0)
+        {
+            NotNullOrEmpty(parameterName, nameof(parameterName));
+
+            throw new ArgumentOutOfRangeException(parameterName, $"The value must be greater than {min}.");
+        }
+
+        return value;
+    }
+
+    public static T GreaterOrEqualTo<T>(T value, string parameterName, T min)
+        where T : struct, IComparable
+    {
+        if (value.CompareTo(min) < 0)
+        {
+            NotNullOrEmpty(parameterName, nameof(parameterName));
+
+            throw new ArgumentOutOfRangeException(parameterName, $"The value must be greater or equal to {min}.");
         }
 
         return value;

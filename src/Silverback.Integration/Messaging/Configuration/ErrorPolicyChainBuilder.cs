@@ -34,117 +34,72 @@ public class ErrorPolicyChainBuilder
     /// <summary>
     ///     Adds a <see cref="StopConsumerErrorPolicy" /> that stops the consumer when an exception is thrown during the message processing.
     /// </summary>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="StopConsumerErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public ErrorPolicyChainBuilder ThenStop(Action<StopConsumerErrorPolicy>? policyConfigurationAction = null)
+    public ErrorPolicyChainBuilder ThenStop(Action<StopConsumerErrorPolicyBuilder>? policyBuilderAction = null)
     {
-        StopConsumerErrorPolicy policy = new();
-        policyConfigurationAction?.Invoke(policy);
-        _errorPolicies.Add(policy);
+        StopConsumerErrorPolicyBuilder builder = new();
+        policyBuilderAction?.Invoke(builder);
+        _errorPolicies.Add(builder.Build());
         return this;
     }
 
     /// <summary>
     ///     Adds a <see cref="SkipMessageErrorPolicy" /> that skips the messages that fail to be processed.
     /// </summary>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="SkipMessageErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public ErrorPolicyChainBuilder ThenSkip(Action<SkipMessageErrorPolicy>? policyConfigurationAction = null)
+    public ErrorPolicyChainBuilder ThenSkip(Action<SkipMessageErrorPolicyBuilder>? policyBuilderAction = null)
     {
-        SkipMessageErrorPolicy policy = new();
-        policyConfigurationAction?.Invoke(policy);
-        _errorPolicies.Add(policy);
+        SkipMessageErrorPolicyBuilder builder = new();
+        policyBuilderAction?.Invoke(builder);
+        _errorPolicies.Add(builder.Build());
         return this;
     }
 
     /// <summary>
     ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
     /// </summary>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="RetryErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public ErrorPolicyChainBuilder ThenRetry(Action<RetryErrorPolicy> policyConfigurationAction) =>
-        ThenRetry(null, null, null, policyConfigurationAction);
-
-    /// <summary>
-    ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
-    /// </summary>
-    /// <param name="retriesCount">
-    ///     The maximum number of retries to be performed.
-    /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public ErrorPolicyChainBuilder ThenRetry(int retriesCount, Action<RetryErrorPolicy> policyConfigurationAction)
-        => ThenRetry(retriesCount, null, null, policyConfigurationAction);
-
-    /// <summary>
-    ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
-    /// </summary>
-    /// <param name="retriesCount">
-    ///     The maximum number of retries to be performed.
-    /// </param>
-    /// <param name="initialDelay">
-    ///     The optional delay to be applied to the first retry.
-    /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public ErrorPolicyChainBuilder ThenRetry(
-        int retriesCount,
-        TimeSpan initialDelay,
-        Action<RetryErrorPolicy> policyConfigurationAction)
-        => ThenRetry(retriesCount, initialDelay, null, policyConfigurationAction);
-
-    /// <summary>
-    ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
-    /// </summary>
-    /// <param name="retriesCount">
-    ///     The maximum number of retries to be performed.
-    /// </param>
-    /// <param name="initialDelay">
-    ///     The optional delay to be applied to the first retry.
-    /// </param>
-    /// <param name="delayIncrement">
-    ///     The optional increment to the delay to be applied at each retry.
-    /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public ErrorPolicyChainBuilder ThenRetry(
-        int? retriesCount = null,
-        TimeSpan? initialDelay = null,
-        TimeSpan? delayIncrement = null,
-        Action<RetryErrorPolicy>? policyConfigurationAction = null)
+    public ErrorPolicyChainBuilder ThenRetry(Action<RetryErrorPolicyBuilder>? policyBuilderAction = null)
     {
-        RetryErrorPolicy policy = new(initialDelay, delayIncrement);
+        RetryErrorPolicyBuilder builder = new();
+        policyBuilderAction?.Invoke(builder);
+        _errorPolicies.Add(builder.Build());
+        return this;
+    }
 
-        if (retriesCount.HasValue)
-            policy.MaxFailedAttempts(retriesCount);
-
-        policyConfigurationAction?.Invoke(policy);
-
-        _errorPolicies.Add(policy);
+    /// <summary>
+    ///     Adds a <see cref="RetryErrorPolicy" /> that retries to process the messages that previously failed to be to processed.
+    /// </summary>
+    /// <param name="retriesCount">
+    ///     The maximum number of retries to be performed.
+    /// </param>
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="RetryErrorPolicyBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public ErrorPolicyChainBuilder ThenRetry(int retriesCount, Action<RetryErrorPolicyBuilder>? policyBuilderAction = null)
+    {
+        RetryErrorPolicyBuilder builder = new();
+        builder.WithMaxRetries(retriesCount);
+        policyBuilderAction?.Invoke(builder);
+        _errorPolicies.Add(builder.Build());
         return this;
     }
 
@@ -154,19 +109,19 @@ public class ErrorPolicyChainBuilder
     /// <param name="producerConfiguration">
     ///     The configuration of the producer to be used to move the message.
     /// </param>
-    /// <param name="policyConfigurationAction">
-    ///     The optional additional configuration.
+    /// <param name="policyBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MoveMessageErrorPolicyBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
     /// </returns>
     public ErrorPolicyChainBuilder ThenMove(
         ProducerConfiguration producerConfiguration,
-        Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
+        Action<MoveMessageErrorPolicyBuilder>? policyBuilderAction = null)
     {
-        MoveMessageErrorPolicy policy = new(producerConfiguration);
-        policyConfigurationAction?.Invoke(policy);
-        _errorPolicies.Add(policy);
+        MoveMessageErrorPolicyBuilder builder = new(producerConfiguration);
+        policyBuilderAction?.Invoke(builder);
+        _errorPolicies.Add(builder.Build());
         return this;
     }
 
@@ -179,7 +134,7 @@ public class ErrorPolicyChainBuilder
     public IErrorPolicy Build()
     {
         if (_errorPolicies.Count == 0)
-            throw new InvalidOperationException("No policy was specified.");
+            throw new SilverbackConfigurationException("At least 1 error policy is required.");
 
         if (_errorPolicies.Count == 1)
             return _errorPolicies[0];

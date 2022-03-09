@@ -20,19 +20,17 @@ namespace Silverback.Messaging.Inbound.ErrorHandling;
 /// </summary>
 /// <remarks>
 ///     This policy can be used also to move the message at the end of the current topic to retry it later on.
-///     The number of retries can be limited using <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />.
+///     The number of retries can be limited using <see cref="ErrorPolicyBase.MaxFailedAttempts" />.
 /// </remarks>
-public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
+public record MoveMessageErrorPolicy : ErrorPolicyBase
 {
-    private Action<IOutboundEnvelope, Exception>? _transformationAction;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
     /// </summary>
     /// <param name="producerConfiguration">
     ///     The configuration of the producer to be used to move the message.
     /// </param>
-    public MoveMessageErrorPolicy(ProducerConfiguration producerConfiguration)
+    internal MoveMessageErrorPolicy(ProducerConfiguration producerConfiguration)
     {
         Check.NotNull(producerConfiguration, nameof(producerConfiguration));
 
@@ -41,31 +39,22 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
         ProducerConfiguration = producerConfiguration;
     }
 
-    internal ProducerConfiguration ProducerConfiguration { get; }
+    /// <summary>
+    ///     Gets an <see cref="Action{T1,T2}" /> to be used to modify the message before moving it to the target endpoint.
+    /// </summary>
+    public Action<IOutboundEnvelope, Exception>? TransformMessageAction { get; init; }
 
     /// <summary>
-    ///     Defines an <see cref="Action{T}" /> to be called to modify (or completely rewrite) the message being
-    ///     moved.
+    ///     Gets the configuration of the producer to be used to move the message.
     /// </summary>
-    /// <param name="transformationAction">
-    ///     The <see cref="Action{T}" /> to be called to modify the message. This function can be used to modify
-    ///     or replace the message body and its headers.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MoveMessageErrorPolicy" /> so that additional calls can be chained.
-    /// </returns>
-    public MoveMessageErrorPolicy Transform(Action<IOutboundEnvelope, Exception> transformationAction)
-    {
-        _transformationAction = transformationAction;
-        return this;
-    }
+    public ProducerConfiguration ProducerConfiguration { get; }
 
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new MoveMessageErrorPolicyImplementation(
             ProducerConfiguration,
-            _transformationAction,
-            MaxFailedAttemptsCount,
+            TransformMessageAction,
+            MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
             ApplyRule,
@@ -94,8 +83,8 @@ public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
             ProducerConfiguration producerConfiguration,
             Action<IOutboundEnvelope, Exception>? transformationAction,
             int? maxFailedAttempts,
-            ICollection<Type> excludedExceptions,
-            ICollection<Type> includedExceptions,
+            IReadOnlyCollection<Type> excludedExceptions,
+            IReadOnlyCollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IBrokerOutboundMessageEnrichersFactory enricherFactory,

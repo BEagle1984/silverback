@@ -2,15 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Silverback.Configuration;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
@@ -21,46 +19,30 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling;
 
-public class RetryErrorPolicyTests
+public class SkipMessageErrorPolicyFixture
 {
     private readonly ServiceProvider _serviceProvider;
 
-    public RetryErrorPolicyTests()
+    public SkipMessageErrorPolicyFixture()
     {
         ServiceCollection services = new();
 
         services
-            .AddSingleton(Substitute.For<IHostApplicationLifetime>())
             .AddFakeLogger()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
         _serviceProvider = services.BuildServiceProvider();
-
-        IBroker broker = _serviceProvider.GetRequiredService<IBroker>();
-        broker.ConnectAsync().Wait();
     }
 
-    [Theory]
-    [InlineData(1, true)]
-    [InlineData(3, true)]
-    [InlineData(4, false)]
-    [InlineData(7, false)]
-    public void CanHandle_WithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(
-        int failedAttempts,
-        bool expectedResult)
+    [Fact]
+    public void CanHandle_ShouldReturnTrue()
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
-
-        MemoryStream rawMessage = new();
-        MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
-
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
         InboundEnvelope envelope = new(
-            rawMessage,
-            headers,
+            "hey oh!",
+            new MemoryStream(),
+            null,
             new TestOffset(),
             TestConsumerEndpoint.GetDefault());
 
@@ -68,13 +50,13 @@ public class RetryErrorPolicyTests
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        canHandle.Should().Be(expectedResult);
+        canHandle.Should().BeTrue();
     }
 
     [Fact]
-    public async Task HandleErrorAsync_Whatever_TrueReturned()
+    public async Task HandleErrorAsync_ShouldReturnTrue()
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
             new MemoryStream(),
@@ -90,29 +72,22 @@ public class RetryErrorPolicyTests
     }
 
     [Fact]
-    public async Task HandleErrorAsync_Whatever_ConsumerRolledBackAndTransactionAborted()
+    public async Task HandleError_ShouldCommitOffsetButAbortTransaction()
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
+        IErrorPolicyImplementation policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
             null,
             new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
 
         IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(
-                envelope,
-                _serviceProvider,
-                transactionManager),
+            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
             new InvalidOperationException("test"));
 
-        await transactionManager.Received(1).RollbackAsync(
-            Arg.Any<InvalidOperationException>(),
-            false,
-            true,
-            false);
+        await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
     }
 }

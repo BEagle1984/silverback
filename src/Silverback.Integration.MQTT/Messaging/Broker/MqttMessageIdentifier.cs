@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker;
 /// </summary>
 /// <remarks>
 ///     Generating the identifier client-side might prevent some Silverback features to work properly
-///     (e.g. <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />).
+///     (e.g. <see cref="ErrorPolicyBase.MaxFailedAttempts" />).
 /// </remarks>
 public sealed class MqttMessageIdentifier : IBrokerMessageIdentifier
 {

@@ -6,9 +6,8 @@ using FluentAssertions;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
-using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -211,7 +210,7 @@ public class MqttConsumerConfigurationTests
                 ProtocolVersion = MqttProtocolVersion.V311
             },
             Serializer = new JsonMessageSerializer<TestEventOne>(),
-            ErrorPolicy = new RetryErrorPolicy().MaxFailedAttempts(10)
+            ErrorPolicy = new ErrorPolicyBuilder().Retry(42).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -234,7 +233,9 @@ public class MqttConsumerConfigurationTests
                 ProtocolVersion = MqttProtocolVersion.V311
             },
             Serializer = new JsonMessageSerializer<TestEventOne>(),
-            ErrorPolicy = new MoveMessageErrorPolicy(GetValidProducerConfiguration()).MaxFailedAttempts(10)
+            ErrorPolicy = new ErrorPolicyBuilder().MoveToMqttTopic(
+                producer => producer.ConfigureClient(client => client.ConnectViaTcp("server")).ProduceTo("topic2"),
+                policy => policy.WithMaxRetries(42)).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -257,7 +258,7 @@ public class MqttConsumerConfigurationTests
                 ProtocolVersion = MqttProtocolVersion.V311
             },
             Serializer = new JsonMessageSerializer<TestEventOne>(),
-            ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy().MaxFailedAttempts(10))
+            ErrorPolicy = new ErrorPolicyBuilder().Skip().ThenRetry(42).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -280,7 +281,11 @@ public class MqttConsumerConfigurationTests
                 ProtocolVersion = MqttProtocolVersion.V311
             },
             Serializer = new JsonMessageSerializer<TestEventOne>(),
-            ErrorPolicy = new ErrorPolicyChain(new MoveMessageErrorPolicy(GetValidProducerConfiguration()).MaxFailedAttempts(10))
+            ErrorPolicy = new ErrorPolicyBuilder()
+                .Skip()
+                .ThenMoveToMqttTopic(
+                    producer => producer.ConfigureClient(client => client.ConnectViaTcp("server")).ProduceTo("topic2"),
+                    policy => policy.WithMaxRetries(42)).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -346,7 +351,7 @@ public class MqttConsumerConfigurationTests
                 },
                 ProtocolVersion = MqttProtocolVersion.V500
             },
-            ErrorPolicy = new RetryErrorPolicy().MaxFailedAttempts(10)
+            ErrorPolicy = new ErrorPolicyBuilder().Retry(42).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -368,8 +373,9 @@ public class MqttConsumerConfigurationTests
                 },
                 ProtocolVersion = MqttProtocolVersion.V500
             },
-            ErrorPolicy =
-                new MoveMessageErrorPolicy(GetValidProducerConfiguration()).MaxFailedAttempts(10)
+            ErrorPolicy = new ErrorPolicyBuilder().MoveToMqttTopic(
+                producer => producer.ConfigureClient(client => client.ConnectViaTcp("server")).ProduceTo("topic2"),
+                policy => policy.WithMaxRetries(42)).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -391,7 +397,7 @@ public class MqttConsumerConfigurationTests
                 },
                 ProtocolVersion = MqttProtocolVersion.V500
             },
-            ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy().MaxFailedAttempts(10))
+            ErrorPolicy = new ErrorPolicyBuilder().Skip().ThenRetry(42).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -413,7 +419,11 @@ public class MqttConsumerConfigurationTests
                 },
                 ProtocolVersion = MqttProtocolVersion.V500
             },
-            ErrorPolicy = new ErrorPolicyChain(new MoveMessageErrorPolicy(GetValidProducerConfiguration()).MaxFailedAttempts(10))
+            ErrorPolicy = new ErrorPolicyBuilder()
+                .Skip()
+                .ThenMoveToMqttTopic(
+                    producer => producer.ConfigureClient(client => client.ConnectViaTcp("server")).ProduceTo("topic2"),
+                    policy => policy.WithMaxRetries(42)).Build()
         };
 
         Action act = () => configuration.Validate();
@@ -447,19 +457,6 @@ public class MqttConsumerConfigurationTests
         new()
         {
             Topics = new ValueReadOnlyCollection<string>(new[] { "test" }),
-            Client = new MqttClientConfiguration
-            {
-                Channel = new MqttClientTcpConfiguration
-                {
-                    Server = "test-server"
-                }
-            }
-        };
-
-    private static MqttProducerConfiguration GetValidProducerConfiguration() =>
-        new()
-        {
-            Endpoint = new MqttStaticProducerEndpointResolver("test"),
             Client = new MqttClientConfiguration
             {
                 Channel = new MqttClientTcpConfiguration

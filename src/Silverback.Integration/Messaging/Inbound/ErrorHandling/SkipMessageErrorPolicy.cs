@@ -16,12 +16,16 @@ namespace Silverback.Messaging.Inbound.ErrorHandling;
 /// <summary>
 ///     This policy skips the message that failed to be processed.
 /// </summary>
-public class SkipMessageErrorPolicy : ErrorPolicyBase
+public record SkipMessageErrorPolicy : ErrorPolicyBase
 {
+    internal SkipMessageErrorPolicy()
+    {
+    }
+
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new SkipMessageErrorPolicyImplementation(
-            MaxFailedAttemptsCount,
+            MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
             ApplyRule,
@@ -35,8 +39,8 @@ public class SkipMessageErrorPolicy : ErrorPolicyBase
 
         public SkipMessageErrorPolicyImplementation(
             int? maxFailedAttempts,
-            ICollection<Type> excludedExceptions,
-            ICollection<Type> includedExceptions,
+            IReadOnlyCollection<Type> excludedExceptions,
+            IReadOnlyCollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,

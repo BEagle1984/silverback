@@ -15,12 +15,16 @@ namespace Silverback.Messaging.Inbound.ErrorHandling;
 ///     This is the default policy and it stops the consumer when an exception is thrown during the
 ///     message processing.
 /// </summary>
-public class StopConsumerErrorPolicy : ErrorPolicyBase
+public record StopConsumerErrorPolicy : ErrorPolicyBase
 {
+    internal StopConsumerErrorPolicy()
+    {
+    }
+
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new StopConsumerErrorPolicyImplementation(
-            MaxFailedAttemptsCount,
+            MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
             ApplyRule,
@@ -33,8 +37,8 @@ public class StopConsumerErrorPolicy : ErrorPolicyBase
     {
         public StopConsumerErrorPolicyImplementation(
             int? maxFailedAttempts,
-            ICollection<Type> excludedExceptions,
-            ICollection<Type> includedExceptions,
+            IReadOnlyCollection<Type> excludedExceptions,
+            IReadOnlyCollection<Type> includedExceptions,
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
