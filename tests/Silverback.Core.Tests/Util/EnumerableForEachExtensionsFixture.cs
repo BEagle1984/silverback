@@ -21,7 +21,7 @@ public class EnumerableForEachExtensionsFixture
         IEnumerable<int> enumerable = Enumerable.Range(1, 5);
         int total = 0;
 
-        enumerable.ForEach(item => total += item);
+        enumerable.ForEach(i => total += i);
 
         total.Should().Be(15);
     }
@@ -61,8 +61,8 @@ public class EnumerableForEachExtensionsFixture
     [Fact]
     public void ParallelForEach_ShouldInvokeActionInParallelForEachItemInEnumerable()
     {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 5);
-        CountdownEvent countdownEvent = new(5);
+        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
+        CountdownEvent countdownEvent = new(3);
         ConcurrentBag<int> threads = new();
         int total = 0;
 
@@ -76,15 +76,15 @@ public class EnumerableForEachExtensionsFixture
                 Interlocked.Add(ref total, item);
             });
 
-        total.Should().Be(15);
-        threads.Distinct().Should().HaveCount(5);
+        total.Should().Be(6);
+        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
     public void ParallelForEach_ShouldInvokeActionWithLimitedParallelism()
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(5);
+        CountdownEvent countdownEvent = new(3);
 
         Action act = () => enumerable.ParallelForEach(
             _ =>
@@ -97,14 +97,14 @@ public class EnumerableForEachExtensionsFixture
             2);
 
         act.Should().Throw<TimeoutException>();
-        countdownEvent.CurrentCount.Should().Be(countdownEvent.InitialCount - 2);
+        countdownEvent.CurrentCount.Should().Be(1);
     }
 
     [Fact]
     public async Task ParallelForEachAsync_ShouldInvokeAsyncFunctionInParallelForEachItemInEnumerable()
     {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 5);
-        CountdownEvent countdownEvent = new(5);
+        IEnumerable<int> enumerable = Enumerable.Range(1, 3);
+        CountdownEvent countdownEvent = new(3);
         ConcurrentBag<int> threads = new();
         int total = 0;
 
@@ -120,15 +120,15 @@ public class EnumerableForEachExtensionsFixture
                 Interlocked.Add(ref total, item);
             });
 
-        total.Should().Be(15);
-        threads.Distinct().Should().HaveCount(5);
+        total.Should().Be(6);
+        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
     public async Task ParallelForEachAsync_ShouldInvokeAsyncFunctionWithLimitedParallelism()
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
-        CountdownEvent countdownEvent = new(5);
+        CountdownEvent countdownEvent = new(3);
 
         Func<Task> act = () => enumerable.ParallelForEachAsync(
             async _ =>
@@ -143,5 +143,6 @@ public class EnumerableForEachExtensionsFixture
             2);
 
         await act.Should().ThrowAsync<TimeoutException>();
+        countdownEvent.CurrentCount.Should().Be(1);
     }
 }

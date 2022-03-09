@@ -279,8 +279,6 @@ public class ProducerTests : KafkaTestFixture
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
 
-        produced.Should().BeLessThan(3);
-
         await AsyncTestingUtil.WaitAsync(() => produced == 3);
 
         produced.Should().Be(3);

@@ -123,8 +123,7 @@ public class ErrorPolicyChainFixture
             new TestErrorPolicy { MaxFailedAttempts = 2 }
         };
 
-        IErrorPolicyImplementation chain = new ErrorPolicyChain(policies)
-            .Build(_serviceProvider);
+        IErrorPolicyImplementation chain = new ErrorPolicyChain(policies).Build(_serviceProvider);
 
         await chain.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(
@@ -139,5 +138,35 @@ public class ErrorPolicyChainFixture
         {
             policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
         }
+    }
+
+    [Fact]
+    public async Task HandleErrorAsync_ShouldApplyCorrectPolicyIgnoringFailedAttemptsWhenMaxFailedAttemptsIsNotSet()
+    {
+        MemoryStream rawMessage = new();
+        MessageHeader[] headers =
+        {
+            new(DefaultMessageHeaders.FailedAttempts, 42)
+        };
+
+        ErrorPolicyBase[] policies =
+        {
+            new TestErrorPolicy { MaxFailedAttempts = 2 },
+            new TestErrorPolicy(),
+            new TestErrorPolicy { MaxFailedAttempts = 2 }
+        };
+
+        IErrorPolicyImplementation chain = new ErrorPolicyChain(policies).Build(_serviceProvider);
+
+        await chain.HandleErrorAsync(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                new InboundEnvelope(
+                    rawMessage,
+                    headers,
+                    new TestOffset(),
+                    TestConsumerEndpoint.GetDefault())),
+            new InvalidOperationException("test"));
+
+        policies[1].As<TestErrorPolicy>().Applied.Should().BeTrue();
     }
 }

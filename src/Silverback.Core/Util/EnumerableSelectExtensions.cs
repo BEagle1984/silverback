@@ -40,18 +40,22 @@ internal static class EnumerableSelectExtensions
             return await source.SelectAsync(selector).ConfigureAwait(false);
 
         using SemaphoreSlim semaphore = new(maxDegreeOfParallelism.Value);
+        using CancellationTokenSource cancellationTokenSource = new();
 
         IEnumerable<Task<TResult>> tasks = source.ParallelSelect(
             async value =>
             {
-                await semaphore.WaitAsync().ConfigureAwait(false);
+                await semaphore.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false);
                 try
                 {
-                    return await selector(value).ConfigureAwait(false);
-                }
-                finally
-                {
+                    TResult result = await selector(value).ConfigureAwait(false);
                     semaphore.Release();
+                    return result;
+                }
+                catch (Exception)
+                {
+                    cancellationTokenSource.Cancel();
+                    throw;
                 }
             });
 

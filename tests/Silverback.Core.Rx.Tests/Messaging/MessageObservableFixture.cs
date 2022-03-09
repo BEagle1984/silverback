@@ -116,24 +116,24 @@ public sealed class MessageObservableFixture : IDisposable
                 {
                     countdownEvent.Signal();
                     countdownEvent.Wait();
+                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                     await _streamProvider.PushAsync(1);
-                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                 }),
             Task.Run(
                 async () =>
                 {
                     countdownEvent.Signal();
                     countdownEvent.Wait();
+                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                     await _streamProvider.PushAsync(2);
-                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                 }),
             Task.Run(
                 async () =>
                 {
                     countdownEvent.Signal();
                     countdownEvent.Wait();
-                    await _streamProvider.PushAsync(3);
                     threads.Add(Thread.CurrentThread.ManagedThreadId);
+                    await _streamProvider.PushAsync(3);
                 }));
 
         count.Should().Be(3);

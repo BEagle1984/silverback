@@ -91,13 +91,13 @@ public class HealthCheckTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
                     .Services
                     .AddHealthChecks()
-                    .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(200)))
+                    .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(300)))
             .Run(waitUntilBrokerConnected: false);
 
         HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        await Task.Delay(200);
+        await Task.Delay(300);
 
         response = await Host.HttpClient.GetAsync("/health");
         response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
