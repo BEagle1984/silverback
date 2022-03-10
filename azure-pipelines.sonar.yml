@@ -1,16 +1,5 @@
 name: sonar.$(date:yyyyMMdd)$(rev:.r)
 
-trigger: none
-pr: none
-resources:
-  pipelines:
-    - pipeline: continuous
-      source: continuous
-
-      trigger:
-        branches:
-          - '*'
-
 pool:
   vmImage: 'ubuntu-20.04'
 
