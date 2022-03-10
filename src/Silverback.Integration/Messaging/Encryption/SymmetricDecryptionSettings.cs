@@ -8,18 +8,17 @@ namespace Silverback.Messaging.Encryption;
 /// <summary>
 ///     The decryption settings used to decrypt the messages.
 /// </summary>
-public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase
+public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase, IDecryptionSettings
 {
     /// <summary>
     ///     Gets the function to be used to retrieve the decryption key.
     /// </summary>
     public Func<string?, byte[]>? KeyProvider { get; init; }
 
-    /// <inheritdoc cref="EncryptionSettings.Validate" />
+    /// <inheritdoc cref="SymmetricEncryptionSettingsBase.Validate" />
     public override void Validate()
     {
-        if (string.IsNullOrEmpty(AlgorithmName))
-            throw new EndpointConfigurationException("The algorithm name is required.");
+        base.Validate();
 
         if (KeyProvider == null && Key == null)
             throw new EndpointConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");

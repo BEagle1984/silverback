@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 using Silverback.Util;
@@ -29,8 +28,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     private string? _friendlyName;
 
     private IMessageSerializer? _serializer;
-
-    private EncryptionSettings? _encryptionSettings;
 
     private MessageValidationMode _messageValidationMode = MessageValidationMode.LogWarning;
 
@@ -102,21 +99,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     }
 
     /// <summary>
-    ///     Enables the end-to-end message encryption.
-    /// </summary>
-    /// <param name="encryptionSettings">
-    ///     The <see cref="EncryptionSettings" />.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder WithEncryption(EncryptionSettings? encryptionSettings)
-    {
-        _encryptionSettings = Check.NotNull(encryptionSettings, nameof(encryptionSettings));
-        return This;
-    }
-
-    /// <summary>
     ///     Enables the message validation.
     /// </summary>
     /// <param name="throwException">
@@ -151,17 +133,16 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// </returns>
     public virtual TConfiguration Build()
     {
-        TConfiguration endpoint = CreateConfiguration() with
+        TConfiguration configuration = CreateConfiguration() with
         {
             FriendlyName = _friendlyName,
             Serializer = _serializer ?? DefaultSerializers.Json,
-            Encryption = _encryptionSettings,
             MessageValidationMode = _messageValidationMode
         };
 
-        endpoint.Validate();
+        configuration.Validate();
 
-        return endpoint;
+        return configuration;
     }
 
     /// <summary>

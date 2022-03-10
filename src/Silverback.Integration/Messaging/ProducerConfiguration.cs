@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Collections;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.EndpointResolvers;
 using Silverback.Messaging.Outbound.Enrichers;
@@ -50,21 +51,27 @@ public abstract record ProducerConfiguration : EndpointConfiguration
     public IValueReadOnlyCollection<IOutboundMessageEnricher> MessageEnrichers { get; init; } =
         ValueReadOnlyCollection.Empty<IOutboundMessageEnricher>();
 
+    /// <summary>
+    ///     Gets the encryption settings to be used to encrypt the messages. The default is <c>null</c>, which means that the messages are
+    ///     being sent in clear-text.
+    /// </summary>
+    public IEncryptionSettings? Encryption { get; init; }
+
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {
-        base.ValidateCore();
-
         if (Endpoint == null || Endpoint == NullProducerEndpointResolver.Instance)
         {
             throw new EndpointConfigurationException(
-                    "An endpoint resolver is required. " +
-                    $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.");
+                "An endpoint resolver is required. " +
+                $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.");
         }
 
         if (Strategy == null)
             throw new EndpointConfigurationException("A produce strategy is required.");
 
         Chunk?.Validate();
+
+        Encryption?.Validate();
     }
 }

@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Encryption;
 
 /// <summary>
-///     Encrypts the message according to the <see cref="EncryptionSettings" />.
+///     Encrypts the message according to the <see cref="IEncryptionSettings" />.
 /// </summary>
 public class EncryptorProducerBehavior : IProducerBehavior
 {

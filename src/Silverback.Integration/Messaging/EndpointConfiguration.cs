@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 
@@ -66,12 +65,6 @@ public abstract record EndpointConfiguration
     public virtual IMessageSerializer Serializer { get; init; } = DefaultSerializers.Json;
 
     /// <summary>
-    ///     Gets the encryption settings. This optional settings enables the transparent end-to-end message encryption.
-    ///     The default is <c>null</c>, which means that the encryption is disabled.
-    /// </summary>
-    public virtual EncryptionSettings? Encryption { get; init; }
-
-    /// <summary>
     ///     Gets the message validation mode. This option can be used to specify if the messages have to be validated and whether an
     ///     exception must be thrown if the message is not valid. The default is <see cref="Validation.MessageValidationMode.LogWarning" />.
     /// </summary>
@@ -85,8 +78,6 @@ public abstract record EndpointConfiguration
         if (Serializer == null)
             throw new EndpointConfigurationException("A serializer is required.");
 
-        Encryption?.Validate();
-
         ValidateCore();
 
         if (string.IsNullOrEmpty(RawName))
@@ -94,9 +85,7 @@ public abstract record EndpointConfiguration
     }
 
     /// <inheritdoc cref="Validate" />
-    protected virtual void ValidateCore()
-    {
-    }
+    protected abstract void ValidateCore();
 
     private string GetDisplayName() => string.IsNullOrEmpty(FriendlyName) ? RawName : $"{FriendlyName} ({RawName})";
 }

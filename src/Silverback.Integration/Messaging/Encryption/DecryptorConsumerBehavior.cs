@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Encryption;
 
 /// <summary>
-///     Decrypts the message according to the <see cref="EncryptionSettings" />.
+///     Decrypts the message according to the <see cref="IDecryptionSettings" />.
 /// </summary>
 public class DecryptorConsumerBehavior : IConsumerBehavior
 {

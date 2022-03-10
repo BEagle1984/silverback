@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Encryption;
 public class SilverbackCryptoStreamFactory : ISilverbackCryptoStreamFactory
 {
     /// <inheritdoc cref="ISilverbackCryptoStreamFactory.GetEncryptStream" />
-    public SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings) =>
+    public SilverbackCryptoStream GetEncryptStream(Stream stream, IEncryptionSettings settings) =>
         settings switch
         {
             SymmetricEncryptionSettings symmetricEncryptionSettings => new SymmetricEncryptStream(
@@ -20,10 +20,7 @@ public class SilverbackCryptoStreamFactory : ISilverbackCryptoStreamFactory
         };
 
     /// <inheritdoc cref="ISilverbackCryptoStreamFactory.GetDecryptStream" />
-    public SilverbackCryptoStream GetDecryptStream(
-        Stream stream,
-        EncryptionSettings settings,
-        string? keyIdentifier = null) =>
+    public SilverbackCryptoStream GetDecryptStream(Stream stream, IDecryptionSettings settings, string? keyIdentifier = null) =>
         settings switch
         {
             SymmetricDecryptionSettings symmetricEncryptionSettings => new SymmetricDecryptStream(

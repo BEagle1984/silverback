@@ -14,16 +14,19 @@ namespace Silverback.Messaging.Configuration;
 public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {
     /// <summary>
-    ///     Specifies the <see cref="EncryptionSettings" /> to be used to decrypt the messages.
+    ///     Specifies the settings to be used to decrypt the messages.
     /// </summary>
     /// <param name="encryptionSettings">
-    ///     The <see cref="EncryptionSettings" />.
+    ///     The <see cref="IDecryptionSettings" />.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder Decrypt(EncryptionSettings encryptionSettings) =>
-        WithEncryption(Check.NotNull(encryptionSettings, nameof(encryptionSettings)));
+    public TBuilder Decrypt(IDecryptionSettings encryptionSettings)
+    {
+        _encryptionSettings = Check.NotNull(encryptionSettings, nameof(encryptionSettings));
+        return This;
+    }
 
     /// <summary>
     ///     Specifies that the AES algorithm has to be used to decrypt the messages.

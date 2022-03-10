@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Collections;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Enrichers;
@@ -45,6 +46,8 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     private int? _chunkSize;
 
     private bool? _alwaysAddChunkHeaders;
+
+    private IEncryptionSettings? _encryptionSettings;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducerConfigurationBuilder{TMessage, TConfiguration, TEndpoint, TBuilder}" /> class.
@@ -180,19 +183,24 @@ public abstract partial class ProducerConfigurationBuilder<TMessage, TConfigurat
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.Build" />
     public sealed override TConfiguration Build()
     {
-        TConfiguration endpoint = base.Build();
+        TConfiguration configuration = base.Build();
 
-        return endpoint with
+        configuration = configuration with
         {
-            Strategy = _strategy ?? endpoint.Strategy,
+            Strategy = _strategy ?? configuration.Strategy,
             Chunk = _chunkSize == null
-                ? endpoint.Chunk
+                ? configuration.Chunk
                 : new ChunkSettings
                 {
                     Size = _chunkSize.Value,
                     AlwaysAddHeaders = _alwaysAddChunkHeaders ?? true
                 },
-            MessageEnrichers = _messageEnrichers.Union(endpoint.MessageEnrichers).AsValueReadOnlyCollection()
+            MessageEnrichers = _messageEnrichers.Union(configuration.MessageEnrichers).AsValueReadOnlyCollection(),
+            Encryption = _encryptionSettings ?? configuration.Encryption
         };
+
+        configuration.Validate();
+
+        return configuration;
     }
 }

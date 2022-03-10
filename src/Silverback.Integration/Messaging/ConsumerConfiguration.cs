@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
@@ -45,11 +46,14 @@ public abstract record ConsumerConfiguration : EndpointConfiguration
     /// </summary>
     public NullMessageHandlingStrategy NullMessageHandlingStrategy { get; init; }
 
+    /// <summary>
+    ///     Gets the encryption settings to be used to decrypt the encrypted messages. The default is <c>null</c>.
+    /// </summary>
+    public IDecryptionSettings? Encryption { get; init; }
+
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()
     {
-        base.ValidateCore();
-
         if (Sequence == null)
             throw new EndpointConfigurationException("The sequence configuration is required.");
 
@@ -57,5 +61,7 @@ public abstract record ConsumerConfiguration : EndpointConfiguration
             throw new EndpointConfigurationException("An error policy is required.");
 
         Batch?.Validate();
+
+        Encryption?.Validate();
     }
 }

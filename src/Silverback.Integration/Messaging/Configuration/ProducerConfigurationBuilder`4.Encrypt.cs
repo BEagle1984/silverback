@@ -13,16 +13,19 @@ namespace Silverback.Messaging.Configuration;
 public abstract partial class ProducerConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
     /// <summary>
-    ///     Specifies the <see cref="EncryptionSettings" /> to be used to encrypt the messages.
+    ///     Specifies the settings to be used to encrypt the messages.
     /// </summary>
     /// <param name="encryptionSettings">
-    ///     The <see cref="EncryptionSettings" />.
+    ///     The encryption settings.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder Encrypt(EncryptionSettings encryptionSettings) =>
-        WithEncryption(Check.NotNull(encryptionSettings, nameof(encryptionSettings)));
+    public TBuilder Encrypt(IEncryptionSettings encryptionSettings)
+    {
+        _encryptionSettings = Check.NotNull(encryptionSettings, nameof(encryptionSettings));
+        return This;
+    }
 
     /// <summary>
     ///     Specifies that the AES algorithm has to be used to encrypt the messages.

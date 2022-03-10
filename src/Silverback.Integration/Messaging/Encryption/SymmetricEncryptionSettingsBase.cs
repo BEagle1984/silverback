@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
+using Silverback.Configuration;
 
 namespace Silverback.Messaging.Encryption;
 
@@ -10,7 +11,7 @@ namespace Silverback.Messaging.Encryption;
 ///     The base class for symmetric encryption settings used to encrypt or decrypt the messages being sent through the
 ///     message broker.
 /// </summary>
-public abstract record SymmetricEncryptionSettingsBase : EncryptionSettings
+public abstract record SymmetricEncryptionSettingsBase : IValidatableSettings
 {
     /// <summary>
     ///     Gets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class
@@ -30,8 +31,8 @@ public abstract record SymmetricEncryptionSettingsBase : EncryptionSettings
 
     /// <summary>
     ///     <para>
-    ///         Gets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback
-    ///         (CFB) and Output Feedback (OFB) cipher modes.
+    ///         Gets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback (CFB) and Output Feedback (OFB)
+    ///         cipher modes.
     ///     </para>
     ///     <para>
     ///         If <c>null</c>, the default value for the specified algorithm will be used.
@@ -44,10 +45,8 @@ public abstract record SymmetricEncryptionSettingsBase : EncryptionSettings
     ///         Gets the optional initialization vector (IV) for the symmetric algorithm.
     ///     </para>
     ///     <para>
-    ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically
-    ///         generate a random one for each message that will also be prepended to the actual encrypted message
-    ///         to be available to the
-    ///         consumer.
+    ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically generate a random one for each
+    ///         message that will also be prepended to the actual encrypted message to be available to the consumer.
     ///     </para>
     /// </summary>
     [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
@@ -79,13 +78,10 @@ public abstract record SymmetricEncryptionSettingsBase : EncryptionSettings
     /// </summary>
     public PaddingMode? PaddingMode { get; init; }
 
-    /// <inheritdoc cref="EncryptionSettings.Validate" />
-    public override void Validate()
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
+    public virtual void Validate()
     {
         if (string.IsNullOrEmpty(AlgorithmName))
             throw new EndpointConfigurationException("The algorithm name is required.");
-
-        if (Key == null)
-            throw new EndpointConfigurationException("A key is required.");
     }
 }

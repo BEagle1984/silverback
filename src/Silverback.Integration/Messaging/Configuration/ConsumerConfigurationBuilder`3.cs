@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
@@ -40,6 +41,8 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
     private bool? _throwIfUnhandled;
 
     private NullMessageHandlingStrategy? _nullMessageHandling;
+
+    private IDecryptionSettings? _encryptionSettings;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerConfigurationBuilder{TMessage,TConfiguration,TBuilder}" /> class.
@@ -206,24 +209,29 @@ public abstract partial class ConsumerConfigurationBuilder<TMessage, TConfigurat
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}.Build" />
     public sealed override TConfiguration Build()
     {
-        TConfiguration endpoint = base.Build();
+        TConfiguration configuration = base.Build();
 
-        return endpoint with
+        configuration = configuration with
         {
-            ErrorPolicy = _errorPolicy ?? endpoint.ErrorPolicy,
+            ErrorPolicy = _errorPolicy ?? configuration.ErrorPolicy,
             Batch = _batchSize == null
-                ? endpoint.Batch
+                ? configuration.Batch
                 : new BatchSettings
                 {
                     Size = _batchSize.Value,
                     MaxWaitTime = _batchMaxWaitTime
                 },
-            Sequence = endpoint.Sequence with
+            Sequence = configuration.Sequence with
             {
-                Timeout = _sequenceTimeout ?? endpoint.Sequence.Timeout
+                Timeout = _sequenceTimeout ?? configuration.Sequence.Timeout
             },
-            ThrowIfUnhandled = _throwIfUnhandled ?? endpoint.ThrowIfUnhandled,
-            NullMessageHandlingStrategy = _nullMessageHandling ?? endpoint.NullMessageHandlingStrategy
+            ThrowIfUnhandled = _throwIfUnhandled ?? configuration.ThrowIfUnhandled,
+            NullMessageHandlingStrategy = _nullMessageHandling ?? configuration.NullMessageHandlingStrategy,
+            Encryption = _encryptionSettings ?? configuration.Encryption
         };
+
+        configuration.Validate();
+
+        return configuration;
     }
 }
