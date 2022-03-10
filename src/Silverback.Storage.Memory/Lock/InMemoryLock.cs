@@ -58,7 +58,7 @@ public sealed class InMemoryLock : DistributedLock
         [SuppressMessage("", "VSTHRD103", Justification = "Intentional")]
         protected override ValueTask DisposeCoreAsync()
         {
-            Dispose(false);
+            Dispose(true);
             return ValueTaskFactory.CompletedTask;
         }
     }

@@ -26,7 +26,7 @@ public class EnumerableSelectExtensionsFixture
             item =>
             {
                 countdownEvent.Signal();
-                countdownEvent.Wait(TimeSpan.FromSeconds(1));
+                countdownEvent.WaitOrThrow();
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 return item * 2;
@@ -46,9 +46,7 @@ public class EnumerableSelectExtensionsFixture
             item =>
             {
                 countdownEvent.Signal();
-
-                if (!countdownEvent.Wait(TimeSpan.FromMilliseconds(100)))
-                    throw new TimeoutException();
+                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
 
                 return item * 2;
             },
@@ -71,7 +69,7 @@ public class EnumerableSelectExtensionsFixture
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-                countdownEvent.Wait(TimeSpan.FromSeconds(1));
+                countdownEvent.WaitOrThrow();
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 return item * 2;
@@ -93,9 +91,7 @@ public class EnumerableSelectExtensionsFixture
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-
-                if (!countdownEvent.Wait(TimeSpan.FromMilliseconds(100)))
-                    throw new TimeoutException();
+                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
 
                 return item * 2;
             },
@@ -175,7 +171,7 @@ public class EnumerableSelectExtensionsFixture
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-                countdownEvent.Wait(TimeSpan.FromSeconds(1));
+                countdownEvent.WaitOrThrow();
 
                 return new[] { item * 2, item * 3 };
             });
@@ -196,9 +192,7 @@ public class EnumerableSelectExtensionsFixture
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-
-                if (!countdownEvent.Wait(TimeSpan.FromMilliseconds(100)))
-                    throw new TimeoutException();
+                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
 
                 return new[] { item * 2, item * 3 };
             },

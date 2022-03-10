@@ -82,7 +82,7 @@ public class DomainEventsPublisher
     /// <summary>
     ///     Publishes the domain events stored into the domain entities returned by the provider function.
     /// </summary>
-    public void PublishDomainEvents() => PublishDomainEventsAsync(false).GetAwaiter().GetResult();
+    public void PublishDomainEvents() => AsyncHelper.RunSynchronously(() => PublishDomainEventsAsync(false));
 
     [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
     private async Task PublishDomainEventsAsync(bool executeAsync)

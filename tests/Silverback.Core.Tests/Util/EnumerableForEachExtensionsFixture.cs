@@ -70,7 +70,7 @@ public class EnumerableForEachExtensionsFixture
             item =>
             {
                 countdownEvent.Signal();
-                countdownEvent.Wait(TimeSpan.FromSeconds(1));
+                countdownEvent.WaitOrThrow();
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 Interlocked.Add(ref total, item);
@@ -90,9 +90,7 @@ public class EnumerableForEachExtensionsFixture
             _ =>
             {
                 countdownEvent.Signal();
-
-                if (!countdownEvent.Wait(TimeSpan.FromMilliseconds(100)))
-                    throw new TimeoutException();
+                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
             },
             2);
 
@@ -111,12 +109,11 @@ public class EnumerableForEachExtensionsFixture
         await enumerable.ParallelForEachAsync(
             async item =>
             {
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
-
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-                countdownEvent.Wait(TimeSpan.FromSeconds(1));
+                countdownEvent.WaitOrThrow();
+                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 Interlocked.Add(ref total, item);
             });
@@ -137,9 +134,7 @@ public class EnumerableForEachExtensionsFixture
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
-
-                if (!countdownEvent.Wait(TimeSpan.FromMilliseconds(100)))
-                    throw new TimeoutException();
+                countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
             },
             2);
 

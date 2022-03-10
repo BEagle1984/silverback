@@ -174,10 +174,7 @@ public partial class PublisherFixture
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             if (!countdownEvent.Signal())
-            {
-                if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
-                    throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
-            }
+                countdownEvent.WaitOrThrow();
 
             await messages.AddAsync(message);
         }
@@ -210,10 +207,7 @@ public partial class PublisherFixture
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             if (!countdownEvent.Signal())
-            {
-                if (!countdownEvent.Wait(TimeSpan.FromSeconds(5)))
-                    throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
-            }
+                countdownEvent.WaitOrThrow();
 
             await messages.AddAsync(message);
         }

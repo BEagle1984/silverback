@@ -397,10 +397,7 @@ public partial class PublisherFixture
         private async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             if (!_countdownEvent.Signal())
-            {
-                if (!_countdownEvent.Wait(TimeSpan.FromSeconds(5)))
-                    throw new InvalidOperationException("Not exclusive subscribers are not executing in parallel.");
-            }
+                _countdownEvent.WaitOrThrow();
 
             await messages.AddAsync(message);
         }

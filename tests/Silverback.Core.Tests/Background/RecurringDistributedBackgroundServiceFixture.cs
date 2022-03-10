@@ -97,16 +97,19 @@ public class RecurringDistributedBackgroundServiceFixture
         await service1.StartAsync(CancellationToken.None);
         await service2.StartAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executed1);
+        await AsyncTestingUtil.WaitAsync(() => executed1 || executed2);
         await Task.Delay(100);
 
-        executed1.Should().BeTrue();
-        executed2.Should().BeFalse();
+        (executed1 || executed2).Should().BeTrue();
+        (executed1 && executed2).Should().BeFalse();
 
-        await service1.StopAsync(CancellationToken.None);
+        if (executed1)
+            await service1.StopAsync(CancellationToken.None);
+        else
+            await service2.StopAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executed2);
-        executed2.Should().BeTrue();
+        await AsyncTestingUtil.WaitAsync(() => executed1 && executed2);
+        (executed1 && executed2).Should().BeTrue();
 
         executedInParallel.Should().BeFalse();
     }
