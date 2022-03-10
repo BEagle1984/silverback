@@ -155,8 +155,7 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
-        IEnumerable<int> result =
-            await enumerable.ParallelSelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
+        IEnumerable<int> result = await enumerable.ParallelSelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
 
         result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3 });
     }
@@ -171,11 +170,12 @@ public class EnumerableSelectExtensionsFixture
         IEnumerable<int> result = await enumerable.ParallelSelectManyAsync<int, int>(
             async item =>
             {
+                threads.Add(Thread.CurrentThread.ManagedThreadId);
+
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
                 countdownEvent.Wait(TimeSpan.FromSeconds(1));
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 return new[] { item * 2, item * 3 };
             });

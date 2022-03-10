@@ -111,11 +111,12 @@ public class EnumerableForEachExtensionsFixture
         await enumerable.ParallelForEachAsync(
             async item =>
             {
+                threads.Add(Thread.CurrentThread.ManagedThreadId);
+
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
                 countdownEvent.Wait(TimeSpan.FromSeconds(1));
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 Interlocked.Add(ref total, item);
             });

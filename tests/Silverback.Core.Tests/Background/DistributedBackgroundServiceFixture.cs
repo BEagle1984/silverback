@@ -97,7 +97,7 @@ public class DistributedBackgroundServiceFixture
         await service1.StartAsync(CancellationToken.None);
         await service2.StartAsync(CancellationToken.None);
 
-        await AsyncTestingUtil.WaitAsync(() => executed1 && executed2);
+        await AsyncTestingUtil.WaitAsync(() => executed1 && executed2, TimeSpan.FromSeconds(5));
 
         executed1.Should().BeTrue();
         executed2.Should().BeTrue();

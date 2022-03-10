@@ -20,8 +20,8 @@ Discover more in the [project's website][docs-site].
 
 ### Build
 
-[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
-[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
+[![continuous build status](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yaml/badge.svg)](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yaml)
+[![sonar build status](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yaml/badge.svg)](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yaml)
 
 ### Quality
 

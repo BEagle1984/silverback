@@ -1,0 +1,60 @@
+name: sonar
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: sonar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET 3.1.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 3.1.x
+      - name: Setup .NET 5.0.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup .NET 6.0.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: 6.0.x
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore
+        run: dotnet restore
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: ./.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: |
+          mkdir ./.sonar
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar
+      - name: Build, test and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./.sonar/dotnet-sonarscanner begin /k:"silverback" /o:"silverback" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"             /d:sonar.cs.vstest.reportsPaths=**/*.trx             /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml \ 
+            /d:sonar.coverage.exclusions="[xunit.*]*%2c[Silverback.Tests.*]*"
+          dotnet build Silverback.sln --configuration Release
+          dotnet test             --configuration Release             --no-build             --verbosity normal             --logger trx             --filter "CI!=false"             --collect "Code coverage"             -p:CollectCoverage=true             -p:CoverletOutputFormat=opencover             -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+          ./.sonar/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"

@@ -182,8 +182,7 @@ public class ConsumersHealthCheckServiceTests
     }
 
     [Fact]
-    public async Task
-        GetDisconnectedConsumersAsync_NeverFullyConnected_ConsumersListReturnedAfterGracePeriod()
+    public async Task GetDisconnectedConsumersAsync_NeverFullyConnected_ConsumersListReturnedAfterGracePeriod()
     {
         IConsumerStatusInfo? statusInfo = Substitute.For<IConsumerStatusInfo>();
         statusInfo.Status.Returns(ConsumerStatus.Connected);
@@ -211,7 +210,7 @@ public class ConsumersHealthCheckServiceTests
 
         result.Should().BeEmpty();
 
-        await Task.Delay(100);
+        await Task.Delay(150);
 
         result = await service.GetDisconnectedConsumersAsync(
             ConsumerStatus.Ready,
