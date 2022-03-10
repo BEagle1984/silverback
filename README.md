@@ -18,12 +18,16 @@ Discover more in the [project's website][docs-site].
 
 ## Project Status
 
-### Build
+### Continuous Build
 
-[![continuous build status](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yaml/badge.svg)](https://github.com/BEagle1984/silverback/actions/workflows/continuous.yaml)
-[![sonar build status](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yaml/badge.svg)](https://github.com/BEagle1984/silverback/actions/workflows/sonar.yaml)
+[![Continuous Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
+[![.NET Tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
 
-### Quality
+### Sonar Build
+
+[![Sonar Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/sonar?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=6&branchName=master)
+
+#### Quality Metrics
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=silverback&metric=alert_status)](https://sonarcloud.io/dashboard?id=silverback)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=silverback&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=silverback)
