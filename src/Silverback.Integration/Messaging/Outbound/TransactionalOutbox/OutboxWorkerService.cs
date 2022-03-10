@@ -54,6 +54,7 @@ public class OutboxWorkerService : RecurringDistributedBackgroundService
     {
         while (await OutboxWorker.ProcessOutboxAsync(stoppingToken).ConfigureAwait(false))
         {
+            // Run in loop until empty, to process in batches
         }
     }
 }

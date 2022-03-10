@@ -25,18 +25,6 @@ public class SilverbackContext
     public void SetObject(int objectTypeId, object obj) =>
         _objects[objectTypeId] = obj;
 
-    // /// <summary>
-    // ///     Adds the specified object and will throw an exception if an object with the same type id is already stored.
-    // /// </summary>
-    // /// <param name="objectTypeId">
-    // ///     An integer number uniquely identifying the object type.
-    // /// </param>
-    // /// <param name="obj">
-    // ///     The object.
-    // /// </param>
-    // public void AddObject(int objectTypeId, object obj) =>
-    //     _objects.Add(objectTypeId, obj);
-
     /// <summary>
     ///     Checks whether an object is set for the specified type and returns it.
     /// </summary>

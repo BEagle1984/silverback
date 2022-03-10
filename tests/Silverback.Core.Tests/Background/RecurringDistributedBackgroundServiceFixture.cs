@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Background;
 
-public class RecurringDistributedBackgroundServiceTests
+public class RecurringDistributedBackgroundServiceFixture
 {
     [Fact]
     public async Task StartAsync_ShouldExecuteJob_WhenNoLockIsUsed()
