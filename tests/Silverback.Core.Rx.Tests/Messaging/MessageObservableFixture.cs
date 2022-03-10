@@ -104,7 +104,6 @@ public sealed class MessageObservableFixture : IDisposable
     public async Task Subscribe_ShouldInvokeOnNext_WhenStreamIsPushedFromDifferentThreads()
     {
         int count = 0;
-        ConcurrentBag<int> threads = new();
 
         Task.Run(() => _observable.Subscribe(_ => Interlocked.Increment(ref count))).FireAndForget();
 
@@ -116,7 +115,6 @@ public sealed class MessageObservableFixture : IDisposable
                 {
                     countdownEvent.Signal();
                     countdownEvent.WaitOrThrow();
-                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                     await _streamProvider.PushAsync(1);
                 }),
             Task.Run(
@@ -124,7 +122,6 @@ public sealed class MessageObservableFixture : IDisposable
                 {
                     countdownEvent.Signal();
                     countdownEvent.WaitOrThrow();
-                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                     await _streamProvider.PushAsync(2);
                 }),
             Task.Run(
@@ -132,12 +129,10 @@ public sealed class MessageObservableFixture : IDisposable
                 {
                     countdownEvent.Signal();
                     countdownEvent.WaitOrThrow();
-                    threads.Add(Thread.CurrentThread.ManagedThreadId);
                     await _streamProvider.PushAsync(3);
                 }));
 
         count.Should().Be(3);
-        threads.Distinct().Should().HaveCountGreaterThan(1);
     }
 
     public void Dispose()

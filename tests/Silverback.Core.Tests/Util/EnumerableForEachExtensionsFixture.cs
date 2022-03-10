@@ -63,7 +63,6 @@ public class EnumerableForEachExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
-        ConcurrentBag<int> threads = new();
         int total = 0;
 
         enumerable.ParallelForEach(
@@ -71,13 +70,11 @@ public class EnumerableForEachExtensionsFixture
             {
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow();
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 Interlocked.Add(ref total, item);
             });
 
         total.Should().Be(6);
-        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
@@ -103,7 +100,6 @@ public class EnumerableForEachExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
-        ConcurrentBag<int> threads = new();
         int total = 0;
 
         await enumerable.ParallelForEachAsync(
@@ -113,13 +109,11 @@ public class EnumerableForEachExtensionsFixture
 
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow();
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 Interlocked.Add(ref total, item);
             });
 
         total.Should().Be(6);
-        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]

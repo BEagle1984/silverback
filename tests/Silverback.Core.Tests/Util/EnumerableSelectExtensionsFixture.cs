@@ -20,20 +20,17 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
-        ConcurrentBag<int> threads = new();
 
         IEnumerable<int> result = enumerable.ParallelSelect(
             item =>
             {
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow();
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 return item * 2;
             });
 
         result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
-        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
@@ -61,7 +58,6 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
-        ConcurrentBag<int> threads = new();
 
         IEnumerable<int> result = await enumerable.ParallelSelectAsync(
             async item =>
@@ -70,13 +66,11 @@ public class EnumerableSelectExtensionsFixture
 
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow();
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
 
                 return item * 2;
             });
 
         result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
-        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
@@ -161,13 +155,10 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
         CountdownEvent countdownEvent = new(3);
-        ConcurrentBag<int> threads = new();
 
         IEnumerable<int> result = await enumerable.ParallelSelectManyAsync<int, int>(
             async item =>
             {
-                threads.Add(Thread.CurrentThread.ManagedThreadId);
-
                 await Task.Delay(1);
 
                 countdownEvent.Signal();
@@ -177,7 +168,6 @@ public class EnumerableSelectExtensionsFixture
             });
 
         result.Should().BeEquivalentTo(new[] { 2, 3, 4, 6, 6, 9 });
-        threads.Distinct().Should().HaveCount(3);
     }
 
     [Fact]
