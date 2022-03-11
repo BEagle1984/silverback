@@ -67,13 +67,12 @@ namespace Silverback.Messaging.Inbound
                 {
                     var unboundedSequence = await GetUnboundedSequenceAsync(context).ConfigureAwait(false);
 
-                    int pushedStreamsCount =
-                        await unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
+                    var result = await unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
 
                     if (unboundedSequence.IsAborted && unboundedSequence.AbortException != null)
                         throw unboundedSequence.AbortException;
 
-                    throwIfUnhandled &= pushedStreamsCount == 0;
+                    throwIfUnhandled &= result.PushedStreamsCount == 0;
                 }
 
                 await PublishEnvelopeAsync(context, throwIfUnhandled).ConfigureAwait(false);

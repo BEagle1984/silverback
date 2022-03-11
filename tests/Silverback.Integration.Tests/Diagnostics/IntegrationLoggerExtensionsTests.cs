@@ -135,11 +135,11 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
-        public void LogSequenceAbortingError_Logged()
+        public void LogSequenceTimeoutError_Logged()
         {
-            var expectedMessage = "Error occurred aborting the FakeSequence 'fake1'.";
+            var expectedMessage = "Error occurred executing the timeout for the FakeSequence 'fake1'.";
 
-            _silverbackLogger.LogSequenceAbortingError(new FakeSequence(), new TimeoutException());
+            _silverbackLogger.LogSequenceTimeoutError(new FakeSequence(), new TimeoutException());
 
             _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1110);
         }

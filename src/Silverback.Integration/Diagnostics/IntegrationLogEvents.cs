@@ -116,12 +116,12 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while
-        ///     aborting an inbound sequence.
+        ///     executing the timeout action on an inbound sequence.
         /// </summary>
-        public static LogEvent ErrorAbortingInboundSequence { get; } = new(
+        public static LogEvent SequenceTimeoutError { get; } = new(
             LogLevel.Warning,
-            GetEventId(110, nameof(ErrorAbortingInboundSequence)),
-            "Error occurred aborting the {sequenceType} '{sequenceId}'.");
+            GetEventId(110, nameof(SequenceTimeoutError)),
+            "Error occurred executing the timeout for the {sequenceType} '{sequenceId}'.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when connecting to the message

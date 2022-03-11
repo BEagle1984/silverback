@@ -4,6 +4,14 @@ uid: releases
 
 # Releases
 
+## [3.6.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.1)
+
+### Fixes
+
+* Handle race condition in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
+
+# Releases
+
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 
 ### What's new

@@ -139,10 +139,14 @@ namespace Silverback.Messaging.Sequences
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-        ///     number of streams that have been pushed.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+        ///     a flag indicating whether the operation was successful and the number of streams that have been
+        ///     actually pushed.
         /// </returns>
-        Task<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
+        Task<AddToSequenceResult> AddAsync(
+            IRawInboundEnvelope envelope,
+            ISequence? sequence,
+            bool throwIfUnhandled = true);
 
         /// <summary>
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the

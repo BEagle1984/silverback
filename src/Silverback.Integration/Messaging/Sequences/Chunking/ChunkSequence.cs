@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
-        protected override Task<int> AddCoreAsync(
+        protected override Task<AddToSequenceResult> AddCoreAsync(
             IRawInboundEnvelope envelope,
             ISequence? sequence,
             bool throwIfUnhandled)
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Sequences.Chunking
                              throw new InvalidOperationException("Chunk index header not found.");
 
             if (!EnsureOrdering(chunkIndex))
-                return Task.FromResult(0);
+                return Task.FromResult(AddToSequenceResult.Success(0));
 
             return base.AddCoreAsync(envelope, sequence, throwIfUnhandled);
         }

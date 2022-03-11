@@ -199,7 +199,7 @@ namespace Silverback.Messaging.Sequences
             StreamProvider.CreateStream<TMessage>(filters);
 
         /// <inheritdoc cref="ISequence.AddAsync" />
-        public Task<int> AddAsync(
+        public Task<AddToSequenceResult> AddAsync(
             IRawInboundEnvelope envelope,
             ISequence? sequence,
             bool throwIfUnhandled = true)
@@ -265,35 +265,39 @@ namespace Silverback.Messaging.Sequences
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-        ///     number of streams that have been pushed.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+        ///     a flag indicating whether the operation was successful and the number of streams that have been
+        ///     actually pushed.
         /// </returns>
-        protected virtual async Task<int> AddCoreAsync(
+        protected virtual async Task<AddToSequenceResult> AddCoreAsync(
             TEnvelope envelope,
             ISequence? sequence,
             bool throwIfUnhandled)
         {
-            if (!IsPending || IsCompleting)
-                return 0;
-
-            ResetTimeout();
-
-            if (sequence != null && sequence != this)
-            {
-                _sequences ??= new List<ISequence>();
-                _sequences.Add(sequence);
-                (sequence as ISequenceImplementation)?.SetParentSequence(this);
-            }
-            else if (_trackIdentifiers)
-            {
-                _messageIdentifiers ??= new List<IBrokerMessageIdentifier>();
-                _messageIdentifiers.Add(envelope.BrokerMessageIdentifier);
-            }
-
             await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+            if (IsComplete || IsCompleting)
+                return AddToSequenceResult.Failed;
+
+            if (IsAborted)
+                throw new InvalidOperationException("The sequence has been aborted.");
 
             try
             {
+                ResetTimeout();
+
+                if (sequence != null && sequence != this)
+                {
+                    _sequences ??= new List<ISequence>();
+                    _sequences.Add(sequence);
+                    (sequence as ISequenceImplementation)?.SetParentSequence(this);
+                }
+                else if (_trackIdentifiers)
+                {
+                    _messageIdentifiers ??= new List<IBrokerMessageIdentifier>();
+                    _messageIdentifiers.Add(envelope.BrokerMessageIdentifier);
+                }
+
                 _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                 Length++;
@@ -322,12 +326,12 @@ namespace Silverback.Messaging.Sequences
                 if (IsCompleting)
                     await CompleteAsync().ConfigureAwait(false);
 
-                return pushedStreamsCount;
+                return AddToSequenceResult.Success(pushedStreamsCount);
             }
             catch (OperationCanceledException)
             {
-                // Ignore
-                return 0;
+                // Ignore and consider successful, it just means that the sequence was aborted.
+                return AddToSequenceResult.Success(0);
             }
             catch (Exception ex)
             {
@@ -473,7 +477,7 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1031", Justification = "Logged in OnTimeoutElapsedAsync if needed")]
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void ResetTimeout()
         {
@@ -492,12 +496,17 @@ namespace Silverback.Messaging.Sequences
             _timeoutCancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = _timeoutCancellationTokenSource.Token;
 
+            bool releaseAddingSemaphore = false;
+
             Task.Run(
                 async () =>
                 {
                     try
                     {
                         await Task.Delay(_timeout, cancellationToken).ConfigureAwait(false);
+
+                        await _addingSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                        releaseAddingSemaphore = true;
 
                         await OnTimeoutElapsedAsync().ConfigureAwait(false);
                     }
@@ -507,7 +516,12 @@ namespace Silverback.Messaging.Sequences
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogSequenceAbortingError(this, ex);
+                        _logger.LogSequenceTimeoutError(this, ex);
+                    }
+                    finally
+                    {
+                        if (releaseAddingSemaphore)
+                            _addingSemaphoreSlim.Release();
                     }
                 });
         }

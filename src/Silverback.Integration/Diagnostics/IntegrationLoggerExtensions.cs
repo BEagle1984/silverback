@@ -60,9 +60,9 @@ namespace Silverback.Diagnostics
                 SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.SkippingIncompleteSequence);
 
         private static readonly Action<ILogger, string, string, Exception?>
-            ErrorAbortingInboundSequence =
+            SequenceTimeoutError =
                 SilverbackLoggerMessage.Define<string, string>(
-                    IntegrationLogEvents.ErrorAbortingInboundSequence);
+                    IntegrationLogEvents.SequenceTimeoutError);
 
         private static readonly Action<ILogger, string, Exception?>
             BrokerConnecting =
@@ -286,15 +286,15 @@ namespace Silverback.Diagnostics
                 sequence.SequenceId,
                 null);
 
-        public static void LogSequenceAbortingError(
+        public static void LogSequenceTimeoutError(
             this ISilverbackLogger logger,
             ISequence sequence,
             Exception exception)
         {
-            if (!logger.IsEnabled(IntegrationLogEvents.ErrorAbortingInboundSequence))
+            if (!logger.IsEnabled(IntegrationLogEvents.SequenceTimeoutError))
                 return;
 
-            ErrorAbortingInboundSequence(
+            SequenceTimeoutError(
                 logger.InnerLogger,
                 sequence.GetType().Name,
                 sequence.SequenceId,
@@ -398,7 +398,11 @@ namespace Silverback.Diagnostics
             this ISilverbackLogger logger,
             IConsumer consumer,
             Exception exception) =>
-            ConsumerDisconnectError(logger.InnerLogger, consumer.Id, consumer.Endpoint.DisplayName, exception);
+            ConsumerDisconnectError(
+                logger.InnerLogger,
+                consumer.Id,
+                consumer.Endpoint.DisplayName,
+                exception);
 
         public static void LogConsumerStartError(
             this ISilverbackLogger logger,
@@ -451,10 +455,14 @@ namespace Silverback.Diagnostics
             Exception exception) =>
             ErrorProcessingOutbox(logger.InnerLogger, exception);
 
-        public static void LogInvalidMessageProduced(this ISilverbackLogger logger, string validationErrors) =>
+        public static void LogInvalidMessageProduced(
+            this ISilverbackLogger logger,
+            string validationErrors) =>
             InvalidMessageProduced(logger.InnerLogger, validationErrors, null);
 
-        public static void LogInvalidMessageProcessed(this ISilverbackLogger logger, string validationErrors) =>
+        public static void LogInvalidMessageProcessed(
+            this ISilverbackLogger logger,
+            string validationErrors) =>
             InvalidMessageProcessed(logger.InnerLogger, validationErrors, null);
 
         public static void LogInvalidEndpointConfiguration(
