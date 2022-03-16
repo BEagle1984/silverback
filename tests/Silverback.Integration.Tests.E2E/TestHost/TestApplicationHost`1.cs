@@ -61,6 +61,9 @@ public sealed class TestApplicationHost<THelper> : IDisposable
         }
     }
 
+    public void ConfigureServicesAndRun(Action<IServiceCollection> configurationAction) =>
+        ConfigureServices(configurationAction).Run();
+
     public TestApplicationHost<THelper> ConfigureServices(Action<IServiceCollection> configurationAction)
     {
         _configurationActions.Add(configurationAction);

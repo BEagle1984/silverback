@@ -49,7 +49,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(message => messages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne>(Handle));
+
+        void Handle(TestEventOne message) => messages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -97,7 +99,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((TestEvent message) => messages.Add(message)));
+                .AddDelegateSubscriber2<TestEvent>(Handle));
+
+        void Handle(TestEvent message) => messages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -151,7 +155,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((IEvent message) => messages.Add(message)));
+                .AddDelegateSubscriber2<IEvent>(Handle));
+
+        void Handle(IEvent message) => messages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -295,10 +301,11 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (ICommand _) =>
-                    {
-                    }));
+                .AddDelegateSubscriber2<ICommand>(Handle));
+
+        static void Handle(ICommand message)
+        {
+        }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -316,10 +323,11 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IEvent _) =>
-                    {
-                    }));
+                .AddDelegateSubscriber2<IEvent>(Handle));
+
+        static void Handle(IEvent message)
+        {
+        }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -337,10 +345,11 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (ICommand _) =>
-                    {
-                    }));
+                .AddDelegateSubscriber2<ICommand>(Handle));
+
+        static void Handle(ICommand message)
+        {
+        }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -362,10 +371,11 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IEvent _) =>
-                    {
-                    }));
+                .AddDelegateSubscriber2<IEvent>(Handle));
+
+        static void Handle(IEvent message)
+        {
+        }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -383,10 +393,11 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IEvent _) =>
-                    {
-                    }));
+                .AddDelegateSubscriber2<IEvent>(Handle));
+
+        static void Handle(IEvent message)
+        {
+        }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 

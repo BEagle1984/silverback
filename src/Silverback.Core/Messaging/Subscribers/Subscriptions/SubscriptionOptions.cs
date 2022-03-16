@@ -16,8 +16,7 @@ public abstract class SubscriptionOptions
     ///     handling the same message. The default value is <c>true</c> (the method(s) will be executed
     ///     sequentially to other subscribers).
     /// </summary>
-    // TODO: Rename to IsExclusive
-    public bool Exclusive { get; set; } = true;
+    public bool IsExclusive { get; set; } = true;
 
     /// <summary>
     ///     Gets or sets the filters to be applied.

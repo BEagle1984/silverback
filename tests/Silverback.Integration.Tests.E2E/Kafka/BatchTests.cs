@@ -33,42 +33,42 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(HandleStream));
 
-                            receivedBatches.ThreadSafeAdd(list);
+        async ValueTask HandleStream(IMessageStreamEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -107,41 +107,41 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable));
 
-                            foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        void HandleEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -180,41 +180,41 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -253,39 +253,39 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .AsObservable()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        (IObservable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .AsObservable()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IObservable<TestEventOne>>(HandleObservable));
 
-                            eventsStream.Subscribe(
-                                message => list.Add(message),
-                                () => Interlocked.Increment(ref completedBatches));
-                        }))
-            .Run();
+        void HandleObservable(IObservable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
+
+            eventsStream.Subscribe(
+                message => list.Add(message),
+                () => Interlocked.Increment(ref completedBatches));
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -326,45 +326,45 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable));
 
-                            foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        Task HandleEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
+            foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
 
-                            // Return a Task, to trick the SubscribedMethodInvoker into thinking that this
-                            // is an asynchronous method, while still enumerating synchronously
-                            return Task.CompletedTask;
-                        }))
-            .Run();
+            Interlocked.Increment(ref completedBatches);
+
+            // Return a Task, to trick the SubscribedMethodInvoker into thinking that this
+            // is an asynchronous method, while still enumerating synchronously
+            return Task.CompletedTask;
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -402,40 +402,40 @@ public class BatchTests : KafkaTestFixture
     {
         int receivedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> batch) =>
-                        {
-                            Interlocked.Increment(ref receivedBatches);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            int count = 0;
-                            await foreach (TestEventOne dummy in batch)
-                            {
-                                if (++count >= 3)
-                                    break;
-                            }
-                        }))
-            .Run();
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> batch)
+        {
+            Interlocked.Increment(ref receivedBatches);
+
+            int count = 0;
+            await foreach (TestEventOne dummy in batch)
+            {
+                if (++count >= 3)
+                    break;
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -457,35 +457,37 @@ public class BatchTests : KafkaTestFixture
         int receivedBatches1 = 0;
         int receivedBatches2 = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(3)))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            Interlocked.Increment(ref receivedBatches1);
-                            List<TestEventOne> dummy = eventsStream.ToList();
-                        })
-                    .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => Interlocked.Increment(ref receivedBatches2)))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(3)))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEventOneEnumerable)
+                .AddDelegateSubscriber2<IEnumerable<TestEventTwo>>(HandleEventTwoEnumerable));
+
+        void HandleEventOneEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            Interlocked.Increment(ref receivedBatches1);
+            List<TestEventOne> dummy = eventsStream.ToList();
+        }
+
+        void HandleEventTwoEnumerable(IEnumerable<TestEventTwo> message) => Interlocked.Increment(ref receivedBatches2);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -506,30 +508,32 @@ public class BatchTests : KafkaTestFixture
         int receivedBatches1 = 0;
         int receivedBatches2 = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(3)))
-                    .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => Interlocked.Increment(ref receivedBatches1))
-                    .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => Interlocked.Increment(ref receivedBatches2)))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(3)))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEventOneEnumerable)
+                .AddDelegateSubscriber2<IEnumerable<TestEventTwo>>(HandleEventTwoEnumerable));
+
+        void HandleEventOneEnumerable(IEnumerable<TestEventOne> message) => Interlocked.Increment(ref receivedBatches1);
+        void HandleEventTwoEnumerable(IEnumerable<TestEventTwo> message) => Interlocked.Increment(ref receivedBatches2);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -552,48 +556,48 @@ public class BatchTests : KafkaTestFixture
         int exitedSubscribers = 0;
         bool areOverlapping = false;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(3, TimeSpan.FromMilliseconds(300))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            if (completedBatches != exitedSubscribers)
-                                areOverlapping = true;
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(3, TimeSpan.FromMilliseconds(300))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            if (completedBatches != exitedSubscribers)
+                areOverlapping = true;
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
 
-                            await Task.Delay(500);
+            Interlocked.Increment(ref completedBatches);
 
-                            exitedSubscribers++;
-                        }))
-            .Run();
+            await Task.Delay(500);
+
+            exitedSubscribers++;
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -616,41 +620,41 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -686,48 +690,48 @@ public class BatchTests : KafkaTestFixture
         int exitedSubscribers = 0;
         bool areOverlapping = false;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(200))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            if (completedBatches != exitedSubscribers)
-                                areOverlapping = true;
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(200))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            if (completedBatches != exitedSubscribers)
+                areOverlapping = true;
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
 
-                            await Task.Delay(500);
+            Interlocked.Increment(ref completedBatches);
 
-                            Interlocked.Increment(ref exitedSubscribers);
-                        }))
-            .Run();
+            await Task.Delay(500);
+
+            Interlocked.Increment(ref exitedSubscribers);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -766,47 +770,47 @@ public class BatchTests : KafkaTestFixture
         int abortedCount = 0;
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            Interlocked.Increment(ref batchesCount);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            try
-                            {
-                                await foreach (TestEventOne message in eventsStream)
-                                {
-                                    receivedMessages.ThreadSafeAdd(message);
-                                }
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                // Simulate something going on in the subscribed method
-                                await Task.Delay(300);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            Interlocked.Increment(ref batchesCount);
 
-                                Interlocked.Increment(ref abortedCount);
-                            }
-                        }))
-            .Run();
+            try
+            {
+                await foreach (TestEventOne message in eventsStream)
+                {
+                    receivedMessages.ThreadSafeAdd(message);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Simulate something going on in the subscribed method
+                await Task.Delay(300);
+
+                Interlocked.Increment(ref abortedCount);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -839,45 +843,45 @@ public class BatchTests : KafkaTestFixture
         int abortedCount = 0;
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            Interlocked.Increment(ref batchesCount);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable));
 
-                            try
-                            {
-                                List<TestEventOne> messages = eventsStream.ToList();
-                                messages.ForEach(receivedMessages.ThreadSafeAdd);
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                // Simulate something going on in the subscribed method
-                                await Task.Delay(300);
+        async Task HandleEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            Interlocked.Increment(ref batchesCount);
 
-                                Interlocked.Increment(ref abortedCount);
-                            }
-                        }))
-            .Run();
+            try
+            {
+                List<TestEventOne> messages = eventsStream.ToList();
+                messages.ForEach(receivedMessages.ThreadSafeAdd);
+            }
+            catch (OperationCanceledException)
+            {
+                // Simulate something going on in the subscribed method
+                await Task.Delay(300);
+
+                Interlocked.Increment(ref abortedCount);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -906,40 +910,40 @@ public class BatchTests : KafkaTestFixture
         List<TestEventOne> receivedMessages = new();
         bool hasSubscriberReturned = false;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                receivedMessages.ThreadSafeAdd(message);
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await Task.Delay(500);
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            await foreach (TestEventOne message in eventsStream)
+            {
+                receivedMessages.ThreadSafeAdd(message);
+            }
 
-                            hasSubscriberReturned = true;
-                        }))
-            .Run();
+            await Task.Delay(500);
+
+            hasSubscriberReturned = true;
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -965,39 +969,39 @@ public class BatchTests : KafkaTestFixture
     {
         int receivedMessages = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(3)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            await foreach (TestEventOne dummy in eventsStream)
-                            {
-                                Interlocked.Increment(ref receivedMessages);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(3)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                                if (receivedMessages == 2)
-                                    throw new InvalidOperationException("Test");
-                            }
-                        }))
-            .Run();
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            await foreach (TestEventOne dummy in eventsStream)
+            {
+                Interlocked.Increment(ref receivedMessages);
+
+                if (receivedMessages == 2)
+                    throw new InvalidOperationException("Test");
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Message 1" });
@@ -1017,51 +1021,51 @@ public class BatchTests : KafkaTestFixture
         int batchesCount = 0;
         int abortedCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            int batchIndex = Interlocked.Increment(ref batchesCount);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            int messagesCount = 0;
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            int batchIndex = Interlocked.Increment(ref batchesCount);
 
-                            try
-                            {
-                                await foreach (TestEventOne dummy in eventsStream)
-                                {
-                                    if (++messagesCount == 2 && batchIndex == 2)
-                                        throw new InvalidOperationException("Test");
-                                }
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                Interlocked.Increment(ref abortedCount);
-                            }
-                        }))
-            .Run();
+            int messagesCount = 0;
+
+            try
+            {
+                await foreach (TestEventOne dummy in eventsStream)
+                {
+                    if (++messagesCount == 2 && batchIndex == 2)
+                        throw new InvalidOperationException("Test");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Interlocked.Increment(ref abortedCount);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         for (int i = 0; i < 10; i++)
@@ -1083,42 +1087,42 @@ public class BatchTests : KafkaTestFixture
     {
         List<List<TestEventOne>> receivedBatches = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
-                        }))
-            .Run();
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
+
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1139,34 +1143,34 @@ public class BatchTests : KafkaTestFixture
         List<TestEventWithKafkaKey> receivedMessages = new();
         TaskCompletionSource<bool> taskCompletionSource = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
-                                    .LimitParallelism(2)
-                                    .EnableBatchProcessing(2)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
-                        {
-                            await foreach (TestEventWithKafkaKey message in eventsStream)
-                            {
-                                receivedMessages.ThreadSafeAdd(message);
-                                await taskCompletionSource.Task;
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
+                                .LimitParallelism(2)
+                                .EnableBatchProcessing(2)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleAsyncEnumerable));
+
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventWithKafkaKey> eventsStream)
+        {
+            await foreach (TestEventWithKafkaKey message in eventsStream)
+            {
+                receivedMessages.ThreadSafeAdd(message);
+                await taskCompletionSource.Task;
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1201,41 +1205,41 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IInboundEnvelope<TestEventOne>> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<IInboundEnvelope<TestEventOne>>>(HandleAsyncEnumerable));
 
-                            await foreach (IInboundEnvelope<TestEventOne> envelope in eventsStream)
-                            {
-                                list.Add(envelope.Message!);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<IInboundEnvelope<TestEventOne>> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (IInboundEnvelope<TestEventOne> envelope in eventsStream)
+            {
+                list.Add(envelope.Message!);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1274,43 +1278,43 @@ public class BatchTests : KafkaTestFixture
         List<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IBinaryMessage> eventsStream) =>
-                        {
-                            List<IBinaryMessage> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<IBinaryMessage>>(HandleAsyncEnumerable));
 
-                            await foreach (IBinaryMessage message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<IBinaryMessage> eventsStream)
+        {
+            List<IBinaryMessage> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (IBinaryMessage message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -1359,43 +1363,43 @@ public class BatchTests : KafkaTestFixture
         List<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(10)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>> eventsStream) =>
-                        {
-                            List<IBinaryMessage> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(10)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>>>(HandleAsyncEnumerable));
 
-                            await foreach (IInboundEnvelope<IBinaryMessage> envelope in eventsStream)
-                            {
-                                list.Add(envelope.Message!);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>> eventsStream)
+        {
+            List<IBinaryMessage> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (IInboundEnvelope<IBinaryMessage> envelope in eventsStream)
+            {
+                list.Add(envelope.Message!);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -1444,41 +1448,41 @@ public class BatchTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(1)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(1)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
 
-                            Interlocked.Increment(ref completedBatches);
-                        }))
-            .Run();
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1500,42 +1504,42 @@ public class BatchTests : KafkaTestFixture
     {
         List<List<TestEventOne>> receivedBatches = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(20)))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(20)))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
-                        }))
-            .Run();
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
+
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1555,43 +1559,43 @@ public class BatchTests : KafkaTestFixture
     {
         List<List<TestEventOne>> receivedBatches = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))
-                                    .EnableBatchProcessing(20)
-                                    .ProcessAllPartitionsTogether()))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))
+                                .EnableBatchProcessing(20)
+                                .ProcessAllPartitionsTogether()))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                list.Add(message);
-                            }
-                        }))
-            .Run();
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.ThreadSafeAdd(list);
+
+            await foreach (TestEventOne message in eventsStream)
+            {
+                list.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

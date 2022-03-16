@@ -12,10 +12,12 @@ using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
+[SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "False positive in test code")]
 public partial class PublisherFixture
 {
     [Fact]
@@ -28,16 +30,22 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishSingleMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new TestCommandOne())
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new TestCommandOne()))
-                .AddDelegateSubscriber<TestCommandOne>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle3)
+                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+
+        static TestCommandOne Handle1(TestEventOne message) => new();
+        static Task<TestCommandOne> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne());
+        static ValueTask<TestCommandOne> Handle3(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        void Handle4(TestCommandOne message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(8);
+        republishedMessages.Should().HaveCount(12);
     }
 
     [Fact]
@@ -50,26 +58,21 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(
-                    _ =>
-                    {
-                        IMessage message = new TestCommandOne();
-                        return message;
-                    })
-                .AddDelegateSubscriber<TestEventOne>(
-                    _ =>
-                    {
-                        IMessage message = new TestCommandOne();
-                        return Task.FromResult(message);
-                    })
-                .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle3)
+                .AddDelegateSubscriber2<ICommand>(message => republishedMessages.Add(message)));
+
+        static IMessage Handle1(TestEventOne message) => new TestCommandOne();
+        static Task<IMessage> Handle2(TestEventOne message) => Task.FromResult((IMessage)new TestCommandOne());
+        static ValueTask<IMessage> Handle3(TestEventOne message) => ValueTask.FromResult((IMessage)new TestCommandOne());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(8);
+        republishedMessages.Should().HaveCount(12);
     }
 
     [Fact]
@@ -82,16 +85,22 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishEnumerableSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new TestCommandOne[] { new(), new() })
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new TestCommandOne[] { new(), new() }))
-                .AddDelegateSubscriber<TestCommandOne>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, TestCommandOne[]>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, TestCommandOne[]>(Handle3)
+                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+
+        static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() };
+        static Task<TestCommandOne[]> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() });
+        static ValueTask<TestCommandOne[]> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne[] { new(), new() });
+        void Handle4(TestCommandOne message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(16);
+        republishedMessages.Should().HaveCount(24);
     }
 
     [Fact]
@@ -104,16 +113,22 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new ICommand[] { new TestCommandOne(), new TestCommandTwo() })
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }))
-                .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, IEnumerable<ICommand>>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, ICommand[]>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, ICommand[]>(Handle3)
+                .AddDelegateSubscriber2<ICommand>(Handle4));
+
+        static IEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() };
+        static Task<ICommand[]> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
+        static ValueTask<ICommand[]> Handle3(TestEventOne message) => ValueTask.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
+        void Handle4(ICommand message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(16);
+        republishedMessages.Should().HaveCount(24);
     }
 
     [Fact]
@@ -126,16 +141,22 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishAsyncEnumerableSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new TestCommandOne[] { new(), new() }.ToAsyncEnumerable())
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable()))
-                .AddDelegateSubscriber<TestCommandOne>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
+                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+
+        static IAsyncEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() }.ToAsyncEnumerable();
+        static Task<IAsyncEnumerable<TestCommandOne>> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
+        static ValueTask<IAsyncEnumerable<TestCommandOne>> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
+        void Handle4(TestCommandOne message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(16);
+        republishedMessages.Should().HaveCount(24);
     }
 
     [Fact]
@@ -148,20 +169,22 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(
-                    _ =>
-                        new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable())
-                .AddDelegateSubscriber<TestEventOne>(
-                    _ =>
-                        Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable()))
-                .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
+                .AddDelegateSubscriber2<ICommand>(Handle4));
+
+        static IAsyncEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable();
+        static Task<IAsyncEnumerable<ICommand>> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable());
+        static ValueTask<IAsyncEnumerable<ICommand>> Handle3(TestEventOne message) => ValueTask.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable());
+        void Handle4(ICommand message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(16);
+        republishedMessages.Should().HaveCount(24);
     }
 
     [Fact]
@@ -174,9 +197,15 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new UnhandledMessage())
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new UnhandledMessage()))
-                .AddDelegateSubscriber<UnhandledMessage>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle3)
+                .AddDelegateSubscriber2<UnhandledMessage>(Handle4));
+
+        static UnhandledMessage Handle1(TestEventOne message) => new();
+        static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
+        static ValueTask<UnhandledMessage> Handle3(TestEventOne message) => ValueTask.FromResult(new UnhandledMessage());
+        void Handle4(UnhandledMessage message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -197,16 +226,22 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .HandleMessagesOfType<UnhandledMessage>()
                 .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber<TestEventOne>(_ => new UnhandledMessage())
-                .AddDelegateSubscriber<TestEventOne>(_ => Task.FromResult(new UnhandledMessage()))
-                .AddDelegateSubscriber<UnhandledMessage>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle2)
+                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle3)
+                .AddDelegateSubscriber2<UnhandledMessage>(Handle4));
+
+        static UnhandledMessage Handle1(TestEventOne message) => new();
+        static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
+        static ValueTask<UnhandledMessage> Handle3(TestEventOne message) => ValueTask.FromResult(new UnhandledMessage());
+        void Handle4(UnhandledMessage message) => republishedMessages.Add(message);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
         await publisher.PublishAsync(new TestEventOne());
 
-        republishedMessages.Should().HaveCount(8);
+        republishedMessages.Should().HaveCount(10);
     }
 
     [Fact]
@@ -321,15 +356,20 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestQueryOne>(_ => "result-sync")
-                .AddDelegateSubscriber<TestQueryOne>(_ => Task.FromResult("result-async")));
+                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber2<TestQueryOne, string>(Handle2)
+                .AddDelegateSubscriber2<TestQueryOne, string>(Handle3));
+
+        static string Handle1(TestQueryOne message) => "result-sync";
+        static Task<string> Handle2(TestQueryOne message) => Task.FromResult("result-task");
+        static ValueTask<string> Handle3(TestQueryOne message) => ValueTask.FromResult("result-value-task");
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         IReadOnlyCollection<string> syncResults = publisher.Publish<string>(new TestQueryOne());
         IReadOnlyCollection<string> asyncResults = await publisher.PublishAsync<string>(new TestQueryOne());
 
-        syncResults.Should().BeEquivalentTo("result-sync", "result-async");
+        syncResults.Should().BeEquivalentTo("result-sync", "result-task", "result-value-task");
         asyncResults.Should().BeEquivalentTo(syncResults);
     }
 
@@ -340,8 +380,13 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestQueryTwo>(_ => new[] { "result1-sync", "result2-sync" })
-                .AddDelegateSubscriber<TestQueryTwo>(_ => Task.FromResult(new[] { "result1-async", "result2-async" })));
+                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle1)
+                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle2)
+                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle3));
+
+        static string[] Handle1(TestQueryTwo message) => new[] { "result1-sync", "result2-sync" };
+        static Task<string[]> Handle2(TestQueryTwo message) => Task.FromResult(new[] { "result1-task", "result2-task" });
+        static ValueTask<string[]> Handle3(TestQueryTwo message) => ValueTask.FromResult(new[] { "result1-value-task", "result2-value-task" });
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -352,7 +397,8 @@ public partial class PublisherFixture
             new[]
             {
                 new[] { "result1-sync", "result2-sync" },
-                new[] { "result1-async", "result2-async" }
+                new[] { "result1-task", "result2-task" },
+                new[] { "result1-value-task", "result2-value-task" }
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
     }
@@ -364,8 +410,13 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestQueryOne>(_ => (string?)null!)
-                .AddDelegateSubscriber<TestQueryOne>(_ => Task.FromResult<string?>(null)));
+                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber2<TestQueryOne, string?>(Handle2)
+                .AddDelegateSubscriber2<TestQueryOne, string?>(Handle3));
+
+        static string Handle1(TestQueryOne message) => null!;
+        static Task<string?> Handle2(TestQueryOne message) => Task.FromResult<string?>(null);
+        static ValueTask<string?> Handle3(TestQueryOne message) => ValueTask.FromResult<string?>(null);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -383,8 +434,13 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestQueryTwo>(_ => Enumerable.Empty<string>())
-                .AddDelegateSubscriber<TestQueryTwo>(_ => Task.FromResult(Enumerable.Empty<string>())));
+                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle1)
+                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle2)
+                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle3));
+
+        static IEnumerable<string> Handle1(TestQueryTwo message) => Enumerable.Empty<string>();
+        static Task<IEnumerable<string>> Handle2(TestQueryTwo message) => Task.FromResult(Enumerable.Empty<string>());
+        static ValueTask<IEnumerable<string>> Handle3(TestQueryTwo message) => ValueTask.FromResult(Enumerable.Empty<string>());
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -395,6 +451,7 @@ public partial class PublisherFixture
             new[]
             {
                 Enumerable.Empty<string>(),
+                Enumerable.Empty<string>(),
                 Enumerable.Empty<string>()
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
@@ -404,12 +461,20 @@ public partial class PublisherFixture
     public async Task PublishAndPublishAsync_ShouldReturnEmptyResult_WhenSyncOrAsyncOrDelegateSubscriberReturnsValueOfWrongType()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryOne>(_ => 42)
-                .AddDelegateSubscriber<TestQueryOne>(_ => Task.FromResult(42)));
+            services =>
+            {
+                services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AddSingletonSubscriber<WrongTypeQueryHandler>()
+                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle1)
+                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle2)
+                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle3);
+            });
+
+        static int Handle1(TestQueryOne message) => 42;
+        static Task<int> Handle2(TestQueryOne message) => Task.FromResult(42);
+        static ValueTask<int> Handle3(TestQueryOne message) => ValueTask.FromResult(42);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -428,10 +493,19 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryOne>(_ => new[] { 42 })
-                .AddDelegateSubscriber<TestQueryOne>(_ => Task.FromResult(new[] { 42 }))
-                .AddDelegateSubscriber<TestQueryOne>(_ => 42)
-                .AddDelegateSubscriber<TestQueryOne>(_ => Task.FromResult(42)));
+                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle1)
+                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle2)
+                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle3)
+                .AddDelegateSubscriber2<TestQueryOne, int>(Handle4)
+                .AddDelegateSubscriber2<TestQueryOne, int>(Handle5)
+                .AddDelegateSubscriber2<TestQueryOne, int>(Handle6));
+
+        static int[] Handle1(TestQueryOne message) => new[] { 42 };
+        static Task<int[]> Handle2(TestQueryOne message) => Task.FromResult(new[] { 42 });
+        static ValueTask<int[]> Handle3(TestQueryOne message) => ValueTask.FromResult(new[] { 42 });
+        static int Handle4(TestQueryOne message) => 42;
+        static Task<int> Handle5(TestQueryOne message) => Task.FromResult(42);
+        static ValueTask<int> Handle6(TestQueryOne message) => ValueTask.FromResult(42);
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -451,8 +525,11 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddSingletonSubscriber<QueryHandler>()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryOne>(_ => "result-delegate")
-                .AddDelegateSubscriber<TestQueryOne>(_ => 42));
+                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber2<TestQueryOne, int>(Handle2));
+
+        static string Handle1(TestQueryOne message) => "result-delegate";
+        static int Handle2(TestQueryOne message) => 42;
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -472,8 +549,11 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddSingletonSubscriber<QueryHandler>()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber<TestQueryTwo>(_ => new[] { "result-delegate-1", "result-delegate-2" })
-                .AddDelegateSubscriber<TestQueryTwo>(_ => new[] { 42, 42 }));
+                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle1)
+                .AddDelegateSubscriber2<TestQueryTwo, int[]>(Handle2));
+
+        static string[] Handle1(TestQueryTwo message) => new[] { "result-delegate-1", "result-delegate-2" };
+        static int[] Handle2(TestQueryTwo message) => new[] { 42, 42 };
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -503,10 +583,9 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<TestCommandOne> AsyncSubscriber(TestEventOne message) => Task.FromResult(new TestCommandOne());
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -522,11 +601,10 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<ICommand> AsyncSubscriber(TestEventOne message) => Task.FromResult<ICommand>(new TestCommandTwo());
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<ICommand> AsyncValueTaskSubscriber(TestEventOne message) =>
-        //     ValueTaskFactory.FromResult<ICommand>(new TestCommandOne());
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<ICommand> AsyncValueTaskSubscriber(TestEventOne message) =>
+            ValueTaskFactory.FromResult<ICommand>(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -542,11 +620,10 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<List<TestCommandOne>> AsyncSubscriber(TestEventOne message) => Task.FromResult(new List<TestCommandOne> { new(), new() });
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<IReadOnlyCollection<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
-        //     ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>(new TestCommandOne[] { new(), new() });
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<IReadOnlyCollection<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
+            ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>(new TestCommandOne[] { new(), new() });
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -563,11 +640,10 @@ public partial class PublisherFixture
         public Task<List<ICommand>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new List<ICommand>(new TestCommandTwo[] { new(), new() }));
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<IReadOnlyCollection<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
-        //     ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>(new TestCommandOne[] { new(), new() });
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<IReadOnlyCollection<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
+            ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>(new TestCommandOne[] { new(), new() });
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -585,11 +661,10 @@ public partial class PublisherFixture
         public Task<IAsyncEnumerable<TestCommandOne>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new List<TestCommandOne> { new(), new() }.ToAsyncEnumerable());
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<IAsyncEnumerable<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
-        //     ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>(new TestCommandOne[] { new(), new() });
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<IAsyncEnumerable<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
+            ValueTaskFactory.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -607,11 +682,10 @@ public partial class PublisherFixture
         public Task<IAsyncEnumerable<ICommand>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new ICommand[] { new TestCommandTwo(), new TestCommandTwo() }.ToAsyncEnumerable());
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<IAsyncEnumerable<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
-        //     ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>(new TestCommandOne[] { new(), new() });
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<IAsyncEnumerable<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
+            ValueTaskFactory.FromResult<IAsyncEnumerable<ICommand>>(new TestCommandTwo[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -716,10 +790,9 @@ public partial class PublisherFixture
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public Task<UnhandledMessage> AsyncSubscriber(TestEventOne message) => Task.FromResult(new UnhandledMessage());
 
-        // TODO: Implement ValueTask support
-        // [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        // [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        // public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
     }
 
     private class UnhandledMessage

@@ -33,59 +33,59 @@ public class ChunkingInBatchTests : KafkaTestFixture
         string? failedCommit = null;
         string? enumerationAborted = null;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .EnableBatchProcessing(3)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
-                        {
-                            List<TestEventOne> list = new();
-                            batches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .EnableBatchProcessing(3)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in streamEnumerable)
-                            {
-                                list.Add(message);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> streamEnumerable)
+        {
+            List<TestEventOne> list = new();
+            batches.ThreadSafeAdd(list);
 
-                                long actualCommittedOffsets =
-                                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                int expectedCommittedOffsets = 9 * (batches.Count - 1);
+            await foreach (TestEventOne message in streamEnumerable)
+            {
+                list.Add(message);
 
-                                if (actualCommittedOffsets != expectedCommittedOffsets)
-                                {
-                                    failedCommit ??=
-                                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                        $"({batches.Count}.{list.Count})";
-                                }
-                            }
+                long actualCommittedOffsets =
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+                int expectedCommittedOffsets = 9 * (batches.Count - 1);
 
-                            if (list.Count != 3)
-                            {
-                                enumerationAborted ??=
-                                    $"Enumeration completed after {list.Count} messages " +
-                                    $"({batches.Count}.{list.Count})";
-                            }
-                        }))
-            .Run();
+                if (actualCommittedOffsets != expectedCommittedOffsets)
+                {
+                    failedCommit ??=
+                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                        $"({batches.Count}.{list.Count})";
+                }
+            }
+
+            if (list.Count != 3)
+            {
+                enumerationAborted ??=
+                    $"Enumeration completed after {list.Count} messages " +
+                    $"({batches.Count}.{list.Count})";
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -126,60 +126,60 @@ public class ChunkingInBatchTests : KafkaTestFixture
         string? failedCommit = null;
         string? enumerationAborted = null;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .EnableBatchProcessing(5)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
-                        {
-                            List<string?> list = new();
-                            batches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .EnableBatchProcessing(5)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<BinaryMessage>>(HandleAsyncEnumerable));
 
-                            await foreach (BinaryMessage message in streamEnumerable)
-                            {
-                                long actualCommittedOffsets =
-                                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                int expectedCommittedOffsets = 10 * (batches.Count - 1);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<BinaryMessage> streamEnumerable)
+        {
+            List<string?> list = new();
+            batches.ThreadSafeAdd(list);
 
-                                if (actualCommittedOffsets != expectedCommittedOffsets)
-                                {
-                                    failedCommit ??=
-                                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                        $"({batches.Count}.{list.Count})";
-                                }
+            await foreach (BinaryMessage message in streamEnumerable)
+            {
+                long actualCommittedOffsets =
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+                int expectedCommittedOffsets = 10 * (batches.Count - 1);
 
-                                byte[]? readAll = await message.Content.ReadAllAsync();
-                                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
-                            }
+                if (actualCommittedOffsets != expectedCommittedOffsets)
+                {
+                    failedCommit ??=
+                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                        $"({batches.Count}.{list.Count})";
+                }
 
-                            if (list.Count != 5)
-                            {
-                                enumerationAborted ??=
-                                    $"Enumeration completed after {list.Count} messages " +
-                                    $"({batches.Count}.{list.Count})";
-                            }
-                        }))
-            .Run();
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+
+            if (list.Count != 5)
+            {
+                enumerationAborted ??=
+                    $"Enumeration completed after {list.Count} messages " +
+                    $"({batches.Count}.{list.Count})";
+            }
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -226,59 +226,59 @@ public class ChunkingInBatchTests : KafkaTestFixture
         string? failedCommit = null;
         string? enumerationAborted = null;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(50))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .EnableBatchProcessing(3)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
-                        {
-                            List<TestEventOne> list = new();
-                            batches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(50))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .EnableBatchProcessing(3)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                            await foreach (TestEventOne message in streamEnumerable)
-                            {
-                                list.Add(message);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> streamEnumerable)
+        {
+            List<TestEventOne> list = new();
+            batches.ThreadSafeAdd(list);
 
-                                long actualCommittedOffsets =
-                                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                int expectedCommittedOffsets = 3 * (batches.Count - 1);
+            await foreach (TestEventOne message in streamEnumerable)
+            {
+                list.Add(message);
 
-                                if (actualCommittedOffsets != expectedCommittedOffsets)
-                                {
-                                    failedCommit ??=
-                                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                        $"({batches.Count}.{list.Count})";
-                                }
-                            }
+                long actualCommittedOffsets =
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+                int expectedCommittedOffsets = 3 * (batches.Count - 1);
 
-                            if (list.Count != 3)
-                            {
-                                enumerationAborted ??=
-                                    $"Enumeration completed after {list.Count} messages " +
-                                    $"({batches.Count}.{list.Count})";
-                            }
-                        }))
-            .Run();
+                if (actualCommittedOffsets != expectedCommittedOffsets)
+                {
+                    failedCommit ??=
+                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                        $"({batches.Count}.{list.Count})";
+                }
+            }
+
+            if (list.Count != 3)
+            {
+                enumerationAborted ??=
+                    $"Enumeration completed after {list.Count} messages " +
+                    $"({batches.Count}.{list.Count})";
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -319,60 +319,60 @@ public class ChunkingInBatchTests : KafkaTestFixture
         string? failedCommit = null;
         string? enumerationAborted = null;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(50))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .EnableBatchProcessing(5)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<BinaryMessage> streamEnumerable) =>
-                        {
-                            List<string?> list = new();
-                            batches.ThreadSafeAdd(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(50))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .EnableBatchProcessing(5)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<BinaryMessage>>(HandleAsyncEnumerable));
 
-                            await foreach (BinaryMessage message in streamEnumerable)
-                            {
-                                long actualCommittedOffsets =
-                                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                int expectedCommittedOffsets = 5 * (batches.Count - 1);
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<BinaryMessage> streamEnumerable)
+        {
+            List<string?> list = new();
+            batches.ThreadSafeAdd(list);
 
-                                if (actualCommittedOffsets != expectedCommittedOffsets)
-                                {
-                                    failedCommit ??=
-                                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                        $"({batches.Count}.{list.Count})";
-                                }
+            await foreach (BinaryMessage message in streamEnumerable)
+            {
+                long actualCommittedOffsets =
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
+                int expectedCommittedOffsets = 5 * (batches.Count - 1);
 
-                                byte[]? readAll = await message.Content.ReadAllAsync();
-                                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
-                            }
+                if (actualCommittedOffsets != expectedCommittedOffsets)
+                {
+                    failedCommit ??=
+                        $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                        $"({batches.Count}.{list.Count})";
+                }
 
-                            if (list.Count != 5)
-                            {
-                                enumerationAborted ??=
-                                    $"Enumeration completed after {list.Count} messages " +
-                                    $"({batches.Count}.{list.Count})";
-                            }
-                        }))
-            .Run();
+                byte[]? readAll = await message.Content.ReadAllAsync();
+                list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
+            }
+
+            if (list.Count != 5)
+            {
+                enumerationAborted ??=
+                    $"Enumeration completed after {list.Count} messages " +
+                    $"({batches.Count}.{list.Count})";
+            }
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 

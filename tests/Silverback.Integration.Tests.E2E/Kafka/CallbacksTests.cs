@@ -33,7 +33,7 @@ public class CallbacksTests : KafkaTestFixture
     [Fact]
     public async Task EndpointsConfiguredCallback_Invoked()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -52,8 +52,7 @@ public class CallbacksTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))))
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))));
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilConnectedAsync();
@@ -67,7 +66,7 @@ public class CallbacksTests : KafkaTestFixture
     [Fact]
     public async Task EndpointsConfiguredCallback_AllHandlersInvoked()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -82,8 +81,7 @@ public class CallbacksTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))))
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))));
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilConnectedAsync();
@@ -100,7 +98,7 @@ public class CallbacksTests : KafkaTestFixture
     [Fact]
     public async Task EndpointsConfiguredCallback_MessagePublished()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -114,9 +112,8 @@ public class CallbacksTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
         await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -129,7 +126,7 @@ public class CallbacksTests : KafkaTestFixture
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -145,10 +142,9 @@ public class CallbacksTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .DisablePartitionEof())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -170,7 +166,7 @@ public class CallbacksTests : KafkaTestFixture
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -188,10 +184,9 @@ public class CallbacksTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .EnablePartitionEof())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaPartitionEofCallback callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
             .ScopedServiceProvider
@@ -217,7 +212,7 @@ public class CallbacksTests : KafkaTestFixture
     [Fact]
     public async Task PartitionEofCallback_PartitionEofEnabledForMultipleConsumers_HandlerInvoked()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -244,8 +239,7 @@ public class CallbacksTests : KafkaTestFixture
                                         configuration => configuration
                                             .WithGroupId("group2")
                                             .EnablePartitionEof())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaPartitionEofCallback callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
             .ScopedServiceProvider
@@ -271,7 +265,7 @@ public class CallbacksTests : KafkaTestFixture
             Content = "Hello E2E!"
         };
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -290,10 +284,9 @@ public class CallbacksTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .EnablePartitionEof())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
@@ -375,7 +368,7 @@ public class CallbacksTests : KafkaTestFixture
             Content = "Hello E2E!"
         };
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -394,10 +387,9 @@ public class CallbacksTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .EnablePartitionEof())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IKafkaTestingHelper kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 

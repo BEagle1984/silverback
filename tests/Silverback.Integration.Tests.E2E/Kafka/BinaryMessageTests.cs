@@ -42,35 +42,29 @@ public class BinaryMessageTests : KafkaTestFixture
             ContentType = "text/plain"
         };
 
-        List<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound<BinaryMessage>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (BinaryMessage binaryMessage) =>
-                            {
-                                lock (receivedFiles)
-                                {
-                                    receivedFiles.Add(binaryMessage.Content.ReadAll());
-                                }
-                            })
-                        .AddIntegrationSpy();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<BinaryMessage>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<BinaryMessage>(HandleBinaryMessage)
+                    .AddIntegrationSpy();
+            });
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
@@ -105,45 +99,33 @@ public class BinaryMessageTests : KafkaTestFixture
             Content = "test"
         };
 
-        List<BinaryMessage> receivedBinaryMessages = new();
-        List<TestEventOne> receivedJsonMessages = new();
+        TestingCollection<BinaryMessage> receivedBinaryMessages = new();
+        TestingCollection<TestEventOne> receivedJsonMessages = new();
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (BinaryMessage message) =>
-                            {
-                                lock (receivedBinaryMessages)
-                                {
-                                    receivedBinaryMessages.Add(message);
-                                }
-                            })
-                        .AddDelegateSubscriber(
-                            (TestEventOne message) =>
-                            {
-                                lock (receivedJsonMessages)
-                                {
-                                    receivedJsonMessages.Add(message);
-                                }
-                            })
-                        .AddIntegrationSpy();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<BinaryMessage>(HandleBinaryMessage)
+                    .AddDelegateSubscriber2<TestEventOne>(HandleEventOne)
+                    .AddIntegrationSpy();
+            });
+
+        void HandleBinaryMessage(BinaryMessage message) => receivedBinaryMessages.Add(message);
+        void HandleEventOne(TestEventOne message) => receivedJsonMessages.Add(message);
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(binaryMessage);
@@ -176,31 +158,25 @@ public class BinaryMessageTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                        })
-                    .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleBinaryMessage)
+                .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
+                .AddIntegrationSpy());
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
         await producer.ProduceAsync(message1);
@@ -246,30 +222,24 @@ public class BinaryMessageTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleBinaryMessage)
+                .AddIntegrationSpy());
+
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
@@ -317,31 +287,25 @@ public class BinaryMessageTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound<CustomBinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                        })
-                    .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound<CustomBinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<CustomBinaryMessage>(HandleBinaryMessage)
+                .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
+                .AddIntegrationSpy());
+
+        void HandleBinaryMessage(CustomBinaryMessage customBinaryMessage) => receivedFiles.Add(customBinaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);

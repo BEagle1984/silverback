@@ -43,29 +43,29 @@ public class ErrorHandlingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -83,33 +83,33 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -125,32 +125,32 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -162,43 +162,42 @@ public class ErrorHandlingTests : KafkaTestFixture
     }
 
     [Fact]
-    public async Task
-        RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+    public async Task RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount % 2 != 0)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            if (tryCount % 2 != 0)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Long message one" });
@@ -227,67 +226,55 @@ public class ErrorHandlingTests : KafkaTestFixture
     [Fact]
     public async Task RetryPolicy_BinaryMessageChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
     {
-        BinaryMessage message1 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "application/pdf"
-        };
-
-        BinaryMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "text/plain"
-        };
+        BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "application/pdf" };
+        BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
 
         int tryCount = 0;
-        List<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            if (binaryMessage.ContentType != "text/plain")
-                            {
-                                tryCount++;
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
 
-                                if (tryCount != 2)
-                                {
-                                    // Read first chunk only
-                                    byte[] buffer = new byte[10];
-                                    binaryMessage.Content!.Read(buffer, 0, 10);
-                                    throw new InvalidOperationException("Retry!");
-                                }
-                            }
+        void HandleMessage(BinaryMessage binaryMessage)
+        {
+            if (binaryMessage.ContentType != "text/plain")
+            {
+                tryCount++;
 
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+                if (tryCount != 2)
+                {
+                    // Read first chunk only
+                    byte[] buffer = new byte[10];
+                    binaryMessage.Content!.Read(buffer, 0, 10);
+                    throw new InvalidOperationException("Retry!");
+                }
+            }
+
+            receivedFiles.Add(binaryMessage.Content.ReadAll());
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -317,32 +304,32 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -360,32 +347,32 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10).ThenSkip())
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10).ThenSkip())
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -401,37 +388,37 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10).ThenSkip())
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10).ThenSkip())
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -450,27 +437,26 @@ public class ErrorHandlingTests : KafkaTestFixture
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Skip())
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Skip())
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -507,27 +493,26 @@ public class ErrorHandlingTests : KafkaTestFixture
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!><what?!><what?!>");
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Skip())
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Skip())
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -571,41 +556,41 @@ public class ErrorHandlingTests : KafkaTestFixture
         List<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .EnableBatchProcessing(5)
-                                    .OnError(policy => policy.Skip())
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            List<TestEventOne> list = new();
-                            receivedBatches.Add(list);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .EnableBatchProcessing(5)
+                                .OnError(policy => policy.Skip())
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
 
-                            await foreach (TestEventOne testEvent in eventsStream)
-                            {
-                                list.Add(testEvent);
-                            }
+        async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.Add(list);
 
-                            completedBatches++;
-                        }))
-            .Run();
+            await foreach (TestEventOne testEvent in batch)
+            {
+                list.Add(testEvent);
+            }
+
+            completedBatches++;
+        }
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -668,40 +653,40 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        Stream rawMessage = DefaultSerializers.Json.Serialize(message);
+        Stream rawMessage = await DefaultSerializers.Json.SerializeAsync(message);
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .DecryptUsingAes(AesEncryptionKey)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .DecryptUsingAes(AesEncryptionKey)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -719,41 +704,41 @@ public class ErrorHandlingTests : KafkaTestFixture
     public async Task RetryPolicy_EncryptedAndChunkedMessage_RetriedMultipleTimes()
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
-        Stream rawMessage = DefaultSerializers.Json.Serialize(message);
+        Stream rawMessage = await DefaultSerializers.Json.SerializeAsync(message);
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .DecryptUsingAes(AesEncryptionKey)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .DecryptUsingAes(AesEncryptionKey)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -761,8 +746,7 @@ public class ErrorHandlingTests : KafkaTestFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should()
-            .NotBeEquivalentTo(rawMessage.Read(10));
+        Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>
             {
@@ -779,43 +763,43 @@ public class ErrorHandlingTests : KafkaTestFixture
         int tryMessageCount = 0;
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .EnableBatchProcessing(2)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IIntegrationEvent> events) =>
-                        {
-                            await foreach (IIntegrationEvent dummy in events)
-                            {
-                                tryMessageCount++;
-                                if (tryMessageCount != 2 && tryMessageCount != 4 && tryMessageCount != 5)
-                                    throw new InvalidOperationException($"Retry {tryMessageCount}!");
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .EnableBatchProcessing(2)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch));
 
-                            completedBatches++;
-                        }))
-            .Run();
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+                tryMessageCount++;
+                if (tryMessageCount != 2 && tryMessageCount != 4 && tryMessageCount != 5)
+                    throw new InvalidOperationException($"Retry {tryMessageCount}!");
+            }
+
+            completedBatches++;
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -835,44 +819,44 @@ public class ErrorHandlingTests : KafkaTestFixture
         int tryCount = 0;
         int completedBatches = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .EnableBatchProcessing(2)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<IIntegrationEvent> events) =>
-                        {
-                            await foreach (IIntegrationEvent dummy in events)
-                            {
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .EnableBatchProcessing(2)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch));
 
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+            }
 
-                            completedBatches++;
-                        }))
-            .Run();
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+
+            completedBatches++;
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -891,24 +875,25 @@ public class ErrorHandlingTests : KafkaTestFixture
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.MoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.MoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -931,38 +916,35 @@ public class ErrorHandlingTests : KafkaTestFixture
     [Fact]
     public async Task MovePolicy_ToSameTopic_MessageMovedAndRetried()
     {
-        TestEventOne message = new()
-        {
-            Content = "Hello E2E!"
-        };
+        TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(
-                                        policy => policy.MoveToKafkaTopic(
-                                            moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
-                                            movePolicy => movePolicy.WithMaxRetries(10)))
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(
+                                    policy => policy.MoveToKafkaTopic(
+                                        moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
+                                        movePolicy => movePolicy.WithMaxRetries(10)))
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -981,32 +963,32 @@ public class ErrorHandlingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(
-                                        policy => policy
-                                            .Retry(1)
-                                            .ThenMoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(
+                                    policy => policy
+                                        .Retry(1)
+                                        .ThenMoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -1035,43 +1017,43 @@ public class ErrorHandlingTests : KafkaTestFixture
         int consumedCount = 0;
         SemaphoreSlim semaphore = new(0);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(2).ThenSkip())
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (TestEventOne message) =>
-                        {
-                            if (message.Content != "1")
-                            {
-                                Interlocked.Increment(ref consumedCount);
-                                return;
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(2).ThenSkip())
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<TestEventOne>(HandleMessage));
 
-                            tryCount++;
+        void HandleMessage(TestEventOne message)
+        {
+            if (message.Content != "1")
+            {
+                Interlocked.Increment(ref consumedCount);
+                return;
+            }
 
-                            semaphore.Wait();
-                            semaphore.Release();
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+            tryCount++;
+
+            semaphore.Wait();
+            semaphore.Release();
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "1" });
@@ -1097,44 +1079,44 @@ public class ErrorHandlingTests : KafkaTestFixture
         int consumedCount = 0;
         SemaphoreSlim semaphore = new(0);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(2).ThenSkip())
-                                    .ProcessAllPartitionsTogether()
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (TestEventOne message) =>
-                        {
-                            if (message.Content != "1")
-                            {
-                                Interlocked.Increment(ref consumedCount);
-                                return;
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(2).ThenSkip())
+                                .ProcessAllPartitionsTogether()
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<TestEventOne>(HandleMessage));
 
-                            tryCount++;
+        void HandleMessage(TestEventOne message)
+        {
+            if (message.Content != "1")
+            {
+                Interlocked.Increment(ref consumedCount);
+                return;
+            }
 
-                            semaphore.Wait();
-                            semaphore.Release();
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+            tryCount++;
+
+            semaphore.Wait();
+            semaphore.Release();
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "1" });
@@ -1158,37 +1140,29 @@ public class ErrorHandlingTests : KafkaTestFixture
     [Fact]
     public async Task MovePolicy_ToOtherTopic_HeadersSet()
     {
-        TestEventOne message1 = new()
-        {
-            Content = "Hello E2E msg1."
-        };
-        TestEventOne message2 = new()
-        {
-            Content = "Hello E2E msg2."
-        };
-        TestEventOne message3 = new()
-        {
-            Content = "Hello E2E msg3."
-        };
+        TestEventOne message1 = new() { Content = "Hello E2E msg1." };
+        TestEventOne message2 = new() { Content = "Hello E2E msg2." };
+        TestEventOne message3 = new() { Content = "Hello E2E msg3." };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                endpoint => endpoint
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.MoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            endpoint => endpoint
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.MoveToKafkaTopic(moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        static void HandleMessage(IIntegrationEvent unused) => throw new InvalidOperationException("Move!");
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message1);

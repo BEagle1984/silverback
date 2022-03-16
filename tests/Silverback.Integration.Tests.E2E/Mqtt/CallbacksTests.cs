@@ -31,7 +31,7 @@ public class CallbacksTests : MqttTestFixture
     {
         FakeConnectedCallbackHandler callbackHandler = new();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -45,8 +45,7 @@ public class CallbacksTests : MqttTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)))
                     .AddSingletonBrokerCallbackHandler(callbackHandler)
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         await AsyncTestingUtil.WaitAsync(() => callbackHandler.CallsCount > 0);
 
@@ -56,7 +55,7 @@ public class CallbacksTests : MqttTestFixture
     [Fact]
     public async Task OnConnected_SendingMessage_MessageSent()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -68,8 +67,7 @@ public class CallbacksTests : MqttTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
                     .AddScopedBrokerCallbackHandler<SendMessageConnectedCallbackHandler>()
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         await AsyncTestingUtil.WaitAsync(() => Helper.Spy.OutboundEnvelopes.Count >= 1);
 
@@ -81,7 +79,7 @@ public class CallbacksTests : MqttTestFixture
     public async Task OnDisconnecting_DefaultSettings_CallbackInvoked()
     {
         FakeDisconnectingCallbackHandler callbackHandler = new();
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -93,8 +91,7 @@ public class CallbacksTests : MqttTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
                     .AddSingletonBrokerCallbackHandler(callbackHandler)
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         callbackHandler.CallsCount.Should().Be(0);
 
@@ -107,7 +104,7 @@ public class CallbacksTests : MqttTestFixture
     [Fact]
     public async Task OnDisconnecting_SendingMessage_MessageSent()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -119,8 +116,7 @@ public class CallbacksTests : MqttTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
                     .AddScopedBrokerCallbackHandler<SendMessageDisconnectingCallbackHandler>()
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IBrokerCollection brokers = Host.ServiceProvider.GetRequiredService<IBrokerCollection>();
         await brokers.DisconnectAsync();

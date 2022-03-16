@@ -25,7 +25,7 @@ public class SerializationTests : KafkaTestFixture
     [Fact]
     public async Task NewtonsoftSerializer_DefaultSettings_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -42,9 +42,8 @@ public class SerializationTests : KafkaTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeJsonUsingNewtonsoft()
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpy());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -60,7 +59,7 @@ public class SerializationTests : KafkaTestFixture
     [Fact]
     public async Task NewtonsoftSerializer_WithHardcodedMessageType_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -76,10 +75,9 @@ public class SerializationTests : KafkaTestFixture
                             .AddInbound<TestEventOne>(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .DeserializeJsonUsingNewtonsoft()))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());

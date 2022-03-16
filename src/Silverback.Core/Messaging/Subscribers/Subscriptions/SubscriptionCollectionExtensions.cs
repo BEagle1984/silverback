@@ -15,7 +15,7 @@ internal static class SubscriptionCollectionExtensions
         TypeSubscriptionOptions options)
     {
         bool exists = collection.OfType<TypeSubscription>()
-            .Any(existingSubscription => existingSubscription.SubscribedType == subscriberType);
+            .Any(existingSubscription => existingSubscription.SubscriberType == subscriberType);
 
         if (!exists)
             collection.Add(new TypeSubscription(subscriberType, options));

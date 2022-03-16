@@ -27,24 +27,21 @@ public class DomainEventsFixture : KafkaTestFixture
     [Fact]
     public async Task DomainEvents_ShouldBeProduced_WhenMappedToOutboundEndpoint()
     {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddDbContext<TestDbContext>(options => options.UseSqlite(Host.SqliteConnectionString))
-                    .AddSilverback()
-                    .UseModel()
-                    .AddDelegateSubscriber(
-                        (ValueChangedDomainEvent domainEvent) => new TestEventOne
-                        {
-                            Content = $"new value: {domainEvent.Source?.Value}"
-                        })
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddDbContext<TestDbContext>(options => options.UseSqlite(Host.SqliteConnectionString))
+                .AddSilverback()
+                .UseModel()
+                .AddDelegateSubscriber2<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
+
+        static TestEventOne HandleDomainEvent(ValueChangedDomainEvent domainEvent) => new() { Content = $"new value: {domainEvent.Source?.Value}" };
 
         using (IServiceScope scope = Host.ServiceProvider.CreateScope())
         {

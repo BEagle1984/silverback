@@ -35,18 +35,21 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
+        }
+
+        void Handle2(IMessageStreamObservable<TestEventOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -77,16 +80,12 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IReadOnlyCollection<IEvent> _) =>
-                    {
-                        Interlocked.Increment(ref receivedEnumeratedStreams);
-                    })
-                .AddDelegateSubscriber(
-                    (List<TestEventOne> _) =>
-                    {
-                        Interlocked.Increment(ref receivedEnumeratedStreams);
-                    }));
+                .AddDelegateSubscriber2<IReadOnlyCollection<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<List<TestEventOne>>(Handle2));
+
+        void Handle1(IReadOnlyCollection<IEvent> message) => Interlocked.Increment(ref receivedEnumeratedStreams);
+        void Handle2(List<TestEventOne> message) => Interlocked.Increment(ref receivedEnumeratedStreams);
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -114,24 +113,27 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                });
+        }
+
+        void Handle2(IMessageStreamObservable<TestEventOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                });
+        }
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -152,33 +154,37 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestCommandOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestCommandOne>>(Handle3));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                });
+        }
+
+        void Handle2(IMessageStreamObservable<TestEventOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                });
+        }
+
+        void Handle3(IMessageStreamObservable<TestCommandOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                });
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -217,23 +223,26 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(
-                            _ =>
-                            {
-                                if (Interlocked.Increment(ref received) >= 3)
-                                    throw new TestException();
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref received));
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(
+                _ =>
+                {
+                    if (Interlocked.Increment(ref received) >= 3)
+                        throw new TestException();
+                });
+        }
+
+        void Handle2(IMessageStreamObservable<TestEventOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref received));
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -261,24 +270,23 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        observable.Subscribe(
-                            _ =>
-                            {
-                                if (Interlocked.Increment(ref received) >= 3)
-                                    throw new TestException();
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable) =>
+            observable.Subscribe(
+                _ =>
+                {
+                    if (Interlocked.Increment(ref received) >= 3)
+                        throw new TestException();
+                });
+
+        static void Handle2(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(
+                _ =>
+                {
+                });
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -304,24 +312,23 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        observable.Subscribe(
-                            _ =>
-                            {
-                                if (Interlocked.Increment(ref received) >= 3)
-                                    throw new TestException();
-                            });
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        observable.Subscribe(
-                            _ =>
-                            {
-                            });
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEvent> observable) =>
+            observable.Subscribe(
+                _ =>
+                {
+                    if (Interlocked.Increment(ref received) >= 3)
+                        throw new TestException();
+                });
+
+        static void Handle2(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(
+                _ =>
+                {
+                });
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -354,18 +361,21 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEnvelope> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedEnvelopes));
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEnvelope> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEnvelope>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEnvelope>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<IEnvelope> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedEnvelopes));
+        }
+
+        void Handle2(IMessageStreamObservable<TestEnvelope> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> streamProvider = new();
@@ -394,18 +404,21 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEventOne> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<TestEnvelope> observable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEnvelope>>(Handle2));
+
+        void Handle1(IMessageStreamObservable<TestEventOne> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
+        }
+
+        void Handle2(IMessageStreamObservable<TestEnvelope> observable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> stream = new();
@@ -433,11 +446,11 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber(
-                    (IMessageStreamObservable<IEvent> observable) =>
-                    {
-                        observable.Subscribe(message => receivedEvents.Add(message));
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle));
+
+        void Handle(IMessageStreamObservable<IEvent> observable) =>
+            observable.Subscribe(message => receivedEvents.Add(message));
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> streamProvider = new();

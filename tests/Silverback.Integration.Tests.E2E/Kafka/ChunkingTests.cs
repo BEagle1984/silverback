@@ -39,27 +39,26 @@ public class ChunkingTests : KafkaTestFixture
     {
         const int chunksPerMessage = 3;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -127,32 +126,29 @@ public class ChunkingTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            receivedFiles.Add(binaryMessage.Content.ReadAll());
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -175,26 +171,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -227,26 +222,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -279,26 +273,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -331,29 +324,28 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -386,29 +378,28 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -441,29 +432,28 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -496,29 +486,28 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -553,26 +542,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -631,29 +619,28 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound<BinaryMessage>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound<BinaryMessage>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -707,54 +694,45 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_BinaryMessageReadAborted_CommittedAndNextMessageConsumed()
     {
-        BinaryMessage message1 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "application/pdf"
-        };
-
-        BinaryMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "text/plain"
-        };
+        BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "application/pdf" };
+        BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            if (binaryMessage.ContentType != "text/plain")
-                            {
-                                // Read first chunk only
-                                byte[] buffer = new byte[10];
-                                binaryMessage.Content!.Read(buffer, 0, 10);
-                                return;
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
 
-                            receivedFiles.Add(binaryMessage.Content.ReadAll());
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        void HandleMessage(BinaryMessage binaryMessage)
+        {
+            if (binaryMessage.ContentType != "text/plain")
+            {
+                // Read first chunk only
+                byte[] buffer = new byte[10];
+                binaryMessage.Content!.Read(buffer, 0, 10);
+                return;
+            }
+
+            receivedFiles.Add(binaryMessage.Content.ReadAll());
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -781,54 +759,44 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_BinaryMessageReadAbortedMidChunk_CommittedAndNextMessageConsumed()
     {
-        BinaryMessage message1 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "application/pdf"
-        };
-
-        BinaryMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "text/plain"
-        };
-
+        BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "application/pdf" };
+        BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            if (binaryMessage.ContentType != "text/plain")
-                            {
-                                // Read only part of first chunk
-                                byte[] buffer = new byte[5];
-                                binaryMessage.Content!.Read(buffer, 0, 5);
-                                return;
-                            }
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
 
-                            receivedFiles.Add(binaryMessage.Content.ReadAll());
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        void HandleMessage(BinaryMessage binaryMessage)
+        {
+            if (binaryMessage.ContentType != "text/plain")
+            {
+                // Read only part of first chunk
+                byte[] buffer = new byte[5];
+                binaryMessage.Content!.Read(buffer, 0, 5);
+                return;
+            }
+
+            receivedFiles.Add(binaryMessage.Content.ReadAll());
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -857,36 +825,36 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_BinaryMessageProcessingFailedAfterFirstChunk_DisconnectedAndNotCommitted()
     {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            // Read first chunk only
-                            byte[] buffer = new byte[10];
-                            binaryMessage.Content!.Read(buffer, 0, 10);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
 
-                            throw new InvalidOperationException("Test");
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        static void HandleMessage(BinaryMessage binaryMessage)
+        {
+            // Read first chunk only
+            byte[] buffer = new byte[10];
+            binaryMessage.Content!.Read(buffer, 0, 10);
+
+            throw new InvalidOperationException("Test");
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -907,28 +875,29 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_BinaryMessageProcessingFailedImmediately_DisconnectedAndNotCommitted()
     {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber((BinaryMessage _) => throw new InvalidOperationException("Test"))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        static void HandleMessage(BinaryMessage message) => throw new InvalidOperationException("Test");
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -955,26 +924,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1016,26 +984,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1071,27 +1038,26 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(5))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(5))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1130,26 +1096,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1200,27 +1165,26 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1284,41 +1248,41 @@ public class ChunkingTests : KafkaTestFixture
         bool enumerationAborted = false;
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryMessages()
-                                    .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            try
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                enumerationAborted = true;
-                                throw;
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConsumeBinaryMessages()
+                                .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        void HandleMessage(BinaryMessage binaryMessage)
+        {
+            try
+            {
+                receivedFiles.Add(binaryMessage.Content.ReadAll());
+            }
+            catch (OperationCanceledException)
+            {
+                enumerationAborted = true;
+                throw;
+            }
+        }
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1383,26 +1347,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1444,28 +1407,27 @@ public class ChunkingTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                            receivedFiles.Add(binaryMessage.Content.ReadAll())))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1505,26 +1467,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1563,40 +1524,40 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = BytesUtil.GetRandomBytes(50);
         bool enumerationAborted = false;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryMessages()
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (BinaryMessage binaryMessage) =>
-                        {
-                            try
-                            {
-                                await binaryMessage.Content.ReadAllAsync();
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                enumerationAborted = true;
-                                throw;
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConsumeBinaryMessages()
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleMessage(BinaryMessage binaryMessage)
+        {
+            try
+            {
+                await binaryMessage.Content.ReadAllAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                enumerationAborted = true;
+                throw;
+            }
+        }
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1637,26 +1598,25 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpy());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1697,40 +1657,40 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         bool enumerationAborted = false;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryMessages()
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (BinaryMessage binaryMessage) =>
-                        {
-                            try
-                            {
-                                await binaryMessage.Content.ReadAllAsync();
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                enumerationAborted = true;
-                                throw;
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConsumeBinaryMessages()
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleMessage(BinaryMessage binaryMessage)
+        {
+            try
+            {
+                await binaryMessage.Content.ReadAllAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                enumerationAborted = true;
+                throw;
+            }
+        }
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1773,27 +1733,26 @@ public class ChunkingTests : KafkaTestFixture
         const int messagesCount = 10;
         const int chunksPerMessage = 3;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -1820,37 +1779,31 @@ public class ChunkingTests : KafkaTestFixture
         byte[] rawMessage3 = BytesUtil.GetRandomBytes(30);
 
         int receivedFilesCount = 0;
-        List<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConsumeBinaryMessages()
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            Interlocked.Increment(ref receivedFilesCount);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConsumeBinaryMessages()
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage));
 
-                            byte[]? fileContent = binaryMessage.Content.ReadAll();
-
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(fileContent);
-                            }
-                        }))
-            .Run();
+        void HandleMessage(BinaryMessage binaryMessage)
+        {
+            Interlocked.Increment(ref receivedFilesCount);
+            receivedFiles.Add(binaryMessage.Content.ReadAll());
+        }
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1906,27 +1859,26 @@ public class ChunkingTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         byte[] rawMessage2 = DefaultSerializers.Json.SerializeToBytes(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(50))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(50))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -1950,49 +1902,33 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_SingleChunkBinaryMessage_ProducedAndConsumed()
     {
-        BinaryMessage message1 = new()
-        {
-            Content = BytesUtil.GetRandomStream(8),
-            ContentType = "application/pdf"
-        };
+        BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "application/pdf" };
+        BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "text/plain" };
+        TestingCollection<byte[]?> receivedFiles = new();
 
-        BinaryMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(8),
-            ContentType = "text/plain"
-        };
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
 
-        List<byte[]?> receivedFiles = new();
-
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            lock (receivedFiles)
-                            {
-                                receivedFiles.Add(binaryMessage.Content.ReadAll());
-                            }
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -2010,54 +1946,44 @@ public class ChunkingTests : KafkaTestFixture
     [Fact]
     public async Task Chunking_SingleChunkBinaryMessageReadAborted_CommittedAndNextMessageConsumed()
     {
-        BinaryMessage message1 = new()
+        BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "application/pdf" };
+        BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
+        TestingCollection<byte[]?> receivedFiles = new();
+
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<BinaryMessage>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                .AddIntegrationSpy());
+
+        void HandleMessage(BinaryMessage binaryMessage)
         {
-            Content = BytesUtil.GetRandomStream(8),
-            ContentType = "application/pdf"
-        };
+            if (binaryMessage.ContentType != "text/plain")
+            {
+                // Read first chunk only
+                byte[] buffer = new byte[10];
+                binaryMessage.Content!.Read(buffer, 0, 10);
+                return;
+            }
 
-        BinaryMessage message2 = new()
-        {
-            Content = BytesUtil.GetRandomStream(30),
-            ContentType = "text/plain"
-        };
-
-        List<byte[]?> receivedFiles = new();
-
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<BinaryMessage>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (BinaryMessage binaryMessage) =>
-                        {
-                            if (binaryMessage.ContentType != "text/plain")
-                            {
-                                // Read first chunk only
-                                byte[] buffer = new byte[10];
-                                binaryMessage.Content!.Read(buffer, 0, 10);
-                                return;
-                            }
-
-                            receivedFiles.Add(binaryMessage.Content.ReadAll());
-                        })
-                    .AddIntegrationSpy())
-            .Run();
+            receivedFiles.Add(binaryMessage.Content.ReadAll());
+        }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 

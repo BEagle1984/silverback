@@ -34,7 +34,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -46,11 +46,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -74,7 +73,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -86,11 +85,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -116,7 +114,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -128,11 +126,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
@@ -174,7 +171,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -186,11 +183,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -236,7 +232,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -248,11 +244,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
@@ -301,7 +296,7 @@ public class ProducerTests : KafkaTestFixture
     {
         byte[] rawMessage = { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -313,11 +308,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -349,7 +343,7 @@ public class ProducerTests : KafkaTestFixture
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -361,11 +355,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -401,7 +394,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -413,11 +406,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -466,7 +458,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -478,11 +470,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -528,7 +519,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -540,11 +531,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -568,7 +558,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -580,11 +570,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -616,7 +605,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -628,11 +617,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
@@ -674,7 +662,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -686,11 +674,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -734,7 +721,7 @@ public class ProducerTests : KafkaTestFixture
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -746,11 +733,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -782,7 +768,7 @@ public class ProducerTests : KafkaTestFixture
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -794,11 +780,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -834,7 +819,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -846,11 +831,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -901,7 +885,7 @@ public class ProducerTests : KafkaTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -913,11 +897,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -965,7 +948,7 @@ public class ProducerTests : KafkaTestFixture
         MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message, headers);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -977,11 +960,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -1022,7 +1004,7 @@ public class ProducerTests : KafkaTestFixture
         MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message, headers);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -1034,11 +1016,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 consumer => consumer
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -1081,7 +1062,7 @@ public class ProducerTests : KafkaTestFixture
         };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -1093,11 +1074,10 @@ public class ProducerTests : KafkaTestFixture
                             .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                             .AddInbound(
                                 endpoint => endpoint
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))
                                     .ConsumeFrom(DefaultTopicName)
                                     .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 

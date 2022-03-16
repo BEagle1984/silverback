@@ -31,7 +31,7 @@ public class OffsetManipulationTests : KafkaTestFixture
     [Fact]
     public async Task PartitionsAssignedEvent_ResetOffset_MessagesConsumedAgain()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -44,10 +44,9 @@ public class OffsetManipulationTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
                     .AddTransientBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>()
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -70,7 +69,7 @@ public class OffsetManipulationTests : KafkaTestFixture
     [Fact]
     public async Task PartitionsAssignedEvent_NoOffsetReturned_MessagesConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -83,10 +82,9 @@ public class OffsetManipulationTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
                     .AddTransientBrokerCallbackHandler<NoResetPartitionsAssignedCallbackHandler>()
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

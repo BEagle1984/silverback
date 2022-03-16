@@ -3,18 +3,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers;
 
 internal static class SubscribedMethodInvoker
 {
-    public static async Task<MethodInvocationResult> InvokeAsync(
+    public static async ValueTask<MethodInvocationResult> InvokeAsync(
         SubscribedMethod subscribedMethod,
         object message,
         IServiceProvider serviceProvider,
@@ -89,7 +93,7 @@ internal static class SubscribedMethodInvoker
         return values;
     }
 
-    private static Task<object?> InvokeWithSingleMessageAsync(
+    private static ValueTask<object?> InvokeWithSingleMessageAsync(
         object message,
         SubscribedMethod subscribedMethod,
         object?[] arguments,
@@ -101,7 +105,7 @@ internal static class SubscribedMethodInvoker
 
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
         arguments[0] = singleResolver.GetValue(message);
-        return subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, arguments, executeAsync);
+        return InvokeWithActivityAsync(subscribedMethod, target, arguments, executeAsync);
     }
 
     private static object InvokeWithStreamEnumerable(
@@ -132,10 +136,7 @@ internal static class SubscribedMethodInvoker
                     return;
                 }
 
-                await subscribedMethod.MethodInfo.InvokeWithActivityWithoutBlockingAsync(
-                        target,
-                        arguments)
-                    .ConfigureAwait(false);
+                await InvokeWithActivityWithoutBlockingAsync(subscribedMethod, target, arguments).ConfigureAwait(false);
             });
     }
 
@@ -145,4 +146,24 @@ internal static class SubscribedMethodInvoker
         subscribedMethod.MessageType.IsInstanceOfType(envelope.Message)
             ? envelope.Message ?? throw new InvalidOperationException("The envelope message is null.")
             : message;
+
+    private static ValueTask<object?> InvokeWithActivityAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments, bool executeAsync) =>
+        executeAsync
+            ? InvokeWithActivityAsync(subscribedMethod, target, arguments)
+            : ValueTaskFactory.FromResult(InvokeWithActivitySync(subscribedMethod, target, arguments));
+
+    private static Task InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
+        Task.Run(() => InvokeWithActivityAsync(subscribedMethod, target, arguments).AsTask());
+
+    private static async ValueTask<object?> InvokeWithActivityAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
+        await subscribedMethod.ReturnType.AwaitAndUnwrapResultAsync(InvokeWithActivity(subscribedMethod.MethodInfo, target, arguments)).ConfigureAwait(false);
+
+    private static object? InvokeWithActivitySync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
+        subscribedMethod.ReturnType.AwaitAndUnwrapResult(InvokeWithActivity(subscribedMethod.MethodInfo, target, arguments));
+
+    private static object? InvokeWithActivity(MethodInfo methodInfo, object? target, object?[] arguments)
+    {
+        using Activity? activity = ActivitySources.StartInvokeSubscriberActivity(methodInfo);
+        return methodInfo.Invoke(target, arguments);
+    }
 }

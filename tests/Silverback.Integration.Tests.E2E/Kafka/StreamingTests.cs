@@ -31,37 +31,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
-                                    .Should().Be(receivedMessages.Count);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
 
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> eventsStream)
+        {
+            await foreach (TestEventOne message in eventsStream)
+            {
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
+                    .Should().Be(receivedMessages.Count);
+
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -84,37 +84,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            foreach (TestEventOne message in eventsStream)
-                            {
-                                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
-                                    .Should().Be(receivedMessages.Count);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable));
 
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+        void HandleEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            foreach (TestEventOne message in eventsStream)
+            {
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
+                    .Should().Be(receivedMessages.Count);
+
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -137,37 +137,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
-                                    .Should().Be(receivedMessages.Count);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(HandleStream));
 
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+        async Task HandleStream(IMessageStreamEnumerable<TestEventOne> eventsStream)
+        {
+            await foreach (TestEventOne message in eventsStream)
+            {
+                DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
+                    .Should().Be(receivedMessages.Count);
+
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -190,37 +190,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .AsObservable()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (IMessageStreamObservable<TestEventOne> observable) =>
-                            observable.Subscribe(
-                                message =>
-                                {
-                                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
-                                        .Should().Be(receivedMessages.Count);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .AsObservable()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(HandleObservable));
 
-                                    receivedMessages.Add(message);
-                                })))
-            .Run();
+        void HandleObservable(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(
+                message =>
+                {
+                    DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName)
+                        .Should().Be(receivedMessages.Count);
+
+                    receivedMessages.Add(message);
+                });
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -244,39 +244,39 @@ public class StreamingTests : KafkaTestFixture
         bool aborted = false;
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            try
-                            {
-                                foreach (TestEventOne message in eventsStream)
-                                {
-                                    receivedMessages.Add(message);
-                                }
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                Task.Delay(300).Wait();
-                                aborted = true;
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable));
+
+        void HandleEnumerable(IEnumerable<TestEventOne> eventsStream)
+        {
+            try
+            {
+                foreach (TestEventOne message in eventsStream)
+                {
+                    receivedMessages.Add(message);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Task.Delay(300).Wait();
+                aborted = true;
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Message 1" });
@@ -298,27 +298,27 @@ public class StreamingTests : KafkaTestFixture
         bool completed = false;
         ConcurrentBag<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .AsObservable()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (IMessageStreamObservable<TestEventOne> observable) =>
-                            observable.Subscribe(
-                                message => receivedMessages.Add(message),
-                                () => completed = true)))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .AsObservable()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(HandleObservable));
+
+        void HandleObservable(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(
+                message => receivedMessages.Add(message),
+                () => completed = true);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Message 1" });
@@ -340,37 +340,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .AsObservable()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventOne> enumerable) =>
-                        {
-                            await foreach (TestEventOne message in enumerable)
-                            {
-                                receivedMessages.Add(message);
-                                if (receivedMessages.Count == 2)
-                                    throw new InvalidOperationException("Test");
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .AsObservable()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(HandleAsyncEnumerable));
+
+        async ValueTask HandleAsyncEnumerable(IAsyncEnumerable<TestEventOne> enumerable)
+        {
+            await foreach (TestEventOne message in enumerable)
+            {
+                receivedMessages.Add(message);
+                if (receivedMessages.Count == 2)
+                    throw new InvalidOperationException("Test");
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Message 1" });
@@ -390,37 +390,37 @@ public class StreamingTests : KafkaTestFixture
     {
         List<TestEventOne> receivedMessages = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .AsObservable()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (IMessageStreamObservable<TestEventOne> observable) =>
-                            observable.Subscribe(
-                                message =>
-                                {
-                                    receivedMessages.Add(message);
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .AsObservable()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(HandleObservable));
 
-                                    if (receivedMessages.Count == 2)
-                                        throw new InvalidOperationException("Test");
-                                })))
-            .Run();
+        void HandleObservable(IMessageStreamObservable<TestEventOne> observable) =>
+            observable.Subscribe(
+                message =>
+                {
+                    receivedMessages.Add(message);
+
+                    if (receivedMessages.Count == 2)
+                        throw new InvalidOperationException("Test");
+                });
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Message 1" });
@@ -441,38 +441,38 @@ public class StreamingTests : KafkaTestFixture
         ConcurrentBag<TestEventOne> receivedMessages = new();
         ConcurrentBag<IMessageStreamEnumerable<TestEventOne>> receivedStreams = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            receivedStreams.Add(eventsStream);
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(HandleStream));
+
+        async Task HandleStream(IMessageStreamEnumerable<TestEventOne> eventsStream)
+        {
+            receivedStreams.Add(eventsStream);
+            await foreach (TestEventOne message in eventsStream)
+            {
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -497,39 +497,39 @@ public class StreamingTests : KafkaTestFixture
         ConcurrentBag<TestEventOne> receivedMessages = new();
         ConcurrentBag<IMessageStreamEnumerable<TestEventOne>> receivedStreams = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.Content))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ProcessAllPartitionsTogether()
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
-                        {
-                            receivedStreams.Add(eventsStream);
-                            await foreach (TestEventOne message in eventsStream)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .WithKafkaKey(message => message?.Content))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ProcessAllPartitionsTogether()
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .CommitOffsetEach(1))))
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(HandleStream));
+
+        async ValueTask HandleStream(IMessageStreamEnumerable<TestEventOne> eventsStream)
+        {
+            receivedStreams.Add(eventsStream);
+            await foreach (TestEventOne message in eventsStream)
+            {
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -554,33 +554,33 @@ public class StreamingTests : KafkaTestFixture
         List<TestEventWithKafkaKey> receivedMessages = new();
         TaskCompletionSource<bool> taskCompletionSource = new();
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventWithKafkaKey>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .LimitParallelism(2)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
-                        {
-                            await foreach (TestEventWithKafkaKey message in eventsStream)
-                            {
-                                receivedMessages.ThreadSafeAdd(message);
-                                await taskCompletionSource.Task;
-                            }
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventWithKafkaKey>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .LimitParallelism(2)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleAsyncEnumerable));
+
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventWithKafkaKey> eventsStream)
+        {
+            await foreach (TestEventWithKafkaKey message in eventsStream)
+            {
+                receivedMessages.ThreadSafeAdd(message);
+                await taskCompletionSource.Task;
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

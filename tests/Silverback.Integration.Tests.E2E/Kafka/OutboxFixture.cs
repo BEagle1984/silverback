@@ -34,8 +34,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceMessagesViaOutboxWorker()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -58,9 +57,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -84,8 +82,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceMessages_WhenUsingMultipleOutboxes()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -122,13 +119,12 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"));
@@ -155,8 +151,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceToCorrectTopic_WhenUsingEndpointNameFunction()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -190,8 +185,7 @@ public class OutboxFixture : KafkaTestFixture
                                             }
                                         })
                                     .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -223,8 +217,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceToCorrectTopic_WhenUsingDynamicNamedEndpoints()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -253,9 +246,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -281,8 +273,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldUseTransaction()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -305,9 +296,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -360,33 +350,31 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldIgnoreTransaction_WhenUsingInMemoryStorage()
     {
-        Host
-            .ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka()
-                            .UseInMemoryOutbox()
-                            .AddOutboxWorker(
-                                worker => worker
-                                    .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
-                                    .WithInterval(TimeSpan.FromMilliseconds(100))))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .UseInMemoryOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(100))))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpy());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -412,8 +400,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceMessages_WhenUsingSqlite()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -436,9 +423,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
@@ -462,8 +448,7 @@ public class OutboxFixture : KafkaTestFixture
     [Fact]
     public async Task OutboxProduceStrategy_ShouldProduceMessages_WhenUsingInMemoryStorage()
     {
-        Host
-            .ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -486,9 +471,8 @@ public class OutboxFixture : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));

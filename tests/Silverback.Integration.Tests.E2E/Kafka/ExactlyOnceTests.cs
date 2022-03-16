@@ -29,7 +29,7 @@
 //     [Fact]
 //     public async Task ExactlyOnce_InMemoryInboundLog_DuplicatedMessagesIgnored()
 //     {
-//         Host.ConfigureServices(
+//         Host.ConfigureServicesAndRun(
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
@@ -51,7 +51,7 @@
 //                                             .WithGroupId(DefaultConsumerGroupId)
 //                                             .CommitOffsetEach(1))))
 //                     .AddIntegrationSpyAndSubscriber())
-//             .Run();
+//             ;
 //
 //         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 //
@@ -79,7 +79,7 @@
 //     [Fact]
 //     public async Task ExactlyOnce_DbInboundLog_DuplicatedMessagesIgnored()
 //     {
-//         Host.ConfigureServices(
+//         Host.ConfigureServicesAndRun(
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
@@ -103,7 +103,7 @@
 //                                             .CommitOffsetEach(1))))
 //                     .AddIntegrationSpyAndSubscriber())
 //             .WithTestDbContext()
-//             .Run();
+//             ;
 //
 //         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 //         TestDbContext dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
@@ -133,7 +133,7 @@
 //     [Fact]
 //     public async Task ExactlyOnce_InMemoryOffsetStore_DuplicatedMessagesIgnored()
 //     {
-//         Host.ConfigureServices(
+//         Host.ConfigureServicesAndRun(
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
@@ -153,7 +153,7 @@
 //                                     .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
 //                     .AddTransientBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>()
 //                     .AddIntegrationSpyAndSubscriber())
-//             .Run();
+//             ;
 //
 //         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 //
@@ -176,7 +176,7 @@
 //     [Fact]
 //     public async Task ExactlyOnce_DbOffsetStore_DuplicatedMessagesIgnored()
 //     {
-//         Host.ConfigureServices(
+//         Host.ConfigureServicesAndRun(
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
@@ -198,7 +198,7 @@
 //                     .AddTransientBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>()
 //                     .AddIntegrationSpyAndSubscriber())
 //             .WithTestDbContext()
-//             .Run();
+//             ;
 //
 //         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 //

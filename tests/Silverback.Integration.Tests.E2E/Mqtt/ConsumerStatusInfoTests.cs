@@ -117,7 +117,7 @@ public class ConsumerStatusInfoTests : MqttTestFixture
     [Fact]
     public async Task StatusInfo_Consuming_LatestConsumedMessageTracked()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -131,8 +131,7 @@ public class ConsumerStatusInfoTests : MqttTestFixture
                             .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         await Helper.WaitUntilConnectedAsync();
 

@@ -29,38 +29,40 @@ public class MqttToKafkaBasicTests : KafkaTestFixture
         int eventOneCount = 0;
         int eventTwoCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedMqtt()
-                            .AddMockedKafka())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<TestEventOne>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration => configuration
-                                    .WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventTwo>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddDelegateSubscriber(
-                        (TestEventOne eventOne) =>
-                        {
-                            Interlocked.Increment(ref eventOneCount);
-                            return new TestEventTwo { Content = eventOne.Content };
-                        })
-                    .AddDelegateSubscriber((TestEventTwo _) => Interlocked.Increment(ref eventTwoCount)))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedMqtt()
+                        .AddMockedKafka())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<TestEventOne>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(
+                            configuration => configuration
+                                .WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventTwo>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddDelegateSubscriber2<TestEventOne, TestEventTwo>(HandleEventOne)
+                .AddDelegateSubscriber2<TestEventTwo>(HandleEventTwo));
+
+        TestEventTwo HandleEventOne(TestEventOne eventOne)
+        {
+            Interlocked.Increment(ref eventOneCount);
+            return new TestEventTwo { Content = eventOne.Content };
+        }
+
+        void HandleEventTwo(TestEventTwo message) => Interlocked.Increment(ref eventTwoCount);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         IMqttTestingHelper mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();

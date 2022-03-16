@@ -27,7 +27,7 @@ public class OutboundRoutingTests : MqttTestFixture
     [Fact]
     public async Task DynamicRouting_NameFunction_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -52,8 +52,7 @@ public class OutboundRoutingTests : MqttTestFixture
                                                 default:
                                                     throw new InvalidOperationException();
                                             }
-                                        }))))
-            .Run();
+                                        }))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -76,7 +75,7 @@ public class OutboundRoutingTests : MqttTestFixture
     [Fact]
     public async Task DynamicRouting_NameFormat_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -102,8 +101,7 @@ public class OutboundRoutingTests : MqttTestFixture
                                                 default:
                                                     throw new InvalidOperationException();
                                             }
-                                        }))))
-            .Run();
+                                        }))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -126,7 +124,7 @@ public class OutboundRoutingTests : MqttTestFixture
     [Fact]
     public async Task DynamicRouting_CustomNameResolver_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSingleton<TestEndpointResolver>()
@@ -138,8 +136,7 @@ public class OutboundRoutingTests : MqttTestFixture
                             .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
                             .AddOutbound<TestEventOne>(
                                 endpoint => endpoint
-                                    .UseEndpointResolver<TestEndpointResolver>())))
-            .Run();
+                                    .UseEndpointResolver<TestEndpointResolver>())));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

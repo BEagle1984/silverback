@@ -26,7 +26,7 @@ public class SubscriptionTests : MqttTestFixture
     [Fact]
     public async Task Subscription_SingleLevelWildcard_MessagesConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -44,8 +44,7 @@ public class SubscriptionTests : MqttTestFixture
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom("world/+/news")))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -63,7 +62,7 @@ public class SubscriptionTests : MqttTestFixture
     [Fact]
     public async Task Subscription_MultiLevelWildcard_MessagesConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -81,8 +80,7 @@ public class SubscriptionTests : MqttTestFixture
                             .AddInbound(
                                 endpoint => endpoint
                                     .ConsumeFrom("world/#/news")))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -101,7 +99,7 @@ public class SubscriptionTests : MqttTestFixture
     [Fact]
     public async Task Subscription_Shared_MessagesConsumedOnce()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -122,8 +120,7 @@ public class SubscriptionTests : MqttTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(config => config.WithClientId("consumer-2"))
                                     .ConsumeFrom("$share/group/" + DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

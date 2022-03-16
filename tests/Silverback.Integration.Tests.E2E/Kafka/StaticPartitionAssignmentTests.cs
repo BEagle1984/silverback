@@ -25,7 +25,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
     [Fact]
     public async Task StaticPartitionAssignment_PartitionsAssigned()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -53,8 +53,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                                     .ConsumeFrom(
                                         new TopicPartition("topic1", 2),
                                         new TopicPartition("topic2", 2))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -71,7 +70,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
     [Fact]
     public async Task StaticPartitionAssignment_UsingResolver_PartitionsAssigned()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -96,8 +95,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                                     .ConsumeFrom(
                                         "topic1",
                                         partitions => partitions)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -112,7 +110,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
     [Fact]
     public async Task StaticPartitionAssignment_UsingResolverForMultipleTopics_PartitionsAssigned()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -140,8 +138,7 @@ public class StaticPartitionAssignmentTests : KafkaTestFixture
                                     .ConsumeFrom(
                                         new[] { "topic1", "topic2" },
                                         partitions => partitions)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

@@ -26,7 +26,7 @@ public class MultipleBrokersTests : MqttTestFixture
     [Fact]
     public async Task MultipleBrokers_OverlappingTopicNames_CorrectlyProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -42,8 +42,7 @@ public class MultipleBrokersTests : MqttTestFixture
                             .ConfigureClient(configuration => configuration.WithClientId("e2e-test-2").ConnectViaTcp("e2e-mqtt-broker-2"))
                             .AddOutbound<Broker2Message>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 

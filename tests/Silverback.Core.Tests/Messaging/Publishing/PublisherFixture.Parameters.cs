@@ -45,8 +45,11 @@ public partial class PublisherFixture
                 .AddSingleton(counter)
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne, Counter>((_, counterParam) => counterParam.Increment())
-                .AddDelegateSubscriber((object _, Counter counterParam) => counterParam.IncrementAsync()));
+                .AddDelegateSubscriber2<TestEventOne, Counter>(Handle1)
+                .AddDelegateSubscriber2<object, Counter>(Handle2));
+
+        static void Handle1(TestEvent message, Counter counter) => counter.Increment();
+        static void Handle2(object message, Counter counterParam) => counterParam.IncrementAsync();
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 

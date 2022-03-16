@@ -47,6 +47,7 @@ public class SubscribedMethod
         Options = Check.NotNull(options, nameof(options));
 
         Parameters = methodInfo.GetParameters();
+        ReturnType = MethodReturnType.CreateFromMethodInfo(methodInfo);
 
         if (Parameters.Count == 0)
             throw new SubscribedMethodInvocationException(methodInfo, "The subscribed method must have at least 1 argument.");
@@ -61,6 +62,11 @@ public class SubscribedMethod
     ///     Gets the <see cref="ParameterInfo" /> for each parameter of the subscribed method.
     /// </summary>
     public IReadOnlyList<ParameterInfo> Parameters { get; }
+
+    /// <summary>
+    ///     Gets the method return type.
+    /// </summary>
+    public MethodReturnType ReturnType { get; }
 
     /// <summary>
     ///     Gets the <see cref="SubscriptionOptions" />.

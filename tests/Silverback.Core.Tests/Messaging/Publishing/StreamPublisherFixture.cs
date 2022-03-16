@@ -37,24 +37,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedEvents);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventOnes);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        async Task Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventOnes);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -86,24 +89,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedEvents);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    (IEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventOnes);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        void Handle2(IEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventOnes);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -135,24 +141,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    async (IAsyncEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (IEvent dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedEvents);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IAsyncEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventOnes);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IAsyncEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(Handle2));
+
+        async Task Handle1(IAsyncEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
+        async ValueTask Handle2(IAsyncEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventOnes);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -182,16 +191,12 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IReadOnlyCollection<IEvent> _) =>
-                    {
-                        Interlocked.Increment(ref receivedEnumeratedStreams);
-                    })
-                .AddDelegateSubscriber(
-                    (List<TestEventOne> _) =>
-                    {
-                        Interlocked.Increment(ref receivedEnumeratedStreams);
-                    }));
+                .AddDelegateSubscriber2<IReadOnlyCollection<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<List<TestEventOne>>(Handle2));
+
+        void Handle1(IReadOnlyCollection<IEvent> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
+        void Handle2(List<TestEventOne> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
         MessageStreamProvider<IEvent> streamProvider = new();
 
@@ -215,22 +220,25 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEvent dummy in enumerable)
-                        {
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEvent dummy in enumerable)
+            {
+            }
+        }
+
+        async Task Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEventOne dummy in enumerable)
+            {
+            }
+        }
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -250,24 +258,28 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        List<IEvent> dummy = enumerable.ToList();
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        List<TestEventOne> dummy = enumerable.ToList();
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<TestCommandOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        List<TestCommandOne> dummy = enumerable.ToList();
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestCommandOne>>(Handle3));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            List<IEvent> dummy = enumerable.ToList();
+        }
+
+        void Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            List<TestEventOne> dummy = enumerable.ToList();
+        }
+
+        void Handle3(IMessageStreamEnumerable<TestCommandOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            List<TestCommandOne> dummy = enumerable.ToList();
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider1 = new();
@@ -305,25 +317,28 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            if (Interlocked.Increment(ref received) >= 3)
-                                throw new TestException();
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref received);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEvent dummy in enumerable)
+            {
+                if (Interlocked.Increment(ref received) >= 3)
+                    throw new TestException();
+            }
+        }
+
+        async Task Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref received);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -350,22 +365,25 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            if (Interlocked.Increment(ref received) >= 3)
-                                throw new TestException();
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            foreach (IEvent dummy in enumerable)
+            {
+                if (Interlocked.Increment(ref received) >= 3)
+                    throw new TestException();
+            }
+        }
+
+        static async Task Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            await foreach (TestEventOne dummy in enumerable)
+            {
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -390,22 +408,25 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            if (Interlocked.Increment(ref received) >= 3)
-                                throw new TestException();
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        await foreach (TestEventOne dummy in enumerable)
-                        {
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            foreach (IEvent dummy in enumerable)
+            {
+                if (Interlocked.Increment(ref received) >= 3)
+                    throw new TestException();
+            }
+        }
+
+        static async Task Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            await foreach (TestEventOne dummy in enumerable)
+            {
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();
@@ -437,24 +458,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEnvelope> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEnvelope dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedEnvelopes);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEnvelope> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEnvelope dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEnvelopes);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEnvelope>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<IEnvelope> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEnvelope dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEnvelopes);
+            }
+        }
+
+        async Task Handle2(IMessageStreamEnumerable<TestEnvelope> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEnvelope dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEnvelopes);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> streamProvider = new();
@@ -482,24 +506,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventOnes);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    async (IMessageStreamEnumerable<TestEnvelope> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        await foreach (TestEnvelope dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEnvelopes);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventOnes);
+            }
+        }
+
+        async Task Handle2(IMessageStreamEnumerable<TestEnvelope> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            await foreach (TestEnvelope dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEnvelopes);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> stream = new();
@@ -529,24 +556,27 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<TestEventOne> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreamsOfOnes);
-                        foreach (TestEventOne dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventOnes);
-                        }
-                    })
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<TestEventTwo> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreamsOfTwos);
-                        foreach (TestEventTwo dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedTestEventTwos);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventTwo>>(Handle2));
+
+        void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreamsOfOnes);
+            foreach (TestEventOne dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventOnes);
+            }
+        }
+
+        void Handle2(IMessageStreamEnumerable<TestEventTwo> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreamsOfTwos);
+            foreach (TestEventTwo dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedTestEventTwos);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> stream = new();
@@ -583,14 +613,16 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        foreach (IEvent envelope in enumerable)
-                        {
-                            receivedEvents.Add(envelope);
-                        }
-                    }));
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle));
+
+        void Handle(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            foreach (IEvent envelope in enumerable)
+            {
+                receivedEvents.Add(envelope);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEnvelope> streamProvider = new();
@@ -616,16 +648,18 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber(
-                    (IMessageStreamEnumerable<IEvent> enumerable) =>
-                    {
-                        Interlocked.Increment(ref receivedStreams);
-                        foreach (IEvent dummy in enumerable)
-                        {
-                            Interlocked.Increment(ref receivedEvents);
-                        }
-                    })
+                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle)
                 .AddSingletonBehavior(testBehavior));
+
+        void Handle(IMessageStreamEnumerable<IEvent> enumerable)
+        {
+            Interlocked.Increment(ref receivedStreams);
+            foreach (IEvent dummy in enumerable)
+            {
+                Interlocked.Increment(ref receivedEvents);
+            }
+        }
+
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
         MessageStreamProvider<IEvent> streamProvider = new();

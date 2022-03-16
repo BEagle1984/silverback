@@ -20,11 +20,15 @@ public partial class PublisherFixture
     public void Publish_ShouldInvokeDelegateSubscriber()
     {
         TestingCollection<TestEventOne> messages = new();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(message => messages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne>(Handle));
+
+        void Handle(TestEventOne message) => messages.Add(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -37,11 +41,15 @@ public partial class PublisherFixture
     public async Task PublishAsync_ShouldInvokeDelegateSubscriber()
     {
         TestingCollection<TestEventOne> messages = new();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(message => messages.Add(message)));
+                .AddDelegateSubscriber2<TestEventOne>(Handle));
+
+        void Handle(TestEventOne message) => messages.Add(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());
@@ -55,12 +63,17 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> syncMessages = new();
         TestingCollection<TestEventOne> asyncMessages = new();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(message => syncMessages.Add(message))
-                .AddDelegateSubscriber<TestEventOne>(message => asyncMessages.AddAsync(message).AsTask()));
+                .AddDelegateSubscriber2<TestEventOne>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+
+        void Handle1(TestEventOne message) => syncMessages.Add(message);
+        ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -75,12 +88,17 @@ public partial class PublisherFixture
     {
         TestingCollection<TestEventOne> syncMessages = new();
         TestingCollection<TestEventOne> asyncMessages = new();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(message => syncMessages.Add(message))
-                .AddDelegateSubscriber<TestEventOne>(message => asyncMessages.AddAsync(message).AsTask()));
+                .AddDelegateSubscriber2<TestEventOne>(Handle1)
+                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+
+        void Handle1(TestEventOne message) => syncMessages.Add(message);
+        ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());
@@ -97,6 +115,16 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages2 = new();
         int executingCount = 0;
 
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+
+        Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
+        Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
+
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             Interlocked.Increment(ref executingCount);
@@ -109,16 +137,6 @@ public partial class PublisherFixture
             Interlocked.Decrement(ref executingCount);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages1),
-                    new DelegateSubscriptionOptions { Exclusive = true })
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages2),
-                    new DelegateSubscriptionOptions { Exclusive = true }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -134,6 +152,16 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages2 = new();
         int executingCount = 0;
 
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+
+        Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
+        Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
+
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             Interlocked.Increment(ref executingCount);
@@ -146,16 +174,6 @@ public partial class PublisherFixture
             Interlocked.Decrement(ref executingCount);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages1),
-                    new DelegateSubscriptionOptions { Exclusive = true })
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages2),
-                    new DelegateSubscriptionOptions { Exclusive = true }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());
@@ -171,6 +189,16 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages2 = new();
         CountdownEvent countdownEvent = new(2);
 
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+
+        Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
+        Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
+
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             if (!countdownEvent.Signal())
@@ -179,16 +207,6 @@ public partial class PublisherFixture
             await messages.AddAsync(message);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages1),
-                    new DelegateSubscriptionOptions { Exclusive = false })
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages2),
-                    new DelegateSubscriptionOptions { Exclusive = false }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEventOne());
@@ -204,6 +222,16 @@ public partial class PublisherFixture
         TestingCollection<TestEventOne> messages2 = new();
         CountdownEvent countdownEvent = new(2);
 
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+
+        Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
+        Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
+
         async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {
             if (!countdownEvent.Signal())
@@ -212,16 +240,6 @@ public partial class PublisherFixture
             await messages.AddAsync(message);
         }
 
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages1),
-                    new DelegateSubscriptionOptions { Exclusive = false })
-                .AddDelegateSubscriber<TestEventOne>(
-                    message => ExecuteAsync(message, messages2),
-                    new DelegateSubscriptionOptions { Exclusive = false }));
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         await publisher.PublishAsync(new TestEventOne());

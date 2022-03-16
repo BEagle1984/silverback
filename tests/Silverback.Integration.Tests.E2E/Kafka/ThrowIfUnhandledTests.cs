@@ -29,7 +29,7 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
     {
         List<object> receivedMessages = new();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -42,33 +42,29 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId).CommitOffsetEach(1))))
                     .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (TestEventOne message) =>
-                        {
-                            receivedMessages.Add(message);
-                        })
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventTwo> messages) =>
-                        {
-                            foreach (TestEventTwo message in messages)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        })
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventThree> stream) =>
-                        {
-                            await foreach (TestEventThree message in stream)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+                    .AddDelegateSubscriber2<TestEventOne>(HandleMessage)
+                    .AddDelegateSubscriber2<IEnumerable<TestEventTwo>>(HandleEnumerable)
+                    .AddDelegateSubscriber2<IAsyncEnumerable<TestEventThree>>(HandleAsyncEnumerable));
+
+        void HandleMessage(TestEventOne message) => receivedMessages.Add(message);
+
+        void HandleEnumerable(IEnumerable<TestEventTwo> messages)
+        {
+            foreach (TestEventTwo message in messages)
+            {
+                receivedMessages.Add(message);
+            }
+        }
+
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventThree> stream)
+        {
+            await foreach (TestEventThree message in stream)
+            {
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -96,7 +92,7 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
     {
         List<object> receivedMessages = new();
 
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -110,33 +106,29 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .IgnoreUnhandledMessages()
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId).CommitOffsetEach(1))))
                     .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (TestEventOne message) =>
-                        {
-                            receivedMessages.Add(message);
-                        })
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventTwo> messages) =>
-                        {
-                            foreach (TestEventTwo message in messages)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        })
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventThree> stream) =>
-                        {
-                            await foreach (TestEventThree message in stream)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+                    .AddDelegateSubscriber2<TestEventOne>(HandleMessage)
+                    .AddDelegateSubscriber2<IEnumerable<TestEventTwo>>(HandleEnumerable)
+                    .AddDelegateSubscriber2<IAsyncEnumerable<TestEventThree>>(HandleAsyncEnumerable));
+
+        void HandleMessage(TestEventOne message) => receivedMessages.Add(message);
+
+        void HandleEnumerable(IEnumerable<TestEventTwo> messages)
+        {
+            foreach (TestEventTwo message in messages)
+            {
+                receivedMessages.Add(message);
+            }
+        }
+
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventThree> stream)
+        {
+            await foreach (TestEventThree message in stream)
+            {
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -164,7 +156,7 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
     public async Task ThrowIfUnhandled_Batch_ConsumerStoppedWhenUnhandled()
     {
         List<object> receivedMessages = new();
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -180,27 +172,25 @@ public class ThrowIfUnhandledTests : KafkaTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .EnableBatchProcessing(3)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .CommitOffsetEach(1))))
-                    .AddDelegateSubscriber(
-                        (IEnumerable<TestEventOne> messages) =>
-                        {
-                            foreach (TestEventOne message in messages)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        })
-                    .AddDelegateSubscriber(
-                        async (IAsyncEnumerable<TestEventTwo> stream) =>
-                        {
-                            await foreach (TestEventTwo message in stream)
-                            {
-                                receivedMessages.Add(message);
-                            }
-                        }))
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId).CommitOffsetEach(1))))
+                    .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(HandleEnumerable)
+                    .AddDelegateSubscriber2<IAsyncEnumerable<TestEventTwo>>(HandleAsyncEnumerable));
+
+        void HandleEnumerable(IEnumerable<TestEventOne> messages)
+        {
+            foreach (TestEventOne message in messages)
+            {
+                receivedMessages.Add(message);
+            }
+        }
+
+        async Task HandleAsyncEnumerable(IAsyncEnumerable<TestEventTwo> stream)
+        {
+            await foreach (TestEventTwo message in stream)
+            {
+                receivedMessages.Add(message);
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());

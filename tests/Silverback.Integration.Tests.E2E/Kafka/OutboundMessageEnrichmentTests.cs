@@ -29,7 +29,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_StaticValues_HeadersAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -43,8 +43,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                     .ProduceTo(DefaultTopicName)
                                     .AddHeader("one", 1)
                                     .AddHeader("two", 2)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -59,7 +58,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_SpecificMessageTypeOnly_HeadersAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -72,8 +71,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .AddHeader<TestEventOne>("x-something", "value")))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -89,7 +87,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_ValueFunction_HeaderAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -104,8 +102,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                     .AddHeader<TestEventOne>(
                                         "x-something",
                                         envelope => envelope.Message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -123,7 +120,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task WithMessageId_HeaderAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -136,8 +133,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithMessageId<TestEventOne>(envelope => envelope.Message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -155,7 +151,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task WithKafkaKey_MessageKeySet()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -170,8 +166,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey(message => message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -188,7 +183,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task WithKafkaKey_FunctionReturningNull_NullMessageKeySet()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -203,8 +198,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                 producer => producer
                                     .ProduceTo(DefaultTopicName)
                                     .WithKafkaKey((TestEventOne? _) => null)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -221,7 +215,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_EnvelopeBasedProducingViaProducer_HeaderAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -236,8 +230,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                     .AddHeader<TestEventOne>(
                                         "x-something",
                                         envelope => envelope.Message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { Content = "one" });
@@ -256,7 +249,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_MessageBasedProducingViaProducer_HeaderAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -271,8 +264,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                     .AddHeader<TestEventOne>(
                                         "x-something",
                                         message => message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne { Content = "one" });
@@ -291,7 +283,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
     [Fact]
     public async Task AddHeader_ProducingViaProducerWithCallbacks_HeaderAdded()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -306,8 +298,7 @@ public class OutboundMessageEnrichmentTests : KafkaTestFixture
                                     .AddHeader<TestEventOne>(
                                         "x-something",
                                         message => message?.Content)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.ProduceAsync(

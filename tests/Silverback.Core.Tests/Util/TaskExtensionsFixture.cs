@@ -13,18 +13,6 @@ namespace Silverback.Tests.Core.Util;
 
 public class TaskExtensionsFixture
 {
-    [Theory]
-    [InlineData("something")]
-    [InlineData(null)]
-    public async Task GetReturnValueAsync_ShouldUnwrapTaskReturnValue(string? value)
-    {
-        Task<string?> task = Task.FromResult(value);
-
-        object? result = await task.GetReturnValueAsync();
-
-        result.Should().Be(value);
-    }
-
     [Fact]
     public async Task CancelOnException_ShouldCancelTasksAtFirstException()
     {

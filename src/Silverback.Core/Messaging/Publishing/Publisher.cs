@@ -163,7 +163,7 @@ public class Publisher : IPublisher
                         method,
                         message,
                         _serviceProvider,
-                        executeAsync))
+                        executeAsync).AsTask())
             .ConfigureAwait(false))
         .ToList();
 
@@ -177,7 +177,7 @@ public class Publisher : IPublisher
                         method,
                         message,
                         _serviceProvider,
-                        executeAsync))
+                        executeAsync).AsTask())
             .ConfigureAwait(false))
         .ToList();
 }

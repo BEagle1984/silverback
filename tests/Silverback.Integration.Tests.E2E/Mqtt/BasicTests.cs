@@ -29,19 +29,18 @@ public class BasicTests : MqttTestFixture
     [Fact]
     public async Task OutboundAndInbound_DefaultSettings_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -62,23 +61,22 @@ public class BasicTests : MqttTestFixture
     [Fact]
     public async Task OutboundAndInbound_DefaultSettingsV311_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration => configuration
-                                    .WithClientId("e2e-test")
-                                    .ConnectViaTcp("e2e-mqtt-broker")
-                                    .UseProtocolVersion(MqttProtocolVersion.V311))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound<TestEventOne>(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(
+                            configuration => configuration
+                                .WithClientId("e2e-test")
+                                .ConnectViaTcp("e2e-mqtt-broker")
+                                .UseProtocolVersion(MqttProtocolVersion.V311))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound<TestEventOne>(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -106,19 +104,18 @@ public class BasicTests : MqttTestFixture
             CustomHeader2 = false
         };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                .AddIntegrationSpy());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -137,46 +134,46 @@ public class BasicTests : MqttTestFixture
         int client1MessagesCount = 0;
         int client2MessagesCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration => configuration
-                                    .WithClientId("e2e-test")
-                                    .ConnectViaTcp("e2e-mqtt-broker")
-                                    .UseProtocolVersion(MqttProtocolVersion.V311))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound<TestEventOne>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithClientId("client1")))
-                            .AddInbound<TestEventOne>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithClientId("client2"))))
-                    .AddDelegateSubscriber(
-                        (IRawInboundEnvelope envelope) =>
-                        {
-                            MqttConsumerConfiguration consumerConfiguration = (MqttConsumerConfiguration)envelope.Endpoint.Configuration;
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(
+                            configuration => configuration
+                                .WithClientId("e2e-test")
+                                .ConnectViaTcp("e2e-mqtt-broker")
+                                .UseProtocolVersion(MqttProtocolVersion.V311))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound<TestEventOne>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithClientId("client1")))
+                        .AddInbound<TestEventOne>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .ConfigureClient(configuration => configuration.WithClientId("client2"))))
+                .AddDelegateSubscriber2<IRawInboundEnvelope>(HandleEnvelope));
 
-                            switch (consumerConfiguration.Client.ClientId)
-                            {
-                                case "client1":
-                                    client1MessagesCount++;
-                                    break;
-                                case "client2":
-                                    client2MessagesCount++;
-                                    break;
-                                default:
-                                    throw new InvalidOperationException();
-                            }
-                        }))
-            .Run();
+        void HandleEnvelope(IRawInboundEnvelope envelope)
+        {
+            MqttConsumerConfiguration consumerConfiguration = (MqttConsumerConfiguration)envelope.Endpoint.Configuration;
+
+            switch (consumerConfiguration.Client.ClientId)
+            {
+                case "client1":
+                    client1MessagesCount++;
+                    break;
+                case "client2":
+                    client2MessagesCount++;
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

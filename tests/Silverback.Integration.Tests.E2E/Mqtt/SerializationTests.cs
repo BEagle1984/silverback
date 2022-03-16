@@ -26,7 +26,7 @@ public class SerializationTests : MqttTestFixture
     [Fact]
     public async Task JsonSerializer_WithHardcodedMessageTypeV311_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -47,8 +47,7 @@ public class SerializationTests : MqttTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeJson()))
-                    .AddIntegrationSpy())
-            .Run();
+                    .AddIntegrationSpy());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -62,7 +61,7 @@ public class SerializationTests : MqttTestFixture
     [Fact]
     public async Task JsonSerializer_WithHardcodedMessageTypeV500_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -83,8 +82,7 @@ public class SerializationTests : MqttTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeJson()))
-                    .AddIntegrationSpy())
-            .Run();
+                    .AddIntegrationSpy());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());

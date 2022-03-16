@@ -31,7 +31,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_WithMessageTypeHeader_TombstoneReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -45,8 +45,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -67,7 +66,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_WithoutTypeHeaderAndUsingDefaultSerializer_TombstoneReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -81,8 +80,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -102,7 +100,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_WithoutAnyHeaderAndUsingNewtonsoftSerializer_TombstoneReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -117,8 +115,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeJsonUsingNewtonsoft()))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -138,7 +135,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_WithoutTypeHeaderButUsingTypedSerializer_TombstoneReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -152,8 +149,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -173,7 +169,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_LegacyBehavior_NullReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -188,8 +184,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .UseLegacyNullMessageHandling()))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -211,7 +206,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_SilentlySkippingNullMessages_NoMessageReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -226,8 +221,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .SkipNullMessages()))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync(
@@ -247,7 +241,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task NullMessage_HandleViaCustomSerializer_CustomWrapperReceived()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -262,8 +256,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)
                                     .DeserializeUsing(new CustomSerializer())))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
         await producer.RawProduceAsync((byte[]?)null);
@@ -280,7 +273,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task Tombstone_RoutingAccordingToTypeParameter_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -297,8 +290,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
@@ -318,7 +310,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
     [Fact]
     public async Task Tombstone_WithoutTypeParameter_ProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -332,8 +324,7 @@ public class NullMessageHandlingTests : KafkaTestFixture
                                 endpoint => endpoint
                                     .ConfigureClient(configuration => configuration.WithGroupId("group1"))
                                     .ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(new Tombstone("42"));

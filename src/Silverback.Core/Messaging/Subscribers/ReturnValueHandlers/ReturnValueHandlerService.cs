@@ -23,7 +23,7 @@ internal sealed class ReturnValueHandlerService
     }
 
     [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-    public async Task<bool> HandleReturnValuesAsync(object? returnValue, bool executeAsync)
+    public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, bool executeAsync)
     {
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
             return false;

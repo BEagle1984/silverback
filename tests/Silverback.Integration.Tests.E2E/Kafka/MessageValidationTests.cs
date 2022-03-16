@@ -34,21 +34,20 @@ public class MessageValidationTests : KafkaTestFixture
         string expectedMessage = $"The message is not valid:{Environment.NewLine}" +
                                  "- The field String10 must be a string with a maximum length of 10.";
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ValidateMessage(true)
-                                    .ProduceTo(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            endpoint => endpoint
+                                .ValidateMessage(true)
+                                .ProduceTo(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -64,21 +63,20 @@ public class MessageValidationTests : KafkaTestFixture
     {
         TestValidationMessage message = new() { String10 = "1234567890abcd" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .DisableMessageValidation()
-                                    .ProduceTo(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            endpoint => endpoint
+                                .DisableMessageValidation()
+                                .ProduceTo(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -93,21 +91,20 @@ public class MessageValidationTests : KafkaTestFixture
     {
         TestValidationMessage message = new() { String10 = "1234567890abcd" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                endpoint => endpoint
-                                    .ValidateMessage(false)
-                                    .ProduceTo(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            endpoint => endpoint
+                                .ValidateMessage(false)
+                                .ProduceTo(DefaultTopicName)))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -122,31 +119,28 @@ public class MessageValidationTests : KafkaTestFixture
     {
         bool received = false;
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound<TestValidationMessage>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ValidateMessage(true)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (IInboundEnvelope _) =>
-                            {
-                                received = true;
-                            })
-                        .AddIntegrationSpyAndSubscriber();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<TestValidationMessage>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ValidateMessage(true)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<IInboundEnvelope>(HandleEnvelope)
+                    .AddIntegrationSpyAndSubscriber();
+            });
+
+        void HandleEnvelope(IInboundEnvelope envelope) => received = true;
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -168,31 +162,28 @@ public class MessageValidationTests : KafkaTestFixture
     {
         bool received = false;
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound<TestValidationMessage>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DisableMessageValidation()
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (IInboundEnvelope _) =>
-                            {
-                                received = true;
-                            })
-                        .AddIntegrationSpyAndSubscriber();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<TestValidationMessage>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .DisableMessageValidation()
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<IInboundEnvelope>(HandleEnvelope)
+                    .AddIntegrationSpyAndSubscriber();
+            });
+
+        void HandleEnvelope(IInboundEnvelope envelope) => received = true;
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 
@@ -212,31 +203,28 @@ public class MessageValidationTests : KafkaTestFixture
     {
         bool received = false;
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                                .AddInbound<TestValidationMessage>(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .ValidateMessage(false)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (IInboundEnvelope _) =>
-                            {
-                                received = true;
-                            })
-                        .AddIntegrationSpyAndSubscriber();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<TestValidationMessage>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ValidateMessage(false)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<IInboundEnvelope>(HandleEnvelope)
+                    .AddIntegrationSpyAndSubscriber();
+            });
+
+        void HandleEnvelope(IInboundEnvelope envelope) => received = true;
 
         IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
 

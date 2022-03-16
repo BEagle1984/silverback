@@ -13,7 +13,7 @@ public abstract class KafkaTestFixture : E2ETestFixture<IKafkaTestingHelper>
 {
     protected const string DefaultTopicName = "default-e2e-topic";
 
-    protected const string DefaultConsumerGroupId = "e2e-consumer-group-1";
+    protected const string DefaultGroupId = "e2e-consumer-group-1";
 
     private IInMemoryTopic? _defaultTopic;
 
@@ -26,6 +26,5 @@ public abstract class KafkaTestFixture : E2ETestFixture<IKafkaTestingHelper>
 
     protected IInMemoryTopic DefaultTopic => _defaultTopic ??= Helper.GetTopic(DefaultTopicName);
 
-    protected IMockedConsumerGroup DefaultConsumerGroup =>
-        _defaultConsumerGroup ??= Helper.GetConsumerGroup(DefaultConsumerGroupId);
+    protected IMockedConsumerGroup DefaultConsumerGroup => _defaultConsumerGroup ??= Helper.GetConsumerGroup(DefaultGroupId);
 }

@@ -47,7 +47,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
     /// <summary>
     ///     Gets the configuration of the producer to be used to move the message.
     /// </summary>
-    public ProducerConfiguration ProducerConfiguration { get; }
+    public ProducerConfiguration ProducerConfiguration { get; init; }
 
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>

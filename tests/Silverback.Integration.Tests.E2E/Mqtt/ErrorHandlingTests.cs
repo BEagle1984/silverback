@@ -39,28 +39,28 @@ public class ErrorHandlingTests : MqttTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -79,32 +79,32 @@ public class ErrorHandlingTests : MqttTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration => configuration
-                                    .WithClientId("e2e-test")
-                                    .ConnectViaTcp("e2e-mqtt-broker")
-                                    .UseProtocolVersion(MqttProtocolVersion.V311))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound<TestEventOne>(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry())))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(
+                            configuration => configuration
+                                .WithClientId("e2e-test")
+                                .ConnectViaTcp("e2e-mqtt-broker")
+                                .UseProtocolVersion(MqttProtocolVersion.V311))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound<TestEventOne>(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry())))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -120,29 +120,29 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -158,28 +158,28 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -195,28 +195,28 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -234,28 +234,28 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10).ThenSkip())))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10).ThenSkip())))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -271,35 +271,35 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(
-                                configuration => configuration
-                                    .WithClientId("e2e-test")
-                                    .ConnectViaTcp("e2e-mqtt-broker")
-                                    .UseProtocolVersion(MqttProtocolVersion.V311))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .DeserializeJson(
-                                        serializer =>
-                                            serializer.UseFixedType<TestEventOne>())
-                                    .OnError(policy => policy.Retry(10).ThenSkip())))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(
+                            configuration => configuration
+                                .WithClientId("e2e-test")
+                                .ConnectViaTcp("e2e-mqtt-broker")
+                                .UseProtocolVersion(MqttProtocolVersion.V311))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .DeserializeJson(
+                                    serializer =>
+                                        serializer.UseFixedType<TestEventOne>())
+                                .OnError(policy => policy.Retry(10).ThenSkip())))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { Content = "Hello E2E!" });
@@ -318,22 +318,21 @@ public class ErrorHandlingTests : MqttTestFixture
 
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Skip())))
-                    .AddIntegrationSpy())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Skip())))
+                .AddIntegrationSpy());
 
         MqttProducer producer = Helper.Broker.GetProducer(
             producer => producer
@@ -373,33 +372,33 @@ public class ErrorHandlingTests : MqttTestFixture
         Stream rawMessageStream = DefaultSerializers.Json.Serialize(message);
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.Retry(10))
-                                    .DecryptUsingAes(AesEncryptionKey)))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            if (tryCount != 3)
-                                throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.Retry(10))
+                                .DecryptUsingAes(AesEncryptionKey)))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            if (tryCount != 3)
+                throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -417,23 +416,24 @@ public class ErrorHandlingTests : MqttTestFixture
     {
         TestEventOne message = new() { Content = "Hello E2E!" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(policy => policy.MoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(policy => policy.MoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        static void HandleMessage(IIntegrationEvent message) => throw new InvalidOperationException("Move!");
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -458,31 +458,31 @@ public class ErrorHandlingTests : MqttTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(
-                                        policy => policy.MoveToMqttTopic(
-                                            moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
-                                            movePolicy => movePolicy.WithMaxRetries(10)))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(
+                                    policy => policy.MoveToMqttTopic(
+                                        moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
+                                        movePolicy => movePolicy.WithMaxRetries(10)))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);
@@ -501,31 +501,31 @@ public class ErrorHandlingTests : MqttTestFixture
         TestEventOne message = new() { Content = "Hello E2E!" };
         int tryCount = 0;
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                    .AddMqttEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .OnError(
-                                        policy => policy
-                                            .Retry(1)
-                                            .ThenMoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
-                    .AddIntegrationSpy()
-                    .AddDelegateSubscriber(
-                        (IIntegrationEvent _) =>
-                        {
-                            tryCount++;
-                            throw new InvalidOperationException("Retry!");
-                        }))
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                        .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .OnError(
+                                    policy => policy
+                                        .Retry(1)
+                                        .ThenMoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
+                .AddIntegrationSpy()
+                .AddDelegateSubscriber2<IIntegrationEvent>(HandleMessage));
+
+        void HandleMessage(IIntegrationEvent unused)
+        {
+            tryCount++;
+            throw new InvalidOperationException("Retry!");
+        }
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message);

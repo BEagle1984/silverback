@@ -48,7 +48,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
@@ -104,7 +104,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                         new TopicPartition(DefaultTopicName, 4))
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
@@ -145,7 +145,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .DisableAutoRecovery())))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
@@ -189,7 +189,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .EnableAutoRecovery())))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
@@ -240,7 +240,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .CommitOffsetEach(1))))
                     .AddIntegrationSpyAndSubscriber())
             .Run(waitUntilBrokerConnected: false);
@@ -276,7 +276,7 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
     [Fact]
     public async Task StatusInfo_Consuming_LatestConsumedMessageTracked()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -293,10 +293,9 @@ public class ConsumerStatusInfoTests : KafkaTestFixture
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(
                                         configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
+                                            .WithGroupId(DefaultGroupId)
                                             .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());

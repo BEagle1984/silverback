@@ -31,7 +31,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_AnyPartition_MessagesRoutedToRandomPartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -42,8 +42,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))))
-            .Run();
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -61,7 +60,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_SpecificPartition_MessagesRoutedToSpecifiedPartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -74,8 +73,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<IIntegrationEvent>(
                                 producer => producer
-                                    .ProduceTo(DefaultTopicName, 3))))
-            .Run();
+                                    .ProduceTo(DefaultTopicName, 3))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -95,7 +93,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_AnyPartitionWithPartitionKey_MessagesRoutedToPredictablePartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -106,8 +104,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))))
-            .Run();
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -127,7 +124,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_AnyPartitionWithNullPartitionKey_MessagesRoutedToRandomPartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -138,8 +135,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))))
-            .Run();
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -157,7 +153,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_AnyPartitionWithNullOrEmptyPartitionKey_MessagesRoutedToRandomPartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -168,8 +164,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))))
-            .Run();
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -187,7 +182,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task OutboundRouting_SpecificPartitionWithPartitionKey_MessagesRoutedToSpecifiedPartition()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -198,8 +193,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName, 3))))
-            .Run();
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName, 3))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -219,7 +213,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task DynamicRouting_TopicFunction_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -244,8 +238,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                                 default:
                                                     throw new InvalidOperationException();
                                             }
-                                        }))))
-            .Run();
+                                        }))));
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -271,7 +264,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task DynamicRouting_TopicAndPartitionFunctions_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -308,8 +301,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                                 default:
                                                     return Partition.Any;
                                             }
-                                        }))))
-            .Run();
+                                        }))));
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -342,7 +334,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task DynamicRouting_TopicFormat_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -368,8 +360,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                                                 default:
                                                     throw new InvalidOperationException();
                                             }
-                                        }))))
-            .Run();
+                                        }))));
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -395,7 +386,7 @@ public class OutboundRoutingTests : KafkaTestFixture
     [Fact]
     public async Task DynamicRouting_CustomEndpointResolver_MessagesRouted()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSingleton<TestEndpointResolver>()
@@ -407,8 +398,7 @@ public class OutboundRoutingTests : KafkaTestFixture
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
                             .AddOutbound<TestEventOne>(
                                 endpoint => endpoint
-                                    .UseEndpointResolver<TestEndpointResolver>())))
-            .Run();
+                                    .UseEndpointResolver<TestEndpointResolver>())));
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");

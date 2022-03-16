@@ -27,8 +27,11 @@ public class CommandPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber((TestCommand _) => _receivedMessages++)
-                .AddDelegateSubscriber((TestCommandWithResult _) => new[] { 1, 2, 3 }));
+                .AddDelegateSubscriber2<TestCommand>(Handle)
+                .AddDelegateSubscriber2<TestCommandWithResult, int[]>(Handle2));
+
+        void Handle(TestCommand message) => _receivedMessages++;
+        static int[] Handle2(TestCommandWithResult message) => new[] { 1, 2, 3 };
 
         _publisher = serviceProvider.CreateScope().ServiceProvider
             .GetRequiredService<ICommandPublisher>();

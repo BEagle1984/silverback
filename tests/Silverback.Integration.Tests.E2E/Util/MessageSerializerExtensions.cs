@@ -14,11 +14,12 @@ namespace Silverback.Tests.Integration.E2E.Util;
 
 public static class MessageSerializerExtensions
 {
-    public static ValueTask<Stream?> SerializeAsync(
+    public static async ValueTask<Stream> SerializeAsync(
         this IMessageSerializer serializer,
         object message,
         MessageHeaderCollection? headers = null) =>
-        serializer.SerializeAsync(message, headers ?? new MessageHeaderCollection(), NullProducerEndpoint.Instance);
+        await serializer.SerializeAsync(message, headers ?? new MessageHeaderCollection(), NullProducerEndpoint.Instance) ??
+        throw new InvalidOperationException("Serializer returned null");
 
     public static Stream Serialize(
         this IMessageSerializer serializer,

@@ -25,7 +25,10 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((IEnvelope envelope) => messages.Add(envelope)));
+                .AddDelegateSubscriber2<IEnvelope>(Handle));
+
+        void Handle(IEnvelope envelope) => messages.Add(envelope);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
@@ -43,7 +46,10 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((object message) => messages.Add(message)));
+                .AddDelegateSubscriber2<object>(Handle));
+
+        void Handle(object message) => messages.Add(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
@@ -62,7 +68,10 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((ITestRawEnvelope envelope) => messages.Add(envelope)));
+                .AddDelegateSubscriber2<ITestRawEnvelope>(Handle));
+
+        void Handle(ITestRawEnvelope envelope) => messages.Add(envelope);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
@@ -80,8 +89,12 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber((ICommand message) => messages.Add(message))
-                .AddDelegateSubscriber((IEnvelope envelope) => messages.Add(envelope)));
+                .AddDelegateSubscriber2<ICommand>(Handle1)
+                .AddDelegateSubscriber2<IEnvelope>(Handle2));
+
+        void Handle1(ICommand message) => messages.Add(message);
+        void Handle2(IEnvelope envelope) => messages.Add(envelope);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestEnvelope(new TestCommandOne(), false));

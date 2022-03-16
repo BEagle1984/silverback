@@ -38,28 +38,27 @@ public class EncryptionTests : KafkaTestFixture
         TestEventOne message1 = new() { Content = "Message 1" };
         TestEventOne message2 = new() { Content = "Message 2" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .DecryptUsingAes(AesEncryptionKey)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .DecryptUsingAes(AesEncryptionKey)
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message1);
@@ -92,42 +91,41 @@ public class EncryptionTests : KafkaTestFixture
         const string keyIdentifier1 = "my-encryption-key-1";
         const string keyIdentifier2 = "my-encryption-key-2";
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<TestEventOne>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey, keyIdentifier1))
-                            .AddOutbound<TestEventTwo>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey2, keyIdentifier2))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .DecryptUsingAes(
-                                        keyIdentifier =>
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<TestEventOne>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey, keyIdentifier1))
+                        .AddOutbound<TestEventTwo>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey2, keyIdentifier2))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .DecryptUsingAes(
+                                    keyIdentifier =>
+                                    {
+                                        switch (keyIdentifier)
                                         {
-                                            switch (keyIdentifier)
-                                            {
-                                                case keyIdentifier1:
-                                                    return AesEncryptionKey;
-                                                default:
-                                                    return AesEncryptionKey2;
-                                            }
-                                        })
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                            case keyIdentifier1:
+                                                return AesEncryptionKey;
+                                            default:
+                                                return AesEncryptionKey2;
+                                        }
+                                    })
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message1);
@@ -156,36 +154,35 @@ public class EncryptionTests : KafkaTestFixture
         TestEventOne message1 = new() { Content = "Message 1" };
         TestEventTwo message2 = new() { Content = "Message 2" };
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .DecryptUsingAes(
-                                        keyIdentifier =>
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .DecryptUsingAes(
+                                    keyIdentifier =>
+                                    {
+                                        return keyIdentifier switch
                                         {
-                                            return keyIdentifier switch
-                                            {
-                                                "another-encryption-key-id" => AesEncryptionKey2,
-                                                _ => AesEncryptionKey
-                                            };
-                                        })
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                            "another-encryption-key-id" => AesEncryptionKey2,
+                                            _ => AesEncryptionKey
+                                        };
+                                    })
+                                .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message1);
@@ -221,33 +218,32 @@ public class EncryptionTests : KafkaTestFixture
         TestEventOne message2 = new() { Content = "Message 2" };
         Stream rawMessageStream2 = DefaultSerializers.Json.Serialize(message2);
 
-        Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                    .AddKafkaEndpoints(
-                        endpoints => endpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                            .AddOutbound<IIntegrationEvent>(
-                                producer => producer
-                                    .ProduceTo(DefaultTopicName)
-                                    .EnableChunking(10)
-                                    .EncryptUsingAes(AesEncryptionKey))
-                            .AddInbound(
-                                consumer => consumer
-                                    .ConsumeFrom(DefaultTopicName)
-                                    .DecryptUsingAes(AesEncryptionKey)
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithGroupId(DefaultConsumerGroupId)
-                                            .DisableAutoCommit()
-                                            .CommitOffsetEach(1))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
+                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                        .AddOutbound<IIntegrationEvent>(
+                            producer => producer
+                                .ProduceTo(DefaultTopicName)
+                                .EnableChunking(10)
+                                .EncryptUsingAes(AesEncryptionKey))
+                        .AddInbound(
+                            consumer => consumer
+                                .ConsumeFrom(DefaultTopicName)
+                                .DecryptUsingAes(AesEncryptionKey)
+                                .ConfigureClient(
+                                    configuration => configuration
+                                        .WithGroupId(DefaultGroupId)
+                                        .DisableAutoCommit()
+                                        .CommitOffsetEach(1))))
+                .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(message1);
@@ -297,34 +293,33 @@ public class EncryptionTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<BinaryMessage>(
-                                    producer => producer
-                                        .ProduceTo(DefaultTopicName)
-                                        .EncryptUsingAes(AesEncryptionKey))
-                                .AddInbound(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey)
-                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (BinaryMessage binaryMessage) =>
-                                receivedFiles.Add(binaryMessage.Content.ReadAll()))
-                        .AddIntegrationSpy();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<BinaryMessage>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    .EncryptUsingAes(AesEncryptionKey))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .DecryptUsingAes(AesEncryptionKey)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                    .AddIntegrationSpy();
+            });
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
@@ -361,35 +356,34 @@ public class EncryptionTests : KafkaTestFixture
 
         List<byte[]?> receivedFiles = new();
 
-        Host.ConfigureServices(
-                services =>
-                {
-                    services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
-                                .AddOutbound<BinaryMessage>(
-                                    producer => producer
-                                        .ProduceTo(DefaultTopicName)
-                                        .EnableChunking(10)
-                                        .EncryptUsingAes(AesEncryptionKey))
-                                .AddInbound(
-                                    consumer => consumer
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DecryptUsingAes(AesEncryptionKey)
-                                        .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                        .AddDelegateSubscriber(
-                            (BinaryMessage binaryMessage) =>
-                                receivedFiles.Add(binaryMessage.Content.ReadAll()))
-                        .AddIntegrationSpy();
-                })
-            .Run();
+        Host.ConfigureServicesAndRun(
+            services =>
+            {
+                services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e"))
+                            .AddOutbound<BinaryMessage>(
+                                producer => producer
+                                    .ProduceTo(DefaultTopicName)
+                                    .EnableChunking(10)
+                                    .EncryptUsingAes(AesEncryptionKey))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .DecryptUsingAes(AesEncryptionKey)
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddDelegateSubscriber2<BinaryMessage>(HandleMessage)
+                    .AddIntegrationSpy();
+            });
+
+        void HandleMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);

@@ -44,15 +44,15 @@ public class HealthCheckTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic3")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
                     .Services
                     .AddHealthChecks()
                     .AddConsumersCheck())
@@ -63,6 +63,7 @@ public class HealthCheckTests : KafkaTestFixture
     }
 
     [Fact]
+    // TODO: Flaky test
     public async Task ConsumerHealthCheck_FailingToAssignPartitions_UnhealthyReturnedAfterGracePeriod()
     {
         Host.ConfigureServices(
@@ -80,15 +81,15 @@ public class HealthCheckTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic1")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic2")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId)))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId)))
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom("topic3")
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
                     .Services
                     .AddHealthChecks()
                     .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(300)))

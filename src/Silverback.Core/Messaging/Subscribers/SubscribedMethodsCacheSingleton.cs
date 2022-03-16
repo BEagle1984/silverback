@@ -33,12 +33,12 @@ internal sealed class SubscribedMethodsCacheSingleton
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
-        GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.Exclusive);
+        GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.IsExclusive);
 
     public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
-        GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.Exclusive);
+        GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.IsExclusive);
 
     public IReadOnlyCollection<SubscribedMethod> GetMethods(
         object message,

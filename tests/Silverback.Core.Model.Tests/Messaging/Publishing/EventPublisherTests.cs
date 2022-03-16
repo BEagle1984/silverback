@@ -26,7 +26,9 @@ public class EventPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber((TestEvent _) => _receivedMessages++));
+                .AddDelegateSubscriber2<TestEvent>(Handle));
+
+        void Handle(TestEvent message) => _receivedMessages++;
 
         _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
     }

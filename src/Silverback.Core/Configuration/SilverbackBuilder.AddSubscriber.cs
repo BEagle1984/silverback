@@ -689,7 +689,7 @@ public partial class SilverbackBuilder
         Check.NotNull(options, nameof(options));
 
         Services.AddSingleton(subscriberType, implementationInstance);
-        BusOptions.Subscriptions.AddTypeSubscriptionIfNotExists(subscriberType, options);
+        BusOptions.Subscriptions.Add(new TypeSubscription(subscriberType, implementationInstance, options));
 
         return this;
     }

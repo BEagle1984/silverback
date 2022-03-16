@@ -26,9 +26,9 @@ public partial class SilverbackBuilderFixture
             .AddSubscribers(typeof(ISubscriber));
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == true &&
-                            subscription.Options.Exclusive == true &&
+                            subscription.Options.IsExclusive == true &&
                             subscription.Options.Filters.Count == 0);
     }
 
@@ -40,9 +40,9 @@ public partial class SilverbackBuilderFixture
             .AddSubscribers(typeof(ISubscriber), false);
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == false &&
-                            subscription.Options.Exclusive == true &&
+                            subscription.Options.IsExclusive == true &&
                             subscription.Options.Filters.Count == 0);
     }
 
@@ -56,13 +56,13 @@ public partial class SilverbackBuilderFixture
                 new TypeSubscriptionOptions
                 {
                     AutoSubscribeAllPublicMethods = false,
-                    Exclusive = false
+                    IsExclusive = false
                 });
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == false &&
-                            subscription.Options.Exclusive == false &&
+                            subscription.Options.IsExclusive == false &&
                             subscription.Options.Filters.Count == 0);
     }
 
@@ -74,9 +74,9 @@ public partial class SilverbackBuilderFixture
             .AddSubscribers<ISubscriber>();
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == true &&
-                            subscription.Options.Exclusive == true &&
+                            subscription.Options.IsExclusive == true &&
                             subscription.Options.Filters.Count == 0);
     }
 
@@ -88,9 +88,9 @@ public partial class SilverbackBuilderFixture
             .AddSubscribers<ISubscriber>(false);
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == false &&
-                            subscription.Options.Exclusive == true &&
+                            subscription.Options.IsExclusive == true &&
                             subscription.Options.Filters.Count == 0);
     }
 
@@ -103,13 +103,13 @@ public partial class SilverbackBuilderFixture
                 new TypeSubscriptionOptions
                 {
                     AutoSubscribeAllPublicMethods = false,
-                    Exclusive = false
+                    IsExclusive = false
                 });
 
         builder.BusOptions.Subscriptions.OfType<TypeSubscription>().Should().Contain(
-            subscription => subscription.SubscribedType == typeof(ISubscriber) &&
+            subscription => subscription.SubscriberType == typeof(ISubscriber) &&
                             subscription.Options.AutoSubscribeAllPublicMethods == false &&
-                            subscription.Options.Exclusive == false &&
+                            subscription.Options.IsExclusive == false &&
                             subscription.Options.Filters.Count == 0);
     }
 }

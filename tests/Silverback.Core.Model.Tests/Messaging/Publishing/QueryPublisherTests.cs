@@ -25,7 +25,9 @@ public class QueryPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber((TestQuery _) => new[] { 1, 2, 3 }));
+                .AddDelegateSubscriber2<TestQuery, int[]>(Handle));
+
+        static int[] Handle(TestQuery message) => new[] { 1, 2, 3 };
 
         _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IQueryPublisher>();
     }

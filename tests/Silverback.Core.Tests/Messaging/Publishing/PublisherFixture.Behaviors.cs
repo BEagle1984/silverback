@@ -101,7 +101,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddSingletonBehavior(behavior)
-                .AddDelegateSubscriber((TestCommandTwo message) => receivedMessages.Add(message)));
+                .AddDelegateSubscriber2<TestCommandTwo>(Handle));
+
+        void Handle(TestCommandTwo message) => receivedMessages.Add(message);
+
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         publisher.Publish(new TestCommandOne());
@@ -121,10 +124,7 @@ public partial class PublisherFixture
         }
 
         public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
-            next(
-                message is TSourceType
-                    ? _changedMessageFactory(message)
-                    : message);
+            next(message is TSourceType ? _changedMessageFactory(message) : message);
     }
 
     private class TestBehavior : IBehavior

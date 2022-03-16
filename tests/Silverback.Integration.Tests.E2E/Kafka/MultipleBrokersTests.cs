@@ -25,7 +25,7 @@ public class MultipleBrokersTests : KafkaTestFixture
     [Fact]
     public async Task MultipleBrokers_OverlappingTopicNames_CorrectlyProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -49,8 +49,7 @@ public class MultipleBrokersTests : KafkaTestFixture
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
                                     .ConfigureClient(configuration => configuration.WithGroupId("group2"))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
@@ -73,7 +72,7 @@ public class MultipleBrokersTests : KafkaTestFixture
     [Fact]
     public async Task MultipleBrokers_OverlappingTopicAndGroupNames_CorrectlyProducedAndConsumed()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -86,7 +85,7 @@ public class MultipleBrokersTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
                     .AddKafkaEndpoints(
                         endpoints => endpoints
                             .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://e2e-2"))
@@ -94,9 +93,8 @@ public class MultipleBrokersTests : KafkaTestFixture
                             .AddInbound(
                                 consumer => consumer
                                     .ConsumeFrom(DefaultTopicName)
-                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultConsumerGroupId))))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                                    .ConfigureClient(configuration => configuration.WithGroupId(DefaultGroupId))))
+                    .AddIntegrationSpyAndSubscriber());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 

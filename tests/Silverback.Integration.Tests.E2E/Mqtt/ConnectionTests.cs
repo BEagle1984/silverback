@@ -25,7 +25,7 @@ public class ConnectionTests : MqttTestFixture
     [Fact]
     public async Task Connection_DisconnectAndReconnectConsumer_ConnectedAndConsumedAgain()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -36,8 +36,7 @@ public class ConnectionTests : MqttTestFixture
                             .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -62,7 +61,7 @@ public class ConnectionTests : MqttTestFixture
     [Fact]
     public async Task Connection_DisconnectAndReconnectBroker_ConnectedAndConsumedAgain()
     {
-        Host.ConfigureServices(
+        Host.ConfigureServicesAndRun(
                 services => services
                     .AddLogging()
                     .AddSilverback()
@@ -73,8 +72,7 @@ public class ConnectionTests : MqttTestFixture
                             .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
                             .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                             .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
-                    .AddIntegrationSpyAndSubscriber())
-            .Run();
+                    .AddIntegrationSpyAndSubscriber());
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
