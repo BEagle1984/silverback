@@ -9,6 +9,7 @@ uid: releases
 ### Fixes
 
 * Handle race condition in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
+* Limit consumer status history
 
 # Releases
 

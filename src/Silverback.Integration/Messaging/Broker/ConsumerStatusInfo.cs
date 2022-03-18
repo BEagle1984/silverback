@@ -8,7 +8,9 @@ namespace Silverback.Messaging.Broker
 {
     internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
     {
-        private readonly List<IConsumerStatusChange> _history = new();
+        private const int MaxHistorySize = 10;
+
+        private readonly LinkedList<IConsumerStatusChange> _history = new();
 
         public IReadOnlyCollection<IConsumerStatusChange> History => _history;
 
@@ -43,7 +45,11 @@ namespace Silverback.Messaging.Broker
         private void ChangeStatus(ConsumerStatus status)
         {
             Status = status;
-            _history.Add(new ConsumerStatusChange(status));
+
+            if (_history.Count == MaxHistorySize)
+                _history.RemoveFirst();
+
+            _history.AddLast(new ConsumerStatusChange(status));
         }
     }
 }
