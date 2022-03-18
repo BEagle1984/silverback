@@ -8,7 +8,9 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 {
-    private readonly List<IConsumerStatusChange> _history = new();
+    private const int MaxHistorySize = 10;
+
+    private readonly LinkedList<IConsumerStatusChange> _history = new();
 
     public IReadOnlyCollection<IConsumerStatusChange> History => _history;
 
@@ -20,15 +22,15 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     public IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; private set; }
 
-    public void SetDisconnected() => ChangeStatus(ConsumerStatus.Stopped);
+    public void SetStopped() => ChangeStatus(ConsumerStatus.Stopped);
 
-    public void SetConnected(bool allowStepBack = false)
+    public void SetStarted(bool allowStepBack = false)
     {
         if (allowStepBack || Status < ConsumerStatus.Started)
             ChangeStatus(ConsumerStatus.Started);
     }
 
-    public void SetReady() => ChangeStatus(ConsumerStatus.Connected);
+    public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
 
     public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
     {
@@ -43,6 +45,10 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
     private void ChangeStatus(ConsumerStatus status)
     {
         Status = status;
-        _history.Add(new ConsumerStatusChange(status));
+
+        if (_history.Count == MaxHistorySize)
+            _history.RemoveFirst();
+
+        _history.AddLast(new ConsumerStatusChange(status));
     }
 }

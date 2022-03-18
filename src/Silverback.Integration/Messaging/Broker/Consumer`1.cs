@@ -415,7 +415,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <summary>
     ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Connected" />.
     /// </summary>
-    protected void SetReadyStatus() => _statusInfo.SetReady();
+    protected void SetReadyStatus() => _statusInfo.SetConnected();
 
     /// <summary>
     ///     Called when the connection is lost to transitions the consumer back to
@@ -424,7 +424,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected void RevertReadyStatus()
     {
         if (_statusInfo.Status > ConsumerStatus.Started)
-            _statusInfo.SetConnected(true);
+            _statusInfo.SetStarted(true);
     }
 
     /// <summary>
@@ -459,7 +459,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {
-        _statusInfo.SetConnected();
+        _statusInfo.SetStarted();
         return default;
     }
 
@@ -474,7 +474,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
 
-        _statusInfo.SetDisconnected();
+        _statusInfo.SetStopped();
     }
 
     private async ValueTask WaitUntilConsumingStoppedAsync()
