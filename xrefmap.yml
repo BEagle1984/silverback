@@ -3978,19 +3978,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.IntegrationLogEvents.EndpointConfiguratorError
   nameWithType: IntegrationLogEvents.EndpointConfiguratorError
-- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
-  name: ErrorAbortingInboundSequence
-  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence
-  commentId: P:Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
-  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
-  nameWithType: IntegrationLogEvents.ErrorAbortingInboundSequence
-- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence*
-  name: ErrorAbortingInboundSequence
-  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence_
-  commentId: Overload:Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
-  isSpec: "True"
-  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
-  nameWithType: IntegrationLogEvents.ErrorAbortingInboundSequence
 - uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorInitializingActivity
   name: ErrorInitializingActivity
   href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity
@@ -4472,6 +4459,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceStarted
   nameWithType: IntegrationLogEvents.SequenceStarted
+- uid: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
+  name: SequenceTimeoutError
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError
+  commentId: P:Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
+  nameWithType: IntegrationLogEvents.SequenceTimeoutError
+- uid: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError*
+  name: SequenceTimeoutError
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError_
+  commentId: Overload:Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
+  nameWithType: IntegrationLogEvents.SequenceTimeoutError
 - uid: Silverback.Diagnostics.IntegrationLogEvents.SkippingIncompleteSequence
   name: SkippingIncompleteSequence
   href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence
@@ -32828,6 +32828,77 @@ references:
   commentId: N:Silverback.Messaging.Sequences
   fullName: Silverback.Messaging.Sequences
   nameWithType: Silverback.Messaging.Sequences
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult
+  name: AddToSequenceResult
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html
+  commentId: T:Silverback.Messaging.Sequences.AddToSequenceResult
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult
+  nameWithType: AddToSequenceResult
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.#ctor(System.Boolean,System.Int32)
+  name: AddToSequenceResult(Boolean, Int32)
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult__ctor_System_Boolean_System_Int32_
+  commentId: M:Silverback.Messaging.Sequences.AddToSequenceResult.#ctor(System.Boolean,System.Int32)
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.AddToSequenceResult(System.Boolean, System.Int32)
+  nameWithType: AddToSequenceResult.AddToSequenceResult(Boolean, Int32)
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.#ctor*
+  name: AddToSequenceResult
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult__ctor_
+  commentId: Overload:Silverback.Messaging.Sequences.AddToSequenceResult.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.AddToSequenceResult
+  nameWithType: AddToSequenceResult.AddToSequenceResult
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.Failed
+  name: Failed
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_Failed
+  commentId: P:Silverback.Messaging.Sequences.AddToSequenceResult.Failed
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.Failed
+  nameWithType: AddToSequenceResult.Failed
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.Failed*
+  name: Failed
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_Failed_
+  commentId: Overload:Silverback.Messaging.Sequences.AddToSequenceResult.Failed
+  isSpec: "True"
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.Failed
+  nameWithType: AddToSequenceResult.Failed
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess
+  name: IsSuccess
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_IsSuccess
+  commentId: P:Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess
+  nameWithType: AddToSequenceResult.IsSuccess
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess*
+  name: IsSuccess
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_IsSuccess_
+  commentId: Overload:Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess
+  isSpec: "True"
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.IsSuccess
+  nameWithType: AddToSequenceResult.IsSuccess
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount
+  name: PushedStreamsCount
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_PushedStreamsCount
+  commentId: P:Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount
+  nameWithType: AddToSequenceResult.PushedStreamsCount
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount*
+  name: PushedStreamsCount
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_PushedStreamsCount_
+  commentId: Overload:Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount
+  isSpec: "True"
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.PushedStreamsCount
+  nameWithType: AddToSequenceResult.PushedStreamsCount
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.Success(System.Int32)
+  name: Success(Int32)
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_Success_System_Int32_
+  commentId: M:Silverback.Messaging.Sequences.AddToSequenceResult.Success(System.Int32)
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.Success(System.Int32)
+  nameWithType: AddToSequenceResult.Success(Int32)
+- uid: Silverback.Messaging.Sequences.AddToSequenceResult.Success*
+  name: Success
+  href: api/Silverback.Messaging.Sequences.AddToSequenceResult.html#Silverback_Messaging_Sequences_AddToSequenceResult_Success_
+  commentId: Overload:Silverback.Messaging.Sequences.AddToSequenceResult.Success
+  isSpec: "True"
+  fullName: Silverback.Messaging.Sequences.AddToSequenceResult.Success
+  nameWithType: AddToSequenceResult.Success
 - uid: Silverback.Messaging.Sequences.Batch
   name: Silverback.Messaging.Sequences.Batch
   href: api/Silverback.Messaging.Sequences.Batch.html

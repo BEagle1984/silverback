@@ -893,7 +893,7 @@ enumeration returned prematurely.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;int&gt; AddAsync(IRawInboundEnvelope envelope, ISequence sequence, bool throwIfUnhandled = true)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;AddToSequenceResult&gt; AddAsync(IRawInboundEnvelope envelope, ISequence sequence, bool throwIfUnhandled = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -936,9 +936,10 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-number of streams that have been pushed.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains
+a flag indicating whether the operation was successful and the number of streams that have been
+actually pushed.</p>
 </td>
       </tr>
     </tbody>
@@ -948,7 +949,7 @@ number of streams that have been pushed.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync__0_Silverback_Messaging_Sequences_ISequence_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.AddCoreAsync(%600%2CSilverback.Messaging.Sequences.ISequence%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L271">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L272">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AddCoreAsync__0_Silverback_Messaging_Sequences_ISequence_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AddCoreAsync(`0,Silverback.Messaging.Sequences.ISequence,System.Boolean)">AddCoreAsync(TEnvelope, ISequence, Boolean)</h4>
@@ -957,7 +958,7 @@ number of streams that have been pushed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual async Task&lt;int&gt; AddCoreAsync(TEnvelope envelope, ISequence sequence, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual async Task&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1000,9 +1001,10 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-number of streams that have been pushed.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains
+a flag indicating whether the operation was successful and the number of streams that have been
+actually pushed.</p>
 </td>
       </tr>
     </tbody>
@@ -1012,7 +1014,7 @@ number of streams that have been pushed.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.CompleteAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L372">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L376">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CompleteAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.CompleteAsync(System.Threading.CancellationToken)">CompleteAsync(CancellationToken)</h4>
@@ -1144,7 +1146,7 @@ belonging to the sequence.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L402">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L406">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.Dispose(System.Boolean)">Dispose(Boolean)</h4>
@@ -1212,7 +1214,7 @@ finalizer.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage__0_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.IsLastMessage(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L361">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L365">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsLastMessage*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage__0_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.IsLastMessage(`0)">IsLastMessage(TEnvelope)</h4>
@@ -1263,7 +1265,7 @@ property.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceBase%601.OnTimeoutElapsedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L463">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceBase`1.cs/#L467">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.OnTimeoutElapsedAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.OnTimeoutElapsedAsync">OnTimeoutElapsedAsync()</h4>
