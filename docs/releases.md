@@ -11,8 +11,6 @@ uid: releases
 * Handle race condition in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
 * Limit consumer status history
 
-# Releases
-
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 
 ### What's new
