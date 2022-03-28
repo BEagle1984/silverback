@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnClientDisconnectingAsync" /> event handler.
 /// </summary>
-public interface IMqttClientDisconnectingCallback : IBrokerCallback
+public interface IMqttClientDisconnectingCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called when the underlying <see cref="IMqttClient" /> is disconnecting from the broker.

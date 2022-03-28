@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the AddSubscriber methods to the <see cref="SilverbackBuilder" />.
+///     Implements the <c>AddSubscriber</c> methods.
 /// </content>
 public partial class SilverbackBuilder
 {

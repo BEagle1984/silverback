@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Util;
@@ -51,7 +51,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private ICollection<ISequence>? _sequences;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SequenceBase{TEnvelope}" /> class.
@@ -196,7 +196,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         StreamProvider.CreateStream<TMessage>(filters);
 
     /// <inheritdoc cref="ISequence.AddAsync" />
-    public Task<int> AddAsync(
+    public ValueTask<int> AddAsync(
         IRawInboundEnvelope envelope,
         ISequence? sequence,
         bool throwIfUnhandled = true)
@@ -210,7 +210,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     /// <inheritdoc cref="ISequence.AbortAsync" />
-    public Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
+    public ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null)
     {
         if (reason == SequenceAbortReason.None)
             throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
@@ -265,7 +265,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     number of streams that have been pushed.
     /// </returns>
-    protected virtual async Task<int> AddCoreAsync(
+    protected virtual async ValueTask<int> AddCoreAsync(
         TEnvelope envelope,
         ISequence? sequence,
         bool throwIfUnhandled)
@@ -366,7 +366,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected virtual async Task CompleteAsync(CancellationToken cancellationToken = default)
+    protected virtual async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
         if (!IsPending)
             return;
@@ -396,7 +396,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </param>
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         if (disposing)
@@ -436,7 +436,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (!SequencerBehaviorsTask.IsCompleted)
                 _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
 
-            _disposed = true;
+            _isDisposed = true;
 
             _logger.LogLowLevelTrace(
                 "{sequenceType} '{sequenceId}' disposed.",
@@ -455,7 +455,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
+    protected virtual ValueTask OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {
@@ -501,13 +501,13 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogSequenceAbortingError(this, ex);
+                        _logger.LogSequenceAbortError(this, ex);
                     }
                 })
             .FireAndForget();
     }
 
-    private async Task AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
+    private async ValueTask AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
     {
         bool alreadyAborted;
 

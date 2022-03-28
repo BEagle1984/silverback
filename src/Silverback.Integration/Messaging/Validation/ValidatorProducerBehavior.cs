@@ -13,15 +13,15 @@ namespace Silverback.Messaging.Validation;
 /// </summary>
 public class ValidatorProducerBehavior : IProducerBehavior
 {
-    private readonly IOutboundLogger<ValidatorProducerBehavior> _logger;
+    private readonly IProducerLogger<ValidatorProducerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ValidatorProducerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IOutboundLogger{TCategoryName}" />.
+    ///     The <see cref="IProducerLogger{TCategoryName}" />.
     /// </param>
-    public ValidatorProducerBehavior(IOutboundLogger<ValidatorProducerBehavior> logger)
+    public ValidatorProducerBehavior(IProducerLogger<ValidatorProducerBehavior> logger)
     {
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -30,19 +30,20 @@ public class ValidatorProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Validator;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Message != null && context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None)
         {
-            (bool isValid, string? validationErrors) = MessageValidator.CheckMessageIsValid(
-                context.Envelope.Message,
-                context.Envelope.Endpoint.Configuration.MessageValidationMode);
-
-            if (!isValid)
-                _logger.LogInvalidMessageProduced(validationErrors!);
+            if (!MessageValidator.IsValid(
+                    context.Envelope.Message,
+                    context.Envelope.Endpoint.Configuration.MessageValidationMode,
+                    out string? validationErrors))
+            {
+                _logger.LogInvalidMessage(context.Envelope, validationErrors);
+            }
         }
 
         await next(context).ConfigureAwait(false);

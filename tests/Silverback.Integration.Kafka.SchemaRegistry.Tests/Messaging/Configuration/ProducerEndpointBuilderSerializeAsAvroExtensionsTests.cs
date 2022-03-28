@@ -16,7 +16,7 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsTests
     [Fact]
     public void SerializeAsAvro_WithoutType_ExceptionThrown()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
         Action act = () => builder.SerializeAsAvro();
 
@@ -26,19 +26,19 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsTests
     [Fact]
     public void SerializeAsAvro_Default_SerializerSet()
     {
-        TestProducerConfigurationBuilder<TestEventOne> builder = new();
+        TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
-        TestProducerConfiguration endpoint = builder.SerializeAsAvro().Build();
+        TestProducerEndpointConfiguration endpointConfiguration = builder.SerializeAsAvro().Build();
 
-        endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
     public void SerializeAsAvro_Configure_SchemaRegistryAndSerializerConfigSet()
     {
-        TestProducerConfigurationBuilder<TestEventOne> builder = new();
+        TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
-        TestProducerConfiguration endpoint = builder.SerializeAsAvro(
+        TestProducerEndpointConfiguration endpointConfiguration = builder.SerializeAsAvro(
             serializer => serializer
                 .Configure(
                     schemaRegistryConfig =>
@@ -50,8 +50,8 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsTests
                         serializerConfig.BufferBytes = 42;
                     })).Build();
 
-        endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
-        endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should().Be("some-url");
-        endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().AvroSerializerConfig.BufferBytes.Should().Be(42);
+        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpointConfiguration.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should().Be("some-url");
+        endpointConfiguration.Serializer.As<AvroMessageSerializer<TestEventOne>>().AvroSerializerConfig.BufferBytes.Should().Be(42);
     }
 }

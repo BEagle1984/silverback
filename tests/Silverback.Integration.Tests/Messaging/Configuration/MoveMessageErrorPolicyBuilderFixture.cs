@@ -4,9 +4,8 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -17,7 +16,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyTo_ShouldAddIncludedExceptions()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.ApplyTo(typeof(TimeoutException)).ApplyTo(typeof(OutOfMemoryException));
 
@@ -28,7 +27,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyTo_ShouldThrow_WhenTypeIsNull()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act = () => builder.ApplyTo(null!);
 
@@ -38,7 +37,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyTo_ShouldAddIncludedException_WhenSpecifiedViaGenericParameter()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.ApplyTo<TimeoutException>().ApplyTo<OutOfMemoryException>();
 
@@ -49,7 +48,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Exclude_ShouldAddExcludedExceptions()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Exclude(typeof(TimeoutException)).Exclude(typeof(OutOfMemoryException));
 
@@ -60,7 +59,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Exclude_ShouldThrow_WhenTypeIsNull()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act = () => builder.Exclude(null!);
 
@@ -70,7 +69,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Exclude_ShouldAddExcludedException_WhenSpecifiedViaGenericParameter()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Exclude<TimeoutException>().Exclude<OutOfMemoryException>();
 
@@ -81,7 +80,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyWhen_ShouldSetApplyRule()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.ApplyWhen(_ => true);
 
@@ -93,7 +92,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyWhen_ShouldThrow_WhenFunctionIsNull()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act1 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, bool>)null!);
         Action act2 = () => builder.ApplyWhen((Func<IRawInboundEnvelope, Exception, bool>)null!);
@@ -105,7 +104,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void ApplyWhen_ShouldSetApplyRuleWithExceptionParameter()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.ApplyWhen((_, _) => true);
 
@@ -117,7 +116,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Publish_ShouldSetMessageFactory()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Publish(_ => new TestEventOne());
 
@@ -129,7 +128,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Publish_ShouldThrow_WhenFunctionIsNull()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act1 = () => builder.Publish((Func<IRawInboundEnvelope, object?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
@@ -141,7 +140,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Publish_ShouldSetMessageFactoryWithExceptionParameter()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Publish((_, _) => new TestEventOne());
 
@@ -153,7 +152,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void WithMaxRetries_ShouldSetMaxFailedAttempts()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.WithMaxRetries(42);
 
@@ -166,7 +165,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [InlineData(-42)]
     public void WithMaxRetries_ShouldThrow_WhenRetriesIsLowerThanOne(int value)
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act = () => builder.WithMaxRetries(value);
 
@@ -176,7 +175,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Transform_ShouldSetTransformAction()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Transform(
             _ =>
@@ -190,7 +189,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Transform_ShouldThrow_WhenFunctionIsNull()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         Action act1 = () => builder.Transform((Action<IOutboundEnvelope?>)null!);
         Action act2 = () => builder.Publish((Func<IRawInboundEnvelope, Exception, object?>)null!);
@@ -202,7 +201,7 @@ public class MoveMessageErrorPolicyBuilderFixture
     [Fact]
     public void Transform_ShouldSetMessageFactoryWithExceptionParameter()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         builder.Transform(
             (_, _) =>
@@ -214,12 +213,11 @@ public class MoveMessageErrorPolicyBuilderFixture
     }
 
     [Fact]
-    public void Constructor_ShouldSetProducerConfiguration()
+    public void Constructor_ShouldSetEndpointName()
     {
-        MoveMessageErrorPolicyBuilder builder = new(TestProducerConfiguration.GetDefault());
+        MoveMessageErrorPolicyBuilder builder = new("topic1");
 
         MoveMessageErrorPolicy policy = (MoveMessageErrorPolicy)builder.Build();
-        policy.ProducerConfiguration.Should().BeOfType<TestProducerConfiguration>();
-        policy.ProducerConfiguration.Should().BeEquivalentTo(TestProducerConfiguration.GetDefault());
+        policy.EndpointName.Should().Be("topic1");
     }
 }

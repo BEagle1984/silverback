@@ -44,9 +44,8 @@ internal static class StreamExtensions
 
         byte[] buffer = new byte[count];
 
-        await stream.ReadAsync(buffer.AsMemory()).ConfigureAwait(false);
-
-        return buffer;
+        int readCount = await stream.ReadAsync(buffer.AsMemory()).ConfigureAwait(false);
+        return buffer[..readCount];
     }
 
     public static byte[]? Read(this Stream? stream, int count)
@@ -56,8 +55,7 @@ internal static class StreamExtensions
 
         byte[] buffer = new byte[count];
 
-        stream.Read(buffer.AsSpan());
-
-        return buffer;
+        int readCount = stream.Read(buffer.AsSpan());
+        return buffer[..readCount];
     }
 }

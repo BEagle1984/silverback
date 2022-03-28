@@ -58,7 +58,7 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     public void Publish(object message, bool throwIfUnhandled) =>
-        PublishAsync(message, throwIfUnhandled, false).Wait();
+        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).Wait();
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message) =>
@@ -66,7 +66,7 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
-        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, false).Result).ToList();
+        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).Result).ToList();
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
     public Task PublishAsync(object message) =>
@@ -74,7 +74,7 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
     public Task PublishAsync(object message, bool throwIfUnhandled) =>
-        PublishAsync(message, throwIfUnhandled, true);
+        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
     public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
@@ -85,7 +85,7 @@ public class Publisher : IPublisher
         object message,
         bool throwIfUnhandled) =>
         CastResults<TResult>(
-                await PublishAsync(message, throwIfUnhandled, true)
+                await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async)
                     .ConfigureAwait(false))
             .ToList();
 
@@ -106,22 +106,23 @@ public class Publisher : IPublisher
     private Task<IReadOnlyCollection<object?>> PublishAsync(
         object message,
         bool throwIfUnhandled,
-        bool executeAsync)
+        ExecutionFlow executionFlow)
     {
         Check.NotNull(message, nameof(message));
 
         return ExecuteBehaviorsPipelineAsync(
             _behaviorsProvider.CreateStack(),
             message,
-            finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executeAsync));
+            finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executionFlow));
     }
 
     private async Task<IReadOnlyCollection<object?>> PublishCoreAsync(
         object message,
         bool throwIfUnhandled,
-        bool executeAsync)
+        ExecutionFlow executionFlow)
     {
-        IReadOnlyCollection<MethodInvocationResult> resultsCollection = await InvokeSubscribedMethodsAsync(message, executeAsync).ConfigureAwait(false);
+        IReadOnlyCollection<MethodInvocationResult> resultsCollection =
+            await InvokeSubscribedMethodsAsync(message, executionFlow).ConfigureAwait(false);
 
         bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
 
@@ -136,48 +137,32 @@ public class Publisher : IPublisher
         foreach (object? result in results)
         {
             if (result is TResult castResult)
-            {
                 yield return castResult;
-            }
             else
-            {
                 _logger.LogSubscriberResultDiscarded(result?.GetType().FullName, typeof(TResult).FullName!);
-            }
         }
     }
 
     private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
         object message,
-        bool executeAsync) =>
-        (await InvokeExclusiveMethodsAsync(message, executeAsync).ConfigureAwait(false))
-        .Union(await InvokeNonExclusiveMethodsAsync(message, executeAsync).ConfigureAwait(false))
+        ExecutionFlow executionFlow) =>
+        (await InvokeExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
+        .Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
         .ToList();
 
     private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
-        bool executeAsync) =>
+        ExecutionFlow executionFlow) =>
         (await _subscribedMethodsCache.GetExclusiveMethods(message)
-            .SelectAsync(
-                method =>
-                    SubscribedMethodInvoker.InvokeAsync(
-                        method,
-                        message,
-                        _serviceProvider,
-                        executeAsync).AsTask())
+            .SelectAsync(method => SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow))
             .ConfigureAwait(false))
         .ToList();
 
     private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
         object message,
-        bool executeAsync) =>
+        ExecutionFlow executionFlow) =>
         (await _subscribedMethodsCache.GetNonExclusiveMethods(message)
-            .ParallelSelectAsync(
-                method =>
-                    SubscribedMethodInvoker.InvokeAsync(
-                        method,
-                        message,
-                        _serviceProvider,
-                        executeAsync).AsTask())
+            .ParallelSelectAsync(method => SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow))
             .ConfigureAwait(false))
         .ToList();
 }

@@ -17,7 +17,7 @@ public class HeadersReaderConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
+    public async ValueTask HandleAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next)
     {

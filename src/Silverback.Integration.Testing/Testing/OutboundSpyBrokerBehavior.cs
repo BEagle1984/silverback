@@ -31,7 +31,7 @@ public class OutboundSpyBrokerBehavior : IProducerBehavior
     public int SortIndex => int.MinValue;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));

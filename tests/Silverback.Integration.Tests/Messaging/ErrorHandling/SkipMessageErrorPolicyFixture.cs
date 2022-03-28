@@ -9,10 +9,10 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -30,7 +30,7 @@ public class SkipMessageErrorPolicyFixture
         services
             .AddFakeLogger()
             .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+            .WithConnectionToMessageBroker();
 
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -43,8 +43,9 @@ public class SkipMessageErrorPolicyFixture
             "hey oh!",
             new MemoryStream(),
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         bool canHandle = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -61,8 +62,9 @@ public class SkipMessageErrorPolicyFixture
             "hey oh!",
             new MemoryStream(),
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         bool result = await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -79,8 +81,9 @@ public class SkipMessageErrorPolicyFixture
             "hey oh!",
             new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
             null,
-            new TestOffset(),
-            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
+            new TestConsumerEndpointConfiguration("source-endpoint").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
 

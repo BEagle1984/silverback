@@ -37,8 +37,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -89,8 +89,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IEnumerable<IEvent> enumerable)
         {
@@ -141,8 +141,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IAsyncEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IAsyncEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IAsyncEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>>(Handle2));
 
         async Task Handle1(IAsyncEnumerable<IEvent> enumerable)
         {
@@ -191,8 +191,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IReadOnlyCollection<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<List<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IReadOnlyCollection<IEvent>>(Handle1)
+                .AddDelegateSubscriber<List<TestEventOne>>(Handle2));
 
         void Handle1(IReadOnlyCollection<IEvent> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
         void Handle2(List<TestEventOne> messages) => Interlocked.Increment(ref receivedEnumeratedStreams);
@@ -220,8 +220,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -258,9 +258,9 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestCommandOne>>(Handle3));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestCommandOne>>(Handle3));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -317,8 +317,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -365,8 +365,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -408,8 +408,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -458,8 +458,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEnvelope>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEnvelope>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<IEnvelope> enumerable)
         {
@@ -506,8 +506,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
         {
@@ -556,8 +556,8 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventOne>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<TestEventTwo>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventTwo>>(Handle2));
 
         void Handle1(IMessageStreamEnumerable<TestEventOne> enumerable)
         {
@@ -613,7 +613,7 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle));
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle));
 
         void Handle(IMessageStreamEnumerable<IEvent> enumerable)
         {
@@ -648,7 +648,7 @@ public class StreamPublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IMessageStreamEnumerable<IEvent>>(Handle)
+                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle)
                 .AddSingletonBehavior(testBehavior));
 
         void Handle(IMessageStreamEnumerable<IEvent> enumerable)

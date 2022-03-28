@@ -42,6 +42,6 @@ public class SingleMessageReturnValueHandler : IReturnValueHandler
         _publisher.Publish<object>(returnValue);
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public async Task HandleAsync(object returnValue) =>
+    public async ValueTask HandleAsync(object returnValue) =>
         await _publisher.PublishAsync<object>(returnValue).ConfigureAwait(false);
 }

@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Sequences.Batch;
 
 namespace Silverback.Messaging.Sequences;
@@ -26,9 +27,9 @@ public sealed record SequenceSettings : IValidatableSettings
     public void Validate()
     {
         if (Timeout <= TimeSpan.Zero)
-            throw new EndpointConfigurationException("The timeout must be greater than 0.");
+            throw new BrokerConfigurationException("The timeout must be greater than 0.");
 
         if (Timeout.TotalMilliseconds > int.MaxValue)
-            throw new EndpointConfigurationException("The timeout in milliseconds must be lower or equal to Int32.MaxValue.");
+            throw new BrokerConfigurationException("The timeout in milliseconds must be lower or equal to Int32.MaxValue.");
     }
 }

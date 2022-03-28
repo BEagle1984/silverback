@@ -4,8 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Tests.Types;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration;
@@ -135,35 +134,33 @@ public class ErrorPolicyChainBuilderFixture
     }
 
     [Fact]
-    public void ThenMove_ShouldAddMoveMessageErrorPolicy()
+    public void ThenMoveTo_ShouldAddMoveMessageErrorPolicy()
     {
         ErrorPolicyBuilder builder = new();
-        TestProducerConfiguration producerConfiguration = TestProducerConfiguration.GetDefault();
 
-        builder.Skip().ThenMove(producerConfiguration);
+        builder.Skip().ThenMoveTo("topic1");
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<ErrorPolicyChain>();
         policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
         policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
         policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(producerConfiguration);
+        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
     }
 
     [Fact]
-    public void ThenMove_ShouldAddMoveMessageErrorPolicyWithOptions()
+    public void ThenMoveTo_ShouldAddMoveMessageErrorPolicyWithOptions()
     {
         ErrorPolicyBuilder builder = new();
-        TestProducerConfiguration producerConfiguration = TestProducerConfiguration.GetDefault();
 
-        builder.Skip().ThenMove(producerConfiguration, policy => policy.WithMaxRetries(42));
+        builder.Skip().ThenMoveTo("topic1", policy => policy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<ErrorPolicyChain>();
         policy.As<ErrorPolicyChain>().Policies.Should().HaveCount(2);
         policy.As<ErrorPolicyChain>().Policies[0].Should().BeOfType<SkipMessageErrorPolicy>();
         policy.As<ErrorPolicyChain>().Policies[1].Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(producerConfiguration);
+        policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
         policy.As<ErrorPolicyChain>().Policies[1].As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
     }
 }

@@ -26,7 +26,15 @@ internal static class EnumerableForEachExtensions
         }
     }
 
-    public static async Task ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
+    public static async ValueTask ForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
+    {
+        foreach (T element in source)
+        {
+            await action(element).ConfigureAwait(false);
+        }
+    }
+
+    public static async ValueTask ForEachAsync<T>(this IEnumerable<T> source, Func<T, ValueTask> action)
     {
         foreach (T element in source)
         {
@@ -43,16 +51,17 @@ internal static class EnumerableForEachExtensions
             new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
             action);
 
-    // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-    public static Task ParallelForEachAsync<T>(
+    public static async ValueTask ParallelForEachAsync<T>(
         this IEnumerable<T> source,
-        Func<T, Task> action,
-        int? maxDegreeOfParallelism = null) =>
-        source.ParallelSelectAsync(
-            async item =>
-            {
-                await action(item).ConfigureAwait(false);
-                return 0;
-            },
-            maxDegreeOfParallelism);
+        Func<T, ValueTask> action,
+        int? maxDegreeOfParallelism = null)
+    {
+        async ValueTask<int> InvokeAction(T item)
+        {
+            await action(item).ConfigureAwait(false);
+            return 0;
+        }
+
+        await source.ParallelSelectAsync(InvokeAction, maxDegreeOfParallelism).ConfigureAwait(false);
+    }
 }

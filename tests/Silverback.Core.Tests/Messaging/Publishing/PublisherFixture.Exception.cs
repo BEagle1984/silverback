@@ -24,8 +24,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static void Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -47,8 +47,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static void Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -70,8 +70,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static Task Handle2(TestEventOne message) => throw new InvalidOperationException("test");
@@ -95,8 +95,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => messages.Add(message);
         static Task Handle2(TestEventOne message) => throw new InvalidOperationException("test");

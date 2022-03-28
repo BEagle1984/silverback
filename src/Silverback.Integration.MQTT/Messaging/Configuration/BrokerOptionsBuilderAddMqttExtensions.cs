@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
+using MQTTnet.Diagnostics;
+using Silverback.Messaging.Broker.Mqtt;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -13,7 +15,7 @@ namespace Silverback.Messaging.Configuration;
 public static class BrokerOptionsBuilderAddMqttExtensions
 {
     /// <summary>
-    ///     Registers Apache Mqtt as message broker.
+    ///     Registers Mqtt as message broker.
     /// </summary>
     /// <param name="brokerOptionsBuilder">
     ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
@@ -21,6 +23,21 @@ public static class BrokerOptionsBuilderAddMqttExtensions
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static BrokerOptionsBuilder AddMqtt(this BrokerOptionsBuilder brokerOptionsBuilder) =>
-        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder)).AddBroker<MqttBroker>();
+    public static BrokerOptionsBuilder AddMqtt(this BrokerOptionsBuilder brokerOptionsBuilder)
+    {
+        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+
+        if (brokerOptionsBuilder.SilverbackBuilder.Services.ContainsAny<MqttClientsConfigurationActions>())
+            return brokerOptionsBuilder;
+
+        brokerOptionsBuilder.SilverbackBuilder
+            .Services
+            .AddScoped<MqttClientsConfigurationActions>()
+            .AddTransient<IMqttNetClientFactory, MqttNetClientFactory>()
+            .AddTransient<IBrokerClientsInitializer, MqttClientsInitializer>()
+            .AddTransient<MqttClientsInitializer>()
+            .AddSingleton<IMqttNetLogger, DefaultMqttNetLogger>();
+
+        return brokerOptionsBuilder;
+    }
 }

@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnPartitionsAssigned" /> event handler.
 /// </summary>
-public interface IKafkaPartitionsAssignedCallback : IBrokerCallback
+public interface IKafkaPartitionsAssignedCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called when a new consumer group partition assignment has been received by the consumer.
@@ -34,7 +34,5 @@ public interface IKafkaPartitionsAssignedCallback : IBrokerCallback
     ///         considered <c>Unset</c>.
     ///     </para>
     /// </returns>
-    IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(
-        IReadOnlyCollection<TopicPartition> topicPartitions,
-        KafkaConsumer consumer);
+    IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(IReadOnlyCollection<TopicPartition> topicPartitions, KafkaConsumer consumer);
 }

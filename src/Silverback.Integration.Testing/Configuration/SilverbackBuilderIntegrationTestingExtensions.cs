@@ -26,9 +26,7 @@ public static class SilverbackBuilderIntegrationTestingExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddIntegrationSpy(
-        this SilverbackBuilder silverbackBuilder,
-        bool attachSubscriber = false)
+    public static SilverbackBuilder AddIntegrationSpy(this SilverbackBuilder silverbackBuilder, bool attachSubscriber = false)
     {
         Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 

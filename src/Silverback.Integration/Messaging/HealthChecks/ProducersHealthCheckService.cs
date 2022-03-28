@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.HealthChecks;
@@ -15,55 +14,41 @@ namespace Silverback.Messaging.HealthChecks;
 /// <inheritdoc cref="IProducersHealthCheckService" />
 public class ProducersHealthCheckService : IProducersHealthCheckService
 {
-    private readonly IOutboundRoutingConfiguration _outboundRoutingConfiguration;
-
-    private readonly IBrokerCollection _brokerCollection;
+    private readonly IProducerCollection _producers;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducersHealthCheckService" /> class.
     /// </summary>
-    /// <param name="outboundRoutingConfiguration">
-    ///     The <see cref="IOutboundRoutingConfiguration" /> to be used to retrieve the list of outbound endpoints.
+    /// <param name="producers">
+    ///     The collection containing all configured producers.
     /// </param>
-    /// <param name="brokerCollection">
-    ///     The collection containing the available brokers.
-    /// </param>
-    public ProducersHealthCheckService(IOutboundRoutingConfiguration outboundRoutingConfiguration, IBrokerCollection brokerCollection)
+    public ProducersHealthCheckService(IProducerCollection producers)
     {
-        _outboundRoutingConfiguration = Check.NotNull(outboundRoutingConfiguration, nameof(outboundRoutingConfiguration));
-        _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
+        _producers = Check.NotNull(producers, nameof(producers));
     }
 
     /// <inheritdoc cref="IProducersHealthCheckService.SendPingMessagesAsync" />
     [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
     public async Task<IReadOnlyCollection<EndpointCheckResult>> SendPingMessagesAsync()
     {
-        if (!_brokerCollection.All(broker => broker.IsConnected))
+        if (!_producers.All(producer => producer.Client.Status is ClientStatus.Initialized or ClientStatus.Initializing))
             return Array.Empty<EndpointCheckResult>();
 
-        IEnumerable<Task<EndpointCheckResult>> tasks =
-            _outboundRoutingConfiguration.Routes
-                .Select(route => route.ProducerConfiguration)
-                .Select(PingEndpointAsync);
-
+        IEnumerable<Task<EndpointCheckResult>> tasks = _producers.Select(PingEndpointAsync);
         return await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     [SuppressMessage("", "CA1031", Justification = "Exception reported in the result.")]
-    private async Task<EndpointCheckResult> PingEndpointAsync(ProducerConfiguration producerConfiguration)
+    private static async Task<EndpointCheckResult> PingEndpointAsync(IProducer producer)
     {
         try
         {
-            IProducer producer = await _brokerCollection.GetProducerAsync(producerConfiguration).ConfigureAwait(false);
             await producer.ProduceAsync(PingMessage.New()).ConfigureAwait(false);
-            return new EndpointCheckResult(producerConfiguration.DisplayName, true);
+            return new EndpointCheckResult(producer.EndpointConfiguration.DisplayName, true);
         }
         catch (Exception ex)
         {
-            return new EndpointCheckResult(
-                producerConfiguration.DisplayName,
-                false,
-                $"[{ex.GetType().FullName}] {ex.Message}");
+            return new EndpointCheckResult(producer.EndpointConfiguration.DisplayName, false, $"[{ex.GetType().FullName}] {ex.Message}");
         }
     }
 }

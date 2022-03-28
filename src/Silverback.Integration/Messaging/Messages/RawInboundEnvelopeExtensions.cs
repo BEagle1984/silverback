@@ -8,5 +8,5 @@ namespace Silverback.Messaging.Messages;
 internal static class RawInboundEnvelopeExtensions
 {
     public static RawInboundEnvelope CloneReplacingStream(this IRawInboundEnvelope envelope, Stream? rawMessage) =>
-        new(rawMessage, envelope.Headers, envelope.Endpoint, envelope.BrokerMessageIdentifier);
+        new(rawMessage, envelope.Headers, envelope.Endpoint, envelope.Consumer, envelope.BrokerMessageIdentifier);
 }

@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnConsumerStatistics" /> event handler.
 /// </summary>
-public interface IKafkaConsumerStatisticsCallback : IBrokerCallback
+public interface IKafkaConsumerStatisticsCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called on statistics events.

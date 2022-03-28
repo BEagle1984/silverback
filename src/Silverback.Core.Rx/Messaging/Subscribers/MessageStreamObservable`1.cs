@@ -23,7 +23,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 
     private Exception? _exception;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     [SuppressMessage("", "CA1031", Justification = "Exception rethrown by the Subscribe method")]
     public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
@@ -35,7 +35,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
                     {
                         await _subscribeSemaphoreSlim.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
 
-                        if (_disposed)
+                        if (_isDisposed)
                             return;
 
                         await foreach (TMessage message in messageStreamEnumerable)
@@ -61,7 +61,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 
     public void Dispose()
     {
-        _disposed = true;
+        _isDisposed = true;
         _completeSemaphoreSlim.Dispose();
         _subscribeSemaphoreSlim.Dispose();
         _subscription?.Dispose();

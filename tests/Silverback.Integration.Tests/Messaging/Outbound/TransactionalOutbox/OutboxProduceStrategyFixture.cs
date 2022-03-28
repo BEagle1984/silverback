@@ -4,8 +4,8 @@
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Lock;
-using Silverback.Messaging.Outbound;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox;

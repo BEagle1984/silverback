@@ -6,7 +6,7 @@ using FluentAssertions;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration;

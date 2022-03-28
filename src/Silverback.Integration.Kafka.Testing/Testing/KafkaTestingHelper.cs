@@ -9,20 +9,18 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 
 namespace Silverback.Testing;
 
 /// <inheritdoc cref="IKafkaTestingHelper" />
-public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelper
+public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
 {
     private readonly IInMemoryTopicCollection? _topics;
 
     private readonly IMockedConsumerGroupsCollection? _groups;
 
-    private readonly KafkaBroker _kafkaBroker;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaTestingHelper" /> class.
@@ -33,14 +31,12 @@ public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelpe
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
-    public KafkaTestingHelper(
-        IServiceProvider serviceProvider,
-        ILogger<KafkaTestingHelper> logger)
+    public KafkaTestingHelper(IServiceProvider serviceProvider, ILogger<KafkaTestingHelper> logger)
         : base(serviceProvider, logger)
     {
         _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
         _groups = serviceProvider.GetService<IMockedConsumerGroupsCollection>();
-        _kafkaBroker = serviceProvider.GetRequiredService<KafkaBroker>();
+        _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
     }
 
     /// <inheritdoc cref="IKafkaTestingHelper.GetConsumerGroup(string)" />
@@ -81,11 +77,8 @@ public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelpe
             case > 1:
                 throw new InvalidOperationException($"More than one topic '{name}' found. Try specifying the bootstrap servers.");
             case 0 when bootstrapServers == null:
-                string?[] distinctBootstrapServers =
-                    _kafkaBroker.Producers.Select(producer => ((KafkaProducerConfiguration)producer.Configuration).Client.BootstrapServers)
-                        .Union(_kafkaBroker.Consumers.Select(consumer => ((KafkaConsumerConfiguration)consumer.Configuration).Client.BootstrapServers))
-                        .Distinct(StringComparer.OrdinalIgnoreCase)
-                        .ToArray();
+                string[] distinctBootstrapServers = _topics.Select(topic => topic.BootstrapServers).Distinct().ToArray();
+
                 if (distinctBootstrapServers.Length == 1)
                     return GetTopic(name, distinctBootstrapServers[0]);
 
@@ -97,9 +90,9 @@ public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelpe
         }
     }
 
-    /// <inheritdoc cref="TestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
+    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
     protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
         _groups == null
             ? Task.CompletedTask
-            : Task.WhenAll(_groups.Select(group => @group.WaitUntilAllMessagesAreConsumedAsync(cancellationToken)));
+            : Task.WhenAll(_groups.Select(group => group.WaitUntilAllMessagesAreConsumedAsync(cancellationToken)));
 }

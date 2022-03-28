@@ -155,8 +155,8 @@ public class RecurringDistributedBackgroundServiceFixture
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
             {
-               executions++;
-               return Task.CompletedTask;
+                executions++;
+                return Task.CompletedTask;
             },
             lockFactory.GetDistributedLock(null));
         await service.StartAsync(CancellationToken.None);

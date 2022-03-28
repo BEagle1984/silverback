@@ -5,143 +5,129 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Client.Publishing;
+using MQTTnet.Client.Receiving;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 
-/// <summary>
-///     Wraps the <see cref="IMqttClient" /> adapting it for usage from the <see cref="MqttProducer" /> and
-///     <see cref="MqttConsumer" />. It also handles the connection with the MQTT broker.
-/// </summary>
-internal sealed class MqttClientWrapper : IDisposable
+internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 {
     private const int ConnectionMonitorMillisecondsInterval = 500;
 
-    private readonly IBrokerCallbacksInvoker _brokerCallbacksInvoker;
+    private readonly IMqttClient _mqttClient;
+
+    private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
 
     private readonly ISilverbackLogger _logger;
 
-    private readonly object _connectionLock = new();
+    private readonly MqttTopicFilter[] _subscribedTopicsFilters;
 
-    private readonly List<object> _connectedObjects = new();
+    private Channel<QueuedMessage> _publishQueueChannel = Channel.CreateUnbounded<QueuedMessage>();
 
     private CancellationTokenSource? _connectCancellationTokenSource;
 
-    private MqttConsumer? _consumer;
+    private CancellationTokenSource? _publishCancellationTokenSource;
 
-    private bool _isConnected;
+    private bool _mqttClientWasConnected;
 
     private bool _pendingReconnect;
 
     public MqttClientWrapper(
+        string name,
         IMqttClient mqttClient,
-        MqttClientConfiguration clientConfiguration,
-        IBrokerCallbacksInvoker brokerCallbacksInvoker,
+        MqttClientConfiguration configuration,
+        IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
         ISilverbackLogger logger)
+        : base(name, logger)
     {
-        ClientConfiguration = clientConfiguration;
-        MqttClient = mqttClient;
-        _brokerCallbacksInvoker = brokerCallbacksInvoker;
-        _logger = logger;
+        Configuration = Check.NotNull(configuration, nameof(configuration));
+        _mqttClient = Check.NotNull(mqttClient, nameof(mqttClient));
+        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
+        _logger = Check.NotNull(logger, nameof(logger));
+
+        _subscribedTopicsFilters = Configuration.ConsumerEndpoints.SelectMany(
+                endpoint => endpoint.Topics.Select(
+                    topic =>
+                        new MqttTopicFilterBuilder()
+                            .WithTopic(topic)
+                            .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
+                            .Build()))
+            .ToArray();
     }
 
-    public MqttClientConfiguration ClientConfiguration { get; }
+    public IReadOnlyCollection<MqttTopicFilter> SubscribedTopicsFilters => _subscribedTopicsFilters;
 
-    public IMqttClient MqttClient { get; }
+    public MqttClientConfiguration Configuration { get; }
 
-    public MqttConsumer? Consumer
+    public AsyncEvent<BrokerClient> Connected { get; } = new();
+
+    public bool IsConnected => _mqttClient.IsConnected;
+
+    public IMqttApplicationMessageReceivedHandler ApplicationMessageReceivedHandler
     {
-        get => _consumer;
-
-        set
-        {
-            if (_consumer != null)
-                throw new InvalidOperationException("A consumer is already bound with this client.");
-
-            _consumer = value;
-        }
+        get => _mqttClient.ApplicationMessageReceivedHandler;
+        set => _mqttClient.ApplicationMessageReceivedHandler = value;
     }
 
-    public Task ConnectAsync(object sender)
-    {
-        Check.NotNull(sender, nameof(sender));
+    public ValueTask ProduceAsync(
+        byte[]? content,
+        IReadOnlyCollection<MessageHeader>? headers,
+        MqttProducerEndpoint endpoint,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError) =>
+        _publishQueueChannel.Writer.WriteAsync(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
 
-        lock (_connectionLock)
-        {
-            if (!_connectedObjects.Contains(sender))
-                _connectedObjects.Add(sender);
-
-            if (_connectedObjects.Count > 1 || MqttClient.IsConnected)
-            {
-                // Ensure OnConnectionEstablishedAsync is called when reconnecting the consumer
-                if (MqttClient.IsConnected && sender is MqttConsumer mqttConsumer)
-                    return mqttConsumer.OnConnectionEstablishedAsync();
-
-                return Task.CompletedTask;
-            }
-
-            ConnectAndMonitorConnection();
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task SubscribeAsync(IReadOnlyCollection<MqttTopicFilter> topicFilters) =>
-        MqttClient.SubscribeAsync(topicFilters.AsArray());
-
-    public Task UnsubscribeAsync(IReadOnlyCollection<string> topicFilters) =>
-        _isConnected ? MqttClient.UnsubscribeAsync(topicFilters.AsArray()) : Task.CompletedTask;
-
-    public async Task DisconnectAsync(object sender)
-    {
-        Check.NotNull(sender, nameof(sender));
-
-        lock (_connectionLock)
-        {
-            if (_connectedObjects.Contains(sender))
-                _connectedObjects.Remove(sender);
-
-            _connectCancellationTokenSource?.Cancel();
-            _connectCancellationTokenSource = null;
-
-            if (_connectedObjects.Count > 0 || !MqttClient.IsConnected)
-                return;
-        }
-
-        await _brokerCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(handler => handler.OnClientDisconnectingAsync(ClientConfiguration))
-            .ConfigureAwait(false);
-
-        if (MqttClient.IsConnected)
-            await MqttClient.DisconnectAsync().ConfigureAwait(false);
-    }
-
-    public void Dispose() => MqttClient.Dispose();
-
-    public Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
-    {
-        if (_consumer == null)
-            throw new InvalidOperationException("No consumer was bound.");
-
-        // Clear the current activity to ensure we don't propagate the previous traceId
-        Activity.Current = null;
-        return _consumer.HandleMessageAsync(consumedMessage);
-    }
-
-    private void ConnectAndMonitorConnection()
+    protected override ValueTask ConnectCoreAsync()
     {
         _connectCancellationTokenSource ??= new CancellationTokenSource();
+        _publishCancellationTokenSource ??= new CancellationTokenSource();
 
-        Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token)).FireAndForget();
+        if (_publishQueueChannel.Reader.Completion.IsCompleted)
+            _publishQueueChannel = Channel.CreateUnbounded<QueuedMessage>();
+
+        Task.Run(() => ConnectAndKeepConnectionAliveAsync(_connectCancellationTokenSource.Token)).FireAndForget();
+        Task.Run(() => ProcessPublishQueueAsync(_publishCancellationTokenSource.Token)).FireAndForget();
+
+        return default;
     }
 
-    private async Task MonitorConnectionAsync(CancellationToken cancellationToken)
+    protected override async ValueTask DisconnectCoreAsync()
+    {
+        await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(
+            callback => callback
+                .OnClientDisconnectingAsync(Configuration)).ConfigureAwait(false);
+
+        _connectCancellationTokenSource?.Cancel();
+        _publishCancellationTokenSource?.Cancel();
+
+        WaitFlushingCompletes();
+
+        _connectCancellationTokenSource?.Dispose(); // TODO: Check if it doesn't cause exceptions
+        _connectCancellationTokenSource = null;
+
+        _publishCancellationTokenSource?.Dispose();
+        _publishCancellationTokenSource = null;
+
+        if (_mqttClient.IsConnected)
+        {
+            await _mqttClient.DisconnectAsync().ConfigureAwait(false);
+        }
+
+        _mqttClientWasConnected = false;
+    }
+
+    private async Task ConnectAndKeepConnectionAliveAsync(CancellationToken cancellationToken)
     {
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
@@ -150,31 +136,27 @@ internal sealed class MqttClientWrapper : IDisposable
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (!MqttClient.IsConnected)
+            if (!_mqttClient.IsConnected)
                 isFirstTry = await TryConnectAsync(isFirstTry, cancellationToken).ConfigureAwait(false);
 
-            await Task.Delay(ConnectionMonitorMillisecondsInterval, cancellationToken)
-                .ConfigureAwait(false);
+            await Task.Delay(ConnectionMonitorMillisecondsInterval, cancellationToken).ConfigureAwait(false);
         }
     }
 
     private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
     {
-        if (_isConnected)
+        if (_mqttClientWasConnected)
         {
             _pendingReconnect = true;
-            _isConnected = false;
+            _mqttClientWasConnected = false;
 
             _logger.LogConnectionLost(this);
 
-            if (Consumer != null)
-                await Consumer.OnConnectionLostAsync().ConfigureAwait(false);
+            await Disconnected.InvokeAsync(this).ConfigureAwait(false);
         }
 
         if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
             return false;
-
-        _isConnected = true;
 
         if (_pendingReconnect)
         {
@@ -182,11 +164,8 @@ internal sealed class MqttClientWrapper : IDisposable
             _logger.LogReconnected(this);
         }
 
-        if (Consumer != null)
-            await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);
-
-        await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(handler => handler.OnClientConnectedAsync(ClientConfiguration))
-            .ConfigureAwait(false);
+        await Connected.InvokeAsync(this).ConfigureAwait(false);
+        await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
 
         return true;
     }
@@ -196,9 +175,11 @@ internal sealed class MqttClientWrapper : IDisposable
     {
         try
         {
-            await MqttClient
-                .ConnectAsync(ClientConfiguration.GetMqttClientOptions(), cancellationToken)
+            await _mqttClient
+                .ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken)
                 .ConfigureAwait(false);
+
+            await _mqttClient.SubscribeAsync(_subscribedTopicsFilters).ConfigureAwait(false);
 
             return true;
         }
@@ -212,4 +193,82 @@ internal sealed class MqttClientWrapper : IDisposable
             return false;
         }
     }
+
+    [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+    private async Task ProcessPublishQueueAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                QueuedMessage queuedMessage = await _publishQueueChannel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+
+                try
+                {
+                    await PublishToTopicAsync(queuedMessage, cancellationToken).ConfigureAwait(false);
+
+                    queuedMessage.OnSuccess.Invoke(null);
+                }
+                catch (Exception ex)
+                {
+                    ProduceException produceException =
+                        new("Error occurred producing the message. See inner exception for details.", ex);
+
+                    queuedMessage.OnError.Invoke(produceException);
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogProducerQueueProcessingCanceled(this);
+        }
+    }
+
+    private async Task PublishToTopicAsync(QueuedMessage queuedMessage, CancellationToken cancellationToken)
+    {
+        MqttApplicationMessage mqttApplicationMessage = new()
+        {
+            Topic = queuedMessage.Endpoint.Topic,
+            Payload = queuedMessage.Content,
+            QualityOfServiceLevel = queuedMessage.Endpoint.Configuration.QualityOfServiceLevel,
+            Retain = queuedMessage.Endpoint.Configuration.Retain,
+            MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval
+        };
+
+        if (queuedMessage.Headers != null && Configuration.AreHeadersSupported)
+            mqttApplicationMessage.UserProperties = queuedMessage.Headers.ToUserProperties();
+
+        while (!_mqttClient.IsConnected)
+        {
+            await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+        }
+
+        MqttClientPublishResult? result = await _mqttClient.PublishAsync(
+                mqttApplicationMessage,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.ReasonCode != MqttClientPublishReasonCode.Success)
+        {
+            throw new MqttProduceException(
+                "Error occurred producing the message to the MQTT broker. See the Result property for details.",
+                result);
+        }
+    }
+
+    private void WaitFlushingCompletes()
+    {
+        if (_publishQueueChannel.Reader.Completion.IsCompleted)
+            return;
+
+        _publishQueueChannel.Writer.Complete();
+        _publishQueueChannel.Reader.Completion.Wait();
+    }
+
+    private sealed record QueuedMessage(
+        byte[]? Content,
+        IReadOnlyCollection<MessageHeader>? Headers,
+        MqttProducerEndpoint Endpoint,
+        Action<IBrokerMessageIdentifier?> OnSuccess,
+        Action<Exception> OnError);
 }

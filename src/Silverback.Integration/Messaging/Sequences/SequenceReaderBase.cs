@@ -34,11 +34,11 @@ public abstract class SequenceReaderBase : ISequenceReader
     public bool HandlesRawMessages { get; }
 
     /// <inheritdoc cref="ISequenceReader.CanHandleAsync" />
-    public abstract Task<bool> CanHandleAsync(ConsumerPipelineContext context);
+    public abstract ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context);
 
     /// <inheritdoc cref="ISequenceReader.GetSequenceAsync" />
     [SuppressMessage("", "CA2000", Justification = "Sequence is being returned")]
-    public async Task<ISequence> GetSequenceAsync(ConsumerPipelineContext context)
+    public async ValueTask<ISequence> GetSequenceAsync(ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
@@ -64,14 +64,14 @@ public abstract class SequenceReaderBase : ISequenceReader
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
     ///     the recognized sequence identifier, or <c>null</c>.
     /// </returns>
-    protected virtual Task<string> GetSequenceIdAsync(ConsumerPipelineContext context)
+    protected virtual ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
         string messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ??
                            "***default***";
 
-        return Task.FromResult(messageId);
+        return ValueTaskFactory.FromResult(messageId);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
     ///     <c>true</c> if a new sequence is starting; otherwise <c>false</c>.
     /// </returns>
-    protected abstract Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context);
+    protected abstract ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context);
 
     /// <summary>
     ///     Creates the new sequence and adds it to the store.
@@ -101,7 +101,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     /// <returns>
     ///     The new sequence.
     /// </returns>
-    protected virtual async Task<ISequence> CreateNewSequenceAsync(
+    protected virtual async ValueTask<ISequence> CreateNewSequenceAsync(
         string sequenceId,
         ConsumerPipelineContext context)
     {
@@ -142,7 +142,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     /// <returns>
     ///     The <see cref="ISequence" /> or <c>null</c> if not found.
     /// </returns>
-    protected virtual Task<ISequence?> GetExistingSequenceAsync(
+    protected virtual ValueTask<ISequence?> GetExistingSequenceAsync(
         ConsumerPipelineContext context,
         string sequenceId)
     {
@@ -155,30 +155,29 @@ public abstract class SequenceReaderBase : ISequenceReader
     {
         List<ISequence> sequences = sequenceStore.ToList();
 
-        await sequences
-            .ForEachAsync(
-                async previousSequence =>
-                {
-                    // Prevent Sequence and RawSequence to mess with each other
-                    if (HandlesRawMessages && previousSequence is Sequence ||
-                        !HandlesRawMessages && previousSequence is RawSequence)
-                        return;
+        async ValueTask AwaitOrAbortPreviousSequence(ISequence sequence)
+        {
+            // Prevent Sequence and RawSequence to mess with each other
+            if (HandlesRawMessages && sequence is Sequence ||
+                !HandlesRawMessages && sequence is RawSequence)
+                return;
 
-                    if (!previousSequence.IsComplete)
-                    {
-                        await previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence)
-                            .ConfigureAwait(false);
-                    }
+            if (!sequence.IsComplete)
+            {
+                await sequence.AbortAsync(SequenceAbortReason.IncompleteSequence)
+                    .ConfigureAwait(false);
+            }
 
-                    ISequence? parentSequence = previousSequence.ParentSequence;
+            ISequence? parentSequence = sequence.ParentSequence;
 
-                    if (parentSequence == null && previousSequence.IsComplete)
-                        await previousSequence.AwaitProcessingAsync(false).ConfigureAwait(false);
+            if (parentSequence == null && sequence.IsComplete)
+                await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
 
-                    if (parentSequence != null && parentSequence.IsComplete)
-                        await parentSequence.AwaitProcessingAsync(false).ConfigureAwait(false);
-                })
-            .ConfigureAwait(false);
+            if (parentSequence is { IsComplete: true })
+                await parentSequence.AwaitProcessingAsync(false).ConfigureAwait(false);
+        }
+
+        await sequences.ForEachAsync(AwaitOrAbortPreviousSequence).ConfigureAwait(false);
 
         await sequences
             .Where(sequence => !sequence.IsPending)

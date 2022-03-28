@@ -31,7 +31,7 @@ public class InboundSpyBrokerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));

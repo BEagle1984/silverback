@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;

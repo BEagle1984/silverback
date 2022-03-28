@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration;
 public class SilverbackBuilderWithConnectionToExtensionsFixture
 {
     [Fact]
-    public void WithConnectionToMessageBroker_ShouldRegisterBrokerCollection()
+    public void WithConnectionToMessageBroker_ShouldRegisterClientsCollections()
     {
         ServiceCollection serviceCollection = new();
 
@@ -25,7 +25,9 @@ public class SilverbackBuilderWithConnectionToExtensionsFixture
 
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-        serviceProvider.GetService<IBrokerCollection>().Should().NotBeNull();
+        serviceProvider.GetService<BrokerClientCollection>().Should().NotBeNull();
+        serviceProvider.GetService<IProducerCollection>().Should().NotBeNull();
+        serviceProvider.GetService<IConsumerCollection>().Should().NotBeNull();
     }
 
     [Fact]

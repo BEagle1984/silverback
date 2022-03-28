@@ -3,48 +3,53 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker;
 
 /// <summary>
 ///     Consumes from one or more endpoints and pushes the received messages to the internal bus.
 /// </summary>
-public interface IConsumer : IBrokerConnectedObject
+public interface IConsumer
 {
     /// <summary>
-    ///     Gets the configuration.
+    ///     Gets the consumer name.
     /// </summary>
-    ConsumerConfiguration Configuration { get; }
+    string Name { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether this consumer is connected and consuming (started).
+    ///     Gets the name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </summary>
-    // TODO: Rename or make private as it is confusing with ConsumerStatus.Consuming
-    bool IsConsuming { get; }
+    string DisplayName { get; }
 
     /// <summary>
-    ///     Gets the <see cref="IConsumerStatusInfo" /> containing the status details and basic statistics of this
-    ///     consumer.
+    ///     Gets the related <see cref="IBrokerClient" />.
+    /// </summary>
+    IBrokerClient Client { get; }
+
+    /// <summary>
+    ///     Gets the endpoints configuration.
+    /// </summary>
+    IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="IConsumerStatusInfo" /> containing the status details and basic statistics of this consumer.
     /// </summary>
     IConsumerStatusInfo StatusInfo { get; }
 
     /// <summary>
-    ///     Gets the <see cref="ISequenceStoreCollection" /> used by this consumer. Some brokers will require
-    ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
-    /// </summary>
-    ISequenceStoreCollection SequenceStores { get; }
-
-    /// <summary>
     ///     Stops the consumer and starts an asynchronous <see cref="Task" /> to disconnect and reconnect it.
     /// </summary>
+    /// <remarks>
+    ///     This is used to recover when the consumer is stuck in state where it's not able to rollback or commit anymore.
+    /// </remarks>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
     ///     soon as the stopping signal has been sent, while the process will be completed in another asynchronous
     ///     <see cref="Task" />.
     /// </returns>
-    Task TriggerReconnectAsync();
+    ValueTask TriggerReconnectAsync(); // TODO: Check name
 
     /// <summary>
     ///     Starts consuming. Used after <see cref="StopAsync" /> has been called to resume consuming.
@@ -52,7 +57,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task StartAsync();
+    ValueTask StartAsync();
 
     /// <summary>
     ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
@@ -61,7 +66,7 @@ public interface IConsumer : IBrokerConnectedObject
     ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
     ///     soon as the stopping signal has been sent.
     /// </returns>
-    Task StopAsync();
+    ValueTask StopAsync();
 
     /// <summary>
     ///     <param>
@@ -78,7 +83,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
+    ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
 
     /// <summary>
     ///     <param>
@@ -95,7 +100,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+    ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
     /// <summary>
     ///     <param>
@@ -112,7 +117,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
+    ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
 
     /// <summary>
     ///     <param>
@@ -129,7 +134,7 @@ public interface IConsumer : IBrokerConnectedObject
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+    ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
     /// <summary>
     ///     Increments the stored failed attempts count for the specified envelope.

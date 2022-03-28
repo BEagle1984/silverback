@@ -37,7 +37,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         Check.NotNullOrEmpty(customHeaderName, nameof(customHeaderName));
 
         ICustomHeadersMappings mappings = builder.Services.GetSingletonServiceInstance<ICustomHeadersMappings>() ??
-                                          throw new InvalidOperationException("ICustomHeadersMappings not found, AddBroker has not been called.");
+                                          throw new InvalidOperationException("ICustomHeadersMappings not found, WithConnectionToMessageBroker has not been called.");
 
         mappings.Add(defaultHeaderName, customHeaderName);
 

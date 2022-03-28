@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers;
@@ -30,6 +31,6 @@ public sealed class MqttClientIdFilterAttribute : MessageFilterAttribute
 
     /// <inheritdoc cref="MessageFilterAttribute.MustProcess" />
     public override bool MustProcess(object message) =>
-        message is IInboundEnvelope { Endpoint: MqttConsumerEndpoint endpoint } &&
-        ClientId.Any(groupId => groupId == endpoint.Configuration.Client.ClientId);
+        message is IInboundEnvelope { Consumer: MqttConsumer consumer } &&
+        ClientId.Any(groupId => groupId == consumer.Configuration.ClientId);
 }

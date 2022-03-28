@@ -20,19 +20,19 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     public IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; private set; }
 
-    public void SetDisconnected() => ChangeStatus(ConsumerStatus.Disconnected);
+    public void SetDisconnected() => ChangeStatus(ConsumerStatus.Stopped);
 
     public void SetConnected(bool allowStepBack = false)
     {
-        if (allowStepBack || Status < ConsumerStatus.Connected)
-            ChangeStatus(ConsumerStatus.Connected);
+        if (allowStepBack || Status < ConsumerStatus.Started)
+            ChangeStatus(ConsumerStatus.Started);
     }
 
-    public void SetReady() => ChangeStatus(ConsumerStatus.Ready);
+    public void SetReady() => ChangeStatus(ConsumerStatus.Connected);
 
     public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
     {
-        if (Status is ConsumerStatus.Connected or ConsumerStatus.Ready)
+        if (Status is ConsumerStatus.Started or ConsumerStatus.Connected)
             ChangeStatus(ConsumerStatus.Consuming);
 
         ConsumedMessagesCount++;

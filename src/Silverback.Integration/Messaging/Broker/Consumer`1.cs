@@ -1,0 +1,503 @@
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
+using Silverback.Util;
+
+namespace Silverback.Messaging.Broker;
+
+/// <inheritdoc cref="IConsumer" />
+/// <typeparam name="TIdentifier">
+///     The type of the <see cref="IBrokerMessageIdentifier" /> used by the consumer implementation.
+/// </typeparam>
+public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
+    where TIdentifier : class, IBrokerMessageIdentifier
+{
+    private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
+
+    private readonly ISilverbackLogger<IConsumer> _logger;
+
+    private readonly ConsumerStatusInfo _statusInfo = new();
+
+    private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary = new();
+
+    private readonly object _reconnectLock = new();
+
+    private bool _isReconnecting;
+
+    private bool _isDisposed;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Consumer{TIdentifier}" /> class.
+    /// </summary>
+    /// <param name="name">
+    ///     The consumer name.
+    /// </param>
+    /// <param name="client">
+    ///     The <see cref="IBrokerClient" />.
+    /// </param>
+    /// <param name="endpointsConfiguration">
+    ///     The endpoints configuration.
+    /// </param>
+    /// <param name="behaviorsProvider">
+    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    /// </param>
+    /// <param name="logger">
+    ///     The <see cref="ISilverbackLogger" />.
+    /// </param>
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in Dispose() method.")]
+    protected Consumer(
+        string name,
+        IBrokerClient client,
+        IReadOnlyCollection<ConsumerEndpointConfiguration> endpointsConfiguration,
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+        IServiceProvider serviceProvider,
+        ISilverbackLogger<IConsumer> logger)
+        : this(
+            name,
+            client,
+            endpointsConfiguration,
+            behaviorsProvider,
+            new DefaultSequenceStoreCollection(serviceProvider),
+            serviceProvider,
+            logger)
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Consumer{TIdentifier}" /> class.
+    /// </summary>
+    /// <param name="name">
+    ///     The consumer name.
+    /// </param>
+    /// <param name="client">
+    ///     The <see cref="IBrokerClient" />.
+    /// </param>
+    /// <param name="endpointsConfiguration">
+    ///     The endpoints configuration.
+    /// </param>
+    /// <param name="behaviorsProvider">
+    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+    /// </param>
+    /// <param name="sequenceStores">
+    ///     The <see cref="ISequenceStoreCollection" />.
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    /// </param>
+    /// <param name="logger">
+    ///     The <see cref="ISilverbackLogger" />.
+    /// </param>
+    protected Consumer(
+        string name,
+        IBrokerClient client,
+        IReadOnlyCollection<ConsumerEndpointConfiguration> endpointsConfiguration,
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+        ISequenceStoreCollection sequenceStores,
+        IServiceProvider serviceProvider,
+        ISilverbackLogger<IConsumer> logger)
+    {
+        Name = Check.NotNullOrEmpty(name, nameof(name));
+        Client = Check.NotNull(client, nameof(client));
+        EndpointsConfiguration = Check.NotNull(endpointsConfiguration, nameof(endpointsConfiguration));
+        _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
+        SequenceStores = Check.NotNull(sequenceStores, nameof(sequenceStores));
+        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _logger = Check.NotNull(logger, nameof(logger));
+
+        Client.Initialized.AddHandler(OnClientConnectedAsync);
+        Client.Disconnecting.AddHandler(OnClientDisconnectingAsync);
+    }
+
+    /// <inheritdoc cref="IConsumer.Name" />
+    public string Name { get; }
+
+    /// <inheritdoc cref="IConsumer.DisplayName" />
+    /// <remarks>
+    ///     The <see cref="DisplayName" /> is currently returning the <see cref="Name" /> but this might change in future implementations.
+    /// </remarks>
+    public string DisplayName => Name;
+
+    /// <inheritdoc cref="IConsumer.Client" />
+    public IBrokerClient Client { get; }
+
+    /// <inheritdoc cref="IConsumer.EndpointsConfiguration" />
+    public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; }
+
+    /// <inheritdoc cref="IConsumer.StatusInfo" />
+    public IConsumerStatusInfo StatusInfo => _statusInfo;
+
+    /// <summary>
+    ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    /// </summary>
+    protected IServiceProvider ServiceProvider { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="ISequenceStoreCollection" /> to be used to store the pending sequences.
+    /// </summary>
+    protected ISequenceStoreCollection SequenceStores { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer is started.
+    /// </summary>
+    protected bool IsStarted { get; private set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer is being stopped.
+    /// </summary>
+    protected bool IsStopping { get; private set; }
+
+    /// <inheritdoc cref="IConsumer.TriggerReconnectAsync" />
+    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    public async ValueTask TriggerReconnectAsync()
+    {
+        lock (_reconnectLock)
+        {
+            if (_isReconnecting || _isDisposed)
+                return;
+
+            _isReconnecting = true;
+        }
+
+        _logger.LogConsumerLowLevelTrace(this, "Triggering reconnect.");
+
+        // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
+        await StopAsync().ConfigureAwait(false);
+
+        Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        await Client.ReconnectAsync().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        _isReconnecting = false;
+                    }
+                })
+            .FireAndForget();
+    }
+
+    /// <inheritdoc cref="IConsumer.StartAsync" />
+    public async ValueTask StartAsync()
+    {
+        if (IsStarted)
+            return;
+
+        if (Client.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
+            throw new InvalidOperationException("The underlying client is not connected.");
+
+        _logger.LogConsumerLowLevelTrace(this, "Starting consumer...");
+
+        try
+        {
+            IsStarted = true;
+
+            await StartCoreAsync().ConfigureAwait(false);
+
+            _logger.LogConsumerLowLevelTrace(this, "Consumer started.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerStartError(this, ex);
+            throw;
+        }
+    }
+
+    /// <inheritdoc cref="IConsumer.StopAsync" />
+    public async ValueTask StopAsync()
+    {
+        if (!IsStarted || IsStopping)
+            return;
+
+        IsStopping = true;
+
+        _logger.LogConsumerLowLevelTrace(this, "Stopping consumer...");
+
+        try
+        {
+            await StopCoreAsync().ConfigureAwait(false);
+
+            IsStarted = false;
+
+            _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerStopError(this, ex);
+            throw;
+        }
+        finally
+        {
+            IsStopping = false;
+        }
+    }
+
+    /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
+    public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+    {
+        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+        return CommitAsync(new[] { brokerMessageIdentifier });
+    }
+
+    /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+    public async ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+    {
+        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+        try
+        {
+            await CommitCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList()).ConfigureAwait(false);
+
+            if (_failedAttemptsDictionary.IsEmpty)
+                return;
+
+            // TODO: Is this the most efficient way to remove a bunch of items?
+            foreach (IBrokerMessageIdentifier? messageIdentifier in brokerMessageIdentifiers)
+            {
+                _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerCommitError(this, brokerMessageIdentifiers, ex);
+            throw;
+        }
+    }
+
+    /// <inheritdoc cref="IConsumer.RollbackAsync(IBrokerMessageIdentifier)" />
+    public ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+    {
+        Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+        return RollbackAsync(new[] { brokerMessageIdentifier });
+    }
+
+    /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+    public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+    {
+        try
+        {
+            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+            return RollbackCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerRollbackError(this, brokerMessageIdentifiers, ex);
+            throw;
+        }
+    }
+
+    /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
+    public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+
+        return _failedAttemptsDictionary.AddOrUpdate(
+            envelope.BrokerMessageIdentifier,
+            _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
+            (_, count) => count + 1);
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     Starts consuming. Called to resume consuming after <see cref="StopAsync" /> has been called.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    protected abstract ValueTask StartCoreAsync();
+
+    /// <summary>
+    ///     Stops consuming while staying connected to the message broker.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    protected abstract ValueTask StopCoreAsync();
+
+    /// <summary>
+    ///     Commits the specified messages sending the acknowledgement to the message broker.
+    /// </summary>
+    /// <param name="brokerMessageIdentifiers">
+    ///     The identifiers of to message be committed.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    protected abstract ValueTask CommitCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
+
+    /// <summary>
+    ///     If necessary notifies the message broker that the specified messages couldn't be processed
+    ///     successfully, to ensure that they will be consumed again.
+    /// </summary>
+    /// <param name="brokerMessageIdentifiers">
+    ///     The identifiers of to message be rolled back.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    protected abstract ValueTask RollbackCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
+
+    /// <summary>
+    ///     Waits until the consuming is stopped.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    protected abstract ValueTask WaitUntilConsumingStoppedCoreAsync();
+
+    /// <summary>
+    ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.
+    /// </summary>
+    /// <param name="message">
+    ///     The body of the consumed message.
+    /// </param>
+    /// <param name="headers">
+    ///     The headers of the consumed message.
+    /// </param>
+    /// <param name="endpoint">
+    ///     The endpoint from which the message was consumed.
+    /// </param>
+    /// <param name="brokerMessageIdentifier">
+    ///     The identifier of the consumed message.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
+    protected virtual async ValueTask HandleMessageAsync(
+        byte[]? message,
+        IReadOnlyCollection<MessageHeader> headers,
+        ConsumerEndpoint endpoint,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+    {
+        RawInboundEnvelope envelope = new(
+            message,
+            headers,
+            endpoint,
+            this,
+            brokerMessageIdentifier);
+
+        _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
+
+        ConsumerPipelineContext consumerPipelineContext = new(
+            envelope,
+            this,
+            SequenceStores.GetSequenceStore(brokerMessageIdentifier),
+            ServiceProvider);
+
+        await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Connected" />.
+    /// </summary>
+    protected void SetReadyStatus() => _statusInfo.SetReady();
+
+    /// <summary>
+    ///     Called when the connection is lost to transitions the consumer back to
+    ///     <see cref="ConsumerStatus.Started" />.
+    /// </summary>
+    protected void RevertReadyStatus()
+    {
+        if (_statusInfo.Status > ConsumerStatus.Started)
+            _statusInfo.SetConnected(true);
+    }
+
+    /// <summary>
+    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.
+    /// </summary>
+    /// <param name="disposing">
+    ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
+    /// </param>
+    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposing || _isDisposed)
+            return;
+
+        _isDisposed = true;
+
+        AsyncHelper.RunSynchronously(StopAsync);
+        SequenceStores.Dispose();
+
+        Client.Initialized.RemoveHandler(OnClientConnectedAsync);
+        Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
+    }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer is started (or will start) and is not being stopped.
+    /// </summary>
+    /// <returns>
+    ///     A value indicating whether the consumer is started and not being stopped.
+    /// </returns>
+    protected bool IsStartedAndNotStopping() =>
+        Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && IsStarted && !IsStopping;
+
+    private ValueTask OnClientConnectedAsync(BrokerClient client)
+    {
+        _statusInfo.SetConnected();
+        return default;
+    }
+
+    private async ValueTask OnClientDisconnectingAsync(BrokerClient client)
+    {
+        if (IsStarted && !IsStopping)
+            await StopAsync().ConfigureAwait(false);
+        else
+            await StopCoreAsync().ConfigureAwait(false);
+
+        await SequenceStores.AbortAllSequencesAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
+
+        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+
+        _statusInfo.SetDisconnected();
+    }
+
+    private async ValueTask WaitUntilConsumingStoppedAsync()
+    {
+        _logger.LogConsumerLowLevelTrace(this, "Waiting until consumer stops...");
+
+        try
+        {
+            await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
+        }
+    }
+
+    private ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
+    {
+        if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
+            return ValueTaskFactory.CompletedTask;
+
+        return _behaviors[stepIndex].HandleAsync(
+            context,
+            nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1));
+    }
+}

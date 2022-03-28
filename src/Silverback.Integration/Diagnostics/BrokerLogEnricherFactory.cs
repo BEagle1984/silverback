@@ -1,50 +1,15 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using Silverback.Messaging;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
+using Silverback.ExtensibleFactories;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Diagnostics;
 
-// TODO: Use ExtensibleFactory?
-internal sealed class BrokerLogEnricherFactory
+/// <inheritdoc cref="IBrokerLogEnricherFactory.GetEnricher" />
+public class BrokerLogEnricherFactory : TypeBasedExtensibleFactory<IBrokerLogEnricher, EndpointConfiguration>, IBrokerLogEnricherFactory
 {
-    private static readonly NullEnricher NullEnricherInstance = new();
-
-    private readonly IServiceProvider _serviceProvider;
-
-    private readonly ConcurrentDictionary<Type, Type> _enricherTypeCache = new();
-
-    public BrokerLogEnricherFactory(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
-    public IBrokerLogEnricher GetLogEnricher(EndpointConfiguration endpointConfiguration)
-    {
-        Type enricherType = _enricherTypeCache.GetOrAdd(
-            endpointConfiguration.GetType(),
-            static type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
-
-        IBrokerLogEnricher? logEnricher = (IBrokerLogEnricher?)_serviceProvider.GetService(enricherType);
-
-        return logEnricher ?? NullEnricherInstance;
-    }
-
-    private sealed class NullEnricher : IBrokerLogEnricher
-    {
-        public string AdditionalPropertyName1 => "unused1";
-
-        public string AdditionalPropertyName2 => "unused2";
-
-        public (string? Value1, string? Value2) GetAdditionalValues(
-            Endpoint endpoint,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-            (null, null);
-    }
+    /// <inheritdoc cref="IBrokerLogEnricherFactory.GetEnricher" />
+    public IBrokerLogEnricher GetEnricher(EndpointConfiguration configuration) =>
+        GetService(configuration) ?? NullBrokerLogEnricher.Instance;
 }

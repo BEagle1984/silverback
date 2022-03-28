@@ -27,14 +27,14 @@ internal static class EnumerableSelectExtensions
     }
 
     // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Task is awaited")]
-    public static async Task<IEnumerable<TResult>> ParallelSelectAsync<T, TResult>(
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "ValueTask is awaited")]
+    public static async ValueTask<IEnumerable<TResult>> ParallelSelectAsync<T, TResult>(
         this IEnumerable<T> source,
-        Func<T, Task<TResult>> selector,
+        Func<T, ValueTask<TResult>> selector,
         int? maxDegreeOfParallelism = null)
     {
         if (maxDegreeOfParallelism == null)
-            return await Task.WhenAll(source.ParallelSelect(selector)).ConfigureAwait(false);
+            return await source.ParallelSelect(selector).AwaitAllAsync().ConfigureAwait(false);
 
         if (maxDegreeOfParallelism == 1)
             return await source.SelectAsync(selector).ConfigureAwait(false);
@@ -42,24 +42,23 @@ internal static class EnumerableSelectExtensions
         using SemaphoreSlim semaphore = new(maxDegreeOfParallelism.Value);
         using CancellationTokenSource cancellationTokenSource = new();
 
-        IEnumerable<Task<TResult>> tasks = source.ParallelSelect(
-            async value =>
+        async ValueTask<TResult> InvokeSelector(T value)
+        {
+            await semaphore.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+            try
             {
-                await semaphore.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-                try
-                {
-                    TResult result = await selector(value).ConfigureAwait(false);
-                    semaphore.Release();
-                    return result;
-                }
-                catch (Exception)
-                {
-                    cancellationTokenSource.Cancel();
-                    throw;
-                }
-            });
+                TResult result = await selector(value).ConfigureAwait(false);
+                semaphore.Release();
+                return result;
+            }
+            catch (Exception)
+            {
+                cancellationTokenSource.Cancel();
+                throw;
+            }
+        }
 
-        return await Task.WhenAll(tasks).ConfigureAwait(false);
+        return await source.ParallelSelect(InvokeSelector).AwaitAllAsync().ConfigureAwait(false);
     }
 
     public static IEnumerable<TResult> Select<T, TResult>(
@@ -73,19 +72,24 @@ internal static class EnumerableSelectExtensions
             : source.Select(selector);
     }
 
-    public static async Task<IEnumerable<TResult>> SelectAsync<T, TResult>(
+    public static async ValueTask<IEnumerable<TResult>> SelectAsync<T, TResult>(
         this IEnumerable<T> source,
-        Func<T, Task<TResult>> selector)
+        Func<T, ValueTask<TResult>> selector)
     {
         List<TResult> results = new();
-        await source.ForEachAsync(async s => results.Add(await selector(s).ConfigureAwait(false)))
-            .ConfigureAwait(false);
+
+        async ValueTask InvokeSelector(T item)
+        {
+            results.Add(await selector.Invoke(item).ConfigureAwait(false));
+        }
+
+        await source.ForEachAsync(InvokeSelector).ConfigureAwait(false);
         return results;
     }
 
-    public static Task<IEnumerable<TResult>> SelectAsync<T, TResult>(
+    public static ValueTask<IEnumerable<TResult>> SelectAsync<T, TResult>(
         this IEnumerable<T> source,
-        Func<T, Task<TResult>> selector,
+        Func<T, ValueTask<TResult>> selector,
         bool parallel,
         int? maxDegreeOfParallelism = null)
     {
@@ -94,17 +98,17 @@ internal static class EnumerableSelectExtensions
             : source.SelectAsync(selector);
     }
 
-    public static async Task<IEnumerable<TResult>> SelectManyAsync<T, TResult>(
+    public static async ValueTask<IEnumerable<TResult>> SelectManyAsync<T, TResult>(
         this IEnumerable<T> source,
-        Func<T, Task<IEnumerable<TResult>>> selector)
+        Func<T, ValueTask<IEnumerable<TResult>>> selector)
     {
         IEnumerable<IEnumerable<TResult>> results = await SelectAsync(source, selector).ConfigureAwait(false);
         return results.SelectMany(result => result);
     }
 
-    public static async Task<IEnumerable<TResult>> ParallelSelectManyAsync<T, TResult>(
+    public static async ValueTask<IEnumerable<TResult>> ParallelSelectManyAsync<T, TResult>(
         this IEnumerable<T> source,
-        Func<T, Task<IEnumerable<TResult>>> selector,
+        Func<T, ValueTask<IEnumerable<TResult>>> selector,
         int? maxDegreeOfParallelism = null)
     {
         IEnumerable<IEnumerable<TResult>> results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism).ConfigureAwait(false);

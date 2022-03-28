@@ -3,7 +3,7 @@
 
 using System;
 using FluentAssertions;
-using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class SymmetricEncryptionSettingsFixture
 
         Action act = () => settings.Validate();
 
-        act.Should().Throw<EndpointConfigurationException>().WithMessage("The algorithm name is required.");
+        act.Should().Throw<BrokerConfigurationException>().WithMessage("The algorithm name is required.");
     }
 
     [Fact]
@@ -34,6 +34,6 @@ public class SymmetricEncryptionSettingsFixture
 
         Action act = () => settings.Validate();
 
-        act.Should().Throw<EndpointConfigurationException>().WithMessage("A Key is required.");
+        act.Should().Throw<BrokerConfigurationException>().WithMessage("A Key is required.");
     }
 }

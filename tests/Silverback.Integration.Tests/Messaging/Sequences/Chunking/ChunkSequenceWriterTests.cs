@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Types;
@@ -23,13 +25,14 @@ public class ChunkSequenceWriterTests
         OutboundEnvelope envelope = new(
             rawMessage,
             null,
-            new TestProducerConfiguration("test")
+            new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 3
                 }
-            }.GetDefaultEndpoint());
+            }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
@@ -47,14 +50,15 @@ public class ChunkSequenceWriterTests
         OutboundEnvelope envelope = new(
             rawMessage,
             null,
-            new TestProducerConfiguration("test")
+            new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 10,
                     AlwaysAddHeaders = alwaysAddHeaders
                 }
-            }.GetDefaultEndpoint());
+            }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
@@ -70,7 +74,8 @@ public class ChunkSequenceWriterTests
         OutboundEnvelope envelope = new(
             rawMessage,
             null,
-            new TestProducerConfiguration("test").GetDefaultEndpoint());
+            new TestProducerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IProducer>());
 
         ChunkSequenceWriter writer = new(enricherFactory);
         bool result = writer.CanHandle(envelope);
@@ -90,13 +95,14 @@ public class ChunkSequenceWriterTests
                 { DefaultMessageHeaders.MessageId, "123" },
                 { "some-custom-header", "abc" }
             },
-            new TestProducerConfiguration("test")
+            new TestProducerEndpointConfiguration("test")
             {
                 Chunk = new ChunkSettings
                 {
                     Size = 3
                 }
             }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>(),
             true);
 
         ChunkSequenceWriter writer = new(enricherFactory);

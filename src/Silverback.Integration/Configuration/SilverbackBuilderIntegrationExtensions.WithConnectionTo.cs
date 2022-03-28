@@ -3,15 +3,25 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
+using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Consuming;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Diagnostics;
-using Silverback.Messaging.Outbound.Enrichers;
-using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Headers;
+using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.Routing;
+using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 using Silverback.Util;
 
 namespace Silverback.Configuration;
@@ -39,13 +49,34 @@ public static partial class SilverbackBuilderIntegrationExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        // Configuration IHostedService
-        builder.Services
-            .AddSingleton<IHostedService, BrokerConnectorService>()
-            .AddSingleton<EndpointsConfiguratorsInvoker>()
-            .AddSingleton(BrokerConnectionOptions.Default);
+        AddClientsManagement(builder);
+        AddOutboundRouting(builder);
+        AddLoggers(builder);
+        AddEnrichers(builder);
+        AddBrokerBehaviors(builder);
 
-        // Outbound Routing
+        builder.Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbackInvoker>();
+        builder.EnableStorage();
+
+        BrokerOptionsBuilder optionsBuilder = new(builder);
+        optionsAction?.Invoke(optionsBuilder);
+
+        return builder;
+    }
+
+    private static void AddClientsManagement(SilverbackBuilder builder) =>
+        builder.Services
+            .AddSingleton<BrokerClientCollection>()
+            .AddSingleton<ProducerCollection>()
+            .AddSingleton<IProducerCollection>(serviceProvider => serviceProvider.GetService<ProducerCollection>())
+            .AddSingleton<ConsumerCollection>()
+            .AddSingleton<IConsumerCollection>(serviceProvider => serviceProvider.GetService<ConsumerCollection>())
+            .AddHostedService<BrokerClientsConnectorService>()
+            .AddTransient<IBrokerClientsConnector, BrokerClientsConnector>()
+            .AddTransient<BrokerClientsConfiguratorsInvoker>()
+            .AddSingleton(new BrokerConnectionOptions());
+
+    private static void AddOutboundRouting(SilverbackBuilder builder) =>
         builder
             .AddScopedBehavior<OutboundRouterBehavior>()
             .AddScopedBehavior<ProduceBehavior>()
@@ -53,36 +84,84 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
             .Services
             .AddSingleton<IOutboundEnvelopeFactory, OutboundEnvelopeFactory>()
-            .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration())
-            .AddSingleton<ProducersPreloader>();
+            .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration());
 
-        // Broker Collection
+    private static void AddLoggers(SilverbackBuilder builder) =>
+        builder
+            .AddTypeBasedExtensibleFactory<IBrokerLogEnricherFactory, BrokerLogEnricherFactory>()
+            .Services
+            .AddSingleton(typeof(IConsumerLogger<>), typeof(ConsumerLogger<>))
+            .AddSingleton(typeof(IProducerLogger<>), typeof(ProducerLogger<>))
+            .AddSingleton<InternalConsumerLoggerFactory>()
+            .AddSingleton<InternalProducerLoggerFactory>();
+
+    private static void AddEnrichers(SilverbackBuilder builder) =>
         builder.Services
-            .AddSingleton<IBrokerCollection, BrokerCollection>();
+            .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>()
+            .AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();
 
-        // Logging
+    private static void AddBrokerBehaviors(SilverbackBuilder builder)
+    {
         builder.Services
-            .AddSingleton(typeof(IInboundLogger<>), typeof(InboundLogger<>))
-            .AddSingleton(typeof(IOutboundLogger<>), typeof(OutboundLogger<>))
-            .AddSingleton<InboundLoggerFactory>()
-            .AddSingleton<OutboundLoggerFactory>()
-            .AddSingleton<BrokerLogEnricherFactory>();
+            .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>));
 
-        // Message Enrichers
-        builder.Services
-            .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>();
+        // Producer basic logic
+        builder
+            .AddSingletonBrokerBehavior<MessageEnricherProducerBehavior>()
+            .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>();
 
-        // Activities
-        builder.Services.AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();
+        // Consumer basic logic
+        builder
+            .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
+            .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
+            .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
 
-        // Event Handlers
-        builder.Services.AddSingleton<IBrokerCallbacksInvoker, BrokerCallbackInvoker>();
+        // Activity
+        builder
+            .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
+            .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
 
-        builder.EnableStorage();
+        // Validation
+        builder
+            .AddSingletonBrokerBehavior<ValidatorProducerBehavior>()
+            .AddSingletonBrokerBehavior<ValidatorConsumerBehavior>();
 
-        BrokerOptionsBuilder optionsBuilder = new(builder);
-        optionsAction?.Invoke(optionsBuilder);
+        // Serialization
+        builder
+            .AddSingletonBrokerBehavior<SerializerProducerBehavior>()
+            .AddSingletonBrokerBehavior<DeserializerConsumerBehavior>();
 
-        return builder;
+        // Encryption
+        builder
+            .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
+            .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>()
+            .Services
+            .AddSingleton<ISilverbackCryptoStreamFactory, SilverbackCryptoStreamFactory>();
+
+        // Headers
+        builder
+            .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
+            .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
+            .AddSingletonBrokerBehavior<CustomHeadersMapperProducerBehavior>()
+            .AddSingletonBrokerBehavior<CustomHeadersMapperConsumerBehavior>()
+            .Services
+            .AddSingleton<ICustomHeadersMappings>(new CustomHeadersMappings());
+
+        // Sequences (chunking, batch, ...)
+        builder
+            .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
+            .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
+            .AddSingletonBrokerBehavior<RawSequencerConsumerBehavior>()
+            .AddSingletonSequenceWriter<ChunkSequenceWriter>()
+            .AddSingletonSequenceReader<ChunkSequenceReader>()
+            .AddTransientSequenceReader<BatchSequenceReader>()
+            .AddTypeBasedExtensibleFactory<IChunkEnricherFactory, ChunkEnricherFactory>()
+            .Services
+            .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore));
+
+        // Binary message
+        builder
+            .AddSingletonBrokerBehavior<BinaryMessageHandlerProducerBehavior>()
+            .AddSingletonBrokerBehavior<BinaryMessageHandlerConsumerBehavior>();
     }
 }

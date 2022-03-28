@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
-internal abstract class RawBrokerEnvelope : IRawBrokerEnvelope
+internal abstract record RawBrokerEnvelope : IRawBrokerEnvelope
 {
     protected RawBrokerEnvelope(
         Stream? rawMessage,

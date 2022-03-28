@@ -7,11 +7,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
-using Silverback.Messaging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound;
-using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Producing;
+using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
@@ -39,10 +41,11 @@ public class ProduceBehaviorFixture
         OutboundEnvelope<TestEventOne> outboundEnvelope = new(
             new TestEventOne(),
             Array.Empty<MessageHeader>(),
-            new TestProducerConfiguration("test")
+            new TestProducerEndpointConfiguration("test")
             {
                 Strategy = testProduceStrategy
-            }.GetDefaultEndpoint());
+            }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>());
 
         await behavior.HandleAsync(
             outboundEnvelope,
@@ -68,7 +71,7 @@ public class ProduceBehaviorFixture
             throw new NotImplementedException();
         }
 
-        public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerConfiguration configuration) =>
+        public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration) =>
             new TestProduceStrategyImplementation(envelope => ProducedEnvelopes.Add(envelope));
 
         private class TestProduceStrategyImplementation : IProduceStrategyImplementation

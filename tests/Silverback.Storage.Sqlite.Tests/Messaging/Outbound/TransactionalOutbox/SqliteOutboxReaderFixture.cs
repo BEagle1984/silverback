@@ -11,7 +11,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Storage.DataAccess;
 using Silverback.Tests.Logging;

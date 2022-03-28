@@ -520,7 +520,7 @@ public class MessageStreamProviderTests
             Message = message;
         }
 
-        public bool AutoUnwrap { get; } = true;
+        public bool AutoUnwrap => true;
 
         public object? Message { get; set; }
     }

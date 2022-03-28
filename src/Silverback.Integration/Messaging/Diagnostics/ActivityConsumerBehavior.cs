@@ -31,17 +31,14 @@ public class ActivityConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         using Activity activity = ActivitySources.StartConsumeActivity(context.Envelope);
 
-        _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.Configuration)
-            .EnrichInboundActivity(activity, context);
+        _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.Configuration).EnrichInboundActivity(activity, context);
 
         await next(context).ConfigureAwait(false);
     }

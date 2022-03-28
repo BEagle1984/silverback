@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Sequences;
 /// <summary>
 ///     The temporary store for the sequences being consumed.
 /// </summary>
-public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposable
+public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposable, IDisposable
 {
     /// <summary>
     ///     Gets a value indicating whether the store has been disposed.
@@ -34,7 +34,7 @@ public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposab
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     <see cref="ISequence" /> instance.
     /// </returns>
-    Task<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
+    ValueTask<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
         where TSequence : class, ISequence;
 
     /// <summary>
@@ -50,7 +50,7 @@ public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposab
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     <see cref="ISequence" /> instance.
     /// </returns>
-    Task<TSequence> AddAsync<TSequence>(TSequence sequence)
+    ValueTask<TSequence> AddAsync<TSequence>(TSequence sequence)
         where TSequence : class, ISequence;
 
     /// <summary>
@@ -62,7 +62,7 @@ public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposab
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task RemoveAsync(string sequenceId);
+    ValueTask RemoveAsync(string sequenceId);
 
     /// <summary>
     ///     Returns the pending sequences currently in the store.

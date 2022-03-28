@@ -2,6 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +16,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Logging;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 
 namespace Silverback.Tests.Performance;
@@ -40,9 +44,9 @@ public class IntegrationLoggingBenchmark
 
     private readonly OutboundEnvelope _outboundEnvelope;
 
-    private readonly IInboundLogger<IntegrationLoggingBenchmark> _inboundLogger;
+    private readonly IConsumerLogger<IntegrationLoggingBenchmark> _consumerLogger;
 
-    private readonly IOutboundLogger<IntegrationLoggingBenchmark> _outboundLogger;
+    private readonly IProducerLogger<IntegrationLoggingBenchmark> _producerLogger;
 
     public IntegrationLoggingBenchmark()
     {
@@ -52,22 +56,16 @@ public class IntegrationLoggingBenchmark
                 .AddSilverback()
                 .WithConnectionToMessageBroker(broker => broker.AddKafka()));
 
-        _inboundLogger =
-            serviceProvider.GetRequiredService<IInboundLogger<IntegrationLoggingBenchmark>>();
+        _consumerLogger =
+            serviceProvider.GetRequiredService<IConsumerLogger<IntegrationLoggingBenchmark>>();
 
-        _outboundLogger =
-            serviceProvider.GetRequiredService<IOutboundLogger<IntegrationLoggingBenchmark>>();
+        _producerLogger =
+            serviceProvider.GetRequiredService<IProducerLogger<IntegrationLoggingBenchmark>>();
 
         KafkaConsumerEndpoint consumerEndpoint = new(
             "test-topic",
             42,
-            new KafkaConsumerConfigurationBuilder<TestEventOne>()
-                .ConfigureClient(
-                    configuration => configuration
-                        .WithBootstrapServers("PLAINTEXT://performance:9092")
-                        .WithClientId("test-client"))
-                .ConsumeFrom("test-topic")
-                .Build());
+            new KafkaConsumerEndpointConfigurationBuilder<TestEventOne>().ConsumeFrom("test-topic").Build());
 
         _inboundEnvelope = new RawInboundEnvelope(
             Array.Empty<byte>(),
@@ -80,15 +78,13 @@ public class IntegrationLoggingBenchmark
                 new(KafkaMessageHeaders.KafkaMessageKey, "key1234")
             },
             consumerEndpoint,
+            new TestConsumer(),
             new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
 
         KafkaProducerEndpoint producerEndpoint = new(
             "test-topic",
             Partition.Any,
-            new KafkaProducerConfigurationBuilder<TestEventOne>()
-                .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://performance:9092"))
-                .ProduceTo("test-topic")
-                .Build());
+            new KafkaProducerEndpointConfigurationBuilder<TestEventOne>().ProduceTo("test-topic").Build());
 
         _outboundEnvelope =
             new OutboundEnvelope(
@@ -98,6 +94,7 @@ public class IntegrationLoggingBenchmark
                     new("Test", "Test")
                 },
                 producerEndpoint,
+                new TestProducer(),
                 false,
                 new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
     }
@@ -105,18 +102,133 @@ public class IntegrationLoggingBenchmark
     [Benchmark]
     public void LogInbound()
     {
-        _inboundLogger.LogProcessing(_inboundEnvelope);
+        _consumerLogger.LogProcessing(_inboundEnvelope);
     }
 
     [Benchmark]
     public void LogOutbound()
     {
-        _outboundLogger.LogProduced(_outboundEnvelope);
+        _producerLogger.LogProduced(_outboundEnvelope);
     }
 
     [Benchmark]
     public void LogDisabled()
     {
-        _outboundLogger.LogWrittenToOutbox(_outboundEnvelope);
+        _producerLogger.LogStoringIntoOutbox(_outboundEnvelope);
+    }
+
+    private class TestClient : IBrokerClient
+    {
+        public string Name => "client1-name";
+
+        public string DisplayName => "client1";
+
+        public AsyncEvent<BrokerClient> Initializing { get; } = new();
+
+        public AsyncEvent<BrokerClient> Initialized { get; } = new();
+
+        public AsyncEvent<BrokerClient> Disconnecting { get; } = new();
+
+        public AsyncEvent<BrokerClient> Disconnected { get; } = new();
+
+        public ClientStatus Status => ClientStatus.Initializing;
+
+        public void Dispose() => throw new NotSupportedException();
+
+        public ValueTask DisposeAsync() => throw new NotSupportedException();
+
+        public ValueTask ConnectAsync() => throw new NotSupportedException();
+
+        public ValueTask DisconnectAsync() => throw new NotSupportedException();
+
+        public ValueTask ReconnectAsync() => throw new NotSupportedException();
+    }
+
+    private class TestConsumer : IConsumer
+    {
+        public string Name => "consumer1-name";
+
+        public string DisplayName => "consumer1";
+
+        public IBrokerClient Client { get; } = new TestClient();
+
+        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = Array.Empty<ConsumerEndpointConfiguration>();
+
+        public IConsumerStatusInfo StatusInfo { get; } = new ConsumerStatusInfo();
+
+        public ValueTask TriggerReconnectAsync() => throw new NotSupportedException();
+
+        public ValueTask StartAsync() => throw new NotSupportedException();
+
+        public ValueTask StopAsync() => throw new NotSupportedException();
+
+        public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
+
+        public ValueTask CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
+
+        public ValueTask RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
+
+        public ValueTask RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers) => throw new NotSupportedException();
+
+        public int IncrementFailedAttempts(IRawInboundEnvelope envelope) => throw new NotSupportedException();
+    }
+
+    private class TestProducer : IProducer
+    {
+        public string Name => "producer1-name";
+
+        public string DisplayName => "producer1";
+
+        public IBrokerClient Client { get; } = new TestClient();
+
+        public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
+
+        public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public IBrokerMessageIdentifier Produce(IOutboundEnvelope envelope) => throw new NotSupportedException();
+
+        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public IBrokerMessageIdentifier RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public IBrokerMessageIdentifier RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public IBrokerMessageIdentifier RawProduce(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public IBrokerMessageIdentifier RawProduce(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void RawProduce(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public void RawProduce(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope) => throw new NotSupportedException();
+
+        public ValueTask ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask ProduceAsync(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(ProducerEndpoint endpoint, byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(ProducerEndpoint endpoint, Stream? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
+
+        public ValueTask RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask RawProduceAsync(ProducerEndpoint endpoint, byte[]? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
+
+        public ValueTask RawProduceAsync(ProducerEndpoint endpoint, Stream? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
     }
 }

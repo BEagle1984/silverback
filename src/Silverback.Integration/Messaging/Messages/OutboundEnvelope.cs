@@ -7,15 +7,16 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages;
 
-internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
+internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 {
     public OutboundEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
+        IProducer producer,
         bool autoUnwrap = false,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(headers, endpoint, brokerMessageIdentifier)
+        : base(headers, endpoint, producer, brokerMessageIdentifier)
     {
         Message = message;
 
@@ -28,7 +29,7 @@ internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
         AutoUnwrap = autoUnwrap;
     }
 
-    public bool AutoUnwrap { get; set; }
+    public bool AutoUnwrap { get; }
 
     public object? Message { get; set; }
 }

@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 ///     A mocked implementation of <see cref="IMqttClient" /> from MQTTnet that connects with an in-memory
 ///     broker.
 /// </summary>
-public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageReceivedHandler
+public sealed class MockedMqttClient : IMqttClient
 {
     private readonly IInMemoryMqttBroker _broker;
 
@@ -34,7 +34,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
 
     private bool _connecting;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MockedMqttClient" /> class.
@@ -66,11 +66,6 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
     /// <inheritdoc cref="IMqttClient.DisconnectedHandler" />
     public IMqttClientDisconnectedHandler? DisconnectedHandler { get; set; }
 
-    internal IConsumer? Consumer =>
-        (ApplicationMessageReceivedHandler as ConsumerChannelManager)?.Consumer;
-
-    private string ClientId => Options?.ClientId ?? "(none)";
-
     /// <inheritdoc cref="IMqttClient.ConnectAsync" />
     public async Task<MqttClientAuthenticateResult> ConnectAsync(
         IMqttClientOptions options,
@@ -87,7 +82,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
 
         Options = options;
 
-        _broker.Connect(options, this);
+        _broker.Connect(this);
 
         await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
 
@@ -102,7 +97,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
     {
         EnsureNotDisposed();
 
-        _broker.Disconnect(ClientId);
+        _broker.Disconnect(this);
 
         IsConnected = false;
 
@@ -117,7 +112,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
         Check.NotNull(options, nameof(options));
         EnsureNotDisposed();
 
-        _broker.Subscribe(ClientId, options.TopicFilters.Select(filter => filter.Topic).ToList());
+        _broker.Subscribe(this, options.TopicFilters.Select(filter => filter.Topic).ToList());
 
         MqttClientSubscribeResult result = new();
         options.TopicFilters.ForEach(filter => result.Items.Add(MapSubscribeResultItem(filter)));
@@ -132,7 +127,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
         Check.NotNull(options, nameof(options));
         EnsureNotDisposed();
 
-        _broker.Unsubscribe(ClientId, options.TopicFilters);
+        _broker.Unsubscribe(this, options.TopicFilters);
 
         MqttClientUnsubscribeResult result = new();
         options.TopicFilters.ForEach(filter => result.Items.Add(MapUnsubscribeResultItem(filter)));
@@ -150,7 +145,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
         if (Options == null)
             throw new InvalidOperationException("The client is not connected.");
 
-        await _broker.PublishAsync(ClientId, applicationMessage, Options).ConfigureAwait(false);
+        await _broker.PublishAsync(this, applicationMessage, Options).ConfigureAwait(false);
 
         return new MqttClientPublishResult
         {
@@ -175,7 +170,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
-        _disposed = true;
+        _isDisposed = true;
     }
 
     private static MqttClientSubscribeResultItem MapSubscribeResultItem(MqttTopicFilter topicFilter)
@@ -205,7 +200,7 @@ public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageRecei
 
     private void EnsureNotDisposed()
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
     }
 }

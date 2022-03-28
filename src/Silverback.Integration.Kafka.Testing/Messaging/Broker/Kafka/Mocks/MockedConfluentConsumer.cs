@@ -17,7 +17,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 {
     private readonly IInMemoryTopicCollection _topics;
 
-    private readonly IMockedConsumerGroup _consumerGroup;
+    private readonly MockedConsumerGroup _consumerGroup;
 
     private readonly IMockedKafkaOptions _options;
 
@@ -46,9 +46,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         Check.NotNull(consumerGroups, nameof(consumerGroups));
 
-        _consumerGroup = !string.IsNullOrEmpty(Config.GroupId)
+        _consumerGroup = (MockedConsumerGroup)(!string.IsNullOrEmpty(Config.GroupId)
             ? consumerGroups.Get(Config)
-            : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers);
+            : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers));
 
         if (config.EnableAutoCommit ?? true)
         {
@@ -198,30 +198,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    public List<TopicPartitionOffset> Commit()
-    {
-        EnsureNotDisposed();
-        CheckGroupIdNotEmpty();
-
-        lock (_storedOffsets)
-        {
-            if (_storedOffsets.Count == 0)
-                return new List<TopicPartitionOffset>();
-
-            List<TopicPartitionOffset> committedOffsets = _storedOffsets.Values.ToList();
-            _consumerGroup.Commit(committedOffsets);
-            _storedOffsets.Clear();
-
-            List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
-                .Select(
-                    topicPartitionOffset =>
-                        new TopicPartitionOffsetError(topicPartitionOffset, null))
-                .ToList();
-            OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
-
-            return committedOffsets;
-        }
-    }
+    public List<TopicPartitionOffset> Commit() => CommitCore(false);
 
     public void Commit(IEnumerable<TopicPartitionOffset> offsets) => throw new NotSupportedException();
 
@@ -284,10 +261,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    public void Close()
-    {
-        _consumerGroup.Remove(this);
-    }
+    public void Close() => _consumerGroup.Remove(this);
 
     public void Dispose()
     {
@@ -367,11 +341,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
                 return true;
             }
 
-            if (Config.EnablePartitionEof == true &&
-                GetEofMessageIfNeeded(topicPartitionOffset, out result))
-            {
+            if (Config.EnablePartitionEof == true && GetEofMessageIfNeeded(topicPartitionOffset, out result))
                 return true;
-            }
         }
 
         result = null;
@@ -383,7 +354,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         if (PartitionsAssigned)
             return;
 
-        while (_consumerGroup.IsRebalancing)
+        while (_consumerGroup.IsRebalancing || _consumerGroup.IsRebalanceScheduled)
         {
             Task.Delay(10, cancellationToken).Wait(cancellationToken);
         }
@@ -397,11 +368,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             .ToList();
 
         List<TopicPartitionOffset> partitionOffsets =
-            PartitionsAssignedHandler?.Invoke(
-                    this,
-                    assignedPartitions.AsList())
-                ?.ToList()
-            ?? assignedPartitions
+            PartitionsAssignedHandler?.Invoke(this, assignedPartitions.AsList()).ToList() ??
+            assignedPartitions
                 .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))
                 .ToList();
 
@@ -412,6 +380,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
 
         PartitionsAssigned = true;
+
+        _consumerGroup.NotifyAssignmentComplete(this);
     }
 
     private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
@@ -453,7 +423,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         {
             try
             {
-                Commit();
+                CommitCore(true);
             }
             catch (Exception)
             {
@@ -461,6 +431,33 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             }
 
             await Task.Delay(_autoCommitIntervalMs).ConfigureAwait(false);
+        }
+    }
+
+    private List<TopicPartitionOffset> CommitCore(bool isAutoCommit)
+    {
+        EnsureNotDisposed();
+        CheckGroupIdNotEmpty();
+
+        lock (_storedOffsets)
+        {
+            if (_storedOffsets.Count == 0)
+                return new List<TopicPartitionOffset>();
+
+            List<TopicPartitionOffset> committedOffsets = _storedOffsets.Values.ToList();
+            _consumerGroup.Commit(committedOffsets);
+            _storedOffsets.Clear();
+
+            List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
+                .Select(
+                    topicPartitionOffset =>
+                        new TopicPartitionOffsetError(topicPartitionOffset, null))
+                .ToList();
+
+            if (isAutoCommit)
+                OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
+
+            return committedOffsets;
         }
     }
 

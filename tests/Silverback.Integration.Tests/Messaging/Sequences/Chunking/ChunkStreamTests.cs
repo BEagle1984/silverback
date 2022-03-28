@@ -5,6 +5,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Types;
@@ -28,12 +30,14 @@ public class ChunkStreamTests
                 Encoding.UTF8.GetBytes("Silver"),
                 null,
                 TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
             new RawInboundEnvelope(
                 Encoding.UTF8.GetBytes("back"),
                 null,
                 TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.CompleteAsync();
 
@@ -57,12 +61,14 @@ public class ChunkStreamTests
                 Encoding.UTF8.GetBytes("Silver"),
                 null,
                 TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.PushAsync(
             new RawInboundEnvelope(
                 Encoding.UTF8.GetBytes("back"),
                 null,
                 TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
                 new TestOffset()));
         await streamProvider.CompleteAsync();
 

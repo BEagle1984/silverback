@@ -37,10 +37,11 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     public bool Retain { get; init; }
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
+    // TODO: Test
     public void Validate()
     {
         if (string.IsNullOrEmpty(Topic))
-            throw new EndpointConfigurationException("The topic is required.");
+            throw new BrokerConfigurationException("The topic is required.");
     }
 
     internal MqttApplicationMessage ToMqttNetType() =>

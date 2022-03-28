@@ -7,8 +7,10 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
@@ -28,7 +30,7 @@ public class ErrorPolicyChainFixture
         services
             .AddFakeLogger()
             .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+            .WithConnectionToMessageBroker();
 
         _serviceProvider = services.BuildServiceProvider();
     }
@@ -61,8 +63,9 @@ public class ErrorPolicyChainFixture
                 new InboundEnvelope(
                     rawMessage,
                     headers,
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             new InvalidOperationException("test"));
 
         result.Should().BeTrue();
@@ -95,8 +98,9 @@ public class ErrorPolicyChainFixture
                 new InboundEnvelope(
                     rawMessage,
                     headers,
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             new InvalidOperationException("test"));
 
         testPolicy.Applied.Should().Be(failedAttempts > 3);
@@ -130,8 +134,9 @@ public class ErrorPolicyChainFixture
                 new InboundEnvelope(
                     rawMessage,
                     headers,
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             new InvalidOperationException("test"));
 
         for (int i = 0; i < policies.Length; i++)
@@ -163,8 +168,9 @@ public class ErrorPolicyChainFixture
                 new InboundEnvelope(
                     rawMessage,
                     headers,
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             new InvalidOperationException("test"));
 
         policies[1].As<TestErrorPolicy>().Applied.Should().BeTrue();

@@ -5,36 +5,38 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}" />
-public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfiguration, KafkaProducerEndpoint>, IDisposable
+/// <inheritdoc cref="Producer{TEndpoint}" />
+public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
 {
-    private readonly IConfluentProducersCache _confluentClientsCache;
-
     private readonly ISilverbackLogger _logger;
 
-    private IProducer<byte[]?, byte[]?>? _confluentProducer;
+    private readonly IKafkaMessageSerializer _serializer;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducer" /> class.
     /// </summary>
-    /// <param name="broker">
-    ///     The <see cref="IBroker" /> that instantiated this producer.
+    /// <param name="name">
+    ///     The producer identifier.
+    /// </param>
+    /// <param name="client">
+    ///     The <see cref="IConfluentProducerWrapper" />.
     /// </param>
     /// <param name="configuration">
-    ///     The <see cref="KafkaProducerConfiguration" />.
+    ///     The configuration containing only the actual endpoint.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
@@ -42,69 +44,76 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
     /// <param name="envelopeFactory">
     ///     The <see cref="IOutboundEnvelopeFactory" />.
     /// </param>
-    /// <param name="producersCache">
-    ///     The <see cref="IConfluentProducersCache" />.
-    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IOutboundLogger{TCategoryName}" />.
+    ///     The <see cref="IProducerLogger{TCategoryName}" />.
     /// </param>
     public KafkaProducer(
-        KafkaBroker broker,
+        string name,
+        IConfluentProducerWrapper client,
         KafkaProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IOutboundEnvelopeFactory envelopeFactory,
-        IConfluentProducersCache producersCache,
         IServiceProvider serviceProvider,
-        IOutboundLogger<KafkaProducer> logger)
-        : base(broker, configuration, behaviorsProvider, envelopeFactory, serviceProvider, logger)
+        IProducerLogger<KafkaProducer> logger)
+        : base(
+            name,
+            client,
+            Check.NotNull(configuration, nameof(configuration)).Endpoints.Single(),
+            behaviorsProvider,
+            envelopeFactory,
+            serviceProvider,
+            logger)
     {
-        Check.NotNull(configuration, nameof(configuration));
-        Check.NotNull(serviceProvider, nameof(serviceProvider));
-
-        _confluentClientsCache = Check.NotNull(producersCache, nameof(producersCache));
+        Client = Check.NotNull(client, nameof(client));
+        Configuration = Check.NotNull(configuration, nameof(configuration));
         _logger = Check.NotNull(logger, nameof(logger));
+
+        EndpointConfiguration = Configuration.Endpoints.Single();
+        _serializer = EndpointConfiguration.Serializer as IKafkaMessageSerializer ??
+                      new DefaultKafkaMessageSerializer(EndpointConfiguration.Serializer);
     }
 
-    /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose()
-    {
-        DisposeConfluentProducer();
-    }
+    /// <inheritdoc cref="Producer{TEndpoint}.Client" />
+    public new IConfluentProducerWrapper Client { get; }
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
+    /// <summary>
+    ///     Gets the producer configuration.
+    /// </summary>
+    public KafkaProducerConfiguration Configuration { get; }
+
+    /// <inheritdoc cref="Producer{TEndpoint}.EndpointConfiguration" />
+    public new KafkaProducerEndpointConfiguration EndpointConfiguration { get; }
+
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
-        object? message,
-        Stream? messageStream,
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageStream, headers, endpoint));
+        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint));
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override IBrokerMessageIdentifier? ProduceCore(
-        object? message,
-        byte[]? messageBytes,
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageBytes, headers, endpoint));
+        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint)); // TODO: No better option?
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
-        object? message,
-        Stream? messageStream,
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        ProduceCore(message, messageStream.ReadAll(), headers, endpoint, onSuccess, onError);
+        ProduceCore(message.ReadAll(), headers, endpoint, onSuccess, onError);
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("", "CA1031", Justification = "Exception forwarded")]
     protected override void ProduceCore(
-        object? message,
-        byte[]? messageBytes,
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -117,13 +126,13 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         Message<byte[]?, byte[]?> kafkaMessage = new()
         {
             Key = GetKafkaKey(headers, endpoint),
-            Value = messageBytes
+            Value = message
         };
 
         if (headers != null && headers.Count >= 1)
             kafkaMessage.Headers = headers.ToConfluentHeaders();
 
-        GetConfluentProducer().Produce(
+        Client.Produce(
             endpoint.TopicPartition,
             kafkaMessage,
             deliveryReport =>
@@ -131,15 +140,9 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
                 try
                 {
                     if (deliveryReport.Error != null && deliveryReport.Error.IsError)
-                    {
-                        // Disposing and re-creating the producer will maybe fix the issue
-                        if (Configuration.Client.DisposeOnException)
-                            DisposeConfluentProducer();
-
                         throw new ProduceException($"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
-                    }
 
-                    if (Configuration.Client.ArePersistenceStatusReportsEnabled)
+                    if (Configuration.ArePersistenceStatusReportsEnabled)
                         CheckPersistenceStatus(deliveryReport);
 
                     onSuccess.Invoke(new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset));
@@ -151,18 +154,16 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
             });
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        object? message,
-        Stream? messageStream,
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint) =>
-        await ProduceCoreAsync(message, await messageStream.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
+        await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        object? message,
-        byte[]? messageBytes,
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint)
     {
@@ -173,62 +174,45 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {
                 Key = GetKafkaKey(headers, endpoint),
-                Value = messageBytes
+                Value = message
             };
 
             if (headers is { Count: >= 1 })
                 kafkaMessage.Headers = headers.ToConfluentHeaders();
 
-            DeliveryResult<byte[]?, byte[]?>? deliveryResult = await GetConfluentProducer()
-                .ProduceAsync(endpoint.TopicPartition, kafkaMessage)
-                .ConfigureAwait(false);
+            DeliveryResult<byte[]?, byte[]?> deliveryResult = await Client.ProduceAsync(endpoint.TopicPartition, kafkaMessage).ConfigureAwait(false);
 
-            if (Configuration.Client.ArePersistenceStatusReportsEnabled)
+            if (Configuration.ArePersistenceStatusReportsEnabled)
                 CheckPersistenceStatus(deliveryResult);
 
             return new KafkaOffset(deliveryResult.TopicPartitionOffset);
         }
         catch (KafkaException ex)
         {
-            // Disposing and re-creating the producer will maybe fix the issue
-            if (Configuration.Client.DisposeOnException)
-                DisposeConfluentProducer();
-
-            throw new ProduceException(
-                "Error occurred producing the message. See inner exception for details.",
-                ex);
+            throw new ProduceException("Error occurred producing the message. See inner exception for details.", ex);
         }
     }
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override async Task ProduceCoreAsync(
-        object? message,
-        Stream? messageStream,
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    protected override async ValueTask ProduceCoreAsync(
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        await ProduceCoreAsync(
-                message,
-                await messageStream.ReadAllAsync().ConfigureAwait(false),
-                headers,
-                endpoint,
-                onSuccess,
-                onError)
-            .ConfigureAwait(false);
+        await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint, onSuccess, onError).ConfigureAwait(false);
 
-    /// <inheritdoc cref="Producer{TBroker,TConfiguration,TEndpoint}.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
-    protected override Task ProduceCoreAsync(
-        object? message,
-        byte[]? messageBytes,
+    protected override ValueTask ProduceCoreAsync(
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         KafkaProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError)
     {
-        ProduceCore(message, messageBytes, headers, endpoint, onSuccess, onError);
-        return Task.CompletedTask;
+        ProduceCore(message, headers, endpoint, onSuccess, onError);
+        return default;
     }
 
     private byte[]? GetKafkaKey(IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
@@ -242,27 +226,22 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
         if (kafkaKeyValueFromHeader == null)
             return null;
 
-        return Configuration.Serializer is IKafkaMessageSerializer kafkaSerializer
-            ? kafkaSerializer.SerializeKey(
-                kafkaKeyValueFromHeader,
-                headers,
-                endpoint)
-            : Encoding.UTF8.GetBytes(kafkaKeyValueFromHeader);
+        return _serializer.SerializeKey(kafkaKeyValueFromHeader, headers, endpoint);
     }
 
-    private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
-        _confluentProducer ??= _confluentClientsCache.GetProducer(Configuration.Client, this);
-
-    private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?> deliveryReport)
+    private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)
     {
+        if (deliveryReport == null)
+            throw new ProduceException("The delivery report is null.");
+
         switch (deliveryReport.Status)
         {
             case PersistenceStatus.PossiblyPersisted
-                when Configuration.Client.ThrowIfNotAcknowledged:
+                when Configuration.ThrowIfNotAcknowledged:
                 throw new ProduceException("The message was transmitted to broker, but no acknowledgement was received.");
 
             case PersistenceStatus.PossiblyPersisted:
-                _logger.LogProduceNotAcknowledged(this);
+                _logger.LogProduceNotAcknowledged(this, deliveryReport.TopicPartition);
                 break;
 
             case PersistenceStatus.NotPersisted:
@@ -270,11 +249,5 @@ public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerConfigura
                     "The message was never transmitted to the broker, or failed with an error indicating it " +
                     "was not written to the log.'");
         }
-    }
-
-    private void DisposeConfluentProducer()
-    {
-        _confluentClientsCache.DisposeProducer(Configuration.Client);
-        _confluentProducer = null;
     }
 }

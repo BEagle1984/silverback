@@ -42,17 +42,35 @@ public class EnumerableForEachExtensionsFixture
     }
 
     [Fact]
-    public async Task ForEachAsync_ShouldInvokeAsyncFunctionForEachItemInEnumerable()
+    public async Task ForEachAsync_ShouldInvokeAsyncFunctionForEachItemInEnumerable_WhenFuncReturnsTask()
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 5);
         int total = 0;
 
-        await enumerable.ForEachAsync(
-            async i =>
-            {
-                await Task.Delay(1);
-                total += i;
-            });
+        async Task Do(int i)
+        {
+            await Task.Delay(1);
+            total += i;
+        }
+
+        await enumerable.ForEachAsync(Do);
+
+        total.Should().Be(15);
+    }
+
+    [Fact]
+    public async Task ForEachAsync_ShouldInvokeAsyncFunctionForEachItemInEnumerable_WhenFuncReturnsValueTask()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 5);
+        int total = 0;
+
+        async ValueTask Do(int i)
+        {
+            await Task.Delay(1);
+            total += i;
+        }
+
+        await enumerable.ForEachAsync(Do);
 
         total.Should().Be(15);
     }
@@ -129,7 +147,7 @@ public class EnumerableForEachExtensionsFixture
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
             },
-            2);
+            2).AsTask();
 
         await act.Should().ThrowAsync<TimeoutException>();
         countdownEvent.CurrentCount.Should().Be(1);

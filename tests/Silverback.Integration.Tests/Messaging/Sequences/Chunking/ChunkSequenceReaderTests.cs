@@ -4,6 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
@@ -31,7 +33,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -52,7 +55,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
             {
                 { DefaultMessageHeaders.MessageId, "123" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -75,7 +79,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -100,7 +105,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
                 { DefaultMessageHeaders.ChunkIndex, "0" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
         RawInboundEnvelope envelope2 = new(
             BytesUtil.GetRandomBytes(10),
@@ -110,7 +116,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
                 { DefaultMessageHeaders.ChunkIndex, "1" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         ChunkSequenceReader reader = new();
@@ -148,7 +155,8 @@ public sealed class ChunkSequenceReaderTests : IDisposable
                 { DefaultMessageHeaders.ChunkIndex, "1" },
                 { DefaultMessageHeaders.ChunksCount, "4" }
             },
-            new TestConsumerConfiguration("test").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("test").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(

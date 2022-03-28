@@ -11,4 +11,7 @@ namespace Silverback.Messaging.Broker.Behaviors;
 /// <param name="context">
 ///     The context that is passed along the producer behaviors pipeline.
 /// </param>
-public delegate Task ProducerBehaviorHandler(ProducerPipelineContext context);
+/// <returns>
+///     A <see cref="ValueTask" /> representing the asynchronous operation.
+/// </returns>
+public delegate ValueTask ProducerBehaviorHandler(ProducerPipelineContext context);

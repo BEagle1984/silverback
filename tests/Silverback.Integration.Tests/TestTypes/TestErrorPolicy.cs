@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes;
@@ -27,7 +27,7 @@ public record TestErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider,
-            Substitute.For<IInboundLogger<TestErrorPolicy>>());
+            Substitute.For<IConsumerLogger<TestErrorPolicy>>());
 
         return _implementation;
     }
@@ -41,7 +41,7 @@ public record TestErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            IInboundLogger<TestErrorPolicy> logger)
+            IConsumerLogger<TestErrorPolicy> logger)
             : base(
                 maxFailedAttempts,
                 excludedExceptions,

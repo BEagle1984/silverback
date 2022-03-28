@@ -49,7 +49,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle));
+                .AddDelegateSubscriber<TestEventOne>(Handle));
 
         void Handle(TestEventOne message) => messages.Add(message);
 
@@ -99,7 +99,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEvent>(Handle));
+                .AddDelegateSubscriber<TestEvent>(Handle));
 
         void Handle(TestEvent message) => messages.Add(message);
 
@@ -155,7 +155,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEvent>(Handle));
+                .AddDelegateSubscriber<IEvent>(Handle));
 
         void Handle(IEvent message) => messages.Add(message);
 
@@ -301,7 +301,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<ICommand>(Handle));
+                .AddDelegateSubscriber<ICommand>(Handle));
 
         static void Handle(ICommand message)
         {
@@ -323,7 +323,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEvent>(Handle));
+                .AddDelegateSubscriber<IEvent>(Handle));
 
         static void Handle(IEvent message)
         {
@@ -345,7 +345,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<ICommand>(Handle));
+                .AddDelegateSubscriber<ICommand>(Handle));
 
         static void Handle(ICommand message)
         {
@@ -371,7 +371,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEvent>(Handle));
+                .AddDelegateSubscriber<IEvent>(Handle));
 
         static void Handle(IEvent message)
         {
@@ -393,7 +393,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEvent>(Handle));
+                .AddDelegateSubscriber<IEvent>(Handle));
 
         static void Handle(IEvent message)
         {

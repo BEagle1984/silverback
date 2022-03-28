@@ -20,19 +20,20 @@ public static class SilverbackBuilderMqttExtensions
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </param>
     /// <param name="configureAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttEndpointsConfigurationBuilder" /> and adds
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientsConfigurationBuilder" /> and adds
     ///     the outbound and inbound endpoints.
     /// </param>
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddMqttEndpoints(
+    // TODO: Review summary and document in release notes
+    public static SilverbackBuilder AddMqttClients(
         this SilverbackBuilder silverbackBuilder,
-        Action<MqttEndpointsConfigurationBuilder> configureAction)
+        Action<MqttClientsConfigurationBuilder> configureAction)
     {
         Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
         Check.NotNull(configureAction, nameof(configureAction));
 
-        return silverbackBuilder.AddEndpointsConfigurator(_ => new MqttEndpointsConfigurator(configureAction));
+        return silverbackBuilder.AddBrokerClientsConfigurator(_ => new MqttBrokerClientsConfigurator(configureAction));
     }
 }

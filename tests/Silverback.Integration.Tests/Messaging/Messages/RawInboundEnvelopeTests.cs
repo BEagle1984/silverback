@@ -3,6 +3,8 @@
 
 using System.IO;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Xunit;
@@ -18,6 +20,7 @@ public class RawInboundEnvelopeTests
             (Stream?)null,
             null,
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
 
         envelope.Should().NotBeNull();

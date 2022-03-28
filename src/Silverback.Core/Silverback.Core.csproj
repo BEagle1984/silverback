@@ -23,13 +23,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0"/>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0"/>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="5.0.0"/>
   </ItemGroup>
 
 </Project>

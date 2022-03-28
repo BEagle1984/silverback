@@ -3,16 +3,14 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
-#if NETCOREAPP3_1 || NET5_0
-using System.Net.Security;
-#endif
-
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using MQTTnet.Client.Options;
 using Silverback.Collections;
 using Silverback.Configuration;
+#if NETCOREAPP3_1 || NET5_0
+using System.Net.Security;
+#endif
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 

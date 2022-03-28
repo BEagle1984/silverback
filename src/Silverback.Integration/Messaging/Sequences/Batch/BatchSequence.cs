@@ -42,5 +42,5 @@ public class BatchSequence : Sequence
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected override Task OnTimeoutElapsedAsync() => CompleteAsync();
+    protected override ValueTask OnTimeoutElapsedAsync() => CompleteAsync();
 }

@@ -21,7 +21,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_BinaryMessage_RawContentProduced()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -32,7 +32,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
@@ -43,7 +43,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_InheritedBinaryMessage_RawContentProduced()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -54,7 +54,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
@@ -65,11 +65,11 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_NonBinaryMessage_EnvelopeUntouched()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        TestProducerConfiguration endpointConfiguration = new("test")
+        TestProducerEndpointConfiguration endpointConfiguration = new("test")
         {
             Serializer = new BinaryMessageSerializer<BinaryMessage>()
         };
-        OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint());
+        OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -80,7 +80,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
@@ -91,7 +91,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
     public async Task HandleAsync_EndpointWithBinaryMessageSerializer_EnvelopeUntouched()
     {
         TestEventOne message = new() { Content = "hey!" };
-        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault());
+        OutboundEnvelope envelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
@@ -99,7 +99,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();

@@ -6,7 +6,7 @@ using Silverback.Configuration;
 namespace Silverback.ExtensibleFactories;
 
 /// <summary>
-///     Used just to restrict the <see cref="SilverbackBuilder.AddExtensibleFactory{TFactoryInterface,TFactory}"/> method usage.
+///     Used just to restrict the <see cref="SilverbackBuilder.AddExtensibleFactory{TFactoryInterface,TFactory}" /> method usage.
 /// </summary>
 internal interface ITypeBasedExtensibleFactory
 {

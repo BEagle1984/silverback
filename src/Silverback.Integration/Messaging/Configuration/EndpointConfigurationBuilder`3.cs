@@ -25,21 +25,21 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     where TConfiguration : EndpointConfiguration
     where TBuilder : EndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {
-    private string? _friendlyName;
+    private readonly string? _friendlyName;
 
     private IMessageSerializer? _serializer;
 
     private MessageValidationMode _messageValidationMode = MessageValidationMode.LogWarning;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="EndpointConfigurationBuilder{TMessage,TEndpoint,TBuilder}" /> class.
+    ///     Initializes a new instance of the <see cref="EndpointConfigurationBuilder{TMessage, TConfiguration, TBuilder}" /> class.
     /// </summary>
-    /// <param name="endpointsConfigurationBuilder">
-    ///     The optional <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
+    /// <param name="friendlyName">
+    ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    protected EndpointConfigurationBuilder(EndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+    protected EndpointConfigurationBuilder(string? friendlyName)
     {
-        EndpointsConfigurationBuilder = endpointsConfigurationBuilder;
+        _friendlyName = friendlyName;
     }
 
     /// <summary>
@@ -53,10 +53,10 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// </summary>
     public abstract string? EndpointRawName { get; }
 
-    /// <summary>
-    ///     Gets the <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
-    /// </summary>
-    internal EndpointsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
+    // /// <summary>
+    // ///     Gets the <see cref="EndpointsConfigurationBuilder" /> that instantiated the builder.
+    // /// </summary>
+    // internal BrokerClientsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
 
     /// <summary>
     ///     Gets this instance.
@@ -65,23 +65,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     ///     This is necessary to work around casting in the base classes.
     /// </remarks>
     protected abstract TBuilder This { get; }
-
-    /// <summary>
-    ///     Specifies an optional friendly name to be used to identify the endpoint. This name can be used to filter or retrieve the
-    ///     endpoints and will also be included in the <see cref="EndpointConfiguration.DisplayName" />, to be shown in the human-targeted
-    ///     output (e.g. logs, health checks result, etc.).
-    /// </summary>
-    /// <param name="friendlyName">
-    ///     The friendly name.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder WithName(string friendlyName)
-    {
-        _friendlyName = Check.NotNullOrEmpty(friendlyName, nameof(friendlyName));
-        return This;
-    }
 
     /// <summary>
     ///     Specifies the <see cref="IMessageSerializer" /> to be used serialize or deserialize the messages.
@@ -99,10 +82,26 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     }
 
     /// <summary>
+    ///     Enables the message validation and logs a warning if the message is not valid.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ValidateMessageAndWarn() => ValidateMessage(false);
+
+    /// <summary>
+    ///     Enables the message validation and throws an exception if the message is not valid.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder ValidateMessageAndThrow() => ValidateMessage(true);
+
+    /// <summary>
     ///     Enables the message validation.
     /// </summary>
     /// <param name="throwException">
-    ///     A value that specifies whether an exception should be thrown if the message is invalid.
+    ///     A value that specifies whether an exception should be thrown if the message is not valid.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.

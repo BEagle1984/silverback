@@ -25,9 +25,14 @@ public interface IMockedConsumerGroup
     string BootstrapServers { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether a rebalance is pending.
+    ///     Gets a value indicating whether a rebalance is being performed.
     /// </summary>
     bool IsRebalancing { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether a rebalance has been scheduled.
+    /// </summary>
+    bool IsRebalanceScheduled { get; }
 
     /// <summary>
     ///     Gets the latest committed <see cref="Offset" /> for each topic partition.
@@ -95,12 +100,18 @@ public interface IMockedConsumerGroup
     void Commit(IEnumerable<TopicPartitionOffset> offsets);
 
     /// <summary>
-    ///     Simulates a rebalance and causes all assignments to be revoked and reassigned.
+    ///     Initializes a rebalance and causes all assignments to be revoked and reassigned.
+    /// </summary>
+    void ScheduleRebalance();
+
+    /// <summary>
+    ///     Exectues a rebalance and causes all assignments to be revoked and reassigned.
     /// </summary>
     /// <returns>
-    ///     The partitions that have been revoked and assigned.
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     partitions that have been revoked and assigned.
     /// </returns>
-    RebalanceResult Rebalance();
+    Task<RebalanceResult> RebalanceAsync();
 
     /// <summary>
     ///     Gets partition assignment for the specified consumer.
@@ -129,7 +140,7 @@ public interface IMockedConsumerGroup
     ///     Gets the total number of committed offsets. This number is usually equal to the number of consumed messages.
     /// </summary>
     /// <param name="topic">
-    ///     The topic name.
+    ///     The topic.
     /// </param>
     /// <returns>
     ///     The number of committed offsets.

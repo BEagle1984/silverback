@@ -27,8 +27,8 @@ public class CommandPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber2<TestCommand>(Handle)
-                .AddDelegateSubscriber2<TestCommandWithResult, int[]>(Handle2));
+                .AddDelegateSubscriber<TestCommand>(Handle)
+                .AddDelegateSubscriber<TestCommandWithResult, int[]>(Handle2));
 
         void Handle(TestCommand message) => _receivedMessages++;
         static int[] Handle2(TestCommandWithResult message) => new[] { 1, 2, 3 };

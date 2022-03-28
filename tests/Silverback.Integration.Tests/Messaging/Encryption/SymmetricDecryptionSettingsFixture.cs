@@ -3,7 +3,7 @@
 
 using System;
 using FluentAssertions;
-using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Xunit;
 
@@ -21,7 +21,7 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = () => settings.Validate();
 
-        act.Should().Throw<EndpointConfigurationException>().WithMessage("The algorithm name is required.");
+        act.Should().Throw<BrokerConfigurationException>().WithMessage("The algorithm name is required.");
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = () => settings.Validate();
 
-        act.Should().Throw<EndpointConfigurationException>().WithMessage("A Key or a KeyProvider is required.");
+        act.Should().Throw<BrokerConfigurationException>().WithMessage("A Key or a KeyProvider is required.");
     }
 
     [Fact]
@@ -49,6 +49,6 @@ public class SymmetricDecryptionSettingsFixture
 
         Action act = () => settings.Validate();
 
-        act.Should().Throw<EndpointConfigurationException>().WithMessage("Cannot set both the Key and the KeyProvider.");
+        act.Should().Throw<BrokerConfigurationException>().WithMessage("Cannot set both the Key and the KeyProvider.");
     }
 }

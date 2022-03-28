@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -6,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Logging;
 using Xunit;
 

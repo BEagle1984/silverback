@@ -9,15 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
 
 namespace Silverback.Testing;
 
 /// <inheritdoc cref="IMqttTestingHelper" />
-public class MqttTestingHelper : TestingHelper<MqttBroker>, IMqttTestingHelper
+public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
 {
     private readonly IInMemoryMqttBroker? _inMemoryMqttBroker;
+
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttTestingHelper" /> class.
@@ -34,6 +35,7 @@ public class MqttTestingHelper : TestingHelper<MqttBroker>, IMqttTestingHelper
         : base(serviceProvider, logger)
     {
         _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
+        _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
     }
 
     /// <inheritdoc cref="IMqttTestingHelper.GetClientSession" />
@@ -54,7 +56,7 @@ public class MqttTestingHelper : TestingHelper<MqttBroker>, IMqttTestingHelper
         return _inMemoryMqttBroker.GetMessages(topic);
     }
 
-    /// <inheritdoc cref="TestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
+    /// <inheritdoc cref="TestingHelper.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
     protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
         _inMemoryMqttBroker == null
             ? Task.CompletedTask

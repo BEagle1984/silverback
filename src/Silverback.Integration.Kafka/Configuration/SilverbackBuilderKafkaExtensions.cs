@@ -15,26 +15,24 @@ namespace Silverback.Configuration;
 public static class SilverbackBuilderKafkaExtensions
 {
     /// <summary>
-    ///     Adds the Kafka endpoints.
+    ///     Adds a Kafka client.
     /// </summary>
     /// <param name="silverbackBuilder">
-    ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
-    ///     the services to.
+    ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </param>
     /// <param name="configureAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaEndpointsConfigurationBuilder" /> and adds
-    ///     the outbound and inbound endpoints.
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientsConfigurationBuilder" /> and configures the clients.
     /// </param>
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddKafkaEndpoints(
+    public static SilverbackBuilder AddKafkaClients(
         this SilverbackBuilder silverbackBuilder,
-        Action<KafkaEndpointsConfigurationBuilder> configureAction)
+        Action<KafkaClientsConfigurationBuilder> configureAction)
     {
         Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
         Check.NotNull(configureAction, nameof(configureAction));
 
-        return silverbackBuilder.AddEndpointsConfigurator(_ => new KafkaEndpointsConfigurator(configureAction));
+        return silverbackBuilder.AddBrokerClientsConfigurator(_ => new KafkaBrokerClientsConfigurator(configureAction));
     }
 }

@@ -15,9 +15,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_Default_SerializerSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
         configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
     }
@@ -25,9 +25,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_WithSetMessageType_TypedSerializerSet()
     {
-        TestConsumerConfigurationBuilder<TestEventOne> builder = new();
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
-        TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
         configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
     }
@@ -35,9 +35,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_UseFixedTypeWithGenericArgument_SerializerSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder
+        TestConsumerEndpointConfiguration configuration = builder
             .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType<object>())
             .Build();
 
@@ -47,9 +47,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_UseFixedType_SerializerSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder
+        TestConsumerEndpointConfiguration configuration = builder
             .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType(typeof(TestEventOne)))
             .Build();
 
@@ -59,9 +59,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_Configure_SerializerAndOptionsSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
             serializer => serializer.Configure(
                 settings =>
                 {
@@ -75,9 +75,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_WithEncoding_SerializerAndEncodingSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
                 serializer => serializer
                     .WithEncoding(MessageEncoding.Unicode))
             .Build();
@@ -90,9 +90,9 @@ public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void DeserializeJsonUsingNewtonsoft_UseFixedTypeAndConfigure_SerializerAndOptionsSet()
     {
-        TestConsumerConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        TestConsumerConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
+        TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
             serializer => serializer
                 .UseFixedType<object>()
                 .Configure(

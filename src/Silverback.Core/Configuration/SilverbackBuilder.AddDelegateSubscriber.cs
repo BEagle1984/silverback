@@ -9,7 +9,7 @@ using Silverback.Messaging.Subscribers.Subscriptions;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the AddDelegateSubscriber methods to the <see cref="SilverbackBuilder" />.
+///     Implements the <c>AddDelegateSubscriber</c> methods.
 /// </content>
 public partial class SilverbackBuilder
 {
@@ -28,7 +28,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage>(Action<TMessage> handler, DelegateSubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Action<TMessage> handler, DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
 
     /// <summary>
@@ -46,7 +46,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage>(Func<TMessage, Task> handler, DelegateSubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Func<TMessage, Task> handler, DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
 
     /// <summary>
@@ -64,7 +64,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage>(Func<TMessage, ValueTask> handler, DelegateSubscriptionOptions? options = null) =>
+    public SilverbackBuilder AddDelegateSubscriber<TMessage>(Func<TMessage, ValueTask> handler, DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
 
     /// <summary>
@@ -85,7 +85,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, TResult>(
         Func<TMessage, TResult> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -108,7 +108,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, TResult>(
         Func<TMessage, Task<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -131,7 +131,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, TResult>(
         Func<TMessage, ValueTask<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -154,7 +154,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2>(
         Action<TMessage, T2> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -177,7 +177,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2>(
         Func<TMessage, T2, Task> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -200,7 +200,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2>(
         Func<TMessage, T2, ValueTask> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -226,7 +226,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, TResult>(
         Func<TMessage, T2, TResult> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -252,7 +252,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, TResult>(
         Func<TMessage, T2, Task<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -278,7 +278,7 @@ public partial class SilverbackBuilder
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, TResult>(
         Func<TMessage, T2, ValueTask<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -305,7 +305,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3>(
         Action<TMessage, T2, T3> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -332,7 +332,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3>(
         Func<TMessage, T2, T3, Task> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -359,7 +359,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3>(
         Func<TMessage, T2, T3, ValueTask> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -389,7 +389,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, TResult>(
         Func<TMessage, T2, T3, TResult> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -419,7 +419,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, TResult>(
         Func<TMessage, T2, T3, Task<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -449,7 +449,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, TResult>(
         Func<TMessage, T2, T3, ValueTask<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -479,7 +479,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4>(
         Action<TMessage, T2, T3, T4> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -509,7 +509,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4>(
         Func<TMessage, T2, T3, T4, Task> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -539,7 +539,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4>(
         Func<TMessage, T2, T3, T4, ValueTask> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -572,7 +572,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4, TResult>(
         Func<TMessage, T2, T3, T4, TResult> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -605,7 +605,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4, TResult>(
         Func<TMessage, T2, T3, T4, Task<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));
@@ -638,7 +638,7 @@ public partial class SilverbackBuilder
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
     [SuppressMessage("Documentation", "SA1625:Element documentation must not be copied and pasted", Justification = "Intentional")]
-    public SilverbackBuilder AddDelegateSubscriber2<TMessage, T2, T3, T4, TResult>(
+    public SilverbackBuilder AddDelegateSubscriber<TMessage, T2, T3, T4, TResult>(
         Func<TMessage, T2, T3, T4, ValueTask<TResult>> handler,
         DelegateSubscriptionOptions? options = null) =>
         AddSubscriber(DelegateSubscriber.Create(handler), MapTypeSubscriptionOptions(options));

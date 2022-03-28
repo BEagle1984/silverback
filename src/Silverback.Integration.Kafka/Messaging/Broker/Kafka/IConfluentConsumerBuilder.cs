@@ -54,9 +54,7 @@ public interface IConfluentConsumerBuilder
     /// <returns>
     ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    IConfluentConsumerBuilder SetPartitionsAssignedHandler(
-        Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>
-            partitionsAssignedHandler);
+    IConfluentConsumerBuilder SetPartitionsAssignedHandler(Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>> partitionsAssignedHandler);
 
     /// <summary>
     ///     Sets the handler to call on partitions assigned events.
@@ -78,9 +76,7 @@ public interface IConfluentConsumerBuilder
     /// <returns>
     ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    IConfluentConsumerBuilder SetPartitionsRevokedHandler(
-        Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
-            partitionsRevokedHandler);
+    IConfluentConsumerBuilder SetPartitionsRevokedHandler(Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>> partitionsRevokedHandler);
 
     /// <summary>
     ///     Sets the handler to call on partitions revoked events.

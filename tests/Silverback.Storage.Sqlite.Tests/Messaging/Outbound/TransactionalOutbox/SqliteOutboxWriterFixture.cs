@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -10,11 +11,10 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
 using Silverback.Tests.Logging;
 using Xunit;
-using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Outbound.TransactionalOutbox;
 

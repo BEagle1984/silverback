@@ -88,7 +88,7 @@ public class EnumerableSelectExtensionsFixture
 
                 return item * 2;
             },
-            2);
+            2).AsTask();
 
         await act.Should().ThrowAsync<TimeoutException>();
         countdownEvent.CurrentCount.Should().Be(1);
@@ -111,7 +111,7 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
-        IEnumerable<int> result = await enumerable.SelectAsync(item => Task.FromResult(item * 2));
+        IEnumerable<int> result = await enumerable.SelectAsync(item => ValueTask.FromResult(item * 2));
 
         result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
     }
@@ -123,7 +123,7 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
-        IEnumerable<int> result = await enumerable.SelectAsync(i => Task.FromResult(i * 2), parallel);
+        IEnumerable<int> result = await enumerable.SelectAsync(i => ValueTask.FromResult(i * 2), parallel);
 
         result.Should().BeEquivalentTo(new[] { 2, 4, 6 });
     }
@@ -134,7 +134,7 @@ public class EnumerableSelectExtensionsFixture
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
         IEnumerable<int> result =
-            await enumerable.SelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
+            await enumerable.SelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
 
         result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3 });
     }
@@ -144,7 +144,7 @@ public class EnumerableSelectExtensionsFixture
     {
         IEnumerable<int> enumerable = Enumerable.Range(1, 3);
 
-        IEnumerable<int> result = await enumerable.ParallelSelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
+        IEnumerable<int> result = await enumerable.ParallelSelectManyAsync(i => ValueTask.FromResult(new[] { i, i }.AsEnumerable()));
 
         result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3 });
     }
@@ -185,7 +185,7 @@ public class EnumerableSelectExtensionsFixture
 
                 return new[] { item * 2, item * 3 };
             },
-            2);
+            2).AsTask();
 
         await act.Should().ThrowAsync<TimeoutException>();
         countdownEvent.CurrentCount.Should().Be(1);

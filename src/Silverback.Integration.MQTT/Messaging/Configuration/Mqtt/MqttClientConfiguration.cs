@@ -2,11 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Configuration;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -39,6 +41,16 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public MqttClientChannelConfiguration? Channel { get; init; }
 
     /// <summary>
+    ///     Gets the configured consumer endpoints.
+    /// </summary>
+    public IValueReadOnlyCollection<MqttConsumerEndpointConfiguration> ConsumerEndpoints { get; init; } = ValueReadOnlyCollection.Empty<MqttConsumerEndpointConfiguration>();
+
+    /// <summary>
+    ///     Gets the configured producer endpoints.
+    /// </summary>
+    public IValueReadOnlyCollection<MqttProducerEndpointConfiguration> ProducerEndpoints { get; init; } = ValueReadOnlyCollection.Empty<MqttProducerEndpointConfiguration>();
+
+    /// <summary>
     ///     Gets a value indicating whether the headers (user properties) are supported according to the configured protocol version.
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
@@ -46,15 +58,42 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public void Validate()
     {
+        if (ProducerEndpoints == null)
+            throw new BrokerConfigurationException("ProducerEndpoints cannot be null.");
+
+        if (ConsumerEndpoints == null)
+            throw new BrokerConfigurationException("ConsumerEndpoints cannot be null.");
+
+        if (ProducerEndpoints.Count == 0 && ConsumerEndpoints.Count == 0)
+            throw new BrokerConfigurationException("At least one endpoint must be configured.");
+
+        ProducerEndpoints.ForEach(endpoint => endpoint.Validate());
+        ConsumerEndpoints.ForEach(endpoint => endpoint.Validate());
+
+        CheckDuplicateConsumerTopics();
+
         if (string.IsNullOrEmpty(ClientId))
-            throw new EndpointConfigurationException($"A {nameof(ClientId)} is required to connect with the message broker.");
+            throw new BrokerConfigurationException($"A {nameof(ClientId)} is required to connect with the message broker.");
 
         if (Channel == null)
-            throw new EndpointConfigurationException("The channel configuration is required to connect with the message broker.");
+            throw new BrokerConfigurationException("The channel configuration is required to connect with the message broker.");
 
         Channel.Validate();
         UserProperties.ForEach(property => property.Validate());
         WillMessage?.Validate();
+
+        if (!AreHeadersSupported)
+        {
+            if (ConsumerEndpoints.Any(endpoint => endpoint.Serializer.RequireHeaders))
+            {
+                throw new BrokerConfigurationException(
+                    "Wrong serializer configuration. Since headers (user properties) are not " +
+                    "supported by MQTT prior to version 5, the serializer must be configured with an " +
+                    "hardcoded message type.");
+            }
+
+            ConsumerEndpoints.ForEach(endpoint => CheckErrorPolicyHeadersRequirement(endpoint.ErrorPolicy));
+        }
     }
 
     internal MqttClientOptions GetMqttClientOptions()
@@ -65,5 +104,36 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         options.UserProperties = UserProperties.Select(property => property.ToMqttNetType()).ToList();
         options.ChannelOptions = Channel?.ToMqttNetType();
         return options;
+    }
+
+    private static void CheckErrorPolicyHeadersRequirement(IErrorPolicy errorPolicy)
+    {
+        switch (errorPolicy)
+        {
+            case ErrorPolicyBase errorPolicyBase:
+                CheckErrorPolicyMaxFailedAttemptsNotSet(errorPolicyBase);
+                break;
+            case ErrorPolicyChain errorPolicyChain:
+                errorPolicyChain.Policies.ForEach(CheckErrorPolicyMaxFailedAttemptsNotSet);
+                break;
+        }
+    }
+
+    private static void CheckErrorPolicyMaxFailedAttemptsNotSet(ErrorPolicyBase errorPolicyBase)
+    {
+        if (errorPolicyBase is not RetryErrorPolicy && errorPolicyBase.MaxFailedAttempts > 1)
+        {
+            throw new BrokerConfigurationException(
+                "Cannot set MaxFailedAttempts on the error policies (except for the RetryPolicy) " +
+                "because headers (user properties) are not supported by MQTT prior to version 5.");
+        }
+    }
+
+    private void CheckDuplicateConsumerTopics()
+    {
+        List<string> topics = ConsumerEndpoints.SelectMany(endpoint => endpoint.Topics.Distinct()).ToList();
+
+        if (topics.Count != topics.Distinct().Count())
+            throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");
     }
 }

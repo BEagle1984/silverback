@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 

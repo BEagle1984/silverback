@@ -4,7 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types.Domain;
 using Xunit;

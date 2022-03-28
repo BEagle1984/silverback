@@ -3,7 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Configuration;

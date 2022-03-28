@@ -24,7 +24,7 @@ public class JsonMessageSerializerBenchmark
 
     private readonly MessageHeaderCollection _messageHeaderCollection = new();
 
-    private readonly ProducerEndpoint _producerEndpoint = new TestProducerEndpoint("Name", new TestProducerConfiguration());
+    private readonly ProducerEndpoint _producerEndpoint = new TestProducerEndpoint("Name", new TestProducerEndpointConfiguration());
 
     [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
     [BenchmarkCategory("Serialize")]

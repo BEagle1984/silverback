@@ -1,13 +1,14 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging;
 
 /// <inheritdoc cref="ProducerEndpoint" />
 public abstract record ProducerEndpoint<TConfiguration> : ProducerEndpoint
-    where TConfiguration : ProducerConfiguration
+    where TConfiguration : ProducerEndpointConfiguration
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducerEndpoint{TConfiguration}" /> class.

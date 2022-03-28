@@ -11,7 +11,7 @@ public class RemoveMessageTypeHeaderProducerBehavior : IProducerBehavior
 {
     public int SortIndex => int.MaxValue;
 
-    public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         context.Envelope.Headers.Remove(DefaultMessageHeaders.MessageType);
 

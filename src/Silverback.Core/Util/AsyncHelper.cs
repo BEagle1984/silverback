@@ -10,7 +10,6 @@
     THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 using System;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,55 +19,74 @@ namespace Silverback.Util;
 // see https://stackoverflow.com/questions/9343594/how-to-call-asynchronous-method-from-synchronous-method-in-c
 internal static class AsyncHelper
 {
-    private static readonly TaskFactory TaskFactory = new(
-        CancellationToken.None,
-        TaskCreationOptions.None,
-        TaskContinuationOptions.None,
-        TaskScheduler.Default);
+    private static readonly TaskFactory TaskFactory =
+        new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
-    public static TResult RunSynchronously<TResult>(Func<Task<TResult>> func)
+    public static TResult RunSynchronously<TResult>(Func<Task<TResult>> asyncFunc) =>
+        TaskFactory
+            .StartNew(asyncFunc, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
+
+    public static void RunSynchronously(Func<Task> asyncFunc) =>
+        TaskFactory
+            .StartNew(asyncFunc, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
+
+    // TODO: TEST
+    public static TResult RunSynchronously<TResult>(Func<ValueTask<TResult>> asyncFunc)
     {
-        CultureInfo? culture = CultureInfo.CurrentCulture;
-        CultureInfo? uiCulture = CultureInfo.CurrentUICulture;
+        ValueTask<TResult> valueTask = asyncFunc.Invoke();
 
-        Task<TResult> ExecuteTask()
-        {
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = uiCulture;
-            return func();
-        }
+        if (valueTask.IsCompleted)
+            return valueTask.GetAwaiter().GetResult();
 
-        return TaskFactory.StartNew(
-                ExecuteTask,
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                TaskScheduler.Default)
+        return TaskFactory
+            .StartNew(() => valueTask.AsTask(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
             .Unwrap()
             .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
     }
 
-    public static void RunSynchronously(Func<Task> func)
+    // TODO: TEST
+    public static void RunSynchronously(Func<ValueTask> asyncFunc)
     {
-        CultureInfo? culture = CultureInfo.CurrentCulture;
-        CultureInfo? uiCulture = CultureInfo.CurrentUICulture;
+        ValueTask valueTask = asyncFunc.Invoke();
 
-        Task ExecuteTask()
-        {
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = uiCulture;
-            return func();
-        }
+        if (valueTask.IsCompleted)
+            return;
 
-        TaskFactory.StartNew(
-                ExecuteTask,
-                CancellationToken.None,
-                TaskCreationOptions.None,
-                TaskScheduler.Default)
+        TaskFactory
+            .StartNew(() => valueTask.AsTask(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
             .Unwrap()
             .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
+    }
+
+    // TODO: TEST
+    public static TResult EnsureRunSynchronously<TResult>(Func<ValueTask<TResult>> asyncFunc)
+    {
+        ValueTask<TResult> valueTask = asyncFunc.Invoke();
+
+        if (!valueTask.IsCompleted)
+            throw new InvalidOperationException("The publish operation didn't synchronously complete.");
+
+        return valueTask.GetAwaiter().GetResult();
+    }
+
+    // TODO: TEST
+    public static void EnsureRunSynchronously(Func<ValueTask> asyncFunc)
+    {
+        ValueTask valueTask = asyncFunc.Invoke();
+
+        if (!valueTask.IsCompleted)
+            throw new InvalidOperationException("The publish operation didn't synchronously complete.");
     }
 }

@@ -20,21 +20,21 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     public int SortIndex => int.MaxValue; // Ignored if a proper sequence is detected
 
     /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
-    public override Task<bool> CanHandleAsync(ConsumerPipelineContext context)
+    public override ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
         bool isBatchEnabled = context.Envelope.Endpoint.Configuration.Batch != null;
 
-        return Task.FromResult(isBatchEnabled);
+        return ValueTaskFactory.FromResult(isBatchEnabled);
     }
 
     /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
-    protected override Task<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
-        Task.FromResult(SequenceIdPrefix);
+    protected override ValueTask<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
+        ValueTaskFactory.FromResult(SequenceIdPrefix);
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
-    protected override async Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
+    protected override async ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
@@ -49,7 +49,7 @@ public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
         new BatchSequence(sequenceId + Guid.NewGuid().ToString("N"), context);
 
     /// <inheritdoc cref="SequenceReaderBase.GetExistingSequenceAsync" />
-    protected override Task<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
+    protected override ValueTask<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
     {
         Check.NotNull(context, nameof(context));
 

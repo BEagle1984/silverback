@@ -18,9 +18,9 @@ public sealed class FakeSequence : SequenceBase<IInboundEnvelope>
         : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))
     {
         if (isComplete)
-            CompleteAsync().Wait();
+            CompleteAsync().AsTask().Wait();
 
         if (isAborted)
-            AbortAsync(SequenceAbortReason.EnumerationAborted).Wait();
+            AbortAsync(SequenceAbortReason.EnumerationAborted).AsTask().Wait();
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using MQTTnet.Client.Options;
 using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -11,11 +12,12 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public partial record MqttClientWebSocketProxyConfiguration : IValidatableSettings
 {
     /// <inheritdoc cref="IValidatableSettings.Validate" />
+    // TODO: Test
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Address))
-            throw new EndpointConfigurationException("The proxy address is required.");
+            throw new BrokerConfigurationException("The proxy address is required.");
     }
 
-    internal MQTTnet.Client.Options.MqttClientWebSocketProxyOptions ToMqttNetType() => MapCore();
+    internal MqttClientWebSocketProxyOptions ToMqttNetType() => MapCore();
 }

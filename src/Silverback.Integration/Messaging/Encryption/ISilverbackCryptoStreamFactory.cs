@@ -7,7 +7,7 @@ namespace Silverback.Messaging.Encryption;
 
 /// <summary>
 ///     The factory used to create the <see cref="SilverbackCryptoStream" /> implementation according to the
-///     <see cref="IEncryptionSettings" /> or <see cref="IDecryptionSettings"/>.
+///     <see cref="IEncryptionSettings" /> or <see cref="IDecryptionSettings" />.
 /// </summary>
 public interface ISilverbackCryptoStreamFactory
 {

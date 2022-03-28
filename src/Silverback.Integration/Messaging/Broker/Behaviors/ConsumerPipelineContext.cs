@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;

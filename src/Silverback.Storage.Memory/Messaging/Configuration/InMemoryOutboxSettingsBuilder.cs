@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -31,10 +31,7 @@ public class InMemoryOutboxSettingsBuilder : IOutboxSettingsImplementationBuilde
     /// <inheritdoc cref="IOutboxSettingsImplementationBuilder.Build" />
     public OutboxSettings Build()
     {
-        InMemoryOutboxSettings settings = new();
-
-        if (_outboxName != null)
-            settings = settings with { OutboxName = _outboxName };
+        InMemoryOutboxSettings settings = _outboxName != null ? new InMemoryOutboxSettings(_outboxName) : new InMemoryOutboxSettings();
 
         settings.Validate();
 

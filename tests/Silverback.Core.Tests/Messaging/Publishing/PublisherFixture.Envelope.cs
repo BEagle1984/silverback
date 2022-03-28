@@ -25,7 +25,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<IEnvelope>(Handle));
+                .AddDelegateSubscriber<IEnvelope>(Handle));
 
         void Handle(IEnvelope envelope) => messages.Add(envelope);
 
@@ -46,7 +46,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<object>(Handle));
+                .AddDelegateSubscriber<object>(Handle));
 
         void Handle(object message) => messages.Add(message);
 
@@ -68,7 +68,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<ITestRawEnvelope>(Handle));
+                .AddDelegateSubscriber<ITestRawEnvelope>(Handle));
 
         void Handle(ITestRawEnvelope envelope) => messages.Add(envelope);
 
@@ -89,8 +89,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<ICommand>(Handle1)
-                .AddDelegateSubscriber2<IEnvelope>(Handle2));
+                .AddDelegateSubscriber<ICommand>(Handle1)
+                .AddDelegateSubscriber<IEnvelope>(Handle2));
 
         void Handle1(ICommand message) => messages.Add(message);
         void Handle2(IEnvelope envelope) => messages.Add(envelope);

@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -14,7 +14,8 @@ namespace Silverback.Diagnostics;
 /// <summary>
 ///     Enriches the <see cref="Activity" /> with Kafka specific tags.
 /// </summary>
-public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerConfiguration>, IBrokerActivityEnricher<KafkaProducerConfiguration>
+public class KafkaActivityEnricher
+    : IBrokerActivityEnricher<KafkaConsumerEndpointConfiguration>, IBrokerActivityEnricher<KafkaProducerEndpointConfiguration>
 {
     internal const string KafkaMessageKey = "messaging.kafka.message_key";
 
@@ -28,6 +29,7 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerConfig
 
         if (producerContext.Envelope.BrokerMessageIdentifier != null)
             SetMessageId(activity, (KafkaOffset)producerContext.Envelope.BrokerMessageIdentifier);
+
         SetMessageKey(activity, producerContext.Envelope.Headers);
     }
 
@@ -52,11 +54,9 @@ public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerConfig
 
     private static void SetMessageKey(Activity activity, MessageHeaderCollection messageHeaderCollection)
     {
-        string? kafkaKeyHeaderValue =
-            messageHeaderCollection.GetValue(KafkaMessageHeaders.KafkaMessageKey);
+        string? kafkaKeyHeaderValue = messageHeaderCollection.GetValue(KafkaMessageHeaders.KafkaMessageKey);
+
         if (kafkaKeyHeaderValue != null)
-        {
             activity.SetTag(KafkaMessageKey, kafkaKeyHeaderValue);
-        }
     }
 }

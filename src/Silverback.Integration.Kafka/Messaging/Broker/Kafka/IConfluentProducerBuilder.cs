@@ -20,7 +20,7 @@ public interface IConfluentProducerBuilder
     /// <returns>
     ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    IConfluentProducerBuilder SetConfig(ProducerConfig config);
+    IConfluentProducerBuilder SetConfiguration(ProducerConfig config);
 
     /// <summary>
     ///     Sets the handler to call on statistics events.

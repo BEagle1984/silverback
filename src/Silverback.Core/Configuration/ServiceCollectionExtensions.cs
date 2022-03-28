@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions
                 .AddSingleton<SubscribedMethodsCacheSingleton>()
                 .AddScoped<SubscribedMethodsCache>()
                 .AddScoped<SilverbackContext>()
+                .AddSingleton<RootServiceProvider>()
                 .AddLogger()
                 .AddArgumentResolvers()
                 .AddReturnValueHandlers()
@@ -64,6 +65,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddLogger(this IServiceCollection services) => services
         .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
+        .AddSingleton<ISilverbackLoggerFactory, SilverbackLoggerFactory>()
         .AddSingleton(typeof(IMappedLevelsLogger<>), typeof(MappedLevelsLogger<>))
         .AddSingleton<LogLevelDictionary>();
 

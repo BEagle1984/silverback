@@ -34,9 +34,7 @@ public class RawSequencerConsumerBehavior : SequencerConsumerBehaviorBase
     public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.RawSequencer;
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
-    protected override Task PublishSequenceAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -45,12 +43,12 @@ public class RawSequencerConsumerBehavior : SequencerConsumerBehaviorBase
 
         context.ProcessingTask ??= processingTask;
 
-        return Task.CompletedTask;
+        return default;
     }
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.AwaitOtherBehaviorIfNeededAsync" />
     [SuppressMessage("", "CA1031", Justification = "Catched in the sequence handling methods")]
-    protected override async Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
+    protected override async ValueTask AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
     {
         try
         {

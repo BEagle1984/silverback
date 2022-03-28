@@ -10,10 +10,10 @@ namespace Silverback.Messaging.Broker.Callbacks;
 ///     Declares the <see cref="OnEndOfTopicPartitionReached" /> event handler.
 /// </summary>
 /// <remarks>
-///     The <see cref="KafkaClientConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
-///     <see cref="KafkaClientConsumerConfiguration" />, otherwise the underlying library will not emit this event.
+///     The <see cref="KafkaConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
+///     <see cref="KafkaConsumerConfiguration" />, otherwise the underlying library will not emit this event.
 /// </remarks>
-public interface IKafkaPartitionEofCallback : IBrokerCallback
+public interface IKafkaPartitionEofCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called to report that the end of a partition has been reached, meaning that it has been completely
@@ -26,8 +26,8 @@ public interface IKafkaPartitionEofCallback : IBrokerCallback
     ///     The related consumer.
     /// </param>
     /// <remarks>
-    ///     The <see cref="KafkaClientConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
-    ///     <see cref="KafkaClientConsumerConfiguration" />, otherwise the underlying library will not emit this event.
+    ///     The <see cref="KafkaConsumerConfiguration.EnablePartitionEof" /> must be set to <c>true</c> in the
+    ///     <see cref="KafkaConsumerConfiguration" />, otherwise the underlying library will not emit this event.
     /// </remarks>
     void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer);
 }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Silverback.Messaging.Configuration;
 
 /// <content>
-///     Adds the WithConnectionOptions method to the <see cref="BrokerOptionsBuilder" />.
+///     Implements the <see cref="WithConnectionOptions" />.
 /// </content>
 public sealed partial class BrokerOptionsBuilder
 {
@@ -20,6 +20,7 @@ public sealed partial class BrokerOptionsBuilder
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
     /// </returns>
+    // TODO: Better fluent API?
     public BrokerOptionsBuilder WithConnectionOptions(BrokerConnectionOptions connectionOptions)
     {
         SilverbackBuilder.Services.RemoveAll<BrokerConnectionOptions>();

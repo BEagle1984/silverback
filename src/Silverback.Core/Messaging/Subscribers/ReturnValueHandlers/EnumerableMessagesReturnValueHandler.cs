@@ -39,10 +39,10 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
         returnValue != null &&
         returnValue.GetType().GetInterfaces().Any(
             type => type.IsGenericType &&
-                 type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                 _busOptions.MessageTypes.Any(
-                     messageType =>
-                         messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
+                    type.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
+                    _busOptions.MessageTypes.Any(
+                        messageType =>
+                            messageType.IsAssignableFrom(type.GenericTypeArguments[0])));
 
     /// <inheritdoc cref="IReturnValueHandler.Handle" />
     public void Handle(object returnValue)
@@ -53,7 +53,7 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public Task HandleAsync(object returnValue)
+    public ValueTask HandleAsync(object returnValue)
     {
         Check.NotNull(returnValue, nameof(returnValue));
 

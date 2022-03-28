@@ -23,24 +23,24 @@ public class ChunkSequenceReader : SequenceReaderBase
     }
 
     /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
-    public override Task<bool> CanHandleAsync(ConsumerPipelineContext context)
+    public override ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
         bool canHandle = context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
 
-        return Task.FromResult(canHandle);
+        return ValueTaskFactory.FromResult(canHandle);
     }
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
-    protected override Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
+    protected override ValueTask<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
     {
         Check.NotNull(context, nameof(context));
 
         int chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                          throw new InvalidOperationException("Chunk index header not found.");
 
-        return Task.FromResult(chunkIndex == 0);
+        return ValueTaskFactory.FromResult(chunkIndex == 0);
     }
 
     /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />

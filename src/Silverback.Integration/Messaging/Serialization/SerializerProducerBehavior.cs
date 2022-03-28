@@ -17,7 +17,7 @@ public class SerializerProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Serializer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));

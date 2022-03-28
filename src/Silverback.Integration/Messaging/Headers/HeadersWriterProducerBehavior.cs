@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -17,13 +18,13 @@ public class HeadersWriterProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.HeadersWriter;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        HeaderAttributeHelper.GetHeaders(context.Envelope.Message)
-            .ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
+        IEnumerable<MessageHeader> headers = HeaderAttributeHelper.GetHeaders(context.Envelope.Message);
+        headers.ForEach(header => context.Envelope.Headers.AddOrReplace(header.Name, header.Value));
 
         await next(context).ConfigureAwait(false);
     }

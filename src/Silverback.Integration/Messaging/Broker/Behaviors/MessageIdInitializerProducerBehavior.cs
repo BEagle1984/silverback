@@ -16,7 +16,7 @@ public class MessageIdInitializerProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));

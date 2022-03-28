@@ -49,6 +49,6 @@ public class ObservableMessagesReturnValueHandler : IReturnValueHandler
         _publisher.Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public Task HandleAsync(object returnValue) =>
-        _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable());
+    public async ValueTask HandleAsync(object returnValue) =>
+        await _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable()).ConfigureAwait(false);
 }

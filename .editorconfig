@@ -551,7 +551,7 @@ dotnet_diagnostic.IDE0051.severity = warning # increase level since the issue ca
 
 # Microsoft .NET properties
 csharp_new_line_before_members_in_object_initializers = false
-csharp_preferred_modifier_order = public, private, protected, internal, new, abstract, virtual, sealed, override, static, readonly, extern, unsafe, volatile, async:suggestion
+csharp_preferred_modifier_order = public, private, protected, internal, static, new, abstract, virtual, sealed, override, readonly, extern, unsafe, volatile, async:suggestion
 csharp_space_after_cast = false
 csharp_style_var_when_type_is_apparent = false:none
 csharp_style_var_for_built_in_types = false:warning
@@ -622,7 +622,7 @@ resharper_arrange_type_member_modifiers_highlighting = hint
 resharper_arrange_type_modifiers_highlighting = hint
 resharper_built_in_type_reference_style_for_member_access_highlighting = hint
 resharper_built_in_type_reference_style_highlighting = hint
-resharper_condition_is_always_true_or_false_highlighting = suggestion
+resharper_condition_is_always_true_or_false_highlighting = warning
 resharper_constant_conditional_access_qualifier_highlighting = suggestion
 resharper_local_function_can_be_made_static_highlighting = warning
 resharper_member_can_be_made_static_global_highlighting = warning
@@ -643,7 +643,7 @@ resharper_arrange_missing_parentheses_highlighting = warning
 resharper_arrange_object_creation_when_type_evident_highlighting = warning
 resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
 resharper_use_negated_pattern_in_is_expression_highlighting = warning
-
+resharper_condition_is_always_true_or_false_according_to_nullable_api_contract_highlighting = suggestion
 
 [*.{csproj,props,yml,yaml,json,xml,config}]
 indent_size = 2

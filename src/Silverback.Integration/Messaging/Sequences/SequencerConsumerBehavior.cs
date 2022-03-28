@@ -33,7 +33,7 @@ public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
     public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.HandleAsync" />
-    public override async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public override async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         ISequenceImplementation? rawSequence = Check.NotNull(context, nameof(context)).Sequence as ISequenceImplementation;
 
@@ -57,9 +57,7 @@ public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
     }
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
-    protected override Task PublishSequenceAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(next, nameof(next));
 

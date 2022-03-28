@@ -27,7 +27,10 @@ internal static class Program
             Console.WriteLine();
         }
 
-        Console.Write(new BuilderGenerator().Generate());
+        Console.Write(new BuilderGenerator("MqttClientConfigurationBuilder").Generate());
+        Console.WriteLine();
+
+        Console.Write(new BuilderGenerator("MqttClientsConfigurationBuilder").Generate());
         Console.WriteLine();
     }
 }

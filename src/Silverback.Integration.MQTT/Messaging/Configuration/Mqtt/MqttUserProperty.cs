@@ -22,10 +22,11 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableSetting
     public string? Value { get; } = Value;
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
+    // TODO: Test
     public void Validate()
     {
         if (string.IsNullOrEmpty(Name))
-            throw new EndpointConfigurationException("The name of a user property cannot be empty.");
+            throw new BrokerConfigurationException("The name of a user property cannot be empty.");
     }
 
     internal MQTTnet.Packets.MqttUserProperty ToMqttNetType() =>

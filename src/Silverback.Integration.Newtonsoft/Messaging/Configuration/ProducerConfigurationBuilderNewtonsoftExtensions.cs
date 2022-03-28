@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration;
 
 /// <summary>
 ///     Adds the <c>SerializeAsJsonUsingNewtonsoft</c> method to the
-///     <see cref="ProducerConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
+///     <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
 /// </summary>
 public static class ProducerConfigurationBuilderNewtonsoftExtensions
 {
@@ -47,11 +47,11 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
     public static TBuilder SerializeAsJsonUsingNewtonsoft<TMessage, TConfiguration, TEndpoint, TBuilder>(
-        this ProducerConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder> endpointBuilder,
+        this ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder> endpointBuilder,
         Action<NewtonsoftJsonMessageSerializerBuilder>? serializerBuilderAction = null)
-        where TConfiguration : ProducerConfiguration<TEndpoint>
+        where TConfiguration : ProducerEndpointConfiguration<TEndpoint>
         where TEndpoint : ProducerEndpoint
-        where TBuilder : ProducerConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
+        where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
     {
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 

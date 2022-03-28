@@ -101,7 +101,7 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddSingletonBehavior(behavior)
-                .AddDelegateSubscriber2<TestCommandTwo>(Handle));
+                .AddDelegateSubscriber<TestCommandTwo>(Handle));
 
         void Handle(TestCommandTwo message) => receivedMessages.Add(message);
 

@@ -26,7 +26,7 @@ public class EventPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber2<TestEvent>(Handle));
+                .AddDelegateSubscriber<TestEvent>(Handle));
 
         void Handle(TestEvent message) => _receivedMessages++;
 

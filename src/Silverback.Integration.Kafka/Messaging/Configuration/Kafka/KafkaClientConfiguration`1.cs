@@ -3,12 +3,13 @@
 
 using Confluent.Kafka;
 using Silverback.Configuration;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
 /// <summary>
 ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> and contains the properties shared between the
-///     <see cref="KafkaClientProducerConfiguration" /> and <see cref="KafkaClientConsumerConfiguration" />.
+///     <see cref="KafkaProducerConfiguration" /> and <see cref="KafkaConsumerConfiguration" />.
 /// </summary>
 /// <typeparam name="TClientConfig">
 ///     The type of the wrapped <see cref="ClientConfig" />.
@@ -22,9 +23,9 @@ public abstract partial record KafkaClientConfiguration<TClientConfig> : IValida
     /// <param name="original">
     ///     The <see cref="KafkaClientConfiguration{TClientConfig}" /> to be cloned.
     /// </param>
-    protected KafkaClientConfiguration(KafkaClientConfiguration<TClientConfig>? original)
+    protected KafkaClientConfiguration(KafkaClientConfiguration<TClientConfig> original)
     {
-        ClientConfig = original?.ClientConfig.Clone() ?? new TClientConfig();
+        ClientConfig = Check.NotNull(original, nameof(original)).ClientConfig.Clone();
     }
 
     /// <summary>
@@ -33,15 +34,15 @@ public abstract partial record KafkaClientConfiguration<TClientConfig> : IValida
     /// <param name="clientConfig">
     ///     The <see cref="ClientConfig" /> to be wrapped.
     /// </param>
-    protected KafkaClientConfiguration(TClientConfig clientConfig)
+    protected KafkaClientConfiguration(TClientConfig? clientConfig = null)
     {
-        ClientConfig = clientConfig;
+        ClientConfig = clientConfig?.Clone() ?? new TClientConfig();
     }
 
     /// <summary>
     ///     Gets the wrapped <see cref="ClientConfig" />.
     /// </summary>
-    protected TClientConfig ClientConfig { get; }
+    protected TClientConfig ClientConfig { get; } = new();
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public abstract void Validate();

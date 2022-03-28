@@ -77,29 +77,25 @@ public class DomainEventsPublisher
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    public async Task PublishDomainEventsAsync() => await PublishDomainEventsAsync(true).ConfigureAwait(false);
+    public async ValueTask PublishDomainEventsAsync() => await PublishDomainEventsAsync(ExecutionFlow.Async).ConfigureAwait(false);
 
     /// <summary>
     ///     Publishes the domain events stored into the domain entities returned by the provider function.
     /// </summary>
-    public void PublishDomainEvents() => AsyncHelper.RunSynchronously(() => PublishDomainEventsAsync(false));
+    public void PublishDomainEvents() => AsyncHelper.RunSynchronously(() => PublishDomainEventsAsync(ExecutionFlow.Sync));
 
     [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-    private async Task PublishDomainEventsAsync(bool executeAsync)
+    private async ValueTask PublishDomainEventsAsync(ExecutionFlow executionFlow)
     {
         IReadOnlyCollection<object> events = GetDomainEvents();
 
         // Keep publishing events fired inside the event handlers
         while (events.Any())
         {
-            if (executeAsync)
-            {
+            if (executionFlow == ExecutionFlow.Async)
                 await events.ForEachAsync(message => _publisher.PublishAsync(message)).ConfigureAwait(false);
-            }
             else
-            {
                 events.ForEach(message => _publisher.Publish(message));
-            }
 
             events = GetDomainEvents();
         }

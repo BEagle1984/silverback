@@ -30,30 +30,26 @@ public class DecryptorConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Decryptor;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Endpoint.Configuration.Encryption != null && context.Envelope.RawMessage != null)
-        {
-            string? keyIdentifier = null;
-
-            if (context.Envelope.Endpoint.Configuration.Encryption is SymmetricDecryptionSettings settings &&
-                settings.KeyProvider != null)
-            {
-                keyIdentifier =
-                    context.Envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId);
-            }
-
-            context.Envelope.RawMessage = _streamFactory.GetDecryptStream(
-                context.Envelope.RawMessage,
-                context.Envelope.Endpoint.Configuration.Encryption,
-                keyIdentifier);
-        }
+        DecryptIfNeeded(context.Envelope);
 
         await next(context).ConfigureAwait(false);
+    }
+
+    private void DecryptIfNeeded(IRawInboundEnvelope envelope)
+    {
+        if (envelope.Endpoint.Configuration.Encryption == null || envelope.RawMessage == null)
+            return;
+
+        string? keyIdentifier = null;
+
+        if (envelope.Endpoint.Configuration.Encryption is SymmetricDecryptionSettings { KeyProvider: { } })
+            keyIdentifier = envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId);
+
+        envelope.RawMessage = _streamFactory.GetDecryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption, keyIdentifier);
     }
 }

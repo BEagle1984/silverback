@@ -141,7 +141,7 @@ public interface ISequence : IDisposable
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     number of streams that have been pushed.
     /// </returns>
-    Task<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
+    ValueTask<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
 
     /// <summary>
     ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
@@ -156,7 +156,7 @@ public interface ISequence : IDisposable
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AbortAsync(SequenceAbortReason reason, Exception? exception = null);
+    ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null);
 
     /// <summary>
     ///     Gets the identifiers of the messages belonging to the sequence.

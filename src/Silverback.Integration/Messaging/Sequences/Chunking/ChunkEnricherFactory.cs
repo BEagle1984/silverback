@@ -5,9 +5,7 @@ using Silverback.ExtensibleFactories;
 
 namespace Silverback.Messaging.Sequences.Chunking;
 
-/// <summary>
-///     Enriches the produced chunks adding some additional broker-specific headers.
-/// </summary>
+/// <inheritdoc cref="IChunkEnricherFactory" />
 public class ChunkEnricherFactory : TypeBasedExtensibleFactory<IChunkEnricher, ProducerEndpoint>, IChunkEnricherFactory
 {
     /// <inheritdoc cref="IChunkEnricherFactory.GetEnricher" />

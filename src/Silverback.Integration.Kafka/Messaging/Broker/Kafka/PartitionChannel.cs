@@ -24,7 +24,7 @@ internal sealed class PartitionChannel : IDisposable
 
     private CancellationTokenSource _readCancellationTokenSource = new();
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public PartitionChannel(KafkaConsumer consumer, TopicPartition topicPartition, ISilverbackLogger logger)
     {
@@ -110,12 +110,12 @@ internal sealed class PartitionChannel : IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         _readCancellationTokenSource.Dispose();
 
-        _disposed = true;
+        _isDisposed = true;
     }
 
     // TODO: Can test setting for backpressure limit?

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
@@ -79,38 +81,36 @@ public class ActivitySourcesTests
         IRawInboundEnvelope envelope = CreateInboundEnvelope(new MessageHeaderCollection());
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
-        listener.Activites.Should().Contain(activity);
+        listener.Activities.Should().Contain(activity);
     }
 
-    private static IRawInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers)
-    {
-        return new RawInboundEnvelope(
+    private static IRawInboundEnvelope CreateInboundEnvelope(MessageHeaderCollection headers) =>
+        new RawInboundEnvelope(
             Stream.Null,
             headers,
-            new TestConsumerConfiguration("Endpoint").GetDefaultEndpoint(),
+            new TestConsumerEndpointConfiguration("Endpoint").GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset("key", "7"));
-    }
 
     private sealed class TestActivityListener : IDisposable
     {
         private readonly ActivityListener _listener;
 
-        private readonly List<Activity> _activites = new();
+        private readonly List<Activity> _activities = new();
 
         public TestActivityListener()
         {
-            _listener = new ActivityListener();
-            _listener.ShouldListenTo = _ => true;
-            _listener.ActivityStarted = activity => _activites.Add(activity);
-            _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded;
+            _listener = new ActivityListener
+            {
+                ShouldListenTo = _ => true,
+                ActivityStarted = activity => _activities.Add(activity),
+                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+            };
             ActivitySource.AddActivityListener(_listener);
         }
 
-        public IEnumerable<Activity> Activites => _activites;
+        public IEnumerable<Activity> Activities => _activities;
 
-        public void Dispose()
-        {
-            _listener.Dispose();
-        }
+        public void Dispose() => _listener.Dispose();
     }
 }

@@ -7,7 +7,7 @@ using Silverback.ExtensibleFactories;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the <see cref="AddExtensibleFactory{TFactoryInterface,TFactory}" /> method to the <see cref="SilverbackBuilder" />.
+///     Implements the <see cref="AddExtensibleFactory{TFactoryInterface,TFactory}" /> method.
 /// </content>
 public partial class SilverbackBuilder
 {

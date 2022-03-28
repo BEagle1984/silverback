@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the AddBrokerCallbackHandler methods to the <see cref="SilverbackBuilder" />.
+///     Adds the AddBrokerClientCallback methods to the <see cref="SilverbackBuilder" />.
 /// </content>
 public static partial class SilverbackBuilderIntegrationExtensions
 {
@@ -25,12 +25,12 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddTransientBrokerCallbackHandler(this SilverbackBuilder builder, Type handlerType)
+    public static SilverbackBuilder AddTransientBrokerClientCallback(this SilverbackBuilder builder, Type handlerType)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(handlerType, nameof(handlerType));
 
-        builder.Services.AddTransient(typeof(IBrokerCallback), handlerType);
+        builder.Services.AddTransient(typeof(IBrokerClientCallback), handlerType);
         return builder;
     }
 
@@ -47,9 +47,9 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddTransientBrokerCallbackHandler<THandler>(this SilverbackBuilder builder)
-        where THandler : class, IBrokerCallback =>
-        AddTransientBrokerCallbackHandler(builder, typeof(THandler));
+    public static SilverbackBuilder AddTransientBrokerClientCallback<THandler>(this SilverbackBuilder builder)
+        where THandler : class, IBrokerClientCallback =>
+        AddTransientBrokerClientCallback(builder, typeof(THandler));
 
     /// <summary>
     ///     Adds a transient callback with a factory specified in <paramref name="implementationFactory" /> to
@@ -65,14 +65,14 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddTransientBrokerCallbackHandler(
+    public static SilverbackBuilder AddTransientBrokerClientCallback(
         this SilverbackBuilder builder,
-        Func<IServiceProvider, IBrokerCallback> implementationFactory)
+        Func<IServiceProvider, IBrokerClientCallback> implementationFactory)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddTransient(typeof(IBrokerCallback), implementationFactory);
+        builder.Services.AddTransient(typeof(IBrokerClientCallback), implementationFactory);
         return builder;
     }
 
@@ -89,12 +89,12 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddScopedBrokerCallbackHandler(this SilverbackBuilder builder, Type handlerType)
+    public static SilverbackBuilder AddScopedBrokerClientCallback(this SilverbackBuilder builder, Type handlerType)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(handlerType, nameof(handlerType));
 
-        builder.Services.AddScoped(typeof(IBrokerCallback), handlerType);
+        builder.Services.AddScoped(typeof(IBrokerClientCallback), handlerType);
         return builder;
     }
 
@@ -111,9 +111,9 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddScopedBrokerCallbackHandler<THandler>(this SilverbackBuilder builder)
-        where THandler : class, IBrokerCallback =>
-        AddScopedBrokerCallbackHandler(builder, typeof(THandler));
+    public static SilverbackBuilder AddScopedBrokerClientCallback<THandler>(this SilverbackBuilder builder)
+        where THandler : class, IBrokerClientCallback =>
+        AddScopedBrokerClientCallback(builder, typeof(THandler));
 
     /// <summary>
     ///     Adds a scoped callback with a factory specified in <paramref name="implementationFactory" /> to the
@@ -128,14 +128,14 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddScopedBrokerCallbackHandler(
+    public static SilverbackBuilder AddScopedBrokerClientCallback(
         this SilverbackBuilder builder,
-        Func<IServiceProvider, IBrokerCallback> implementationFactory)
+        Func<IServiceProvider, IBrokerClientCallback> implementationFactory)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddScoped(typeof(IBrokerCallback), implementationFactory);
+        builder.Services.AddScoped(typeof(IBrokerClientCallback), implementationFactory);
         return builder;
     }
 
@@ -152,12 +152,12 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddSingletonBrokerCallbackHandler(this SilverbackBuilder builder, Type handlerType)
+    public static SilverbackBuilder AddSingletonBrokerClientCallback(this SilverbackBuilder builder, Type handlerType)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(handlerType, nameof(handlerType));
 
-        builder.Services.AddSingleton(typeof(IBrokerCallback), handlerType);
+        builder.Services.AddSingleton(typeof(IBrokerClientCallback), handlerType);
         return builder;
     }
 
@@ -174,9 +174,9 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddSingletonBrokerCallbackHandler<THandler>(this SilverbackBuilder builder)
-        where THandler : class, IBrokerCallback =>
-        AddSingletonBrokerCallbackHandler(builder, typeof(THandler));
+    public static SilverbackBuilder AddSingletonBrokerClientCallback<THandler>(this SilverbackBuilder builder)
+        where THandler : class, IBrokerClientCallback =>
+        AddSingletonBrokerClientCallback(builder, typeof(THandler));
 
     /// <summary>
     ///     Adds a singleton callback with a factory specified in <paramref name="implementationFactory" /> to
@@ -191,14 +191,14 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddSingletonBrokerCallbackHandler(
+    public static SilverbackBuilder AddSingletonBrokerClientCallback(
         this SilverbackBuilder builder,
-        Func<IServiceProvider, IBrokerCallback> implementationFactory)
+        Func<IServiceProvider, IBrokerClientCallback> implementationFactory)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationFactory, nameof(implementationFactory));
 
-        builder.Services.AddSingleton(typeof(IBrokerCallback), implementationFactory);
+        builder.Services.AddSingleton(typeof(IBrokerClientCallback), implementationFactory);
         return builder;
     }
 
@@ -215,14 +215,14 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public static SilverbackBuilder AddSingletonBrokerCallbackHandler(
+    public static SilverbackBuilder AddSingletonBrokerClientCallback(
         this SilverbackBuilder builder,
-        IBrokerCallback implementationInstance)
+        IBrokerClientCallback implementationInstance)
     {
         Check.NotNull(builder, nameof(builder));
         Check.NotNull(implementationInstance, nameof(implementationInstance));
 
-        builder.Services.AddSingleton(typeof(IBrokerCallback), implementationInstance);
+        builder.Services.AddSingleton(typeof(IBrokerClientCallback), implementationInstance);
         return builder;
     }
 }

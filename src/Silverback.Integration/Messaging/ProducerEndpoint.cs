@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging;
@@ -19,14 +20,14 @@ public abstract record ProducerEndpoint : Endpoint
     /// <param name="configuration">
     ///     The endpoint configuration.
     /// </param>
-    protected ProducerEndpoint(string rawName, ProducerConfiguration configuration)
+    protected ProducerEndpoint(string rawName, ProducerEndpointConfiguration configuration)
         : base(rawName, configuration)
     {
         Configuration = Check.NotNull(configuration, nameof(configuration));
     }
 
     /// <summary>
-    ///     Gets the producer configuration.
+    ///     Gets the producer endpoint configuration.
     /// </summary>
-    public new ProducerConfiguration Configuration { get; }
+    public new ProducerEndpointConfiguration Configuration { get; }
 }

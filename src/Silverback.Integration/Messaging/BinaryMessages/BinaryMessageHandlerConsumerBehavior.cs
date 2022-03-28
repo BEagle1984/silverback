@@ -20,7 +20,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryMessageHandler;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
+    public async ValueTask HandleAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next)
     {
@@ -32,7 +32,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
         await next(context).ConfigureAwait(false);
     }
 
-    private static async Task<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
+    private static async ValueTask<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
     {
         if (envelope.Endpoint.Configuration.Serializer is IBinaryMessageSerializer)
             return envelope;
@@ -42,8 +42,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
             return envelope;
 
         (object? deserializedObject, Type deserializedType) =
-            await DefaultSerializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint)
-                .ConfigureAwait(false);
+            await DefaultSerializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
 
         // Create typed envelope for easier specific subscription
         return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);

@@ -150,8 +150,7 @@ internal class SqliteDataAccess
         {
             if (sqliteTransaction.Connection.ConnectionString != _connectionString)
             {
-                throw new InvalidOperationException(
-                    "The connection string of the active transaction does not match the configured connection string.");
+                throw new InvalidOperationException("The connection string of the active transaction does not match the configured connection string.");
             }
 
             return (sqliteTransaction, false);

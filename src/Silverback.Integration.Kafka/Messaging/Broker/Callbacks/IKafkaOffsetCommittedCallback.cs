@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnOffsetsCommitted" /> event handler.
 /// </summary>
-public interface IKafkaOffsetCommittedCallback : IBrokerCallback
+public interface IKafkaOffsetCommittedCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called to report the result of offset commits.

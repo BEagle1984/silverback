@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Adds the <c>DeserializeJsonUsingNewtonsoft</c> method to the <see cref="ConsumerConfigurationBuilder{TMessage,TConfiguration,TBuilder}" />.
+///     Adds the <c>DeserializeJsonUsingNewtonsoft</c> method to the <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}" />.
 /// </summary>
 public static class ConsumerConfigurationBuilderNewtonsoftExtensions
 {
@@ -41,10 +41,10 @@ public static class ConsumerConfigurationBuilderNewtonsoftExtensions
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
     public static TBuilder DeserializeJsonUsingNewtonsoft<TMessage, TConfiguration, TBuilder>(
-        this ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder> endpointBuilder,
+        this ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder> endpointBuilder,
         Action<NewtonsoftJsonMessageSerializerBuilder>? serializerBuilderAction = null)
-        where TConfiguration : ConsumerConfiguration
-        where TBuilder : ConsumerConfigurationBuilder<TMessage, TConfiguration, TBuilder>
+        where TConfiguration : ConsumerEndpointConfiguration
+        where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
     {
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 

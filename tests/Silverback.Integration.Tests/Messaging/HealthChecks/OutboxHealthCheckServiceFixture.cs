@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.HealthChecks;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.HealthChecks;

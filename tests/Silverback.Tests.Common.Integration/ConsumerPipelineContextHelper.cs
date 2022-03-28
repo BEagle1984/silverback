@@ -10,7 +10,7 @@ using Silverback.Configuration;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
@@ -33,6 +33,7 @@ public static class ConsumerPipelineContextHelper
                 Stream.Null,
                 Array.Empty<MessageHeader>(),
                 endpoint ?? TestConsumerEndpoint.GetDefault(),
+                consumer ?? Substitute.For<IConsumer>(),
                 identifier ?? new TestOffset()),
             consumer ?? Substitute.For<IConsumer>(),
             sequenceStore ?? Substitute.For<ISequenceStore>(),

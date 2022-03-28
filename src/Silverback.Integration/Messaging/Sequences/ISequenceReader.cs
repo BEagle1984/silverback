@@ -28,7 +28,7 @@ public interface ISequenceReader
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
     ///     value indicating whether this reader can and must handle the message.
     /// </returns>
-    Task<bool> CanHandleAsync(ConsumerPipelineContext context);
+    ValueTask<bool> CanHandleAsync(ConsumerPipelineContext context);
 
     /// <summary>
     ///     Returns the <see cref="ISequence" /> related to the message being processed.
@@ -40,5 +40,5 @@ public interface ISequenceReader
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     <see cref="ISequence" />.
     /// </returns>
-    Task<ISequence> GetSequenceAsync(ConsumerPipelineContext context);
+    ValueTask<ISequence> GetSequenceAsync(ConsumerPipelineContext context);
 }

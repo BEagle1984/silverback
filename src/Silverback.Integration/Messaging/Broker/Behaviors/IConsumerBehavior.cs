@@ -21,7 +21,7 @@ public interface IConsumerBehavior : IBrokerBehavior, ISorted
     ///     The next behavior in the pipeline.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
+    ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
 }

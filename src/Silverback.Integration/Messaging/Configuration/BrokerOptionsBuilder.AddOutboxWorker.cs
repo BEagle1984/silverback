@@ -7,14 +7,13 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Lock;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
 /// <content>
-///     Adds the AddOutboxWorker method to the <see cref="BrokerOptionsBuilder" />.
+///     Implements the <c>AddOutboxWorker</c> methods.
 /// </content>
 public sealed partial class BrokerOptionsBuilder
 {
@@ -57,10 +56,9 @@ public sealed partial class BrokerOptionsBuilder
                     OutboxWorker outboxWorker = new(
                         settings,
                         serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox),
-                        serviceProvider.GetRequiredService<IBrokerCollection>(),
-                        serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
+                        serviceProvider.GetRequiredService<IProducerCollection>(),
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
-                        serviceProvider.GetRequiredService<IOutboundLogger<OutboxWorker>>());
+                        serviceProvider.GetRequiredService<IProducerLogger<OutboxWorker>>());
 
                     IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
                     IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock);

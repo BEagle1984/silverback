@@ -28,18 +28,12 @@ internal static class KafkaHeadersMappingExtensions
     public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(this Confluent.Kafka.Headers? kafkaHeaders)
     {
         List<MessageHeader> headers = new(kafkaHeaders?.Count ?? 0);
-        kafkaHeaders?.ForEach(
-            kafkaHeader => headers.Add(
-                new MessageHeader(
-                    kafkaHeader.Key,
-                    Decode(kafkaHeader.GetValueBytes()))));
+        kafkaHeaders?.ForEach(kafkaHeader => headers.Add(new MessageHeader(kafkaHeader.Key, Decode(kafkaHeader.GetValueBytes()))));
 
         return headers;
     }
 
-    private static byte[]? Encode(string? value) => value != null
-        ? Encoding.GetBytes(value)
-        : null;
+    private static byte[]? Encode(string? value) => value != null ? Encoding.GetBytes(value) : null;
 
     private static string? Decode(byte[]? value) => value != null ? Encoding.GetString(value) : null;
 }

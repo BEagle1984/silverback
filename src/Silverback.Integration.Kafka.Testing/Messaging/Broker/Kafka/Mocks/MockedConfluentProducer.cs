@@ -22,7 +22,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     private int _lastPushedPartition = -1;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
     {
@@ -148,7 +148,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     public void Dispose()
     {
-        _disposed = true;
+        _isDisposed = true;
     }
 
     private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
@@ -188,7 +188,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     private void EnsureNotDisposed()
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
     }
 }

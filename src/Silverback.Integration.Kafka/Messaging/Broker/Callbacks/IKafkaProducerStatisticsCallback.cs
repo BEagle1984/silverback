@@ -2,13 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker.Callbacks.Statistics;
+using Silverback.Messaging.Broker.Kafka;
 
 namespace Silverback.Messaging.Broker.Callbacks;
 
 /// <summary>
 ///     Declares the <see cref="OnProducerStatistics" /> event handler.
 /// </summary>
-public interface IKafkaProducerStatisticsCallback : IBrokerCallback
+public interface IKafkaProducerStatisticsCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called on statistics events.
@@ -23,8 +24,8 @@ public interface IKafkaProducerStatisticsCallback : IBrokerCallback
     /// <param name="rawStatistics">
     ///     The raw statistics string.
     /// </param>
-    /// <param name="producer">
-    ///     The related producer instance.
+    /// <param name="producerWrapper">
+    ///     The related <see cref="IConfluentProducerWrapper" />.
     /// </param>
-    void OnProducerStatistics(KafkaStatistics? statistics, string rawStatistics, KafkaProducer producer);
+    void OnProducerStatistics(KafkaStatistics? statistics, string rawStatistics, IConfluentProducerWrapper producerWrapper);
 }

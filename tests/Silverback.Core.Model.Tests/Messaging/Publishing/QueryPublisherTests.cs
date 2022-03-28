@@ -25,7 +25,7 @@ public class QueryPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseModel()
-                .AddDelegateSubscriber2<TestQuery, int[]>(Handle));
+                .AddDelegateSubscriber<TestQuery, int[]>(Handle));
 
         static int[] Handle(TestQuery message) => new[] { 1, 2, 3 };
 

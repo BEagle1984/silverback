@@ -39,7 +39,7 @@ public abstract class DistributedBackgroundService : BackgroundService
     }
 
     /// <summary>
-    ///     Gets the <see cref="IDistributedLock"/> used by this service.
+    ///     Gets the <see cref="IDistributedLock" /> used by this service.
     /// </summary>
     protected IDistributedLock DistributedLock { get; }
 
@@ -50,6 +50,7 @@ public abstract class DistributedBackgroundService : BackgroundService
         _logger.LogBackgroundServiceStarting(this);
 
         // Run another task to avoid deadlocks
+        // TODO: Needed?
         return Task.Run(
             async () =>
             {

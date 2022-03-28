@@ -17,10 +17,13 @@ namespace Silverback.Messaging.Broker.Mqtt;
 
 internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHandler, IDisposable
 {
-    [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
-    private readonly MqttClientWrapper _mqttClientWrapper;
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The consumer is the owner of this class and its lifecycle is handled elsewhere")]
+    private readonly MqttConsumer _consumer;
 
-    private readonly IInboundLogger<IConsumer> _logger;
+    private readonly IConsumerLogger<IConsumer> _logger;
+
+    [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
+    private readonly IMqttClientWrapper _mqttClientWrapper;
 
     // The parallelism is currently fixed to 1 but could be made configurable for QoS=0.
     // QoS=1+ requires the acks to come in the right order so better not mess with it (in the normal case
@@ -35,10 +38,10 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
     private TaskCompletionSource<bool> _readTaskCompletionSource;
 
     public ConsumerChannelManager(
-        MqttClientWrapper mqttClientWrapper,
-        IInboundLogger<IConsumer> logger)
+        MqttConsumer consumer,
+        IConsumerLogger<IConsumer> logger)
     {
-        _mqttClientWrapper = Check.NotNull(mqttClientWrapper, nameof(mqttClientWrapper));
+        _consumer = Check.NotNull(consumer, nameof(consumer));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _channel = CreateBoundedChannel();
@@ -46,10 +49,9 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
         _readCancellationTokenSource = new CancellationTokenSource();
         _readTaskCompletionSource = new TaskCompletionSource<bool>();
 
-        mqttClientWrapper.MqttClient.ApplicationMessageReceivedHandler = this;
+        _mqttClientWrapper = consumer.Client;
+        _mqttClientWrapper.ApplicationMessageReceivedHandler = this;
     }
-
-    public MqttConsumer? Consumer => _mqttClientWrapper.Consumer;
 
     public Task Stopping => _readTaskCompletionSource.Task;
 
@@ -90,7 +92,7 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
     {
         ConsumedApplicationMessage receivedMessage = new(eventArgs.ApplicationMessage);
 
-        _logger.LogConsuming(receivedMessage, Consumer!);
+        _logger.LogConsuming(receivedMessage, _consumer);
 
         await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 
@@ -108,8 +110,7 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
         _parallelismLimiterSemaphoreSlim.Dispose();
     }
 
-    private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
-        Channel.CreateBounded<ConsumedApplicationMessage>(10);
+    private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() => Channel.CreateBounded<ConsumedApplicationMessage>(10);
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     private async Task ReadChannelAsync()
@@ -118,7 +119,7 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
         Activity.Current = null;
         try
         {
-            _logger.LogConsumerLowLevelTrace(Consumer, "Starting channel processing loop...");
+            _logger.LogConsumerLowLevelTrace(_consumer, "Starting channel processing loop...");
 
             while (!_readCancellationTokenSource.IsCancellationRequested)
             {
@@ -128,32 +129,31 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
         catch (OperationCanceledException)
         {
             // Ignore
-            _logger.LogConsumerLowLevelTrace(
-                Consumer,
-                "Exiting channel processing loop (operation canceled).");
+            _logger.LogConsumerLowLevelTrace(_consumer, "Exiting channel processing loop (operation canceled).");
         }
         catch (Exception ex)
         {
             if (ex is not ConsumerPipelineFatalException)
-                _logger.LogConsumerFatalError(Consumer, ex);
+                _logger.LogConsumerFatalError(_consumer, ex);
 
             IsReading = false;
             _readTaskCompletionSource.TrySetResult(false);
 
-            await _mqttClientWrapper.Consumer!.DisconnectAsync().ConfigureAwait(false);
+            // TODO: Review logic and log messages (the entire client is disconnected)
+            await _mqttClientWrapper.DisconnectAsync().ConfigureAwait(false);
         }
 
         IsReading = false;
         _readTaskCompletionSource.TrySetResult(true);
 
-        _logger.LogConsumerLowLevelTrace(Consumer, "Exited channel processing loop.");
+        _logger.LogConsumerLowLevelTrace(_consumer, "Exited channel processing loop.");
     }
 
     private async Task ReadChannelOnceAsync()
     {
         _readCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-        _logger.LogConsumerLowLevelTrace(Consumer, "Reading channel...");
+        _logger.LogConsumerLowLevelTrace(_consumer, "Reading channel...");
 
         ConsumedApplicationMessage consumedMessage =
             await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
@@ -173,10 +173,13 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
 
     private async Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
     {
+        // Clear the current activity to ensure we don't propagate the previous traceId
+        Activity.Current = null;
+
         // Retry locally until successfully processed (or skipped)
         while (!_readCancellationTokenSource.Token.IsCancellationRequested)
         {
-            await _mqttClientWrapper.HandleMessageAsync(consumedMessage).ConfigureAwait(false);
+            await _consumer.HandleMessageAsync(consumedMessage).ConfigureAwait(false);
 
             if (await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
                 break;

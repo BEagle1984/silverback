@@ -20,13 +20,14 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     public override string ToString() => Uri ?? string.Empty;
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
+    // TODO: Test
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Uri))
-            throw new EndpointConfigurationException("The URI is required to connect with the message broker.");
+            throw new BrokerConfigurationException("The URI is required to connect with the message broker.");
 
         if (Tls == null)
-            throw new EndpointConfigurationException("The TLS configuration is required.");
+            throw new BrokerConfigurationException("The TLS configuration is required.");
 
         Proxy?.Validate();
         Tls.Validate();

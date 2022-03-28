@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client.Options;
-using MQTTnet.Client.Receiving;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -27,97 +26,101 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         "ReSharper",
         "InconsistentlySynchronizedField",
         Justification = "Lock (dis-)connect only")]
-    public IClientSession GetClientSession(string clientId) => _sessions[clientId];
+    public IClientSession GetClientSession(string clientId) =>
+        _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic) =>
-        _messagesByTopic.ContainsKey(topic)
-            ? _messagesByTopic[topic]
-            : Array.Empty<MqttApplicationMessage>();
+    public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null) =>
+        (IReadOnlyList<MqttApplicationMessage>?)_messagesByTopic.FirstOrDefault(
+            messagesByTopicPair => messagesByTopicPair
+                .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ??
+        Array.Empty<MqttApplicationMessage>();
 
-    public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
+    public void Connect(MockedMqttClient client)
     {
-        Check.NotNull(clientOptions, nameof(clientOptions));
-        Check.NotNull(handler, nameof(handler));
+        Check.NotNull(client, nameof(client));
+
+        if (client.Options == null)
+            throw new InvalidOperationException("Client options not set.");
 
         lock (_sessions)
         {
-            Disconnect(clientOptions.ClientId);
+            Disconnect(client);
 
-            if (!_sessions.TryGetValue(clientOptions.ClientId, out ClientSession? session))
-                session = new ClientSession(clientOptions, handler, _sharedSubscriptionsManager);
+            if (!TryGetClientSession(client, out ClientSession? session))
+            {
+                session = new ClientSession(client, _sharedSubscriptionsManager);
+                _sessions.Add(GetClientSessionKey(client), session);
+            }
 
-            _sessions.Add(clientOptions.ClientId, session);
             session.Connect();
         }
     }
 
-    public void Disconnect(string clientId)
+    public void Disconnect(MockedMqttClient client)
     {
+        Check.NotNull(client, nameof(client));
+
+        if (client.Options == null)
+            throw new InvalidOperationException("Client options not set.");
+
         lock (_sessions)
         {
-            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+            if (!TryGetClientSession(client, out ClientSession? session))
                 return;
 
             session.Disconnect();
 
-            if (session.ClientOptions.CleanSession)
-                _sessions.Remove(clientId);
+            if (client.Options.CleanSession)
+                RemoveClientSession(client);
         }
     }
 
-    public void Subscribe(string clientId, IReadOnlyCollection<string> topics)
+    public void Subscribe(MockedMqttClient client, IReadOnlyCollection<string> topics)
     {
         lock (_sessions)
         {
-            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+            if (!TryGetClientSession(client, out ClientSession? session))
                 return;
 
             session.Subscribe(topics);
         }
     }
 
-    public void Unsubscribe(string clientId, IReadOnlyCollection<string> topics)
+    public void Unsubscribe(MockedMqttClient client, IReadOnlyCollection<string> topics)
     {
         lock (_sessions)
         {
-            if (!_sessions.TryGetValue(clientId, out ClientSession? session))
+            if (!TryGetClientSession(client, out ClientSession? session))
                 return;
 
             session.Unsubscribe(topics);
         }
     }
 
-    [SuppressMessage(
-        "ReSharper",
-        "InconsistentlySynchronizedField",
-        Justification = "Lock (dis-)connect only")]
-    public Task PublishAsync(
-        string clientId,
-        MqttApplicationMessage message,
-        IMqttClientOptions clientOptions)
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
+    public ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, IMqttClientOptions clientOptions)
     {
-        if (!_sessions.TryGetValue(clientId, out ClientSession? publisherSession) || !publisherSession.IsConnected)
+        if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
             throw new InvalidOperationException("The client is not connected.");
 
-        StoreMessage(message);
+        StoreMessage(message, clientOptions);
 
-        return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions).AsTask());
+        return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions));
     }
 
-    [SuppressMessage(
-        "ReSharper",
-        "InconsistentlySynchronizedField",
-        Justification = "Lock (dis-)connect only.")]
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
     public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
             if (_sessions.Values.All(
                     session => session.PendingMessagesCount == 0 ||
-                               session.IsConsumerDisconnected ||
+                               !session.Client.IsConnected ||
                                !session.IsConnected))
+            {
                 return;
+            }
 
             await Task.Delay(10, cancellationToken).ConfigureAwait(false);
         }
@@ -128,14 +131,23 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         _sessions.Values.ForEach(session => session.Dispose());
     }
 
-    private void StoreMessage(MqttApplicationMessage message)
+    private static string GetClientSessionKey(MockedMqttClient client) => $"{client.Options?.ClientId}|{client.Options?.ChannelOptions}";
+
+    private bool TryGetClientSession(MockedMqttClient client, [NotNullWhen(true)] out ClientSession? session) =>
+        _sessions.TryGetValue(GetClientSessionKey(client), out session);
+
+    private void RemoveClientSession(MockedMqttClient client) => _sessions.Remove(GetClientSessionKey(client));
+
+    private void StoreMessage(MqttApplicationMessage message, IMqttClientOptions clientOptions)
     {
         lock (_messagesByTopic)
         {
-            if (!_messagesByTopic.ContainsKey(message.Topic))
-                _messagesByTopic[message.Topic] = new List<MqttApplicationMessage>();
+            string topicKey = $"{message.Topic}|{clientOptions.ChannelOptions}";
 
-            _messagesByTopic[message.Topic].Add(message);
+            if (!_messagesByTopic.ContainsKey(topicKey))
+                _messagesByTopic[topicKey] = new List<MqttApplicationMessage>();
+
+            _messagesByTopic[topicKey].Add(message);
         }
     }
 }

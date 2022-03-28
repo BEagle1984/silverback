@@ -2,13 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Diagnostics;
 
-/// <summary>
-///     Provides enrichment for the logs written in the context of the consumers and producers, for the specified endpoint type.
-/// </summary>
+/// <inheritdoc cref="IBrokerLogEnricher" />
 /// <typeparam name="TEndpoint">
 ///     The type of the endpoint that this enricher can be used for.
 /// </typeparam>

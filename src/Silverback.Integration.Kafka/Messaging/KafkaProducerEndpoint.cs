@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging;
@@ -9,7 +10,7 @@ namespace Silverback.Messaging;
 /// <summary>
 ///     The Kafka topic and partition where the message must be produced to.
 /// </summary>
-public record KafkaProducerEndpoint : ProducerEndpoint<KafkaProducerConfiguration>
+public record KafkaProducerEndpoint : ProducerEndpoint<KafkaProducerEndpointConfiguration>
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
@@ -23,7 +24,7 @@ public record KafkaProducerEndpoint : ProducerEndpoint<KafkaProducerConfiguratio
     /// <param name="configuration">
     ///     The producer configuration.
     /// </param>
-    public KafkaProducerEndpoint(string topic, Partition partition, KafkaProducerConfiguration configuration)
+    public KafkaProducerEndpoint(string topic, Partition partition, KafkaProducerEndpointConfiguration configuration)
         : this(new TopicPartition(topic, partition), configuration)
     {
     }
@@ -37,7 +38,7 @@ public record KafkaProducerEndpoint : ProducerEndpoint<KafkaProducerConfiguratio
     /// <param name="configuration">
     ///     The producer configuration.
     /// </param>
-    public KafkaProducerEndpoint(TopicPartition topicPartition, KafkaProducerConfiguration configuration)
+    public KafkaProducerEndpoint(TopicPartition topicPartition, KafkaProducerEndpointConfiguration configuration)
         : base(Check.NotNull(topicPartition, nameof(topicPartition)).Topic, configuration)
     {
         TopicPartition = Check.NotNull(topicPartition, nameof(topicPartition));

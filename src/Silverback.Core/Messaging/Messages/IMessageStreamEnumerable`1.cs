@@ -14,4 +14,5 @@ namespace Silverback.Messaging.Messages;
 /// </typeparam>
 public interface IMessageStreamEnumerable<out TMessage> : IEnumerable<TMessage>, IAsyncEnumerable<TMessage>
 {
+    // TODO: Add Count property when size is known (e.g. batch)
 }

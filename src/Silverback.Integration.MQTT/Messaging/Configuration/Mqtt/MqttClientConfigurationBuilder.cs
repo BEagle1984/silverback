@@ -22,11 +22,15 @@ public partial class MqttClientConfigurationBuilder
 
     private readonly List<MqttUserProperty> _userProperties = new();
 
-    private MqttClientConfiguration _configuration;
+    private readonly Dictionary<string, MqttProducerEndpointConfiguration> _producerEndpoints = new();
+
+    private readonly Dictionary<string, MqttConsumerEndpointConfiguration> _consumerEndpoints = new();
+
+    private MqttClientConfiguration _configuration = new();
 
     private MqttClientWebSocketProxyConfiguration? _webSocketProxyConfiguration;
 
-    private MqttClientTlsConfiguration _tlsConfiguration;
+    private MqttClientTlsConfiguration _tlsConfiguration = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
@@ -38,29 +42,172 @@ public partial class MqttClientConfigurationBuilder
     public MqttClientConfigurationBuilder(IServiceProvider? serviceProvider = null)
     {
         _serviceProvider = serviceProvider;
-        _configuration = new MqttClientConfiguration();
-        _tlsConfiguration = new MqttClientTlsConfiguration();
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
+    ///     Adds a producer endpoint, which is a topic and its related configuration (serializer, etc.).
     /// </summary>
-    /// <param name="baseConfiguration">
-    ///     The <see cref="MqttClientConfiguration" /> to be used to initialize the builder.
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
     /// </param>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the required types (e.g. the
-    ///     <see cref="IMqttExtendedAuthenticationExchangeHandler" />).
-    /// </param>
-    public MqttClientConfigurationBuilder(MqttClientConfiguration baseConfiguration, IServiceProvider? serviceProvider = null)
-        : this(serviceProvider)
-    {
-        Check.NotNull(baseConfiguration, nameof(baseConfiguration));
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Produce(Action<MqttProducerEndpointConfigurationBuilder<object>> configurationBuilderAction) =>
+        Produce<object>(configurationBuilderAction);
 
-        _configuration = baseConfiguration with { };
-        _userProperties = new List<MqttUserProperty>(_configuration.UserProperties);
-        _webSocketProxyConfiguration = (_configuration.Channel as MqttClientWebSocketConfiguration)?.Proxy;
-        _tlsConfiguration = _configuration.Channel?.Tls ?? new MqttClientTlsConfiguration();
+    /// <summary>
+    ///     Adds a producer endpoint, which is a topic and its related configuration (serializer, etc.).
+    /// </summary>
+    /// <param name="name">
+    ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+    ///     By default the name will be generated concatenating the topic name and the message type.
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Produce(string? name, Action<MqttProducerEndpointConfigurationBuilder<object>> configurationBuilderAction) =>
+        Produce<object>(name, configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds a producer endpoint, which is a topic and its related configuration (serializer, etc.).
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type (or base type) of the messages being produced. This is used to setup the serializer and will determine the type of the
+    ///     message parameter in the nested configuration functions.
+    /// </typeparam>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Produce<TMessage>(Action<MqttProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction) =>
+        Produce(null, configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds a producer endpoint, which is a topic and its related configuration (serializer, etc.).
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type (or base type) of the messages being produced. This is used to setup the serializer and will determine the type of the
+    ///     message parameter in the nested configuration functions.
+    /// </typeparam>
+    /// <param name="name">
+    ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+    ///     By default the name will be generated concatenating the topic name and the message type.
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Produce<TMessage>(
+        string? name,
+        Action<MqttProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+    {
+        Check.NullButNotEmpty(name, nameof(name));
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        MqttProducerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        configurationBuilderAction.Invoke(builder);
+        MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
+
+        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}"; // TODO: Check if OK to concat type (needed when pushing multiple types to same topic)
+
+        if (_producerEndpoints.ContainsKey(name))
+            return this;
+
+        _producerEndpoints[name] = endpointConfiguration;
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Adds a consumer endpoint, which is a topic or a group of topics that share the same configuration (deserializer, error policies, etc.).
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Consume(Action<MqttConsumerEndpointConfigurationBuilder<object>> configurationBuilderAction) =>
+        Consume<object>(configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds a consumer endpoint, which is a topic or a group of topics that share the same configuration (deserializer, error policies, etc.).
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type (or base type) of the messages being consumed. This is used to setup the deserializer and will determine the type of the
+    ///     message parameter in the nested configuration functions.
+    /// </typeparam>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Consume<TMessage>(Action<MqttConsumerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction) =>
+        Consume(null, configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds a consumer endpoint, which is a topic or a group of topics that share the same configuration (deserializer, error policies, etc.).
+    /// </summary>
+    /// <param name="name">
+    ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+    ///     By default the name will be generated concatenating the topic name(s).
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Consume(
+        string? name,
+        Action<MqttConsumerEndpointConfigurationBuilder<object>> configurationBuilderAction) =>
+        Consume<object>(name, configurationBuilderAction);
+
+    /// <summary>
+    ///     Adds a consumer endpoint, which is a topic or a group of topics that share the same configuration (deserializer, error policies, etc.).
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type (or base type) of the messages being consumed. This is used to setup the deserializer and will determine the type of the
+    ///     message parameter in the nested configuration functions.
+    /// </typeparam>
+    /// <param name="name">
+    ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
+    ///     By default the name will be generated concatenating the topic name(s).
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action" /> that takes the <see cref="MqttClientConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder Consume<TMessage>(
+        string? name,
+        Action<MqttConsumerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+    {
+        Check.NullButNotEmpty(name, nameof(name));
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
+
+        MqttConsumerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        configurationBuilderAction.Invoke(builder);
+        MqttConsumerEndpointConfiguration endpointConfiguration = builder.Build();
+
+        name ??= endpointConfiguration.RawName;
+
+        if (_consumerEndpoints.ContainsKey(name))
+            return this;
+
+        _consumerEndpoints[name] = endpointConfiguration;
+
+        return this;
     }
 
     /// <summary>
@@ -635,7 +782,7 @@ public partial class MqttClientConfigurationBuilder
     {
         Check.NotNull(address, nameof(address));
 
-        _webSocketProxyConfiguration = new MqttClientWebSocketProxyConfiguration()
+        _webSocketProxyConfiguration = new MqttClientWebSocketProxyConfiguration
         {
             Address = address,
             Username = username,
@@ -713,21 +860,24 @@ public partial class MqttClientConfigurationBuilder
     {
         _configuration = _configuration with
         {
-            UserProperties = _userProperties.AsValueReadOnlyCollection()
+            UserProperties = _userProperties.AsValueReadOnlyCollection(),
+            ProducerEndpoints = _producerEndpoints.Values.AsValueReadOnlyCollection(),
+            ConsumerEndpoints = _consumerEndpoints.Values.AsValueReadOnlyCollection()
         };
 
         switch (_configuration.Channel)
         {
             case MqttClientTcpConfiguration tcpChannel:
-                return _configuration with
+                _configuration = _configuration with
                 {
                     Channel = tcpChannel with
                     {
                         Tls = _tlsConfiguration
                     }
                 };
+                break;
             case MqttClientWebSocketConfiguration webSocketChannel:
-                return _configuration with
+                _configuration = _configuration with
                 {
                     Channel = webSocketChannel with
                     {
@@ -735,8 +885,11 @@ public partial class MqttClientConfigurationBuilder
                         Tls = _tlsConfiguration
                     }
                 };
-            default:
-                return _configuration;
+                break;
         }
+
+        _configuration.Validate();
+
+        return _configuration;
     }
 }

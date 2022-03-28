@@ -4,7 +4,7 @@
 using System;
 using Silverback.Configuration;
 using Silverback.Lock;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -128,10 +128,10 @@ public class OutboxWorkerSettingsBuilder
     }
 
     /// <summary>
-    ///     Builds <see cref="OutboxWorkerSettings"/>.
+    ///     Builds <see cref="OutboxWorkerSettings" />.
     /// </summary>
     /// <returns>
-    ///     The <see cref="OutboxWorkerSettings"/>.
+    ///     The <see cref="OutboxWorkerSettings" />.
     /// </returns>
     public OutboxWorkerSettings Build()
     {

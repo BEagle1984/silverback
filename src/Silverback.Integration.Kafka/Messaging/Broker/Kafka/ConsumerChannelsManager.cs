@@ -22,7 +22,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
     [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
     private readonly KafkaConsumer _consumer;
 
-    private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+    private readonly IBrokerClientCallbacksInvoker _callbacksInvoker;
 
     private readonly ISilverbackLogger _logger;
 
@@ -30,11 +30,11 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     private readonly SemaphoreSlim _messagesLimiterSemaphoreSlim;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public ConsumerChannelsManager(
         KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
         _consumer = Check.NotNull(consumer, nameof(consumer));
@@ -54,7 +54,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     public void StartReading(TopicPartition topicPartition)
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         PartitionChannel partitionChannel = GetPartitionChannel(topicPartition);
@@ -95,7 +95,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     public async Task StopReadingAsync(TopicPartition topicPartition)
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         PartitionChannel? partitionChannel = GetPartitionChannel(topicPartition, false);
@@ -110,7 +110,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     public void Reset(TopicPartition topicPartition)
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         if (_partitionChannels.TryGetValue(topicPartition, out PartitionChannel? partitionChannel))
@@ -123,7 +123,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
     // synchronously to stay within a single long-running thread with the Consume loop.
     public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         PartitionChannel partitionChannel = GetPartitionChannel(consumeResult.TopicPartition);
@@ -145,7 +145,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         AsyncHelper.RunSynchronously(StopReadingAsync);
@@ -155,7 +155,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
         _messagesLimiterSemaphoreSlim.Dispose();
 
-        _disposed = true;
+        _isDisposed = true;
     }
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -195,7 +195,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
             partitionChannel.NotifyReadingStopped(true);
 
-            await _consumer.DisconnectAsync().ConfigureAwait(false);
+            await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
         }
 
         _logger.LogConsumerLowLevelTrace(

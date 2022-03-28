@@ -30,6 +30,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             rawContent,
             headers,
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
@@ -42,7 +43,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().BeAssignableTo<IInboundEnvelope<BinaryMessage>>();
@@ -58,6 +59,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             rawContent,
             null,
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
@@ -70,7 +72,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().BeSameAs(envelope);
@@ -84,7 +86,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         {
             new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         };
-        TestConsumerConfiguration endpointConfiguration = new("test")
+        TestConsumerEndpointConfiguration endpointConfiguration = new("test")
         {
             Serializer = new BinaryMessageSerializer<BinaryMessage>()
         };
@@ -93,6 +95,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             rawContent,
             headers,
             endpointConfiguration.GetDefaultEndpoint(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         IRawInboundEnvelope? result = null;
@@ -105,7 +108,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().BeSameAs(envelope);

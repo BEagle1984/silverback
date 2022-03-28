@@ -12,13 +12,14 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguration
 {
     /// <inheritdoc cref="IValidatableSettings.Validate" />
+    // TODO: Test
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Server))
-            throw new EndpointConfigurationException("The server is required to connect with the message broker.");
+            throw new BrokerConfigurationException("The server is required to connect with the message broker.");
 
         if (Port <= 0)
-            throw new EndpointConfigurationException("The port must be greater than zero.");
+            throw new BrokerConfigurationException("The port must be greater than zero.");
 
         Tls.Validate();
     }

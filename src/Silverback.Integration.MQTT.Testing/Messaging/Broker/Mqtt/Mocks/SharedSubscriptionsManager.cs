@@ -2,49 +2,60 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using MQTTnet;
+using System.Linq;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
 internal class SharedSubscriptionsManager
 {
-    private readonly Dictionary<string, int> _groups = new();
+    private readonly Dictionary<string, GroupSubscriptions> _groupSubscriptions = new();
 
-    private readonly Dictionary<string, Dictionary<object, int>> _counters = new();
-
-    public void Add(string group)
+    public void Add(Subscription subscription)
     {
-        lock (_groups)
+        if (subscription.SharedSubscriptionGroup == null)
+            return;
+
+        lock (_groupSubscriptions)
         {
-            if (_groups.ContainsKey(group))
-            {
-                _groups[group]++;
-            }
-            else
-            {
-                _groups[group] = 0;
-                _counters[group] = new Dictionary<object, int>();
-            }
+            _groupSubscriptions.GetOrAdd(subscription.SharedSubscriptionGroup, _ => new GroupSubscriptions()).Add(subscription);
         }
     }
 
-    public bool IsFirstMatch(string group, MqttApplicationMessage message)
+    public void Remove(Subscription subscription)
     {
-        lock (_counters)
+        if (subscription.SharedSubscriptionGroup == null)
+            return;
+
+        lock (_groupSubscriptions)
         {
-            Dictionary<object, int> counter = _counters[group];
+            if (_groupSubscriptions.TryGetValue(subscription.SharedSubscriptionGroup, out GroupSubscriptions? groupSubscriptions))
+                groupSubscriptions.Remove(subscription);
+        }
+    }
 
-            if (counter.ContainsKey(message))
-            {
-                counter[message]++;
-                if (counter[message] >= _groups[group])
-                    counter.Remove(message);
+    public bool IsActive(Subscription subscription)
+    {
+        if (subscription.SharedSubscriptionGroup == null)
+            return true;
 
-                return false;
-            }
+        lock (_groupSubscriptions)
+        {
+            if (_groupSubscriptions.TryGetValue(subscription.SharedSubscriptionGroup, out GroupSubscriptions? groupSubscriptions))
+                return groupSubscriptions.ActiveSubscription == subscription;
 
-            counter[message] = 1;
             return true;
         }
+    }
+
+    private sealed class GroupSubscriptions
+    {
+        private readonly List<Subscription> _subscriptions = new();
+
+        public Subscription? ActiveSubscription => _subscriptions.FirstOrDefault();
+
+        public void Add(Subscription subscription) => _subscriptions.Add(subscription);
+
+        public void Remove(Subscription subscription) => _subscriptions.Remove(subscription);
     }
 }

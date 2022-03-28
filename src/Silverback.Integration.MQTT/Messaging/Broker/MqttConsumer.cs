@@ -4,43 +4,41 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Mqtt;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}" />
-public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, MqttMessageIdentifier>
+/// <inheritdoc cref="Consumer{TIdentifier}" />
+public class MqttConsumer : Consumer<MqttMessageIdentifier>
 {
-    [SuppressMessage("", "CA2213", Justification = "Disposed by the MqttClientCache")]
-    private readonly MqttClientWrapper _clientWrapper;
+    private readonly IConsumerLogger<MqttConsumer> _logger;
 
     private readonly ConsumerChannelManager _channelManager;
 
     private readonly ConcurrentDictionary<string, ConsumedApplicationMessage> _inProcessingMessages = new();
 
-    private readonly Dictionary<string, MqttConsumerEndpoint> _endpointsCache = new();
+    private readonly MqttConsumerEndpointsCache _endpointsCache;
 
-    private readonly Func<string, MqttConsumerEndpoint> _endpointFactory;
-
-    private bool _disposed;
+    private bool _isDisposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.
     /// </summary>
-    /// <param name="broker">
-    ///     The <see cref="IBroker" /> that is instantiating the consumer.
+    /// <param name="name">
+    ///     The consumer identifier.
+    /// </param>
+    /// <param name="client">
+    ///     The <see cref="IMqttClientWrapper" />.
     /// </param>
     /// <param name="configuration">
-    ///     The <see cref="MqttConsumerConfiguration" />.
+    ///     The <see cref="MqttClientConfiguration" /> with only the consumer endpoints.
     /// </param>
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
@@ -49,35 +47,53 @@ public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, Mqtt
     ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </param>
     /// <param name="logger">
-    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
     /// </param>
     public MqttConsumer(
-        MqttBroker broker,
-        MqttConsumerConfiguration configuration,
+        string name,
+        IMqttClientWrapper client,
+        MqttClientConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
         IServiceProvider serviceProvider,
-        IInboundLogger<MqttConsumer> logger)
-        : base(broker, configuration, behaviorsProvider, serviceProvider, logger)
+        IConsumerLogger<MqttConsumer> logger)
+        : base(
+            name,
+            client,
+            Check.NotNull(configuration, nameof(configuration)).ConsumerEndpoints,
+            behaviorsProvider,
+            serviceProvider,
+            logger)
     {
-        Check.NotNull(serviceProvider, nameof(serviceProvider));
-        Check.NotNull(logger, nameof(logger));
+        Client = Check.NotNull(client, nameof(client));
+        Configuration = Check.NotNull(configuration, nameof(configuration));
+        _logger = Check.NotNull(logger, nameof(logger));
 
-        _clientWrapper = serviceProvider
-            .GetRequiredService<IMqttClientsCache>()
-            .GetClient(this);
+        _channelManager = new ConsumerChannelManager(this, logger);
+        _endpointsCache = new MqttConsumerEndpointsCache(client.Configuration);
 
-        _channelManager = new ConsumerChannelManager(_clientWrapper, logger);
-
-        _endpointFactory = topic => new MqttConsumerEndpoint(topic, configuration);
+        Client.Connected.AddHandler(OnClientConnectedAsync);
+        Client.Disconnected.AddHandler(OnClientDisconnectedAsync);
+        Client.Initializing.AddHandler(OnClientStartingAsync);
     }
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.Client" />
+    public new IMqttClientWrapper Client { get; }
+
+    /// <summary>
+    ///     Gets the client configuration.
+    /// </summary>
+    public MqttClientConfiguration Configuration { get; }
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.EndpointsConfiguration" />
+    public new IReadOnlyCollection<MqttConsumerEndpointConfiguration> EndpointsConfiguration => Configuration.ConsumerEndpoints;
 
     internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
     {
-        MessageHeaderCollection headers = Configuration.Client.AreHeadersSupported
+        MessageHeaderCollection headers = Configuration.AreHeadersSupported
             ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties.ToSilverbackHeaders())
             : new MessageHeaderCollection();
 
-        MqttConsumerEndpoint endpoint = _endpointsCache.GetOrAdd(message.ApplicationMessage.Topic, _endpointFactory);
+        MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
 
         headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
@@ -89,29 +105,76 @@ public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, Mqtt
                 message.ApplicationMessage.Payload,
                 headers,
                 endpoint,
-                new MqttMessageIdentifier(Configuration.Client.ClientId, message.Id))
+                new MqttMessageIdentifier(Configuration.ClientId, message.Id))
             .ConfigureAwait(false);
     }
 
-    internal async Task OnConnectionEstablishedAsync()
+    /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
+    protected override ValueTask StartCoreAsync()
     {
-        await _clientWrapper.SubscribeAsync(
-                Configuration.Topics.Select(
-                        topic =>
-                            new MqttTopicFilterBuilder()
-                                .WithTopic(topic)
-                                .WithQualityOfServiceLevel(Configuration.QualityOfServiceLevel)
-                                .Build())
-                    .ToArray())
-            .ConfigureAwait(false);
+        _channelManager.StartReading();
+        return default;
+    }
 
-        if (IsConnected)
-            await StartAsync().ConfigureAwait(false);
+    /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
+    protected override ValueTask StopCoreAsync()
+    {
+        if (Client.IsConnected && Client.Status != ClientStatus.Disconnecting)
+            throw new InvalidOperationException("Stopping is not supported by the MqttConsumer. Disconnect the client instead.");
+
+        _channelManager.StopReading();
+        return default;
+    }
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
+    protected override async ValueTask WaitUntilConsumingStoppedCoreAsync() => await _channelManager.Stopping.ConfigureAwait(false);
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync" />
+    protected override ValueTask CommitCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
+    {
+        SetProcessingCompleted(brokerMessageIdentifiers, true);
+        return default;
+    }
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.RollbackCoreAsync" />
+    protected override ValueTask RollbackCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
+    {
+        SetProcessingCompleted(brokerMessageIdentifiers, false);
+        return default;
+    }
+
+    /// <inheritdoc cref="Consumer{TIdentifier}.Dispose(bool)" />
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (!disposing || _isDisposed)
+            return;
+
+        _isDisposed = true;
+
+        _channelManager.Dispose();
+
+        Client.Connected.RemoveHandler(OnClientConnectedAsync);
+        Client.Disconnected.RemoveHandler(OnClientDisconnectedAsync);
+        Client.Initializing.RemoveHandler(OnClientStartingAsync);
+    }
+
+    private ValueTask OnClientStartingAsync(BrokerClient client) => StartAsync();
+
+    private async ValueTask OnClientConnectedAsync(BrokerClient client)
+    {
+        Client.SubscribedTopicsFilters.ForEach(topicFilter => _logger.LogConsumerSubscribed(topicFilter.Topic, this));
+
+        if (!IsStartedAndNotStopping())
+            return;
+
+        await StartAsync().ConfigureAwait(false);
 
         SetReadyStatus();
     }
 
-    internal async Task OnConnectionLostAsync()
+    private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
 
@@ -120,69 +183,15 @@ public class MqttConsumer : Consumer<MqttBroker, MqttConsumerConfiguration, Mqtt
         await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.ConnectCoreAsync" />
-    protected override Task ConnectCoreAsync() => _clientWrapper.ConnectAsync(this);
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.DisconnectCoreAsync" />
-    protected override async Task DisconnectCoreAsync()
-    {
-        await _clientWrapper.UnsubscribeAsync(Configuration.Topics).ConfigureAwait(false);
-        await _clientWrapper.DisconnectAsync(this).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.StartCoreAsync" />
-    protected override Task StartCoreAsync()
-    {
-        if (_clientWrapper == null)
-            throw new InvalidOperationException("The consumer is not connected.");
-
-        _channelManager.StartReading();
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.StopCoreAsync" />
-    protected override Task StopCoreAsync()
-    {
-        _channelManager.StopReading();
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
-    protected override Task WaitUntilConsumingStoppedCoreAsync() => _channelManager.Stopping;
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.CommitCoreAsync" />
-    protected override Task CommitCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
-        SetProcessingCompletedAsync(brokerMessageIdentifiers, true);
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.RollbackCoreAsync" />
-    protected override Task RollbackCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
-        SetProcessingCompletedAsync(brokerMessageIdentifiers, false);
-
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}.Dispose(bool)" />
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-
-        if (!disposing || _disposed)
-            return;
-
-        _disposed = true;
-
-        _channelManager.Dispose();
-    }
-
-    private Task SetProcessingCompletedAsync(
-        IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers,
-        bool isSuccess)
+    private void SetProcessingCompleted(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers, bool isSuccess)
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
         string messageId = brokerMessageIdentifiers.Single().MessageId;
 
         if (!_inProcessingMessages.TryRemove(messageId, out ConsumedApplicationMessage? message))
-            return Task.CompletedTask;
+            return;
 
         message.TaskCompletionSource.SetResult(isSuccess);
-        return Task.CompletedTask;
     }
 }

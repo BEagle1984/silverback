@@ -21,7 +21,7 @@ public interface IProducerBehavior : IBrokerBehavior, ISorted
     ///     The next behavior in the pipeline.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next);
+    ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next);
 }

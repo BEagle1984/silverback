@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
@@ -15,6 +16,11 @@ public interface IRawOutboundEnvelope : IRawBrokerEnvelope
     ///     configured to determine a dynamic target endpoint for each message.
     /// </summary>
     new ProducerEndpoint Endpoint { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="IProducer" /> that will be or was used to produce this message.
+    /// </summary>
+    IProducer Producer { get; }
 
     /// <summary>
     ///     Gets the message identifier on the message broker (the Kafka offset or similar).

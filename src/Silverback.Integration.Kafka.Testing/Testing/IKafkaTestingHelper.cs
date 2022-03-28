@@ -1,15 +1,17 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Testing;
 
-/// <inheritdoc cref="ITestingHelper{TBroker}" />
-public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
+/// <inheritdoc cref="ITestingHelper" />
+public interface IKafkaTestingHelper : ITestingHelper
 {
     /// <summary>
     ///     Returns the <see cref="IMockedConsumerGroup" /> representing the consumer group with the specified id.
@@ -62,4 +64,15 @@ public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     ///     The <see cref="IInMemoryTopic" />.
     /// </returns>
     IInMemoryTopic GetTopic(string name, string? bootstrapServers = null);
+
+    /// <summary>
+    ///     Gets a new producer with the specified configuration.
+    /// </summary>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfigurationBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IProducer" />.
+    /// </returns>
+    IProducer GetProducer(Action<KafkaProducerConfigurationBuilder> configurationBuilderAction);
 }

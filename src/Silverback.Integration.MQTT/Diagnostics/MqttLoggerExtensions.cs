@@ -12,24 +12,26 @@ namespace Silverback.Diagnostics;
 
 internal static class MqttLoggerExtensions
 {
-    private static readonly Action<ILogger, string, string, string, string, Exception?> ConsumingMessage =
-        SilverbackLoggerMessage.Define<string, string, string, string>(IntegrationLoggerExtensions.EnrichConsumerLogEvent(MqttLogEvents.ConsumingMessage));
+    private static readonly Action<ILogger, string, string, string, Exception?> ConsumingMessage =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConsumingMessage);
 
-    private static readonly Action<ILogger, string, string, Exception?> ConnectError =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectError);
+    private static readonly Action<ILogger, string, string, string, Exception?> ConnectError =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectError);
 
-    private static readonly Action<ILogger, string, string, Exception?> ConnectRetryError =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectRetryError);
+    private static readonly Action<ILogger, string, string, string, Exception?> ConnectRetryError =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectRetryError);
 
-    private static readonly Action<ILogger, string, string, Exception?>
-        ConnectionLost =
-            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectionLost);
+    private static readonly Action<ILogger, string, string, string, Exception?> ConnectionLost =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectionLost);
 
-    private static readonly Action<ILogger, string, string, Exception?> Reconnected =
-        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.Reconnected);
+    private static readonly Action<ILogger, string, string, string, Exception?> Reconnected =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.Reconnected);
 
     private static readonly Action<ILogger, string, string, Exception?> ProducerQueueProcessingCanceled =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLoggerExtensions.EnrichProducerLogEvent(MqttLogEvents.ProducerQueueProcessingCanceled));
+        SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ProducerQueueProcessingCanceled);
+
+    private static readonly Action<ILogger, string, string, string, string, Exception?> ConsumerSubscribed =
+        SilverbackLoggerMessage.Define<string, string, string, string>(MqttLogEvents.ConsumerSubscribed);
 
     private static readonly Action<ILogger, string, string, Exception?> MqttClientLogError =
         SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogError);
@@ -43,16 +45,12 @@ internal static class MqttLoggerExtensions
     private static readonly Action<ILogger, string, string, Exception?> MqttClientLogVerbose =
         SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogVerbose);
 
-    public static void LogConsuming(
-        this ISilverbackLogger logger,
-        ConsumedApplicationMessage applicationMessage,
-        MqttConsumer consumer) =>
+    public static void LogConsuming(this ISilverbackLogger logger, ConsumedApplicationMessage applicationMessage, MqttConsumer consumer) =>
         ConsumingMessage(
             logger.InnerLogger,
             applicationMessage.Id,
             applicationMessage.ApplicationMessage.Topic,
-            consumer.Id,
-            applicationMessage.ApplicationMessage.Topic,
+            consumer.DisplayName,
             null);
 
     public static void LogConnectError(
@@ -61,8 +59,9 @@ internal static class MqttLoggerExtensions
         Exception exception) =>
         ConnectError(
             logger.InnerLogger,
-            client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
+            client.DisplayName,
+            client.Configuration.ClientId,
+            client.Configuration.Channel?.ToString() ?? string.Empty,
             exception);
 
     public static void LogConnectRetryError(
@@ -71,35 +70,37 @@ internal static class MqttLoggerExtensions
         Exception exception) =>
         ConnectRetryError(
             logger.InnerLogger,
-            client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
+            client.DisplayName,
+            client.Configuration.ClientId,
+            client.Configuration.Channel?.ToString() ?? string.Empty,
             exception);
 
-    public static void LogConnectionLost(
-        this ISilverbackLogger logger,
-        MqttClientWrapper client) =>
+    public static void LogConnectionLost(this ISilverbackLogger logger, MqttClientWrapper client) =>
         ConnectionLost(
             logger.InnerLogger,
-            client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
+            client.DisplayName,
+            client.Configuration.ClientId,
+            client.Configuration.Channel?.ToString() ?? string.Empty,
             null);
 
-    public static void LogReconnected(
-        this ISilverbackLogger logger,
-        MqttClientWrapper client) =>
+    public static void LogReconnected(this ISilverbackLogger logger, MqttClientWrapper client) =>
         Reconnected(
             logger.InnerLogger,
-            client.ClientConfiguration.ClientId,
-            client.ClientConfiguration.Channel?.ToString() ?? string.Empty,
+            client.DisplayName,
+            client.Configuration.ClientId,
+            client.Configuration.Channel?.ToString() ?? string.Empty,
             null);
 
-    public static void LogProducerQueueProcessingCanceled(
-        this ISilverbackLogger logger,
-        MqttProducer producer) =>
-        ProducerQueueProcessingCanceled(
+    public static void LogProducerQueueProcessingCanceled(this ISilverbackLogger logger, MqttClientWrapper client) =>
+        ProducerQueueProcessingCanceled(logger.InnerLogger, client.DisplayName, client.Configuration.ClientId, null);
+
+    public static void LogConsumerSubscribed(this ISilverbackLogger logger, string topicPattern, MqttConsumer consumer) =>
+        ConsumerSubscribed(
             logger.InnerLogger,
-            producer.Id,
-            producer.Configuration.DisplayName,
+            topicPattern,
+            consumer.Client.DisplayName,
+            consumer.Client.Configuration.ClientId,
+            consumer.DisplayName,
             null);
 
     public static void LogMqttClientError(
@@ -175,7 +176,7 @@ internal static class MqttLoggerExtensions
     {
         try
         {
-            return parameters != null && parameters.Length > 0
+            return parameters is { Length: > 0 }
                 ? string.Format(CultureInfo.InvariantCulture, message, parameters)
                 : message;
         }

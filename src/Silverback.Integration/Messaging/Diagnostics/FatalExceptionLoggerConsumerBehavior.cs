@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Diagnostics;
 /// </summary>
 public class FatalExceptionLoggerConsumerBehavior : IConsumerBehavior
 {
-    private readonly IInboundLogger<FatalExceptionLoggerConsumerBehavior> _logger;
+    private readonly IConsumerLogger<FatalExceptionLoggerConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="FatalExceptionLoggerConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
     /// </param>
-    public FatalExceptionLoggerConsumerBehavior(IInboundLogger<FatalExceptionLoggerConsumerBehavior> logger)
+    public FatalExceptionLoggerConsumerBehavior(IConsumerLogger<FatalExceptionLoggerConsumerBehavior> logger)
     {
         _logger = logger;
     }
@@ -32,9 +32,7 @@ public class FatalExceptionLoggerConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.FatalExceptionLogger;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -47,9 +45,7 @@ public class FatalExceptionLoggerConsumerBehavior : IConsumerBehavior
         {
             _logger.LogProcessingFatalError(context.Envelope, ex);
 
-            throw new ConsumerPipelineFatalException(
-                "Fatal error occurred processing the consumed message.",
-                ex);
+            throw new ConsumerPipelineFatalException("Fatal error occurred processing the consumed message.", ex);
         }
     }
 }

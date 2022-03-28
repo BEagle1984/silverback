@@ -5,9 +5,9 @@ using Silverback.Messaging;
 
 namespace Silverback.Tests.Types;
 
-public record TestProducerEndpoint : ProducerEndpoint<TestProducerConfiguration>
+public record TestProducerEndpoint : ProducerEndpoint<TestProducerEndpointConfiguration>
 {
-    public TestProducerEndpoint(string topic, TestProducerConfiguration configuration)
+    public TestProducerEndpoint(string topic, TestProducerEndpointConfiguration configuration)
         : base(topic, configuration)
     {
         Topic = topic;
@@ -15,5 +15,5 @@ public record TestProducerEndpoint : ProducerEndpoint<TestProducerConfiguration>
 
     public string Topic { get; }
 
-    public static TestProducerEndpoint GetDefault() => TestProducerConfiguration.GetDefault().GetDefaultEndpoint();
+    public static TestProducerEndpoint GetDefault() => TestProducerEndpointConfiguration.GetDefault().GetDefaultEndpoint();
 }

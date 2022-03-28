@@ -22,7 +22,7 @@ internal static class SubscribedMethodInvoker
         SubscribedMethod subscribedMethod,
         object message,
         IServiceProvider serviceProvider,
-        bool executeAsync)
+        ExecutionFlow executionFlow)
     {
         if (IsFiltered(subscribedMethod.Options.Filters, message))
             return MethodInvocationResult.NotInvoked;
@@ -40,7 +40,7 @@ internal static class SubscribedMethodInvoker
                     arguments,
                     singleResolver,
                     serviceProvider,
-                    executeAsync).ConfigureAwait(false);
+                    executionFlow).ConfigureAwait(false);
                 break;
             case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
                 returnValue = InvokeWithStreamEnumerable(
@@ -64,7 +64,7 @@ internal static class SubscribedMethodInvoker
         bool returnValueWasHandled =
             await serviceProvider
                 .GetRequiredService<ReturnValueHandlerService>()
-                .HandleReturnValuesAsync(returnValue, executeAsync)
+                .HandleReturnValuesAsync(returnValue, executionFlow)
                 .ConfigureAwait(false);
 
         if (returnValueWasHandled)
@@ -99,13 +99,13 @@ internal static class SubscribedMethodInvoker
         object?[] arguments,
         ISingleMessageArgumentResolver singleResolver,
         IServiceProvider serviceProvider,
-        bool executeAsync)
+        ExecutionFlow executionFlow)
     {
         message = UnwrapEnvelopeIfNeeded(message, subscribedMethod);
 
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
         arguments[0] = singleResolver.GetValue(message);
-        return InvokeWithActivityAsync(subscribedMethod, target, arguments, executeAsync);
+        return InvokeWithActivityAsync(subscribedMethod, target, arguments, executionFlow);
     }
 
     private static object InvokeWithStreamEnumerable(
@@ -147,8 +147,12 @@ internal static class SubscribedMethodInvoker
             ? envelope.Message ?? throw new InvalidOperationException("The envelope message is null.")
             : message;
 
-    private static ValueTask<object?> InvokeWithActivityAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments, bool executeAsync) =>
-        executeAsync
+    private static ValueTask<object?> InvokeWithActivityAsync(
+        SubscribedMethod subscribedMethod,
+        object target,
+        object?[] arguments,
+        ExecutionFlow executionFlow) =>
+        executionFlow == ExecutionFlow.Async
             ? InvokeWithActivityAsync(subscribedMethod, target, arguments)
             : ValueTaskFactory.FromResult(InvokeWithActivitySync(subscribedMethod, target, arguments));
 

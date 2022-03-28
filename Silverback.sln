@@ -111,12 +111,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Sqlite",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Sqlite.Tests", "tests\Silverback.Storage.Sqlite.Tests\Silverback.Storage.Sqlite.Tests.csproj", "{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github-workflows", "github-workflows", "{2990772A-34EE-4670-AE36-0FDCD6CC5F30}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\continuous.yaml = .github\workflows\continuous.yaml
-		.github\workflows\sonar.yaml = .github\workflows\sonar.yaml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -292,7 +286,6 @@ Global
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
-		{2990772A-34EE-4670-AE36-0FDCD6CC5F30} = {C177137F-A084-4178-805F-890F0A175A56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

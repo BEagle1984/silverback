@@ -16,7 +16,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Validation;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -28,7 +27,7 @@ public class ValidatorProducerBehaviorTests
 {
     private readonly LoggerSubstitute<ValidatorProducerBehavior> _loggerSubstitute;
 
-    private readonly IOutboundLogger<ValidatorProducerBehavior> _outboundLogger;
+    private readonly IProducerLogger<ValidatorProducerBehavior> _producerLogger;
 
     public ValidatorProducerBehaviorTests()
     {
@@ -36,16 +35,14 @@ public class ValidatorProducerBehaviorTests
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>()));
+                .WithConnectionToMessageBroker());
 
         _loggerSubstitute =
             (LoggerSubstitute<ValidatorProducerBehavior>)serviceProvider
                 .GetRequiredService<ILogger<ValidatorProducerBehavior>>();
 
-        _outboundLogger = serviceProvider
-            .GetRequiredService<IOutboundLogger<ValidatorProducerBehavior>>();
+        _producerLogger = serviceProvider
+            .GetRequiredService<IProducerLogger<ValidatorProducerBehavior>>();
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -99,7 +96,7 @@ public class ValidatorProducerBehaviorTests
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123"
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
+                $"Invalid message produced:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
             };
             yield return new object[]
             {
@@ -107,7 +104,7 @@ public class ValidatorProducerBehaviorTests
                 {
                     Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message produced:{Environment.NewLine}- The field IntRange must be between 5 and 10."
             };
             yield return new object[]
             {
@@ -115,7 +112,7 @@ public class ValidatorProducerBehaviorTests
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 30, NumbersOnly = "123"
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message produced:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
             };
             yield return new object[]
             {
@@ -123,7 +120,7 @@ public class ValidatorProducerBehaviorTests
                 {
                     String10 = "123456", IntRange = 5, NumbersOnly = "123"
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The Id field is required."
+                $"Invalid message produced:{Environment.NewLine}- The Id field is required."
             };
             yield return new object[]
             {
@@ -131,7 +128,7 @@ public class ValidatorProducerBehaviorTests
                 {
                     Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
+                $"Invalid message produced:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
             };
             yield return new object[]
             {
@@ -146,7 +143,7 @@ public class ValidatorProducerBehaviorTests
                         String5 = "123456"
                     }
                 },
-                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+                $"Invalid message produced:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
             };
         }
     }
@@ -155,14 +152,14 @@ public class ValidatorProducerBehaviorTests
     [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
     public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
     {
-        TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.None
         }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint);
+        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        await new ValidatorProducerBehavior(_outboundLogger).HandleAsync(
+        await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -170,7 +167,7 @@ public class ValidatorProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
@@ -185,14 +182,14 @@ public class ValidatorProducerBehaviorTests
     public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
-        TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
         {
             MessageValidationMode = validationMode
         }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint);
+        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorProducerBehavior(_outboundLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -200,8 +197,8 @@ public class ValidatorProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
-            });
+                return default;
+            }).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         result.Should().NotBeNull();
@@ -215,14 +212,14 @@ public class ValidatorProducerBehaviorTests
         IIntegrationMessage message,
         string expectedValidationMessage)
     {
-        TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.LogWarning
         }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint);
+        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        await new ValidatorProducerBehavior(_outboundLogger).HandleAsync(
+        await new ValidatorProducerBehavior(_producerLogger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -230,12 +227,13 @@ public class ValidatorProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
         result!.Message.Should().NotBeNull();
-        _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1079);
+        expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
+        _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1081);
     }
 
     [Fact]
@@ -244,14 +242,14 @@ public class ValidatorProducerBehaviorTests
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =
             $"The message is not valid:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
-        TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+        TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.ThrowException
         }.GetDefaultEndpoint();
-        OutboundEnvelope envelope = new(message, null, endpoint);
+        OutboundEnvelope envelope = new(message, null, endpoint, Substitute.For<IProducer>());
 
         IOutboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorProducerBehavior(_outboundLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorProducerBehavior(_producerLogger).HandleAsync(
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
@@ -259,8 +257,8 @@ public class ValidatorProducerBehaviorTests
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
-            });
+                return default;
+            }).AsTask();
 
         result.Should().BeNull();
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);

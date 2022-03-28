@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker;
@@ -12,18 +13,33 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     Produces the messages to an endpoint.
 /// </summary>
-public interface IProducer : IBrokerConnectedObject
+public interface IProducer
 {
     /// <summary>
-    ///     Gets the configuration.
+    ///     Gets the producer name.
     /// </summary>
-    ProducerConfiguration Configuration { get; }
+    string Name { get; }
+
+    /// <summary>
+    ///     Gets the name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).
+    /// </summary>
+    string DisplayName { get; }
+
+    /// <summary>
+    ///     Gets the related <see cref="IBrokerClient" />.
+    /// </summary>
+    IBrokerClient Client { get; }
+
+    /// <summary>
+    ///     Gets the endpoint configuration.
+    /// </summary>
+    ProducerEndpointConfiguration EndpointConfiguration { get; }
 
     /// <summary>
     ///     Publishes the specified message.
     /// </summary>
     /// <param name="message">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -52,7 +68,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="message">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -94,7 +110,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <param name="messageContent">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -110,7 +126,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <param name="messageStream">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -129,7 +145,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     The target endpoint.
     /// </param>
     /// <param name="messageContent">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -149,7 +165,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     The target endpoint.
     /// </param>
     /// <param name="messageStream">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -170,7 +186,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="messageContent">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -195,7 +211,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="messageStream">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -223,7 +239,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     The target endpoint.
     /// </param>
     /// <param name="messageContent">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -252,7 +268,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     The target endpoint.
     /// </param>
     /// <param name="messageStream">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -274,16 +290,16 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message.
     /// </summary>
     /// <param name="message">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    Task<IBrokerMessageIdentifier?> ProduceAsync(
+    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null);
 
@@ -294,20 +310,20 @@ public interface IProducer : IBrokerConnectedObject
     ///     The envelope containing the message to be delivered.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
+    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
 
     /// <summary>
     ///     Publishes the specified message.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="message">
-    ///     The message to be delivered.
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -319,10 +335,10 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task ProduceAsync(
+    ValueTask ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -332,7 +348,7 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="envelope">
@@ -345,10 +361,10 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task ProduceAsync(
+    ValueTask ProduceAsync(
         IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
@@ -356,56 +372,35 @@ public interface IProducer : IBrokerConnectedObject
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <param name="messageContent">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    Task<IBrokerMessageIdentifier?> RawProduceAsync(
-        byte[]? messageContent,
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <param name="messageStream">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    Task<IBrokerMessageIdentifier?> RawProduceAsync(
-        Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="messageContent">
-    ///     The message to be delivered.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    Task<IBrokerMessageIdentifier?> RawProduceAsync(
-        ProducerEndpoint endpoint,
-        byte[]? messageContent,
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
@@ -414,30 +409,51 @@ public interface IProducer : IBrokerConnectedObject
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
-    /// <param name="messageStream">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    Task<IBrokerMessageIdentifier?> RawProduceAsync(
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
-        Stream? messageStream,
+        byte[]? message,
+        IReadOnlyCollection<MessageHeader>? headers = null);
+
+    /// <summary>
+    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+    /// </summary>
+    /// <param name="endpoint">
+    ///     The target endpoint.
+    /// </param>
+    /// <param name="message">
+    ///     The message.
+    /// </param>
+    /// <param name="headers">
+    ///     The optional message headers.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
+    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
+    /// </returns>
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        ProducerEndpoint endpoint,
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
-    /// <param name="messageContent">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -449,11 +465,11 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task RawProduceAsync(
-        byte[]? messageContent,
+    ValueTask RawProduceAsync(
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
@@ -462,11 +478,11 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
-    /// <param name="messageStream">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -478,11 +494,11 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task RawProduceAsync(
-        Stream? messageStream,
+    ValueTask RawProduceAsync(
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
@@ -491,14 +507,14 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
-    /// <param name="messageContent">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -510,12 +526,12 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task RawProduceAsync(
+    ValueTask RawProduceAsync(
         ProducerEndpoint endpoint,
-        byte[]? messageContent,
+        byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
@@ -524,14 +540,14 @@ public interface IProducer : IBrokerConnectedObject
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
     /// <remarks>
-    ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
-    /// <param name="messageStream">
-    ///     The message to be delivered.
+    /// <param name="message">
+    ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
@@ -543,12 +559,12 @@ public interface IProducer : IBrokerConnectedObject
     ///     The callback to be invoked when the produce fails.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
     ///     soon as the message is enqueued.
     /// </returns>
-    Task RawProduceAsync(
+    ValueTask RawProduceAsync(
         ProducerEndpoint endpoint,
-        Stream? messageStream,
+        Stream? message,
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);

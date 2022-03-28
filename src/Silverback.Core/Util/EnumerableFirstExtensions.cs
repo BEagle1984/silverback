@@ -9,9 +9,9 @@ namespace Silverback.Util;
 
 internal static class EnumerableFirstExtensions
 {
-    public static async Task<T?> FirstOrDefaultAsync<T>(
+    public static async ValueTask<T?> FirstOrDefaultAsync<T>(
         this IEnumerable<T> source,
-        Func<T, Task<bool>> predicate)
+        Func<T, ValueTask<bool>> predicate)
     {
         foreach (T item in source)
         {

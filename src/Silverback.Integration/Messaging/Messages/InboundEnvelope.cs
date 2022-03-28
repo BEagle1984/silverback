@@ -8,41 +8,47 @@ using Silverback.Messaging.Broker;
 namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IRawInboundEnvelope" />
-internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
+internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
 {
     public InboundEnvelope(IRawInboundEnvelope envelope)
         : this(
             envelope.RawMessage,
             envelope.Headers,
-            envelope.BrokerMessageIdentifier,
-            envelope.Endpoint)
+            envelope.Endpoint,
+            envelope.Consumer,
+            envelope.BrokerMessageIdentifier)
+    {
+    }
+
+    public InboundEnvelope(IRawInboundEnvelope envelope, object? message)
+        : this(
+            message,
+            envelope.RawMessage,
+            envelope.Headers,
+            envelope.Endpoint,
+            envelope.Consumer,
+            envelope.BrokerMessageIdentifier)
     {
     }
 
     public InboundEnvelope(
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
-        IBrokerMessageIdentifier brokerMessageIdentifier,
-        ConsumerEndpoint endpoint)
-        : base(
-            rawMessage,
-            headers,
-            endpoint,
-            brokerMessageIdentifier)
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : base(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
     {
     }
 
     public InboundEnvelope(
-        object message,
+        object? message,
         Stream? rawMessage,
         IReadOnlyCollection<MessageHeader>? headers,
-        IBrokerMessageIdentifier brokerMessageIdentifier,
-        ConsumerEndpoint endpoint)
-        : base(
-            rawMessage,
-            headers,
-            endpoint,
-            brokerMessageIdentifier)
+        ConsumerEndpoint endpoint,
+        IConsumer consumer,
+        IBrokerMessageIdentifier brokerMessageIdentifier)
+        : base(rawMessage, headers, endpoint, consumer, brokerMessageIdentifier)
     {
         Message = message;
     }

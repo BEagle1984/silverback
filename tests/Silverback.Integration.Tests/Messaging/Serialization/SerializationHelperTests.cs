@@ -3,6 +3,8 @@
 
 using System;
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -95,6 +97,7 @@ public class SerializationHelperTests
             Array.Empty<byte>(),
             new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
             endpoint,
+            Substitute.For<IConsumer>(),
             new TestOffset());
         TestEventOne message = new();
 

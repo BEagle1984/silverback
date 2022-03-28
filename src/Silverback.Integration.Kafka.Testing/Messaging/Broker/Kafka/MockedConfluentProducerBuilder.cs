@@ -29,8 +29,8 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
         _topics = topics;
     }
 
-    /// <inheritdoc cref="IConfluentProducerBuilder.SetConfig" />
-    public IConfluentProducerBuilder SetConfig(ProducerConfig config)
+    /// <inheritdoc cref="IConfluentProducerBuilder.SetConfiguration" />
+    public IConfluentProducerBuilder SetConfiguration(ProducerConfig config)
     {
         _config = config;
         return this;

@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Sequences;
 
 internal static class SequenceEnumerableExtensions
 {
-    public static Task AbortAllAsync(
+    public static ValueTask AbortAllAsync(
         this IEnumerable<ISequence> sequences,
         SequenceAbortReason abortReason) =>
         sequences
@@ -17,10 +17,7 @@ internal static class SequenceEnumerableExtensions
                 async sequence =>
                 {
                     if (sequence.IsPending)
-                    {
-                        await sequence.AbortAsync(abortReason)
-                            .ConfigureAwait(false);
-                    }
+                        await sequence.AbortAsync(abortReason).ConfigureAwait(false);
 
                     await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
                 });

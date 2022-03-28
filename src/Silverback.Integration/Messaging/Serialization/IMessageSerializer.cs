@@ -14,7 +14,7 @@ public interface IMessageSerializer
 {
     /// <summary>
     ///     Gets a value indicating whether headers are mandatory for this serializer implementation or configuration
-    ///     to work properly.
+    ///     to properly deserialize the serialized message.
     /// </summary>
     bool RequireHeaders { get; }
 

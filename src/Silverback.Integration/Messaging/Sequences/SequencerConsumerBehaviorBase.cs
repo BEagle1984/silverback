@@ -53,7 +53,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     public abstract int SortIndex { get; }
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public virtual async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public virtual async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -97,9 +97,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected abstract Task PublishSequenceAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next);
+    protected abstract ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
 
     /// <summary>
     ///     When overridden in a derived class awaits for the sequence to be processed by the other twin behavior.
@@ -113,7 +111,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
+    protected virtual ValueTask AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => default;
 
     private static void AddSequenceTagToActivity(ISequence sequence)
     {
@@ -149,16 +147,14 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                         // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
                         // The reason behind this call here may be counterintuitive but with
                         // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted)
-                            .ConfigureAwait(false);
+                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                     }
                     catch (Exception exception)
                     {
                         if (!sequence.IsPending || sequence.ParentSequence != null)
                             return;
 
-                        await sequence.AbortAsync(SequenceAbortReason.Error, exception)
-                            .ConfigureAwait(false);
+                        await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
                     }
                     finally
                     {
@@ -174,14 +170,10 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
     private static void StartActivityIfNeeded(ISequence sequence)
     {
-        if (sequence is ISequenceImplementation sequenceImplementation &&
-            sequenceImplementation.ShouldCreateNewActivity)
+        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation)
         {
-            Activity? sequenceActivity = ActivitySources.StartSequenceActivity();
-            if (sequenceActivity != null)
-            {
+            if (ActivitySources.StartSequenceActivity() is { } sequenceActivity)
                 sequenceImplementation.SetActivity(sequenceActivity);
-            }
         }
     }
 
@@ -257,7 +249,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
         if (sequence is IncompleteSequence incompleteSequence)
         {
-            _logger.LogSkippingIncompleteSequence(incompleteSequence);
+            _logger.LogIncompleteSequenceSkipped(incompleteSequence);
             return null;
         }
 

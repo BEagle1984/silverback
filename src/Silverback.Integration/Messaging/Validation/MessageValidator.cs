@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -15,23 +16,27 @@ internal static class MessageValidator
     private static readonly ConcurrentDictionary<Type, IReadOnlyCollection<PropertyInfo>>
         NestedObjectPropertiesCache = new();
 
-    public static (bool IsValid, string? ValidationErrors) CheckMessageIsValid(
+    public static bool IsValid(
         object message,
-        MessageValidationMode validationMode)
+        MessageValidationMode validationMode,
+        [NotNullWhen(false)] out string? validationErrors)
     {
         bool validMessage = TryValidateObject(message, out IReadOnlyList<ValidationResult> results);
 
         if (validMessage)
-            return (true, null);
+        {
+            validationErrors = null;
+            return true;
+        }
 
-        string validationResults = string.Join(
+        validationErrors = string.Join(
             string.Empty,
             results.Select(validationResult => $"{Environment.NewLine}- {validationResult.ErrorMessage}"));
 
         if (validationMode == MessageValidationMode.ThrowException)
-            throw new MessageValidationException($"The message is not valid:{validationResults}");
+            throw new MessageValidationException($"The message is not valid:{validationErrors}");
 
-        return (false, validationResults);
+        return false;
     }
 
     private static bool TryValidateObject(

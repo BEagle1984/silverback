@@ -30,26 +30,24 @@ public class EncryptorProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Encryptor;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Endpoint.Configuration.Encryption != null && context.Envelope.RawMessage != null)
-        {
-            context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
-                context.Envelope.RawMessage,
-                context.Envelope.Endpoint.Configuration.Encryption);
-
-            if (context.Envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings settings &&
-                settings.KeyIdentifier != null)
-            {
-                context.Envelope.Headers.AddOrReplace(
-                    DefaultMessageHeaders.EncryptionKeyId,
-                    settings.KeyIdentifier);
-            }
-        }
+        EncryptIfNeeded(context.Envelope);
 
         await next(context).ConfigureAwait(false);
+    }
+
+    private void EncryptIfNeeded(IRawOutboundEnvelope envelope)
+    {
+        if (envelope.Endpoint.Configuration.Encryption == null || envelope.RawMessage == null)
+            return;
+
+        envelope.RawMessage = _streamFactory.GetEncryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption);
+
+        if (envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings { KeyIdentifier: { } } settings)
+            envelope.Headers.AddOrReplace(DefaultMessageHeaders.EncryptionKeyId, settings.KeyIdentifier);
     }
 }

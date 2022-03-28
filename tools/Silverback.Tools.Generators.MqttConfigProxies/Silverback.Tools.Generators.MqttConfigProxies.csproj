@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="3.0.16" />
+    <PackageReference Include="MQTTnet" Version="3.0.16"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj" />
+    <ProjectReference Include="..\Silverback.Tools.Generators.Common\Silverback.Tools.Generators.Common.csproj"/>
   </ItemGroup>
 </Project>

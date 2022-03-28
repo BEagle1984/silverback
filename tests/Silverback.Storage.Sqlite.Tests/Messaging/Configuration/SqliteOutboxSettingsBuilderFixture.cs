@@ -3,7 +3,7 @@
 
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Configuration;

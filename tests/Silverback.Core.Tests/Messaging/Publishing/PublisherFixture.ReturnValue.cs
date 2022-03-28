@@ -30,10 +30,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishSingleMessageSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, TestCommandOne>(Handle3)
-                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, TestCommandOne>(Handle3)
+                .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static TestCommandOne Handle1(TestEventOne message) => new();
         static Task<TestCommandOne> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne());
@@ -58,10 +58,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishSingleMessageAsInterfaceSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, IMessage>(Handle3)
-                .AddDelegateSubscriber2<ICommand>(message => republishedMessages.Add(message)));
+                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, IMessage>(Handle3)
+                .AddDelegateSubscriber<ICommand>(message => republishedMessages.Add(message)));
 
         static IMessage Handle1(TestEventOne message) => new TestCommandOne();
         static Task<IMessage> Handle2(TestEventOne message) => Task.FromResult((IMessage)new TestCommandOne());
@@ -85,10 +85,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishEnumerableSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, TestCommandOne[]>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, TestCommandOne[]>(Handle3)
-                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, IEnumerable<TestCommandOne>>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
+                .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() };
         static Task<TestCommandOne[]> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() });
@@ -113,10 +113,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, IEnumerable<ICommand>>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, ICommand[]>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, ICommand[]>(Handle3)
-                .AddDelegateSubscriber2<ICommand>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, IEnumerable<ICommand>>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle3)
+                .AddDelegateSubscriber<ICommand>(Handle4));
 
         static IEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() };
         static Task<ICommand[]> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
@@ -141,10 +141,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishAsyncEnumerableSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
-                .AddDelegateSubscriber2<TestCommandOne>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<TestCommandOne>>(Handle3)
+                .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
         static IAsyncEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() }.ToAsyncEnumerable();
         static Task<IAsyncEnumerable<TestCommandOne>> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
@@ -169,10 +169,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishAsyncEnumerableOfInterfaceSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
-                .AddDelegateSubscriber2<ICommand>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, IAsyncEnumerable<ICommand>>(Handle3)
+                .AddDelegateSubscriber<ICommand>(Handle4));
 
         static IAsyncEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable();
         static Task<IAsyncEnumerable<ICommand>> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() }.ToAsyncEnumerable());
@@ -197,10 +197,10 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle3)
-                .AddDelegateSubscriber2<UnhandledMessage>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
+                .AddDelegateSubscriber<UnhandledMessage>(Handle4));
 
         static UnhandledMessage Handle1(TestEventOne message) => new();
         static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
@@ -226,10 +226,10 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .HandleMessagesOfType<UnhandledMessage>()
                 .AddScopedSubscriber<PublishUnhandledMessageSubscriber>()
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle2)
-                .AddDelegateSubscriber2<TestEventOne, UnhandledMessage>(Handle3)
-                .AddDelegateSubscriber2<UnhandledMessage>(Handle4));
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle1)
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle2)
+                .AddDelegateSubscriber<TestEventOne, UnhandledMessage>(Handle3)
+                .AddDelegateSubscriber<UnhandledMessage>(Handle4));
 
         static UnhandledMessage Handle1(TestEventOne message) => new();
         static Task<UnhandledMessage> Handle2(TestEventOne message) => Task.FromResult(new UnhandledMessage());
@@ -356,9 +356,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber2<TestQueryOne, string>(Handle2)
-                .AddDelegateSubscriber2<TestQueryOne, string>(Handle3));
+                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber<TestQueryOne, string>(Handle2)
+                .AddDelegateSubscriber<TestQueryOne, string>(Handle3));
 
         static string Handle1(TestQueryOne message) => "result-sync";
         static Task<string> Handle2(TestQueryOne message) => Task.FromResult("result-task");
@@ -380,9 +380,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle1)
-                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle2)
-                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle3));
+                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
+                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle2)
+                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle3));
 
         static string[] Handle1(TestQueryTwo message) => new[] { "result1-sync", "result2-sync" };
         static Task<string[]> Handle2(TestQueryTwo message) => Task.FromResult(new[] { "result1-task", "result2-task" });
@@ -410,9 +410,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber2<TestQueryOne, string?>(Handle2)
-                .AddDelegateSubscriber2<TestQueryOne, string?>(Handle3));
+                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber<TestQueryOne, string?>(Handle2)
+                .AddDelegateSubscriber<TestQueryOne, string?>(Handle3));
 
         static string Handle1(TestQueryOne message) => null!;
         static Task<string?> Handle2(TestQueryOne message) => Task.FromResult<string?>(null);
@@ -434,9 +434,9 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle1)
-                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle2)
-                .AddDelegateSubscriber2<TestQueryTwo, IEnumerable<string>>(Handle3));
+                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle1)
+                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle2)
+                .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle3));
 
         static IEnumerable<string> Handle1(TestQueryTwo message) => Enumerable.Empty<string>();
         static Task<IEnumerable<string>> Handle2(TestQueryTwo message) => Task.FromResult(Enumerable.Empty<string>());
@@ -467,9 +467,9 @@ public partial class PublisherFixture
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle1)
-                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle2)
-                    .AddDelegateSubscriber2<TestQueryOne, int>(Handle3);
+                    .AddDelegateSubscriber<TestQueryOne, int>(Handle1)
+                    .AddDelegateSubscriber<TestQueryOne, int>(Handle2)
+                    .AddDelegateSubscriber<TestQueryOne, int>(Handle3);
             });
 
         static int Handle1(TestQueryOne message) => 42;
@@ -493,12 +493,12 @@ public partial class PublisherFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle1)
-                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle2)
-                .AddDelegateSubscriber2<TestQueryOne, int[]>(Handle3)
-                .AddDelegateSubscriber2<TestQueryOne, int>(Handle4)
-                .AddDelegateSubscriber2<TestQueryOne, int>(Handle5)
-                .AddDelegateSubscriber2<TestQueryOne, int>(Handle6));
+                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle1)
+                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle2)
+                .AddDelegateSubscriber<TestQueryOne, int[]>(Handle3)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle4)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle5)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle6));
 
         static int[] Handle1(TestQueryOne message) => new[] { 42 };
         static Task<int[]> Handle2(TestQueryOne message) => Task.FromResult(new[] { 42 });
@@ -525,8 +525,8 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddSingletonSubscriber<QueryHandler>()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber2<TestQueryOne, string>(Handle1)
-                .AddDelegateSubscriber2<TestQueryOne, int>(Handle2));
+                .AddDelegateSubscriber<TestQueryOne, string>(Handle1)
+                .AddDelegateSubscriber<TestQueryOne, int>(Handle2));
 
         static string Handle1(TestQueryOne message) => "result-delegate";
         static int Handle2(TestQueryOne message) => 42;
@@ -549,8 +549,8 @@ public partial class PublisherFixture
                 .AddSilverback()
                 .AddSingletonSubscriber<QueryHandler>()
                 .AddSingletonSubscriber<WrongTypeQueryHandler>()
-                .AddDelegateSubscriber2<TestQueryTwo, string[]>(Handle1)
-                .AddDelegateSubscriber2<TestQueryTwo, int[]>(Handle2));
+                .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
+                .AddDelegateSubscriber<TestQueryTwo, int[]>(Handle2));
 
         static string[] Handle1(TestQueryTwo message) => new[] { "result-delegate-1", "result-delegate-2" };
         static int[] Handle2(TestQueryTwo message) => new[] { 42, 42 };

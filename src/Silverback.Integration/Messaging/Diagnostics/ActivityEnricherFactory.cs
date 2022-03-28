@@ -5,9 +5,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Diagnostics;
 
+// TODO: Use TypeBasedExtensibleFactory?
 internal sealed class ActivityEnricherFactory : IActivityEnricherFactory
 {
     private static readonly NullEnricher NullEnricherInstance = new();

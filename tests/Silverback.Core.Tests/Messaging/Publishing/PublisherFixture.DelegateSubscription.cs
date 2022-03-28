@@ -25,7 +25,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle));
+                .AddDelegateSubscriber<TestEventOne>(Handle));
 
         void Handle(TestEventOne message) => messages.Add(message);
 
@@ -46,7 +46,7 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle));
+                .AddDelegateSubscriber<TestEventOne>(Handle));
 
         void Handle(TestEventOne message) => messages.Add(message);
 
@@ -68,8 +68,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => syncMessages.Add(message);
         ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
@@ -93,8 +93,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1)
-                .AddDelegateSubscriber2<TestEventOne>(Handle2));
+                .AddDelegateSubscriber<TestEventOne>(Handle1)
+                .AddDelegateSubscriber<TestEventOne>(Handle2));
 
         void Handle1(TestEventOne message) => syncMessages.Add(message);
         ValueTask Handle2(TestEventOne message) => asyncMessages.AddAsync(message);
@@ -119,8 +119,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
-                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -156,8 +156,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
-                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
+                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = true })
+                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = true }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -193,8 +193,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
-                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);
@@ -226,8 +226,8 @@ public partial class PublisherFixture
             services => services
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
-                .AddDelegateSubscriber2<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
+                .AddDelegateSubscriber<TestEventOne>(Handle1, new DelegateSubscriptionOptions { IsExclusive = false })
+                .AddDelegateSubscriber<TestEventOne>(Handle2, new DelegateSubscriptionOptions { IsExclusive = false }));
 
         Task Handle1(TestEventOne message) => ExecuteAsync(message, messages1);
         Task Handle2(TestEventOne message) => ExecuteAsync(message, messages2);

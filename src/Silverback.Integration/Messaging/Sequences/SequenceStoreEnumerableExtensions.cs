@@ -9,11 +9,6 @@ namespace Silverback.Messaging.Sequences;
 
 internal static class SequenceStoreEnumerableExtensions
 {
-    public static Task AbortAllSequencesAsync(
-        this IEnumerable<ISequenceStore> stores,
-        SequenceAbortReason abortReason) =>
-        stores
-            .SelectMany(store => store)
-            .ToList()
-            .AbortAllAsync(abortReason);
+    public static ValueTask AbortAllSequencesAsync(this IEnumerable<ISequenceStore> stores, SequenceAbortReason abortReason) =>
+        stores.SelectMany(store => store).ToList().AbortAllAsync(abortReason);
 }

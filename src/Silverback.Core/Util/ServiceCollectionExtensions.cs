@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,13 +16,8 @@ internal static class ServiceCollectionExtensions
     public static bool ContainsAny(this IServiceCollection services, Type serviceType) =>
         services.Any(descriptor => descriptor.ServiceType == serviceType);
 
-    [return: MaybeNull]
-    public static TService GetSingletonServiceInstance<TService>(this IServiceCollection services)
-    {
-        object? instance = services.GetSingletonServiceInstance(typeof(TService));
-
-        return instance != null ? (TService)instance : default;
-    }
+    public static TService? GetSingletonServiceInstance<TService>(this IServiceCollection services) =>
+        (TService?)services.GetSingletonServiceInstance(typeof(TService)) ?? default;
 
     public static object? GetSingletonServiceInstance(this IServiceCollection services, Type serviceType) =>
         services.FirstOrDefault(descriptor => descriptor.ServiceType == serviceType)?.ImplementationInstance;

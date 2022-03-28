@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
@@ -65,30 +66,36 @@ public class ErrorPolicyBaseFixture
             new object[]
             {
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault()),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
                 new ArgumentException(),
                 true
             },
             new object[]
             {
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault()),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
                 new ArgumentException(),
                 false
             },
             new object[]
             {
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault()),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
                 new ArgumentException("no"),
                 false
             }
@@ -107,10 +114,12 @@ public class ErrorPolicyBaseFixture
         bool canHandle = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             exception);
 
         canHandle.Should().Be(mustApply);
@@ -129,10 +138,12 @@ public class ErrorPolicyBaseFixture
         bool canHandle = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             exception);
 
         canHandle.Should().Be(mustApply);
@@ -152,10 +163,12 @@ public class ErrorPolicyBaseFixture
         bool canHandle = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
-                    new MemoryStream(),
+                    null,
+                    Stream.Null,
                     new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
-                    new TestOffset(),
-                    TestConsumerEndpoint.GetDefault())),
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset())),
             exception);
 
         canHandle.Should().Be(mustApply);
@@ -187,15 +200,14 @@ public class ErrorPolicyBaseFixture
     public void CanHandle_ShouldEvaluateMaxFailedAttempts(int failedAttempts, bool expectedResult)
     {
         InboundEnvelope envelope = new(
-            new MemoryStream(),
+            Stream.Null,
             new[]
             {
-                new MessageHeader(
-                    DefaultMessageHeaders.FailedAttempts,
-                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+                new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
             },
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IErrorPolicyImplementation policy = new TestErrorPolicy
             {
@@ -224,10 +236,11 @@ public class ErrorPolicyBaseFixture
             .Build(serviceProvider);
 
         InboundEnvelope envelope = new(
-            new MemoryStream(),
+            Stream.Null,
             new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
@@ -250,13 +263,14 @@ public class ErrorPolicyBaseFixture
             .Build(serviceProvider);
 
         InboundEnvelope envelope = new(
-            new MemoryStream(),
+            Stream.Null,
             new[]
             {
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")
             },
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),

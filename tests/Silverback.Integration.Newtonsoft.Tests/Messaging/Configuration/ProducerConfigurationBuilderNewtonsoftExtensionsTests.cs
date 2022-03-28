@@ -15,9 +15,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_Default_SerializerSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft().Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft().Build();
 
         configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
     }
@@ -25,9 +25,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_WithSetMessageType_SerializerSet()
     {
-        TestProducerConfigurationBuilder<TestEventOne> builder = new();
+        TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
-        TestProducerConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft().Build();
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft().Build();
 
         configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
     }
@@ -35,9 +35,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_UseFixedTypeWithGenericArgument_SerializerSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SerializeAsJsonUsingNewtonsoft(serializer => serializer.UseFixedType<TestEventOne>())
             .Build();
 
@@ -47,9 +47,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_UseFixedType_SerializerSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder
+        TestProducerEndpointConfiguration configuration = builder
             .SerializeAsJsonUsingNewtonsoft(serializer => serializer.UseFixedType(typeof(TestEventOne)))
             .Build();
 
@@ -59,9 +59,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_Configure_SerializerAndOptionsSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
             serializer => serializer.Configure(
                 settings =>
                 {
@@ -75,9 +75,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_WithEncoding_SerializerAndOptionsSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
                 serializer => serializer
                     .WithEncoding(MessageEncoding.Unicode))
             .Build();
@@ -89,9 +89,9 @@ public class ProducerConfigurationBuilderNewtonsoftExtensionsTests
     [Fact]
     public void SerializeAsJsonUsingNewtonsoft_UseFixedTypeAndConfigure_SerializerAndOptionsSet()
     {
-        TestProducerConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
+        TestProducerEndpointConfiguration configuration = builder.SerializeAsJsonUsingNewtonsoft(
             serializer => serializer
                 .UseFixedType<TestEventOne>()
                 .Configure(

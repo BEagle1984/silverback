@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -51,7 +51,7 @@ public class InMemoryOutboxReaderFixture
             new[]
             {
                 new byte[] { 0x02 },
-                new byte[] { 0x04 },
+                new byte[] { 0x04 }
             });
     }
 

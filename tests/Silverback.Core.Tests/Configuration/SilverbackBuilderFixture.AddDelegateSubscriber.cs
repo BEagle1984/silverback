@@ -22,7 +22,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle);
+            .AddDelegateSubscriber<TestEventOne>(Handle);
 
         void Handle(TestEventOne message)
         {
@@ -43,7 +43,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         void Handle(TestEventOne message)
         {
@@ -64,7 +64,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle);
+            .AddDelegateSubscriber<TestEventOne>(Handle);
 
         Task Handle(TestEventOne message) => Task.CompletedTask;
 
@@ -83,7 +83,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task Handle(TestEventOne message) => Task.CompletedTask;
 
@@ -102,7 +102,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle);
+            .AddDelegateSubscriber<TestEventOne>(Handle);
 
         ValueTask Handle(TestEventOne message) => default;
 
@@ -121,7 +121,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask Handle(TestEventOne message) => default;
 
@@ -140,7 +140,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, int>(Handle);
 
         int Handle(TestEventOne message) => 42;
 
@@ -159,7 +159,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         int Handle(TestEventOne message) => 42;
 
@@ -178,7 +178,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, int>(Handle);
 
         Task<int> Handle(TestEventOne message) => Task.FromResult(42);
 
@@ -197,7 +197,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task<int> Handle(TestEventOne message) => Task.FromResult(42);
 
@@ -216,7 +216,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, int>(Handle);
 
         ValueTask<int> Handle(TestEventOne message) => ValueTask.FromResult(42);
 
@@ -235,7 +235,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask<int> Handle(TestEventOne message) => ValueTask.FromResult(42);
 
@@ -254,7 +254,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object>(Handle);
 
         void Handle(TestEventOne message, object service)
         {
@@ -275,7 +275,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         void Handle(TestEventOne message, object service)
         {
@@ -296,7 +296,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object>(Handle);
 
         Task Handle(TestEventOne message, object service) => Task.CompletedTask;
 
@@ -315,7 +315,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task Handle(TestEventOne message, object service) => Task.CompletedTask;
 
@@ -334,7 +334,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object>(Handle);
 
         ValueTask Handle(TestEventOne message, object service) => default;
 
@@ -353,7 +353,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask Handle(TestEventOne message, object service) => default;
 
@@ -372,7 +372,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle);
 
         int Handle(TestEventOne message, object service) => 42;
 
@@ -391,7 +391,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         int Handle(TestEventOne message, object service) => 42;
 
@@ -410,7 +410,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle);
 
         Task<int> Handle(TestEventOne message, object service) => Task.FromResult(42);
 
@@ -429,7 +429,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task<int> Handle(TestEventOne message, object service) => Task.FromResult(42);
 
@@ -448,7 +448,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle);
 
         ValueTask<int> Handle(TestEventOne message, object service) => ValueTask.FromResult(42);
 
@@ -467,7 +467,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask<int> Handle(TestEventOne message, object service) => ValueTask.FromResult(42);
 
@@ -486,7 +486,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle);
 
         void Handle(TestEventOne message, object service1, object service2)
         {
@@ -507,7 +507,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         void Handle(TestEventOne message, object service1, object service2)
         {
@@ -528,7 +528,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle);
 
         Task Handle(TestEventOne message, object service1, object service2) => Task.CompletedTask;
 
@@ -547,7 +547,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task Handle(TestEventOne message, object service1, object service2) => Task.CompletedTask;
 
@@ -566,7 +566,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle);
 
         ValueTask Handle(TestEventOne message, object service1, object service2) => default;
 
@@ -585,7 +585,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask Handle(TestEventOne message, object service1, object service2) => default;
 
@@ -604,7 +604,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle);
 
         int Handle(TestEventOne message, object service1, object service2) => 42;
 
@@ -623,7 +623,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         int Handle(TestEventOne message, object service1, object service2) => 42;
 
@@ -642,7 +642,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle);
 
         Task<int> Handle(TestEventOne message, object service1, object service2) => Task.FromResult(42);
 
@@ -661,7 +661,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task<int> Handle(TestEventOne message, object service1, object service2) => Task.FromResult(42);
 
@@ -680,7 +680,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle);
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2) => ValueTask.FromResult(42);
 
@@ -699,7 +699,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2) => ValueTask.FromResult(42);
 
@@ -718,7 +718,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle);
 
         void Handle(TestEventOne message, object service1, object service2, object service3)
         {
@@ -739,7 +739,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         void Handle(TestEventOne message, object service1, object service2, object service3)
         {
@@ -760,7 +760,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle);
 
         Task Handle(TestEventOne message, object service1, object service2, object service3) => Task.CompletedTask;
 
@@ -779,7 +779,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task Handle(TestEventOne message, object service1, object service2, object service3) => Task.CompletedTask;
 
@@ -798,7 +798,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle);
 
         ValueTask Handle(TestEventOne message, object service1, object service2, object service3) => default;
 
@@ -817,7 +817,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask Handle(TestEventOne message, object service1, object service2, object service3) => default;
 
@@ -836,7 +836,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle);
 
         int Handle(TestEventOne message, object service1, object service2, object service3) => 42;
 
@@ -855,7 +855,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         int Handle(TestEventOne message, object service1, object service2, object service3) => 42;
 
@@ -874,7 +874,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle);
 
         Task<int> Handle(TestEventOne message, object service1, object service2, object service3) => Task.FromResult(42);
 
@@ -893,7 +893,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         Task<int> Handle(TestEventOne message, object service1, object service2, object service3) => Task.FromResult(42);
 
@@ -912,7 +912,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle);
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle);
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2, object service3) => ValueTask.FromResult(42);
 
@@ -931,7 +931,7 @@ public partial class SilverbackBuilderFixture
     {
         SilverbackBuilder builder = new ServiceCollection()
             .AddSilverback()
-            .AddDelegateSubscriber2<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
+            .AddDelegateSubscriber<TestEventOne, object, object, object, int>(Handle, new DelegateSubscriptionOptions { IsExclusive = false });
 
         ValueTask<int> Handle(TestEventOne message, object service1, object service2, object service3) => ValueTask.FromResult(42);
 

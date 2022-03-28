@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Adds the <seealso cref="UseMemory"/> method to the <see cref="OutboxSettingsBuilder" />.
+///     Adds the <seealso cref="UseMemory" /> method to the <see cref="OutboxSettingsBuilder" />.
 /// </summary>
 public static class OutboxSettingsBuilderMemoryExtensions
 {
@@ -12,10 +12,10 @@ public static class OutboxSettingsBuilderMemoryExtensions
     ///     Configures the outbox to be stored in memory.
     /// </summary>
     /// <param name="builder">
-    ///     The <see cref="OutboxSettingsBuilder"/>.
+    ///     The <see cref="OutboxSettingsBuilder" />.
     /// </param>
     /// <returns>
-    ///     The <see cref="IOutboxSettingsImplementationBuilder"/>.
+    ///     The <see cref="IOutboxSettingsImplementationBuilder" />.
     /// </returns>
     public static InMemoryOutboxSettingsBuilder UseMemory(this OutboxSettingsBuilder builder) => new();
 }

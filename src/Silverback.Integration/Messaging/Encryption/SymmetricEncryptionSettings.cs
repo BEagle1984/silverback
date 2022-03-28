@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Encryption;
@@ -22,6 +23,6 @@ public record SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase, IEn
         base.Validate();
 
         if (Key == null)
-            throw new EndpointConfigurationException($"A {nameof(Key)} is required.");
+            throw new BrokerConfigurationException($"A {nameof(Key)} is required.");
     }
 }

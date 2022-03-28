@@ -14,34 +14,29 @@ namespace Silverback.Messaging.HealthChecks;
 /// <inheritdoc cref="IConsumersHealthCheckService" />
 public class ConsumersHealthCheckService : IConsumersHealthCheckService
 {
-    private readonly IBrokerCollection _brokerCollection;
+    private readonly IConsumerCollection _consumerCollection;
 
     private bool _applicationIsStopping;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumersHealthCheckService" /> class.
     /// </summary>
-    /// <param name="brokerCollection">
-    ///     The collection containing the available brokers.
+    /// <param name="consumerCollection">
+    ///     The collection holding a reference to all consumers.
     /// </param>
     /// <param name="applicationLifetime">
     ///     The <see cref="IHostApplicationLifetime" /> used to track the application shutdown.
     /// </param>
-    public ConsumersHealthCheckService(
-        IBrokerCollection brokerCollection,
-        IHostApplicationLifetime applicationLifetime)
+    public ConsumersHealthCheckService(IConsumerCollection consumerCollection, IHostApplicationLifetime applicationLifetime)
     {
-        _brokerCollection = Check.NotNull(brokerCollection, nameof(brokerCollection));
+        _consumerCollection = Check.NotNull(consumerCollection, nameof(consumerCollection));
         Check.NotNull(applicationLifetime, nameof(applicationLifetime));
 
         applicationLifetime.ApplicationStopping.Register(() => _applicationIsStopping = true);
     }
 
     /// <inheritdoc cref="IConsumersHealthCheckService.GetDisconnectedConsumersAsync" />
-    public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
-        ConsumerStatus minStatus,
-        TimeSpan gracePeriod,
-        Func<ConsumerConfiguration, bool>? consumersFilter)
+    public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(ConsumerStatus minStatus, TimeSpan gracePeriod)
     {
         // The check is skipped when the application is shutting down, because all consumers will be
         // disconnected and since the shutdown could take a while we don't want to report the application
@@ -50,26 +45,12 @@ public class ConsumersHealthCheckService : IConsumersHealthCheckService
             return Task.FromResult((IReadOnlyCollection<IConsumer>)Array.Empty<IConsumer>());
 
         IReadOnlyCollection<IConsumer> disconnectedConsumers =
-            _brokerCollection
-                .SelectMany(broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod, consumersFilter))
+            _consumerCollection
+                .Where(consumer => IsDisconnected(consumer, minStatus, gracePeriod))
                 .ToList();
 
         return Task.FromResult(disconnectedConsumers);
     }
-
-    private static IEnumerable<IConsumer> GetDisconnectedConsumers(
-        IBroker broker,
-        ConsumerStatus minStatus,
-        TimeSpan gracePeriod,
-        Func<ConsumerConfiguration, bool>? consumersFilter) =>
-        broker.Consumers.Where(
-            consumer => IsToBeTested(consumer.Configuration, consumersFilter) &&
-                        IsDisconnected(consumer, minStatus, gracePeriod));
-
-    private static bool IsToBeTested(
-        ConsumerConfiguration consumerConfiguration,
-        Func<ConsumerConfiguration, bool>? consumersFilter) =>
-        consumersFilter == null || consumersFilter.Invoke(consumerConfiguration);
 
     private static bool IsDisconnected(IConsumer consumer, ConsumerStatus minStatus, TimeSpan gracePeriod) =>
         consumer.StatusInfo.Status < minStatus &&

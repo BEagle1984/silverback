@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +12,11 @@ using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Consuming.ErrorHandling;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -30,8 +28,6 @@ public class MoveMessageErrorPolicyFixture
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly IBroker _broker;
-
     public MoveMessageErrorPolicyFixture()
     {
         ServiceCollection services = new();
@@ -40,24 +36,22 @@ public class MoveMessageErrorPolicyFixture
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
             .AddFakeLogger()
             .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+            .WithConnectionToMessageBroker();
 
         _serviceProvider = services.BuildServiceProvider();
-
-        _broker = _serviceProvider.GetRequiredService<IBroker>();
-        _broker.ConnectAsync().Wait();
     }
 
     [Fact]
     public void CanHandle_ShouldReturnTrue_WhenMessageIsNotInSequence()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            Stream.Null,
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         bool result = policy.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -69,8 +63,8 @@ public class MoveMessageErrorPolicyFixture
     [Fact]
     public void CanHandle_ShouldReturnFalse_WhenMessageIsInSequence()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
-        TestConsumerConfiguration endpointConfiguration = new("test")
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+        TestConsumerEndpointConfiguration endpointConfiguration = new("test")
         {
             Batch = new BatchSettings
             {
@@ -79,10 +73,11 @@ public class MoveMessageErrorPolicyFixture
         };
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            Stream.Null,
             null,
-            new TestOffset(),
-            endpointConfiguration.GetDefaultEndpoint());
+            new TestConsumerEndpoint("test", endpointConfiguration),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider);
         context.SetSequence(new BatchSequence("batch", context), false);
@@ -97,13 +92,14 @@ public class MoveMessageErrorPolicyFixture
     [Fact]
     public void CanHandle_ShouldReturnFalse_WhenMessageIsInRawSequence()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            Stream.Null,
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider);
         context.SetSequence(new ChunkSequence("123", 5, context), false);
@@ -118,140 +114,150 @@ public class MoveMessageErrorPolicyFixture
     [Fact]
     public async Task HandleErrorAsync_ShouldProduceMessage()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(),
+            Stream.Null,
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
 
-        producer.ProducedMessages.Should().HaveCount(1);
+        await producer.Received(1).ProduceAsync(Arg.Any<IOutboundEnvelope>());
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldPreserveMessageContent()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
 
-        TestEventOne message = new() { Content = "hey oh!" };
-        MessageHeaderCollection headers = new()
-        {
-            { "key1", "value1" },
-            { "key2", "value2" }
-        };
-        Stream? rawContent = await TestConsumerConfiguration.GetDefault().Serializer
-            .SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
-        InboundEnvelope envelope = new(
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
+        TestEventOne message = new() { Content = "Test" };
+        InboundEnvelope inboundEnvelope = new(
             message,
-            rawContent,
-            headers,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            new MemoryStream(BytesUtil.GetRandomBytes()),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
-
-        ProducedMessage producedMessage = producer.ProducedMessages.Last();
-        (object? deserializedMessage, _) =
-            await producedMessage.Endpoint.Configuration.Serializer.DeserializeAsync(
-                new MemoryStream(producedMessage.Message!),
-                producedMessage.Headers,
-                TestConsumerEndpoint.GetDefault());
-        deserializedMessage.Should().BeEquivalentTo(envelope.Message);
+        await producer.Received(1).ProduceAsync(Arg.Is<IOutboundEnvelope>(outboundEnvelope => outboundEnvelope.Message == message));
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldPreserveRawMessageContent_WhenMessageWasNotDeserialized()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
-        InboundEnvelope envelope = new(
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
+        byte[] rawContent = BytesUtil.GetRandomBytes();
+        RawInboundEnvelope inboundEnvelope = new(
+            new MemoryStream(rawContent),
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
-        ProducedMessage producedMessage = producer.ProducedMessages.Last();
-
-        producedMessage.Message.Should().BeEquivalentTo(producedMessage.Message);
+        await producer.Received(1).ProduceAsync(
+            Arg.Is<IOutboundEnvelope>(
+                outboundEnvelope =>
+                    outboundEnvelope.RawMessage.ReReadAll()!.SequenceEqual(rawContent)));
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldPreserveHeaders()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
+
         MessageHeaderCollection headers = new()
         {
             { "key1", "value1" },
             { "key2", "value2" }
         };
-        InboundEnvelope envelope = new(
-            "hey oh!",
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+        InboundEnvelope inboundEnvelope = new(
+            new TestEventOne(),
+            new MemoryStream(BytesUtil.GetRandomBytes()),
             headers,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
-
-        producer.ProducedMessages.Last().Headers.Should().Contain(envelope.Headers);
+        await producer.Received(1).ProduceAsync(
+            Arg.Is<IOutboundEnvelope>(
+                outboundEnvelope =>
+                    outboundEnvelope.Headers.GetValue("key1", true) == "value1" &&
+                    outboundEnvelope.Headers.GetValue("key2", true) == "value2"));
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldTransformMessage()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault())
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
             {
                 TransformMessageAction = (outboundEnvelope, _) => outboundEnvelope.Message = new TestEventTwo()
             }
             .Build(_serviceProvider);
 
-        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("hey oh!"));
-
-        MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.MessageType, typeof(string).AssemblyQualifiedName)
-        };
-
-        InboundEnvelope envelope = new(
-            rawMessage,
-            headers,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
+        InboundEnvelope inboundEnvelope = new(
+            new TestEventOne(),
+            new MemoryStream(BytesUtil.GetRandomBytes()),
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
-        (object? producedMessage, _) = await producer.Configuration.Serializer.DeserializeAsync(
-            new MemoryStream(producer.ProducedMessages[0].Message!),
-            producer.ProducedMessages[0].Headers,
-            TestConsumerEndpoint.GetDefault());
-        producedMessage.Should().BeOfType<TestEventTwo>();
+        await producer.Received(1).ProduceAsync(
+            Arg.Is<IOutboundEnvelope>(
+                outboundEnvelope =>
+                    outboundEnvelope.Message is TestEventTwo));
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldTransformHeaders()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault())
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
             {
                 TransformMessageAction = (outboundEnvelope, ex) =>
                 {
@@ -260,32 +266,39 @@ public class MoveMessageErrorPolicyFixture
             }
             .Build(_serviceProvider);
 
-        InboundEnvelope envelope = new(
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+        InboundEnvelope inboundEnvelope = new(
+            new TestEventOne(),
+            new MemoryStream(BytesUtil.GetRandomBytes()),
             null,
-            new TestOffset(),
-            TestConsumerEndpoint.GetDefault());
-        envelope.Headers.Add("key", "value");
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         await policy.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
-        TestProducer producer = (TestProducer)_broker.GetProducer(TestProducerConfiguration.GetDefault());
-        MessageHeaderCollection newHeaders = producer.ProducedMessages[0].Headers;
-        newHeaders.Should().HaveCount(4); // key, error, traceparent, message-id
+        await producer.Received(1).ProduceAsync(
+            Arg.Is<IOutboundEnvelope>(
+                outboundEnvelope =>
+                    outboundEnvelope.Headers.GetValue("error", true) == "InvalidOperationException"));
     }
 
     [Fact]
     public async Task HandleErrorAsync_ShouldReturnTrue()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            Stream.Null,
             null,
-            new TestOffset(),
-            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         bool result = await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -297,16 +310,20 @@ public class MoveMessageErrorPolicyFixture
     [Fact]
     public async Task HandleErrorAsync_ShouldCommitOffsetButAbortTransaction()
     {
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy(TestProducerConfiguration.GetDefault()).Build(_serviceProvider);
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+
+        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
-            new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+            Stream.Null,
             null,
-            new TestOffset(),
-            new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
-
         await policy.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
             new InvalidOperationException("test"));

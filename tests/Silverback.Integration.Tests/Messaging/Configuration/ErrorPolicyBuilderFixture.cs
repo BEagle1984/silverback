@@ -4,8 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
-using Silverback.Tests.Types;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration;
@@ -110,29 +109,27 @@ public class ErrorPolicyBuilderFixture
     }
 
     [Fact]
-    public void Move_ShouldBuildMoveMessageErrorPolicy()
+    public void MoveTo_ShouldBuildMoveMessageErrorPolicy()
     {
         ErrorPolicyBuilder builder = new();
-        TestProducerConfiguration producerConfiguration = TestProducerConfiguration.GetDefault();
 
-        builder.Move(producerConfiguration);
+        builder.MoveTo("topic1");
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(producerConfiguration);
+        policy.As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
     }
 
     [Fact]
-    public void Move_ShouldBuildMoveMessageErrorPolicyWithOptions()
+    public void MoveTo_ShouldBuildMoveMessageErrorPolicyWithOptions()
     {
         ErrorPolicyBuilder builder = new();
-        TestProducerConfiguration producerConfiguration = TestProducerConfiguration.GetDefault();
 
-        builder.Move(producerConfiguration, policy => policy.WithMaxRetries(42));
+        builder.MoveTo("topic1", policy => policy.WithMaxRetries(42));
         IErrorPolicy policy = builder.Build();
 
         policy.Should().BeOfType<MoveMessageErrorPolicy>();
-        policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(producerConfiguration);
+        policy.As<MoveMessageErrorPolicy>().EndpointName.Should().Be("topic1");
         policy.As<MoveMessageErrorPolicy>().MaxFailedAttempts.Should().Be(42);
     }
 }

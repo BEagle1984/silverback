@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Sequences.Chunking;
 
@@ -29,6 +30,6 @@ public sealed record ChunkSettings : IValidatableSettings
     public void Validate()
     {
         if (Size < 1)
-            throw new EndpointConfigurationException("The chunk size must be greater or equal to 1.");
+            throw new BrokerConfigurationException("The chunk size must be greater or equal to 1.");
     }
 }

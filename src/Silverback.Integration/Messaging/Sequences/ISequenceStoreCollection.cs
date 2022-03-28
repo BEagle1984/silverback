@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Sequences;
 /// <summary>
 ///     The collection of <see cref="ISequenceStore" /> used by the <see cref="IConsumer" />.
 /// </summary>
-public interface ISequenceStoreCollection : IReadOnlyCollection<ISequenceStore>, IAsyncDisposable
+public interface ISequenceStoreCollection : IReadOnlyCollection<ISequenceStore>, IAsyncDisposable, IDisposable
 {
     /// <summary>
     ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.

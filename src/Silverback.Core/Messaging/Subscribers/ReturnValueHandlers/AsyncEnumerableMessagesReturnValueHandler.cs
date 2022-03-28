@@ -53,7 +53,7 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-    public Task HandleAsync(object returnValue)
+    public ValueTask HandleAsync(object returnValue)
     {
         Check.NotNull(returnValue, nameof(returnValue));
 

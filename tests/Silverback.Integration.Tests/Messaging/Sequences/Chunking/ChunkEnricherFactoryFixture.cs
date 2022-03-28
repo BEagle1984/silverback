@@ -4,6 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Types;
@@ -20,8 +21,8 @@ public class ChunkEnricherFactoryFixture
         factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
         factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
 
         enricher1.Should().BeOfType<ChunkEnricher1>();
         enricher2.Should().BeOfType<ChunkEnricher2>();
@@ -43,8 +44,8 @@ public class ChunkEnricherFactoryFixture
         ChunkEnricherFactory factory = new();
         factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic1", new TestProducerConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic1", new TestProducerEndpointConfiguration()));
 
         enricher1.Should().BeOfType<NullChunkEnricher>();
         enricher2.Should().BeSameAs(enricher1);
@@ -57,8 +58,8 @@ public class ChunkEnricherFactoryFixture
         factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
         factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
 
         enricher2.Should().BeSameAs(enricher1);
     }
@@ -72,7 +73,7 @@ public class ChunkEnricherFactoryFixture
 
         factory.OverrideFactories(() => new OverrideChunkEnricher());
 
-        ProducerEndpoint endpoint1 = new ProducerEndpoint1("topic1", new TestProducerConfiguration());
+        ProducerEndpoint endpoint1 = new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration());
         IChunkEnricher enricher1 = factory.GetEnricher(endpoint1);
         IChunkEnricher enricher2 = factory.GetEnricher(endpoint1);
 
@@ -87,12 +88,12 @@ public class ChunkEnricherFactoryFixture
         factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
         factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
 
-        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerConfiguration()));
-        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerConfiguration()));
-        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerConfiguration()));
+        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
 
         enricher1A1.Should().BeSameAs(enricher1A2);
         enricher1B1.Should().BeSameAs(enricher1B2);
@@ -109,12 +110,12 @@ public class ChunkEnricherFactoryFixture
         factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
         factory.OverrideFactories(() => new OverrideChunkEnricher());
 
-        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerConfiguration()));
-        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerConfiguration()));
-        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerConfiguration()));
-        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerConfiguration()));
+        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
 
         enricher1A1.Should().BeSameAs(enricher1A2);
         enricher1B1.Should().BeSameAs(enricher1B2);
@@ -144,8 +145,8 @@ public class ChunkEnricherFactoryFixture
 
         factory.OverrideFactories(() => new OverrideChunkEnricher());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
 
         enricher1.Should().BeOfType<OverrideChunkEnricher>();
         enricher2.Should().BeOfType<OverrideChunkEnricher>();
@@ -175,7 +176,7 @@ public class ChunkEnricherFactoryFixture
 
     private record ProducerEndpoint1 : ProducerEndpoint
     {
-        public ProducerEndpoint1(string rawName, ProducerConfiguration configuration)
+        public ProducerEndpoint1(string rawName, ProducerEndpointConfiguration configuration)
             : base(rawName, configuration)
         {
         }
@@ -183,7 +184,7 @@ public class ChunkEnricherFactoryFixture
 
     private record ProducerEndpoint2 : ProducerEndpoint
     {
-        public ProducerEndpoint2(string rawName, ProducerConfiguration configuration)
+        public ProducerEndpoint2(string rawName, ProducerEndpointConfiguration configuration)
             : base(rawName, configuration)
         {
         }

@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnConsumerLog" /> event handler.
 /// </summary>
-public interface IKafkaConsumerLogCallback : IBrokerCallback
+public interface IKafkaConsumerLogCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called when a log message is being reported by the underlying consumer.

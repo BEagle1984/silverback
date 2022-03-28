@@ -14,16 +14,18 @@ uid: releases
   * New AddHeader overloads with only message
   * New WithMessageId overloads with only message
   * WithKafkaKey overloads with only message
-  * AddInbound/AddOoutbound with message type (influencing AddHeader etc.)
+  * AddInbound/AddOutbound with message type (influencing AddHeader etc.)
   * Default serializer is typed and now works with sub-typed (document in serializer page)
   * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
   * Builders for client config?
   * New Storage packages (see...)
-  * Outbox supports ambient transaction (TransactionScope)
+  * New Outbox with Enlist for transaction
+  * StorageInitializer to create tables
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies
 * Support subscribers returning `ValueTask`
+
 
 ### Breaking Changes
 
@@ -50,19 +52,32 @@ uid: releases
   * AddOutboundEndpointsCheck renamed to AddProducersCheck
   * IOutboundQueueHealthCheckService to IOutboxHealthCheckService
   * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
+  * EndpointsConfiguration redesigned completely
+    * Endpoints configuration moved completely under `Messaging.Configuration` namespace
   * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
   * Broker -> BrokerBase
   * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
   * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
   * DistributedBackgroundService / RecurringDBS
   * IOutboxReader / IOutboxWriter namespace + move to storage
+  * Publisher and behaviors to `ValueTask`
+  * `Helper.GetProducer` and other differences
+  * `Add*BrokerCallbackHandler` to `Add*BrokerClientCallback` (`IBrokerCallback` to `IBrokerClientCallback`)
+  * `IEndpointsConfiguredCallback` to `IBrokerClientsConfiguredCallback`
+  * Removed `EndpointBuilder.WithName()` -> replaced by name parameter
+  * Renamed Inbound namespace to Consuming and Outbound to Producing
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext
 * Deprecated ExactlyOnceStrategy -> replaced with ???client-side-offset-storage???
 * Slight changes to policy builder (e.g. removed some overloads of PolicyBuilder.Retry/ThenRetru)
 * Some changes to the `AddDelegateSubscriber` methods
-
+* IBroker/IBrokerCollection -> IProducerFactory / IConsumerCollection
+* Additional changes to configuration
+* Removed `AddConsumer`/`AddProducer` from `IBroker`/`IBrokerCollection`
+* e.g. `KafkaBroker.GetProducer` -> `IProducerFactory.GetProducer(endpointName)`/`IProducerFactory.GetProducer<TProducer>(endpointName)`/`IProducerFactory.GetProducer(configuration)`/...
+* Changes to Kafka callbacks (stats etc.) -> replaced producer/consumer
+* PartitionOffsetsProvider returns `ValueTask`
 
 ### Deprecation Notice
 

@@ -1,13 +1,14 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 namespace Silverback.Messaging;
 
 /// <inheritdoc cref="ConsumerEndpoint" />
 public abstract record ConsumerEndpoint<TConfiguration> : ConsumerEndpoint
-    where TConfiguration : ConsumerConfiguration
+    where TConfiguration : ConsumerEndpointConfiguration
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerEndpoint{TConfiguration}" /> class.

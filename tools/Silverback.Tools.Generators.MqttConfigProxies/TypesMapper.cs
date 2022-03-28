@@ -29,12 +29,12 @@ public static class TypesMapper
 
     public static (string PropertyType, bool IsMapped) GetMappedPropertyTypeString(Type propertyType) =>
         propertyType.Name switch
-    {
-        nameof(IMqttClientCredentials) => ("MqttClientCredentials?", true),
-        nameof(MqttApplicationMessage) => ("MqttLastWillMessageConfiguration?", true),
-        nameof(IMqttClientChannelOptions) => ("MqttClientChannelConfiguration?", true),
-        nameof(MqttClientTlsOptions) => ("MqttClientTlsConfiguration?", true),
-        nameof(MqttClientWebSocketProxyOptions) => ("MqttClientWebSocketProxyConfiguration?", true),
-        _ => (ReflectionHelper.GetTypeString(propertyType, true), false)
-    };
+        {
+            nameof(IMqttClientCredentials) => ("MqttClientCredentials?", true),
+            nameof(MqttApplicationMessage) => ("MqttLastWillMessageConfiguration?", true),
+            nameof(IMqttClientChannelOptions) => ("MqttClientChannelConfiguration?", true),
+            nameof(MqttClientTlsOptions) => ("MqttClientTlsConfiguration?", true),
+            nameof(MqttClientWebSocketProxyOptions) => ("MqttClientWebSocketProxyConfiguration?", true),
+            _ => (ReflectionHelper.GetTypeString(propertyType, true), false)
+        };
 }

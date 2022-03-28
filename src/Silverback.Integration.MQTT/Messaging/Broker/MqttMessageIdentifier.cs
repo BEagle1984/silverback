@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker;
@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker;
 ///     Generating the identifier client-side might prevent some Silverback features to work properly
 ///     (e.g. <see cref="ErrorPolicyBase.MaxFailedAttempts" />).
 /// </remarks>
-public sealed class MqttMessageIdentifier : IBrokerMessageIdentifier
+public sealed record MqttMessageIdentifier : IBrokerMessageIdentifier
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttMessageIdentifier" /> class.
@@ -50,33 +50,6 @@ public sealed class MqttMessageIdentifier : IBrokerMessageIdentifier
     public string ToVerboseLogString() => $"{ClientId}@{MessageId}";
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(IBrokerMessageIdentifier? other)
-    {
-        if (ReferenceEquals(this, other))
-            return true;
-        if (ReferenceEquals(other, null))
-            return false;
-
-        if (other is not MqttMessageIdentifier otherMqttIdentifier)
-            return false;
-
-        return ClientId == otherMqttIdentifier.ClientId && MessageId == otherMqttIdentifier.MessageId;
-    }
-
-    /// <inheritdoc cref="object.Equals(object)" />
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (obj.GetType() != GetType())
-            return false;
-
-        return Equals((IBrokerMessageIdentifier)obj);
-    }
-
-    /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => HashCode.Combine(ClientId, MessageId);
+    public bool Equals(IBrokerMessageIdentifier? other) =>
+        other is MqttMessageIdentifier otherMqttIdentifier && Equals(otherMqttIdentifier);
 }

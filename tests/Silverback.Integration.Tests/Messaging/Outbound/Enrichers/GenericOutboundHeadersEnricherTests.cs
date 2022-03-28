@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Enrichers;
+using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -18,7 +20,8 @@ public class GenericOutboundHeadersEnricherTests
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher enricher = new("x-test", "value");
 
@@ -37,7 +40,8 @@ public class GenericOutboundHeadersEnricherTests
             {
                 { "x-test", "old-value" }
             },
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher enricher = new("x-test", "value");
 
@@ -53,11 +57,13 @@ public class GenericOutboundHeadersEnricherTests
         OutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
         OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new("x-test", "value");
 
@@ -74,15 +80,18 @@ public class GenericOutboundHeadersEnricherTests
         OutboundEnvelope<TestEventOne> envelopeEventOne = new(
             new TestEventOne(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
         OutboundEnvelope<TestEventTwo> envelopeEventTwo = new(
             new TestEventTwo(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
         OutboundEnvelope<BinaryMessage> envelopeBinaryMessage = new(
             new BinaryMessage(),
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<IIntegrationEvent> enricher = new("x-test", "value");
 
@@ -101,7 +110,8 @@ public class GenericOutboundHeadersEnricherTests
         OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "content" },
             null,
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
 
         GenericOutboundHeadersEnricher<TestEventOne> enricher = new(
             "x-test",

@@ -14,7 +14,7 @@ internal sealed class UnboundedSequence : Sequence
 {
     [SuppressMessage("", "CA2000", Justification = "Stream disposed in base class")]
     public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
-        : base(sequenceId, context, enforceTimeout: false, trackIdentifiers: false)
+        : base(sequenceId, context, false, trackIdentifiers: false)
     {
     }
 }

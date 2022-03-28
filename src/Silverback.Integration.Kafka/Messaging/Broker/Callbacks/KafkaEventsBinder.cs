@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,40 +8,42 @@ using Confluent.Kafka;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks.Statistics;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Callbacks;
 
 internal static class KafkaEventsBinder
 {
-    public static void SetEventsHandlers(
+    public static IConfluentProducerBuilder SetEventsHandlers(
         this IConfluentProducerBuilder producerBuilder,
-        KafkaProducer producer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentProducerWrapper producerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger) =>
         producerBuilder
-            .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, producer, callbacksInvoker, logger))
-            .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, callbacksInvoker, logger));
+            .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, producerWrapper, callbacksInvoker, logger))
+            .SetLogHandler((_, logMessage) => OnLog(logMessage, producerWrapper, callbacksInvoker, logger));
 
-    public static void SetEventsHandlers(
+    public static IConfluentConsumerBuilder SetEventsHandlers(
         this IConfluentConsumerBuilder consumerBuilder,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        KafkaConsumerConfiguration consumerConfiguration,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
         consumerBuilder
-            .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, consumer, callbacksInvoker, logger))
+            .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, consumerWrapper, callbacksInvoker, logger))
             .SetPartitionsAssignedHandler(
                 (_, topicPartitions) => OnPartitionsAssigned(
                     topicPartitions,
-                    consumer,
+                    consumerWrapper,
                     callbacksInvoker,
                     logger))
-            .SetOffsetsCommittedHandler((_, offsets) => OnOffsetsCommitted(offsets, consumer, callbacksInvoker, logger))
-            .SetErrorHandler((_, error) => OnError(error, consumer, callbacksInvoker, logger))
-            .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, callbacksInvoker, logger));
+            .SetOffsetsCommittedHandler((_, offsets) => OnOffsetsCommitted(offsets, consumerWrapper, callbacksInvoker, logger))
+            .SetErrorHandler((_, error) => OnError(error, consumerWrapper, callbacksInvoker, logger))
+            .SetLogHandler((_, logMessage) => OnLog(logMessage, consumerWrapper, callbacksInvoker, logger));
 
-        if (consumer.Configuration.Client.PartitionAssignmentStrategy != null &&
-            consumer.Configuration.Client.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky))
+        if (consumerConfiguration.PartitionAssignmentStrategy != null &&
+            consumerConfiguration.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky))
         {
             // This is done to discard the result of the revoke handler. Using the SetPartitionsRevokedHandler
             // overload with a Func<> results in an exception in the internal rebalance method since you are
@@ -51,76 +52,67 @@ internal static class KafkaEventsBinder
                 .SetPartitionsRevokedHandler(
                     (_, topicPartitionOffsets) =>
                     {
-                        OnPartitionsRevoked(
-                            topicPartitionOffsets,
-                            consumer,
-                            callbacksInvoker,
-                            logger);
+                        OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper, callbacksInvoker, logger);
                     });
         }
         else
         {
             consumerBuilder
                 .SetPartitionsRevokedHandler(
-                    (_, topicPartitionOffsets) => OnPartitionsRevoked(
-                        topicPartitionOffsets,
-                        consumer,
-                        callbacksInvoker,
-                        logger));
+                    (_, topicPartitionOffsets) =>
+                        OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper, callbacksInvoker, logger));
         }
+
+        return consumerBuilder;
     }
 
     private static void OnStatistics(
         string statistics,
-        KafkaProducer producer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentProducerWrapper producerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        logger.LogProducerStatisticsReceived(statistics, producer);
+        logger.LogProducerStatisticsReceived(statistics, producerWrapper);
 
         callbacksInvoker.Invoke<IKafkaProducerStatisticsCallback>(
-            handler => handler.OnProducerStatistics(
+            callback => callback.OnProducerStatistics(
                 KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
                 statistics,
-                producer),
+                producerWrapper),
             invokeDuringShutdown: false);
     }
 
     private static void OnStatistics(
         string statistics,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        logger.LogConsumerStatisticsReceived(statistics, consumer);
+        logger.LogConsumerStatisticsReceived(statistics, consumerWrapper.Consumer);
 
         callbacksInvoker.Invoke<IKafkaConsumerStatisticsCallback>(
-            handler => handler.OnConsumerStatistics(
+            callback => callback.OnConsumerStatistics(
                 KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
                 statistics,
-                consumer),
+                consumerWrapper.Consumer),
             invokeDuringShutdown: false);
     }
 
-    [SuppressMessage(
-        "",
-        "CA1508",
-        Justification = "False positive: topicPartitionOffsets set in handler action")]
+    [SuppressMessage("", "CA1508", Justification = "False positive: topicPartitionOffsets set in handler action")]
     private static IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
         List<TopicPartition> topicPartitions,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        topicPartitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumer));
+        topicPartitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumerWrapper.Consumer));
 
         List<TopicPartitionOffset>? topicPartitionOffsets = null;
 
         callbacksInvoker.Invoke<IKafkaPartitionsAssignedCallback>(
-            assignedCallback =>
+            callback =>
             {
-                IEnumerable<TopicPartitionOffset>? result =
-                    assignedCallback.OnPartitionsAssigned(topicPartitions, consumer);
+                IEnumerable<TopicPartitionOffset>? result = callback.OnPartitionsAssigned(topicPartitions, consumerWrapper.Consumer);
 
                 if (result != null)
                     topicPartitionOffsets = result.ToList();
@@ -133,34 +125,33 @@ internal static class KafkaEventsBinder
         foreach (TopicPartitionOffset? topicPartitionOffset in topicPartitionOffsets)
         {
             if (topicPartitionOffset.Offset != Offset.Unset)
-                logger.LogPartitionOffsetReset(topicPartitionOffset, consumer);
+                logger.LogPartitionOffsetReset(topicPartitionOffset, consumerWrapper.Consumer);
         }
 
-        consumer.OnPartitionsAssigned(
-            topicPartitionOffsets.Select(
-                topicPartitionOffset =>
-                    topicPartitionOffset.TopicPartition).ToList());
+        consumerWrapper.Consumer.OnPartitionsAssigned(topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition).ToList());
 
         return topicPartitionOffsets;
     }
 
     private static void OnPartitionsRevoked(
         List<TopicPartitionOffset> topicPartitionOffsets,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        consumer.OnPartitionsRevoked(topicPartitionOffsets);
+        consumerWrapper.Consumer.OnPartitionsRevoked(topicPartitionOffsets);
 
-        topicPartitionOffsets.ForEach(topicPartitionOffset => logger.LogPartitionRevoked(topicPartitionOffset, consumer));
+        topicPartitionOffsets.ForEach(topicPartitionOffset => logger.LogPartitionRevoked(topicPartitionOffset, consumerWrapper.Consumer));
 
-        callbacksInvoker.Invoke<IKafkaPartitionsRevokedCallback>(revokedCallback => revokedCallback.OnPartitionsRevoked(topicPartitionOffsets, consumer));
+        callbacksInvoker.Invoke<IKafkaPartitionsRevokedCallback>(
+            callback =>
+                callback.OnPartitionsRevoked(topicPartitionOffsets, consumerWrapper.Consumer));
     }
 
     private static void OnOffsetsCommitted(
         CommittedOffsets offsets,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
         foreach (TopicPartitionOffsetError? topicPartitionOffsetError in offsets.Offsets)
@@ -171,97 +162,83 @@ internal static class KafkaEventsBinder
             if (topicPartitionOffsetError.Error != null &&
                 topicPartitionOffsetError.Error.Code != ErrorCode.NoError)
             {
-                logger.LogOffsetCommitError(topicPartitionOffsetError, consumer);
+                logger.LogOffsetCommitError(topicPartitionOffsetError, consumerWrapper.Consumer);
             }
             else
             {
-                logger.LogOffsetCommitted(topicPartitionOffsetError.TopicPartitionOffset, consumer);
+                logger.LogOffsetCommitted(topicPartitionOffsetError.TopicPartitionOffset, consumerWrapper.Consumer);
             }
         }
 
-        callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(handler => handler.OnOffsetsCommitted(offsets, consumer));
+        callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback => callback.OnOffsetsCommitted(offsets, consumerWrapper.Consumer));
     }
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     private static void OnError(
         Error error,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
         // Ignore errors if not consuming anymore
         // (lidrdkafka randomly throws some "brokers are down" while disconnecting)
-        if (!consumer.IsConnected)
+        if (consumerWrapper.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
             return;
 
-        try
-        {
-            bool handled = false;
+        bool handled = false;
 
-            callbacksInvoker.Invoke<IKafkaConsumerErrorCallback>(
-                handler =>
-                {
-                    handled &= handler.OnConsumerError(error, consumer);
-                });
+        callbacksInvoker.Invoke<IKafkaConsumerErrorCallback>(
+            handler =>
+            {
+                handled &= handler.OnConsumerError(error, consumerWrapper.Consumer);
+            });
 
-            if (handled)
-                return;
-        }
-        catch (Exception ex)
-        {
-            logger.LogKafkaErrorHandlerError(consumer, ex);
-        }
+        if (handled)
+            return;
 
         if (error.IsFatal)
-            logger.LogConfluentConsumerFatalError(error, consumer);
+            logger.LogConfluentConsumerFatalError(error, consumerWrapper.Consumer);
         else
-            logger.LogConfluentConsumerError(error, consumer);
+            logger.LogConfluentConsumerError(error, consumerWrapper.Consumer);
     }
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     private static void OnLog(
         LogMessage logMessage,
-        KafkaProducer producer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentProducerWrapper producerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        try
-        {
-            bool handled = false;
+        bool handled = false;
 
-            callbacksInvoker.Invoke<IKafkaProducerLogCallback>(
-                handler =>
-                {
-                    handled &= handler.OnProducerLog(logMessage, producer);
-                });
+        callbacksInvoker.Invoke<IKafkaProducerLogCallback>(
+            handler =>
+            {
+                handled &= handler.OnProducerLog(logMessage, producerWrapper);
+            });
 
-            if (handled)
-                return;
-        }
-        catch (Exception ex)
-        {
-            logger.LogKafkaLogHandlerError(producer, ex);
-        }
+        if (handled)
+            return;
 
         switch (logMessage.Level)
         {
             case SyslogLevel.Emergency:
             case SyslogLevel.Alert:
             case SyslogLevel.Critical:
-                logger.LogConfluentProducerLogCritical(logMessage, producer);
+                logger.LogConfluentProducerLogCritical(logMessage, producerWrapper);
                 break;
             case SyslogLevel.Error:
-                logger.LogConfluentProducerLogError(logMessage, producer);
+                logger.LogConfluentProducerLogError(logMessage, producerWrapper);
                 break;
             case SyslogLevel.Warning:
-                logger.LogConfluentProducerLogWarning(logMessage, producer);
+                logger.LogConfluentProducerLogWarning(logMessage, producerWrapper);
                 break;
             case SyslogLevel.Notice:
             case SyslogLevel.Info:
-                logger.LogConfluentProducerLogInformation(logMessage, producer);
+                logger.LogConfluentProducerLogInformation(logMessage, producerWrapper);
                 break;
             default:
-                logger.LogConfluentProducerLogDebug(logMessage, producer);
+                logger.LogConfluentProducerLogDebug(logMessage, producerWrapper);
                 break;
         }
     }
@@ -269,47 +246,40 @@ internal static class KafkaEventsBinder
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     private static void OnLog(
         LogMessage logMessage,
-        KafkaConsumer consumer,
-        IBrokerCallbacksInvoker callbacksInvoker,
+        IConfluentConsumerWrapper consumerWrapper,
+        IBrokerClientCallbacksInvoker callbacksInvoker,
         ISilverbackLogger logger)
     {
-        try
-        {
-            bool handled = false;
+        bool handled = false;
 
-            callbacksInvoker.Invoke<IKafkaConsumerLogCallback>(
-                handler =>
-                {
-                    handled &= handler.OnConsumerLog(logMessage, consumer);
-                });
+        callbacksInvoker.Invoke<IKafkaConsumerLogCallback>(
+            handler =>
+            {
+                handled &= handler.OnConsumerLog(logMessage, consumerWrapper.Consumer);
+            });
 
-            if (handled)
-                return;
-        }
-        catch (Exception ex)
-        {
-            logger.LogKafkaLogHandlerError(consumer, ex);
-        }
+        if (handled)
+            return;
 
         switch (logMessage.Level)
         {
             case SyslogLevel.Emergency:
             case SyslogLevel.Alert:
             case SyslogLevel.Critical:
-                logger.LogConfluentConsumerLogCritical(logMessage, consumer);
+                logger.LogConfluentConsumerLogCritical(logMessage, consumerWrapper.Consumer);
                 break;
             case SyslogLevel.Error:
-                logger.LogConfluentConsumerLogError(logMessage, consumer);
+                logger.LogConfluentConsumerLogError(logMessage, consumerWrapper.Consumer);
                 break;
             case SyslogLevel.Warning:
-                logger.LogConfluentConsumerLogWarning(logMessage, consumer);
+                logger.LogConfluentConsumerLogWarning(logMessage, consumerWrapper.Consumer);
                 break;
             case SyslogLevel.Notice:
             case SyslogLevel.Info:
-                logger.LogConfluentConsumerLogInformation(logMessage, consumer);
+                logger.LogConfluentConsumerLogInformation(logMessage, consumerWrapper.Consumer);
                 break;
             default:
-                logger.LogConfluentConsumerLogDebug(logMessage, consumer);
+                logger.LogConfluentConsumerLogDebug(logMessage, consumerWrapper.Consumer);
                 break;
         }
     }

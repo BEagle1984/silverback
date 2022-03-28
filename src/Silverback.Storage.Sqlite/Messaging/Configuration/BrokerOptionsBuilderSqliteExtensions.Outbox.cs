@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -24,7 +24,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </param>
     /// <param name="connectionString">
-    ///    The connection string to the SQLite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.

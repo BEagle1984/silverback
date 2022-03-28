@@ -11,13 +11,7 @@ namespace Silverback.Messaging.Configuration;
 public class BrokerConnectionOptions
 {
     /// <summary>
-    ///     Gets the default options.
-    /// </summary>
-    public static BrokerConnectionOptions Default { get; } = new();
-
-    /// <summary>
-    ///     Gets or sets the <see cref="BrokerConnectionMode" />. The default is
-    ///     <see cref="BrokerConnectionMode.Startup" />.
+    ///     Gets or sets the <see cref="BrokerConnectionMode" />. The default is <see cref="BrokerConnectionMode.Startup" />.
     /// </summary>
     public BrokerConnectionMode Mode { get; set; } = BrokerConnectionMode.Startup;
 
@@ -30,8 +24,7 @@ public class BrokerConnectionOptions
 
     /// <summary>
     ///     Gets or sets interval between the connection retries. The default is 5 minutes. This setting is
-    ///     ignored
-    ///     when <c>Mode</c> is set to manual.
+    ///     ignored when <c>Mode</c> is set to manual.
     /// </summary>
     public TimeSpan RetryInterval { get; set; } = TimeSpan.FromMinutes(5);
 }

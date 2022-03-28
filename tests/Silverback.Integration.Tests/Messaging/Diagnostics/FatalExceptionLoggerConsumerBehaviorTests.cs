@@ -14,7 +14,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
@@ -25,7 +24,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
 {
     private readonly LoggerSubstitute<FatalExceptionLoggerConsumerBehavior> _loggerSubstitute;
 
-    private readonly IInboundLogger<FatalExceptionLoggerConsumerBehavior> _inboundLogger;
+    private readonly IConsumerLogger<FatalExceptionLoggerConsumerBehavior> _consumerLogger;
 
     public FatalExceptionLoggerConsumerBehaviorTests()
     {
@@ -33,14 +32,14 @@ public class FatalExceptionLoggerConsumerBehaviorTests
             services => services
                 .AddLoggerSubstitute(LogLevel.Trace)
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>()));
+                .WithConnectionToMessageBroker());
 
         _loggerSubstitute =
             (LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>)serviceProvider
                 .GetRequiredService<ILogger<FatalExceptionLoggerConsumerBehavior>>();
 
-        _inboundLogger = serviceProvider
-            .GetRequiredService<IInboundLogger<FatalExceptionLoggerConsumerBehavior>>();
+        _consumerLogger = serviceProvider
+            .GetRequiredService<IConsumerLogger<FatalExceptionLoggerConsumerBehavior>>();
     }
 
     [Fact]
@@ -50,11 +49,12 @@ public class FatalExceptionLoggerConsumerBehaviorTests
             new byte[5],
             null,
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         try
         {
-            await new FatalExceptionLoggerConsumerBehavior(_inboundLogger).HandleAsync(
+            await new FatalExceptionLoggerConsumerBehavior(_consumerLogger).HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
@@ -77,15 +77,16 @@ public class FatalExceptionLoggerConsumerBehaviorTests
             new byte[5],
             null,
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
-        Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(_inboundLogger).HandleAsync(
+        Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(_consumerLogger).HandleAsync(
             new ConsumerPipelineContext(
                 rawEnvelope,
                 Substitute.For<IConsumer>(),
                 Substitute.For<ISequenceStore>(),
                 Substitute.For<IServiceProvider>()),
-            _ => throw new InvalidCastException());
+            _ => throw new InvalidCastException()).AsTask();
 
         await act.Should().ThrowExactlyAsync<ConsumerPipelineFatalException>()
             .WithInnerExceptionExactly<ConsumerPipelineFatalException, InvalidCastException>();

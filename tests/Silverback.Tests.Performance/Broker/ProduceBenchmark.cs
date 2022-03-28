@@ -3,14 +3,18 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 
 namespace Silverback.Tests.Performance.Broker;
 
@@ -47,8 +51,6 @@ public class ProduceBenchmark
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10
     };
 
-    private readonly IBroker _broker;
-
     private readonly IProducer _producer;
 
     private readonly IProducer _producerWithoutValidation;
@@ -60,43 +62,36 @@ public class ProduceBenchmark
                 .AddFakeLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                .AddKafkaEndpoints(
-                    endpoints => endpoints
-                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://benchmark"))
-                        .AddOutbound<IIntegrationEvent>(
-                            producer => producer
-                                .ProduceTo("benchmarks"))
-                        .AddOutbound<IIntegrationEvent>(
-                            producer => producer
-                                .ProduceTo("benchmarks-2")
-                                .DisableMessageValidation())));
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://benchmark")
+                        .AddProducer(producer => producer
+                        .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks"))
+                        .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
 
-        _broker = serviceProvider.GetRequiredService<IBroker>();
+        BrokerClientsConnectorService clientsConnectorService = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
+        AsyncHelper.RunSynchronously(() => clientsConnectorService.StartAsync(CancellationToken.None));
 
-        _broker.ConnectAsync().Wait();
-
-        _producer = _broker.Producers[0];
-        _producerWithoutValidation = _broker.Producers[1];
+        IProducerCollection producerCollection = serviceProvider.GetRequiredService<IProducerCollection>();
+        _producer = producerCollection[0];
+        _producerWithoutValidation = producerCollection[^1];
 
         Activity activity = new("Benchmark");
         activity.Start();
     }
 
     [Benchmark]
-    public void GetProducer() => _broker.GetProducer(_producer.Configuration);
-
-    [Benchmark]
     public void Produce() => _producer.Produce(TestEventOne);
 
     [Benchmark]
-    public Task ProduceAsync() => _producer.ProduceAsync(TestEventOne);
+    public async Task ProduceAsync() => await _producer.ProduceAsync(TestEventOne);
 
     [Benchmark]
     public void RawProduce() => _producer.RawProduce(RawContent);
 
     [Benchmark]
-    public Task RawProduceAsync() => _producer.RawProduceAsync(RawContent);
+    public async Task RawProduceAsync() => await _producer.RawProduceAsync(RawContent);
 
     [Benchmark]
-    public Task ProduceAsyncWithoutValidation() => _producerWithoutValidation.ProduceAsync(TestEventOne);
+    public async Task ProduceAsyncWithoutValidation() => await _producerWithoutValidation.ProduceAsync(TestEventOne);
 }

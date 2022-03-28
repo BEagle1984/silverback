@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 
 namespace Silverback.Messaging.Messages;
 
@@ -20,7 +20,7 @@ public static class KafkaMessageHeaders
     /// <summary>
     ///     The header that will be filled with the timestamp of the message consumed from Kafka.
     /// </summary>
-    public const string TimestampKey = "x-kafka-message-timestamp";
+    public const string Timestamp = "x-kafka-message-timestamp";
 
     /// <summary>
     ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the GroupId of

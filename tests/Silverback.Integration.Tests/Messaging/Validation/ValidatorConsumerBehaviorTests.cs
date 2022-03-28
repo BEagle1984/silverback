@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Validation;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -27,7 +28,7 @@ public class ValidatorConsumerBehaviorTests
 
     private readonly LoggerSubstitute<ValidatorConsumerBehavior> _loggerSubstitute;
 
-    private readonly IInboundLogger<ValidatorConsumerBehavior> _inboundLogger;
+    private readonly IConsumerLogger<ValidatorConsumerBehavior> _consumerLogger;
 
     public ValidatorConsumerBehaviorTests()
     {
@@ -36,7 +37,7 @@ public class ValidatorConsumerBehaviorTests
         services
             .AddLoggerSubstitute()
             .AddSilverback()
-            .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+            .WithConnectionToMessageBroker();
 
         _serviceProvider = services.BuildServiceProvider();
 
@@ -44,8 +45,8 @@ public class ValidatorConsumerBehaviorTests
             (LoggerSubstitute<ValidatorConsumerBehavior>)_serviceProvider
                 .GetRequiredService<ILogger<ValidatorConsumerBehavior>>();
 
-        _inboundLogger = _serviceProvider
-            .GetRequiredService<IInboundLogger<ValidatorConsumerBehavior>>();
+        _consumerLogger = _serviceProvider
+            .GetRequiredService<IConsumerLogger<ValidatorConsumerBehavior>>();
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -99,7 +100,7 @@ public class ValidatorConsumerBehaviorTests
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123"
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
+                $"Invalid message consumed:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
             };
             yield return new object[]
             {
@@ -107,7 +108,7 @@ public class ValidatorConsumerBehaviorTests
                 {
                     Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message consumed:{Environment.NewLine}- The field IntRange must be between 5 and 10."
             };
             yield return new object[]
             {
@@ -115,7 +116,7 @@ public class ValidatorConsumerBehaviorTests
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 30, NumbersOnly = "123"
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message consumed:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
             };
             yield return new object[]
             {
@@ -123,7 +124,7 @@ public class ValidatorConsumerBehaviorTests
                 {
                     String10 = "123456", IntRange = 5, NumbersOnly = "123"
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The Id field is required."
+                $"Invalid message consumed:{Environment.NewLine}- The Id field is required."
             };
             yield return new object[]
             {
@@ -131,7 +132,7 @@ public class ValidatorConsumerBehaviorTests
                 {
                     Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
+                $"Invalid message consumed:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
             };
             yield return new object[]
             {
@@ -146,7 +147,7 @@ public class ValidatorConsumerBehaviorTests
                         String5 = "123456"
                     }
                 },
-                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+                $"Invalid message consumed:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
             };
         }
     }
@@ -155,7 +156,7 @@ public class ValidatorConsumerBehaviorTests
     [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
     public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
     {
-        TestConsumerEndpoint endpoint = new TestConsumerConfiguration("topic1")
+        TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.None
         }.GetDefaultEndpoint();
@@ -164,16 +165,17 @@ public class ValidatorConsumerBehaviorTests
             message,
             null,
             null,
-            new TestOffset(),
-            endpoint);
+            endpoint,
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
+        await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
@@ -187,7 +189,7 @@ public class ValidatorConsumerBehaviorTests
     public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
-        TestConsumerEndpoint endpoint = new TestConsumerConfiguration("topic1")
+        TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
             MessageValidationMode = validationMode
         }.GetDefaultEndpoint();
@@ -196,17 +198,18 @@ public class ValidatorConsumerBehaviorTests
             message,
             null,
             null,
-            new TestOffset(),
-            endpoint);
+            endpoint,
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
-            });
+                return default;
+            }).AsTask();
         await act.Should().NotThrowAsync<ValidationException>();
         result.Should().NotBeNull();
         _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
@@ -218,7 +221,7 @@ public class ValidatorConsumerBehaviorTests
         IIntegrationMessage message,
         string expectedValidationMessage)
     {
-        TestConsumerEndpoint endpoint = new TestConsumerConfiguration("topic1")
+        TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.LogWarning
         }.GetDefaultEndpoint();
@@ -227,20 +230,22 @@ public class ValidatorConsumerBehaviorTests
             message,
             null,
             null,
-            new TestOffset(),
-            endpoint);
+            endpoint,
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        await new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
+        await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
+                return default;
             });
 
         result.Should().NotBeNull();
-        _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1080);
+        expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
+        _loggerSubstitute.Received(LogLevel.Warning, null, expectedValidationMessage, 1082);
     }
 
     [Fact]
@@ -249,7 +254,7 @@ public class ValidatorConsumerBehaviorTests
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =
             $"The message is not valid:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
-        TestConsumerEndpoint endpoint = new TestConsumerConfiguration("topic1")
+        TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.ThrowException
         }.GetDefaultEndpoint();
@@ -257,17 +262,18 @@ public class ValidatorConsumerBehaviorTests
             message,
             null,
             null,
-            new TestOffset(),
-            endpoint);
+            endpoint,
+            Substitute.For<IConsumer>(),
+            new TestOffset());
 
         IRawInboundEnvelope? result = null;
-        Func<Task> act = () => new ValidatorConsumerBehavior(_inboundLogger).HandleAsync(
+        Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             context =>
             {
                 result = context.Envelope;
-                return Task.CompletedTask;
-            });
+                return default;
+            }).AsTask();
 
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
         result.Should().BeNull();

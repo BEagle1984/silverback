@@ -36,6 +36,7 @@ public class ActivityConsumerBehaviorTests
                 }
             },
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         bool entered = false;
@@ -55,7 +56,7 @@ public class ActivityConsumerBehaviorTests
 
                     entered = true;
 
-                    return Task.CompletedTask;
+                    return default;
                 });
 
         entered.Should().BeTrue();
@@ -74,6 +75,7 @@ public class ActivityConsumerBehaviorTests
                 }
             },
             TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
             new TestOffset());
 
         bool entered = false;
@@ -91,7 +93,7 @@ public class ActivityConsumerBehaviorTests
 
                     entered = true;
 
-                    return Task.CompletedTask;
+                    return default;
                 });
 
         entered.Should().BeTrue();

@@ -15,7 +15,7 @@ public class EnumerableFirstExtensionsFixture
     {
         object?[] enumerable = { "one", 1, null };
 
-        object? result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item is int));
+        object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int));
 
         result.Should().Be(1);
     }
@@ -25,7 +25,7 @@ public class EnumerableFirstExtensionsFixture
     {
         object?[] enumerable = { "one", 1, null };
 
-        object? result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item is int intItem && intItem == 2));
+        object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int intItem && intItem == 2));
 
         result.Should().BeNull();
     }
@@ -35,7 +35,7 @@ public class EnumerableFirstExtensionsFixture
     {
         int[] enumerable = { 1, 3, 5, 7, 9 };
 
-        int result = await enumerable.FirstOrDefaultAsync(item => Task.FromResult(item % 2 == 0));
+        int result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item % 2 == 0));
 
         result.Should().Be(0);
     }

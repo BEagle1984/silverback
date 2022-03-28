@@ -11,4 +11,7 @@ namespace Silverback.Messaging.Broker.Behaviors;
 /// <param name="context">
 ///     The context that is passed along the consumer behaviors pipeline.
 /// </param>
-public delegate Task ConsumerBehaviorHandler(ConsumerPipelineContext context);
+/// <returns>
+///     A <see cref="ValueTask" /> representing the asynchronous operation.
+/// </returns>
+public delegate ValueTask ConsumerBehaviorHandler(ConsumerPipelineContext context);

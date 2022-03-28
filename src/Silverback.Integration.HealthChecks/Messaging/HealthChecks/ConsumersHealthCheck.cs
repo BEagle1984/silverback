@@ -23,8 +23,6 @@ public class ConsumersHealthCheck : IHealthCheck
 
     private readonly TimeSpan _gracePeriod;
 
-    private readonly Func<ConsumerConfiguration, bool>? _consumersFilter;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumersHealthCheck" /> class.
     /// </summary>
@@ -37,40 +35,27 @@ public class ConsumersHealthCheck : IHealthCheck
     /// <param name="gracePeriod">
     ///     The grace period to observe after each status change before a consumer is considered unhealthy.
     /// </param>
-    /// <param name="consumersFilter">
-    ///     An optional filter to be applied to the consumers to be tested.
-    /// </param>
-    public ConsumersHealthCheck(
-        IConsumersHealthCheckService service,
-        ConsumerStatus minHealthyStatus,
-        TimeSpan gracePeriod,
-        Func<ConsumerConfiguration, bool>? consumersFilter)
+    public ConsumersHealthCheck(IConsumersHealthCheckService service, ConsumerStatus minHealthyStatus, TimeSpan gracePeriod)
     {
         _service = service;
         _minHealthyStatus = minHealthyStatus;
         _gracePeriod = gracePeriod;
-        _consumersFilter = consumersFilter;
     }
 
     /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
-    public async Task<HealthCheckResult> CheckHealthAsync(
-        HealthCheckContext context,
-        CancellationToken cancellationToken = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         Check.NotNull(context, nameof(context));
 
         IReadOnlyCollection<IConsumer> disconnectedConsumers =
-            await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod, _consumersFilter).ConfigureAwait(false);
+            await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod).ConfigureAwait(false);
 
         if (disconnectedConsumers.Count == 0)
             return new HealthCheckResult(HealthStatus.Healthy);
 
         string errorMessage = disconnectedConsumers.Aggregate(
             "One or more consumers are not connected:",
-            (current, consumer) =>
-                $"{current}{Environment.NewLine}- " +
-                $"{consumer.Configuration.DisplayName} " +
-                $"[{consumer.Id}]");
+            (current, consumer) => $"{current}{Environment.NewLine}- {consumer.DisplayName}");
 
         return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
     }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Messages;
 
@@ -15,6 +16,11 @@ public interface IRawInboundEnvelope : IRawBrokerEnvelope
     ///     (for example if consuming multiple topics with a single consumer).
     /// </summary>
     new ConsumerEndpoint Endpoint { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="IConsumer" /> that consumed this message.
+    /// </summary>
+    IConsumer Consumer { get; }
 
     /// <summary>
     ///     Gets the message identifier on the message broker (the Kafka offset or similar).

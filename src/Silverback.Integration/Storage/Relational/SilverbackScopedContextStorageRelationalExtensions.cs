@@ -15,10 +15,10 @@ namespace Silverback.Storage.Relational;
 public static class SilverbackScopedContextStorageRelationalExtensions
 {
     /// <summary>
-    ///     Checks whether an active <see cref="DbTransaction"/> is set and returns it.
+    ///     Checks whether an active <see cref="DbTransaction" /> is set and returns it.
     /// </summary>
     /// <typeparam name="T">
-    ///     The expected type of the <see cref="DbTransaction"/>. An <see cref="InvalidOperationException"/> will be thrown if the type of
+    ///     The expected type of the <see cref="DbTransaction" />. An <see cref="InvalidOperationException" /> will be thrown if the type of
     ///     the stored transaction object is not compatible.
     /// </typeparam>
     /// <param name="context">

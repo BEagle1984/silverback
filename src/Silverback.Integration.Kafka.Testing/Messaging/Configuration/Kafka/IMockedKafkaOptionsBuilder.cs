@@ -25,13 +25,13 @@ public interface IMockedKafkaOptionsBuilder
 
     /// <summary>
     ///     Specifies the value to be used instead of the default 5 seconds or the configured
-    ///     <see cref="KafkaClientConsumerConfiguration.AutoCommitIntervalMs" /> for the inbound topics. Set it to
+    ///     <see cref="KafkaConsumerConfiguration.AutoCommitIntervalMs" /> for the inbound topics. Set it to
     ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
     /// </summary>
     /// <remarks>
     ///     This is necessary to speed up the tests, since the
-    ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> and
-    ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" /> methods wait until
+    ///     <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> and
+    ///     <see cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" /> methods wait until
     ///     the offsets are committed.
     /// </remarks>
     /// <param name="intervalMs">

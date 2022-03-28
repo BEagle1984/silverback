@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers;
@@ -34,6 +35,6 @@ public sealed class KafkaGroupIdFilterAttribute : MessageFilterAttribute
         MessageIsFromAllowedGroups(message) || message is IMessageStreamProvider;
 
     private bool MessageIsFromAllowedGroups(object message) =>
-        message is IInboundEnvelope { Endpoint: KafkaConsumerEndpoint endpoint }
-        && GroupId.Any(groupId => groupId == endpoint.Configuration.Client.GroupId);
+        message is IInboundEnvelope { Consumer: KafkaConsumer consumer }
+        && GroupId.Any(groupId => groupId == consumer.Configuration.GroupId);
 }

@@ -7,8 +7,8 @@ using Silverback.Messaging.Broker.Callbacks;
 namespace Silverback.Messaging.Broker;
 
 /// <summary>
-///     Handles the consumer error callback and reverts the consumer <see cref="ConsumerStatus.Ready" /> status
-///     to <see cref="ConsumerStatus.Connected" /> when the local poll timeout is exceeded. The consumer should
+///     Handles the consumer error callback and reverts the consumer <see cref="ConsumerStatus.Connected" /> status
+///     to <see cref="ConsumerStatus.Started" /> when the local poll timeout is exceeded. The consumer should
 ///     eventually reconnect but this allows to accurately track its status.
 /// </summary>
 public class KafkaConsumerLocalTimeoutMonitor : IKafkaConsumerLogCallback

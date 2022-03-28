@@ -13,7 +13,7 @@ namespace Silverback.Collections;
 ///     This class is used as in-memory storage for various items.
 /// </summary>
 /// <typeparam name="T">
-///    The type of the entities.
+///     The type of the entities.
 /// </typeparam>
 public class InMemoryStorage<T>
     where T : class
@@ -62,7 +62,7 @@ public class InMemoryStorage<T>
     ///     Specifies the number of items to retrieve.
     /// </param>
     /// <returns>
-    ///    The items.
+    ///     The items.
     /// </returns>
     public IReadOnlyCollection<T> Get(int count)
     {
@@ -73,10 +73,10 @@ public class InMemoryStorage<T>
     }
 
     /// <summary>
-    ///    Adds the specified item to the storage.
+    ///     Adds the specified item to the storage.
     /// </summary>
     /// <param name="item">
-    ///    The item to add.
+    ///     The item to add.
     /// </param>
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "_items is locked when used inside SinglePhaseNotification")]
     public void Add(T item)
@@ -90,10 +90,10 @@ public class InMemoryStorage<T>
     }
 
     /// <summary>
-    ///    Removes the specified items from the storage.
+    ///     Removes the specified items from the storage.
     /// </summary>
     /// <param name="itemsToRemove">
-    ///   The items to remove.
+    ///     The items to remove.
     /// </param>
     public void Remove(IEnumerable<T> itemsToRemove)
     {

@@ -27,7 +27,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public ConsumeLoopHandler(
         KafkaConsumer consumer,
@@ -39,7 +39,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
-    public InstanceIdentifier Id { get; } = new();
+    public string Id { get; } = Guid.NewGuid().ToString();
 
     public Task Stopping => _consumeTaskCompletionSource?.Task ?? Task.CompletedTask;
 
@@ -47,7 +47,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     public void Start()
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         if (IsConsuming)
@@ -77,7 +77,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     public Task StopAsync()
     {
-        if (_disposed)
+        if (_isDisposed)
             throw new ObjectDisposedException(GetType().FullName);
 
         if (!IsConsuming)
@@ -97,7 +97,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     public void Dispose()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         _logger.LogConsumerLowLevelTrace(
@@ -113,7 +113,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             "ConsumeLoopHandler disposed. | instanceId: {instanceId}",
             () => new object[] { Id });
 
-        _disposed = true;
+        _isDisposed = true;
     }
 
     private async Task ConsumeAsync(
@@ -153,7 +153,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         // The call to DisconnectAsync is the only exception since we are exiting anyway and Consume will
         // not be called anymore.
         if (!cancellationToken.IsCancellationRequested)
-            await _consumer.DisconnectAsync().ConfigureAwait(false);
+            await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
     }
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -162,10 +162,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         try
         {
-            ConsumeResult<byte[]?, byte[]?>? consumeResult = _consumer.ConfluentConsumer.Consume(cancellationToken);
-
-            if (consumeResult == null)
-                return true;
+            ConsumeResult<byte[]?, byte[]?> consumeResult = _consumer.Client.Consume(cancellationToken);
 
             _logger.LogConsuming(consumeResult, _consumer);
 
@@ -192,7 +189,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     private void AutoRecoveryIfEnabled(Exception ex)
     {
-        if (!_consumer.Configuration.Client.EnableAutoRecovery)
+        if (!_consumer.Configuration.EnableAutoRecovery)
         {
             _logger.LogKafkaExceptionNoAutoRecovery(_consumer, ex);
             return;

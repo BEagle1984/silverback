@@ -31,7 +31,7 @@ public class RawInboundSpyBrokerBehavior : IConsumerBehavior
     public int SortIndex => int.MinValue;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));

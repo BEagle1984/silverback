@@ -221,11 +221,7 @@ public static class RawProduceComparison
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
     [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
-    private static async Task<Stats> RunSilverbackProduceAsync(
-        int count,
-        Message<byte[], byte[]> message,
-        int? lingerMs,
-        int? batchSize)
+    private static async Task<Stats> RunSilverbackProduceAsync(int count, Message<byte[], byte[]> message, int? lingerMs, int? batchSize)
     {
         string runTitle = GetRunTitle("Silverback ProduceAsync not awaited", lingerMs, batchSize);
         WriteTitle(runTitle);
@@ -234,25 +230,20 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddEndpoints(
-                endpoints => endpoints
-                    .AddKafkaEndpoints(
-                        kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
-                            .AddOutbound<object>(
-                                producer => producer
-                                    .ProduceTo("test")
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithLingerMs(lingerMs)
-                                            .WithBatchSize(batchSize)
-                                            .WithQueueBufferingMaxMessages(10_000_000)
-                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
+            .AddKafkaClients(
+                clients => clients
+                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .AddProducer(
+                        producer => producer
+                            .WithLingerMs(lingerMs)
+                            .WithBatchSize(batchSize)
+                            .WithQueueBufferingMaxMessages(10_000_000)
+                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
-        IProducer producer = broker.GetProducer("test");
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
         int produced = 0;
@@ -263,7 +254,7 @@ public static class RawProduceComparison
             if (i == WarmupMessages)
                 stopwatch.Start();
 
-            producer.ProduceAsync(message.Value)
+            producer.ProduceAsync(message.Value).AsTask()
                 .ContinueWith(
                     _ =>
                     {
@@ -295,25 +286,20 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddEndpoints(
-                endpoints => endpoints
-                    .AddKafkaEndpoints(
-                        kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
-                            .AddOutbound<object>(
-                                producer => producer
-                                    .ProduceTo("test")
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithLingerMs(lingerMs)
-                                            .WithBatchSize(batchSize)
-                                            .WithQueueBufferingMaxMessages(10_000_000)
-                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
+            .AddKafkaClients(
+                clients => clients
+                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .AddProducer(
+                        producer => producer
+                            .WithLingerMs(lingerMs)
+                            .WithBatchSize(batchSize)
+                            .WithQueueBufferingMaxMessages(10_000_000)
+                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
-        IProducer producer = broker.GetProducer("test");
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
         int produced = 0;
@@ -364,25 +350,20 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddEndpoints(
-                endpoints => endpoints
-                    .AddKafkaEndpoints(
-                        kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
-                            .AddOutbound<object>(
-                                producer => producer
-                                    .ProduceTo("test")
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithLingerMs(lingerMs)
-                                            .WithBatchSize(batchSize)
-                                            .WithQueueBufferingMaxMessages(10_000_000)
-                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
+            .AddKafkaClients(
+                clients => clients
+                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .AddProducer(
+                        producer => producer
+                            .WithLingerMs(lingerMs)
+                            .WithBatchSize(batchSize)
+                            .WithQueueBufferingMaxMessages(10_000_000)
+                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
-        IProducer producer = broker.GetProducer("test");
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
         int produced = 0;
@@ -431,25 +412,20 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddEndpoints(
-                endpoints => endpoints
-                    .AddKafkaEndpoints(
-                        kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
-                            .AddOutbound<object>(
-                                producer => producer
-                                    .ProduceTo("test")
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithLingerMs(lingerMs)
-                                            .WithBatchSize(batchSize)
-                                            .WithQueueBufferingMaxMessages(10_000_000)
-                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
+            .AddKafkaClients(
+                clients => clients
+                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .AddProducer(
+                        producer => producer
+                            .WithLingerMs(lingerMs)
+                            .WithBatchSize(batchSize)
+                            .WithQueueBufferingMaxMessages(10_000_000)
+                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
-        IProducer producer = broker.GetProducer("test");
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
         int produced = 0;
@@ -502,25 +478,20 @@ public static class RawProduceComparison
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
-            .AddEndpoints(
-                endpoints => endpoints
-                    .AddKafkaEndpoints(
-                        kafkaEndpoints => kafkaEndpoints
-                            .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
-                            .AddOutbound<object>(
-                                producer => producer
-                                    .ProduceTo("test")
-                                    .ConfigureClient(
-                                        configuration => configuration
-                                            .WithLingerMs(lingerMs)
-                                            .WithBatchSize(batchSize)
-                                            .WithQueueBufferingMaxMessages(10_000_000)
-                                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)))))
+            .AddKafkaClients(
+                clients => clients
+                    .WithBootstrapServers("PLAINTEXT://localhost:9092")
+                    .AddProducer(
+                        producer => producer
+                            .WithLingerMs(lingerMs)
+                            .WithBatchSize(batchSize)
+                            .WithQueueBufferingMaxMessages(10_000_000)
+                            .WithQueueBufferingMaxKbytes(TargetTotalBytes)
+                            .Produce<object>(endpoint => endpoint.ProduceTo("test"))))
             .Services.BuildServiceProvider();
 
-        IBroker broker = serviceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
-        IProducer producer = broker.GetProducer("test");
+        await serviceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
+        IProducer producer = serviceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint("test");
         Stopwatch stopwatch = new();
 
         int produced = 0;

@@ -6,13 +6,12 @@ using System;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the HandleMessagesOfType methods to the <see cref="SilverbackBuilder" />.
+///     Implements the <c>HandleMessagesOfType</c> methods.
 /// </content>
 public partial class SilverbackBuilder
 {
     /// <summary>
-    ///     Configures the type <typeparamref name="TMessage" /> to be recognized as a message to enable
-    ///     features like automatic republishing.
+    ///     Configures the type <typeparamref name="TMessage" /> to be recognized as a message to enable features like automatic republishing.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The (base) message type.
@@ -24,8 +23,7 @@ public partial class SilverbackBuilder
         HandleMessagesOfType(typeof(TMessage));
 
     /// <summary>
-    ///     Configures the specified type to be recognized as a message to enable features like automatic
-    ///     republishing.
+    ///     Configures the specified type to be recognized as a message to enable features like automatic republishing.
     /// </summary>
     /// <param name="messageType">
     ///     The (base) message type.

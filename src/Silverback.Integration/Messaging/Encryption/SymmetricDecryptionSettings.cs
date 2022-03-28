@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Encryption;
 
@@ -21,9 +22,9 @@ public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase, IDe
         base.Validate();
 
         if (KeyProvider == null && Key == null)
-            throw new EndpointConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");
+            throw new BrokerConfigurationException($"A {nameof(Key)} or a {nameof(KeyProvider)} is required.");
 
         if (KeyProvider != null && Key != null)
-            throw new EndpointConfigurationException($"Cannot set both the {nameof(Key)} and the {nameof(KeyProvider)}.");
+            throw new BrokerConfigurationException($"Cannot set both the {nameof(Key)} and the {nameof(KeyProvider)}.");
     }
 }

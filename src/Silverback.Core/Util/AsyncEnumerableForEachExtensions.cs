@@ -17,7 +17,15 @@ internal static class AsyncEnumerableForEachExtensions
         }
     }
 
-    public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action)
+    public static async ValueTask ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action)
+    {
+        await foreach (T element in source)
+        {
+            await action(element).ConfigureAwait(false);
+        }
+    }
+
+    public static async ValueTask ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, ValueTask> action)
     {
         await foreach (T element in source)
         {

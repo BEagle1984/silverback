@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
@@ -100,9 +99,6 @@ public static class HealthCheckBuilderExtensions
     /// <param name="gracePeriod">
     ///     The grace period to observe after each status change before a consumer is considered unhealthy.
     /// </param>
-    /// <param name="consumersFilter">
-    ///     An optional filter to be applied to the consumers to be tested.
-    /// </param>
     /// <param name="name">
     ///     The health check name. The default is "Consumers".
     /// </param>
@@ -118,9 +114,8 @@ public static class HealthCheckBuilderExtensions
     /// </returns>
     public static IHealthChecksBuilder AddConsumersCheck(
         this IHealthChecksBuilder builder,
-        ConsumerStatus minHealthyStatus = ConsumerStatus.Ready,
+        ConsumerStatus minHealthyStatus = ConsumerStatus.Connected,
         TimeSpan? gracePeriod = null,
-        Func<ConsumerConfiguration, bool>? consumersFilter = null,
         string name = "Consumers",
         HealthStatus? failureStatus = null,
         IEnumerable<string>? tags = null)
@@ -129,18 +124,12 @@ public static class HealthCheckBuilderExtensions
 
         builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
 
-        return builder.Add(
-            new HealthCheckRegistration(
-                name,
-                CreateService,
-                failureStatus,
-                tags));
+        return builder.Add(new HealthCheckRegistration(name, CreateService, failureStatus, tags));
 
         IHealthCheck CreateService(IServiceProvider serviceProvider) =>
             new ConsumersHealthCheck(
                 serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
                 minHealthyStatus,
-                gracePeriod ?? TimeSpan.FromSeconds(30),
-                consumersFilter);
+                gracePeriod ?? TimeSpan.FromSeconds(30));
     }
 }

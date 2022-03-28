@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <content>
-///     Adds the AddBehavior methods to the <see cref="SilverbackBuilder" />.
+///     Implements the <c>AddBehavior</c> methods.
 /// </content>
 public partial class SilverbackBuilder
 {

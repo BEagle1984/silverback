@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Validation;
 /// </summary>
 public class ValidatorConsumerBehavior : IConsumerBehavior
 {
-    private readonly IInboundLogger<ValidatorConsumerBehavior> _logger;
+    private readonly IConsumerLogger<ValidatorConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ValidatorConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
     /// </param>
-    public ValidatorConsumerBehavior(IInboundLogger<ValidatorConsumerBehavior> logger)
+    public ValidatorConsumerBehavior(IConsumerLogger<ValidatorConsumerBehavior> logger)
     {
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -32,24 +32,20 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Validator;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
-            context.Envelope is IInboundEnvelope deserializeEnvelope &&
-            deserializeEnvelope.Message != null)
+            context.Envelope is IInboundEnvelope { Message: { } } deserializeEnvelope)
         {
-            (bool isValid, string? validationErrors) = MessageValidator.CheckMessageIsValid(
-                deserializeEnvelope.Message,
-                context.Envelope.Endpoint.Configuration.MessageValidationMode);
-
-            if (!isValid)
+            if (!MessageValidator.IsValid(
+                    deserializeEnvelope.Message,
+                    context.Envelope.Endpoint.Configuration.MessageValidationMode,
+                    out string? validationErrors))
             {
-                _logger.LogInvalidMessageProcessed(validationErrors!);
+                _logger.LogInvalidMessage(context.Envelope, validationErrors);
             }
         }
 

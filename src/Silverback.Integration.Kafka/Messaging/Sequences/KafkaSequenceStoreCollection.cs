@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Sequences;
 /// <summary>
 ///     This <see cref="ISequenceStoreCollection" /> will create a sequence store per each partition.
 /// </summary>
-internal class KafkaSequenceStoreCollection : ISequenceStoreCollection
+internal sealed class KafkaSequenceStoreCollection : ISequenceStoreCollection
 {
     private static readonly TopicPartition AnyTopicPartition = new(string.Empty, Partition.Any);
 
@@ -26,11 +26,9 @@ internal class KafkaSequenceStoreCollection : ISequenceStoreCollection
 
     private readonly Func<TopicPartition, ISequenceStore> _sequenceStoreFactory;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
-    public KafkaSequenceStoreCollection(
-        IServiceProvider serviceProvider,
-        bool processPartitionsIndependently)
+    public KafkaSequenceStoreCollection(IServiceProvider serviceProvider, bool processPartitionsIndependently)
     {
         Check.NotNull(serviceProvider, nameof(serviceProvider));
         _processPartitionsIndependently = processPartitionsIndependently;
@@ -59,11 +57,20 @@ internal class KafkaSequenceStoreCollection : ISequenceStoreCollection
 
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
-        await _sequenceStores.Values.ForEachAsync(store => store.DisposeAsync().AsTask()).ConfigureAwait(false);
-        _disposed = true;
+        await _sequenceStores.Values.ForEachAsync(store => store.DisposeAsync()).ConfigureAwait(false);
+        _isDisposed = true;
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed)
+            return;
+
+        _sequenceStores.Values.ForEach(store => store.Dispose());
+        _isDisposed = true;
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -14,7 +14,7 @@ namespace Silverback.Tests.Core.Configuration;
 public partial class SilverbackBuilderFixture
 {
     [Fact]
-    public void WithLogLevels_ShouldMapLogLevels()
+    public void WithLogLevels_ShouldSetLogLevelsDictionary()
     {
         ServiceCollection services = new();
 

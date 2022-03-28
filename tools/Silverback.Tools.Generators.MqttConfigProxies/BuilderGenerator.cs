@@ -18,10 +18,10 @@ internal sealed class BuilderGenerator
 
     private readonly StringBuilder _stringBuilder = new();
 
-    public BuilderGenerator()
+    public BuilderGenerator(string generatedClassName)
     {
         _proxiedType = typeof(MqttClientOptionsBuilder);
-        _generatedClassName = "MqttClientConfigurationBuilder";
+        _generatedClassName = generatedClassName;
     }
 
     public string Generate()

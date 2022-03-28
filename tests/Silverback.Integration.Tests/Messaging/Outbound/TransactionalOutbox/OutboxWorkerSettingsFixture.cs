@@ -4,7 +4,7 @@
 using System;
 using FluentAssertions;
 using Silverback.Lock;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox;

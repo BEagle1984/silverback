@@ -29,17 +29,13 @@ public class CustomHeadersMapperConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.CustomHeadersMapper;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (_mappings != null && _mappings.Count > 0)
-        {
+        if (_mappings is { Count: > 0 })
             _mappings.Revert(context.Envelope.Headers);
-        }
 
         await next(context).ConfigureAwait(false);
     }

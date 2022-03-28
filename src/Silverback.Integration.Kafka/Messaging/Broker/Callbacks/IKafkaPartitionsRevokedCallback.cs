@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnPartitionsRevoked" /> event handler.
 /// </summary>
-public interface IKafkaPartitionsRevokedCallback : IBrokerCallback
+public interface IKafkaPartitionsRevokedCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called immediately prior to a group partition assignment being revoked.
@@ -21,7 +21,5 @@ public interface IKafkaPartitionsRevokedCallback : IBrokerCallback
     /// <param name="consumer">
     ///     The related consumer instance.
     /// </param>
-    void OnPartitionsRevoked(
-        IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset,
-        KafkaConsumer consumer);
+    void OnPartitionsRevoked(IReadOnlyCollection<TopicPartitionOffset> topicPartitionsOffset, KafkaConsumer consumer);
 }

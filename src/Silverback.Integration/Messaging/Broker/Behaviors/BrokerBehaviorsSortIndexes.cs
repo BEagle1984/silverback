@@ -3,12 +3,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.BinaryMessages;
+using Silverback.Messaging.Consuming;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
-using Silverback.Messaging.Inbound;
-using Silverback.Messaging.Inbound.Transaction;
-using Silverback.Messaging.Outbound.Enrichers;
+using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;

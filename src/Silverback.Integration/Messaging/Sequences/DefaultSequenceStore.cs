@@ -29,7 +29,7 @@ internal sealed class DefaultSequenceStore : ISequenceStore
 
     public bool Disposed { get; private set; }
 
-    public Task<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
+    public ValueTask<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
         where TSequence : class, ISequence
     {
         if (Disposed)
@@ -49,10 +49,10 @@ internal sealed class DefaultSequenceStore : ISequenceStore
         if (sequence is ISequenceImplementation sequenceImpl)
             sequenceImpl.SetIsNew(false);
 
-        return Task.FromResult((TSequence?)sequence);
+        return ValueTaskFactory.FromResult((TSequence?)sequence);
     }
 
-    public async Task<TSequence> AddAsync<TSequence>(TSequence sequence)
+    public async ValueTask<TSequence> AddAsync<TSequence>(TSequence sequence)
         where TSequence : class, ISequence
     {
         Check.NotNull(sequence, nameof(sequence));
@@ -77,7 +77,7 @@ internal sealed class DefaultSequenceStore : ISequenceStore
         return sequence;
     }
 
-    public Task RemoveAsync(string sequenceId)
+    public ValueTask RemoveAsync(string sequenceId)
     {
         _logger.LogLowLevelTrace(
             "Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.",
@@ -88,28 +88,22 @@ internal sealed class DefaultSequenceStore : ISequenceStore
             });
 
         _store.Remove(sequenceId);
-        return Task.CompletedTask;
+        return default;
     }
 
     public IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false) =>
-        _store.Values.Where(
-                sequence =>
-                    sequence.IsPending && (includeUnbounded || sequence is not UnboundedSequence))
-            .ToList();
+        _store.Values.Where(sequence => sequence.IsPending && (includeUnbounded || sequence is not UnboundedSequence)).ToList();
 
     public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
+
+    public void Dispose() => AsyncHelper.RunSynchronously(DisposeAsync);
 
     public async ValueTask DisposeAsync()
     {
         if (Disposed)
             return;
 
-        _logger.LogLowLevelTrace(
-            "Disposing sequence store {sequenceStoreId}",
-            () => new object[]
-            {
-                _id
-            });
+        _logger.LogLowLevelTrace("Disposing sequence store {sequenceStoreId}", () => new object[] { _id });
 
         await _store.Values.AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
 

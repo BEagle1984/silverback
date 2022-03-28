@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -23,23 +24,28 @@ internal sealed class ReturnValueHandlerService
     }
 
     [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-    public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, bool executeAsync)
+    public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, ExecutionFlow executionFlow)
     {
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
             return false;
 
         IReturnValueHandler? returnValueHandler = _returnValueHandlers.FirstOrDefault(handler => handler.CanHandle(returnValue));
 
-        if (returnValueHandler != null)
-        {
-            if (executeAsync)
-                await returnValueHandler.HandleAsync(returnValue).ConfigureAwait(false);
-            else
-                returnValueHandler.Handle(returnValue);
+        if (returnValueHandler == null)
+            return false;
 
-            return true;
+        switch (executionFlow)
+        {
+            case ExecutionFlow.Async:
+                await returnValueHandler.HandleAsync(returnValue).ConfigureAwait(false);
+                break;
+            case ExecutionFlow.Sync:
+                returnValueHandler.Handle(returnValue);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(executionFlow), executionFlow, "Invalid execution flow.");
         }
 
-        return false;
+        return true;
     }
 }

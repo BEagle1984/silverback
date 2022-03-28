@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     Declares the <see cref="OnClientConnectedAsync" /> event handler.
 /// </summary>
-public interface IMqttClientConnectedCallback : IBrokerCallback
+public interface IMqttClientConnectedCallback : IBrokerClientCallback
 {
     /// <summary>
     ///     Called when the underlying <see cref="IMqttClient" /> connects to the broker.

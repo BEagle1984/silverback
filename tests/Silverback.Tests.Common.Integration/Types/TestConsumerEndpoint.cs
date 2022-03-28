@@ -5,9 +5,9 @@ using Silverback.Messaging;
 
 namespace Silverback.Tests.Types;
 
-public record TestConsumerEndpoint : ConsumerEndpoint<TestConsumerConfiguration>
+public record TestConsumerEndpoint : ConsumerEndpoint<TestConsumerEndpointConfiguration>
 {
-    public TestConsumerEndpoint(string topic, TestConsumerConfiguration configuration)
+    public TestConsumerEndpoint(string topic, TestConsumerEndpointConfiguration configuration)
         : base(topic, configuration)
     {
         Topic = topic;
@@ -15,5 +15,5 @@ public record TestConsumerEndpoint : ConsumerEndpoint<TestConsumerConfiguration>
 
     public string Topic { get; }
 
-    public static TestConsumerEndpoint GetDefault() => TestConsumerConfiguration.GetDefault().GetDefaultEndpoint();
+    public static TestConsumerEndpoint GetDefault() => TestConsumerEndpointConfiguration.GetDefault().GetDefaultEndpoint();
 }

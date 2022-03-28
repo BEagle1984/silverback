@@ -43,9 +43,7 @@ internal sealed class CustomHeadersMappings : ICustomHeadersMappings
             MessageHeader header = headers[i];
 
             if (mappings.TryGetValue(header.Name, out string? mappedName))
-            {
                 headers[i] = header with { Name = mappedName };
-            }
         }
     }
 }

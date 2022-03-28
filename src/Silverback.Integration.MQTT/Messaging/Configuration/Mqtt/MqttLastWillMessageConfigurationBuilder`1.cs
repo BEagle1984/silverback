@@ -6,7 +6,7 @@ using System.IO;
 using MQTTnet;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.EndpointResolvers;
+using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -38,15 +38,15 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     /// <summary>
     ///     Specifies the name of the topic to produce the LWT message to.
     /// </summary>
-    /// <param name="topicName">
-    ///     The name of the topic.
+    /// <param name="topic">
+    ///     The topic.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageConfigurationBuilder<TMessage> ProduceTo(string topicName)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> ProduceTo(string topic)
     {
-        _topic = Check.NotNullOrEmpty(topicName, nameof(topicName));
+        _topic = Check.NotNullOrEmpty(topic, nameof(topic));
         return this;
     }
 
@@ -186,7 +186,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
 
         if (!string.IsNullOrEmpty(_topic))
         {
-            MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerConfiguration());
+            MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerEndpointConfiguration());
             payloadStream = AsyncHelper
                 .RunSynchronously(() => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint).AsTask());
         }

@@ -7,5 +7,5 @@ namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
 public class TestEventTwo : IIntegrationEvent
 {
-    public string? Content { get; set; }
+    public string? ContentEventTwo { get; set; }
 }

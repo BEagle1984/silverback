@@ -15,15 +15,15 @@ namespace Silverback.Messaging.Serialization;
 /// </summary>
 public class DeserializerConsumerBehavior : IConsumerBehavior
 {
-    private readonly IInboundLogger<DeserializerConsumerBehavior> _logger;
+    private readonly IConsumerLogger<DeserializerConsumerBehavior> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="DeserializerConsumerBehavior" /> class.
     /// </summary>
     /// <param name="logger">
-    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    ///     The <see cref="IConsumerLogger{TCategoryName}" />.
     /// </param>
-    public DeserializerConsumerBehavior(IInboundLogger<DeserializerConsumerBehavior> logger)
+    public DeserializerConsumerBehavior(IConsumerLogger<DeserializerConsumerBehavior> logger)
     {
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -32,9 +32,7 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async Task HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -56,31 +54,22 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
     {
         IRawInboundEnvelope envelope = context.Envelope;
 
-        if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
+        if (envelope is IInboundEnvelope { Message: { } } inboundEnvelope)
             return inboundEnvelope;
 
         (object? deserializedObject, Type deserializedType) =
-            await envelope.Endpoint.Configuration.Serializer.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint)
-                .ConfigureAwait(false);
+            await envelope.Endpoint.Configuration.Serializer.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
 
-        envelope.Headers.AddIfNotExists(
-            DefaultMessageHeaders.MessageType,
-            deserializedType.AssemblyQualifiedName);
+        envelope.Headers.AddIfNotExists(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
 
         return deserializedObject == null
-            ? HandleNullMessage(context, envelope, deserializedType)
-            : SerializationHelper.CreateTypedInboundEnvelope(
-                envelope,
-                deserializedObject,
-                deserializedType);
+            ? HandleNullMessage(envelope, deserializedType)
+            : SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
     }
 
-    private static IRawInboundEnvelope? HandleNullMessage(
-        ConsumerPipelineContext context,
-        IRawInboundEnvelope envelope,
-        Type deserializedType)
+    private static IRawInboundEnvelope? HandleNullMessage(IRawInboundEnvelope envelope, Type deserializedType)
     {
-        switch (context.Consumer.Configuration.NullMessageHandlingStrategy)
+        switch (envelope.Endpoint.Configuration.NullMessageHandlingStrategy)
         {
             case NullMessageHandlingStrategy.Tombstone:
                 return CreateTombstoneEnvelope(envelope, deserializedType);

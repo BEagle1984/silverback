@@ -30,15 +30,15 @@ public class ActivityProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         using Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
-        _activityEnricherFactory
-            .GetActivityEnricher(context.Envelope.Endpoint.Configuration)
-            .EnrichOutboundActivity(activity, context);
+
+        _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.Configuration).EnrichOutboundActivity(activity, context);
+
         await next(context).ConfigureAwait(false);
     }
 }

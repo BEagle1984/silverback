@@ -29,12 +29,13 @@ public class CustomHeadersMapperProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.CustomHeadersMapper;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        _mappings?.Apply(context.Envelope.Headers);
+        if (_mappings is { Count: > 0 })
+            _mappings.Apply(context.Envelope.Headers);
 
         await next(context).ConfigureAwait(false);
     }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,17 +29,17 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
                 .AddFakeLogger()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddKafka())
-                .AddKafkaEndpoints(
-                    endpoints => endpoints
-                        .ConfigureClient(configuration => configuration.WithBootstrapServers("PLAINTEXT://localhost:9092"))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://localhost:9092")
 
                         // Produce each SampleMessage to a samples-perf topic
-                        .AddOutbound<SampleMessage1>(producer => producer.ProduceTo("samples-perf-1"))
-                        .AddOutbound<SampleMessage2>(producer => producer.ProduceTo("samples-perf-2"))
-                        .AddOutbound<SampleMessage3>(producer => producer.ProduceTo("samples-perf-3"))
-                        .AddOutbound<SampleMessage4>(producer => producer.ProduceTo("samples-perf-4"))
-                        .AddOutbound<SampleMessage4>(producer => producer.ProduceTo("samples-perf-5"))
-                        .AddOutbound<SampleMessage5>(producer => producer.ProduceTo("samples-perf-6"))));
+                        .AddProducer(producer => producer.Produce<SampleMessage1>(endpoint => endpoint.ProduceTo("samples-perf-1")))
+                        .AddProducer(producer => producer.Produce<SampleMessage2>(endpoint => endpoint.ProduceTo("samples-perf-2")))
+                        .AddProducer(producer => producer.Produce<SampleMessage3>(endpoint => endpoint.ProduceTo("samples-perf-3")))
+                        .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-4")))
+                        .AddProducer(producer => producer.Produce<SampleMessage4>(endpoint => endpoint.ProduceTo("samples-perf-5")))
+                        .AddProducer(producer => producer.Produce<SampleMessage5>(endpoint => endpoint.ProduceTo("samples-perf-6")))));
 
         _serviceScope = _rootServiceProvider.CreateScope();
 
@@ -173,6 +172,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
                     {
                         Number = ++number
                     })
+                .AsTask()
                 .ContinueWith(
                     task =>
                     {
@@ -286,8 +286,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     private async Task ConnectAsync()
     {
         Console.WriteLine("Connecting...");
-        IBroker broker = _rootServiceProvider.GetRequiredService<IBroker>();
-        await broker.ConnectAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().ConnectAllAsync();
 
         Console.WriteLine("Connected. Waiting 5 seconds...");
 
@@ -299,8 +298,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     private async Task DisconnectAsync()
     {
         Console.WriteLine("Disconnecting...");
-        IBroker broker = _rootServiceProvider.GetRequiredService<IBroker>();
-        await broker.DisconnectAsync();
+        await _rootServiceProvider.GetRequiredService<IBrokerClientsConnector>().DisconnectAllAsync();
 
         Console.WriteLine("Disconnected.");
 
@@ -310,8 +308,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
     }
 
     private IProducer GetProducer(string endpointName) =>
-        _serviceScope.ServiceProvider.GetRequiredService<KafkaBroker>()
-            .Producers.First(producer => producer.Configuration.RawName == endpointName);
+        _serviceScope.ServiceProvider.GetRequiredService<IProducerCollection>().GetProducerForEndpoint(endpointName);
 
     internal sealed class Stats
     {

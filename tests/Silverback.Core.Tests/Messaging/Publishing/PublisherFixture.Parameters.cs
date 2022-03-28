@@ -45,8 +45,8 @@ public partial class PublisherFixture
                 .AddSingleton(counter)
                 .AddFakeLogger()
                 .AddSilverback()
-                .AddDelegateSubscriber2<TestEventOne, Counter>(Handle1)
-                .AddDelegateSubscriber2<object, Counter>(Handle2));
+                .AddDelegateSubscriber<TestEventOne, Counter>(Handle1)
+                .AddDelegateSubscriber<object, Counter>(Handle2));
 
         static void Handle1(TestEvent message, Counter counter) => counter.Increment();
         static void Handle2(object message, Counter counterParam) => counterParam.IncrementAsync();

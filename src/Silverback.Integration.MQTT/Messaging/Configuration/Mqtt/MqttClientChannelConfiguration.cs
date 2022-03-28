@@ -1,12 +1,13 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using MQTTnet.Client.Options;
 using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
 /// <summary>
-///     The base class for <see cref="MqttClientTcpConfiguration"/> and <see cref="MqttClientWebSocketConfiguration"/>.
+///     The base class for <see cref="MqttClientTcpConfiguration" /> and <see cref="MqttClientWebSocketConfiguration" />.
 /// </summary>
 public abstract record MqttClientChannelConfiguration : IValidatableSettings
 {
@@ -18,5 +19,5 @@ public abstract record MqttClientChannelConfiguration : IValidatableSettings
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public abstract void Validate();
 
-    internal abstract MQTTnet.Client.Options.IMqttClientChannelOptions ToMqttNetType();
+    internal abstract IMqttClientChannelOptions ToMqttNetType();
 }

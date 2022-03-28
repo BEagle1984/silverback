@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -38,12 +39,12 @@ public static class MessageSerializerExtensions
     private record NullProducerEndpoint : ProducerEndpoint
     {
         private NullProducerEndpoint()
-            : base("null", new NullProducerConfiguration())
+            : base("null", new NullProducerEndpointConfiguration())
         {
         }
 
         public static NullProducerEndpoint Instance { get; } = new();
 
-        private record NullProducerConfiguration : ProducerConfiguration<NullProducerEndpoint>;
+        private record NullProducerEndpointConfiguration : ProducerEndpointConfiguration<NullProducerEndpoint>;
     }
 }

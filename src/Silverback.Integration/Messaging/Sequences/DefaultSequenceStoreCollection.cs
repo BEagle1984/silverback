@@ -22,7 +22,7 @@ internal sealed class DefaultSequenceStoreCollection : ISequenceStoreCollection
 
     private ISequenceStore _sequenceStore;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public DefaultSequenceStoreCollection(IServiceProvider serviceProvider)
     {
@@ -39,7 +39,7 @@ internal sealed class DefaultSequenceStoreCollection : ISequenceStoreCollection
 
         lock (_lockObject)
         {
-            if (_sequenceStore.Disposed && !_disposed)
+            if (_sequenceStore.Disposed && !_isDisposed)
                 _sequenceStore = _serviceProvider.GetRequiredService<ISequenceStore>();
         }
 
@@ -52,13 +52,22 @@ internal sealed class DefaultSequenceStoreCollection : ISequenceStoreCollection
         yield return _sequenceStore;
     }
 
+    public void Dispose()
+    {
+        if (_isDisposed)
+            return;
+
+        _sequenceStore.Dispose();
+        _isDisposed = true;
+    }
+
     public async ValueTask DisposeAsync()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         await _sequenceStore.DisposeAsync().ConfigureAwait(false);
-        _disposed = true;
+        _isDisposed = true;
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

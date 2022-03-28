@@ -118,7 +118,7 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    public Task CompleteAsync(CancellationToken cancellationToken = default) =>
+    public ValueTask CompleteAsync(CancellationToken cancellationToken = default) =>
         _lazyStreams.ParallelForEachAsync(
             async lazyStream =>
             {

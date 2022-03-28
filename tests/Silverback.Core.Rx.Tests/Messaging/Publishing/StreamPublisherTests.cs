@@ -35,8 +35,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEvent> observable)
         {
@@ -80,8 +80,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IReadOnlyCollection<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<List<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IReadOnlyCollection<IEvent>>(Handle1)
+                .AddDelegateSubscriber<List<TestEventOne>>(Handle2));
 
         void Handle1(IReadOnlyCollection<IEvent> message) => Interlocked.Increment(ref receivedEnumeratedStreams);
         void Handle2(List<TestEventOne> message) => Interlocked.Increment(ref receivedEnumeratedStreams);
@@ -113,8 +113,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEvent> observable)
         {
@@ -154,9 +154,9 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestCommandOne>>(Handle3));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestCommandOne>>(Handle3));
 
         void Handle1(IMessageStreamObservable<IEvent> observable)
         {
@@ -223,8 +223,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEvent> observable)
         {
@@ -270,8 +270,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEvent> observable) =>
             observable.Subscribe(
@@ -312,8 +312,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEvent> observable) =>
             observable.Subscribe(
@@ -361,8 +361,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEnvelope>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEnvelope>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEnvelope>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamObservable<IEnvelope> observable)
         {
@@ -404,8 +404,8 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEventOne>>(Handle1)
-                .AddDelegateSubscriber2<IMessageStreamObservable<TestEnvelope>>(Handle2));
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(Handle1)
+                .AddDelegateSubscriber<IMessageStreamObservable<TestEnvelope>>(Handle2));
 
         void Handle1(IMessageStreamObservable<TestEventOne> observable)
         {
@@ -446,7 +446,7 @@ public class StreamPublisherTests
                 .AddFakeLogger()
                 .AddSilverback()
                 .AsObservable()
-                .AddDelegateSubscriber2<IMessageStreamObservable<IEvent>>(Handle));
+                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle));
 
         void Handle(IMessageStreamObservable<IEvent> observable) =>
             observable.Subscribe(message => receivedEvents.Add(message));

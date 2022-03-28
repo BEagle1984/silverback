@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageErrorPolicyBuilder>
 {
-    private readonly ProducerConfiguration _producerConfiguration;
+    private readonly string _endpointName;
 
     private int? _maxFailedAttempts;
 
@@ -22,12 +22,13 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
     /// <summary>
     ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicyBuilder" /> class.
     /// </summary>
-    /// <param name="producerConfiguration">
-    ///     The producer configuration.
+    /// <param name="endpointName">
+    ///     The endpoint name. It could be either the topic/queue name or the friendly name of an endpoint that is already configured with
+    ///     a producer.
     /// </param>
-    public MoveMessageErrorPolicyBuilder(ProducerConfiguration producerConfiguration)
+    public MoveMessageErrorPolicyBuilder(string endpointName)
     {
-        _producerConfiguration = Check.NotNull(producerConfiguration, nameof(producerConfiguration));
+        _endpointName = Check.NotNull(endpointName, nameof(endpointName));
     }
 
     /// <inheritdoc cref="ErrorPolicyBaseBuilder{TBuilder}.This" />
@@ -82,7 +83,7 @@ public class MoveMessageErrorPolicyBuilder : ErrorPolicyBaseBuilder<MoveMessageE
 
     /// <inheritdoc cref="ErrorPolicyBaseBuilder{TBuilder}.BuildCore" />
     protected override ErrorPolicyBase BuildCore() =>
-        new MoveMessageErrorPolicy(_producerConfiguration)
+        new MoveMessageErrorPolicy(_endpointName)
         {
             MaxFailedAttempts = _maxFailedAttempts,
             TransformMessageAction = _transformMessageAction

@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Collections;
 
 /// <summary>
-///     Provides the <see cref="Empty{T}"/> factory method.
+///     Provides the <see cref="Empty{T}" /> factory method.
 /// </summary>
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix", Justification = "Named after the actual collection")]
 public static class ValueReadOnlyCollection
