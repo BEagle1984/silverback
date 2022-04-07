@@ -3,19 +3,31 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Confluent.Kafka;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class InMemoryPartition : IInMemoryPartition
     {
-        private readonly List<Message<byte[]?, byte[]?>> _messages = new();
+        private readonly List<StoredMessage> _messages = new();
+
+        private readonly List<Transaction> _transactions = new();
 
         public InMemoryPartition(in int index, InMemoryTopic topic)
         {
             Partition = new Partition(index);
             Topic = topic;
+        }
+
+        private enum StoredMessageStatus
+        {
+            Pending,
+
+            Committed,
+
+            Deleted
         }
 
         public Partition Partition { get; }
@@ -26,12 +38,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public Offset LastOffset { get; private set; } = Offset.Unset;
 
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-        public IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages => _messages;
-
         public int TotalMessagesCount { get; private set; }
 
-        public Offset Add(Message<byte[]?, byte[]?> message)
+        public Offset Add(Message<byte[]?, byte[]?> message, Guid transactionalUniqueId)
         {
             lock (_messages)
             {
@@ -40,11 +49,27 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 else
                     LastOffset++;
 
-                _messages.Add(message);
+                if (transactionalUniqueId == Guid.Empty)
+                {
+                    _messages.Add(new StoredMessage(message, LastOffset, StoredMessageStatus.Committed));
+                    TotalMessagesCount++;
+                }
+                else
+                {
+                    Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionalUniqueId);
 
-                TotalMessagesCount++;
+                    if (transaction == null)
+                    {
+                        transaction = new Transaction(transactionalUniqueId);
+                        _transactions.Add(transaction);
+                    }
 
-                return new Offset(LastOffset);
+                    StoredMessage storedMessage = new(message, LastOffset, StoredMessageStatus.Pending);
+                    _messages.Add(storedMessage);
+                    transaction.Messages.Add(storedMessage);
+                }
+
+                return LastOffset;
             }
         }
 
@@ -52,23 +77,106 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             lock (_messages)
             {
-                if (offset.Value > LastOffset || _messages.Count == 0)
+                while (true)
                 {
-                    result = null;
-                    return false;
+                    if (offset.Value > LastOffset || _messages.Count == 0)
+                    {
+                        result = null;
+                        return false;
+                    }
+
+                    StoredMessage storedMessage = _messages[(int)(offset.Value - Math.Max(0, FirstOffset.Value))];
+
+                    switch (storedMessage.Status)
+                    {
+                        case StoredMessageStatus.Pending:
+                            result = null;
+                            return false;
+                        case StoredMessageStatus.Deleted:
+                            offset++;
+                            continue;
+                        default:
+                            result = new ConsumeResult<byte[]?, byte[]?>
+                            {
+                                IsPartitionEOF = false,
+                                Message = storedMessage.Message,
+                                Offset = offset,
+                                Partition = Partition,
+                                Topic = Topic.Name
+                            };
+                            return true;
+                    }
+                }
+            }
+        }
+
+        public bool HasMessages(Offset offset) => TryPull(Math.Max(0, offset), out _);
+
+        public IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages() =>
+            _messages
+                .Where(message => message.Status == StoredMessageStatus.Committed)
+                .Select(message => message.Message)
+                .AsReadOnlyCollection();
+
+        public void CommitTransaction(Guid transactionUniqueId)
+        {
+            lock (_messages)
+            {
+                Transaction? transaction =
+                    _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+
+                if (transaction == null)
+                    return;
+
+                foreach (StoredMessage message in transaction.Messages)
+                {
+                    message.Status = StoredMessageStatus.Committed;
                 }
 
-                result = new ConsumeResult<byte[]?, byte[]?>
+                _transactions.Remove(transaction);
+                TotalMessagesCount += transaction.Messages.Count;
+            }
+        }
+
+        public void AbortTransaction(Guid transactionUniqueId)
+        {
+            lock (_messages)
+            {
+                Transaction? transaction =
+                    _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+
+                if (transaction == null)
+                    return;
+
+                foreach (StoredMessage message in transaction.Messages)
                 {
-                    IsPartitionEOF = false,
-                    Message = _messages[(int)(offset.Value - Math.Max(0, FirstOffset.Value))],
-                    Offset = offset,
-                    Partition = Partition,
-                    Topic = Topic.Name
-                };
+                    message.Status = StoredMessageStatus.Deleted;
+                }
+
+                _transactions.Remove(transaction);
+                TotalMessagesCount -= transaction.Messages.Count;
+            }
+        }
+
+        private class StoredMessage
+        {
+            public StoredMessage(Message<byte[]?, byte[]?> message, Offset offset, StoredMessageStatus status)
+            {
+                Message = message;
+                Offset = offset;
+                Status = status;
             }
 
-            return true;
+            public Message<byte[]?, byte[]?> Message { get; }
+
+            public Offset Offset { get; }
+
+            public StoredMessageStatus Status { get; set; }
+        }
+
+        private record Transaction(Guid Id)
+        {
+            public List<StoredMessage> Messages { get; } = new();
         }
     }
 }

@@ -12,24 +12,24 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     public interface IInMemoryPartition
     {
         /// <summary>
-        ///     Gets the <see cref="Partition"/> (index).
+        ///     Gets the <see cref="Partition" /> (index).
         /// </summary>
         Partition Partition { get; }
 
         /// <summary>
-        ///     Gets the <see cref="Offset"/> of the first message in the partition.
+        ///     Gets the <see cref="Offset" /> of the first message in the partition.
         /// </summary>
         Offset FirstOffset { get; }
 
         /// <summary>
-        ///     Gets the <see cref="Offset"/> of the latest message in the partition.
+        ///     Gets the <see cref="Offset" /> of the latest message in the partition.
         /// </summary>
         Offset LastOffset { get; }
 
         /// <summary>
-        ///     Gets the messages written to the partition.
+        ///     Gets the total number of messages written to the partition.
         /// </summary>
-        IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages { get; }
+        int TotalMessagesCount { get; }
 
         /// <summary>
         ///     Pulls the next message from the partition, if available.
@@ -44,5 +44,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     A value indicating whether a message was available for pulling.
         /// </returns>
         bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result);
+
+        /// <summary>
+        ///     Gets all messages currently stored in the partition.
+        /// </summary>
+        /// <returns>
+        ///     The messages.
+        /// </returns>
+        IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages();
     }
 }

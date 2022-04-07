@@ -258,10 +258,8 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<IProducer> producers,
             IReadOnlyCollection<IConsumer> consumers)
         {
-            await producers.ParallelForEachAsync(producer => producer.ConnectAsync(), MaxConnectParallelism)
-                .ConfigureAwait(false);
-            await consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism)
-                .ConfigureAwait(false);
+            await producers.ParallelForEachAsync(producer => producer.ConnectAsync(), MaxConnectParallelism).ConfigureAwait(false);
+            await consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism).ConfigureAwait(false);
         }
 
         /// <summary>

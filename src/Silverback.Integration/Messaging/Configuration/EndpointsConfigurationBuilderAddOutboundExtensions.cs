@@ -366,8 +366,7 @@ namespace Silverback.Messaging.Configuration
         private static void PreloadProducers(IOutboundRouter router, IServiceProvider serviceProvider)
         {
             var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            var logger =
-                serviceProvider.GetRequiredService<ISilverbackLogger<IEndpointsConfigurationBuilder>>();
+            var logger = serviceProvider.GetRequiredService<ISilverbackLogger<IEndpointsConfigurationBuilder>>();
 
             router.Endpoints.ForEach(endpoint => PreloadProducer(brokers, endpoint, logger));
         }

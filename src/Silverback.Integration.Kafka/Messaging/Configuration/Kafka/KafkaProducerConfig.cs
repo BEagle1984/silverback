@@ -54,6 +54,11 @@ namespace Silverback.Messaging.Configuration.Kafka
         public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <summary>
+        ///     The transactions init operation timeout. The default is 30 seconds.
+        /// </summary>
+        public TimeSpan TransactionInitTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         ///     Gets a value indicating whether the persistence status will be returned as part of the
         ///     delivery reports according to the explicit configuration and Kafka defaults.
         /// </summary>
@@ -62,6 +67,11 @@ namespace Silverback.Messaging.Configuration.Kafka
             (string.IsNullOrEmpty(DeliveryReportFields) ||
              DeliveryReportFields == "all" ||
              DeliveryReportFields.Contains("status", StringComparison.Ordinal));
+
+        /// <summary>
+        ///     Gets a value indicating whether a TransactionalId has been specified.
+        /// </summary>
+        internal bool IsTransactional => !string.IsNullOrEmpty(TransactionalId);
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public override void Validate()

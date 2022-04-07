@@ -60,6 +60,19 @@ namespace Silverback.Messaging.Broker
                 .GetProducer(endpoint);
         }
 
+        // public IProducer GetProducer(string endpointName)
+        // {
+        //     Check.NotEmpty(endpointName, nameof(endpointName));
+        //
+        //     var endpointType = endpoint.GetType();
+        //
+        //     return FindBroker(
+        //             broker => broker.ProducerEndpointType,
+        //             endpointType,
+        //             _producerEndpointTypeMap)
+        //         .GetProducer(endpointName);
+        // }
+
         /// <inheritdoc cref="IBrokerCollection.AddConsumer" />
         public IConsumer AddConsumer(IConsumerEndpoint endpoint)
         {

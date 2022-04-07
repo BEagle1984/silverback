@@ -45,7 +45,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
                 .AddTransient<IConfluentAdminClientBuilder, MockedConfluentAdminClientBuilder>()
-                .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
+                .AddSingleton<InMemoryTopicCollection>()
+                .AddSingleton<InMemoryTransactionManager>()
                 .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 
             var optionsBuilder = new MockedKafkaOptionsBuilder(builder.Services);

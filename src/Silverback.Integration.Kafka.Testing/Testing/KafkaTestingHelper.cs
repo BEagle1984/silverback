@@ -19,7 +19,7 @@ namespace Silverback.Testing
     /// <inheritdoc cref="IKafkaTestingHelper" />
     public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelper
     {
-        private readonly IInMemoryTopicCollection? _topics;
+        private readonly InMemoryTopicCollection? _topics;
 
         private readonly KafkaBroker _kafkaBroker;
 
@@ -39,7 +39,7 @@ namespace Silverback.Testing
             ILogger<KafkaTestingHelper> logger)
             : base(serviceProvider, logger)
         {
-            _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
+            _topics = serviceProvider.GetService<InMemoryTopicCollection>();
             _kafkaBroker = serviceProvider.GetRequiredService<KafkaBroker>();
             _logger = logger;
         }
@@ -75,8 +75,7 @@ namespace Silverback.Testing
 
             // If the topic wasn't created yet, just create one per each broker
             return _kafkaBroker
-                .Producers.Select(
-                    producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
+                .Producers.Select(producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
                 .Union(
                     _kafkaBroker.Consumers.Select(
                         producer =>
@@ -132,8 +131,7 @@ namespace Silverback.Testing
                     await Task.WhenAll(
                             topics.Select(
                                 topic =>
-                                    topic.WaitUntilAllMessagesAreConsumedAsync(
-                                        cancellationTokenSource.Token)))
+                                    topic.WaitUntilAllMessagesAreConsumedAsync(cancellationTokenSource.Token)))
                         .ConfigureAwait(false);
                 }
                 while (!await IsOutboxEmptyAsync().ConfigureAwait(false));

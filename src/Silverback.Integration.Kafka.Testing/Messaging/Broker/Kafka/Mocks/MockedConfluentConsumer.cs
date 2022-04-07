@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     {
         private readonly ConsumerConfig _config;
 
-        private readonly IInMemoryTopicCollection _topics;
+        private readonly InMemoryTopicCollection _topics;
 
         private readonly IMockedKafkaOptions _options;
 
@@ -29,8 +29,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             = new();
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>
-            _lastPartitionEof
-                = new();
+            _lastPartitionEof = new();
 
         private readonly List<TopicPartitionOffset> _temporaryAssignment = new();
 
@@ -43,7 +42,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MockedConfluentConsumer(
             ConsumerConfig config,
-            IInMemoryTopicCollection topics,
+            InMemoryTopicCollection topics,
             IMockedKafkaOptions options)
         {
             _config = Check.NotNull(config, nameof(config));

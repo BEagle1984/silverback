@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.7.0](https://github.com/BEagle1984/silverback/releases/tag/v3.7.0-beta.1)
+
+### What's new
+
+* Basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)
+
 ## [3.6.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.1)
 
 ### Fixes

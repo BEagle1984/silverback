@@ -20,7 +20,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
-    public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
+    public class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         private readonly IConfluentProducersCache _confluentClientsCache;
 
@@ -68,6 +68,23 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
+        ///     resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+        ///     finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+                return;
+
             DisposeConfluentProducer();
         }
 
@@ -77,8 +94,7 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName) =>
-            AsyncHelper.RunSynchronously(
-                () => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
 
         /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
         protected override IBrokerMessageIdentifier? ProduceCore(
@@ -86,8 +102,7 @@ namespace Silverback.Messaging.Broker
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName) =>
-            AsyncHelper.RunSynchronously(
-                () => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
 
         /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override void ProduceCore(
@@ -138,15 +153,13 @@ namespace Silverback.Messaging.Broker
                             if (Endpoint.Configuration.DisposeOnException)
                                 DisposeConfluentProducer();
 
-                            throw new ProduceException(
-                                $"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
+                            throw new ProduceException($"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
                         }
 
                         if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
                             CheckPersistenceStatus(deliveryReport);
 
-                        onSuccess.Invoke(
-                            new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset));
+                        onSuccess.Invoke(new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset));
                     }
                     catch (Exception ex)
                     {
@@ -241,6 +254,15 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        ///     Returns the cached <see cref="IProducer{TKey,TValue}" /> or creates a new one.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="IProducer{TKey,TValue}" />.
+        /// </returns>
+        protected IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
+            _confluentProducer ??= _confluentClientsCache.GetProducer(this);
+
         private static Partition GetPartition(IReadOnlyCollection<MessageHeader>? headers)
         {
             if (headers == null)
@@ -275,17 +297,13 @@ namespace Silverback.Messaging.Broker
                 : Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
         }
 
-        private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
-            _confluentProducer ??= _confluentClientsCache.GetProducer(Endpoint.Configuration, this);
-
         private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?> deliveryReport)
         {
             switch (deliveryReport.Status)
             {
                 case PersistenceStatus.PossiblyPersisted
                     when Endpoint.Configuration.ThrowIfNotAcknowledged:
-                    throw new ProduceException(
-                        "The message was transmitted to broker, but no acknowledgement was received.");
+                    throw new ProduceException("The message was transmitted to broker, but no acknowledgement was received.");
 
                 case PersistenceStatus.PossiblyPersisted:
                     _logger.LogProduceNotAcknowledged(this);
@@ -301,7 +319,7 @@ namespace Silverback.Messaging.Broker
 
         private void DisposeConfluentProducer()
         {
-            _confluentClientsCache.DisposeProducer(Endpoint.Configuration);
+            _confluentClientsCache.DisposeProducer(this);
             _confluentProducer = null;
         }
     }

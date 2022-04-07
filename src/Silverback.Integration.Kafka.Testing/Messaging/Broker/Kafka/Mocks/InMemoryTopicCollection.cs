@@ -11,7 +11,7 @@ using Silverback.Messaging.Configuration.Kafka;
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-    internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
+    internal sealed class InMemoryTopicCollection : IEnumerable<IInMemoryTopic>
     {
         private readonly IMockedKafkaOptions _options;
 

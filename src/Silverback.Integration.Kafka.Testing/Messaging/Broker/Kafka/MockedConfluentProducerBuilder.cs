@@ -3,7 +3,9 @@
 
 using System;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Kafka.Mocks;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
 {
@@ -12,7 +14,9 @@ namespace Silverback.Messaging.Broker.Kafka
     /// </summary>
     public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
     {
-        private readonly IInMemoryTopicCollection _topics;
+        private readonly InMemoryTopicCollection _topics;
+
+        private readonly InMemoryTransactionManager _transactionManager;
 
         private ProducerConfig? _config;
 
@@ -21,12 +25,14 @@ namespace Silverback.Messaging.Broker.Kafka
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedConfluentProducerBuilder" /> class.
         /// </summary>
-        /// <param name="topics">
-        ///     The <see cref="IInMemoryTopicCollection" />.
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        public MockedConfluentProducerBuilder(IInMemoryTopicCollection topics)
+        public MockedConfluentProducerBuilder(IServiceProvider serviceProvider)
         {
-            _topics = topics;
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _topics = serviceProvider.GetRequiredService<InMemoryTopicCollection>();
+            _transactionManager = serviceProvider.GetRequiredService<InMemoryTransactionManager>();
         }
 
         /// <inheritdoc cref="IConfluentProducerBuilder.SetConfig" />
@@ -37,8 +43,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentProducerBuilder.SetStatisticsHandler" />
-        public IConfluentProducerBuilder SetStatisticsHandler(
-            Action<IProducer<byte[]?, byte[]?>, string> statisticsHandler)
+        public IConfluentProducerBuilder SetStatisticsHandler(Action<IProducer<byte[]?, byte[]?>, string> statisticsHandler)
         {
             _statisticsHandler = statisticsHandler;
             return this;
@@ -57,7 +62,7 @@ namespace Silverback.Messaging.Broker.Kafka
             if (_config == null)
                 throw new InvalidOperationException("SetConfig must be called to provide the producer configuration.");
 
-            var producer = new MockedConfluentProducer(_config, _topics);
+            var producer = new MockedConfluentProducer(_config, _topics, _transactionManager);
 
             producer.StatisticsHandler = _statisticsHandler;
 

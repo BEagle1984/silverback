@@ -1,13 +1,10 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Formatter;
-using Silverback.Messaging;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -40,10 +37,8 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo("world/news"))
-                                .AddOutbound<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("world/europe/news"))
-                                .AddOutbound<TestEventThree>(
-                                    endpoint => endpoint.ProduceTo("world/europe/switzerland/news"))
+                                .AddOutbound<TestEventTwo>(endpoint => endpoint.ProduceTo("world/europe/news"))
+                                .AddOutbound<TestEventThree>(endpoint => endpoint.ProduceTo("world/europe/switzerland/news"))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom("world/+/news")))
@@ -79,10 +74,8 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo("world/news"))
-                                .AddOutbound<TestEventTwo>(
-                                    endpoint => endpoint.ProduceTo("world/europe/news"))
-                                .AddOutbound<TestEventThree>(
-                                    endpoint => endpoint.ProduceTo("world/europe/switzerland/news"))
+                                .AddOutbound<TestEventTwo>(endpoint => endpoint.ProduceTo("world/europe/news"))
+                                .AddOutbound<TestEventThree>(endpoint => endpoint.ProduceTo("world/europe/switzerland/news"))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom("world/#/news")))
@@ -118,8 +111,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .Configure(config => config.WithClientId("consumer-1"))

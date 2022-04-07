@@ -16,24 +16,21 @@ namespace Silverback.Messaging.Broker.Kafka
         ///     Gets an <see cref="IProducer{TKey,TValue}" /> compatible with the specified
         ///     <see cref="KafkaProducerConfig" />.
         /// </summary>
-        /// <param name="config">
-        ///     The <see cref="KafkaProducerConfig" />.
-        /// </param>
-        /// <param name="owner">
-        ///     The <see cref="KafkaProducer" /> to be linked to the new producer being created.
+        /// <param name="ownerProducer">
+        ///     The <see cref="KafkaProducer" /> that needs the producer.
         /// </param>
         /// <returns>
         ///     The <see cref="IProducer{TKey,TValue}" />.
         /// </returns>
-        IProducer<byte[]?, byte[]?> GetProducer(KafkaProducerConfig config, KafkaProducer owner);
+        IProducer<byte[]?, byte[]?> GetProducer(KafkaProducer ownerProducer);
 
         /// <summary>
         ///     Disposes the <see cref="IProducer{TKey,TValue}" /> for the specified
         ///     <see cref="KafkaProducerConfig" /> and removes it from the cache.
         /// </summary>
-        /// <param name="config">
-        ///     The <see cref="KafkaProducerConfig" />.
+        /// <param name="ownerProducer">
+        ///     The <see cref="KafkaProducer" /> that owns the producer to be disposed.
         /// </param>
-        void DisposeProducer(KafkaProducerConfig config);
+        void DisposeProducer(KafkaProducer ownerProducer);
     }
 }

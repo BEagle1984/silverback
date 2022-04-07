@@ -53,10 +53,29 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         /// <param name="message">
         ///     The message to be written.
         /// </param>
+        /// <param name="transactionalUniqueId">
+        ///     The transactional unique identifier.
+        /// </param>
         /// <returns>
         ///     The <see cref="Offset" /> at which the message was written.
         /// </returns>
-        Offset Push(int partition, Message<byte[]?, byte[]?> message);
+        Offset Push(int partition, Message<byte[]?, byte[]?> message, Guid transactionalUniqueId);
+
+        /// <summary>
+        ///     Commits the transaction.
+        /// </summary>
+        /// <param name="transactionalUniqueId">
+        ///     The transactional unique identifier.
+        /// </param>
+        void CommitTransaction(Guid transactionalUniqueId);
+
+        /// <summary>
+        ///     Aborts the transaction.
+        /// </summary>
+        /// <param name="transactionalUniqueId">
+        ///     The transactional unique identifier.
+        /// </param>
+        void AbortTransaction(Guid transactionalUniqueId);
 
         /// <summary>
         ///     Ensures that a partition assignment has been given to the specified consumer, otherwise

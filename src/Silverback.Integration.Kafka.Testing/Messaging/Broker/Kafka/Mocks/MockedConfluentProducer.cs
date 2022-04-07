@@ -16,18 +16,26 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     {
         private readonly ProducerConfig _config;
 
-        private readonly IInMemoryTopicCollection _topics;
+        private readonly InMemoryTopicCollection _topics;
+
+        private readonly InMemoryTransactionManager _transactionManager;
 
         private readonly object _roundRobinLockObject = new();
 
         private int _lastPushedPartition = -1;
 
+        private Guid _transactionalUniqueId = Guid.Empty;
+
         private bool _disposed;
 
-        public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
+        public MockedConfluentProducer(
+            ProducerConfig config,
+            InMemoryTopicCollection topics,
+            InMemoryTransactionManager transactionManager)
         {
             _config = Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
+            _transactionManager = Check.NotNull(transactionManager, nameof(transactionManager));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
         }
@@ -128,17 +136,26 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             // Nothing to flush
         }
 
-        public void InitTransactions(TimeSpan timeout) => throw new NotSupportedException();
+        public void InitTransactions(TimeSpan timeout)
+        {
+            if (string.IsNullOrEmpty(_config.TransactionalId))
+                throw new InvalidOperationException("Cannot initialize transactions without a transactional id.");
 
-        public void BeginTransaction() => throw new NotSupportedException();
+            if (_transactionalUniqueId != Guid.Empty)
+                throw new InvalidOperationException("Transactions have been already initialized.");
 
-        public void CommitTransaction(TimeSpan timeout) => throw new NotSupportedException();
+            _transactionalUniqueId = _transactionManager.InitTransaction(_config.TransactionalId);
+        }
 
-        public void CommitTransaction() => throw new NotSupportedException();
+        public void BeginTransaction() => _transactionManager.BeginTransaction(_transactionalUniqueId);
 
-        public void AbortTransaction(TimeSpan timeout) => throw new NotSupportedException();
+        public void CommitTransaction(TimeSpan timeout) => CommitTransaction();
 
-        public void AbortTransaction() => throw new NotSupportedException();
+        public void CommitTransaction() => _transactionManager.CommitTransaction(_transactionalUniqueId);
+
+        public void AbortTransaction(TimeSpan timeout) => AbortTransaction();
+
+        public void AbortTransaction() => _transactionManager.AbortTransaction(_transactionalUniqueId);
 
         public void SendOffsetsToTransaction(
             IEnumerable<TopicPartitionOffset> offsets,
@@ -171,7 +188,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     ? GetPartitionIndex(inMemoryTopic, message.Key)
                     : topicPartition.Partition.Value;
 
-            offset = inMemoryTopic.Push(partitionIndex, message);
+            Guid transactionalUniqueId = _transactionManager.IsTransactionPending(_transactionalUniqueId)
+                ? _transactionalUniqueId
+                : Guid.Empty;
+
+            offset = inMemoryTopic.Push(partitionIndex, message, transactionalUniqueId);
             return partitionIndex;
         }
 

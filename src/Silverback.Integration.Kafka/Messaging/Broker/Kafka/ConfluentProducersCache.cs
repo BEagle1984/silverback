@@ -7,7 +7,6 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
-using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
@@ -33,29 +32,32 @@ namespace Silverback.Messaging.Broker.Kafka
             _callbacksInvoker = callbacksInvoker;
         }
 
-        public IProducer<byte[]?, byte[]?> GetProducer(KafkaProducerConfig config, KafkaProducer owner) =>
-            _producersCache.GetOrAdd(
-                config.GetConfluentConfig(),
-                _ => CreateConfluentProducer(config, owner));
+        public IProducer<byte[]?, byte[]?> GetProducer(KafkaProducer ownerProducer)
+        {
+            if (ownerProducer.Endpoint.Configuration.IsTransactional)
+                return CreateConfluentProducer(ownerProducer);
 
-        public void DisposeProducer(KafkaProducerConfig config)
+            return _producersCache.GetOrAdd(
+                ownerProducer.Endpoint.Configuration.GetConfluentConfig(),
+                _ => CreateConfluentProducer(ownerProducer));
+        }
+
+        public void DisposeProducer(KafkaProducer ownerProducer)
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!_producersCache.TryRemove(config.GetConfluentConfig(), out var producer))
+            if (!_producersCache.TryRemove(ownerProducer.Endpoint.Configuration.GetConfluentConfig(), out var producer))
                 return;
 
-            producer.Flush(config.FlushTimeout);
+            producer.Flush(ownerProducer.Endpoint.Configuration.FlushTimeout);
             producer.Dispose();
         }
 
-        private IProducer<byte[]?, byte[]?> CreateConfluentProducer(
-            KafkaProducerConfig config,
-            KafkaProducer ownerProducer)
+        private IProducer<byte[]?, byte[]?> CreateConfluentProducer(KafkaProducer ownerProducer)
         {
             _logger.LogCreatingConfluentProducer(ownerProducer);
 
             var builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
-            builder.SetConfig(config.GetConfluentConfig());
+            builder.SetConfig(ownerProducer.Endpoint.Configuration.GetConfluentConfig());
             builder.SetEventsHandlers(ownerProducer, _callbacksInvoker, _logger);
             return builder.Build();
         }

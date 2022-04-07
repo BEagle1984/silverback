@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
@@ -16,7 +17,7 @@ namespace Silverback.Messaging.Broker.Kafka
     /// </summary>
     public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     {
-        private readonly IInMemoryTopicCollection _topics;
+        private readonly InMemoryTopicCollection _topics;
 
         private readonly IMockedKafkaOptions _options;
 
@@ -37,15 +38,16 @@ namespace Silverback.Messaging.Broker.Kafka
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedConfluentConsumerBuilder" /> class.
         /// </summary>
-        /// <param name="topics">
-        ///     The <see cref="IInMemoryTopicCollection" />.
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="options">
         ///     The <see cref="IMockedKafkaOptions"/>.
         /// </param>
-        public MockedConfluentConsumerBuilder(IInMemoryTopicCollection topics, IMockedKafkaOptions options)
+        public MockedConfluentConsumerBuilder(IServiceProvider serviceProvider, IMockedKafkaOptions options)
         {
-            _topics = Check.NotNull(topics, nameof(topics));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _topics = serviceProvider.GetRequiredService<InMemoryTopicCollection>();
             _options = Check.NotNull(options, nameof(options));
         }
 
@@ -57,8 +59,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetStatisticsHandler" />
-        public IConfluentConsumerBuilder SetStatisticsHandler(
-            Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
+        public IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
         {
             _statisticsHandler = statisticsHandler;
             return this;
@@ -81,8 +82,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartition}})" />
-        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
+        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
         {
             _partitionsAssignedHandler = (consumer, partitions) =>
             {
@@ -106,8 +106,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartitionOffset}})" />
-        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
+        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
         {
             _partitionsRevokedHandler = (consumer, partitions) =>
             {
@@ -120,8 +119,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetOffsetsCommittedHandler" />
-        public IConfluentConsumerBuilder SetOffsetsCommittedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
+        public IConfluentConsumerBuilder SetOffsetsCommittedHandler(Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
         {
             _offsetsCommittedHandler = offsetsCommittedHandler;
             return this;

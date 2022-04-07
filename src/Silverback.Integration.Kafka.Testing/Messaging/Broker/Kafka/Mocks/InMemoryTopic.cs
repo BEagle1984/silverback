@@ -57,14 +57,19 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public IReadOnlyList<IInMemoryPartition> Partitions => _partitions;
 
-        public int MessagesCount =>
-            _partitions.Sum(partition => partition.Messages.Count);
+        public int MessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
 
         public IReadOnlyList<Message<byte[]?, byte[]?>> GetAllMessages() =>
-            _partitions.SelectMany(partition => partition.Messages).ToList();
+            _partitions.SelectMany(partition => partition.GetAllMessages()).ToList();
 
-        public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
-            _partitions[partition].Add(message);
+        public Offset Push(int partition, Message<byte[]?, byte[]?> message, Guid transactionalUniqueId) =>
+            _partitions[partition].Add(message, transactionalUniqueId);
+
+        public void CommitTransaction(Guid transactionalUniqueId) =>
+            _partitions.ForEach(partition => partition.CommitTransaction(transactionalUniqueId));
+
+        public void AbortTransaction(Guid transactionalUniqueId) =>
+            _partitions.ForEach(partition => partition.AbortTransaction(transactionalUniqueId));
 
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync writes only")]
         public void EnsurePartitionsAssigned(
@@ -262,8 +267,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
                 {
                     // Skip manually assigned partitions
-                    if (groupAssignedConsumers.Any(
-                        consumer => consumer.Assignment.Contains(new TopicPartition(Name, partitionIndex))))
+                    if (groupAssignedConsumers.Any(consumer => consumer.Assignment.Contains(new TopicPartition(Name, partitionIndex))))
                         continue;
 
                     assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
@@ -287,14 +291,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             if (!consumer.PartitionsAssigned)
                 return false;
 
-            var partitionsOffsets = _committedOffsets[consumer.GroupId];
+            ConcurrentDictionary<Partition, Offset> partitionsOffsets = _committedOffsets[consumer.GroupId];
 
-            return consumer.Assignment.All(
-                topicPartition =>
-                {
-                    var lastOffset = _partitions[topicPartition.Partition].LastOffset;
-                    return lastOffset < 0 || partitionsOffsets[topicPartition.Partition] > lastOffset;
-                });
+            return consumer.Assignment
+                .Select(topicPartition => topicPartition.Partition)
+                .Select(
+                    partition =>
+                        (InMemoryPartition: _partitions[partition], Offset: partitionsOffsets[partition]))
+                .All(tuple => !tuple.InMemoryPartition.HasMessages(tuple.Offset));
         }
     }
 }
