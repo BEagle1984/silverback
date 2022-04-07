@@ -17,11 +17,15 @@ namespace Silverback.Messaging.Broker.Behaviors;
 /// </summary>
 public sealed class ConsumerPipelineContext : IDisposable
 {
+    private readonly object _disposeLock = new();
+
     private IServiceScope? _serviceScope;
 
     private IConsumerTransactionManager? _transactionManager;
 
     private IRawInboundEnvelope _envelope;
+
+    private bool _disposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
@@ -178,10 +182,18 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
+        lock (_disposeLock)
+        {
+            if (_disposed)
+                return;
+
+            _disposed = true;
+        }
+
         _serviceScope?.Dispose();
         _serviceScope = null;
 
-        if (ProcessingTask == null || !ProcessingTask.IsCompleted)
+        if (ProcessingTask is not { IsCompleted: true })
             return;
 
         ProcessingTask.Dispose();
