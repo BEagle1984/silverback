@@ -8,7 +8,12 @@ uid: releases
 
 ### What's new
 
-* Basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)
+* Implement basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)
+* Skip chunking when processing single chunk messages
+
+### Fixes
+
+* Fix possible race condition in consumer pipeline
 
 ## [3.6.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.1)
 
