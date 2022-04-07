@@ -27,7 +27,14 @@ namespace Silverback.Messaging.Sequences.Chunking
         {
             Check.NotNull(context, nameof(context));
 
-            var canHandle = context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
+            int? chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex);
+            int? chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
+            bool? isLastChunk = context.Envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk);
+
+            // Skip chunking if the message is not chunked or it consists of a single chunk
+            bool canHandle = chunkIndex != null &&
+                             chunksCount is null or > 1 &&
+                             (isLastChunk != true || chunkIndex > 0);
 
             return Task.FromResult(canHandle);
         }
