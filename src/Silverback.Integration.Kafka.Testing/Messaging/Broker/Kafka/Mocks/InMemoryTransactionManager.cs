@@ -102,6 +102,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             if (producerInfo == null)
                 throw new InvalidOperationException("The producer has been fenced.");
+
             return producerInfo;
         }
 
