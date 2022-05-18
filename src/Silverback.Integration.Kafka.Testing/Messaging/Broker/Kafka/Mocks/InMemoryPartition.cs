@@ -158,7 +158,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
         }
 
-        private class StoredMessage
+        private sealed class StoredMessage
         {
             public StoredMessage(Message<byte[]?, byte[]?> message, Offset offset, StoredMessageStatus status)
             {
@@ -174,7 +174,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             public StoredMessageStatus Status { get; set; }
         }
 
-        private record Transaction(Guid Id)
+        private sealed record Transaction(Guid Id)
         {
             public List<StoredMessage> Messages { get; } = new();
         }

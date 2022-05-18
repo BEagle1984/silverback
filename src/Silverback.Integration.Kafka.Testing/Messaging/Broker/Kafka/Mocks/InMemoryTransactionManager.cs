@@ -106,11 +106,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             return producerInfo;
         }
 
-        private class TransactionalProducerInfo
+        private sealed class TransactionalProducerInfo
         {
             public TransactionalProducerInfo(string transactionalId)
             {
-                this.TransactionalId = transactionalId;
+                TransactionalId = transactionalId;
             }
 
             public string TransactionalId { get; }

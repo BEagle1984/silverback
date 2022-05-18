@@ -17,6 +17,8 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// </summary>
     public sealed class ConsumerPipelineContext : IDisposable
     {
+        private readonly object _disposeLock = new();
+
         private IServiceScope? _serviceScope;
 
         private IConsumerTransactionManager? _transactionManager;
@@ -24,8 +26,6 @@ namespace Silverback.Messaging.Broker.Behaviors
         private IRawInboundEnvelope _envelope;
 
         private bool _disposed;
-
-        private object _disposeLock = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
