@@ -12072,12 +12072,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache
   fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache
   nameWithType: IConfluentProducersCache
-- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
-  name: DisposeProducer(KafkaProducerConfig)
-  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_
-  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
-  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
-  nameWithType: IConfluentProducersCache.DisposeProducer(KafkaProducerConfig)
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
+  name: DisposeProducer(KafkaProducer)
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_Silverback_Messaging_Broker_KafkaProducer_
+  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
+  nameWithType: IConfluentProducersCache.DisposeProducer(KafkaProducer)
 - uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer*
   name: DisposeProducer
   href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_
@@ -12085,12 +12085,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer
   nameWithType: IConfluentProducersCache.DisposeProducer
-- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig,Silverback.Messaging.Broker.KafkaProducer)
-  name: GetProducer(KafkaProducerConfig, KafkaProducer)
-  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_Silverback_Messaging_Broker_KafkaProducer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig,Silverback.Messaging.Broker.KafkaProducer)
-  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig, Silverback.Messaging.Broker.KafkaProducer)
-  nameWithType: IConfluentProducersCache.GetProducer(KafkaProducerConfig, KafkaProducer)
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
+  name: GetProducer(KafkaProducer)
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_Silverback_Messaging_Broker_KafkaProducer_
+  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
+  nameWithType: IConfluentProducersCache.GetProducer(KafkaProducer)
 - uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer*
   name: GetProducer
   href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_
@@ -12136,12 +12136,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder
   fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder
   nameWithType: MockedConfluentConsumerBuilder
-- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  name: MockedConfluentConsumerBuilder(IInMemoryTopicCollection, IMockedKafkaOptions)
-  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_
-  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection, Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  nameWithType: MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(IInMemoryTopicCollection, IMockedKafkaOptions)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(System.IServiceProvider,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  name: MockedConfluentConsumerBuilder(IServiceProvider, IMockedKafkaOptions)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_System_IServiceProvider_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(System.IServiceProvider,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(System.IServiceProvider, Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  nameWithType: MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(IServiceProvider, IMockedKafkaOptions)
 - uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor*
   name: MockedConfluentConsumerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_
@@ -12295,12 +12295,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder
   fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder
   nameWithType: MockedConfluentProducerBuilder
-- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
-  name: MockedConfluentProducerBuilder(IInMemoryTopicCollection)
-  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_
-  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
-  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
-  nameWithType: MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(IInMemoryTopicCollection)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(System.IServiceProvider)
+  name: MockedConfluentProducerBuilder(IServiceProvider)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_System_IServiceProvider_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(System.IServiceProvider)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(System.IServiceProvider)
+  nameWithType: MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(IServiceProvider)
 - uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor*
   name: MockedConfluentProducerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_
@@ -12391,6 +12391,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.FirstOffset
   nameWithType: IInMemoryPartition.FirstOffset
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
+  name: GetAllMessages()
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_GetAllMessages
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages()
+  nameWithType: IInMemoryPartition.GetAllMessages()
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages*
+  name: GetAllMessages
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_GetAllMessages_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
+  nameWithType: IInMemoryPartition.GetAllMessages
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.LastOffset
   name: LastOffset
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_LastOffset
@@ -12404,19 +12417,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.LastOffset
   nameWithType: IInMemoryPartition.LastOffset
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
-  name: Messages
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Messages
-  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
-  nameWithType: IInMemoryPartition.Messages
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages*
-  name: Messages
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Messages_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
-  nameWithType: IInMemoryPartition.Messages
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Partition
   name: Partition
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Partition
@@ -12430,6 +12430,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Partition
   nameWithType: IInMemoryPartition.Partition
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
+  name: TotalMessagesCount
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TotalMessagesCount
+  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
+  nameWithType: IInMemoryPartition.TotalMessagesCount
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount*
+  name: TotalMessagesCount
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TotalMessagesCount_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
+  nameWithType: IInMemoryPartition.TotalMessagesCount
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TryPull(Confluent.Kafka.Offset,Confluent.Kafka.ConsumeResult{System.Byte[],System.Byte[]}@)
   name: TryPull(Offset, out ConsumeResult<Byte[], Byte[]>)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TryPull_Confluent_Kafka_Offset_Confluent_Kafka_ConsumeResult_System_Byte___System_Byte_____
@@ -12452,6 +12465,19 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic
   nameWithType: IInMemoryTopic
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
+  name: AbortTransaction(Guid)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_AbortTransaction_System_Guid_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
+  nameWithType: IInMemoryTopic.AbortTransaction(Guid)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction*
+  name: AbortTransaction
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_AbortTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction
+  nameWithType: IInMemoryTopic.AbortTransaction
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,Confluent.Kafka.Partition)
   name: Assign(IMockedConfluentConsumer, Partition)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Assign_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_Confluent_Kafka_Partition_
@@ -12494,6 +12520,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Commit
   nameWithType: IInMemoryTopic.Commit
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
+  name: CommitTransaction(Guid)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_CommitTransaction_System_Guid_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
+  nameWithType: IInMemoryTopic.CommitTransaction(Guid)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction*
+  name: CommitTransaction
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_CommitTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction
+  nameWithType: IInMemoryTopic.CommitTransaction
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.TimeSpan,System.Threading.CancellationToken)
   name: EnsurePartitionsAssigned(IMockedConfluentConsumer, TimeSpan, CancellationToken)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_EnsurePartitionsAssigned_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_TimeSpan_System_Threading_CancellationToken_
@@ -12624,15 +12663,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Partitions
   nameWithType: IInMemoryTopic.Partitions
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]})
-  name: Push(Int32, Message<Byte[], Byte[]>)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_System_Int32_Confluent_Kafka_Message_System_Byte___System_Byte____
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]})
-  name.vb: Push(Int32, Message(Of Byte(), Byte()))
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message<System.Byte[], System.Byte[]>)
-  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message(Of System.Byte(), System.Byte()))
-  nameWithType: IInMemoryTopic.Push(Int32, Message<Byte[], Byte[]>)
-  nameWithType.vb: IInMemoryTopic.Push(Int32, Message(Of Byte(), Byte()))
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]},System.Guid)
+  name: Push(Int32, Message<Byte[], Byte[]>, Guid)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_System_Int32_Confluent_Kafka_Message_System_Byte___System_Byte____System_Guid_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]},System.Guid)
+  name.vb: Push(Int32, Message(Of Byte(), Byte()), Guid)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message<System.Byte[], System.Byte[]>, System.Guid)
+  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message(Of System.Byte(), System.Byte()), System.Guid)
+  nameWithType: IInMemoryTopic.Push(Int32, Message<Byte[], Byte[]>, Guid)
+  nameWithType.vb: IInMemoryTopic.Push(Int32, Message(Of Byte(), Byte()), Guid)
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push*
   name: Push
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_
@@ -12692,31 +12731,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync
   nameWithType: IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
-  name: IInMemoryTopicCollection
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html
-  commentId: T:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
-  nameWithType: IInMemoryTopicCollection
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,Confluent.Kafka.ClientConfig)
-  name: Get(String, ClientConfig)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_System_String_Confluent_Kafka_ClientConfig_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,Confluent.Kafka.ClientConfig)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String, Confluent.Kafka.ClientConfig)
-  nameWithType: IInMemoryTopicCollection.Get(String, ClientConfig)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,System.String)
-  name: Get(String, String)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_System_String_System_String_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,System.String)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String, System.String)
-  nameWithType: IInMemoryTopicCollection.Get(String, String)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get*
-  name: Get
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get
-  nameWithType: IInMemoryTopicCollection.Get
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer
   name: IMockedConfluentConsumer
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html
@@ -12794,6 +12808,57 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaBroker.KafkaBroker
   nameWithType: KafkaBroker.KafkaBroker
+- uid: Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
+  name: Dispose(Boolean)
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_Dispose_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
+  fullName: Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
+  nameWithType: KafkaBroker.Dispose(Boolean)
+- uid: Silverback.Messaging.Broker.KafkaBroker.Dispose*
+  name: Dispose
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_Dispose_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.Dispose
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaBroker.Dispose
+  nameWithType: KafkaBroker.Dispose
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
+  name: GetProducer(IProducerEndpoint)
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_Silverback_Messaging_IProducerEndpoint_
+  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
+  nameWithType: KafkaBroker.GetProducer(IProducerEndpoint)
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
+  name: GetProducer(String)
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_System_String_
+  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
+  nameWithType: KafkaBroker.GetProducer(String)
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer*
+  name: GetProducer
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.GetProducer
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer
+  nameWithType: KafkaBroker.GetProducer
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
+  name: GetTransactionalProducer(IProducerEndpoint)
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_Silverback_Messaging_IProducerEndpoint_
+  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
+  nameWithType: KafkaBroker.GetTransactionalProducer(IProducerEndpoint)
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
+  name: GetTransactionalProducer(String)
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_System_String_
+  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
+  nameWithType: KafkaBroker.GetTransactionalProducer(String)
+- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer*
+  name: GetTransactionalProducer
+  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer
+  nameWithType: KafkaBroker.GetTransactionalProducer
 - uid: Silverback.Messaging.Broker.KafkaBroker.InstantiateConsumer(Silverback.Messaging.KafkaConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)
   name: InstantiateConsumer(KafkaConsumerEndpoint, IBrokerBehaviorsProvider<IConsumerBehavior>, IServiceProvider)
   href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_InstantiateConsumer_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_
@@ -13269,6 +13334,12 @@ references:
   commentId: M:Silverback.Messaging.Broker.KafkaProducer.Dispose
   fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose()
   nameWithType: KafkaProducer.Dispose()
+- uid: Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
+  name: Dispose(Boolean)
+  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_Dispose_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
+  fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
+  nameWithType: KafkaProducer.Dispose(Boolean)
 - uid: Silverback.Messaging.Broker.KafkaProducer.Dispose*
   name: Dispose
   href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_Dispose_
@@ -13276,6 +13347,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose
   nameWithType: KafkaProducer.Dispose
+- uid: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
+  name: GetConfluentProducer()
+  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer
+  commentId: M:Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
+  fullName: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer()
+  nameWithType: KafkaProducer.GetConfluentProducer()
+- uid: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer*
+  name: GetConfluentProducer
+  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
+  nameWithType: KafkaProducer.GetConfluentProducer
 - uid: Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)
   name: ProduceCore(Object, Byte[], IReadOnlyCollection<MessageHeader>, String)
   href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_
@@ -13362,6 +13446,80 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync
   nameWithType: KafkaProducer.ProduceCoreAsync
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer
+  name: KafkaTransactionalProducer
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html
+  commentId: T:Silverback.Messaging.Broker.KafkaTransactionalProducer
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer
+  nameWithType: KafkaTransactionalProducer
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentProducersCache,System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})
+  name: KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider<IProducerBehavior>, IConfluentProducersCache, IServiceProvider, IOutboundLogger<KafkaProducer>)
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_KafkaProducer__
+  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentProducersCache,System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})
+  name.vb: KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider(Of IProducerBehavior), IConfluentProducersCache, IServiceProvider, IOutboundLogger(Of KafkaProducer))
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer(Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaProducerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider<Silverback.Messaging.Broker.Behaviors.IProducerBehavior>, Silverback.Messaging.Broker.Kafka.IConfluentProducersCache, System.IServiceProvider, Silverback.Diagnostics.IOutboundLogger<Silverback.Messaging.Broker.KafkaProducer>)
+  fullName.vb: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer(Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaProducerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider(Of Silverback.Messaging.Broker.Behaviors.IProducerBehavior), Silverback.Messaging.Broker.Kafka.IConfluentProducersCache, System.IServiceProvider, Silverback.Diagnostics.IOutboundLogger(Of Silverback.Messaging.Broker.KafkaProducer))
+  nameWithType: KafkaTransactionalProducer.KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider<IProducerBehavior>, IConfluentProducersCache, IServiceProvider, IOutboundLogger<KafkaProducer>)
+  nameWithType.vb: KafkaTransactionalProducer.KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider(Of IProducerBehavior), IConfluentProducersCache, IServiceProvider, IOutboundLogger(Of KafkaProducer))
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor*
+  name: KafkaTransactionalProducer
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer__ctor_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer
+  nameWithType: KafkaTransactionalProducer.KafkaTransactionalProducer
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
+  name: AbortTransaction()
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_AbortTransaction
+  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction()
+  nameWithType: KafkaTransactionalProducer.AbortTransaction()
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction*
+  name: AbortTransaction
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_AbortTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
+  nameWithType: KafkaTransactionalProducer.AbortTransaction
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
+  name: BeginTransaction()
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_BeginTransaction
+  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction()
+  nameWithType: KafkaTransactionalProducer.BeginTransaction()
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction*
+  name: BeginTransaction
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_BeginTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
+  nameWithType: KafkaTransactionalProducer.BeginTransaction
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
+  name: CommitTransaction()
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_CommitTransaction
+  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction()
+  nameWithType: KafkaTransactionalProducer.CommitTransaction()
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction*
+  name: CommitTransaction
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_CommitTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
+  nameWithType: KafkaTransactionalProducer.CommitTransaction
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
+  name: InitTransaction()
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_InitTransaction
+  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction()
+  nameWithType: KafkaTransactionalProducer.InitTransaction()
+- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction*
+  name: InitTransaction
+  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_InitTransaction_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
+  nameWithType: KafkaTransactionalProducer.InitTransaction
 - uid: Silverback.Messaging.Broker.Mqtt
   name: Silverback.Messaging.Broker.Mqtt
   href: api/Silverback.Messaging.Broker.Mqtt.html
@@ -20227,6 +20385,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.ThrowIfNotAcknowledged
   nameWithType: KafkaProducerConfig.ThrowIfNotAcknowledged
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
+  name: TransactionInitTimeout
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_TransactionInitTimeout
+  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
+  nameWithType: KafkaProducerConfig.TransactionInitTimeout
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout*
+  name: TransactionInitTimeout
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_TransactionInitTimeout_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
+  nameWithType: KafkaProducerConfig.TransactionInitTimeout
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.Validate
   name: Validate()
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_Validate

@@ -283,7 +283,7 @@
 </code></pre>
 <h2 id="mocked-kafka">Mocked Kafka</h2>
 <p>Many aspects of the Kafka broker have been mocked to replicated as much as possible the behavior you have when connected with the real broker. This new implementation supports commits, kafka events, offset reset, partitioning, rebalance, etc.</p>
-<p>The implementation revolves around the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html">IInMemoryTopicCollection</a>. This type is registered as singleton and can be resolved in the tests to gain access to the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> instances directly and inspect their partitions, offsets, etc.
+<p>The implementation revolves around the &lt;xref:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection&gt;. This type is registered as singleton and can be resolved in the tests to gain access to the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> instances directly and inspect their partitions, offsets, etc.
 Alternatively the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> can be retrieved via the <code>GetTopic</code> method of the <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>.</p>
 <h3 id="partitioning">Partitioning</h3>
 <p>By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. The setting is per broker and there's currently no way to configure each topic independently.</p>

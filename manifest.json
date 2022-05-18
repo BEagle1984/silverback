@@ -191,7 +191,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html",
-          "hash": "248Gd6yrZu7fFgTCIgmPg7lt5z5wvwWtEstH4lCvprY="
+          "hash": "NI9dNulquaGB2f2xvJaQ/u/MobUSa5Wqo3L+ZT8Ob/o="
         }
       },
       "is_incremental": false,
@@ -1427,7 +1427,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html",
-          "hash": "rUN5s92YY5Uvo+v38jdbM1cF+7wvjOfkOUYCG3c0DkE="
+          "hash": "hkDSgpMMd8t6D1INoer7Tsll45HD8eTzDWSollJj/ZE="
         }
       },
       "is_incremental": false,
@@ -1535,7 +1535,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Broker-2.html",
-          "hash": "R46JnhT7U4uzgEbN+CjkMVdKwvdq0j4+cWRKeYl19NY="
+          "hash": "mm/vyWqfCWasIfoocSXYrnt1YZSsjyje9GZAH9v+jSU="
         }
       },
       "is_incremental": false,
@@ -1883,7 +1883,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Consumer.html",
-          "hash": "gAm4V8exVRZcGg48bsG7JXOWLDRfQw9wVLCJMUTdT1M="
+          "hash": "plOx9w/cOoJ8ICHLuwLAdwMQPouanyvNZ5ZF0sPY/rQ="
         }
       },
       "is_incremental": false,
@@ -1907,7 +1907,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.IBroker.html",
-          "hash": "dkDGVBYVWr1Rvuul+4TQcmn0Et4g7IKmIlqb1Zgtkm0="
+          "hash": "0Xh8J/utyOhKWaRX3dP+u+EMrBoN/+1ssKs846Stj28="
         }
       },
       "is_incremental": false,
@@ -2075,7 +2075,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html",
-          "hash": "aAj4sZM6vOq37l+3ATJPHeBvELtaXoBX1IELIw3fSbg="
+          "hash": "yXBit0cmHjMIamSWSEleRiAWrWZvHscMirNJ+ql7pIc="
         }
       },
       "is_incremental": false,
@@ -2099,7 +2099,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html",
-          "hash": "TJ6eQgfeIi/jBjNBD9Eh/+SWKMSyY+aMR4VpNRCDbjk="
+          "hash": "2Li4PSTdXCG9BOWISuuGbgAT7nzju8tB0j0GDuynMR4="
         }
       },
       "is_incremental": false,
@@ -2111,7 +2111,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html",
-          "hash": "O41zyr2OvvkWndl9+a7FIdLzpklRaPYn70linKVVmPk="
+          "hash": "aesukEr+6rSvpVpFqxYAOd9cWcdUef0t0VmFizWDD3M="
         }
       },
       "is_incremental": false,
@@ -2123,7 +2123,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html",
-          "hash": "iPSATJUcYHRT2ujj+qIaFTpmbdTrK4IcYOQs6GmSxMg="
+          "hash": "V3zactSmTGuZjzAjshntFxP+qVHEF3veNib/nMb0J7Y="
         }
       },
       "is_incremental": false,
@@ -2135,19 +2135,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html",
-          "hash": "GOFKq74o9MdIogf0Rhx+MbE/mTWO2M1+3KIFDlz8UKw="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html",
-          "hash": "pYdXGTdf9ZG7SO+dh537fSYFktqAAYC53wLROKiqCBA="
+          "hash": "Dmpe70QO6TwsY2rLEVNeTF+LzSjGi+rneF92iFD/CaA="
         }
       },
       "is_incremental": false,
@@ -2171,7 +2159,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.html",
-          "hash": "RIDpflfjxMrVl/Ac+OrMzXacpqoquHguJhc4I6BSWGs="
+          "hash": "wdmF76wrJlsmdr5cRHudxbp+1k7R4VuiGDo6iLUI64w="
         }
       },
       "is_incremental": false,
@@ -2195,7 +2183,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.KafkaBroker.html",
-          "hash": "mhprEDMHbgAJyw/g3C0R4q+fjipzy9GD20iRavyrzMw="
+          "hash": "f3mCoTFbLhyIOLHkQ13zbWKrGUgRQ2d3r9PV4a8tmUU="
         }
       },
       "is_incremental": false,
@@ -2243,7 +2231,19 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.KafkaProducer.html",
-          "hash": "YZWL/9MLDytzm+8N4pcZfSEMtMvpsy+aNzY97mqBiNs="
+          "hash": "sSY2n47UPM1TouiB5YRxIlZRR3INIdVy4ls7XS9PH/Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Silverback.Messaging.Broker.KafkaTransactionalProducer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html",
+          "hash": "Kla7G4HpWyFBbyxzAwNC4dFjb1W7UncDaf9u5YA8tfE="
         }
       },
       "is_incremental": false,
@@ -2519,7 +2519,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.html",
-          "hash": "9pbBBGVFysWTDS8U4aC9BcUYgIZgNQXU072ulhhca9g="
+          "hash": "YKseaIvKVi58frYbUBg8EK3twaDZ8FwrJQc0Dho9nTA="
         }
       },
       "is_incremental": false,
@@ -2579,7 +2579,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html",
-          "hash": "FUc8WRkrR2zKINsJpFPS4G+xPw1P6pYb1c1Nbf27U+g="
+          "hash": "5R3C3/NMunrwC/IRNpjlaujp6mT1cvDD/o1hP6REr5o="
         }
       },
       "is_incremental": false,
@@ -2843,7 +2843,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html",
-          "hash": "eczoIpZEjJJtwR9MM0r6HwU/VOfMWgltlAxtNcxW1Hk="
+          "hash": "DJiPsejPr5J2q9F3BFc6V5MW3iCTNlN4EjPsp0L0HjY="
         }
       },
       "is_incremental": false,
@@ -2963,7 +2963,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html",
-          "hash": "TJaGQix9dmg/VXpB2Pyl5ZmZxzInbn60AqFN1HhoUxY="
+          "hash": "jqGoBkwzmP84Y21mVsPUOPw3ukDoIQ/VMWJzn8vcXQ4="
         }
       },
       "is_incremental": false,
@@ -2975,7 +2975,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ISilverbackBuilder.html",
-          "hash": "tDJlQZk4bS8/3fK14orF6oaZhRO2VzV6Yfabr1dLwDM="
+          "hash": "1NsKrBLQUGinuZN+U7hmxPEm4caraj3bShypWzpXb/M="
         }
       },
       "is_incremental": false,
@@ -3143,7 +3143,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html",
-          "hash": "jzBktlPVASCXw2M7lssunoe/deFgOgkvM6NHD1huoBc="
+          "hash": "laneKHQxQnGUEYlKhzvMN4khR/JSpp2szMsETpcWGQE="
         }
       },
       "is_incremental": false,
@@ -3371,7 +3371,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html",
-          "hash": "M3xp9ShhRZx/xtyoR1yE6zZEoSZvoY2TLEXwrV/36xk="
+          "hash": "BQpm8WL+YxdReilbuiFfeH/zS9Le1MCCWjo8yHAV7Yw="
         }
       },
       "is_incremental": false,
@@ -6059,7 +6059,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html",
-          "hash": "fnYmrzBYdE4xga6BEqK8A28MIwUdl38e2bDzwPhwDZ8="
+          "hash": "819t87P32iZazJUfcLCmMAmXe+hK8qRtB7kjEBnFyhY="
         }
       },
       "is_incremental": false,
@@ -6227,7 +6227,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Sequences.SequenceBase-1.html",
-          "hash": "gE0+ADm6cOs2AKsyCJ1kB4Mu2wiMSIoMuNIV/uSkM/A="
+          "hash": "ZCJTYeB+pNxdH8ZxJ/sLExB+x3XozV9kMLvg+vKF6q8="
         }
       },
       "is_incremental": false,
@@ -7091,7 +7091,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Testing.KafkaTestingHelper.html",
-          "hash": "32bmM98m5uf7cFYGT+1tuOuGGHisKst2N3ez41TjKnk="
+          "hash": "Zovg1StloclIf8wDfByee9SWJiDWMnYWbJ6IyxR/7/o="
         }
       },
       "is_incremental": false,
@@ -7259,7 +7259,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "79YTOa/l5QFl6aWca5rS+Xn3jzJJBXkPNlFKKLSrheg="
+          "hash": "B+KuCIbyiuTaMD2fspMW538o4XtL7EgY/jTW6ADPfDc="
         }
       },
       "is_incremental": false,
@@ -7535,7 +7535,7 @@
       "output": {
         ".html": {
           "relative_path": "concepts/broker/testing.html",
-          "hash": "IOdDzNulv6uulvgWRYPZUJpnQeA4IoyOdKxylJ05aGM="
+          "hash": "OJqnkaYQI+v3zAtnWDte0p6POPBdJWYPEPvhPUbxnOA="
         }
       },
       "is_incremental": false,
@@ -8127,7 +8127,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "wCx2nFGXzdipvPX0ynwl04MkRs80xbYr9QLxJWr+jcE="
+          "hash": "OL23EZ131XXqFA9WLmM+Wi+8GZMrzN7hIiFWu6jGVe0="
         }
       },
       "is_incremental": false,
