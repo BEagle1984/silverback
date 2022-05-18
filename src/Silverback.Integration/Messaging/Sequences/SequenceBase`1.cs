@@ -416,53 +416,64 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (_isDisposed)
             return;
 
-        if (disposing)
+        if (!disposing)
+            return;
+
+        _logger.LogLowLevelTrace(
+            "Disposing {sequenceType} '{sequenceId}'...",
+            () => new object[]
+            {
+                GetType().Name,
+                SequenceId
+            });
+
+        _abortingTaskCompletionSource?.Task.Wait();
+
+        _streamProvider.Dispose();
+        _abortCancellationTokenSource.Dispose();
+
+        try
         {
-            _logger.LogLowLevelTrace(
-                "Disposing {sequenceType} '{sequenceId}'...",
-                () => new object[]
-                {
-                    GetType().Name,
-                    SequenceId
-                });
-
-            _abortingTaskCompletionSource?.Task.Wait();
-
-            _streamProvider.Dispose();
-            _abortCancellationTokenSource.Dispose();
             _timeoutCancellationTokenSource?.Cancel();
             _timeoutCancellationTokenSource?.Dispose();
-            _timeoutCancellationTokenSource = null;
-
-            _sequences?.ForEach(sequence => sequence.Dispose());
-
-            _logger.LogLowLevelTrace(
-                "Waiting adding semaphore ({sequenceType} '{sequenceId}')...",
-                () => new object[]
-                {
-                    GetType().Name,
-                    SequenceId
-                });
-
-            _addingSemaphoreSlim.Wait();
-            _addingSemaphoreSlim.Dispose();
-
-            Context.Dispose();
-
-            // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
-            if (!SequencerBehaviorsTask.IsCompleted)
-                _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
-
-            _isDisposed = true;
-
-            _logger.LogLowLevelTrace(
-                "{sequenceType} '{sequenceId}' disposed.",
-                () => new object[]
-                {
-                    GetType().Name,
-                    SequenceId
-                });
         }
+        catch (OperationCanceledException)
+        {
+            // Ignore
+        }
+        finally
+        {
+            _timeoutCancellationTokenSource = null;
+        }
+
+        _sequences?.ForEach(sequence => sequence.Dispose());
+
+        _logger.LogLowLevelTrace(
+            "Waiting adding semaphore ({sequenceType} '{sequenceId}')...",
+            () => new object[]
+            {
+                GetType().Name,
+                SequenceId
+            });
+
+        _addingSemaphoreSlim.Wait();
+        _addingSemaphoreSlim.Dispose();
+
+        Context.Dispose();
+
+        // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
+        if (!SequencerBehaviorsTask.IsCompleted)
+            _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
+
+        _isDisposed = true;
+
+        _logger.LogLowLevelTrace(
+            "{sequenceType} '{sequenceId}' disposed.",
+            () => new object[]
+            {
+                GetType().Name,
+                SequenceId
+            });
     }
 
     /// <summary>
@@ -576,7 +587,14 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 AbortReason
             });
 
-        _timeoutCancellationTokenSource?.Cancel();
+        try
+        {
+            _timeoutCancellationTokenSource?.Cancel();
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore
+        }
 
         await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
         if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
