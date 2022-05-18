@@ -194,8 +194,7 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
-        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
-            IReadOnlyCollection<IMessageFilter>? filters = null) =>
+        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
             StreamProvider.CreateStream<TMessage>(filters);
 
         /// <inheritdoc cref="ISequence.AddAsync" />
@@ -422,9 +421,20 @@ namespace Silverback.Messaging.Sequences
 
                 _streamProvider.Dispose();
                 _abortCancellationTokenSource.Dispose();
-                _timeoutCancellationTokenSource?.Cancel();
-                _timeoutCancellationTokenSource?.Dispose();
-                _timeoutCancellationTokenSource = null;
+
+                try
+                {
+                    _timeoutCancellationTokenSource?.Cancel();
+                    _timeoutCancellationTokenSource?.Dispose();
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ignore
+                }
+                finally
+                {
+                    _timeoutCancellationTokenSource = null;
+                }
 
                 _sequences?.ForEach(sequence => sequence.Dispose());
 
@@ -565,7 +575,14 @@ namespace Silverback.Messaging.Sequences
                     AbortReason
                 });
 
-            _timeoutCancellationTokenSource?.Cancel();
+            try
+            {
+                _timeoutCancellationTokenSource?.Cancel();
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
