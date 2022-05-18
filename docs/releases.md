@@ -8,7 +8,7 @@ uid: releases
 
 ### What's new
 
-* Implement basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)
+* Implement basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)_
 * Skip chunking when processing single chunk messages
 
 ### Fixes
