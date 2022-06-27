@@ -588,7 +588,7 @@ namespace Silverback.Messaging.Sequences
             if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
                 LogAbort();
 
-            _streamProvider.Abort();
+            _streamProvider.AbortIfPending();
 
             _abortCancellationTokenSource.Cancel();
             _abortingTaskCompletionSource?.SetResult(true);

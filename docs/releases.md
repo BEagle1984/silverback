@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.7.1](https://github.com/BEagle1984/silverback/releases/tag/v3.7.1)
+
+### Fixes
+
+* Improve message streams abort process to avoid first chance exceptions (e.g. during dispose)
+
 ## [3.7.0](https://github.com/BEagle1984/silverback/releases/tag/v3.7.0)
 
 ### What's new

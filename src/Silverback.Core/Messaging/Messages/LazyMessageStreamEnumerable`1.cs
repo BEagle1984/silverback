@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Messages
 
         private MessageStreamEnumerable<TMessage>? _stream;
 
+        private bool _disposed;
+
         public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             Filters = filters;
@@ -45,6 +47,9 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
         public IMessageStreamEnumerable GetOrCreateStream()
         {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().FullName);
+
             if (_stream == null)
             {
                 _stream = new MessageStreamEnumerable<TMessage>();
@@ -59,8 +64,11 @@ namespace Silverback.Messaging.Messages
 
         public void Dispose()
         {
+            if (_disposed)
+                return;
+
             _stream?.Dispose();
-            _stream = null;
+            _disposed = true;
         }
     }
 }

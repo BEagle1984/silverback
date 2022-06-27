@@ -28,6 +28,10 @@ namespace Silverback.Messaging.Messages
 
         private MethodInfo? _genericCreateStreamMethodInfo;
 
+        private bool _completed;
+
+        private bool _aborted;
+
         /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
         public Type MessageType => typeof(TMessage);
 
@@ -82,6 +86,9 @@ namespace Silverback.Messaging.Messages
         {
             Check.NotNull<object>(message, nameof(message));
 
+            if (_completed || _aborted)
+                throw new InvalidOperationException("The streams are already completed or aborted.");
+
             var messageId = Interlocked.Increment(ref _messagesCount);
 
             var processingTasks = PushToCompatibleStreams(messageId, message, cancellationToken).ToList();
@@ -94,20 +101,41 @@ namespace Silverback.Messaging.Messages
             return processingTasks.Count;
         }
 
+        /// <inheritdoc cref="Abort"/>
+        /// <remarks>
+        ///     The abort is performed only if the streams haven't been completed already.
+        /// </remarks>
+        public void AbortIfPending()
+        {
+            if (!_completed)
+                Abort();
+        }
+
         /// <summary>
         ///     Aborts the ongoing enumerations and the pending calls to
         ///     <see cref="PushAsync(TMessage,CancellationToken)" />, then marks the
         ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
         ///     thrown by the enumerators and the <see cref="PushAsync(TMessage,CancellationToken)" /> method.
         /// </summary>
-        public void Abort() => _lazyStreams.ParallelForEach(
-            lazyStream =>
-            {
-                if (lazyStream.Stream != null)
-                    lazyStream.Stream.Abort();
-                else
-                    lazyStream.Cancel();
-            });
+        public void Abort()
+        {
+            if (_completed)
+                throw new InvalidOperationException("The streams are already completed.");
+
+            if (_aborted)
+                return;
+
+            _lazyStreams.ParallelForEach(
+                lazyStream =>
+                {
+                    if (lazyStream.Stream != null)
+                        lazyStream.Stream.Abort();
+                    else
+                        lazyStream.Cancel();
+                });
+
+            _aborted = true;
+        }
 
         /// <summary>
         ///     Marks the stream as complete, meaning no more messages will be pushed.
@@ -118,15 +146,25 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public Task CompleteAsync(CancellationToken cancellationToken = default) =>
-            _lazyStreams.ParallelForEachAsync(
+        public async Task CompleteAsync(CancellationToken cancellationToken = default)
+        {
+            if (_aborted)
+                throw new InvalidOperationException("The stream are already aborted.");
+
+            if (_completed)
+                return;
+
+            await _lazyStreams.ParallelForEachAsync(
                 async lazyStream =>
                 {
                     if (lazyStream.Stream != null)
                         await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                     else
                         lazyStream.Cancel();
-                });
+                }).ConfigureAwait(false);
+
+            _completed = true;
+        }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
         public IMessageStreamEnumerable<object> CreateStream(
@@ -138,8 +176,7 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream{TMessage}" />
-        public IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>(
-            IReadOnlyCollection<IMessageFilter>? filters = null)
+        public IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             var lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream<TMessageLinked>(filters);
             return (IMessageStreamEnumerable<TMessageLinked>)lazyStream.GetOrCreateStream();
@@ -163,8 +200,7 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream{TMessage}" />
-        public ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(
-            IReadOnlyCollection<IMessageFilter>? filters = null)
+        public ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             var stream = CreateLazyStreamCore<TMessageLinked>(filters);
 
@@ -179,11 +215,11 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            AsyncHelper.RunSynchronously(() => CompleteAsync());
+            if (!_aborted && !_completed)
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
 
-        private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(
-            IReadOnlyCollection<IMessageFilter>? filters = null) =>
+        private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
             new LazyMessageStreamEnumerable<TMessageLinked>(filters);
 
         private static bool PushIfCompatibleType(
@@ -232,11 +268,11 @@ namespace Silverback.Messaging.Messages
             foreach (var lazyStream in _lazyStreams)
             {
                 if (PushIfCompatibleType(
-                    lazyStream,
-                    messageId,
-                    message,
-                    cancellationToken,
-                    out var processingTask))
+                        lazyStream,
+                        messageId,
+                        message,
+                        cancellationToken,
+                        out var processingTask))
                 {
                     yield return processingTask;
                 }
