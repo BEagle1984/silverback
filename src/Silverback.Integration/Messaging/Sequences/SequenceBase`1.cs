@@ -600,7 +600,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
             LogAbort();
 
-        _streamProvider.Abort();
+        _streamProvider.AbortIfPending();
 
         _abortCancellationTokenSource.Cancel();
         _abortingTaskCompletionSource?.SetResult(true);

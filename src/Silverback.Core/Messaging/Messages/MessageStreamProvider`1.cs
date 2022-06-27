@@ -28,6 +28,10 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
 
     private MethodInfo? _genericCreateStreamMethodInfo;
 
+    private bool _completed;
+
+    private bool _aborted;
+
     /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
     public Type MessageType => typeof(TMessage);
 
@@ -82,6 +86,9 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     {
         Check.NotNull<object>(message, nameof(message));
 
+        if (_completed || _aborted)
+            throw new InvalidOperationException("The streams are already completed or aborted.");
+
         int messageId = Interlocked.Increment(ref _messagesCount);
 
         List<Task> processingTasks = PushToCompatibleStreams(messageId, message, cancellationToken).ToList();
@@ -94,20 +101,41 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
         return processingTasks.Count;
     }
 
+    /// <inheritdoc cref="Abort"/>
+    /// <remarks>
+    ///     The abort is performed only if the streams haven't been completed already.
+    /// </remarks>
+    public void AbortIfPending()
+    {
+        if (!_completed)
+            Abort();
+    }
+
     /// <summary>
     ///     Aborts the ongoing enumerations and the pending calls to
     ///     <see cref="PushAsync(TMessage,CancellationToken)" />, then marks the
     ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
     ///     thrown by the enumerators and the <see cref="PushAsync(TMessage,CancellationToken)" /> method.
     /// </summary>
-    public void Abort() => _lazyStreams.ParallelForEach(
-        lazyStream =>
-        {
-            if (lazyStream.Stream != null)
-                lazyStream.Stream.Abort();
-            else
-                lazyStream.Cancel();
-        });
+    public void Abort()
+    {
+        if (_completed)
+            throw new InvalidOperationException("The streams are already completed.");
+
+        if (_aborted)
+            return;
+
+        _lazyStreams.ParallelForEach(
+            lazyStream =>
+            {
+                if (lazyStream.Stream != null)
+                    lazyStream.Stream.Abort();
+                else
+                    lazyStream.Cancel();
+            });
+
+        _aborted = true;
+    }
 
     /// <summary>
     ///     Marks the stream as complete, meaning no more messages will be pushed.
@@ -116,17 +144,27 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     ///     A <see cref="CancellationToken" /> used to cancel the operation.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    public ValueTask CompleteAsync(CancellationToken cancellationToken = default) =>
-        _lazyStreams.ParallelForEachAsync(
+    public async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
+    {
+        if (_aborted)
+            throw new InvalidOperationException("The stream are already aborted.");
+
+        if (_completed)
+            return;
+
+        await _lazyStreams.ParallelForEachAsync(
             async lazyStream =>
             {
                 if (lazyStream.Stream != null)
                     await lazyStream.Stream.CompleteAsync(cancellationToken).ConfigureAwait(false);
                 else
                     lazyStream.Cancel();
-            });
+            }).ConfigureAwait(false);
+
+        _completed = true;
+    }
 
     /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
     public IMessageStreamEnumerable<object> CreateStream(
@@ -177,7 +215,8 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
-        AsyncHelper.RunSynchronously(() => CompleteAsync());
+        if (!_aborted && !_completed)
+            AsyncHelper.RunSynchronously(() => CompleteAsync());
     }
 
     private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>

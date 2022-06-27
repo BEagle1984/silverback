@@ -20,6 +20,8 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private MessageStreamEnumerable<TMessage>? _stream;
 
+    private bool _disposed;
+
     public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
         Filters = filters;
@@ -45,6 +47,9 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
     public IMessageStreamEnumerable GetOrCreateStream()
     {
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
         if (_stream == null)
         {
             _stream = new MessageStreamEnumerable<TMessage>();
@@ -59,7 +64,10 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     public void Dispose()
     {
+        if (_disposed)
+            return;
+
         _stream?.Dispose();
-        _stream = null;
+        _disposed = true;
     }
 }
