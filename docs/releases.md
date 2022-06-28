@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.7.2](https://github.com/BEagle1984/silverback/releases/tag/v3.7.2)
+
+### Fixes
+
+* Correctly invoke the [IKafkaOffsetCommittedCallback](xref:Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback) when auto commit is disabled [[#167](https://github.com/BEagle1984/silverback/issues/167)]
+  
 ## [3.7.1](https://github.com/BEagle1984/silverback/releases/tag/v3.7.1)
 
 ### Fixes

@@ -122,8 +122,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             if (string.IsNullOrEmpty(GroupId))
             {
-                throw new ArgumentException(
-                    "'group.id' configuration parameter is required and was not specified.");
+                throw new ArgumentException("'group.id' configuration parameter is required and was not specified.");
             }
 
             var topicsList =
@@ -214,40 +213,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             partitionOffsetDictionary[offset.Partition] = offset.Offset;
         }
 
-        public List<TopicPartitionOffset> Commit()
-        {
-            EnsureNotDisposed();
-
-            var topicPartitionOffsets = _storedOffsets.SelectMany(
-                topicPair => topicPair.Value.Select(
-                    partitionPair => new TopicPartitionOffset(
-                        topicPair.Key,
-                        partitionPair.Key,
-                        partitionPair.Value))).ToList();
-
-            var topicPartitionOffsetsByTopic =
-                topicPartitionOffsets.GroupBy(topicPartitionOffset => topicPartitionOffset.Topic);
-
-            var actualCommittedOffsets = new List<TopicPartitionOffset>();
-            foreach (var group in topicPartitionOffsetsByTopic)
-            {
-                actualCommittedOffsets.AddRange(_topics.Get(group.Key, _config).Commit(GroupId, group));
-            }
-
-            if (actualCommittedOffsets.Count > 0)
-            {
-                OffsetsCommittedHandler?.Invoke(
-                    this,
-                    new CommittedOffsets(
-                        actualCommittedOffsets
-                            .Select(
-                                topicPartitionOffset =>
-                                    new TopicPartitionOffsetError(topicPartitionOffset, null)).ToList(),
-                        null));
-            }
-
-            return actualCommittedOffsets;
-        }
+        public List<TopicPartitionOffset> Commit() => CommitCore(false);
 
         public void Commit(IEnumerable<TopicPartitionOffset> offsets) => throw new NotSupportedException();
 
@@ -333,8 +299,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
             _temporaryAssignment.RemoveAll(topicPartitionOffset => topicPartitionOffset.Topic == topicName);
-            _temporaryAssignment.AddRange(
-                partitions.Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)));
+            _temporaryAssignment.AddRange(partitions.Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)));
 
             if (!_topicAssignments.Contains(topicName))
                 _topicAssignments.Add(topicName);
@@ -354,8 +319,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             PartitionsAssigned = true;
         }
 
-        private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(
-            IEnumerable<TopicPartitionOffset> partitionOffsets) =>
+        private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(IEnumerable<TopicPartitionOffset> partitionOffsets) =>
             PartitionsAssignedHandler?.Invoke(
                     this,
                     partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition).ToList())
@@ -482,7 +446,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 try
                 {
-                    Commit();
+                    CommitCore(true);
                 }
                 catch (Exception)
                 {
@@ -491,6 +455,41 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 await Task.Delay(_autoCommitIntervalMs).ConfigureAwait(false);
             }
+        }
+
+        private List<TopicPartitionOffset> CommitCore(bool isAutoCommit)
+        {
+            EnsureNotDisposed();
+
+            var topicPartitionOffsets = _storedOffsets.SelectMany(
+                topicPair => topicPair.Value.Select(
+                    partitionPair => new TopicPartitionOffset(
+                        topicPair.Key,
+                        partitionPair.Key,
+                        partitionPair.Value))).ToList();
+
+            var topicPartitionOffsetsByTopic =
+                topicPartitionOffsets.GroupBy(topicPartitionOffset => topicPartitionOffset.Topic);
+
+            var actualCommittedOffsets = new List<TopicPartitionOffset>();
+            foreach (var group in topicPartitionOffsetsByTopic)
+            {
+                actualCommittedOffsets.AddRange(_topics.Get(group.Key, _config).Commit(GroupId, group));
+            }
+
+            if (isAutoCommit && actualCommittedOffsets.Count > 0)
+            {
+                OffsetsCommittedHandler?.Invoke(
+                    this,
+                    new CommittedOffsets(
+                        actualCommittedOffsets
+                            .Select(
+                                topicPartitionOffset =>
+                                    new TopicPartitionOffsetError(topicPartitionOffset, null)).ToList(),
+                        null));
+            }
+
+            return actualCommittedOffsets;
         }
 
         private bool GetEofMessageIfNeeded(
@@ -504,7 +503,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
 
             if (!_lastPartitionEof[topicPartitionOffset.Topic]
-                .ContainsKey(topicPartitionOffset.Partition))
+                    .ContainsKey(topicPartitionOffset.Partition))
             {
                 _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition] = -1;
             }

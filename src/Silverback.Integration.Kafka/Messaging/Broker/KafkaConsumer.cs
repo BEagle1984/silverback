@@ -130,8 +130,7 @@ namespace Silverback.Messaging.Broker
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
 
-            AsyncHelper.RunSynchronously(
-                () => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
+            AsyncHelper.RunSynchronously(() => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
             SequenceStores.Clear();
 
             // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
@@ -302,17 +301,14 @@ namespace Silverback.Messaging.Broker
 
             if (IsConsuming)
             {
-                _confluentConsumer?.Pause(
-                    latestTopicPartitionOffsets.Select(
-                        topicPartitionOffset => topicPartitionOffset.TopicPartition));
+                _confluentConsumer?.Pause(latestTopicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
             }
 
             var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
 
             foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
             {
-                channelsManagerStoppingTasks.Add(
-                    _channelsManager?.StopReadingAsync(topicPartitionOffset.TopicPartition));
+                channelsManagerStoppingTasks.Add(_channelsManager?.StopReadingAsync(topicPartitionOffset.TopicPartition));
                 ConfluentConsumer.Seek(topicPartitionOffset);
                 _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
             }
@@ -387,8 +383,7 @@ namespace Silverback.Messaging.Broker
             {
                 _confluentConsumer.Assign(Endpoint.TopicPartitions);
 
-                Endpoint.TopicPartitions.ForEach(
-                    topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
+                Endpoint.TopicPartitions.ForEach(topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
 
                 SetReadyStatus();
             }
@@ -550,10 +545,10 @@ namespace Silverback.Messaging.Broker
                 if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach)
                     return;
 
+                CommitOffsets();
+
                 _messagesSinceCommit = 0;
             }
-
-            ConfluentConsumer.Commit();
         }
 
         private void CommitOffsets()
