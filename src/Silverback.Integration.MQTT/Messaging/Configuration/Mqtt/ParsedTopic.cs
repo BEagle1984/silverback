@@ -56,8 +56,8 @@ internal class ParsedTopic
         }
 
         string pattern = Regex.Escape(topic)
-            .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
-            .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
+            .Replace("\\+", "[^\\/]*", StringComparison.Ordinal)
+            .Replace("\\#", ".*", StringComparison.Ordinal);
 
         return new Regex($"^{pattern}$", RegexOptions.Compiled);
     }

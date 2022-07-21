@@ -337,4 +337,39 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
     }
+
+    [Fact]
+    public async Task ConsumerEndpoint_ShouldConsume_WhenTopicNameContainsSpecialCharacters()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                .AddMqttClients(
+                    clients => clients
+                        .ConnectViaTcp("e2e-mqtt-broker")
+                        .AddClient(
+                            client => client
+                                .WithClientId("e2e-test-1")
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("test/+")))
+                        .AddClient(
+                            client => client
+                                .WithClientId("e2e-test-2")
+                                .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom("test/#"))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IProducer producer = Helper.GetProducer(
+            client => client
+                .ConnectViaTcp("e2e-mqtt-broker")
+                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("test/some-topic?name")));
+
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+    }
 }
