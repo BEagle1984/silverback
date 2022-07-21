@@ -204,8 +204,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
             {
                 var pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
-                    .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
-                    .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
+                    .Replace("\\+", "[^\\/]*", StringComparison.Ordinal)
+                    .Replace("\\#", ".*", StringComparison.Ordinal);
 
                 return new Regex($"^{pattern}$", RegexOptions.Compiled);
             }

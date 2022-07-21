@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.7.3](https://github.com/BEagle1984/silverback/releases/tag/v3.7.3)
+
+### Fixes
+
+* Support topic names with symbols (e.g. hyphens) in mocked MQTT broker
+
 ## [3.7.2](https://github.com/BEagle1984/silverback/releases/tag/v3.7.2)
 
 ### Fixes

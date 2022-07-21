@@ -142,5 +142,35 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
+
+        [Fact]
+        public async Task Subscription_WithSymbolsInTopicName_MessagesConsumed()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .ConnectViaTcp("e2e-mqtt-broker"))
+                                .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo("test/some-topic?name"))
+                                .AddInbound(endpoint => endpoint.ConsumeFrom("test/+").Configure(config => config.WithClientId("e2e-test-1")))
+                                .AddInbound(endpoint => endpoint.ConsumeFrom("test/#").Configure(config => config.WithClientId("e2e-test-2"))))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne());
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+        }
     }
 }
