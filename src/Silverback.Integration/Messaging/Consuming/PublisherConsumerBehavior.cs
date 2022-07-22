@@ -171,12 +171,23 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
                     await Task.WhenAny(tasks).ConfigureAwait(false);
 
-                    if (!sequence.IsComplete && tasks.All(task => !task.IsFaulted))
+                    if (!sequence.IsComplete)
                     {
-                        // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
-                        // The reason behind this call here may be counterintuitive but with
-                        // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                        if (tasks.Any(task => task.IsFaulted))
+                        {
+                            // Call AbortIfPending to abort the uncompleted sequence, including the lazy streams
+                            // which haven't been created yet. This is necessary for the Task.WhenAll to complete.
+                            // The actual exception is handled in the catch block and in there the sequence is
+                            // properly aborted, triggering the error policies and everything else.
+                            (sequence.StreamProvider as MessageStreamProvider)?.AbortIfPending();
+                        }
+                        else
+                        {
+                            // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
+                            // The reason behind this call here may be counterintuitive but with
+                            // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
+                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                        }
                     }
 
                     await Task.WhenAll(processingTasks).ConfigureAwait(false);

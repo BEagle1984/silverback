@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TMessage">
 ///     The type of the messages being streamed.
 /// </typeparam>
-internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
+internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 {
     private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new();
 
@@ -32,11 +32,11 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
 
     private bool _aborted;
 
-    /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
-    public Type MessageType => typeof(TMessage);
+    /// <inheritdoc cref="MessageStreamProvider.MessageType" />
+    public override Type MessageType => typeof(TMessage);
 
-    /// <inheritdoc cref="IMessageStreamProvider.StreamsCount" />
-    public int StreamsCount => _lazyStreams.Count;
+    /// <inheritdoc cref="MessageStreamProvider.StreamsCount" />
+    public override int StreamsCount => _lazyStreams.Count;
 
     /// <summary>
     ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
@@ -101,23 +101,15 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
         return processingTasks.Count;
     }
 
-    /// <inheritdoc cref="Abort"/>
-    /// <remarks>
-    ///     The abort is performed only if the streams haven't been completed already.
-    /// </remarks>
-    public void AbortIfPending()
+    /// <inheritdoc cref="MessageStreamProvider.AbortIfPending"/>
+    public override void AbortIfPending()
     {
         if (!_completed)
             Abort();
     }
 
-    /// <summary>
-    ///     Aborts the ongoing enumerations and the pending calls to
-    ///     <see cref="PushAsync(TMessage,CancellationToken)" />, then marks the
-    ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
-    ///     thrown by the enumerators and the <see cref="PushAsync(TMessage,CancellationToken)" /> method.
-    /// </summary>
-    public void Abort()
+    /// <inheritdoc cref="MessageStreamProvider.Abort"/>
+    public override void Abort()
     {
         if (_completed)
             throw new InvalidOperationException("The streams are already completed.");
@@ -137,16 +129,8 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
         _aborted = true;
     }
 
-    /// <summary>
-    ///     Marks the stream as complete, meaning no more messages will be pushed.
-    /// </summary>
-    /// <param name="cancellationToken">
-    ///     A <see cref="CancellationToken" /> used to cancel the operation.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
-    /// </returns>
-    public async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
+    /// <inheritdoc cref="MessageStreamProvider.CompleteAsync"/>
+    public override async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
         if (_aborted)
             throw new InvalidOperationException("The stream are already aborted.");
@@ -167,7 +151,7 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     }
 
     /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
-    public IMessageStreamEnumerable<object> CreateStream(
+    public override IMessageStreamEnumerable<object> CreateStream(
         Type messageType,
         IReadOnlyCollection<IMessageFilter>? filters = null)
     {
@@ -176,14 +160,14 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     }
 
     /// <inheritdoc cref="IMessageStreamProvider.CreateStream{TMessage}" />
-    public IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
+    public override IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
         ILazyMessageStreamEnumerable lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream<TMessageLinked>(filters);
         return (IMessageStreamEnumerable<TMessageLinked>)lazyStream.GetOrCreateStream();
     }
 
     /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream" />
-    public ILazyMessageStreamEnumerable<object> CreateLazyStream(
+    public override ILazyMessageStreamEnumerable<object> CreateLazyStream(
         Type messageType,
         IReadOnlyCollection<IMessageFilter>? filters = null)
     {
@@ -199,8 +183,8 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
         return (ILazyMessageStreamEnumerable<object>)lazyStream;
     }
 
-    /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream{TMessage}" />
-    public ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
+    /// <inheritdoc cref="MessageStreamProvider.CreateLazyStream{TMessage}" />
+    public override ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
         ILazyMessageStreamEnumerable<TMessageLinked> stream = CreateLazyStreamCore<TMessageLinked>(filters);
 
@@ -213,7 +197,7 @@ internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, 
     }
 
     /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose()
+    public override void Dispose()
     {
         if (!_aborted && !_completed)
             AsyncHelper.RunSynchronously(() => CompleteAsync());
