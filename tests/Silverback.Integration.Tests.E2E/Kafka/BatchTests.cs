@@ -1204,6 +1204,82 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             abortedCount.Should().BeGreaterOrEqualTo(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
         }
+        
+        [Fact]
+        public async Task Batch_ProcessingFailedWithIncompatibleSubscribers_ConsumerStopped()
+        {
+            int batchesCount = 0;
+            int abortedCount = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })
+                                        .EnableBatchProcessing(10)))
+                        .AddDelegateSubscriber(
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                Interlocked.Increment(ref batchesCount);
+
+                                int messagesCount = 0;
+
+                                try
+                                {
+                                    await foreach (var dummy in eventsStream)
+                                    {
+                                        if (++messagesCount == 2)
+                                            throw new InvalidOperationException("Test");
+                                    }
+                                }
+                                catch (OperationCanceledException)
+                                {
+                                    Interlocked.Increment(ref abortedCount);
+                                }
+                            })
+                        .AddDelegateSubscriber(
+                            (IAsyncEnumerable<TestEventTwo> dummy) =>
+                            {
+                                // Do nothing, this is just an incompatible subscriber
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            for (int i = 0; i < 5; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(() => !Helper.Broker.Consumers[0].IsConnected);
+
+            Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+        }
 
         [Fact]
         public async Task Batch_FromMultiplePartitions_ConcurrentlyConsumed()
