@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Testing;
@@ -20,19 +21,55 @@ public class IntegrationSpy : IIntegrationSpy
 
     /// <inheritdoc cref="IIntegrationSpy.OutboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes;
+    public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes
+    {
+        get
+        {
+            lock (_outboundEnvelopes)
+            {
+                return _outboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+            }
+        }
+    }
 
     /// <inheritdoc cref="IIntegrationSpy.RawOutboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IRawOutboundEnvelope> RawOutboundEnvelopes => _rawOutboundEnvelopes;
+    public IReadOnlyList<IRawOutboundEnvelope> RawOutboundEnvelopes
+    {
+        get
+        {
+            lock (_rawOutboundEnvelopes)
+            {
+                return _rawOutboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+            }
+        }
+    }
 
     /// <inheritdoc cref="IIntegrationSpy.RawInboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes => _rawInboundEnvelopes;
+    public IReadOnlyList<IRawInboundEnvelope> RawInboundEnvelopes
+    {
+        get
+        {
+            lock (_rawInboundEnvelopes)
+            {
+                return _rawInboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+            }
+        }
+    }
 
     /// <inheritdoc cref="IIntegrationSpy.InboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyList<IInboundEnvelope> InboundEnvelopes => _inboundEnvelopes;
+    public IReadOnlyList<IInboundEnvelope> InboundEnvelopes
+    {
+        get
+        {
+            lock (_inboundEnvelopes)
+            {
+                return _inboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+            }
+        }
+    }
 
     /// <summary>
     ///     Adds an item to the <see cref="OutboundEnvelopes" />.
