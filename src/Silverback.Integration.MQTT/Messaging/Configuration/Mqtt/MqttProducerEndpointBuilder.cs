@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, string})" />
-        public IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string> topicNameFunction)
+        public IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string?> topicNameFunction)
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
 
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, string})" />
         public IMqttProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction)
+            Func<IOutboundEnvelope<TMessage>, string?> topicNameFunction)
             where TMessage : class
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
@@ -80,7 +80,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string})" />
         public IMqttProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction)
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction)
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
 
@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, IServiceProvider, string})" />
         public IMqttProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction)
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string?> topicNameFunction)
             where TMessage : class
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));

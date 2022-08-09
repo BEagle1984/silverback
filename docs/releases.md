@@ -4,7 +4,11 @@ uid: releases
 
 # Releases
 
-## [3.7.4](https://github.com/BEagle1984/silverback/releases/tag/v3.7.4)
+## [3.8.0](https://github.com/BEagle1984/silverback/releases/tag/v3.8.0)
+
+### What's new
+
+* Topic name resolvers can be used to filter the messages to be produce:  returning `null` will discard the message
 
 ### Fixes
 

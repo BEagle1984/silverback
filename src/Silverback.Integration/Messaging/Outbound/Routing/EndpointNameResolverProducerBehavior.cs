@@ -25,9 +25,14 @@ namespace Silverback.Messaging.Outbound.Routing
 
             if (context.Envelope is OutboundEnvelope outboundEnvelope)
             {
-                outboundEnvelope.ActualEndpointName = outboundEnvelope.Endpoint.GetActualName(
+                string? actualEndpointName = outboundEnvelope.Endpoint.GetActualName(
                     outboundEnvelope,
                     context.ServiceProvider);
+
+                if (actualEndpointName == null)
+                    return;
+
+                outboundEnvelope.ActualEndpointName = actualEndpointName;
             }
 
             await next(context).ConfigureAwait(false);

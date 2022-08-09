@@ -28,12 +28,13 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     Specifies the name of the topic and optionally the target partition.
         /// </summary>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <returns>
         ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
-        IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string> topicNameFunction);
+        IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string?> topicNameFunction);
 
         /// <summary>
         ///     Specifies the name of the topic and optionally the target partition.
@@ -42,26 +43,28 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The type of the messages being produced.
         /// </typeparam>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <returns>
         ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction)
+            Func<IOutboundEnvelope<TMessage>, string?> topicNameFunction)
             where TMessage : class;
 
         /// <summary>
         ///     Specifies the name of the topic and optionally the target partition.
         /// </summary>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <returns>
         ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction);
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction);
 
         /// <summary>
         ///     Specifies the name of the topic and optionally the target partition.
@@ -70,13 +73,14 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The type of the messages being produced.
         /// </typeparam>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <returns>
         ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction)
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string?> topicNameFunction)
             where TMessage : class;
 
         /// <summary>

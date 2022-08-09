@@ -19,62 +19,64 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="name">
+        /// <param name="topicName">
         ///     The name of the topic.
         /// </param>
-        public MqttProducerEndpoint(string name)
-            : base(name)
+        public MqttProducerEndpoint(string topicName)
+            : base(topicName)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
-        public MqttProducerEndpoint(Func<IOutboundEnvelope, string> nameFunction)
-            : base(nameFunction)
+        public MqttProducerEndpoint(Func<IOutboundEnvelope, string?> topicNameFunction)
+            : base(topicNameFunction)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
-        public MqttProducerEndpoint(Func<IOutboundEnvelope, IServiceProvider, string> nameFunction)
-            : base(nameFunction)
+        public MqttProducerEndpoint(Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction)
+            : base(topicNameFunction)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFormat">
+        /// <param name="topicNameFormatString">
         ///     The endpoint name format string that will be combined with the arguments returned by the
-        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        ///     <paramref name="topicNameArgumentsFunction" /> using a <c>string.Format</c>.
         /// </param>
-        /// <param name="argumentsFunction">
+        /// <param name="topicNameArgumentsFunction">
         ///     The function returning the arguments to be used to format the string.
         /// </param>
         public MqttProducerEndpoint(
-            string nameFormat,
-            Func<IOutboundEnvelope, string[]> argumentsFunction)
-            : base(nameFormat, argumentsFunction)
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction)
+            : base(topicNameFormatString, topicNameArgumentsFunction)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameResolverType">
+        /// <param name="resolverType">
         ///     The type of the <see cref="IProducerEndpointNameResolver" /> to be used to resolve the actual
         ///     endpoint name.
         /// </param>
-        public MqttProducerEndpoint(Type nameResolverType)
-            : base(nameResolverType)
+        public MqttProducerEndpoint(Type resolverType)
+            : base(resolverType)
         {
         }
 

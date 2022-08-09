@@ -18,7 +18,7 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IProducerEndpoint" />
     public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint
     {
-        private readonly Func<IOutboundEnvelope, IServiceProvider, string> _nameFunction;
+        private readonly Func<IOutboundEnvelope, IServiceProvider, string?> _nameFunction;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
@@ -34,9 +34,10 @@ namespace Silverback.Messaging
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
         /// </summary>
         /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
-        protected ProducerEndpoint(Func<IOutboundEnvelope, string> nameFunction)
+        protected ProducerEndpoint(Func<IOutboundEnvelope, string?> nameFunction)
             : base("[dynamic]") =>
             _nameFunction = (envelope, _) => nameFunction.Invoke(envelope);
 
@@ -44,9 +45,10 @@ namespace Silverback.Messaging
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
         /// </summary>
         /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
-        protected ProducerEndpoint(Func<IOutboundEnvelope, IServiceProvider, string> nameFunction)
+        protected ProducerEndpoint(Func<IOutboundEnvelope, IServiceProvider, string?> nameFunction)
             : base("[dynamic]")
         {
             Check.NotNull(nameFunction, nameof(nameFunction));
@@ -75,22 +77,22 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameResolverType">
+        /// <param name="resolverType">
         ///     The type of the <see cref="IProducerEndpointNameResolver" /> to be used to resolve the actual endpoint
         ///     name.
         /// </param>
-        protected ProducerEndpoint(Type nameResolverType)
-            : base($"[dynamic | {nameResolverType}]")
+        protected ProducerEndpoint(Type resolverType)
+            : base($"[dynamic | {resolverType}]")
         {
-            if (!typeof(IProducerEndpointNameResolver).IsAssignableFrom(nameResolverType))
+            if (!typeof(IProducerEndpointNameResolver).IsAssignableFrom(resolverType))
             {
                 throw new ArgumentException(
                     "The specified type must implement IProducerEndpointNameResolver.",
-                    nameof(nameResolverType));
+                    nameof(resolverType));
             }
 
             _nameFunction = (envelope, serviceProvider) =>
-                ((IProducerEndpointNameResolver)serviceProvider.GetRequiredService(nameResolverType))
+                ((IProducerEndpointNameResolver)serviceProvider.GetRequiredService(resolverType))
                 .GetName(envelope);
         }
 
@@ -119,7 +121,7 @@ namespace Silverback.Messaging
             MessageEnrichers.AsReadOnlyCollection();
 
         /// <inheritdoc cref="IProducerEndpoint.GetActualName" />
-        public string GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider) =>
+        public string? GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider) =>
             _nameFunction.Invoke(envelope, serviceProvider);
 
         /// <inheritdoc cref="Endpoint.Validate" />

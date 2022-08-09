@@ -76,6 +76,42 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [Fact]
+        public async Task DynamicRouting_NameFunctionReturningNull_MessagesIgnored()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker"))
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo<TestEventOne>(
+                                            envelope =>
+                                            {
+                                                if (envelope.Message!.Content == "skip")
+                                                    return null;
+
+                                                return DefaultTopicName;
+                                            }))))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "skip" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            Helper.GetMessages(DefaultTopicName).Should().HaveCount(2);
+        }
+
+        [Fact]
         public async Task DynamicRouting_NameFormat_MessagesRouted()
         {
             Host.ConfigureServices(

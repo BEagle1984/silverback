@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, string}, Func{IOutboundEnvelope, int}?)" />
         public IKafkaProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, string> topicNameFunction,
+            Func<IOutboundEnvelope, string?> topicNameFunction,
             Func<IOutboundEnvelope, int>? partitionFunction = null)
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, string}, Func{IOutboundEnvelope{TMessage}, int}?)" />
         public IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, string?> topicNameFunction,
             Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
             where TMessage : class
         {
@@ -96,7 +96,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string}, Func{IOutboundEnvelope, IServiceProvider, int}?)" />
         public IKafkaProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction,
             Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction = null)
         {
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
@@ -111,7 +111,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, IServiceProvider, string}, Func{IOutboundEnvelope{TMessage}, IServiceProvider, int}?)" />
         public IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string?> topicNameFunction,
             Func<IOutboundEnvelope<TMessage>, IServiceProvider, int>? partitionFunction = null)
             where TMessage : class
         {

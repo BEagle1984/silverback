@@ -58,7 +58,6 @@ namespace Silverback.Testing
             }
         }
 
-
         /// <inheritdoc cref="IIntegrationSpy.InboundEnvelopes" />
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
         public IReadOnlyList<IInboundEnvelope> InboundEnvelopes

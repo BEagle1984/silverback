@@ -24,7 +24,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="name">
+        /// <param name="topicName">
         ///     The name of the topic.
         /// </param>
         /// <param name="clientConfig">
@@ -32,16 +32,16 @@ namespace Silverback.Messaging
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            string name,
+            string topicName,
             KafkaClientConfig? clientConfig = null)
-            : this(name, (int?)null, clientConfig)
+            : this(topicName, (int?)null, clientConfig)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="name">
+        /// <param name="topicName">
         ///     The name of the topic.
         /// </param>
         /// <param name="partition">
@@ -54,10 +54,10 @@ namespace Silverback.Messaging
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            string name,
+            string topicName,
             int? partition,
             KafkaClientConfig? clientConfig = null)
-            : base(name)
+            : base(topicName)
         {
             if (partition != null && partition < Partition.Any)
             {
@@ -77,25 +77,27 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="clientConfig">
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            Func<IOutboundEnvelope, string> nameFunction,
+            Func<IOutboundEnvelope, string?> topicNameFunction,
             KafkaClientConfig? clientConfig = null)
-            : this(nameFunction, null, clientConfig)
+            : this(topicNameFunction, null, clientConfig)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -107,10 +109,10 @@ namespace Silverback.Messaging
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            Func<IOutboundEnvelope, string> nameFunction,
+            Func<IOutboundEnvelope, string?> topicNameFunction,
             Func<IOutboundEnvelope, int>? partitionFunction,
             KafkaClientConfig? clientConfig = null)
-            : base(nameFunction)
+            : base(topicNameFunction)
         {
             Configuration = new KafkaProducerConfig(clientConfig);
 
@@ -123,25 +125,27 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="clientConfig">
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            Func<IOutboundEnvelope, IServiceProvider, string> nameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction,
             KafkaClientConfig? clientConfig = null)
-            : this(nameFunction, null, clientConfig)
+            : this(topicNameFunction, null, clientConfig)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFunction">
-        ///     The function returning the endpoint name for the message being produced.
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -153,10 +157,10 @@ namespace Silverback.Messaging
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(
-            Func<IOutboundEnvelope, IServiceProvider, string> nameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction,
             Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction,
             KafkaClientConfig? clientConfig = null)
-            : base(nameFunction)
+            : base(topicNameFunction)
         {
             Configuration = new KafkaProducerConfig(clientConfig);
 
@@ -174,11 +178,11 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFormat">
+        /// <param name="topicNameFormatString">
         ///     The endpoint name format string that will be combined with the arguments returned by the
-        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        ///     <paramref name="topicNameArgumentsFunction" /> using a <c>string.Format</c>.
         /// </param>
-        /// <param name="argumentsFunction">
+        /// <param name="topicNameArgumentsFunction">
         ///     The function returning the arguments to be used to format the string.
         /// </param>
         /// <param name="clientConfig">
@@ -187,21 +191,21 @@ namespace Silverback.Messaging
         /// </param>
         [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Read-only array")]
         public KafkaProducerEndpoint(
-            string nameFormat,
-            Func<IOutboundEnvelope, string[]> argumentsFunction,
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction,
             KafkaClientConfig? clientConfig = null)
-            : this(nameFormat, argumentsFunction, null, clientConfig)
+            : this(topicNameFormatString, topicNameArgumentsFunction, null, clientConfig)
         {
         }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameFormat">
+        /// <param name="topicNameFormatString">
         ///     The endpoint name format string that will be combined with the arguments returned by the
-        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        ///     <paramref name="topicNameArgumentsFunction" /> using a <c>string.Format</c>.
         /// </param>
-        /// <param name="argumentsFunction">
+        /// <param name="topicNameArgumentsFunction">
         ///     The function returning the arguments to be used to format the string.
         /// </param>
         /// <param name="partitionFunction">
@@ -215,11 +219,11 @@ namespace Silverback.Messaging
         /// </param>
         [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Read-only array")]
         public KafkaProducerEndpoint(
-            string nameFormat,
-            Func<IOutboundEnvelope, string[]> argumentsFunction,
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction,
             Func<IOutboundEnvelope, int>? partitionFunction,
             KafkaClientConfig? clientConfig = null)
-            : base(nameFormat, argumentsFunction)
+            : base(topicNameFormatString, topicNameArgumentsFunction)
         {
             Configuration = new KafkaProducerConfig(clientConfig);
 
@@ -232,7 +236,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
-        /// <param name="nameResolverType">
+        /// <param name="resolverType">
         ///     The type of the <see cref="IKafkaProducerEndpointNameResolver" /> to be used to resolve the actual
         ///     endpoint name.
         /// </param>
@@ -240,20 +244,20 @@ namespace Silverback.Messaging
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
-        public KafkaProducerEndpoint(Type nameResolverType, KafkaClientConfig? clientConfig = null)
-            : base(nameResolverType)
+        public KafkaProducerEndpoint(Type resolverType, KafkaClientConfig? clientConfig = null)
+            : base(resolverType)
         {
             Configuration = new KafkaProducerConfig(clientConfig);
 
-            if (!typeof(IKafkaProducerEndpointNameResolver).IsAssignableFrom(nameResolverType))
+            if (!typeof(IKafkaProducerEndpointNameResolver).IsAssignableFrom(resolverType))
             {
                 throw new ArgumentException(
                     "The specified type must implement IKafkaProducerEndpointNameResolver.",
-                    nameof(nameResolverType));
+                    nameof(resolverType));
             }
 
             _partitionFunction = (envelope, serviceProvider) =>
-                ((IKafkaProducerEndpointNameResolver)serviceProvider.GetRequiredService(nameResolverType))
+                ((IKafkaProducerEndpointNameResolver)serviceProvider.GetRequiredService(resolverType))
                 .GetPartition(envelope) ?? Partition.Any;
         }
 

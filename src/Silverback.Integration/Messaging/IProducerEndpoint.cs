@@ -45,6 +45,6 @@ namespace Silverback.Messaging
         /// <returns>
         ///     The actual name of the endpoint to be produced to.
         /// </returns>
-        public string GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider);
+        public string? GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider);
     }
 }

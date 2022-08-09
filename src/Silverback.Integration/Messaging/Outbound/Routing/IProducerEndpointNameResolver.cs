@@ -11,7 +11,8 @@ namespace Silverback.Messaging.Outbound.Routing
     public interface IProducerEndpointNameResolver
     {
         /// <summary>
-        ///     Gets the actual target endpoint name for the message being produced.
+        ///     Gets the actual target endpoint name for the message being produced. If it returns
+        ///     <c>null</c> the message will not be produced.
         /// </summary>
         /// <param name="envelope">
         ///     The envelope containing the message being produced.
@@ -19,6 +20,6 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <returns>
         ///     The actual name of the endpoint to be produced to.
         /// </returns>
-        string GetName(IOutboundEnvelope envelope);
+        string? GetName(IOutboundEnvelope envelope);
     }
 }

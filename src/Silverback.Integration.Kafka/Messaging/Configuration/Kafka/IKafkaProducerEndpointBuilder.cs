@@ -32,7 +32,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     Specifies the name of the topic and optionally the target partition.
         /// </summary>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -43,7 +44,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, string> topicNameFunction,
+            Func<IOutboundEnvelope, string?> topicNameFunction,
             Func<IOutboundEnvelope, int>? partitionFunction = null);
 
         /// <summary>
@@ -53,7 +54,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages being produced.
         /// </typeparam>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -64,7 +66,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, string?> topicNameFunction,
             Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
             where TMessage : class;
 
@@ -72,7 +74,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     Specifies the name of the topic and optionally the target partition.
         /// </summary>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -83,7 +86,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaProducerEndpointBuilder ProduceTo(
-            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, string?> topicNameFunction,
             Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction = null);
 
         /// <summary>
@@ -93,7 +96,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages being produced.
         /// </typeparam>
         /// <param name="topicNameFunction">
-        ///     The function returning the topic name for the message being produced.
+        ///     The function returning the topic name for the message being produced. If the function returns
+        ///     <c>null</c> the message will not be produced.
         /// </param>
         /// <param name="partitionFunction">
         ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
@@ -104,7 +108,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
-            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string?> topicNameFunction,
             Func<IOutboundEnvelope<TMessage>, IServiceProvider, int>? partitionFunction = null)
             where TMessage : class;
 
