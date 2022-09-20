@@ -152,4 +152,21 @@ public class EnumerableForEachExtensionsFixture
         await act.Should().ThrowAsync<TimeoutException>();
         countdownEvent.CurrentCount.Should().Be(1);
     }
+
+    [Fact]
+    public async Task ParallelForEach_ShouldBlockUntilAsyncFunctionCompletes()
+    {
+        IEnumerable<int> enumerable = Enumerable.Range(1, 5);
+
+        int total = 0;
+        await enumerable.ParallelForEachAsync(
+            async i =>
+            {
+                await Task.Delay(500);
+                Interlocked.Add(ref total, i);
+            },
+            2);
+
+        total.Should().Be(15);
+    }
 }
