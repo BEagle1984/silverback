@@ -117,11 +117,7 @@ namespace Silverback.Messaging.Broker
         protected override Task ConnectCoreAsync() => _clientWrapper.ConnectAsync(this);
 
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
-        protected override async Task DisconnectCoreAsync()
-        {
-            await _clientWrapper.UnsubscribeAsync(Endpoint.Topics).ConfigureAwait(false);
-            await _clientWrapper.DisconnectAsync(this).ConfigureAwait(false);
-        }
+        protected override Task DisconnectCoreAsync() => _clientWrapper.DisconnectAsync(this);
 
         /// <inheritdoc cref="Consumer.StartCoreAsync" />
         protected override Task StartCoreAsync()
