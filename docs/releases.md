@@ -15,6 +15,7 @@ uid: releases
 * Fix error policies not being triggered consistently when batch consuming
 * Make `IntegrationSpy` fully thread-safe
 * Prevent errors when the [IKafkaPartitionsRevokedCallback](xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback) is invoked during application shutdown
+* Improve error handling during connection to MQTT
 
 ## [3.7.3](https://github.com/BEagle1984/silverback/releases/tag/v3.7.3)
 

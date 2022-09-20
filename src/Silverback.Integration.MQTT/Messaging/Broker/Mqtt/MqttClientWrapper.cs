@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Exceptions;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -23,6 +24,8 @@ namespace Silverback.Messaging.Broker.Mqtt
     internal sealed class MqttClientWrapper : IDisposable
     {
         private const int ConnectionMonitorMillisecondsInterval = 500;
+
+        private const int ConnectionCheckDelayMilliseconds = 5000;
 
         private readonly IBrokerCallbacksInvoker _brokerCallbacksInvoker;
 
@@ -115,8 +118,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                     return;
             }
 
-            await _brokerCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(
-                    handler => handler.OnClientDisconnectingAsync(ClientConfig))
+            await _brokerCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(handler => handler.OnClientDisconnectingAsync(ClientConfig))
                 .ConfigureAwait(false);
 
             if (MqttClient.IsConnected)
@@ -184,12 +186,19 @@ namespace Silverback.Messaging.Broker.Mqtt
                 _logger.LogReconnected(this);
             }
 
-            if (Consumer != null)
-                await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);
+            try
+            {
+                if (Consumer != null)
+                    await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);
 
-            await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(
-                    handler => handler.OnClientConnectedAsync(ClientConfig))
-                .ConfigureAwait(false);
+                await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(handler => handler.OnClientConnectedAsync(ClientConfig))
+                    .ConfigureAwait(false);
+            }
+            catch (MqttCommunicationException ex)
+            {
+                // This might happen if the client briefly connects and then immediately disconnects
+                _logger.LogConnectError(this, ex);
+            }
 
             return true;
         }
@@ -203,7 +212,13 @@ namespace Silverback.Messaging.Broker.Mqtt
                     .ConnectAsync(ClientConfig.GetMqttClientOptions(), cancellationToken)
                     .ConfigureAwait(false);
 
-                return true;
+                // The client might briefly connect and then disconnect immediately (e.g. when connecting with
+                // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real
+                // (Not very elegant, but we do this only for the real client, to avoid slowing down the tests)
+                if (MqttClient is MqttClient)
+                    await Task.Delay(ConnectionCheckDelayMilliseconds, cancellationToken).ConfigureAwait(false);
+
+                return MqttClient.IsConnected;
             }
             catch (Exception ex)
             {
