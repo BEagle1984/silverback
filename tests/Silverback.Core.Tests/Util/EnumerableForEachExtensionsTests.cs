@@ -89,5 +89,22 @@ namespace Silverback.Tests.Core.Util
 
             total.Should().Be(15);
         }
+
+        [Fact]
+        public async Task ParallelForEach_AsyncFunc_BlocksUntilCompletion()
+        {
+            var enumerable = Enumerable.Range(1, 5);
+
+            var total = 0;
+            await enumerable.ParallelForEachAsync(
+                async i =>
+                {
+                    await Task.Delay(1000);
+                    Interlocked.Add(ref total, i);
+                },
+                2);
+
+            total.Should().Be(15);
+        }
     }
 }
