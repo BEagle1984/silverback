@@ -13,6 +13,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Client.Publishing;
 using MQTTnet.Client.Receiving;
+using MQTTnet.Exceptions;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -24,6 +25,8 @@ namespace Silverback.Messaging.Broker.Mqtt;
 internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 {
     private const int ConnectionMonitorMillisecondsInterval = 500;
+
+    private const int ConnectionCheckDelayMilliseconds = 5000;
 
     private readonly IMqttClient _mqttClient;
 
@@ -164,8 +167,16 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             _logger.LogReconnected(this);
         }
 
-        await Connected.InvokeAsync(this).ConfigureAwait(false);
-        await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
+        try
+        {
+            await Connected.InvokeAsync(this).ConfigureAwait(false);
+            await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
+        }
+        catch (MqttCommunicationException ex)
+        {
+            // This might happen if the client briefly connects and then immediately disconnects
+            _logger.LogConnectError(this, ex);
+        }
 
         return true;
     }
@@ -181,7 +192,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
             await _mqttClient.SubscribeAsync(_subscribedTopicsFilters).ConfigureAwait(false);
 
-            return true;
+            // The client might briefly connect and then disconnect immediately (e.g. when connecting with
+            // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real
+            // (Not very elegant, but we do this only for the real client, to avoid slowing down the tests)
+            if (_mqttClient is MqttClient)
+                await Task.Delay(ConnectionCheckDelayMilliseconds, cancellationToken).ConfigureAwait(false);
+
+            return _mqttClient.IsConnected;
         }
         catch (Exception ex)
         {
