@@ -87,8 +87,7 @@ namespace Silverback.Messaging
             IEnumerable<TopicPartition> topicPartitions,
             KafkaClientConfig? clientConfig = null)
             : this(
-                topicPartitions?.Select(
-                    topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
+                topicPartitions?.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
                 clientConfig)
         {
         }
@@ -310,8 +309,7 @@ namespace Silverback.Messaging
 
             if (MaxDegreeOfParallelism < 1)
             {
-                throw new EndpointConfigurationException(
-                    "MaxDegreeOfParallelism must be greater or equal to 1.");
+                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
             }
 
             if (BackpressureLimit < 1)
@@ -366,6 +364,10 @@ namespace Silverback.Messaging
             Names = topicNames;
 
             Configuration = new KafkaConsumerConfig(clientConfig);
+            if (string.IsNullOrEmpty(Configuration.GroupId))
+            {
+                Configuration.GroupId = ConfluentConsumerConfigProxy.GroupIdNotSet;
+            }
         }
     }
 }

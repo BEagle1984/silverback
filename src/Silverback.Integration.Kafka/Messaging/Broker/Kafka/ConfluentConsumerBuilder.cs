@@ -37,8 +37,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetStatisticsHandler" />
-        public IConfluentConsumerBuilder SetStatisticsHandler(
-            Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
+        public IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
         {
             _statisticsHandler = statisticsHandler;
             return this;
@@ -61,8 +60,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartition}})" />
-        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
+        public IConfluentConsumerBuilder SetPartitionsAssignedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
         {
             _partitionsAssignedHandler = (consumer, partitions) =>
             {
@@ -86,8 +84,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartitionOffset}})" />
-        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
+        public IConfluentConsumerBuilder SetPartitionsRevokedHandler(Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
         {
             _partitionsRevokedHandler = (consumer, partitions) =>
             {
@@ -100,8 +97,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetOffsetsCommittedHandler" />
-        public IConfluentConsumerBuilder SetOffsetsCommittedHandler(
-            Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
+        public IConfluentConsumerBuilder SetOffsetsCommittedHandler(Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
         {
             _offsetsCommittedHandler = offsetsCommittedHandler;
             return this;

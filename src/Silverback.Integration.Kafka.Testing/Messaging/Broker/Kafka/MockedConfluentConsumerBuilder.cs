@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Broker.Kafka
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="options">
-        ///     The <see cref="IMockedKafkaOptions"/>.
+        ///     The <see cref="IMockedKafkaOptions" />.
         /// </param>
         public MockedConfluentConsumerBuilder(IServiceProvider serviceProvider, IMockedKafkaOptions options)
         {

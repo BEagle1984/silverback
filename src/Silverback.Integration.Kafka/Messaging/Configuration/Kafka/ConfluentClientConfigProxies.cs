@@ -877,6 +877,17 @@ namespace Silverback.Messaging.Configuration.Kafka
     public abstract class ConfluentConsumerConfigProxy : ConfluentClientConfigProxy
     {
         /// <summary>
+        ///     If the KafkaConsumer does not have a group.id for consumer group partition assignment and offset
+        ///     storage, then a fake value is set as workaround for the current limitations of confluent-kafka-dotnet and librdkafka.
+        ///     See also
+        ///     <see href="https://github.com/confluentinc/confluent-kafka-dotnet/issues/225" />
+        ///     <see href="https://github.com/edenhill/librdkafka/issues/593" /> for more information.
+        /// </summary>
+        public const string GroupIdNotSet = "group-id-not-set";
+
+        private bool? _isGroupIdSet;
+
+        /// <summary>
         ///     Initializes a new instance of the <see cref="ConfluentConsumerConfigProxy" /> class.
         /// </summary>
         /// <param name="clientConfig">
@@ -886,6 +897,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         protected ConfluentConsumerConfigProxy(ClientConfig? clientConfig = null)
             : base(clientConfig != null ? new ConsumerConfig(clientConfig.Clone()) : new ConsumerConfig())
         {
+        }
+
+        /// <summary>
+        ///     Returns a boolean indicating whether group.id is set.
+        /// </summary>
+        public bool IsGroupIdSet
+        {
+            get
+            {
+                _isGroupIdSet ??= GroupId != GroupIdNotSet;
+                return _isGroupIdSet.Value;
+            }
         }
 
         /// <summary>
