@@ -8,7 +8,7 @@ uid: releases
 
 ### What's new
 
-* Topic name resolvers can be used to filter the messages to be produce:  returning `null` will discard the message
+* Topic name resolvers can be used to filter the messages to be produce: returning `null` will discard the message
 
 ### Fixes
 

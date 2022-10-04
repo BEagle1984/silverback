@@ -123,6 +123,8 @@ Header Key | Description
 
 ### Kafka specific
 
+Header Key | Description
+:-- | :--
 `x-kafka-message-key` | The header that will be filled with the [key](xref:kafka-partitioning) of the message consumed from Kafka.
 `x-kafka-message-timestamp` | The header that will be filled with the timestamp of the message consumed from Kafka.
 `x-source-consumer-group-id` | The header that will be set by the <xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy> and will contain the GroupId the consumer that consumed the message that failed to be processed.
