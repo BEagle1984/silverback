@@ -439,7 +439,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">topicNameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced.</p>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -489,7 +490,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">topicNameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced.</p>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -647,7 +649,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">topicNameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced.</p>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -714,7 +717,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">topicNameFunction</span></td>
-        <td><p>The function returning the topic name for the message being produced.</p>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
     </tbody>

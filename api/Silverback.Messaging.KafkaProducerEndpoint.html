@@ -176,7 +176,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.String%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L133">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L136">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.String},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;, KafkaClientConfig)</h4>
@@ -185,7 +185,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string&gt; nameFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string&gt; topicNameFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -199,8 +199,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the endpoint name for the message being produced.</p>
+        <td><span class="parametername">topicNameFunction</span></td>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
       <tr>
@@ -217,7 +218,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.String%7D%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.Int32%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L155">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L159">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.String},System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.Int32},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;, Func&lt;IOutboundEnvelope, IServiceProvider, Int32&gt;, KafkaClientConfig)</h4>
@@ -226,7 +227,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string&gt; nameFunction, Func&lt;IOutboundEnvelope, IServiceProvider, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, string&gt; topicNameFunction, Func&lt;IOutboundEnvelope, IServiceProvider, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -240,8 +241,9 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the endpoint name for the message being produced.</p>
+        <td><span class="parametername">topicNameFunction</span></td>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
       <tr>
@@ -266,7 +268,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L87">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L88">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;, KafkaClientConfig)</h4>
@@ -275,7 +277,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, string&gt; nameFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, string&gt; topicNameFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -289,8 +291,9 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the endpoint name for the message being produced.</p>
+        <td><span class="parametername">topicNameFunction</span></td>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
       <tr>
@@ -307,7 +310,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%7D%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.Int32%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L109">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L111">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String},System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.Int32},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;, Func&lt;IOutboundEnvelope, Int32&gt;, KafkaClientConfig)</h4>
@@ -316,7 +319,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, string&gt; nameFunction, Func&lt;IOutboundEnvelope, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Func&lt;IOutboundEnvelope, string&gt; topicNameFunction, Func&lt;IOutboundEnvelope, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -330,8 +333,9 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">nameFunction</span></td>
-        <td><p>The function returning the endpoint name for the message being produced.</p>
+        <td><span class="parametername">topicNameFunction</span></td>
+        <td><p>The function returning the topic name for the message being produced. If the function returns
+<code>null</code> the message will not be produced.</p>
 </td>
       </tr>
       <tr>
@@ -365,7 +369,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string name, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string topicName, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -379,7 +383,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">name</span></td>
+        <td><span class="parametername">topicName</span></td>
         <td><p>The name of the topic.</p>
 </td>
       </tr>
@@ -397,7 +401,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%5B%5D%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L188">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L192">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String[]},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;, KafkaClientConfig)</h4>
@@ -406,7 +410,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string nameFormat, Func&lt;IOutboundEnvelope, string[]&gt; argumentsFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string topicNameFormatString, Func&lt;IOutboundEnvelope, string[]&gt; topicNameArgumentsFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -420,14 +424,14 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">nameFormat</span></td>
+        <td><span class="parametername">topicNameFormatString</span></td>
         <td><p>The endpoint name format string that will be combined with the arguments returned by the
-<code data-dev-comment-type="paramref" class="paramref">argumentsFunction</code> using a <code>string.Format</code>.</p>
+<code data-dev-comment-type="paramref" class="paramref">topicNameArgumentsFunction</code> using a <code>string.Format</code>.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>[]&gt;</td>
-        <td><span class="parametername">argumentsFunction</span></td>
+        <td><span class="parametername">topicNameArgumentsFunction</span></td>
         <td><p>The function returning the arguments to be used to format the string.</p>
 </td>
       </tr>
@@ -445,7 +449,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%5B%5D%7D%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.Int32%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L216">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L220">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_Int32__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String[]},System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.Int32},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;, Func&lt;IOutboundEnvelope, Int32&gt;, KafkaClientConfig)</h4>
@@ -454,7 +458,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string nameFormat, Func&lt;IOutboundEnvelope, string[]&gt; argumentsFunction, Func&lt;IOutboundEnvelope, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string topicNameFormatString, Func&lt;IOutboundEnvelope, string[]&gt; topicNameArgumentsFunction, Func&lt;IOutboundEnvelope, int&gt; partitionFunction, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -468,14 +472,14 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">nameFormat</span></td>
+        <td><span class="parametername">topicNameFormatString</span></td>
         <td><p>The endpoint name format string that will be combined with the arguments returned by the
-<code data-dev-comment-type="paramref" class="paramref">argumentsFunction</code> using a <code>string.Format</code>.</p>
+<code data-dev-comment-type="paramref" class="paramref">topicNameArgumentsFunction</code> using a <code>string.Format</code>.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>[]&gt;</td>
-        <td><span class="parametername">argumentsFunction</span></td>
+        <td><span class="parametername">topicNameArgumentsFunction</span></td>
         <td><p>The function returning the arguments to be used to format the string.</p>
 </td>
       </tr>
@@ -510,7 +514,7 @@ to specify a message key, otherwise a random one will be generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string name, int? partition, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(string topicName, int? partition, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -524,7 +528,7 @@ to specify a message key, otherwise a random one will be generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">name</span></td>
+        <td><span class="parametername">topicName</span></td>
         <td><p>The name of the topic.</p>
 </td>
       </tr>
@@ -550,7 +554,7 @@ generated).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Type_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.%23ctor(System.Type%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L243">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L247">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint__ctor_System_Type_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.#ctor(System.Type,Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaProducerEndpoint(Type, KafkaClientConfig)</h4>
@@ -559,7 +563,7 @@ generated).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Type nameResolverType, KafkaClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducerEndpoint(Type resolverType, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -573,7 +577,7 @@ generated).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">nameResolverType</span></td>
+        <td><span class="parametername">resolverType</span></td>
         <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IKafkaProducerEndpointNameResolver.html">IKafkaProducerEndpointNameResolver</a> to be used to resolve the actual
 endpoint name.</p>
 </td>
@@ -594,7 +598,7 @@ endpoint name.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_Configuration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.Configuration%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L264">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L268">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_Configuration_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Configuration*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_Configuration" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Configuration">Configuration</h4>
@@ -628,7 +632,7 @@ dictionary provided by the Confluent.Kafka library.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_Equals_Silverback_Messaging_KafkaProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.Equals(Silverback.Messaging.KafkaProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L296">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L300">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_Equals_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_Equals_Silverback_Messaging_KafkaProducerEndpoint_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Equals(Silverback.Messaging.KafkaProducerEndpoint)">Equals(KafkaProducerEndpoint)</h4>
@@ -675,7 +679,7 @@ dictionary provided by the Confluent.Kafka library.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L309">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L313">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_Equals_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Equals(System.Object)">Equals(Object)</h4>
@@ -724,7 +728,7 @@ dictionary provided by the Confluent.Kafka library.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L324">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L328">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_GetHashCode" data-uid="Silverback.Messaging.KafkaProducerEndpoint.GetHashCode">GetHashCode()</h4>
@@ -756,7 +760,7 @@ dictionary provided by the Confluent.Kafka library.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_GetPartition_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.GetPartition(Silverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L281">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L285">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_GetPartition_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.GetPartition*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_GetPartition_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.GetPartition(Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider)">GetPartition(IOutboundEnvelope, IServiceProvider)</h4>
@@ -815,7 +819,7 @@ The default is <code>Partition.Any</code> (-1).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaProducerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaProducerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L285">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/KafkaProducerEndpoint.cs/#L289">View source</a>
   </span>
   <a id="Silverback_Messaging_KafkaProducerEndpoint_Validate_" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_KafkaProducerEndpoint_Validate" data-uid="Silverback.Messaging.KafkaProducerEndpoint.Validate">Validate()</h4>
