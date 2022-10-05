@@ -12,19 +12,17 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class BrokerClientCollection : IReadOnlyCollection<IBrokerClient>, IDisposable
 {
-    private const int MaxConnectParallelism = 2;
-
-    private const int MaxDisconnectParallelism = 4;
-
     private readonly ConcurrentBag<IBrokerClient> _clients = new();
 
     public int Count => _clients.Count;
 
     public void Add(IBrokerClient client) => _clients.Add(client);
 
-    public ValueTask ConnectAllAsync() => _clients.ParallelForEachAsync(client => client.ConnectAsync(), MaxConnectParallelism);
+    // TODO: Investigate why version with limited parallelism causes errors in BrokerConnectorServiceFixture
+    public ValueTask ConnectAllAsync() => _clients.ParallelForEachAsync(client => client.ConnectAsync());
 
-    public ValueTask DisconnectAllAsync() => _clients.ParallelForEachAsync(client => client.DisconnectAsync(), MaxDisconnectParallelism);
+    // TODO: Investigate why version with limited parallelism causes errors in BrokerConnectorServiceFixture
+    public ValueTask DisconnectAllAsync() => _clients.ParallelForEachAsync(client => client.DisconnectAsync());
 
     public void Dispose() => _clients.ForEach(client => client.Dispose());
 
