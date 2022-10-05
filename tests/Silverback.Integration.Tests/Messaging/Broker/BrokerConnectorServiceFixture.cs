@@ -76,7 +76,7 @@ public class BrokerConnectorServiceFixture
         brokenClient.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
             _ =>
             {
-                if (tries++ < 3)
+                if (++tries < 3)
                     throw new InvalidOperationException("retry!");
             });
 
@@ -120,7 +120,7 @@ public class BrokerConnectorServiceFixture
         brokenClient.ConnectAsync().ReturnsForAnyArgs(ValueTask.CompletedTask).AndDoes(
             _ =>
             {
-                if (tries++ < 3)
+                if (++tries < 3)
                     throw new InvalidOperationException("retry!");
             });
 

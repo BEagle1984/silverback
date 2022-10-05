@@ -60,6 +60,9 @@ public class MultipleBrokersFixture : KafkaFixture
         await publisher.PublishAsync(new Broker1Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync(); // Wait twice to ensure ordering in asserts
 
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+
         await publisher.PublishAsync(new Broker2Message());
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

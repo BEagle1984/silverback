@@ -81,6 +81,8 @@ public class DistributedBackgroundServiceFixture
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
             lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
 
+        service2.DistributedLock.Should().BeSameAs(service1.DistributedLock);
+
         async Task ExecuteTask(CancellationToken stoppingToken, Action execute)
         {
             Interlocked.Increment(ref executingCount);
@@ -111,8 +113,11 @@ public class DistributedBackgroundServiceFixture
         public TestDistributedBackgroundService(Func<CancellationToken, Task> task, IDistributedLock distributedLock)
             : base(distributedLock, Substitute.For<ISilverbackLogger<DistributedBackgroundService>>())
         {
+            DistributedLock = distributedLock;
             _task = task;
         }
+
+        public new IDistributedLock DistributedLock { get; }
 
         protected override Task ExecuteLockedAsync(CancellationToken stoppingToken) => _task.Invoke(stoppingToken);
     }
