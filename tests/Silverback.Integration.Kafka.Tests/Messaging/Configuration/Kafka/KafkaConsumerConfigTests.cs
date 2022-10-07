@@ -26,15 +26,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Theory]
-        [InlineData("myGroup", true)]
-        [InlineData("group-id-not-set", false)]
-        public void IsGroupIdSet_CorrectlySet(string groupId, bool expected)
+        [InlineData("myGroup", "myGroup", true)]
+        [InlineData("not-set", "not-set", false)]
+        [InlineData("", "not-set", false)]
+        [InlineData(" ", "not-set", false)]
+        [InlineData(null, "not-set", false)]
+        public void IsGroupIdSet_CorrectlySet(string groupId, string expectedGroupId, bool expected)
         {
             var config = new KafkaConsumerConfig
             {
                 GroupId = groupId
             };
 
+            config.GroupId.Should().Be(expectedGroupId);
             config.IsGroupIdSet.Should().Be(expected);
         }
 

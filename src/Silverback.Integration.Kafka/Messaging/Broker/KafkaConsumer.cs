@@ -127,8 +127,7 @@ namespace Silverback.Messaging.Broker
 
             AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
 
-            if (!Endpoint.Configuration.IsAutoCommitEnabled && Endpoint.Configuration.IsGroupIdSet)
-                CommitOffsets();
+            CommitOffsets();
 
             AsyncHelper.RunSynchronously(() => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
             SequenceStores.Clear();
@@ -207,8 +206,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
         protected override Task DisconnectCoreAsync()
         {
-            if (!Endpoint.Configuration.IsAutoCommitEnabled && Endpoint.Configuration.IsGroupIdSet)
-                CommitOffsets();
+            CommitOffsets();
 
             DisposeConfluentConsumer();
 
@@ -558,7 +556,7 @@ namespace Silverback.Messaging.Broker
 
         private void CommitOffsets()
         {
-            if (_messagesSinceCommit == 0)
+            if (Endpoint.Configuration.IsAutoCommitEnabled || !Endpoint.Configuration.IsGroupIdSet || _messagesSinceCommit == 0)
                 return;
             try
             {

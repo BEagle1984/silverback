@@ -158,9 +158,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         }
 
         [Theory]
-        [InlineData("myGroup", true)]
-        [InlineData("group-id-not-set", false)]
-        public void Constructor_WithClientConfiguration_IsGroupIdSet_CorrectlySet(string groupId, bool expected)
+        [InlineData("myGroup", "myGroup", true)]
+        [InlineData("not-set", "not-set", false)]
+        [InlineData("", "not-set", false)]
+        [InlineData(" ", "not-set", false)]
+        [InlineData(null, "not-set", false)]
+        public void Constructor_WithClientConfiguration_IsGroupIdSet_CorrectlySet(string groupId, string expectedGroupId, bool expected)
         {
             var endpoint = new KafkaConsumerEndpoint("topic")
             {
@@ -170,7 +173,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            endpoint.Configuration.GroupId.Should().Be(groupId);
+            endpoint.Configuration.GroupId.Should().Be(expectedGroupId);
             endpoint.Configuration.IsGroupIdSet.Should().Be(expected);
         }
 

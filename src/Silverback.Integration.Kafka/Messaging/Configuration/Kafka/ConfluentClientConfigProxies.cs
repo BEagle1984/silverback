@@ -883,7 +883,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <see href="https://github.com/confluentinc/confluent-kafka-dotnet/issues/225" />
         ///     <see href="https://github.com/edenhill/librdkafka/issues/593" /> for more information.
         /// </summary>
-        public const string GroupIdNotSet = "group-id-not-set";
+        public const string GroupIdNotSet = "not-set";
 
         private bool? _isGroupIdSet;
 
@@ -902,14 +902,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     Returns a boolean indicating whether group.id is set.
         /// </summary>
-        public bool IsGroupIdSet
-        {
-            get
-            {
-                _isGroupIdSet ??= GroupId != GroupIdNotSet;
-                return _isGroupIdSet.Value;
-            }
-        }
+        public bool IsGroupIdSet => _isGroupIdSet ??= GroupId != GroupIdNotSet;
 
         /// <summary>
         ///     A comma separated list of fields that may be optionally set
@@ -949,7 +942,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         public string GroupId
         {
             get => ConfluentConfig.GroupId;
-            set => ConfluentConfig.GroupId = value;
+            set => ConfluentConfig.GroupId = string.IsNullOrWhiteSpace(value) ? GroupIdNotSet : value;
         }
 
         /// <summary>
