@@ -373,6 +373,8 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 0))!.Offset.Value.Should().Be(4);
         DefaultConsumerGroup.GetCommittedOffset(new TopicPartition(DefaultTopicName, 1))!.Offset.Value.Should().Be(2);
 
+        await AsyncTestingUtil.WaitAsync(() => offsetCommittedCallback.CallsCount >= 2);
+
         offsetCommittedCallback.CallsCount.Should().Be(2);
         offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 0)].Value.Should().Be(4);
         offsetCommittedCallback.Offsets[new TopicPartition(DefaultTopicName, 1)].Value.Should().Be(2);
