@@ -51,7 +51,7 @@ public class QueryPublisherTests
     [Fact]
     public async Task ExecuteAsync_UnhandledQuery_ExceptionThrown()
     {
-        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledQuery());
+        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledQuery()).AsTask();
 
         await act.Should().ThrowAsync<UnhandledMessageException>();
     }

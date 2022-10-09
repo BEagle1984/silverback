@@ -89,14 +89,14 @@ public class OutboundRouterBehaviorFixture
             _ =>
             {
                 nextBehaviorCalls++;
-                return Task.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
             });
         await behavior.HandleAsync(
             new TestEventTwo(),
             _ =>
             {
                 nextBehaviorCalls++;
-                return Task.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
             });
 
         nextBehaviorCalls.Should().Be(0);

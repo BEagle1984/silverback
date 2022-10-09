@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Domain;
@@ -83,6 +84,7 @@ public sealed class DomainEventsPublisherFixture
     }
 
     [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task PublishDomainEventsAsync_ShouldPublishEventsChain()
     {
         List<DomainEntity> entities = new();

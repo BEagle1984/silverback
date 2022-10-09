@@ -78,6 +78,9 @@ uid: releases
 * e.g. `KafkaBroker.GetProducer` -> `IProducerFactory.GetProducer(endpointName)`/`IProducerFactory.GetProducer<TProducer>(endpointName)`/`IProducerFactory.GetProducer(configuration)`/...
 * Changes to Kafka callbacks (stats etc.) -> replaced producer/consumer
 * PartitionOffsetsProvider returns `ValueTask`
+* Many interfaces changed to return a `ValueTask` instead of `Task`:
+  * `IPublisher` async methods
+  * `IBehavior`, `IProducerBehavior`, `IConsumerBehavior`
 
 ### Deprecation Notice
 

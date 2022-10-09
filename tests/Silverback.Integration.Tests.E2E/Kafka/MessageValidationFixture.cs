@@ -53,7 +53,7 @@ public class MessageValidationFixture : KafkaFixture
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message);
+        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
 
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
 
@@ -82,7 +82,7 @@ public class MessageValidationFixture : KafkaFixture
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message);
+        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         DefaultTopic.MessagesCount.Should().Be(1);
@@ -110,7 +110,7 @@ public class MessageValidationFixture : KafkaFixture
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message);
+        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         DefaultTopic.MessagesCount.Should().Be(1);

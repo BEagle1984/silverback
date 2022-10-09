@@ -717,13 +717,13 @@ public class StreamPublisherFixture
 
         public int ExitCount { get; private set; }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             _calls?.Add("unsorted");
 
             EnterCount++;
 
-            Task<IReadOnlyCollection<object?>> result = next(message);
+            ValueTask<IReadOnlyCollection<object?>> result = next(message);
 
             ExitCount++;
 

@@ -123,7 +123,7 @@ public partial class PublisherFixture
             _changedMessageFactory = changedMessageFactory;
         }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
             next(message is TSourceType ? _changedMessageFactory(message) : message);
     }
 
@@ -140,13 +140,13 @@ public partial class PublisherFixture
 
         public int ExitCount { get; private set; }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             _calls?.Add("unsorted");
 
             EnterCount++;
 
-            Task<IReadOnlyCollection<object?>> result = next(message);
+            ValueTask<IReadOnlyCollection<object?>> result = next(message);
 
             ExitCount++;
 
@@ -170,13 +170,13 @@ public partial class PublisherFixture
 
         public int ExitCount { get; private set; }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             _calls?.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 
             EnterCount++;
 
-            Task<IReadOnlyCollection<object?>> result = next(message);
+            ValueTask<IReadOnlyCollection<object?>> result = next(message);
 
             ExitCount++;
 

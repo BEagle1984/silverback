@@ -34,9 +34,9 @@ public class CommandPublisher : ICommandPublisher
         _publisher.Publish<TResult>(commandMessage, true).Single();
 
     /// <inheritdoc cref="ICommandPublisher.ExecuteAsync(ICommand)" />
-    public Task ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage, true);
+    public ValueTask ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage, true);
 
     /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult})" />
-    public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
+    public async ValueTask<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
         (await _publisher.PublishAsync<TResult>(commandMessage, true).ConfigureAwait(false)).Single();
 }

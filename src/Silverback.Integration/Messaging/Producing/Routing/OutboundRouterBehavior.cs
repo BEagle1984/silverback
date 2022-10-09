@@ -56,7 +56,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundRouter;
 
     /// <inheritdoc cref="IBehavior.HandleAsync" />
-    public async Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+    public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
     {
         Check.NotNull(next, nameof(next));
 

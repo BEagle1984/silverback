@@ -49,13 +49,13 @@ public class ProduceBehaviorFixture
 
         await behavior.HandleAsync(
             outboundEnvelope,
-            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            message => ValueTask.FromResult(new[] { message }.AsReadOnlyCollection())!);
         await behavior.HandleAsync(
             outboundEnvelope,
-            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            message => ValueTask.FromResult(new[] { message }.AsReadOnlyCollection())!);
         await behavior.HandleAsync(
             outboundEnvelope,
-            message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            message => ValueTask.FromResult(new[] { message }.AsReadOnlyCollection())!);
 
         testProduceStrategy.ProducedEnvelopes.Should().HaveCount(3);
         testProduceStrategy.ProducedEnvelopes.Select(envelope => envelope.Message)

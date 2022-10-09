@@ -52,7 +52,7 @@ public class EventPublisherTests
     [Fact]
     public async Task PublishAsync_UnhandledEvent_ExceptionThrown()
     {
-        Func<Task> act = () => _publisher.PublishAsync(new UnhandledEvent(), true);
+        Func<Task> act = () => _publisher.PublishAsync(new UnhandledEvent(), true).AsTask();
 
         await act.Should().ThrowAsync<UnhandledMessageException>();
     }

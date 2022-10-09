@@ -72,7 +72,7 @@ public class CommandPublisherTests
     [Fact]
     public async Task ExecuteAsync_UnhandledCommand_ExceptionThrown()
     {
-        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand());
+        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand()).AsTask();
 
         await act.Should().ThrowAsync<UnhandledMessageException>();
     }
@@ -88,7 +88,7 @@ public class CommandPublisherTests
     [Fact]
     public async Task ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
     {
-        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult());
+        Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult()).AsTask();
 
         await act.Should().ThrowAsync<UnhandledMessageException>();
     }

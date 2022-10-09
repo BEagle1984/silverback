@@ -286,7 +286,7 @@ public partial class PublisherFixture
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         Action actSync = () => publisher.Publish(new TestEventOne());
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne());
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne()).AsTask();
 
         actSync.Should().Throw<InvalidOperationException>().WithMessage("No service for type *");
         await actAsync.Should().ThrowAsync<InvalidOperationException>().WithMessage("No service for type *");
@@ -310,9 +310,9 @@ public partial class PublisherFixture
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         Action actSync = () => publisher.Publish(new TestEventOne(), true);
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true).AsTask();
 
-        actSync.Should().ThrowExactly<AggregateException>();
+        actSync.Should().ThrowExactly<UnhandledMessageException>();
         await actAsync.Should().ThrowExactlyAsync<UnhandledMessageException>();
     }
 
@@ -332,7 +332,7 @@ public partial class PublisherFixture
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         Action actSync = () => publisher.Publish(new TestEventOne(), true);
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true).AsTask();
 
         actSync.Should().NotThrow();
         await actAsync.Should().NotThrowAsync();
@@ -355,8 +355,8 @@ public partial class PublisherFixture
 
         Action actSync1 = () => publisher.Publish(new TestEventOne(), false);
         Action actSync2 = () => publisher.Publish(new TestEventOne());
-        Func<Task> actAsync1 = () => publisher.PublishAsync(new TestEventOne(), false);
-        Func<Task> actAsync2 = () => publisher.PublishAsync(new TestEventOne());
+        Func<Task> actAsync1 = () => publisher.PublishAsync(new TestEventOne(), false).AsTask();
+        Func<Task> actAsync2 = () => publisher.PublishAsync(new TestEventOne()).AsTask();
 
         actSync1.Should().NotThrow();
         actSync2.Should().NotThrow();
@@ -380,7 +380,7 @@ public partial class PublisherFixture
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         Action actSync = () => publisher.Publish(new TestEventOne(), true);
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true).AsTask();
 
         actSync.Should().NotThrow();
         await actAsync.Should().NotThrowAsync();
@@ -402,7 +402,7 @@ public partial class PublisherFixture
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
         Action actSync = () => publisher.Publish(new TestCommandOne());
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestCommandOne());
+        Func<Task> actAsync = () => publisher.PublishAsync(new TestCommandOne()).AsTask();
 
         actSync.Should().NotThrow();
         await actAsync.Should().NotThrowAsync();

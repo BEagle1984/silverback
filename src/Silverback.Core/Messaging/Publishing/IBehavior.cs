@@ -22,8 +22,8 @@ public interface IBehavior
     ///     The next behavior in the pipeline.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     result values (if any).
     /// </returns>
-    Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next);
+    ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next);
 }

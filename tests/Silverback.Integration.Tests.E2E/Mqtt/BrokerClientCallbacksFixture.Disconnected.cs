@@ -97,6 +97,7 @@ public partial class BrokerClientCallbacksFixture
             _publisher = publisher;
         }
 
-        public Task OnClientDisconnectingAsync(MqttClientConfiguration configuration) => _publisher.PublishAsync(new TestEventOne());
+        public Task OnClientDisconnectingAsync(MqttClientConfiguration configuration) =>
+            _publisher.PublishAsync(new TestEventOne()).AsTask();
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,31 +58,33 @@ public class Publisher : IPublisher
         Publish(message, false);
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
     public void Publish(object message, bool throwIfUnhandled) =>
-        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).Wait();
+        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult();
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message) =>
         Publish<TResult>(message, false);
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
-        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).Result).ToList();
+        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult()).ToList();
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
-    public Task PublishAsync(object message) =>
+    public ValueTask PublishAsync(object message) =>
         PublishAsync(message, false);
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
-    public Task PublishAsync(object message, bool throwIfUnhandled) =>
-        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async);
+    public async ValueTask PublishAsync(object message, bool throwIfUnhandled) =>
+        await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
-    public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
+    public ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
         PublishAsync<TResult>(message, false);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
-    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
+    public async ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
         object message,
         bool throwIfUnhandled) =>
         CastResults<TResult>(
@@ -89,10 +92,10 @@ public class Publisher : IPublisher
                     .ConfigureAwait(false))
             .ToList();
 
-    private static Task<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
+    private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,
         object message,
-        Func<object, Task<IReadOnlyCollection<object?>>> finalAction)
+        Func<object, ValueTask<IReadOnlyCollection<object?>>> finalAction)
     {
         if (!behaviors.TryPop(out IBehavior? nextBehavior))
             return finalAction(message);
@@ -103,7 +106,7 @@ public class Publisher : IPublisher
                 ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, finalAction));
     }
 
-    private Task<IReadOnlyCollection<object?>> PublishAsync(
+    private ValueTask<IReadOnlyCollection<object?>> PublishAsync(
         object message,
         bool throwIfUnhandled,
         ExecutionFlow executionFlow)
@@ -116,7 +119,7 @@ public class Publisher : IPublisher
             finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executionFlow));
     }
 
-    private async Task<IReadOnlyCollection<object?>> PublishCoreAsync(
+    private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(
         object message,
         bool throwIfUnhandled,
         ExecutionFlow executionFlow)
@@ -143,14 +146,14 @@ public class Publisher : IPublisher
         }
     }
 
-    private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
+    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
         object message,
         ExecutionFlow executionFlow) =>
         (await InvokeExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
         .Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
         .ToList();
 
-    private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
+    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
         ExecutionFlow executionFlow) =>
         (await _subscribedMethodsCache.GetExclusiveMethods(message)
@@ -158,7 +161,7 @@ public class Publisher : IPublisher
             .ConfigureAwait(false))
         .ToList();
 
-    private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
+    private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
         object message,
         ExecutionFlow executionFlow) =>
         (await _subscribedMethodsCache.GetNonExclusiveMethods(message)

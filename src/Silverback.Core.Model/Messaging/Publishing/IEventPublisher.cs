@@ -35,7 +35,7 @@ public interface IEventPublisher : IPublisherBase
     void Publish(IEvent eventMessage, bool throwIfUnhandled);
 
     /// <summary>
-    ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers and the <see cref="Task" />
+    ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers and the <see cref="ValueTask" />
     ///     will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
     ///     through a message broker).
     /// </summary>
@@ -43,12 +43,12 @@ public interface IEventPublisher : IPublisherBase
     ///     The event to be executed.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    Task PublishAsync(IEvent eventMessage);
+    ValueTask PublishAsync(IEvent eventMessage);
 
     /// <summary>
-    ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers and the <see cref="Task" />
+    ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers and the <see cref="ValueTask" />
     ///     will not complete until all subscribers have processed it (unless using Silverback.Integration to produce and consume the message
     ///     through a message broker).
     /// </summary>
@@ -59,7 +59,7 @@ public interface IEventPublisher : IPublisherBase
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the message.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled);
+    ValueTask PublishAsync(IEvent eventMessage, bool throwIfUnhandled);
 }

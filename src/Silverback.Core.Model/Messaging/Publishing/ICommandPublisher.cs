@@ -39,20 +39,20 @@ public interface ICommandPublisher : IPublisherBase
 
     /// <summary>
     ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
-    ///     <see cref="Task" /> will not complete until all subscribers have processed it (unless using Silverback.Integration to produce
+    ///     <see cref="ValueTask" /> will not complete until all subscribers have processed it (unless using Silverback.Integration to produce
     ///     and consume the message through a message broker).
     /// </summary>
     /// <param name="commandMessage">
     ///     The command to be executed.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    Task ExecuteAsync(ICommand commandMessage);
+    ValueTask ExecuteAsync(ICommand commandMessage);
 
     /// <summary>
     ///     Executes the specified command publishing it to the internal bus. The message will be forwarded to its subscribers and the
-    ///     <see cref="Task" /> will not complete until all subscribers have processed it (unless using Silverback.Integration to produce
+    ///     <see cref="ValueTask" /> will not complete until all subscribers have processed it (unless using Silverback.Integration to produce
     ///     and consume the message through a message broker).
     /// </summary>
     /// <typeparam name="TResult">
@@ -62,8 +62,8 @@ public interface ICommandPublisher : IPublisherBase
     ///     The command to be executed.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     command result.
     /// </returns>
-    Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
+    ValueTask<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
 }

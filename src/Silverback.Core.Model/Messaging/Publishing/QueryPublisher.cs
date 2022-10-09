@@ -31,6 +31,6 @@ public class QueryPublisher : IQueryPublisher
         _publisher.Publish<TResult>(queryMessage, true).Single();
 
     /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult})" />
-    public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
+    public async ValueTask<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
         (await _publisher.PublishAsync<TResult>(queryMessage, true).ConfigureAwait(false)).Single();
 }

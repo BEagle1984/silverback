@@ -33,9 +33,9 @@ public class EventPublisher : IEventPublisher
         _publisher.Publish(eventMessage, throwIfUnhandled);
 
     /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent)" />
-    public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
+    public ValueTask PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
 
     /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent, bool)" />
-    public Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled) =>
+    public ValueTask PublishAsync(IEvent eventMessage, bool throwIfUnhandled) =>
         _publisher.PublishAsync(eventMessage, throwIfUnhandled);
 }
