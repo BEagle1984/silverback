@@ -153,7 +153,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint = new KafkaConsumerEndpoint("topic");
 
-            endpoint.Configuration.GroupId.Should().Be(ConfluentConsumerConfigProxy.GroupIdNotSet);
+            endpoint.Configuration.GroupId.Should().Be("not-set");
             endpoint.Configuration.IsGroupIdSet.Should().BeFalse();
         }
 

@@ -364,10 +364,6 @@ namespace Silverback.Messaging
             Names = topicNames;
 
             Configuration = new KafkaConsumerConfig(clientConfig);
-            if (string.IsNullOrWhiteSpace(Configuration.GroupId))
-            {
-                Configuration.GroupId = ConfluentConsumerConfigProxy.GroupIdNotSet;
-            }
         }
     }
 }
