@@ -301,9 +301,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    private bool TryConsume(
-        CancellationToken cancellationToken,
-        out ConsumeResult<byte[]?, byte[]?>? result)
+    private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

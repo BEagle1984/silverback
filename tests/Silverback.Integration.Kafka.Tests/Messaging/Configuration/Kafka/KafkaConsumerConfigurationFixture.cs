@@ -53,18 +53,28 @@ public class KafkaConsumerConfigurationFixture
         configuration2.CommitOffsetEach.Should().Be(42);
     }
 
-    [Theory]
-    [InlineData(true, true)]
-    [InlineData(null, true)]
-    [InlineData(false, false)]
-    public void IsAutoCommitEnabled_ShouldReturnCorrectValue(bool? enableAutoCommit, bool expected)
+    [Fact]
+    public void GroupId_ShouldSet()
     {
-        KafkaConsumerConfiguration configuration = new()
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            EnableAutoCommit = enableAutoCommit
+            GroupId = "group1"
         };
 
-        configuration.IsAutoCommitEnabled.Should().Be(expected);
+        configuration.GroupId.Should().Be("group1");
+    }
+
+    [InlineData(null)]
+    [InlineData("")]
+    [Theory]
+    public void GroupId_ShouldReturnUnset_WhenNullOrEmpty(string groupId)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            GroupId = groupId
+        };
+
+        configuration.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
     }
 
     [Fact]
@@ -226,7 +236,7 @@ public class KafkaConsumerConfigurationFixture
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validate_ShouldThrow_WhenSubscribingWithNoGroupId(string? groupId)
+    public void Validate_ShouldThrow_WhenSubscribingWithoutGroupId(string? groupId)
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
@@ -247,15 +257,44 @@ public class KafkaConsumerConfigurationFixture
 
         Action act = () => configuration.Validate();
 
-        act.Should().ThrowExactly<BrokerConfigurationException>();
+        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId must be specified when the partitions are assigned dynamically. *");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_ShouldThrow_WhenCommittingWithNoGroupId(string? groupId)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            GroupId = groupId,
+            CommitOffsets = true,
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+                new[]
+                {
+                    new KafkaConsumerEndpointConfiguration
+                    {
+                        TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                            new[]
+                            {
+                                new TopicPartitionOffset("topic1", 1, Offset.Unset)
+                            })
+                    }
+                })
+        };
+
+        Action act = () => configuration.Validate();
+
+        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId should be specified when committing the offsets to the broker. *");
     }
 
     [Fact]
-    public void Validate_ShouldNotThrow_WhenStaticAssignmentWithoutGroupId()
+    public void Validate_ShouldNotThrow_WhenStaticAssignmentAndNotCommittingWithoutGroupId()
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
             GroupId = null,
+            CommitOffsets = false,
             Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
                 new[]
                 {
@@ -291,19 +330,21 @@ public class KafkaConsumerConfigurationFixture
     }
 
     [Theory]
-    [InlineData(true, null, true)]
-    [InlineData(false, 1, true)]
-    [InlineData(false, 42, true)]
-    [InlineData(true, 1, false)]
-    [InlineData(true, 0, false)]
-    [InlineData(true, 42, false)]
-    [InlineData(false, null, false)]
-    [InlineData(false, 0, false)]
-    [InlineData(false, -1, false)]
-    public void Validate_ShouldValidateCommitSettings(bool enableAutoCommit, int? commitOffsetEach, bool isValid)
+    [InlineData(true, true, null, true)]
+    [InlineData(true, false, 1, true)]
+    [InlineData(true, false, 42, true)]
+    [InlineData(true, true, 1, false)]
+    [InlineData(true, true, 0, false)]
+    [InlineData(true, true, 42, false)]
+    [InlineData(true, false, null, false)]
+    [InlineData(true, false, 0, false)]
+    [InlineData(true, false, -1, false)]
+    [InlineData(false, false, 42, false)]
+    public void Validate_ShouldValidateCommitSettings(bool commitOffsets, bool enableAutoCommit, int? commitOffsetEach, bool isValid)
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
+            CommitOffsets = commitOffsets,
             EnableAutoCommit = enableAutoCommit,
             CommitOffsetEach = commitOffsetEach
         };

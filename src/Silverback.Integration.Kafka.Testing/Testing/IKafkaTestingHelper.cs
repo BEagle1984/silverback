@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
@@ -13,6 +14,14 @@ namespace Silverback.Testing;
 /// <inheritdoc cref="ITestingHelper" />
 public interface IKafkaTestingHelper : ITestingHelper
 {
+    /// <summary>
+    ///     Gets a collection of of <see cref="IMockedConsumerGroup" /> representing all known consumer groups.
+    /// </summary>
+    /// <returns>
+    ///     The collection of <see cref="IMockedConsumerGroup" />.
+    /// </returns>
+    public IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups { get; }
+
     /// <summary>
     ///     Returns the <see cref="IMockedConsumerGroup" /> representing the consumer group with the specified id.
     /// </summary>

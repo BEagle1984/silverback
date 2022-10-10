@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Collections;
@@ -16,39 +15,83 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <summary>
 ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> adding the Silverback specific settings.
 /// </summary>
-[SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
 public sealed partial record KafkaConsumerConfiguration : KafkaClientConfiguration<ConsumerConfig>
 {
-    private const bool KafkaDefaultAutoCommitEnabled = true;
+    internal const string UnsetGroupId = "not-set";
 
     private readonly bool _processPartitionsIndependently = true;
 
     private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints =
         ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
 
+    private readonly bool _commitOffsets = true;
+
     internal KafkaConsumerConfiguration(ConsumerConfig? consumerConfig = null)
         : base(consumerConfig)
     {
-        // This property is not exposed and it's hardcoded to false
-        ClientConfig.EnableAutoOffsetStore = false;
+        if (consumerConfig == null)
+        {
+            ClientConfig.EnableAutoCommit = true;
+            ClientConfig.GroupId = UnsetGroupId;
+
+            // This property is not exposed and it's hardcoded to false
+            ClientConfig.EnableAutoOffsetStore = false;
+        }
     }
 
     /// <summary>
-    ///     Gets a value indicating whether autocommit is enabled according to the explicit
-    ///     configuration and Kafka defaults.
+    ///     Gets or sets the client group.id. All clients sharing the same group.id belong to the same group. The default is <c>null</c>
+    ///     (which will internally be replaced with <c>"not-set"</c> since the underlying library requires a value).
     /// </summary>
-    public bool IsAutoCommitEnabled => EnableAutoCommit ?? KafkaDefaultAutoCommitEnabled;
+    public string? GroupId
+    {
+        get => ClientConfig.GroupId;
+        init => ClientConfig.GroupId = string.IsNullOrEmpty(value) ? UnsetGroupId : value;
+    }
 
     /// <summary>
-    ///     Defines the number of message to be processed before committing the offset to the server. The most
+    ///    Gets a value indicating whether the offsets must be committed. The default is <c>true</c>.
+    /// </summary>
+    public bool CommitOffsets
+    {
+        get => _commitOffsets;
+        init
+        {
+            _commitOffsets = value;
+
+            if (!value)
+            {
+                EnableAutoCommit = false;
+                CommitOffsetEach = null;
+            }
+        }
+    }
+
+    // /// <summary>
+    // ///     Gets the <see cref="IOffsetStore" /> to be used to store the offsets. The stored offsets will be used during the partitions assignment to determine the starting offset and ensure
+    // /// </summary>
+    // public IOffsetStore? ClientSideOffsetStore { get;init; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the offsets must be automatically and periodically committed in the background.
+    ///     Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this
+    ///     behaviour set specific start offsets per partition in the call to assign(). The default is <c>true</c>.
+    /// </summary>
+    public bool EnableAutoCommit
+    {
+        get => ClientConfig.EnableAutoCommit ?? true;
+        init => ClientConfig.EnableAutoCommit = value;
+    }
+
+    /// <summary>
+    ///     Gets or sets the number of message to be processed before committing the offset to the server. The most
     ///     reliable level is 1 but it reduces throughput.
     /// </summary>
     public int? CommitOffsetEach { get; init; }
 
     /// <summary>
-    ///     Specifies whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
-    ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default
-    ///     is <c>true</c>.
+    ///     Gets or sets a value specifying whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
+    ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default is <c>true</c>.
     /// </summary>
     public bool EnableAutoRecovery { get; init; } = true;
 
@@ -87,16 +130,6 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// </summary>
     public int BackpressureLimit { get; init; } = 2;
 
-    // /// <summary>
-    // ///    Gets a value indicating whether the consumed offsets must be committed to the broker. The default is <c>true</c>.
-    // /// </summary>
-    // public bool CommitOffsets { get; init; } = true;
-
-    // /// <summary>
-    // ///     Gets the <see cref="IOffsetStore" /> to be used to store the offsets. The stored offsets will be used during the partitions assignment to determine the starting offset and ensure
-    // /// </summary>
-    // public IOffsetStore? ClientSideOffsetStore { get;init; }
-
     /// <summary>
     ///     Gets the configured endpoints.
     /// </summary>
@@ -122,18 +155,13 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         CheckDuplicateTopics();
 
-        // TODO: TO BE REFINED to include other cases where the GroupId is needed
-        if (!IsStaticAssignment && string.IsNullOrEmpty(GroupId))
-            throw new BrokerConfigurationException("A group id must be specified when the partitions are assigned dynamically.");
+        if (GroupId == UnsetGroupId)
+            CheckGroupIdRequirements();
 
         if (string.IsNullOrEmpty(BootstrapServers))
-            throw new BrokerConfigurationException("The bootstrap servers are required to connect with the message broker.");
+            throw new BrokerConfigurationException($"The {nameof(BootstrapServers)} are required to connect with the message broker.");
 
-        if (IsAutoCommitEnabled && CommitOffsetEach != null)
-            throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} cannot be used when auto-commit is enabled. Explicitly disable it setting {nameof(EnableAutoCommit)} to false.");
-
-        if (!IsAutoCommitEnabled && CommitOffsetEach is null or < 1)
-            throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
+        ValidateCommitStrategy();
 
         if (MaxDegreeOfParallelism < 1)
             throw new BrokerConfigurationException("The specified degree of parallelism must be greater or equal to 1.");
@@ -168,5 +196,39 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         if (topics.Count != topics.Distinct().Count())
             throw new BrokerConfigurationException("Cannot connect to the same topic in different endpoints in the same consumer.");
+    }
+
+    private void CheckGroupIdRequirements()
+    {
+        if (!IsStaticAssignment)
+        {
+            throw new BrokerConfigurationException(
+                $"The {nameof(GroupId)} must be specified when the partitions are assigned dynamically. " +
+                $"Explicitly specify the partitions to be consumed or set the {nameof(GroupId)}.");
+        }
+
+        if (CommitOffsets)
+        {
+            throw new BrokerConfigurationException(
+                $"The {nameof(GroupId)} should be specified when committing the offsets to the broker. " +
+                $"Set {nameof(CommitOffsets)} to false or set the {nameof(GroupId)}.");
+        }
+    }
+
+    private void ValidateCommitStrategy()
+    {
+        if (CommitOffsets)
+        {
+            if (EnableAutoCommit && CommitOffsetEach != null)
+                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} cannot be used when auto-commit is enabled. Explicitly disable it setting {nameof(EnableAutoCommit)} to false.");
+
+            if (!EnableAutoCommit && CommitOffsetEach is null or < 1)
+                throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
+        }
+        else
+        {
+            if (EnableAutoCommit || CommitOffsetEach != null)
+                throw new BrokerConfigurationException($"Auto commit and {nameof(CommitOffsetEach)} shouldn't be enabled when not committing. Set {nameof(EnableAutoCommit)} to false and {nameof(CommitOffsets)} to null, or {nameof(CommitOffsets)} to true.");
+        }
     }
 }

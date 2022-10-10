@@ -42,10 +42,10 @@ public abstract partial record KafkaClientConfiguration<TClientConfig> : IValida
     /// <summary>
     ///     Gets the wrapped <see cref="ClientConfig" />.
     /// </summary>
-    protected TClientConfig ClientConfig { get; } = new();
+    protected TClientConfig ClientConfig { get; }
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public abstract void Validate();
 
-    internal TClientConfig GetConfluentClientConfig() => ClientConfig;
+    internal virtual TClientConfig GetConfluentClientConfig() => ClientConfig;
 }

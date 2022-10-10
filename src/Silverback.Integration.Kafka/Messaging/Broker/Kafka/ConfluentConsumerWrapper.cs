@@ -81,6 +81,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
 
+        if (!_configuration.CommitOffsets)
+            return;
+
         _confluentConsumer.StoreOffset(topicPartitionOffset);
     }
 
@@ -91,6 +94,9 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+        if (!_configuration.CommitOffsets)
+            return;
 
         try
         {
@@ -166,7 +172,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     protected override ValueTask DisconnectCoreAsync()
     {
-        if (!_configuration.IsAutoCommitEnabled)
+        if (!_configuration.EnableAutoCommit)
             Commit();
 
         _confluentConsumer?.Close();

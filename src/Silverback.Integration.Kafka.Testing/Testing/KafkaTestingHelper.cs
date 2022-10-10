@@ -39,6 +39,10 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
         _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
     }
 
+    /// <inheritdoc cref="IKafkaTestingHelper.ConsumerGroups" />
+    public IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups =>
+        (IReadOnlyCollection<IMockedConsumerGroup>?)_groups ?? Array.Empty<IMockedConsumerGroup>();
+
     /// <inheritdoc cref="IKafkaTestingHelper.GetConsumerGroup(string)" />
     public IMockedConsumerGroup GetConsumerGroup(string groupId)
     {

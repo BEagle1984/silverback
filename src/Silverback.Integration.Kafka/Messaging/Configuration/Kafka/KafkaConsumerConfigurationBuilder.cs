@@ -19,6 +19,8 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
 {
     private readonly Dictionary<string, KafkaConsumerEndpointConfiguration> _endpoints = new();
 
+    private bool? _commitOffsets;
+
     private int? _commitOffsetEach;
 
     private bool? _enableAutoRecovery;
@@ -121,6 +123,79 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Client group id string. All clients sharing the same group.id belong to the same group.
+    /// </summary>
+    /// <param name="groupId">
+    ///     Client group id string. All clients sharing the same group.id belong to the same group.
+    /// </param>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithGroupId(string? groupId)
+    {
+        ClientConfig.GroupId = string.IsNullOrEmpty(groupId) ? KafkaConsumerConfiguration.UnsetGroupId : groupId;
+        return This;
+    }
+
+    /// <summary>
+    ///     Enable the offsets commit. This is the default.
+    /// </summary>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder EnableOffsetsCommit()
+    {
+        _commitOffsets = true;
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the offsets commit.
+    /// </summary>
+    /// <remarks>
+    ///     Disabling offsets commit will also disable auto commit (see <see cref="DisableAutoCommit" />) and clear the
+    ///     <see cref="KafkaConsumerConfiguration.CommitOffsetEach" /> setting (see <see cref="CommitOffsetEach" />).
+    /// </remarks>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisableOffsetsCommit()
+    {
+        _commitOffsets = false;
+        _commitOffsetEach = null;
+        DisableAutoCommit();
+        return this;
+    }
+
+    /// <summary>
+    ///     Automatically and periodically commit offsets in the background.
+    /// </summary>
+    /// <remarks>
+    ///     Enabling automatic offsets commit will clear the <see cref="KafkaConsumerConfiguration.CommitOffsetEach" /> setting
+    ///     (see <see cref="CommitOffsetEach" />).
+    /// </remarks>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder EnableAutoCommit()
+    {
+        _commitOffsetEach = null;
+        return WithEnableAutoCommit(true);
+    }
+
+    /// <summary>
+    ///     Disable automatic offsets commit. Note: setting this does not prevent the consumer from fetching previously committed start
+    ///     offsets. To circumvent this behaviour set specific start offsets per partition in the call to assign().
+    /// </summary>
+    /// <remarks>
+    ///     See also <see cref="CommitOffsetEach" />.
+    /// </remarks>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisableAutoCommit() => WithEnableAutoCommit(false);
+
+    /// <summary>
     ///     Defines the number of message to be processed before committing the offset to the server. The most
     ///     reliable level is 1 but it reduces throughput.
     /// </summary>
@@ -165,34 +240,6 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
         _enableAutoRecovery = false;
         return this;
     }
-
-    /// <summary>
-    ///     Automatically and periodically commit offsets in the background.
-    /// </summary>
-    /// <remarks>
-    ///     Enabling automatic offsets commit will clear the <see cref="KafkaConsumerConfiguration.CommitOffsetEach" /> setting
-    ///     (see <see cref="CommitOffsetEach" />).
-    /// </remarks>
-    /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder EnableAutoCommit()
-    {
-        _commitOffsetEach = null;
-        return WithEnableAutoCommit(true);
-    }
-
-    /// <summary>
-    ///     Disable automatic offsets commit. Note: setting this does not prevent the consumer from fetching previously committed start
-    ///     offsets. To circumvent this behaviour set specific start offsets per partition in the call to assign().
-    /// </summary>
-    /// <remarks>
-    ///     See also <see cref="CommitOffsetEach" />.
-    /// </remarks>
-    /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder DisableAutoCommit() => WithEnableAutoCommit(false);
 
     /// <summary>
     ///     Invoke the <see cref="IKafkaPartitionEofCallback" /> whenever a partition end of file is reached.
@@ -303,6 +350,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
 
         configuration = configuration with
         {
+            CommitOffsets = _commitOffsets ?? configuration.CommitOffsets,
             CommitOffsetEach = _commitOffsetEach ?? configuration.CommitOffsetEach,
             EnableAutoRecovery = _enableAutoRecovery ?? configuration.EnableAutoRecovery,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,

@@ -801,17 +801,6 @@ public partial record KafkaConsumerConfiguration
     }
 
     /// <summary>
-    ///     Client group id string. All clients sharing the same group.id belong to the same group.
-    ///     <br /><br />default: ''
-    ///     <br />importance: high
-    /// </summary>
-    public string? GroupId
-    {
-        get => ClientConfig.GroupId;
-        init => ClientConfig.GroupId = value;
-    }
-
-    /// <summary>
     ///     Enable static group membership. Static group members are able to leave and rejoin a group within the configured `session.timeout.ms` without prompting a group rebalance. This should be used in combination with a larger `session.timeout.ms` to avoid group rebalances caused by transient unavailability (e.g. process restarts). Requires broker version &gt;= 2.3.0.
     ///     <br /><br />default: ''
     ///     <br />importance: medium
@@ -886,17 +875,6 @@ public partial record KafkaConsumerConfiguration
     {
         get => ClientConfig.MaxPollIntervalMs;
         init => ClientConfig.MaxPollIntervalMs = value;
-    }
-
-    /// <summary>
-    ///     Automatically and periodically commit offsets in the background. Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this behaviour set specific start offsets per partition in the call to assign().
-    ///     <br /><br />default: true
-    ///     <br />importance: high
-    /// </summary>
-    public bool? EnableAutoCommit
-    {
-        get => ClientConfig.EnableAutoCommit;
-        init => ClientConfig.EnableAutoCommit = value;
     }
 
     /// <summary>
@@ -4152,21 +4130,6 @@ public partial class KafkaConsumerConfigurationBuilder
     public KafkaConsumerConfigurationBuilder WithAutoOffsetReset(AutoOffsetReset? autoOffsetReset)
     {
         ClientConfig.AutoOffsetReset = autoOffsetReset;
-        return This;
-    }
-
-    /// <summary>
-    ///     Client group id string. All clients sharing the same group.id belong to the same group.
-    /// </summary>
-    /// <param name="groupId">
-    ///     Client group id string. All clients sharing the same group.id belong to the same group.
-    /// </param>
-    /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder WithGroupId(string? groupId)
-    {
-        ClientConfig.GroupId = groupId;
         return This;
     }
 

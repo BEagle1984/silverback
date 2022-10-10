@@ -139,6 +139,86 @@ public class KafkaConsumerConfigurationBuilderFixture
     }
 
     [Fact]
+    public void WithGroupId_ShouldSetGroupId()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithGroupId("group1");
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.GroupId.Should().Be("group1");
+    }
+
+    [InlineData(null)]
+    [InlineData("")]
+    [Theory]
+    public void WithGroupId_ShouldSetGroupIdToUnset_WhenNullOrEmpty(string groupId)
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfiguration();
+        builder.Consume(endpoint => endpoint.ConsumeFrom("topic1", 1));
+        builder.DisableOffsetsCommit();
+
+        builder.WithGroupId(groupId);
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
+    }
+
+    [Fact]
+    public void EnableOffsetsCommit_ShouldSetCommitOffsets()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.EnableOffsetsCommit();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.Should().NotBeNull();
+        configuration.CommitOffsets.Should().BeTrue();
+    }
+
+    [Fact]
+    public void DisableOffsetsCommit_ShouldSetCommitOffsets()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableOffsetsCommit();
+
+        builder.DisableOffsetsCommit();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.Should().NotBeNull();
+        configuration.CommitOffsets.Should().BeFalse();
+    }
+
+    [Fact]
+    public void DisableOffsetsCommit_ShouldDisableAutoCommit()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableAutoCommit();
+
+        builder.DisableOffsetsCommit();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.Should().NotBeNull();
+        configuration.CommitOffsets.Should().BeFalse();
+        configuration.EnableAutoCommit.Should().BeFalse();
+    }
+
+    [Fact]
+    public void DisableOffsetsCommit_ShouldSetCommitOffsetEach()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.CommitOffsetEach(42);
+
+        builder.DisableOffsetsCommit();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.Should().NotBeNull();
+        configuration.CommitOffsets.Should().BeFalse();
+        configuration.EnableAutoCommit.Should().BeFalse();
+        configuration.CommitOffsetEach.Should().BeNull();
+    }
+
+    [Fact]
     public void CommitOffsetEach_ShouldSetCommitOffsetEach()
     {
         KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();

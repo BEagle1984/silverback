@@ -63,7 +63,9 @@ internal sealed class ProxyClassGenerator
     {
         IEnumerable<PropertyInfo> properties =
             ReflectionHelper.GetProperties(_proxiedType, !_isChildType)
-                .Where(property => property.Name != "EnableAutoOffsetStore");
+                .Where(
+                    property => property.Name != "EnableAutoOffsetStore" &&
+                                property.Name != "GroupId");
 
         foreach (PropertyInfo property in properties)
         {

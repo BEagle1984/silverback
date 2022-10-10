@@ -162,7 +162,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
                         .ConfigureAwait(false);
                 }));
 
-        if (!Configuration.IsAutoCommitEnabled)
+        if (!Configuration.EnableAutoCommit)
             Client.Commit();
 
         // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
@@ -445,7 +445,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     private void CommitOffsetsIfNeeded()
     {
-        if (Configuration.IsAutoCommitEnabled)
+        if (Configuration.EnableAutoCommit)
             return;
 
         lock (_messagesSinceCommitLock)

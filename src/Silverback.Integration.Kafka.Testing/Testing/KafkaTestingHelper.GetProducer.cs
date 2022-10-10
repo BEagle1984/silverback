@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
@@ -69,10 +68,6 @@ public partial class KafkaTestingHelper
         KafkaConsumerEndpointConfiguration endpointConfiguration)
     {
         endpoint.SerializeUsing(endpointConfiguration.Serializer);
-
-        TopicPartitionOffset topicPartition =
-            endpointConfiguration.TopicPartitions.First(topicPartition => topicPartition.Topic == endpointConfiguration.RawName);
-
-        endpoint.ProduceTo(topicPartition.TopicPartition);
+        endpoint.ProduceTo(endpointConfiguration.TopicPartitions.First().TopicPartition);
     }
 }
