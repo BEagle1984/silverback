@@ -9,7 +9,7 @@ namespace Silverback.Storage;
 ///     Adds the storage specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
 // TODO: Test?
-public static class SilverbackScopedContextStorageExtensions
+public static class SilverbackContextStorageExtensions
 {
     private const int StorageTransactionObjectTypeId = 1;
 
@@ -22,6 +22,7 @@ public static class SilverbackScopedContextStorageExtensions
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
+    // TODO: Rename in SetTransaction?
     public static void SetStorageTransaction(this SilverbackContext context, object transaction) =>
         Check.NotNull(context, nameof(context)).SetObject(StorageTransactionObjectTypeId, transaction);
 

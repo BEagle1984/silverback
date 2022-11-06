@@ -97,15 +97,14 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
     {
-        while (true)
+        ConsumeResult<byte[]?, byte[]?>? result;
+
+        while (!TryConsume(cancellationToken, out result))
         {
-            EnsureNotDisposed();
-
-            if (TryConsume(cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result))
-                return result!;
-
             Thread.Sleep(10);
         }
+
+        return result;
     }
 
     public ConsumeResult<byte[]?, byte[]?> Consume(TimeSpan timeout) => throw new NotSupportedException();
@@ -301,8 +300,10 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
+    private bool TryConsume(CancellationToken cancellationToken, [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
     {
+        EnsureNotDisposed();
+
         cancellationToken.ThrowIfCancellationRequested();
 
         EnsurePartitionsAssigned(cancellationToken);
@@ -461,7 +462,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private bool GetEofMessageIfNeeded(
         TopicPartitionOffset topicPartitionOffset,
-        out ConsumeResult<byte[]?, byte[]?>? result)
+        [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
     {
         if (!_lastEofOffsets.ContainsKey(topicPartitionOffset.TopicPartition))
         {

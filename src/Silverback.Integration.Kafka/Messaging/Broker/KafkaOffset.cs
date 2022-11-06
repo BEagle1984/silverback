@@ -29,6 +29,23 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
     /// </summary>
+    /// <param name="topic">
+    ///     The topic.
+    /// </param>
+    /// <param name="partition">
+    ///     The partition.
+    /// </param>
+    /// <param name="offset">
+    ///     The offset in the partition.
+    /// </param>
+    public KafkaOffset(string topic, int partition, int offset)
+        : this(new TopicPartition(Check.NotNull(topic, nameof(topic)), partition), offset)
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
+    /// </summary>
     /// <param name="topicPartition">
     ///     The <see cref="Confluent.Kafka.TopicPartition" />.
     /// </param>
@@ -50,6 +67,9 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     ///     Gets the offset in the partition.
     /// </summary>
     public Offset Offset { get; }
+
+    /// <inheritdoc cref="IBrokerMessageIdentifier.GroupKey" />
+    public string GroupKey => TopicPartition.ToString();
 
     /// <summary>
     ///     Less than operator.

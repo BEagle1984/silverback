@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.Memory.Messaging.Configuration;
 
-public class BrokerOptionsBuilderMemoryExtensionsFixture
+public partial class BrokerOptionsBuilderMemoryExtensionsFixture
 {
     [Fact]
     public void AddInMemoryOutbox_ShouldConfigureOutboxFactories()

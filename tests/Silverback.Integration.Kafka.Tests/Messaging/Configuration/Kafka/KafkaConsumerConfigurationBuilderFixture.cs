@@ -5,7 +5,9 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -242,6 +244,30 @@ public class KafkaConsumerConfigurationBuilderFixture
         configuration.Should().NotBeNull();
         configuration.CommitOffsetEach.Should().Be(42);
         configuration.EnableAutoCommit.Should().BeFalse();
+    }
+
+    [Fact]
+    public void StoreOffsetsClientSide_ShouldSetOffsetStoreSettings()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        InMemoryKafkaOffsetStoreSettings settings = new();
+        builder.StoreOffsetsClientSide(settings).Build();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.ClientSideOffsetStore.Should().Be(settings);
+    }
+
+    [Fact]
+    public void StoreOffsetsClientSide_ShouldSetOffsetStoreSettingsUsingBuilder()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.StoreOffsetsClientSide(offsetStore => offsetStore.UseMemory().WithName("test-store")).Build();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.ClientSideOffsetStore.Should().BeOfType<InMemoryKafkaOffsetStoreSettings>();
+        configuration.ClientSideOffsetStore.As<InMemoryKafkaOffsetStoreSettings>().OffsetStoreName.Should().Be("test-store");
     }
 
     [Fact]

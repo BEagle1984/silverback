@@ -68,9 +68,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     {
         if (_isCommitted)
         {
-            _logger.LogConsumerLowLevelTrace(
-                "Not committing consumer transaction because it was already committed.",
-                _context.Envelope);
+            _logger.LogConsumerLowLevelTrace("Not committing consumer transaction because it was already committed.", _context.Envelope);
 
             return;
         }
@@ -84,7 +82,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
         await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
-        await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
+        await _context.Consumer.CommitAsync(_context.GetLastBrokerMessageIdentifiers()).ConfigureAwait(false);
 
         _logger.LogConsumerLowLevelTrace("Consumer transaction committed.", _context.Envelope);
     }
@@ -98,9 +96,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     {
         if (_isAborted)
         {
-            _logger.LogConsumerLowLevelTrace(
-                "Not aborting consumer transaction because it was already aborted.",
-                _context.Envelope);
+            _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
 
             return false;
         }
@@ -129,16 +125,14 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         {
             if (commitConsumer)
             {
-                await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers())
-                    .ConfigureAwait(false);
+                await _context.Consumer.CommitAsync(_context.GetLastBrokerMessageIdentifiers()).ConfigureAwait(false);
             }
             else
             {
                 if (stopConsuming)
                     await _context.Consumer.StopAsync().ConfigureAwait(false);
 
-                await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers())
-                    .ConfigureAwait(false);
+                await _context.Consumer.RollbackAsync(_context.GetFirstBrokerMessageIdentifiers()).ConfigureAwait(false);
             }
         }
 

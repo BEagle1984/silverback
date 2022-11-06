@@ -22,6 +22,7 @@ public static class PublisherStorageExtensions
     /// <param name="dbTransaction">
     ///     The transaction to be used.
     /// </param>
+    // TODO: Uniform naming (SetStorageTransaction vs EnlistTransaction)
     public static void EnlistTransaction(this IPublisherBase publisher, DbTransaction dbTransaction) =>
         Check.NotNull(publisher, nameof(publisher)).Context.SetStorageTransaction(dbTransaction);
 }

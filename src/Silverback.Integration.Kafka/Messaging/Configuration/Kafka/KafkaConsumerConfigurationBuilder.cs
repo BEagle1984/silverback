@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Confluent.Kafka;
 using Silverback.Collections;
 using Silverback.Messaging.Broker.Callbacks;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Util;
@@ -22,6 +23,8 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     private bool? _commitOffsets;
 
     private int? _commitOffsetEach;
+
+    private KafkaOffsetStoreSettings? _clientSideOffsetStoreSettings;
 
     private bool? _enableAutoRecovery;
 
@@ -216,6 +219,42 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Specifies that the offsets have to stored in the specified client store, additionally to or instead of being committed to the
+    ///     message broker.
+    /// </summary>
+    /// <param name="settingsBuilderFunc">
+    ///     A <see cref="Func{T}" /> that takes the <see cref="KafkaOffsetStoreSettingsBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(Func<KafkaOffsetStoreSettingsBuilder, IKafkaOffsetStoreSettingsImplementationBuilder> settingsBuilderFunc)
+    {
+        Check.NotNull(settingsBuilderFunc, nameof(settingsBuilderFunc));
+
+        return StoreOffsetsClientSide(settingsBuilderFunc.Invoke(new KafkaOffsetStoreSettingsBuilder()).Build());
+    }
+
+    /// <summary>
+    ///     Specifies that the offsets have to stored in the specified client store, additionally to or instead of being committed to the
+    ///     message broker.
+    /// </summary>
+    /// <param name="settings">
+    ///     The offset store settings.
+    /// </param>
+    /// <returns>
+    ///     The client configuration builder so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(KafkaOffsetStoreSettings settings)
+    {
+        Check.NotNull(settings, nameof(settings));
+        settings.Validate();
+
+        _clientSideOffsetStoreSettings = settings;
+        return This;
+    }
+
+    /// <summary>
     ///     Specifies that the consumer has to be automatically recycled when a <see cref="KafkaException" />
     ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). This is the default.
     /// </summary>
@@ -352,6 +391,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
         {
             CommitOffsets = _commitOffsets ?? configuration.CommitOffsets,
             CommitOffsetEach = _commitOffsetEach ?? configuration.CommitOffsetEach,
+            ClientSideOffsetStore = _clientSideOffsetStoreSettings ?? configuration.ClientSideOffsetStore,
             EnableAutoRecovery = _enableAutoRecovery ?? configuration.EnableAutoRecovery,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,
             ProcessPartitionsIndependently = _processPartitionsIndependently ?? configuration.ProcessPartitionsIndependently,

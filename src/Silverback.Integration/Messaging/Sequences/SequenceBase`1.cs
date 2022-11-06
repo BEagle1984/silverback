@@ -47,7 +47,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private CancellationTokenSource? _timeoutCancellationTokenSource;
 
-    private List<IBrokerMessageIdentifier>? _messageIdentifiers;
+    private Dictionary<string, IBrokerMessageIdentifier>? _beginningMessageIdentifiers;
+
+    private Dictionary<string, IBrokerMessageIdentifier>? _endMessageIdentifiers;
 
     private ICollection<ISequence>? _sequences;
 
@@ -225,16 +227,32 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         return AbortCoreAsync(reason, exception);
     }
 
-    /// <inheritdoc cref="ISequence.GetBrokerMessageIdentifiers" />
-    public IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers()
+    /// <inheritdoc cref="ISequence.GetBeginningBrokerMessageIdentifiers" />
+    public IReadOnlyList<IBrokerMessageIdentifier> GetBeginningBrokerMessageIdentifiers()
     {
-        IReadOnlyList<IBrokerMessageIdentifier> identifiers = _messageIdentifiers?.AsReadOnlyList() ??
+        IReadOnlyList<IBrokerMessageIdentifier> identifiers = _beginningMessageIdentifiers?.Values.AsReadOnlyList() ??
                                                               Array.Empty<IBrokerMessageIdentifier>();
 
         if (_sequences != null)
         {
             identifiers = identifiers
-                .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()))
+                .Union(_sequences.SelectMany(sequence => sequence.GetBeginningBrokerMessageIdentifiers()))
+                .AsReadOnlyList();
+        }
+
+        return identifiers;
+    }
+
+    /// <inheritdoc cref="ISequence.GetEndBrokerMessageIdentifiers" />
+    public IReadOnlyList<IBrokerMessageIdentifier> GetEndBrokerMessageIdentifiers()
+    {
+        IReadOnlyList<IBrokerMessageIdentifier> identifiers = _endMessageIdentifiers?.Values.AsReadOnlyList() ??
+                                                              Array.Empty<IBrokerMessageIdentifier>();
+
+        if (_sequences != null)
+        {
+            identifiers = identifiers
+                .Union(_sequences.SelectMany(sequence => sequence.GetEndBrokerMessageIdentifiers()))
                 .AsReadOnlyList();
         }
 
@@ -265,10 +283,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     number of streams that have been pushed.
     /// </returns>
-    protected virtual async ValueTask<int> AddCoreAsync(
-        TEnvelope envelope,
-        ISequence? sequence,
-        bool throwIfUnhandled)
+    protected virtual async ValueTask<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
         if (!IsPending || IsCompleting)
             return 0;
@@ -283,8 +298,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
         else if (_trackIdentifiers)
         {
-            _messageIdentifiers ??= new List<IBrokerMessageIdentifier>();
-            _messageIdentifiers.Add(envelope.BrokerMessageIdentifier);
+            TrackIdentifiers(envelope);
         }
 
         await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
@@ -456,6 +470,19 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     protected virtual ValueTask OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
+
+    private void TrackIdentifiers(TEnvelope envelope)
+    {
+        _beginningMessageIdentifiers ??= new Dictionary<string, IBrokerMessageIdentifier>();
+        _endMessageIdentifiers ??= new Dictionary<string, IBrokerMessageIdentifier>();
+
+        string groupKey = envelope.BrokerMessageIdentifier.GroupKey ?? string.Empty;
+
+        if (!_beginningMessageIdentifiers.ContainsKey(groupKey))
+            _beginningMessageIdentifiers[groupKey] = envelope.BrokerMessageIdentifier;
+
+        _endMessageIdentifiers[groupKey] = envelope.BrokerMessageIdentifier;
+    }
 
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {

@@ -15,7 +15,7 @@ using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Storage.Memory.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Storage.Memory.Messaging.Producing.TransactionalOutbox;
 
 public class InMemoryOutboxReaderFixture
 {

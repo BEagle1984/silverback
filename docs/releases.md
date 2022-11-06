@@ -21,6 +21,7 @@ uid: releases
   * New Storage packages (see...)
   * New Outbox with Enlist for transaction
   * StorageInitializer to create tables
+  * Client side offset storage (w/ transaction)
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

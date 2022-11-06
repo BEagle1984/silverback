@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 namespace Silverback.Storage.DataAccess;
 
 // TODO: Move to Silverback.Storage.RelationalDatabase
+// TODO: Test
 internal static class DbConnectionExtensions
 {
+    public static void CloseAndDispose(this DbConnection connection)
+    {
+        connection.Close();
+        connection.Dispose();
+    }
+
     public static async Task CloseAndDisposeAsync(this DbConnection connection)
     {
         await connection.CloseAsync().ConfigureAwait(false);

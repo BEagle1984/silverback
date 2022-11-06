@@ -188,6 +188,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
         // Loop to handle edge cases where the sequence gets completed between the calls to
         // GetSequenceAsync and AddAsync
+        // TODO: Optimize this while(true) -> Is the retry even necessary? In which case?
         while (true)
         {
             sequence = await GetSequenceAsync(context, sequenceReader).ConfigureAwait(false);

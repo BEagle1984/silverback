@@ -43,6 +43,9 @@ public sealed record MqttMessageIdentifier : IBrokerMessageIdentifier
     /// </summary>
     public string MessageId { get; }
 
+    /// <inheritdoc cref="IBrokerMessageIdentifier.GroupKey" />
+    public string GroupKey => ClientId;
+
     /// <inheritdoc cref="IBrokerMessageIdentifier.ToLogString" />
     public string ToLogString() => MessageId;
 

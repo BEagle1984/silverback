@@ -15,6 +15,8 @@ namespace Silverback.Collections;
 /// <typeparam name="T">
 ///     The type of the entities.
 /// </typeparam>
+// TODO: Rename to InMemoryStore (unify with other stores)
+// TODO: Needed only to share items between outbox reader and writer? Does it make sense to keep it abstracted and in its own namespace?
 public class InMemoryStorage<T>
     where T : class
 {

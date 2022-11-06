@@ -12,6 +12,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
@@ -22,6 +23,8 @@ namespace Silverback.Messaging.Broker;
 /// <inheritdoc cref="Consumer{TIdentifier}" />
 public class KafkaConsumer : Consumer<KafkaOffset>
 {
+    private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
+
     private readonly IConsumerLogger<KafkaConsumer> _logger;
 
     private readonly object _messagesSinceCommitLock = new();
@@ -54,6 +57,9 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <param name="callbacksInvoker">
     ///     The <see cref="IBrokerClientCallbacksInvoker" />.
     /// </param>
+    /// <param name="offsetStoreFactory">
+    ///     The <see cref="IKafkaOffsetStoreFactory" />.
+    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </param>
@@ -67,6 +73,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         KafkaConsumerConfiguration configuration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
         IBrokerClientCallbacksInvoker callbacksInvoker,
+        IKafkaOffsetStoreFactory offsetStoreFactory,
         IServiceProvider serviceProvider,
         IConsumerLogger<KafkaConsumer> logger)
         : base(
@@ -74,15 +81,14 @@ public class KafkaConsumer : Consumer<KafkaOffset>
             client,
             Check.NotNull(configuration, nameof(configuration)).Endpoints,
             behaviorsProvider,
-            new KafkaSequenceStoreCollection(
-                serviceProvider,
-                configuration.ProcessPartitionsIndependently),
+            new KafkaSequenceStoreCollection(serviceProvider, configuration.ProcessPartitionsIndependently),
             serviceProvider,
             logger)
     {
         Client = Check.NotNull(client, nameof(client));
         Configuration = Check.NotNull(configuration, nameof(configuration));
 
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _channelsManager = new ConsumerChannelsManager(this, callbacksInvoker, logger);
@@ -132,14 +138,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     // TODO: Test
     public void Seek(TopicPartitionOffset topicPartitionOffset) => Client.Seek(topicPartitionOffset);
 
-    internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> topicPartitions)
+    internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
     {
         if (!IsStartedAndNotStopping())
-            return;
+            return Array.Empty<TopicPartitionOffset>(); // TODO: Check this
 
-        _channelsManager.StartReading(topicPartitions);
+        topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration).ApplyStoredOffsets(topicPartitionOffsets);
+
+        _channelsManager.StartReading(topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
 
         SetReadyStatus();
+
+        return topicPartitionOffsets;
     }
 
     internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
@@ -251,17 +261,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override ValueTask CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
-        // TODO: Still needs the group by or we can trust the caller?
-        IEnumerable<TopicPartitionOffset> lastOffsets = brokerMessageIdentifiers
-            .GroupBy(offset => offset.TopicPartition)
-            .Select(
-                offsetsGroup => offsetsGroup
-                    .OrderBy(offset => offset)
-                    .Last()
-                    .AsTopicPartitionOffset());
-
         StoreOffset(
-            lastOffsets
+            brokerMessageIdentifiers
                 .Select(
                     topicPartitionOffset => new TopicPartitionOffset(
                         topicPartitionOffset.TopicPartition,
@@ -276,34 +277,25 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <inheritdoc cref="Consumer{TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override ValueTask RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
-        // TODO: Still needs the group by or we can trust the caller?
-        List<TopicPartitionOffset> latestTopicPartitionOffsets =
-            brokerMessageIdentifiers
-                .GroupBy(offset => offset.TopicPartition)
-                .Select(
-                    offsetsGroup => offsetsGroup
-                        .OrderBy(offset => offset)
-                        .First()
-                        .AsTopicPartitionOffset())
-                .ToList();
+        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
         if (IsStarted)
-            Client.Pause(latestTopicPartitionOffsets.Select(offset => offset.TopicPartition));
+            Client.Pause(brokerMessageIdentifiers.Select(offset => offset.TopicPartition));
 
-        List<Task?> channelsManagerStoppingTasks = new(latestTopicPartitionOffsets.Count);
+        List<Task?> channelsManagerStoppingTasks = new(brokerMessageIdentifiers.Count);
 
-        foreach (TopicPartitionOffset? topicPartitionOffset in latestTopicPartitionOffsets)
+        IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
+            .Select(offset => offset.AsTopicPartitionOffset())
+            .AsReadOnlyList();
+
+        foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {
             channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
             Client.Seek(topicPartitionOffset);
             _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
         }
 
-        Task.Run(
-                () => RestartConsumeLoopAfterRollbackAsync(
-                    channelsManagerStoppingTasks,
-                    latestTopicPartitionOffsets))
-            .FireAndForget();
+        Task.Run(() => RestartConsumeLoopAfterRollbackAsync(channelsManagerStoppingTasks, topicPartitionOffsets)).FireAndForget();
 
         return default;
     }

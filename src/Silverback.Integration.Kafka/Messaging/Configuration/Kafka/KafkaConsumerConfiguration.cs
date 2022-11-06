@@ -6,6 +6,7 @@ using System.Linq;
 using Confluent.Kafka;
 using Silverback.Collections;
 using Silverback.Configuration;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Util;
@@ -19,38 +20,35 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 {
     internal const string UnsetGroupId = "not-set";
 
+    private readonly bool _commitOffsets = true;
+
     private readonly bool _processPartitionsIndependently = true;
 
     private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints =
         ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
 
-    private readonly bool _commitOffsets = true;
-
     internal KafkaConsumerConfiguration(ConsumerConfig? consumerConfig = null)
         : base(consumerConfig)
     {
-        if (consumerConfig == null)
-        {
-            ClientConfig.EnableAutoCommit = true;
-            ClientConfig.GroupId = UnsetGroupId;
+        ClientConfig.EnableAutoCommit ??= true;
+        ClientConfig.GroupId ??= UnsetGroupId;
 
-            // This property is not exposed and it's hardcoded to false
-            ClientConfig.EnableAutoOffsetStore = false;
-        }
+        // This property is not exposed and it's hardcoded to false
+        ClientConfig.EnableAutoOffsetStore = false;
     }
 
     /// <summary>
     ///     Gets or sets the client group.id. All clients sharing the same group.id belong to the same group. The default is <c>null</c>
     ///     (which will internally be replaced with <c>"not-set"</c> since the underlying library requires a value).
     /// </summary>
-    public string? GroupId
+    public string GroupId
     {
         get => ClientConfig.GroupId;
         init => ClientConfig.GroupId = string.IsNullOrEmpty(value) ? UnsetGroupId : value;
     }
 
     /// <summary>
-    ///    Gets a value indicating whether the offsets must be committed. The default is <c>true</c>.
+    ///     Gets a value indicating whether the offsets must be committed. The default is <c>true</c>.
     /// </summary>
     public bool CommitOffsets
     {
@@ -67,10 +65,11 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         }
     }
 
-    // /// <summary>
-    // ///     Gets the <see cref="IOffsetStore" /> to be used to store the offsets. The stored offsets will be used during the partitions assignment to determine the starting offset and ensure
-    // /// </summary>
-    // public IOffsetStore? ClientSideOffsetStore { get;init; }
+    /// <summary>
+    ///     Gets the settings for the <see cref="IKafkaOffsetStore" /> to be used to store the offsets. The stored offsets will be used during
+    ///     the partitions assignment to determine the starting offset and ensure that each message is consumed only once.
+    /// </summary>
+    public KafkaOffsetStoreSettings? ClientSideOffsetStore { get; init; }
 
     /// <summary>
     ///     Gets or sets a value indicating whether the offsets must be automatically and periodically committed in the background.
@@ -213,6 +212,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
                 $"The {nameof(GroupId)} should be specified when committing the offsets to the broker. " +
                 $"Set {nameof(CommitOffsets)} to false or set the {nameof(GroupId)}.");
         }
+
+        if (ClientSideOffsetStore != null)
+            throw new BrokerConfigurationException($"The {nameof(GroupId)} should be specified when using a client side offset store.");
     }
 
     private void ValidateCommitStrategy()

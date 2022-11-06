@@ -89,9 +89,11 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
-        TestProducerEndpointConfiguration endpoint = builder.ProduceToOutbox(new InMemoryOutboxSettings()).Build();
+        InMemoryOutboxSettings settings = new();
+        TestProducerEndpointConfiguration endpoint = builder.ProduceToOutbox(settings).Build();
 
         endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
+        endpoint.Strategy.As<OutboxProduceStrategy>().Settings.Should().Be(settings);
     }
 
     [Fact]

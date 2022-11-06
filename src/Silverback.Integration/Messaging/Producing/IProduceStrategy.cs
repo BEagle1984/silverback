@@ -9,6 +9,7 @@ namespace Silverback.Messaging.Producing;
 /// <summary>
 ///     The strategy used to produce the messages.
 /// </summary>
+// TODO: Still needed to Build the implementation in a second step?
 public interface IProduceStrategy : IEquatable<IProduceStrategy>
 {
     /// <summary>

@@ -6,8 +6,20 @@ using System.Threading.Tasks;
 
 namespace Silverback.Storage.DataAccess;
 
+// TODO: Test
 internal static class DbTransactionExtensions
 {
+    public static void CommitAndDispose(this DbTransaction transaction)
+    {
+        DbConnection? connection = transaction.Connection;
+        transaction.Commit();
+
+        if (connection != null)
+            connection.CloseAndDispose();
+
+        transaction.Dispose();
+    }
+
     public static async Task CommitAndDisposeAsync(this DbTransaction transaction)
     {
         DbConnection? connection = transaction.Connection;
@@ -17,6 +29,17 @@ internal static class DbTransactionExtensions
             await connection.CloseAndDisposeAsync().ConfigureAwait(false);
 
         await transaction.DisposeAsync().ConfigureAwait(false);
+    }
+
+    public static void RollbackAndDispose(this DbTransaction transaction)
+    {
+        DbConnection? connection = transaction.Connection;
+        transaction.Rollback();
+
+        if (connection != null)
+            connection.CloseAndDispose();
+
+        transaction.Dispose();
     }
 
     public static async Task RollbackAndDisposeAsync(this DbTransaction transaction)

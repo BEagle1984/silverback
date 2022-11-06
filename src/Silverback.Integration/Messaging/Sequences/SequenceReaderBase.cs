@@ -155,7 +155,7 @@ public abstract class SequenceReaderBase : ISequenceReader
     {
         List<ISequence> sequences = sequenceStore.ToList();
 
-        async ValueTask AwaitOrAbortPreviousSequence(ISequence sequence)
+        async ValueTask AwaitOrAbortPreviousSequenceAsync(ISequence sequence)
         {
             // Prevent Sequence and RawSequence to mess with each other
             if (HandlesRawMessages && sequence is Sequence ||
@@ -177,7 +177,7 @@ public abstract class SequenceReaderBase : ISequenceReader
                 await parentSequence.AwaitProcessingAsync(false).ConfigureAwait(false);
         }
 
-        await sequences.ForEachAsync(AwaitOrAbortPreviousSequence).ConfigureAwait(false);
+        await sequences.ForEachAsync(AwaitOrAbortPreviousSequenceAsync).ConfigureAwait(false);
 
         await sequences
             .Where(sequence => !sequence.IsPending)

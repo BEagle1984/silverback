@@ -39,8 +39,7 @@ public class SqliteOutboxReader : IOutboxReader
     /// </param>
     public SqliteOutboxReader(SqliteOutboxSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
-        _dataAccess = new SqliteDataAccess(settings.ConnectionString);
+        _dataAccess = new SqliteDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
 
         _getQuerySql = "SELECT " +
                        "Id," +
@@ -52,8 +51,11 @@ public class SqliteOutboxReader : IOutboxReader
                        "SerializedEndpoint " +
                        $"FROM {settings.TableName} " +
                        "ORDER BY Created LIMIT @Limit";
+
         _countQuerySql = $"SELECT COUNT(*) FROM {settings.TableName}";
+
         _minCreatedQuerySql = $"SELECT MIN(Created) FROM {settings.TableName}";
+
         _deleteSql = $"DELETE FROM {settings.TableName} WHERE Id = @Id ";
     }
 
@@ -79,15 +81,18 @@ public class SqliteOutboxReader : IOutboxReader
 
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
     // TODO: Optimize?
-    public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages)
-    {
-        Check.NotNull(outboxMessages, nameof(outboxMessages));
-
-        return _dataAccess.ExecuteNonQueryAsync(
-            outboxMessages.Cast<DbOutboxMessage>(),
+    public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) =>
+        _dataAccess.ExecuteNonQueryAsync(
+            Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
             _deleteSql,
-            outboxMessage => new[] { new SqliteParameter("@Id", outboxMessage.Id) });
-    }
+            new[]
+            {
+                new SqliteParameter("@Id", 0L)
+            },
+            (outboxMessage, parameters) =>
+            {
+                parameters[0].Value = outboxMessage.Id;
+            });
 
     private static OutboxMessage MapOutboxMessage(DbDataReader reader)
     {

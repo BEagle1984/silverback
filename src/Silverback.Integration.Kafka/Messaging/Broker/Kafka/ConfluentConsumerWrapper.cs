@@ -11,6 +11,7 @@ using Confluent.Kafka;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
@@ -21,6 +22,8 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
     private readonly KafkaConsumerConfiguration _configuration;
 
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
+
+    private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
     private readonly ISilverbackLogger _logger;
 
@@ -40,11 +43,13 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         KafkaConsumerConfiguration configuration,
         IConfluentAdminClientBuilder adminClientBuilder,
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
+        IKafkaOffsetStoreFactory offsetStoreFactory,
         ISilverbackLogger logger)
         : base(name, logger)
     {
         _configuration = Check.NotNull(configuration, nameof(configuration));
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _consumerBuilder = Check.NotNull(consumerBuilder, nameof(consumerBuilder))
@@ -81,10 +86,8 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         if (_confluentConsumer == null)
             throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-        if (!_configuration.CommitOffsets)
-            return;
-
-        _confluentConsumer.StoreOffset(topicPartitionOffset);
+        if (_configuration.CommitOffsets)
+            _confluentConsumer.StoreOffset(topicPartitionOffset);
     }
 
     public void Commit()
@@ -209,6 +212,8 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private async IAsyncEnumerable<TopicPartitionOffset> GetAssignmentAsync(KafkaConsumerEndpointConfiguration endpointConfiguration)
     {
+        StoredOffsetsLoader storedOffsetsLoader = new(_offsetStoreFactory, _configuration);
+
         foreach (TopicPartitionOffset topicPartitionOffset in endpointConfiguration.TopicPartitions)
         {
             if (topicPartitionOffset.Partition == Partition.Any && endpointConfiguration.PartitionOffsetsProvider != null)
@@ -218,12 +223,12 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
                 foreach (TopicPartitionOffset providedTopicPartitionOffset in providedTopicPartitionOffsets)
                 {
-                    yield return providedTopicPartitionOffset;
+                    yield return storedOffsetsLoader.ApplyStoredOffset(providedTopicPartitionOffset);
                 }
             }
             else
             {
-                yield return topicPartitionOffset;
+                yield return storedOffsetsLoader.ApplyStoredOffset(topicPartitionOffset);
             }
         }
     }

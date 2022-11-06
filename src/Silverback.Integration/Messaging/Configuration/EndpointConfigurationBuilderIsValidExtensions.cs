@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
-// TODO: TEST??
+// TODO: TEST?? STILL USED?
 internal static class EndpointConfigurationBuilderIsValidExtensions
 {
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = Justifications.ExceptionLogged)]

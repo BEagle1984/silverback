@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
 using Silverback.Storage.Relational;
@@ -54,7 +53,7 @@ public partial class OutboxFixture
                 .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+        await storageInitializer.CreateSqliteOutboxAsync(Host.SqliteConnectionString);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -104,7 +103,7 @@ public partial class OutboxFixture
                 .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
+        await storageInitializer.CreateSqliteOutboxAsync(Host.SqliteConnectionString);
 
         await using SqliteConnection connection = new(Host.SqliteConnectionString);
         await connection.OpenAsync();

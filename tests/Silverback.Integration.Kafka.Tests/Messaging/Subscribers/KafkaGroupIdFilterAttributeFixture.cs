@@ -15,6 +15,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
@@ -64,6 +65,7 @@ public class KafkaGroupIdFilterAttributeFixture
                 },
                 Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
                 Substitute.For<IBrokerClientCallbacksInvoker>(),
+                Substitute.For<IKafkaOffsetStoreFactory>(),
                 Substitute.For<IServiceProvider>(),
                 Substitute.For<IConsumerLogger<KafkaConsumer>>()),
             new KafkaOffset(new TopicPartitionOffset("test", 0, 42)));

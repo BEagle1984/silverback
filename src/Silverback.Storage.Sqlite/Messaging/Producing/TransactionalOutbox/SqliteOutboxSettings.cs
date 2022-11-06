@@ -21,7 +21,7 @@ public record SqliteOutboxSettings : OutboxSettings
     ///     Initializes a new instance of the <see cref="SqliteOutboxSettings" /> class.
     /// </summary>
     /// <param name="connectionString">
-    ///     The connection string to the SQLite database.
+    ///     The connection string to the Sqlite database.
     /// </param>
     /// <param name="tableName">
     ///     The name of the outbox table. If not specified, the default <c>"SilverbackOutbox"</c> will be used.
@@ -35,14 +35,14 @@ public record SqliteOutboxSettings : OutboxSettings
     }
 
     /// <summary>
-    ///     Gets the connection string to the SQLite database.
+    ///     Gets the connection string to the Sqlite database.
     /// </summary>
     public string ConnectionString { get; init; } = string.Empty;
 
     /// <summary>
     ///     Gets the name of the outbox table. The default is <c>"SilverbackOutbox"</c>.
     /// </summary>
-    public string TableName { get; init; } = "SilverbackOutbox";
+    public string TableName { get; init; } = "Silverback_Outbox";
 
     /// <summary>
     ///     Returns an instance of <see cref="InMemoryLockSettings" />, since there is no distributed lock implementation for Sqlite and

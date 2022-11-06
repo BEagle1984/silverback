@@ -38,8 +38,7 @@ public abstract record ErrorPolicyBase : IErrorPolicy
     public Func<IRawInboundEnvelope, Exception, object?>? MessageToPublishFactory { get; init; }
 
     /// <inheritdoc cref="IErrorPolicy.Build" />
-    public IErrorPolicyImplementation Build(IServiceProvider serviceProvider) =>
-        BuildCore(serviceProvider);
+    public IErrorPolicyImplementation Build(IServiceProvider serviceProvider) => BuildCore(serviceProvider);
 
     /// <inheritdoc cref="IErrorPolicy.Build" />
     protected abstract ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider);

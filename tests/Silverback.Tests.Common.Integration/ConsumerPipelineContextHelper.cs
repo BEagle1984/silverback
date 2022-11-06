@@ -27,8 +27,10 @@ public static class ConsumerPipelineContextHelper
         IConsumer? consumer = null,
         ISequenceStore? sequenceStore = null,
         ConsumerEndpoint? endpoint = null,
-        IBrokerMessageIdentifier? identifier = null) =>
-        new(
+        IBrokerMessageIdentifier? identifier = null,
+        ISequence? sequence = null)
+    {
+        ConsumerPipelineContext context = new(
             envelope ?? new RawInboundEnvelope(
                 Stream.Null,
                 Array.Empty<MessageHeader>(),
@@ -41,6 +43,12 @@ public static class ConsumerPipelineContextHelper
         {
             TransactionManager = transactionManager ?? Substitute.For<IConsumerTransactionManager>()
         };
+
+        if (sequence != null)
+            context.SetSequence(sequence, true);
+
+        return context;
+    }
 
     private static IServiceProvider GetServiceProvider() =>
         ServiceProviderHelper.GetScopedServiceProvider(

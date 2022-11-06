@@ -7,7 +7,7 @@ using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
-namespace Silverback.Tests.Storage.Sqlite.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Storage.Sqlite.Messaging.Producing.TransactionalOutbox;
 
 public class SqliteOutboxSettingsFixture
 {
@@ -16,33 +16,16 @@ public class SqliteOutboxSettingsFixture
     {
         SqliteOutboxSettings settings = new();
 
-        settings.TableName.Should().Be("SilverbackOutbox");
+        settings.TableName.Should().Be("Silverback_Outbox");
     }
 
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingWithSameInstance()
+    public void Constructor_ShouldSetConnectionStringAndTableName()
     {
-        SqliteOutboxSettings settings = new();
+        SqliteOutboxSettings settings = new("connection-string", "my-outbox");
 
-        settings.Equals(settings).Should().BeTrue();
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnTrue_WhenSettingsAreEquivalent()
-    {
-        SqliteOutboxSettings settings1 = new() { TableName = "outbox" };
-        SqliteOutboxSettings settings2 = new() { TableName = "outbox" };
-
-        settings1.Equals(settings2).Should().BeTrue();
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnFalse_WhenSettingsAreDifferent()
-    {
-        SqliteOutboxSettings settings1 = new() { TableName = "outbox1" };
-        SqliteOutboxSettings settings2 = new() { TableName = "outbox2" };
-
-        settings1.Equals(settings2).Should().BeFalse();
+        settings.ConnectionString.Should().Be("connection-string");
+        settings.TableName.Should().Be("my-outbox");
     }
 
     [Fact]

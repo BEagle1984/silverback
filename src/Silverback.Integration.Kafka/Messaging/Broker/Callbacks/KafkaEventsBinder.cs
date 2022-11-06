@@ -128,9 +128,7 @@ internal static class KafkaEventsBinder
                 logger.LogPartitionOffsetReset(topicPartitionOffset, consumerWrapper.Consumer);
         }
 
-        consumerWrapper.Consumer.OnPartitionsAssigned(topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition).ToList());
-
-        return topicPartitionOffsets;
+        return consumerWrapper.Consumer.OnPartitionsAssigned(topicPartitionOffsets);
     }
 
     private static void OnPartitionsRevoked(

@@ -104,7 +104,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Specifies that the<see cref="OutboxProduceStrategy" /> has to be used, storing the messages into the transactional outbox table.
+    ///     Specifies that the <see cref="OutboxProduceStrategy" /> has to be used, storing the messages into the transactional outbox table.
     ///     The operation is therefore included in the database transaction applying the message side effects to the local database.
     ///     The <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
     /// </summary>
@@ -122,7 +122,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Specifies that the<see cref="OutboxProduceStrategy" /> has to be used, storing the messages into the transactional outbox table.
+    ///     Specifies that the <see cref="OutboxProduceStrategy" /> has to be used, storing the messages into the transactional outbox table.
     ///     The operation is therefore included in the database transaction applying the message side effects to the local database.
     ///     The <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
     /// </summary>

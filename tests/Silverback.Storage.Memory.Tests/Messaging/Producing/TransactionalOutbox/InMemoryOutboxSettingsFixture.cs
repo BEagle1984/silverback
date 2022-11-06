@@ -7,7 +7,7 @@ using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
-namespace Silverback.Tests.Storage.Memory.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Storage.Memory.Messaging.Producing.TransactionalOutbox;
 
 public class InMemoryOutboxSettingsFixture
 {
@@ -20,29 +20,11 @@ public class InMemoryOutboxSettingsFixture
     }
 
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingWithSameInstance()
+    public void Constructor_ShouldSetOutboxName()
     {
-        InMemoryOutboxSettings settings = new();
+        InMemoryOutboxSettings settings = new("my-outbox");
 
-        settings.Equals(settings).Should().BeTrue();
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnTrue_WhenSettingsAreEquivalent()
-    {
-        InMemoryOutboxSettings settings1 = new() { OutboxName = "outbox" };
-        InMemoryOutboxSettings settings2 = new() { OutboxName = "outbox" };
-
-        settings1.Equals(settings2).Should().BeTrue();
-    }
-
-    [Fact]
-    public void Equals_ShouldReturnFalse_WhenSettingsAreDifferent()
-    {
-        InMemoryOutboxSettings settings1 = new() { OutboxName = "outbox1" };
-        InMemoryOutboxSettings settings2 = new() { OutboxName = "outbox2" };
-
-        settings1.Equals(settings2).Should().BeFalse();
+        settings.OutboxName.Should().Be("my-outbox");
     }
 
     [Fact]
@@ -70,7 +52,7 @@ public class InMemoryOutboxSettingsFixture
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? outboxName)
+    public void Validate_ShouldThrow_WhenOutboxNameIsNullOrWhitespace(string? outboxName)
     {
         InMemoryOutboxSettings outboxSettings = new(outboxName!);
 

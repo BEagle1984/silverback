@@ -10,15 +10,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 public partial class ConsumerEndpointFixture
 {
     [Fact]
-    public async Task ConsumerEndpoint_ShouldConsumeWithoutGroupId_WhenNotCommitting()
+    public async Task ConsumerEndpoint_ShouldConsumeWithoutGroupId_WhenStaticallyAssigningAndNotCommitting()
     {
         int received = 0;
 
@@ -36,11 +38,11 @@ public partial class ConsumerEndpointFixture
                         .AddConsumer(
                             consumer => consumer
                                 .DisableOffsetsCommit()
-                                .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
+                                .Consume(DefaultTopicName, endpoint => endpoint.ConsumeFrom(DefaultTopicName, 0, 1, 2))))
                 .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
                 .AddIntegrationSpy());
 
-        IProducer producer = Helper.GetProducerForEndpoint("topic1[1]");
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         for (int i = 0; i < 5; i++)
         {

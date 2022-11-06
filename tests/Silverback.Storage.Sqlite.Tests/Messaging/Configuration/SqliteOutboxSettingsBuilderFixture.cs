@@ -22,7 +22,7 @@ public class SqliteOutboxSettingsBuilderFixture
     }
 
     [Fact]
-    public void WithName_ShouldSetOutboxName()
+    public void WithTableName_ShouldSetOutboxTableName()
     {
         SqliteOutboxSettingsBuilder builder = new("connection-string");
 

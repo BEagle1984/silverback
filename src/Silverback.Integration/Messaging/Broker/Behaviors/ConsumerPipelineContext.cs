@@ -66,8 +66,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     public ISequence? Sequence { get; private set; }
 
     /// <summary>
-    ///     Gets a value indicating whether the current message was recognized as the beginning of a new
-    ///     sequence.
+    ///     Gets a value indicating whether the current message was recognized as the beginning of a new sequence.
     /// </summary>
     public bool IsSequenceStart { get; private set; }
 
@@ -113,21 +112,30 @@ public sealed class ConsumerPipelineContext : IDisposable
     }
 
     /// <summary>
-    ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g.
-    ///     when starting the processing of a <see cref="Sequence" />. This <see cref="Task" /> will complete when
-    ///     all subscribers return.
+    ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g. when starting the
+    ///     processing of a <see cref="Sequence" />. This <see cref="Task" /> will complete when all subscribers return.
     /// </summary>
     public Task? ProcessingTask { get; internal set; }
 
     /// <summary>
-    ///     Gets the identifiers of the messages being handled in this context (either the single message or the
-    ///     sequence).
+    ///     Gets the identifiers of the messages being handled in this context (either the single message or the first message in the
+    ///     sequence per each topic or partition).
     /// </summary>
     /// <returns>
     ///     The list of identifiers.
     /// </returns>
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers() =>
-        Sequence?.GetBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetFirstBrokerMessageIdentifiers() =>
+        Sequence?.GetBeginningBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+
+    /// <summary>
+    ///     Gets the identifiers of the messages being handled in this context (either the single message or the last message in the
+    ///     sequence per each topic or partition).
+    /// </summary>
+    /// <returns>
+    ///     The list of identifiers.
+    /// </returns>
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetLastBrokerMessageIdentifiers() =>
+        Sequence?.GetEndBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
 
     /// <summary>
     ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.
@@ -159,8 +167,8 @@ public sealed class ConsumerPipelineContext : IDisposable
     }
 
     /// <summary>
-    ///     Sets the <see cref="IsSequenceEnd" /> property to <c>true</c>, indicating that the current message was
-    ///     recognized as the end of the sequence.
+    ///     Sets the <see cref="IsSequenceEnd" /> property to <c>true</c>, indicating that the current message was recognized as the end of
+    ///     the sequence.
     /// </summary>
     public void SetIsSequenceEnd()
     {

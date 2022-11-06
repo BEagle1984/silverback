@@ -12,7 +12,7 @@ namespace Silverback.Storage.Relational;
 ///     Adds the relational storage specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
 // TODO: Test
-public static class SilverbackScopedContextStorageRelationalExtensions
+public static class SilverbackContextStorageRelationalExtensions
 {
     /// <summary>
     ///     Checks whether an active <see cref="DbTransaction" /> is set and returns it.

@@ -15,7 +15,7 @@ public static class OutboxSettingsBuilderMemoryExtensions
     ///     The <see cref="OutboxSettingsBuilder" />.
     /// </param>
     /// <returns>
-    ///     The <see cref="IOutboxSettingsImplementationBuilder" />.
+    ///     The <see cref="InMemoryOutboxSettingsBuilder" />.
     /// </returns>
     public static InMemoryOutboxSettingsBuilder UseMemory(this OutboxSettingsBuilder builder) => new();
 }

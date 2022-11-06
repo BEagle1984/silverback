@@ -8,10 +8,12 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -39,7 +41,9 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
 
         brokerOptionsBuilder.SilverbackBuilder
             .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
+            .AddSingletonBrokerBehavior<KafkaOffsetStoreConsumerBehavior>()
             .AddSingletonBrokerClientCallback<KafkaConsumerLocalTimeoutMonitor>()
+            .AddExtensibleFactory<IKafkaOffsetStoreFactory, KafkaOffsetStoreFactory>()
             .Services
             .AddScoped<KafkaClientsConfigurationActions>()
             .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
@@ -51,7 +55,15 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpointConfiguration>, KafkaActivityEnricher>()
             .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpointConfiguration>, KafkaActivityEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>, KafkaMovePolicyMessageEnricher>()
-            .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>();
+            .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>()
+            .AddTransient<KafkaOffsetStoreScope>(
+                services =>
+                {
+                    if (!services.GetRequiredService<SilverbackContext>().TryGetKafkaOffsetStoreScope(out KafkaOffsetStoreScope? scope))
+                        throw new InvalidOperationException("No kafka offset store scope."); // TODO: review message
+
+                    return scope;
+                });
 
         AddChunkEnricher(brokerOptionsBuilder);
         AddBrokerLogEnrichers(brokerOptionsBuilder);

@@ -17,7 +17,7 @@ using Silverback.Storage.DataAccess;
 using Silverback.Tests.Logging;
 using Xunit;
 
-namespace Silverback.Tests.Storage.Sqlite.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Storage.Sqlite.Messaging.Producing.TransactionalOutbox;
 
 public sealed class SqliteOutboxReaderFixture : IDisposable
 {

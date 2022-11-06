@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Tests.Logging;
@@ -45,6 +46,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             new KafkaConsumerConfiguration(),
             Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
             Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<IKafkaOffsetStoreFactory>(),
             Substitute.For<IServiceProvider>(),
             Substitute.For<IConsumerLogger<KafkaConsumer>>());
 

@@ -235,6 +235,8 @@ public class KafkaOffsetTests
 
         public string Value { get; }
 
+        public string GroupKey => Key;
+
         public string ToLogString() => Value;
 
         public string ToVerboseLogString() => Value;

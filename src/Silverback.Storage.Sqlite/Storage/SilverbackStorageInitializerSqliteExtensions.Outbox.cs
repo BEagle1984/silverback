@@ -19,6 +19,23 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     /// <param name="initializer">
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
+    /// <param name="connectionString">
+    ///     The connection string to the Sqlite database.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task CreateSqliteOutboxAsync(this SilverbackStorageInitializer initializer, string connectionString) =>
+        CreateSqliteOutboxAsync(
+            initializer,
+            new SqliteOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
+
+    /// <summary>
+    ///     Creates the Sqlite outbox table.
+    /// </summary>
+    /// <param name="initializer">
+    ///     The <see cref="SilverbackStorageInitializer" />.
+    /// </param>
     /// <param name="settings">
     ///     The outbox settings.
     /// </param>
@@ -40,10 +57,10 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the SQLite database.
+    ///     The connection string to the Sqlite database.
     /// </param>
     /// <param name="tableName">
-    ///     The name of the outbox table. If not specified, the default <c>"SilverbackOutbox"</c> will be used.
+    ///     The name of the outbox table.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -59,16 +76,16 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
 
         SqliteDataAccess dataAccess = new(connectionString);
 
-        // TODO: No transaction possibility?
         return dataAccess.ExecuteNonQueryAsync(
             $"CREATE TABLE IF NOT EXISTS {tableName} (" +
-            "Id INTEGER PRIMARY KEY ," +
-            "MessageType TEXT NOT NULL," +
+            "Id INTEGER NOT NULL," +
+            "MessageType TEXT," +
             "Content BLOB," +
             "Headers TEXT," +
             "EndpointRawName TEXT NOT NULL," +
             "EndpointFriendlyName TEXT," +
             "SerializedEndpoint TEXT," +
-            "Created INTEGER)");
+            "Created INTEGER NOT NULL," +
+            "PRIMARY KEY (Id));");
     }
 }

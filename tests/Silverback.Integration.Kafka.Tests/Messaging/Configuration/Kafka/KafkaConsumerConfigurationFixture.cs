@@ -9,6 +9,7 @@ using FluentAssertions;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Sequences.Batch;
 using Xunit;
 
@@ -240,7 +241,7 @@ public class KafkaConsumerConfigurationFixture
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            GroupId = groupId,
+            GroupId = groupId!,
             Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
                 new[]
                 {
@@ -267,7 +268,7 @@ public class KafkaConsumerConfigurationFixture
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            GroupId = groupId,
+            GroupId = groupId!,
             CommitOffsets = true,
             Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
                 new[]
@@ -288,12 +289,41 @@ public class KafkaConsumerConfigurationFixture
         act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId should be specified when committing the offsets to the broker. *");
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_ShouldThrow_WhenSpecifyingOffsetStoreWithNoGroupId(string? groupId)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            GroupId = groupId!,
+            CommitOffsets = false,
+            ClientSideOffsetStore = new InMemoryKafkaOffsetStoreSettings(),
+            Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
+                new[]
+                {
+                    new KafkaConsumerEndpointConfiguration
+                    {
+                        TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                            new[]
+                            {
+                                new TopicPartitionOffset("topic1", 1, Offset.Unset)
+                            })
+                    }
+                })
+        };
+
+        Action act = () => configuration.Validate();
+
+        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The GroupId should be specified when using a client side offset store.");
+    }
+
     [Fact]
     public void Validate_ShouldNotThrow_WhenStaticAssignmentAndNotCommittingWithoutGroupId()
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            GroupId = null,
+            GroupId = null!,
             CommitOffsets = false,
             Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
                 new[]

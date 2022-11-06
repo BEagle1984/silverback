@@ -48,8 +48,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             context.ReplaceServiceScope(scope);
             context.TransactionManager = new ConsumerTransactionManager(
                 context,
-                context.ServiceProvider
-                    .GetRequiredService<IConsumerLogger<ConsumerTransactionManager>>());
+                context.ServiceProvider.GetRequiredService<IConsumerLogger<ConsumerTransactionManager>>());
 
             _logger.LogProcessing(context.Envelope);
 

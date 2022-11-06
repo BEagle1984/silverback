@@ -16,7 +16,6 @@ using Silverback.Util;
 namespace Silverback.Storage.DataAccess;
 
 // TODO: Generalize, split and move abstraction to Silverback.Storage.RelationalDatabase
-// TODO: Avoid unnecessary commit/rollback calls (for queries)?
 internal class SqliteDataAccess
 {
     private readonly string _connectionString;
@@ -29,76 +28,113 @@ internal class SqliteDataAccess
     public static SqliteParameter CreateParameter(string name, object? value) =>
         value == null ? new SqliteParameter(name, DBNull.Value) : new SqliteParameter(name, value);
 
-    public Task<IReadOnlyCollection<T>> ExecuteQueryAsync<T>(
+    public IReadOnlyCollection<T> ExecuteQuery<T>(
         Func<DbDataReader, T> projection,
         string sql,
-        params SqliteParameter[] parameters) =>
-        ExecuteCommandAsync(
-            sql,
-            parameters,
-            async command =>
-            {
-                DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
-                await using ConfiguredAsyncDisposable disposableReader = reader.ConfigureAwait(false);
-
-                return (IReadOnlyCollection<T>)await MapAsync(reader, projection).ToListAsync().ConfigureAwait(false);
-            });
-
-    public Task<T?> ExecuteScalarAsync<T>(string sql, params SqliteParameter[] parameters) =>
-        ExecuteCommandAsync(
-            sql,
-            parameters,
-            async command =>
-            {
-                object? result = await command.ExecuteScalarAsync().ConfigureAwait(false);
-
-                if (result == DBNull.Value)
-                    return default;
-
-                return (T?)result;
-            });
-
-    public Task ExecuteNonQueryAsync(string sql, params SqliteParameter[] parameters) =>
-        ExecuteNonQueryAsync(null, sql, parameters);
-
-    public Task ExecuteNonQueryAsync(
-        SilverbackContext? context,
-        string sql,
-        params SqliteParameter[] parameters) =>
-        ExecuteCommandAsync(sql, parameters, command => command.ExecuteNonQueryAsync(), context);
-
-    [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
-    public async Task ExecuteNonQueryAsync<T>(
-        IEnumerable<T> items,
-        string sql,
-        Func<T, SqliteParameter[]> parametersProvider,
-        SilverbackContext? context = null)
+        params SqliteParameter[] parameters)
     {
-        (DbTransaction transaction, bool isNewTransaction) = await GetTransactionAsync(context).ConfigureAwait(false);
+        using DbCommand command = GetCommand(sql, parameters).DbCommand;
+        using DbDataReader reader = command.ExecuteReader();
+
+        return Map(reader, projection).ToList();
+    }
+
+    public async Task<IReadOnlyCollection<T>> ExecuteQueryAsync<T>(
+        Func<DbDataReader, T> projection,
+        string sql,
+        params SqliteParameter[] parameters)
+    {
+        DbCommand command = (await GetCommandAsync(sql, parameters).ConfigureAwait(false)).DbCommand;
+        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+        DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable disposableReader = reader.ConfigureAwait(false);
+
+        return await MapAsync(reader, projection).ToListAsync().ConfigureAwait(false);
+    }
+
+    public T? ExecuteScalar<T>(string sql, params SqliteParameter[] parameters)
+    {
+        DbCommand command = GetCommand(sql, parameters).DbCommand;
+
+        object? result = command.ExecuteScalar();
+
+        if (result == DBNull.Value)
+            return default;
+
+        return (T?)result;
+    }
+
+    public async Task<T?> ExecuteScalarAsync<T>(string sql, params SqliteParameter[] parameters)
+    {
+        DbCommand command = (await GetCommandAsync(sql, parameters).ConfigureAwait(false)).DbCommand;
+        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+
+        object? result = await command.ExecuteScalarAsync().ConfigureAwait(false);
+
+        if (result == DBNull.Value)
+            return default;
+
+        return (T?)result;
+    }
+
+    public Task ExecuteNonQueryAsync(string sql, params SqliteParameter[] parameters) => ExecuteNonQueryAsync(null, sql, parameters);
+
+    public async Task ExecuteNonQueryAsync(SilverbackContext? context, string sql, params SqliteParameter[] parameters)
+    {
+        (DbCommand command, bool isNewTransaction) = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
 
         try
         {
-            DbCommand command = transaction.Connection!.CreateCommand();
-            await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
-
-            command.CommandText = sql;
-
-            foreach (T item in items)
-            {
-                command.Parameters.Clear();
-                command.Parameters.AddRange(parametersProvider.Invoke(item));
-                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-            }
+            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
             if (isNewTransaction)
-                await transaction.CommitAsync().ConfigureAwait(false);
+                await command.Transaction!.CommitAsync().ConfigureAwait(false);
         }
         catch (Exception)
         {
             if (isNewTransaction)
-                await transaction.RollbackAndDisposeAsync().ConfigureAwait(false);
+                await command.Transaction!.RollbackAndDisposeAsync().ConfigureAwait(false);
 
             throw;
+        }
+    }
+
+    public async Task ExecuteNonQueryAsync<T>(
+        IEnumerable<T> items,
+        string sql,
+        SqliteParameter[] parameters,
+        Action<T, SqliteParameter[]> parameterValuesProvider,
+        SilverbackContext? context = null)
+    {
+        (DbCommand command, bool isNewTransaction) = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
+        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+
+        try
+        {
+            foreach (T item in items)
+            {
+                parameterValuesProvider.Invoke(item, parameters);
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+            }
+
+            if (isNewTransaction)
+                await command.Transaction!.CommitAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            if (isNewTransaction)
+                await command.Transaction!.RollbackAndDisposeAsync().ConfigureAwait(false);
+
+            throw;
+        }
+    }
+
+    private static IEnumerable<T> Map<T>(DbDataReader reader, Func<DbDataReader, T> projection)
+    {
+        while (reader.Read())
+        {
+            yield return projection(reader);
         }
     }
 
@@ -111,54 +147,81 @@ internal class SqliteDataAccess
     }
 
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
-    private async Task<T> ExecuteCommandAsync<T>(
+    private (DbCommand DbCommand, bool IsNewTransaction) GetCommand(
         string sql,
         SqliteParameter[] parameters,
-        Func<DbCommand, Task<T>> executeFunction,
+        bool beginTransaction = false,
         SilverbackContext? context = null)
     {
-        (DbTransaction transaction, bool isNewTransaction) = await GetTransactionAsync(context).ConfigureAwait(false);
+        ConnectionAndTransaction connectionAndTransaction = GetConnectionAndTransaction(context, beginTransaction);
+        DbCommand command = connectionAndTransaction.Connection.CreateCommand();
+        command.Transaction = connectionAndTransaction.Transaction;
+        command.CommandText = sql;
+        command.Parameters.AddRange(parameters);
 
-        try
-        {
-            DbCommand command = transaction.Connection!.CreateCommand();
-            await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+        return (command, connectionAndTransaction.IsNewTransaction);
+    }
 
-            command.CommandText = sql;
-            command.Parameters.AddRange(parameters);
+    [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
+    private async Task<(DbCommand DbCommand, bool IsNewTransaction)> GetCommandAsync(
+        string sql,
+        SqliteParameter[] parameters,
+        bool beginTransaction = false,
+        SilverbackContext? context = null)
+    {
+        ConnectionAndTransaction connectionAndTransaction = await GetConnectionAndTransactionAsync(context, beginTransaction).ConfigureAwait(false);
+        DbCommand command = connectionAndTransaction.Connection.CreateCommand();
+        command.Transaction = connectionAndTransaction.Transaction;
+        command.CommandText = sql;
+        command.Parameters.AddRange(parameters);
 
-            T result = await executeFunction.Invoke(command).ConfigureAwait(false);
-
-            if (isNewTransaction)
-                await transaction.CommitAndDisposeAsync().ConfigureAwait(false);
-
-            return result;
-        }
-        catch (Exception)
-        {
-            if (isNewTransaction)
-                await transaction.RollbackAndDisposeAsync().ConfigureAwait(false);
-
-            throw;
-        }
+        return (command, connectionAndTransaction.IsNewTransaction);
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
-    private async Task<(DbTransaction Transaction, bool IsNew)> GetTransactionAsync(SilverbackContext? context)
+    private ConnectionAndTransaction GetConnectionAndTransaction(SilverbackContext? context, bool beginTransaction)
     {
-        if (context != null && context.TryGetActiveDbTransaction(out SqliteTransaction? sqliteTransaction))
-        {
-            if (sqliteTransaction.Connection.ConnectionString != _connectionString)
-            {
-                throw new InvalidOperationException("The connection string of the active transaction does not match the configured connection string.");
-            }
+        DbTransaction? transaction = GetExistingTransaction(context);
 
-            return (sqliteTransaction, false);
-        }
+        if (transaction != null)
+            return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
+
+        SqliteConnection connection = new(_connectionString);
+        connection.Open();
+
+        if (beginTransaction)
+            transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+
+        return new ConnectionAndTransaction(connection, transaction, transaction != null);
+    }
+
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
+    private async Task<ConnectionAndTransaction> GetConnectionAndTransactionAsync(SilverbackContext? context, bool beginTransaction)
+    {
+        DbTransaction? transaction = GetExistingTransaction(context);
+
+        if (transaction != null)
+            return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
 
         SqliteConnection connection = new(_connectionString);
         await connection.OpenAsync().ConfigureAwait(false);
-        DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
-        return (transaction, true);
+
+        if (beginTransaction)
+            transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
+
+        return new ConnectionAndTransaction(connection, transaction, transaction != null);
     }
+
+    private DbTransaction? GetExistingTransaction(SilverbackContext? context)
+    {
+        if (context == null || !context.TryGetActiveDbTransaction(out SqliteTransaction? sqliteTransaction))
+            return null;
+
+        if (sqliteTransaction.Connection.ConnectionString != _connectionString)
+            throw new InvalidOperationException("The connection string of the active transaction does not match the configured connection string.");
+
+        return sqliteTransaction;
+    }
+
+    private record ConnectionAndTransaction(DbConnection Connection, DbTransaction? Transaction, bool IsNewTransaction);
 }

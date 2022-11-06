@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Configuration;
 
-public class BrokerOptionsBuilderSqliteExtensionsFixture
+public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 {
     [Fact]
     public void AddSqliteOutbox_ShouldConfigureOutboxFactories()

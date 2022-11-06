@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -20,6 +21,8 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
 
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
 
+    private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
+
     private readonly ISilverbackLoggerFactory _silverbackLoggerFactory;
 
     private readonly IConsumerLogger<KafkaConsumer> _consumerLogger;
@@ -29,6 +32,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
     public KafkaConsumersInitializer(
         KafkaClientsConfigurationActions configurationActions,
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
+        IKafkaOffsetStoreFactory offsetStoreFactory,
         ISilverbackLoggerFactory silverbackLoggerFactory,
         IConsumerLogger<KafkaConsumer> consumerLogger,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
@@ -38,6 +42,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
     {
         _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
+        _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
         _consumerLogger = Check.NotNull(consumerLogger, nameof(consumerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
@@ -58,6 +63,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
                 configuration,
                 ServiceProvider.GetRequiredService<IConfluentAdminClientBuilder>(),
                 _brokerClientCallbacksInvoker,
+                _offsetStoreFactory,
                 _silverbackLoggerFactory.CreateLogger<ConfluentConsumerWrapper>());
 
             AddClient(confluentConsumerWrapper);
@@ -68,6 +74,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
                 configuration,
                 _behaviorsProvider,
                 _brokerClientCallbacksInvoker,
+                _offsetStoreFactory,
                 ServiceProvider,
                 _consumerLogger);
 

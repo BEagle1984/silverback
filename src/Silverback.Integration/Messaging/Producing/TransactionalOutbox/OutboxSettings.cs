@@ -20,7 +20,6 @@ public abstract record OutboxSettings : IValidatableSettings
     public abstract DistributedLockSettings? GetCompatibleLockSettings();
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    /// .
     public virtual void Validate()
     {
     }

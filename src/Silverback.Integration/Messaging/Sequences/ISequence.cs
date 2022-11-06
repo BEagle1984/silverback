@@ -159,10 +159,20 @@ public interface ISequence : IDisposable
     ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null);
 
     /// <summary>
-    ///     Gets the identifiers of the messages belonging to the sequence.
+    ///     Gets the identifier(s) of the message(s) at the beginning of the sequence. A single identifier is returned unless the sequence
+    ///     spans multiple topics or partitions.
     /// </summary>
     /// <returns>
     ///     The list of identifiers.
     /// </returns>
-    IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers();
+    IReadOnlyList<IBrokerMessageIdentifier> GetBeginningBrokerMessageIdentifiers();
+
+    /// <summary>
+    ///     Gets the identifier(s) of the message(s) at the end of the sequence. A single identifier is returned unless the sequence
+    ///     spans multiple topics or partitions.
+    /// </summary>
+    /// <returns>
+    ///     The list of identifiers.
+    /// </returns>
+    IReadOnlyList<IBrokerMessageIdentifier> GetEndBrokerMessageIdentifiers();
 }

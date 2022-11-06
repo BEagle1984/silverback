@@ -15,10 +15,10 @@ public static class OutboxSettingsBuilderSqliteExtensions
     ///     The <see cref="OutboxSettingsBuilder" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the SQLite database.
+    ///     The connection string to the Sqlite database.
     /// </param>
     /// <returns>
-    ///     The <see cref="IOutboxSettingsImplementationBuilder" />.
+    ///     The <see cref="SqliteOutboxSettingsBuilder" />.
     /// </returns>
     public static SqliteOutboxSettingsBuilder UseSqlite(this OutboxSettingsBuilder builder, string connectionString) =>
         new(connectionString);

@@ -21,7 +21,7 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
         : base(producerConfig)
     {
         // Optimization: by default limit delivery report to just key and status since no other field is needed
-        DeliveryReportFields = "key,status";
+        ClientConfig.DeliveryReportFields ??= "key,status";
     }
 
     /// <summary>
