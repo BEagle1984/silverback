@@ -75,7 +75,7 @@ public sealed class KafkaOffsetStoreScope
     /// <param name="dbTransaction">
     ///     The transaction to be used.
     /// </param>
-    public void EnlistTransaction(DbTransaction dbTransaction) => _silverbackContext.SetStorageTransaction(dbTransaction);
+    public void EnlistTransaction(DbTransaction dbTransaction) => _silverbackContext.EnlistTransaction(dbTransaction);
 
     private bool AreAllStoredAlready(IReadOnlyCollection<KafkaOffset> offsets) =>
         offsets.All(

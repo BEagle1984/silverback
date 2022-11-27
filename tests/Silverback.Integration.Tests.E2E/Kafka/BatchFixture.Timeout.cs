@@ -21,7 +21,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldCompletePendingBatchAfterTimeout()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -48,7 +48,7 @@ public partial class BatchFixture
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -87,7 +87,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldNotOverlapNextSequence_WhenTimeoutElapses()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
         int exitedSubscribers = 0;
         bool areOverlapping = false;
@@ -119,7 +119,7 @@ public partial class BatchFixture
                 areOverlapping = true;
 
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {

@@ -19,7 +19,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldCreateConcurrentBatchPerPartition()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -45,7 +45,7 @@ public partial class BatchFixture
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -75,7 +75,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldCreateSingleBatch_WhenPartitionsProcessedTogether()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -102,7 +102,7 @@ public partial class BatchFixture
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -126,7 +126,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldLimitParallelism_WhenConsumingFromMultiplePartitions()
     {
-        List<TestEventWithKafkaKey> receivedMessages = new();
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = new();
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(
@@ -155,7 +155,7 @@ public partial class BatchFixture
         {
             await foreach (TestEventWithKafkaKey message in batch)
             {
-                receivedMessages.ThreadSafeAdd(message);
+                receivedMessages.Add(message);
                 await taskCompletionSource.Task;
             }
         }

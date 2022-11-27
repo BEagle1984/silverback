@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -120,7 +119,7 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldLimitParallelism()
     {
-        List<TestEventWithKafkaKey> receivedMessages = new();
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = new();
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(
@@ -145,7 +144,7 @@ public partial class StreamingFixture
         {
             await foreach (TestEventWithKafkaKey message in stream)
             {
-                receivedMessages.ThreadSafeAdd(message);
+                receivedMessages.Add(message);
                 await taskCompletionSource.Task;
             }
         }

@@ -224,7 +224,7 @@ public class RebalanceFixture : KafkaFixture
     [Fact]
     public async Task Rebalance_ShouldAbortPendingBatchesAndConsumeAgainAfterRebalance()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -253,7 +253,7 @@ public class RebalanceFixture : KafkaFixture
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> eventsStream)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in eventsStream)
             {

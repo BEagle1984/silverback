@@ -30,7 +30,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToStream()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -57,7 +57,7 @@ public partial class BatchFixture : KafkaFixture
         void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             foreach (TestEventOne message in batch)
             {
@@ -101,7 +101,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToEnvelopesStream()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -128,7 +128,7 @@ public partial class BatchFixture : KafkaFixture
         void HandleBatch(IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             foreach (IInboundEnvelope<TestEventOne> envelope in batch)
             {
@@ -172,7 +172,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToStreamAndEnumeratingAsynchronously()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -199,7 +199,7 @@ public partial class BatchFixture : KafkaFixture
         async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -243,7 +243,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToEnumerable()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -270,7 +270,7 @@ public partial class BatchFixture : KafkaFixture
         void HandleBatch(IEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             foreach (TestEventOne message in batch)
             {
@@ -314,7 +314,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToAsyncEnumerable()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -341,7 +341,7 @@ public partial class BatchFixture : KafkaFixture
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -385,7 +385,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToObservable()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -413,7 +413,7 @@ public partial class BatchFixture : KafkaFixture
         void HandleBatch(IObservable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             batch.Subscribe(
                 message => list.Add(message),
@@ -456,7 +456,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenAsyncSubscriberIsEnumeratingSynchronously()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -483,7 +483,7 @@ public partial class BatchFixture : KafkaFixture
         Task HandleBatch(IEnumerable<TestEventOne> batch)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             foreach (TestEventOne message in batch)
             {
@@ -580,7 +580,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldNotOverlapNextSequence_WhenCompleted()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
         int exitedSubscribers = 0;
         bool areOverlapping = false;
@@ -612,7 +612,7 @@ public partial class BatchFixture : KafkaFixture
                 areOverlapping = true;
 
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
             {
@@ -644,7 +644,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldHandleBatchWithSize1()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -671,7 +671,7 @@ public partial class BatchFixture : KafkaFixture
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> eventsStream)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in eventsStream)
             {
@@ -699,7 +699,7 @@ public partial class BatchFixture : KafkaFixture
     [Fact]
     public async Task Batch_ShouldHandleExpiringBatchWithSize1()
     {
-        List<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -726,7 +726,7 @@ public partial class BatchFixture : KafkaFixture
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> eventsStream)
         {
             List<TestEventOne> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (TestEventOne message in eventsStream)
             {

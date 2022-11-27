@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Data.Common;
 using Silverback.Util;
 
 namespace Silverback.Storage;
@@ -14,7 +15,7 @@ public static class SilverbackContextStorageExtensions
     private const int StorageTransactionObjectTypeId = 1;
 
     /// <summary>
-    ///     Stores the specified storage transaction.
+    ///     Specifies an existing <see cref="DbTransaction" /> to be used for database operations.
     /// </summary>
     /// <param name="context">
     ///     The <see cref="SilverbackContext" />.
@@ -22,8 +23,7 @@ public static class SilverbackContextStorageExtensions
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
-    // TODO: Rename in SetTransaction?
-    public static void SetStorageTransaction(this SilverbackContext context, object transaction) =>
+    public static void EnlistTransaction(this SilverbackContext context, object transaction) =>
         Check.NotNull(context, nameof(context)).SetObject(StorageTransactionObjectTypeId, transaction);
 
     /// <summary>

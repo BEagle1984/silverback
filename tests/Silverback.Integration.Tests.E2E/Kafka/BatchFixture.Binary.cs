@@ -20,7 +20,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToStreamOfBinaryMessages()
     {
-        List<List<IBinaryMessage>> receivedBatches = new();
+        TestingCollection<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -47,7 +47,7 @@ public partial class BatchFixture
         async ValueTask HandleBatch(IAsyncEnumerable<IBinaryMessage> batch)
         {
             List<IBinaryMessage> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (IBinaryMessage message in batch)
             {
@@ -101,7 +101,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldConsumeAndCommitInBatch_WhenSubscribingToEnvelopesStreamOfBinaryMessages()
     {
-        List<List<IBinaryMessage>> receivedBatches = new();
+        TestingCollection<List<IBinaryMessage>> receivedBatches = new();
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -128,7 +128,7 @@ public partial class BatchFixture
         async ValueTask HandleBatch(IAsyncEnumerable<IInboundEnvelope<IBinaryMessage>> eventsStream)
         {
             List<IBinaryMessage> list = new();
-            receivedBatches.ThreadSafeAdd(list);
+            receivedBatches.Add(list);
 
             await foreach (IInboundEnvelope<IBinaryMessage> envelope in eventsStream)
             {

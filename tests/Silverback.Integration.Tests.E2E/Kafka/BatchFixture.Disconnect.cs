@@ -24,7 +24,7 @@ public partial class BatchFixture
     {
         int batchesCount = 0;
         int abortedCount = 0;
-        List<TestEventOne> receivedMessages = new();
+        TestingCollection<TestEventOne> receivedMessages = new();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -55,7 +55,7 @@ public partial class BatchFixture
             {
                 await foreach (TestEventOne message in batch)
                 {
-                    receivedMessages.ThreadSafeAdd(message);
+                    receivedMessages.Add(message);
                 }
             }
             catch (OperationCanceledException)
@@ -160,7 +160,7 @@ public partial class BatchFixture
     [Fact]
     public async Task Batch_ShouldAwaitSubscriberBeforeDisconnecting()
     {
-        List<TestEventOne> receivedMessages = new();
+        TestingCollection<TestEventOne> receivedMessages = new();
         bool hasSubscriberReturned = false;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -188,7 +188,7 @@ public partial class BatchFixture
         {
             await foreach (TestEventOne message in batch)
             {
-                receivedMessages.ThreadSafeAdd(message);
+                receivedMessages.Add(message);
             }
 
             await Task.Delay(500);

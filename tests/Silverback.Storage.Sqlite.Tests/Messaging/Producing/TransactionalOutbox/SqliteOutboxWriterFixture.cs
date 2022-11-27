@@ -85,7 +85,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await connection.OpenAsync();
         DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
         SilverbackContext context = new();
-        context.SetStorageTransaction(transaction);
+        context.EnlistTransaction(transaction);
 
         // Add and rollback
         await outboxWriter.AddAsync(
@@ -104,7 +104,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
 
         // Begin new transaction, add and commit
         transaction = await connection.BeginTransactionAsync();
-        context.SetStorageTransaction(transaction);
+        context.EnlistTransaction(transaction);
 
         await outboxWriter.AddAsync(
             new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint),

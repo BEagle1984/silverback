@@ -23,7 +23,6 @@ public static class SilverbackContextKafkaOffsetSToreExtensions
     /// <param name="scope">
     ///     The scope.
     /// </param>
-    // TODO: Rename in SetTransaction?
     public static void SetKafkaOffsetStoreScope(this SilverbackContext context, KafkaOffsetStoreScope scope) =>
         Check.NotNull(context, nameof(context)).SetObject(OffsetStoreObjectTypeId, scope);
 

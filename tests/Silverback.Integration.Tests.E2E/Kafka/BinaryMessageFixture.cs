@@ -254,7 +254,7 @@ public class BinaryMessageFixture : KafkaFixture
             CustomHeader = "two"
         };
 
-        List<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = new();
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -275,7 +275,7 @@ public class BinaryMessageFixture : KafkaFixture
                 .AddDelegateSubscriber<BinaryMessage>(HandleBinaryMessage)
                 .AddIntegrationSpy());
 
-        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.ThreadSafeAdd(binaryMessage.Content.ReadAll());
+        void HandleBinaryMessage(BinaryMessage binaryMessage) => receivedFiles.Add(binaryMessage.Content.ReadAll());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message1);
