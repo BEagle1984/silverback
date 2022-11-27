@@ -36,7 +36,7 @@ public class ChunkSequence : RawSequence
     }
 
     /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
-    protected override ValueTask<int> AddCoreAsync(
+    protected override ValueTask<AddToSequenceResult> AddCoreAsync(
         IRawInboundEnvelope envelope,
         ISequence? sequence,
         bool throwIfUnhandled)
@@ -47,7 +47,7 @@ public class ChunkSequence : RawSequence
                          throw new InvalidOperationException("Chunk index header not found.");
 
         if (!EnsureOrdering(chunkIndex))
-            return ValueTaskFactory.FromResult(0);
+            return ValueTaskFactory.FromResult(AddToSequenceResult.Success(0));
 
         return base.AddCoreAsync(envelope, sequence, throwIfUnhandled);
     }

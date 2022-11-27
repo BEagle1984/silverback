@@ -141,12 +141,13 @@ public static class IntegrationLogEvents
         "Skipped incomplete sequence '{sequenceId}'. The first message is missing.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs aborting a sequence.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs executing the timeout action on a
+    ///     sequence.
     /// </summary>
-    public static LogEvent SequenceAbortError { get; } = new(
+    public static LogEvent SequenceTimeoutError { get; } = new(
         LogLevel.Warning,
-        GetEventId(18, nameof(SequenceAbortError)),
-        "Error occurred aborting the {sequenceType} '{sequenceId}'.");
+        GetEventId(18, nameof(SequenceTimeoutError)),
+        "Error occurred executing the timeout for the {sequenceType} '{sequenceId}'.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown when initializing the

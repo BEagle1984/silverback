@@ -185,63 +185,47 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ISequence? previousSequence)
     {
         ISequence? sequence;
+        AddToSequenceResult addToSequenceResult;
 
-        // Loop to handle edge cases where the sequence gets completed between the calls to
+        // Loop to handle edge cases where the sequence gets completed (e.g. because of timeout) between the calls to
         // GetSequenceAsync and AddAsync
-        // TODO: Optimize this while(true) -> Is the retry even necessary? In which case?
-        while (true)
+        do
         {
             sequence = await GetSequenceAsync(context, sequenceReader).ConfigureAwait(false);
 
             if (sequence == null)
-                break;
+                return null;
 
             await PublishSequenceIfNewAsync(context, next, sequence).ConfigureAwait(false);
 
-            // Loop again if the retrieved sequence has completed already in the meanwhile
-            // ...unless it was a new sequence, in which case it can only mean that an error
-            // occurred in the subscriber before consuming the actual first message and it doesn't
-            // make sense to recreate and publish once again the sequence.
-            if (!sequence.IsPending || sequence.IsCompleting)
-            {
-                if (sequence.IsNew)
-                    break;
-
-                continue;
-            }
-
-            await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
-
-            _logger.LogMessageAddedToSequence(context.Envelope, sequence);
-
-            AddSequenceTagToActivity(sequence);
-
-            break;
+            addToSequenceResult = await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
         }
+        while (!addToSequenceResult.IsSuccess);
+
+        _logger.LogMessageAddedToSequence(context.Envelope, sequence);
+        AddSequenceTagToActivity(sequence);
 
         return sequence;
     }
 
     private async Task HandleCompletedSequenceAsync(ConsumerPipelineContext context, ISequence? sequence)
     {
-        if (sequence != null && sequence.IsComplete)
+        if (sequence is not { IsComplete: true })
+            return;
+
+        await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
+
+        // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
+        if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
+            sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
         {
-            await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
-
-            // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
-            if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
-                sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
-            {
-                context.SetIsSequenceEnd();
-            }
-
-            _logger.LogSequenceCompleted(sequence);
+            context.SetIsSequenceEnd();
         }
+
+        _logger.LogSequenceCompleted(sequence);
     }
 
-    private async Task<ISequence?> GetSequenceAsync(
-        ConsumerPipelineContext context,
-        ISequenceReader sequenceReader)
+    private async Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context, ISequenceReader sequenceReader)
     {
         ISequence sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 

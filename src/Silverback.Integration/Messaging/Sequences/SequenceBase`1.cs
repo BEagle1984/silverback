@@ -198,7 +198,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         StreamProvider.CreateStream<TMessage>(filters);
 
     /// <inheritdoc cref="ISequence.AddAsync" />
-    public ValueTask<int> AddAsync(
+    public ValueTask<AddToSequenceResult> AddAsync(
         IRawInboundEnvelope envelope,
         ISequence? sequence,
         bool throwIfUnhandled = true)
@@ -280,31 +280,34 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-    ///     number of streams that have been pushed.
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
+    ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
-    protected virtual async ValueTask<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
+    protected virtual async ValueTask<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
-        if (!IsPending || IsCompleting)
-            return 0;
-
-        ResetTimeout();
-
-        if (sequence != null && sequence != this)
-        {
-            _sequences ??= new List<ISequence>();
-            _sequences.Add(sequence);
-            (sequence as ISequenceImplementation)?.SetParentSequence(this);
-        }
-        else if (_trackIdentifiers)
-        {
-            TrackIdentifiers(envelope);
-        }
-
         await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+        if (IsComplete || IsCompleting)
+            return AddToSequenceResult.Failed;
+
+        if (IsAborted)
+            throw new InvalidOperationException("The sequence has been aborted.");
 
         try
         {
+            ResetTimeout();
+
+            if (sequence != null && sequence != this)
+            {
+                _sequences ??= new List<ISequence>();
+                _sequences.Add(sequence);
+                (sequence as ISequenceImplementation)?.SetParentSequence(this);
+            }
+            else if (_trackIdentifiers)
+            {
+                TrackIdentifiers(envelope);
+            }
+
             _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             Length++;
@@ -333,12 +336,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (IsCompleting)
                 await CompleteAsync().ConfigureAwait(false);
 
-            return pushedStreamsCount;
+            return AddToSequenceResult.Success(pushedStreamsCount);
         }
         catch (OperationCanceledException)
         {
-            // Ignore
-            return 0;
+            // Ignore and consider successful, it just means that the sequence was aborted.
+            return AddToSequenceResult.Success(0);
         }
         catch (Exception ex)
         {
@@ -528,7 +531,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogSequenceAbortError(this, ex);
+                        _logger.LogSequenceTimeoutError(this, ex);
                     }
                 })
             .FireAndForget();

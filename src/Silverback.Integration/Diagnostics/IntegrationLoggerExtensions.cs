@@ -39,8 +39,8 @@ internal static class IntegrationLoggerExtensions
     private static readonly Action<ILogger, string, Exception?> IncompleteSequenceSkipped =
         SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.IncompleteSequenceSkipped);
 
-    private static readonly Action<ILogger, string, string, Exception?> SequenceAbortError =
-        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.SequenceAbortError);
+    private static readonly Action<ILogger, string, string, Exception?> SequenceTimeoutError =
+        SilverbackLoggerMessage.Define<string, string>(IntegrationLogEvents.SequenceTimeoutError);
 
     private static readonly Action<ILogger, Exception?> BrokerClientsInitializationError =
         SilverbackLoggerMessage.Define(IntegrationLogEvents.BrokerClientsInitializationError);
@@ -209,16 +209,12 @@ internal static class IntegrationLoggerExtensions
     public static void LogIncompleteSequenceSkipped(this ISilverbackLogger logger, IncompleteSequence sequence) =>
         IncompleteSequenceSkipped(logger.InnerLogger, sequence.SequenceId, null);
 
-    public static void LogSequenceAbortError(this ISilverbackLogger logger, ISequence sequence, Exception exception)
+    public static void LogSequenceTimeoutError(this ISilverbackLogger logger, ISequence sequence, Exception exception)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.SequenceAbortError))
+        if (!logger.IsEnabled(IntegrationLogEvents.SequenceTimeoutError))
             return;
 
-        SequenceAbortError(
-            logger.InnerLogger,
-            sequence.GetType().Name,
-            sequence.SequenceId,
-            exception);
+        SequenceTimeoutError(logger.InnerLogger, sequence.GetType().Name, sequence.SequenceId, exception);
     }
 
     public static void LogBrokerClientsInitializationError(this ISilverbackLogger logger, Exception exception) =>

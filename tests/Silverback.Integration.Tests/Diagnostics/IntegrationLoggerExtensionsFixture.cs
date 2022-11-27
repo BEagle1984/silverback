@@ -144,14 +144,14 @@ public class IntegrationLoggerExtensionsFixture
     }
 
     [Fact]
-    public void LogSequenceAbortError_ShouldLog()
+    public void LogSequenceTimeoutError_ShouldLog()
     {
-        _silverbackLogger.LogSequenceAbortError(new FakeSequence(), new TimeoutException());
+        _silverbackLogger.LogSequenceTimeoutError(new FakeSequence(), new TimeoutException());
 
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(TimeoutException),
-            "Error occurred aborting the FakeSequence 'fake1'.",
+            "Error occurred executing the timeout for the FakeSequence 'fake1'.",
             1018);
     }
 

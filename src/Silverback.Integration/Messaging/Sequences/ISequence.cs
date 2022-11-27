@@ -64,9 +64,8 @@ public interface ISequence : IDisposable
     bool IsAborted { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether the sequence is being consumed. This value is set to <c>true</c> as
-    ///     soon as <see cref="CreateStream{TMessage}" /> is called and the output
-    ///     <see cref="IMessageStreamEnumerable{TMessage}" /> is created.
+    ///     Gets a value indicating whether the sequence is being consumed. This value is set to <c>true</c> as soon as
+    ///     <see cref="CreateStream{TMessage}" /> is called and the output <see cref="IMessageStreamEnumerable{TMessage}" /> is created.
     /// </summary>
     bool IsBeingConsumed { get; }
 
@@ -138,10 +137,10 @@ public interface ISequence : IDisposable
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-    ///     number of streams that have been pushed.
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a flag indicating whether
+    ///     the operation was successful and the number of streams that have been actually pushed.
     /// </returns>
-    ValueTask<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
+    ValueTask<AddToSequenceResult> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
 
     /// <summary>
     ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
@@ -154,7 +153,7 @@ public interface ISequence : IDisposable
     ///     The exception that caused the abort, if an exception was thrown.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
+    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
     ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null);
 
