@@ -13,7 +13,6 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Collections;
-using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;

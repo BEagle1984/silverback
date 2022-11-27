@@ -24,7 +24,7 @@ public sealed record TestOffset : IBrokerMessageIdentifier
 
     public string Value { get; }
 
-    public string? GroupKey => Key;
+    public string GroupKey => Key;
 
     public string ToLogString() => Value;
 

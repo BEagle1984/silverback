@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,9 +14,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
-using Silverback.Messaging.Publishing;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
@@ -144,6 +143,7 @@ public partial class OffsetStoreFixture
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
     public async Task ConsumerEndpoint_ShouldUseTransaction_WhenUsingSqlite()
     {
         int received = 0;

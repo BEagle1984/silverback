@@ -3,17 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
-using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Xunit;
 

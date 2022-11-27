@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Util;
 
