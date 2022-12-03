@@ -4,6 +4,16 @@ uid: releases
 
 # Releases
 
+## [4.0.0](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.1.3.436](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.3.436)
+
+### Breaking changes
+
+* Some breaking changes in MQTTnet 4 are reflected into Silverback
+
 ## [3.8.0](https://github.com/BEagle1984/silverback/releases/tag/v3.8.0)
 
 ### What's new

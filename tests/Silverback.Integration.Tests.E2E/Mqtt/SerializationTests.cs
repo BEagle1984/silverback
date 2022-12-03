@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .DeserializeJson()))
-                        .AddIntegrationSpy())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .DeserializeJson()))
-                        .AddIntegrationSpy())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -136,7 +136,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                 .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)))
-                        .AddIntegrationSpy())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var producer = Helper.Broker.GetProducer(

@@ -10,8 +10,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client.Options;
-using MQTTnet.Client.Receiving;
+using MQTTnet.Client;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using Silverback.Util;
@@ -20,8 +19,6 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 {
     internal sealed class ClientSession : IDisposable, IClientSession
     {
-        private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
-
         private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
 
         private readonly Channel<MqttApplicationMessage> _channel =
@@ -34,25 +31,24 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         private int _pendingMessagesCount;
 
         public ClientSession(
-            IMqttClientOptions clientOptions,
-            IMqttApplicationMessageReceivedHandler messageHandler,
+            MqttClientOptions clientOptions,
+            MockedMqttClient mockedMqttClient,
             SharedSubscriptionsManager sharedSubscriptionsManager)
         {
             ClientOptions = Check.NotNull(clientOptions, nameof(clientOptions));
-            _messageHandler = Check.NotNull(messageHandler, nameof(messageHandler));
+            MockedMqttClient = Check.NotNull(mockedMqttClient, nameof(mockedMqttClient));
             _sharedSubscriptionsManager = Check.NotNull(
                 sharedSubscriptionsManager,
                 nameof(sharedSubscriptionsManager));
         }
 
-        public IMqttClientOptions ClientOptions { get; }
+        public MqttClientOptions ClientOptions { get; }
+
+        public MockedMqttClient MockedMqttClient { get; }
 
         public int PendingMessagesCount => _pendingMessagesCount;
 
         public bool IsConnected { get; private set; }
-
-        public bool IsConsumerDisconnected =>
-            !((_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? true);
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Connect()
@@ -100,7 +96,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        public async ValueTask PushAsync(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+        public async ValueTask PushAsync(MqttApplicationMessage message, MqttClientOptions clientOptions)
         {
             lock (_subscriptions)
             {
@@ -134,7 +130,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     (_, _) => Task.CompletedTask);
 
                 Task messageHandlingTask =
-                    _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
+                    MockedMqttClient.HandleMessageAsync(eventArgs)
                         .ContinueWith(
                             _ => Interlocked.Decrement(ref _pendingMessagesCount),
                             TaskScheduler.Default);
@@ -149,7 +145,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             private readonly SharedSubscriptionsManager _sharedSubscriptionsManager;
 
             public Subscription(
-                IMqttClientOptions clientOptions,
+                MqttClientOptions clientOptions,
                 string topic,
                 SharedSubscriptionsManager sharedSubscriptionsManager)
             {
@@ -173,7 +169,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             public Regex Regex { get; }
 
-            public bool IsMatch(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+            public bool IsMatch(MqttApplicationMessage message, MqttClientOptions clientOptions)
             {
                 if (!Regex.IsMatch(GetFullTopicName(message.Topic, clientOptions)))
                     return false;
@@ -201,7 +197,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                 return false;
             }
 
-            private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
+            private static Regex GetSubscriptionRegex(string topic, MqttClientOptions clientOptions)
             {
                 var pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
                     .Replace("\\+", "[^\\/]*", StringComparison.Ordinal)
@@ -210,10 +206,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                 return new Regex($"^{pattern}$", RegexOptions.Compiled);
             }
 
-            private static string GetFullTopicName(string topic, IMqttClientOptions clientOptions) =>
+            private static string GetFullTopicName(string topic, MqttClientOptions clientOptions) =>
                 $"{GetBrokerIdentifier(clientOptions)}|{topic}";
 
-            private static string GetBrokerIdentifier(IMqttClientOptions clientOptions) =>
+            private static string GetBrokerIdentifier(MqttClientOptions clientOptions) =>
                 clientOptions.ChannelOptions switch
                 {
                     MqttClientTcpOptions tcpOptions =>

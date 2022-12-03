@@ -3,7 +3,7 @@
 
 using System;
 using FluentAssertions;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -67,8 +67,20 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             act.Should().ThrowExactly<EndpointConfigurationException>();
         }
 
+        [Fact]
+        public void Equals_EqualObjects_TrueReturned()
+        {
+            var config1 = GetValidConfig();
+            var config2 = GetValidConfig();
+
+            var result = config1.Equals(config2);
+
+            result.Should().BeTrue();
+        }
+
         private static MqttClientConfig GetValidConfig() => new()
         {
+            ClientId = "client1",
             ChannelOptions = new MqttClientTcpOptions
             {
                 Server = "test-server"

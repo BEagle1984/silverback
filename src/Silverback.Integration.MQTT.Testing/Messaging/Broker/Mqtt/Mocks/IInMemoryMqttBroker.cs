@@ -6,8 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using MQTTnet.Client.Receiving;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
 {
@@ -46,11 +44,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <param name="clientOptions">
         ///     The client options.
         /// </param>
-        /// <param name="handler">
-        ///     The <see cref="IMqttApplicationMessageReceivedHandler" /> to be pushed with the messages published to
-        ///     the subscribed topics.
+        /// <param name="mockedMqttClient">
+        ///     The <see cref="MockedMqttClient" />.
         /// </param>
-        void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler);
+        void Connect(MqttClientOptions clientOptions, MockedMqttClient mockedMqttClient);
 
         /// <summary>
         ///     Disconnects the specified client.
@@ -92,7 +89,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         ///     The <see cref="MqttApplicationMessage" /> to be published.
         /// </param>
         /// <param name="clientOptions">
-        ///     The <see cref="IMqttClientOptions" /> of the producing <see cref="MqttClient" />.
+        ///     The <see cref="MqttClientOptions" /> of the producing <see cref="MqttClient" />.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -100,7 +97,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         Task PublishAsync(
             string clientId,
             MqttApplicationMessage message,
-            IMqttClientOptions clientOptions);
+            MqttClientOptions clientOptions);
 
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been

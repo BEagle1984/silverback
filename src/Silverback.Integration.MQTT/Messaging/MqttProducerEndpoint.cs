@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
@@ -104,7 +104,7 @@ namespace Silverback.Messaging
         ///     message expiry interval is set, the broker must store the message for matching subscribers
         ///     indefinitely.
         /// </summary>
-        public uint? MessageExpiryInterval { get; set; }
+        public uint MessageExpiryInterval { get; set; }
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()

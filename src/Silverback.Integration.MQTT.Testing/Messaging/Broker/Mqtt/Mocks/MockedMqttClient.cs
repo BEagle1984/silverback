@@ -8,15 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Connecting;
-using MQTTnet.Client.Disconnecting;
-using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Client.Options;
-using MQTTnet.Client.Publishing;
-using MQTTnet.Client.Receiving;
-using MQTTnet.Client.Subscribing;
-using MQTTnet.Client.Unsubscribing;
-using MQTTnet.Protocol;
+using MQTTnet.Diagnostics;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -26,7 +18,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     ///     A mocked implementation of <see cref="IMqttClient" /> from MQTTnet that connects with an in-memory
     ///     broker.
     /// </summary>
-    public sealed class MockedMqttClient : IMqttClient, IMqttApplicationMessageReceivedHandler
+    public sealed class MockedMqttClient : IMqttClient
     {
         private readonly IInMemoryMqttBroker _broker;
 
@@ -51,29 +43,41 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             _mockOptions = Check.NotNull(mockOptions, nameof(mockOptions));
         }
 
+        /// <inheritdoc cref="IMqttClient.ApplicationMessageReceivedAsync" />
+        public event Func<MqttApplicationMessageReceivedEventArgs, Task>? ApplicationMessageReceivedAsync;
+
+        /// <inheritdoc cref="IMqttClient.ConnectedAsync" />
+        public event Func<MqttClientConnectedEventArgs, Task>? ConnectedAsync;
+
+        /// <inheritdoc cref="IMqttClient.ConnectingAsync" />
+        public event Func<MqttClientConnectingEventArgs, Task>? ConnectingAsync;
+
+        /// <inheritdoc cref="IMqttClient.DisconnectedAsync" />
+        public event Func<MqttClientDisconnectedEventArgs, Task>? DisconnectedAsync;
+
+#pragma warning disable CS0067
+        /// <inheritdoc cref="IMqttClient.InspectPackage" />
+        public event Func<InspectMqttPacketEventArgs, Task>? InspectPackage;
+#pragma warning restore CS0067
+
+        /// <summary>
+        ///     Gets a value indicating whether the client is connected and a message handler is bound to it.
+        /// </summary>
+        public bool IsConsumerConnected => 
+            ApplicationMessageReceivedAsync?.Target is ConsumerChannelManager consumerChannelManager &&
+            (consumerChannelManager.Consumer?.IsConnected ?? false);
+
         /// <inheritdoc cref="IMqttClient.IsConnected" />
         public bool IsConnected { get; private set; }
 
         /// <inheritdoc cref="IMqttClient.Options" />
-        public IMqttClientOptions? Options { get; private set; }
-
-        /// <inheritdoc cref="IApplicationMessageReceiver.ApplicationMessageReceivedHandler" />
-        public IMqttApplicationMessageReceivedHandler? ApplicationMessageReceivedHandler { get; set; }
-
-        /// <inheritdoc cref="IMqttClient.ConnectedHandler" />
-        public IMqttClientConnectedHandler? ConnectedHandler { get; set; }
-
-        /// <inheritdoc cref="IMqttClient.DisconnectedHandler" />
-        public IMqttClientDisconnectedHandler? DisconnectedHandler { get; set; }
-
-        internal IConsumer? Consumer =>
-            (ApplicationMessageReceivedHandler as ConsumerChannelManager)?.Consumer;
+        public MqttClientOptions? Options { get; private set; }
 
         private string ClientId => Options?.ClientId ?? "(none)";
 
         /// <inheritdoc cref="IMqttClient.ConnectAsync" />
-        public async Task<MqttClientAuthenticateResult> ConnectAsync(
-            IMqttClientOptions options,
+        public async Task<MqttClientConnectResult> ConnectAsync(
+            MqttClientOptions options,
             CancellationToken cancellationToken)
         {
             Check.NotNull(options, nameof(options));
@@ -85,8 +89,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             _connecting = true;
 
-            Options = options;
+            if (ConnectingAsync != null)
+                await ConnectingAsync.Invoke(new MqttClientConnectingEventArgs(options)).ConfigureAwait(false);
 
+            Options = options;
             _broker.Connect(options, this);
 
             await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
@@ -94,11 +100,14 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             IsConnected = true;
             _connecting = false;
 
-            return new MqttClientAuthenticateResult();
+            if (ConnectedAsync != null)
+                await ConnectedAsync.Invoke(new MqttClientConnectedEventArgs(new MqttClientConnectResult())).ConfigureAwait(false);
+
+            return new MqttClientConnectResult();
         }
 
         /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
-        public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken)
+        public async Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken)
         {
             EnsureNotDisposed();
 
@@ -106,7 +115,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             IsConnected = false;
 
-            return Task.CompletedTask;
+            if (DisconnectedAsync != null)
+                await DisconnectedAsync.Invoke(new MqttClientDisconnectedEventArgs()).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IMqttClient.SubscribeAsync" />
@@ -119,9 +129,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             _broker.Subscribe(ClientId, options.TopicFilters.Select(filter => filter.Topic).ToList());
 
-            var result = new MqttClientSubscribeResult();
-            options.TopicFilters.ForEach(filter => result.Items.Add(MapSubscribeResultItem(filter)));
-            return Task.FromResult(result);
+            return Task.FromResult(new MqttClientSubscribeResult());
         }
 
         /// <inheritdoc cref="IMqttClient.UnsubscribeAsync" />
@@ -134,12 +142,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             _broker.Unsubscribe(ClientId, options.TopicFilters);
 
-            var result = new MqttClientUnsubscribeResult();
-            options.TopicFilters.ForEach(filter => result.Items.Add(MapUnsubscribeResultItem(filter)));
-            return Task.FromResult(result);
+            return Task.FromResult(new MqttClientUnsubscribeResult());
         }
 
-        /// <inheritdoc cref="IApplicationMessagePublisher.PublishAsync" />
+        /// <inheritdoc cref="IMqttClient.PublishAsync" />
         public async Task<MqttClientPublishResult> PublishAsync(
             MqttApplicationMessage applicationMessage,
             CancellationToken cancellationToken)
@@ -166,43 +172,14 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             MqttExtendedAuthenticationExchangeData data,
             CancellationToken cancellationToken) => Task.CompletedTask;
 
-        /// <inheritdoc cref="IMqttApplicationMessageReceivedHandler.HandleApplicationMessageReceivedAsync" />
-        [SuppressMessage("", "VSTHRD110", Justification = "False positive: the task is returned")]
-        public Task HandleApplicationMessageReceivedAsync(
-            MqttApplicationMessageReceivedEventArgs eventArgs) =>
-            ApplicationMessageReceivedHandler?.HandleApplicationMessageReceivedAsync(eventArgs) ??
-            Task.CompletedTask;
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             _disposed = true;
         }
 
-        private static MqttClientSubscribeResultItem MapSubscribeResultItem(MqttTopicFilter topicFilter)
-        {
-            MqttClientSubscribeResultCode resultCode;
-
-            switch (topicFilter.QualityOfServiceLevel)
-            {
-                case MqttQualityOfServiceLevel.AtMostOnce:
-                    resultCode = MqttClientSubscribeResultCode.GrantedQoS0;
-                    break;
-                case MqttQualityOfServiceLevel.AtLeastOnce:
-                    resultCode = MqttClientSubscribeResultCode.GrantedQoS1;
-                    break;
-                case MqttQualityOfServiceLevel.ExactlyOnce:
-                    resultCode = MqttClientSubscribeResultCode.GrantedQoS2;
-                    break;
-                default:
-                    throw new InvalidOperationException("Invalid QualityOfServiceLevel.");
-            }
-
-            return new MqttClientSubscribeResultItem(topicFilter, resultCode);
-        }
-
-        private static MqttClientUnsubscribeResultItem MapUnsubscribeResultItem(string topicFilter) =>
-            new(topicFilter, MqttClientUnsubscribeResultCode.Success);
+        internal Task HandleMessageAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
+            ApplicationMessageReceivedAsync?.Invoke(eventArgs) ?? Task.CompletedTask;
 
         private void EnsureNotDisposed()
         {

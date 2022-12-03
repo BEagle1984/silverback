@@ -8,8 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client.Options;
-using MQTTnet.Client.Receiving;
+using MQTTnet.Client;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
@@ -35,17 +34,22 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                 ? _messagesByTopic[topic]
                 : Array.Empty<MqttApplicationMessage>();
 
-        public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
+        public void Connect(MqttClientOptions clientOptions, MockedMqttClient mockedMqttClient)
         {
             Check.NotNull(clientOptions, nameof(clientOptions));
-            Check.NotNull(handler, nameof(handler));
+            Check.NotNull(mockedMqttClient, nameof(mockedMqttClient));
 
             lock (_sessions)
             {
                 Disconnect(clientOptions.ClientId);
 
                 if (!_sessions.TryGetValue(clientOptions.ClientId, out ClientSession? session))
-                    session = new ClientSession(clientOptions, handler, _sharedSubscriptionsManager);
+                {
+                    session = new ClientSession(
+                        clientOptions,
+                        mockedMqttClient,
+                        _sharedSubscriptionsManager);
+                }
 
                 _sessions.Add(clientOptions.ClientId, session);
                 session.Connect();
@@ -95,15 +99,14 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         public Task PublishAsync(
             string clientId,
             MqttApplicationMessage message,
-            IMqttClientOptions clientOptions)
+            MqttClientOptions clientOptions)
         {
             if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
                 throw new InvalidOperationException("The client is not connected.");
 
             StoreMessage(message);
 
-            return _sessions.Values.ForEachAsync(
-                session => session.PushAsync(message, clientOptions).AsTask());
+            return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions).AsTask());
         }
 
         [SuppressMessage(
@@ -116,7 +119,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             {
                 if (_sessions.Values.All(
                         session => session.PendingMessagesCount == 0 ||
-                                   session.IsConsumerDisconnected ||
+                                   !session.MockedMqttClient.IsConsumerConnected ||
                                    !session.IsConnected))
                     return;
 

@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers

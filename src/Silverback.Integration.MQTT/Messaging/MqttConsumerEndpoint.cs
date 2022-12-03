@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Inbound.ErrorHandling;

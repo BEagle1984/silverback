@@ -7,8 +7,7 @@ using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using MQTTnet.Packets;
 using NSubstitute;
@@ -45,16 +44,16 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
-        public void WithCommunicationTimeout_TimeSpan_TimeoutSet()
+        public void WithTimeout_TimeSpan_TimeoutSet()
         {
             var builder = new MqttClientConfigBuilder();
 
             builder
                 .ConnectViaTcp("tests-server")
-                .WithCommunicationTimeout(TimeSpan.FromSeconds(42));
+                .WithTimeout(TimeSpan.FromSeconds(42));
 
             var config = builder.Build();
-            config.CommunicationTimeout.TotalSeconds.Should().Be(42);
+            config.Timeout.TotalSeconds.Should().Be(42);
         }
 
         [Fact]
@@ -140,9 +139,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
                         .ProduceTo("testaments"));
 
             var config = builder.Build();
-            config.WillMessage.Should().NotBeNull();
-            config.WillMessage!.Topic.Should().Be("testaments");
-            config.WillMessage.Payload.Should().NotBeNullOrEmpty();
+            config.WillTopic.Should().Be("testaments");
+            config.WillPayload.Should().NotBeNullOrEmpty();
             config.WillDelayInterval.Should().Be(42);
         }
 
@@ -219,26 +217,6 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             config.MaximumPacketSize.Should().Be(42);
         }
 
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(uint.MaxValue, true)]
-        [InlineData((long)uint.MaxValue + 1, false)]
-        [InlineData(long.MaxValue, false)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void LimitPacketSize_Long_RangeValidated(long value, bool isValid)
-        {
-            var builder = new MqttClientConfigBuilder();
-
-            Action act = () => builder.LimitPacketSize(value);
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().Throw<ArgumentOutOfRangeException>();
-        }
-
         [Fact]
         public void LimitUnacknowledgedPublications_Int_ReceiveMaximumSet()
         {
@@ -250,26 +228,6 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.ReceiveMaximum.Should().Be(42);
-        }
-
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(ushort.MaxValue, true)]
-        [InlineData(ushort.MaxValue + 1, false)]
-        [InlineData(int.MaxValue, false)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void LimitUnacknowledgedPublications_Int_RangeValidated(int value, bool isValid)
-        {
-            var builder = new MqttClientConfigBuilder();
-
-            Action act = () => builder.LimitUnacknowledgedPublications(value);
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [Fact]
@@ -367,8 +325,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.Credentials.Should().NotBeNull();
-            config.Credentials!.Username.Should().Be("user");
-            config.Credentials!.Password.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("pass"));
+            config.Credentials!.GetUserName(new MqttClientOptions()).Should().Be("user");
+            config.Credentials!.GetPassword(new MqttClientOptions()).Should().BeEquivalentTo(Encoding.UTF8.GetBytes("pass"));
         }
 
         [Fact]
@@ -383,8 +341,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.Credentials.Should().NotBeNull();
-            config.Credentials!.Username.Should().Be("user");
-            config.Credentials!.Password.Should().BeEquivalentTo(passwordBytes);
+            config.Credentials!.GetUserName(new MqttClientOptions()).Should().Be("user");
+            config.Credentials!.GetPassword(new MqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
         }
 
         [Fact]
@@ -395,17 +353,12 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             builder
                 .ConnectViaTcp("tests-server")
-                .WithCredentials(
-                    new MqttClientCredentials
-                    {
-                        Username = "user",
-                        Password = passwordBytes
-                    });
+                .WithCredentials(new MqttClientCredentials("user", passwordBytes));
 
             var config = builder.Build();
             config.Credentials.Should().NotBeNull();
-            config.Credentials!.Username.Should().Be("user");
-            config.Credentials!.Password.Should().BeEquivalentTo(passwordBytes);
+            config.Credentials!.GetUserName(new MqttClientOptions()).Should().Be("user");
+            config.Credentials!.GetPassword(new MqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
         }
 
         [Fact]
@@ -729,7 +682,9 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             var baseConfig = builder.Build();
             var config = new MqttClientConfigBuilder(baseConfig).Build();
 
-            config.Should().BeEquivalentTo(baseConfig);
+            config.Should().BeEquivalentTo(baseConfig, options => options
+                .ExcludingProperties()
+                .ExcludingFields());
             config.Should().NotBeSameAs(baseConfig);
         }
 

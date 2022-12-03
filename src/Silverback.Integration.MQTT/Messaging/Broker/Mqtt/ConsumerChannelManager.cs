@@ -7,15 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using MQTTnet;
-using MQTTnet.Client.Receiving;
+using MQTTnet.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt
 {
-    internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHandler, IDisposable
+    internal sealed class ConsumerChannelManager : IDisposable
     {
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly MqttClientWrapper _mqttClientWrapper;
@@ -46,7 +45,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             _readCancellationTokenSource = new CancellationTokenSource();
             _readTaskCompletionSource = new TaskCompletionSource<bool>();
 
-            mqttClientWrapper.MqttClient.ApplicationMessageReceivedHandler = this;
+            mqttClientWrapper.MqttClient.ApplicationMessageReceivedAsync += HandleApplicationMessageReceivedAsync;
         }
 
         public MqttConsumer? Consumer => _mqttClientWrapper.Consumer;
@@ -86,8 +85,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                 _readTaskCompletionSource.TrySetResult(true);
         }
 
-        public async Task HandleApplicationMessageReceivedAsync(
-            MqttApplicationMessageReceivedEventArgs eventArgs)
+        public async Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
             var receivedMessage = new ConsumedApplicationMessage(eventArgs.ApplicationMessage);
 
@@ -105,6 +103,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         public void Dispose()
         {
             StopReading();
+            _mqttClientWrapper.MqttClient.ApplicationMessageReceivedAsync -= HandleApplicationMessageReceivedAsync;
             _readCancellationTokenSource.Dispose();
             _parallelismLimiterSemaphoreSlim.Dispose();
         }
