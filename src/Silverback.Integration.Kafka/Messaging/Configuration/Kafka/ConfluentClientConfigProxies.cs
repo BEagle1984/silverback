@@ -812,6 +812,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
+        [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Same as Confluent.Kafka")]
         public string SaslOauthbearerTokenEndpointUrl
         {
             get => ConfluentConfig.SaslOauthbearerTokenEndpointUrl;

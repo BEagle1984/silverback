@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,7 +62,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <summary>
         ///     Gets a value indicating whether the client is connected and a message handler is bound to it.
         /// </summary>
-        public bool IsConsumerConnected => 
+        public bool IsConsumerConnected =>
             ApplicationMessageReceivedAsync?.Target is ConsumerChannelManager consumerChannelManager &&
             (consumerChannelManager.Consumer?.IsConnected ?? false);
 

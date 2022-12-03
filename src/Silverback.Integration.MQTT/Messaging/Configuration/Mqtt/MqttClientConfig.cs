@@ -326,7 +326,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <summary>
-        ///     Gets or sets the user properties of the will message.
+        ///     Gets the user properties of the will message.
         /// </summary>
         public IList<MqttUserProperty> WillUserProperties => _clientOptions.WillUserProperties ??= new List<MqttUserProperty>();
 
@@ -380,6 +380,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        [SuppressMessage("", "CA1502", Justification = "Rewritten in next big release")]
         public bool Equals(MqttClientConfig? other)
         {
             if (other is null)
