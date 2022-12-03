@@ -9,7 +9,8 @@ uid: releases
 ### What's new
 
 * Upgrade to [MQTTnet 4.1.3.436](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.3.436)
-
+* Upgrade to [Confluent.Kafka 1.9.3](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.9.3)
+* 
 ### Breaking changes
 
 * Some breaking changes in MQTTnet 4 are reflected into Silverback

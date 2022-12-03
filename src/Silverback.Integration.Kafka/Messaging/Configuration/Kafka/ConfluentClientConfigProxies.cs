@@ -23,8 +23,7 @@ namespace Silverback.Messaging.Configuration.Kafka
     [SuppressMessage("", "CA1044", Justification = "Accessors generated according to wrapped class")]
     public abstract class ConfluentClientConfigProxy : IValidatableEndpointSettings
     {
-        internal static readonly ConfigurationDictionaryEqualityComparer<string, string>
-            ConfluentConfigEqualityComparer = new();
+        internal static readonly ConfigurationDictionaryEqualityComparer<string, string> ConfluentConfigEqualityComparer = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConfluentClientConfigProxy" /> class.
@@ -38,8 +37,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512.
-        ///     **NOTE**: Despite the name, you may not configure more than one mechanism.
+        ///     SASL mechanism to use for authentication. Supported: GSSAPI, PLAIN, SCRAM-SHA-256, SCRAM-SHA-512. **NOTE**: Despite the name, you may not configure more than one mechanism.
         /// </summary>
         public SaslMechanism? SaslMechanism
         {
@@ -73,8 +71,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Initial list of brokers as a CSV list of broker host or host:port. The application may also use
-        ///     `rd_kafka_brokers_add()` to add brokers during runtime.
+        ///     Initial list of brokers as a CSV list of broker host or host:port. The application may also use `rd_kafka_brokers_add()` to add brokers during runtime.
         ///     <br /><br />default: ''
         ///     <br />importance: high
         /// </summary>
@@ -85,10 +82,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum Kafka protocol request message size. Due to differing framing overhead between protocol versions
-        ///     the producer is unable to reliably enforce a strict max message limit at produce time and may exceed the
-        ///     maximum size by one message in protocol ProduceRequests, the broker will enforce the the topic's
-        ///     `max.message.bytes` limit (see Apache Kafka documentation).
+        ///     Maximum Kafka protocol request message size. Due to differing framing overhead between protocol versions the producer is unable to reliably enforce a strict max message limit at produce time and may exceed the maximum size by one message in protocol ProduceRequests, the broker will enforce the the topic's `max.message.bytes` limit (see Apache Kafka documentation).
         ///     <br /><br />default: 1000000
         ///     <br />importance: medium
         /// </summary>
@@ -99,8 +93,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum size for message to be copied to buffer. Messages larger than this will be passed by reference
-        ///     (zero-copy) at the expense of larger iovecs.
+        ///     Maximum size for message to be copied to buffer. Messages larger than this will be passed by reference (zero-copy) at the expense of larger iovecs.
         ///     <br /><br />default: 65535
         ///     <br />importance: low
         /// </summary>
@@ -111,10 +104,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum Kafka protocol response message size. This serves as a safety precaution to avoid memory
-        ///     exhaustion in case of protocol hickups. This value must be at least `fetch.max.bytes`  + 512 to allow for
-        ///     protocol overhead; the value is adjusted automatically unless the configuration property is explicitly
-        ///     set.
+        ///     Maximum Kafka protocol response message size. This serves as a safety precaution to avoid memory exhaustion in case of protocol hickups. This value must be at least `fetch.max.bytes`  + 512 to allow for protocol overhead; the value is adjusted automatically unless the configuration property is explicitly set.
         ///     <br /><br />default: 100000000
         ///     <br />importance: medium
         /// </summary>
@@ -125,9 +115,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum number of in-flight requests per broker connection. This is a generic property applied to all
-        ///     broker communication, however it is primarily relevant to produce requests. In particular, note that
-        ///     other mechanisms limit the number of outstanding consumer fetch request per broker to one.
+        ///     Maximum number of in-flight requests per broker connection. This is a generic property applied to all broker communication, however it is primarily relevant to produce requests. In particular, note that other mechanisms limit the number of outstanding consumer fetch request per broker to one.
         ///     <br /><br />default: 1000000
         ///     <br />importance: low
         /// </summary>
@@ -138,11 +126,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Period of time in milliseconds at which topic and broker metadata is refreshed in order to proactively
-        ///     discover any new brokers, topics, partitions or partition leader changes. Use -1 to disable the
-        ///     intervalled refresh (not recommended). If there are no locally referenced topics (no topic objects
-        ///     created, no messages produced, no subscription or no assignment) then only the broker list will be
-        ///     refreshed every interval but no more often than every 10s.
+        ///     Period of time in milliseconds at which topic and broker metadata is refreshed in order to proactively discover any new brokers, topics, partitions or partition leader changes. Use -1 to disable the intervalled refresh (not recommended). If there are no locally referenced topics (no topic objects created, no messages produced, no subscription or no assignment) then only the broker list will be refreshed every interval but no more often than every 10s.
         ///     <br /><br />default: 300000
         ///     <br />importance: low
         /// </summary>
@@ -164,9 +148,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     When a topic loses its leader a new metadata request will be enqueued with this initial interval,
-        ///     exponentially increasing until the topic metadata has been refreshed. This is used to recover quickly
-        ///     from transitioning leader brokers.
+        ///     When a topic loses its leader a new metadata request will be enqueued with this initial interval, exponentially increasing until the topic metadata has been refreshed. This is used to recover quickly from transitioning leader brokers.
         ///     <br /><br />default: 250
         ///     <br />importance: low
         /// </summary>
@@ -188,13 +170,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Apache Kafka topic creation is asynchronous and it takes some time for a new topic to propagate
-        ///     throughout the cluster to all brokers. If a client requests topic metadata after manual topic creation
-        ///     but before the topic has been fully propagated to the broker the client is requesting metadata from, the
-        ///     topic will seem to be non-existent and the client will mark the topic as such, failing queued produced
-        ///     messages with `ERR__UNKNOWN_TOPIC`. This setting delays marking a topic as non-existent until the
-        ///     configured propagation max time has passed. The maximum propagation time is calculated from the time the
-        ///     topic is first referenced in the client, e.g., on produce().
+        ///     Apache Kafka topic creation is asynchronous and it takes some time for a new topic to propagate throughout the cluster to all brokers. If a client requests topic metadata after manual topic creation but before the topic has been fully propagated to the broker the client is requesting metadata from, the topic will seem to be non-existent and the client will mark the topic as such, failing queued produced messages with `ERR__UNKNOWN_TOPIC`. This setting delays marking a topic as non-existent until the configured propagation max time has passed. The maximum propagation time is calculated from the time the topic is first referenced in the client, e.g., on produce().
         ///     <br /><br />default: 30000
         ///     <br />importance: low
         /// </summary>
@@ -205,8 +181,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Topic blacklist, a comma-separated list of regular expressions for matching topic names that should be
-        ///     ignored in broker metadata information as if the topics did not exist.
+        ///     Topic blacklist, a comma-separated list of regular expressions for matching topic names that should be ignored in broker metadata information as if the topics did not exist.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -217,8 +192,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     A comma-separated list of debug contexts to enable. Detailed Producer debugging: broker,topic,msg.
-        ///     Consumer: consumer,cgrp,topic,fetch
+        ///     A comma-separated list of debug contexts to enable. Detailed Producer debugging: broker,topic,msg. Consumer: consumer,cgrp,topic,fetch
         ///     <br /><br />default: ''
         ///     <br />importance: medium
         /// </summary>
@@ -229,10 +203,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Default timeout for network requests. Producer: ProduceRequests will use the lesser value of
-        ///     `socket.timeout.ms` and remaining `message.timeout.ms` for the first message in the batch. Consumer:
-        ///     FetchRequests will use `fetch.wait.max.ms` + `socket.timeout.ms`. Admin: Admin requests will use
-        ///     `socket.timeout.ms` or explicitly set `rd_kafka_AdminOptions_set_operation_timeout()` value.
+        ///     Default timeout for network requests. Producer: ProduceRequests will use the lesser value of `socket.timeout.ms` and remaining `message.timeout.ms` for the first message in the batch. Consumer: FetchRequests will use `fetch.wait.max.ms` + `socket.timeout.ms`. Admin: Admin requests will use `socket.timeout.ms` or explicitly set `rd_kafka_AdminOptions_set_operation_timeout()` value.
         ///     <br /><br />default: 60000
         ///     <br />importance: low
         /// </summary>
@@ -287,10 +258,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Disconnect from broker when this number of send failures (e.g., timed out requests) is reached. Disable
-        ///     with 0. WARNING: It is highly recommended to leave this setting at its default value of 1 to avoid the
-        ///     client and broker to become desynchronized in case of request timeouts. NOTE: The connection is
-        ///     automatically re-established.
+        ///     Disconnect from broker when this number of send failures (e.g., timed out requests) is reached. Disable with 0. WARNING: It is highly recommended to leave this setting at its default value of 1 to avoid the client and broker to become desynchronized in case of request timeouts. NOTE: The connection is automatically re-established.
         ///     <br /><br />default: 1
         ///     <br />importance: low
         /// </summary>
@@ -323,9 +291,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Close broker connections after the specified time of inactivity. Disable with 0. If this property is left
-        ///     at its default value some heuristics are performed to determine a suitable default value, this is
-        ///     currently limited to identifying brokers on Azure (see librdkafka issue #3109 for more info).
+        ///     Maximum time allowed for broker connection setup (TCP connection setup as well SSL and SASL handshake). If the connection to the broker is not fully functional after this the connection will be closed and retried.
+        ///     <br /><br />default: 30000
+        ///     <br />importance: medium
+        /// </summary>
+        public int? SocketConnectionSetupTimeoutMs
+        {
+            get => ConfluentConfig.SocketConnectionSetupTimeoutMs;
+            set => ConfluentConfig.SocketConnectionSetupTimeoutMs = value;
+        }
+
+        /// <summary>
+        ///     Close broker connections after the specified time of inactivity. Disable with 0. If this property is left at its default value some heuristics are performed to determine a suitable default value, this is currently limited to identifying brokers on Azure (see librdkafka issue #3109 for more info).
         ///     <br /><br />default: 0
         ///     <br />importance: medium
         /// </summary>
@@ -336,9 +313,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The initial time to wait before reconnecting to a broker after the connection has been closed. The time
-        ///     is increased exponentially until `reconnect.backoff.max.ms` is reached. -25% to +50% jitter is applied to
-        ///     each reconnect backoff. A value of 0 disables the backoff and reconnects immediately.
+        ///     The initial time to wait before reconnecting to a broker after the connection has been closed. The time is increased exponentially until `reconnect.backoff.max.ms` is reached. -25% to +50% jitter is applied to each reconnect backoff. A value of 0 disables the backoff and reconnects immediately.
         ///     <br /><br />default: 100
         ///     <br />importance: medium
         /// </summary>
@@ -360,8 +335,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     librdkafka statistics emit interval. The application also needs to register a stats callback using
-        ///     `rd_kafka_conf_set_stats_cb()`. The granularity is 1000ms. A value of 0 disables statistics.
+        ///     librdkafka statistics emit interval. The application also needs to register a stats callback using `rd_kafka_conf_set_stats_cb()`. The granularity is 1000ms. A value of 0 disables statistics.
         ///     <br /><br />default: 0
         ///     <br />importance: high
         /// </summary>
@@ -372,9 +346,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Disable spontaneous log_cb from internal librdkafka threads, instead enqueue log messages on queue set
-        ///     with `rd_kafka_set_log_queue()` and serve log callbacks or events through the standard poll APIs.
-        ///     **NOTE**: Log messages will linger in a temporary queue until the log queue has been set.
+        ///     Disable spontaneous log_cb from internal librdkafka threads, instead enqueue log messages on queue set with `rd_kafka_set_log_queue()` and serve log callbacks or events through the standard poll APIs. **NOTE**: Log messages will linger in a temporary queue until the log queue has been set.
         ///     <br /><br />default: false
         ///     <br />importance: low
         /// </summary>
@@ -396,9 +368,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     If enabled librdkafka will initialize the PRNG with srand(current_time.milliseconds) on the first
-        ///     invocation of rd_kafka_new() (required only if rand_r() is not available on your platform). If disabled
-        ///     the application must call srand() prior to calling rd_kafka_new().
+        ///     If enabled librdkafka will initialize the PRNG with srand(current_time.milliseconds) on the first invocation of rd_kafka_new() (required only if rand_r() is not available on your platform). If disabled the application must call srand() prior to calling rd_kafka_new().
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -409,8 +379,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an
-        ///     aggressive `connection.max.idle.ms` value.
+        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an aggressive `connections.max.idle.ms` value.
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -421,10 +390,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Signal that librdkafka will use to quickly terminate on rd_kafka_destroy(). If this signal is not set
-        ///     then there will be a delay before rd_kafka_wait_destroyed() returns true as internal threads are timing
-        ///     out their system calls. If this signal is set however the delay will be minimal. The application should
-        ///     mask this signal as an internal signal handler is installed.
+        ///     Signal that librdkafka will use to quickly terminate on rd_kafka_destroy(). If this signal is not set then there will be a delay before rd_kafka_wait_destroyed() returns true as internal threads are timing out their system calls. If this signal is set however the delay will be minimal. The application should mask this signal as an internal signal handler is installed.
         ///     <br /><br />default: 0
         ///     <br />importance: low
         /// </summary>
@@ -435,10 +401,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Request broker's supported API versions to adjust functionality to available protocol features. If set to
-        ///     false, or the ApiVersionRequest fails, the fallback version `broker.version.fallback` will be used.
-        ///     **NOTE**: Depends on broker version &gt;=0.10.0. If the request is not supported by (an older) broker the
-        ///     `broker.version.fallback` fallback is used.
+        ///     Request broker's supported API versions to adjust functionality to available protocol features. If set to false, or the ApiVersionRequest fails, the fallback version `broker.version.fallback` will be used. **NOTE**: Depends on broker version &gt;=0.10.0. If the request is not supported by (an older) broker the `broker.version.fallback` fallback is used.
         ///     <br /><br />default: true
         ///     <br />importance: high
         /// </summary>
@@ -460,9 +423,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Dictates how long the `broker.version.fallback` fallback is used in the case the ApiVersionRequest fails.
-        ///     **NOTE**: The ApiVersionRequest is only issued when a new connection to the broker is made (such as after
-        ///     an upgrade).
+        ///     Dictates how long the `broker.version.fallback` fallback is used in the case the ApiVersionRequest fails. **NOTE**: The ApiVersionRequest is only issued when a new connection to the broker is made (such as after an upgrade).
         ///     <br /><br />default: 0
         ///     <br />importance: medium
         /// </summary>
@@ -473,12 +434,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Older broker versions (before 0.10.0) provide no way for a client to query for supported protocol
-        ///     features (ApiVersionRequest, see `api.version.request`) making it impossible for the client to know what
-        ///     features it may use. As a workaround a user may set this property to the expected broker version and the
-        ///     client will automatically adjust its feature set accordingly if the ApiVersionRequest fails (or is
-        ///     disabled). The fallback broker version will be used for `api.version.fallback.ms`. Valid values are:
-        ///     0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables ApiVersionRequests.
+        ///     Older broker versions (before 0.10.0) provide no way for a client to query for supported protocol features (ApiVersionRequest, see `api.version.request`) making it impossible for the client to know what features it may use. As a workaround a user may set this property to the expected broker version and the client will automatically adjust its feature set accordingly if the ApiVersionRequest fails (or is disabled). The fallback broker version will be used for `api.version.fallback.ms`. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables ApiVersionRequests.
         ///     <br /><br />default: 0.10.0
         ///     <br />importance: medium
         /// </summary>
@@ -500,9 +456,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     A cipher suite is a named combination of authentication, encryption, MAC and key exchange algorithm used
-        ///     to negotiate the security settings for a network connection using TLS or SSL network protocol. See manual
-        ///     page for `ciphers(1)` and `SSL_CTX_set_cipher_list(3).
+        ///     A cipher suite is a named combination of authentication, encryption, MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol. See manual page for `ciphers(1)` and `SSL_CTX_set_cipher_list(3).
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -513,9 +467,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The supported-curves extension in the TLS ClientHello message specifies the curves (standard/named, or
-        ///     'explicit' GF(2^k) or GF(p)) the client is willing to have the server use. See manual page for
-        ///     `SSL_CTX_set1_curves_list(3)`. OpenSSL &gt;= 1.0.2 required.
+        ///     The supported-curves extension in the TLS ClientHello message specifies the curves (standard/named, or 'explicit' GF(2^k) or GF(p)) the client is willing to have the server use. See manual page for `SSL_CTX_set1_curves_list(3)`. OpenSSL &gt;= 1.0.2 required.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -526,9 +478,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The client uses the TLS ClientHello signature_algorithms extension to indicate to the server which
-        ///     signature/hash algorithm pairs may be used in digital signatures. See manual page for
-        ///     `SSL_CTX_set1_sigalgs_list(3)`. OpenSSL &gt;= 1.0.2 required.
+        ///     The client uses the TLS ClientHello signature_algorithms extension to indicate to the server which signature/hash algorithm pairs may be used in digital signatures. See manual page for `SSL_CTX_set1_sigalgs_list(3)`. OpenSSL &gt;= 1.0.2 required.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -594,13 +544,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     File or directory path to CA certificate(s) for verifying the broker's key. Defaults: On Windows the
-        ///     system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX
-        ///     this configuration defaults to `probe`. It is recommended to install openssl using Homebrew, to provide
-        ///     CA certificates. On Linux install the distribution's ca-certificates package. If OpenSSL is statically
-        ///     linked or `ssl.ca.location` is set to `probe` a list of standard paths will be probed and the first one
-        ///     found will be used as the default CA certificate location path. If OpenSSL is dynamically linked the
-        ///     OpenSSL library's default path will be used (see `OPENSSLDIR` in `openssl version -a`).
+        ///     File or directory path to CA certificate(s) for verifying the broker's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX this configuration defaults to `probe`. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package. If OpenSSL is statically linked or `ssl.ca.location` is set to `probe` a list of standard paths will be probed and the first one found will be used as the default CA certificate location path. If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see `OPENSSLDIR` in `openssl version -a`).
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -611,10 +555,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Comma-separated list of Windows Certificate stores to load CA certificates from. Certificates will be
-        ///     loaded in the same order as stores are specified. If no certificates can be loaded from any of the
-        ///     specified stores an error is logged and the OpenSSL library's default CA location is used instead. Store
-        ///     names are typically one or more of: MY, Root, Trust, CA.
+        ///     CA certificate string (PEM format) for verifying the broker's key.
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SslCaPem
+        {
+            get => ConfluentConfig.SslCaPem;
+            set => ConfluentConfig.SslCaPem = value;
+        }
+
+        /// <summary>
+        ///     Comma-separated list of Windows Certificate stores to load CA certificates from. Certificates will be loaded in the same order as stores are specified. If no certificates can be loaded from any of the specified stores an error is logged and the OpenSSL library's default CA location is used instead. Store names are typically one or more of: MY, Root, Trust, CA.
         ///     <br /><br />default: Root
         ///     <br />importance: low
         /// </summary>
@@ -680,8 +632,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Enable OpenSSL's builtin broker (server) certificate verification. This verification can be extended by
-        ///     the application by implementing a certificate_verify_cb.
+        ///     Enable OpenSSL's builtin broker (server) certificate verification. This verification can be extended by the application by implementing a certificate_verify_cb.
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -692,9 +643,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Endpoint identification algorithm to validate broker hostname using broker certificate. https - Server
-        ///     (broker) hostname verification as specified in RFC2818. none - No endpoint verification. OpenSSL &gt;=
-        ///     1.0.2 required.
+        ///     Endpoint identification algorithm to validate broker hostname using broker certificate. https - Server (broker) hostname verification as specified in RFC2818. none - No endpoint verification. OpenSSL &gt;= 1.0.2 required.
         ///     <br /><br />default: none
         ///     <br />importance: low
         /// </summary>
@@ -727,11 +676,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Shell command to refresh or acquire the client's Kerberos ticket. This command is executed on client
-        ///     creation and every sasl.kerberos.min.time.before.relogin (0=disable). %{config.prop.name} is replaced by
-        ///     corresponding config object value.
-        ///     <br /><br />default: kinit -R -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal} || kinit -t
-        ///     "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal}
+        ///     Shell command to refresh or acquire the client's Kerberos ticket. This command is executed on client creation and every sasl.kerberos.min.time.before.relogin (0=disable). %{config.prop.name} is replaced by corresponding config object value.
+        ///     <br /><br />default: kinit -R -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal} || kinit -t "%{sasl.kerberos.keytab}" -k %{sasl.kerberos.principal}
         ///     <br />importance: low
         /// </summary>
         public string SaslKerberosKinitCmd
@@ -741,8 +687,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Path to Kerberos keytab file. This configuration property is only used as a variable in
-        ///     `sasl.kerberos.kinit.cmd` as ` ... -t "%{sasl.kerberos.keytab}"`.
+        ///     Path to Kerberos keytab file. This configuration property is only used as a variable in `sasl.kerberos.kinit.cmd` as ` ... -t "%{sasl.kerberos.keytab}"`.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -753,8 +698,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Minimum time in milliseconds between key refresh attempts. Disable automatic key refresh by setting this
-        ///     property to 0.
+        ///     Minimum time in milliseconds between key refresh attempts. Disable automatic key refresh by setting this property to 0.
         ///     <br /><br />default: 60000
         ///     <br />importance: low
         /// </summary>
@@ -787,15 +731,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     SASL/OAUTHBEARER configuration. The format is implementation-dependent and must be parsed accordingly.
-        ///     The default unsecured token implementation (see https://tools.ietf.org/html/rfc7515#appendix-A.5)
-        ///     recognizes space-separated name=value pairs with valid names including principalClaimName, principal,
-        ///     scopeClaimName, scope, and lifeSeconds. The default value for principalClaimName is "sub", the default
-        ///     value for scopeClaimName is "scope", and the default value for lifeSeconds is 3600. The scope value is
-        ///     CSV format with the default value being no/empty scope. For example: `principalClaimName=azp
-        ///     principal=admin scopeClaimName=roles scope=role1,role2 lifeSeconds=600`. In addition, SASL extensions can
-        ///     be communicated to the broker via `extension_NAME=value`. For example: `principal=admin
-        ///     extension_traceId=123`
+        ///     SASL/OAUTHBEARER configuration. The format is implementation-dependent and must be parsed accordingly. The default unsecured token implementation (see https://tools.ietf.org/html/rfc7515#appendix-A.5) recognizes space-separated name=value pairs with valid names including principalClaimName, principal, scopeClaimName, scope, and lifeSeconds. The default value for principalClaimName is "sub", the default value for scopeClaimName is "scope", and the default value for lifeSeconds is 3600. The scope value is CSV format with the default value being no/empty scope. For example: `principalClaimName=azp principal=admin scopeClaimName=roles scope=role1,role2 lifeSeconds=600`. In addition, SASL extensions can be communicated to the broker via `extension_NAME=value`. For example: `principal=admin extension_traceId=123`
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -806,8 +742,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Enable the builtin unsecure JWT OAUTHBEARER token handler if no oauthbearer_refresh_cb has been set. This
-        ///     builtin handler should only be used for development or testing, and not in production.
+        ///     Enable the builtin unsecure JWT OAUTHBEARER token handler if no oauthbearer_refresh_cb has been set. This builtin handler should only be used for development or testing, and not in production.
         ///     <br /><br />default: false
         ///     <br />importance: low
         /// </summary>
@@ -818,9 +753,73 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     List of plugin libraries to load (; separated). The library search path is platform dependent (see
-        ///     dlopen(3) for Unix and LoadLibrary() for Windows). If no filename extension is specified the
-        ///     platform-specific extension (such as .dll or .so) will be appended automatically.
+        ///     Set to "default" or "oidc" to control which login method to be used. If set to "oidc", the following properties must also be be specified: `sasl.oauthbearer.client.id`, `sasl.oauthbearer.client.secret`, and `sasl.oauthbearer.token.endpoint.url`.
+        ///     <br /><br />default: default
+        ///     <br />importance: low
+        /// </summary>
+        public SaslOauthbearerMethod? SaslOauthbearerMethod
+        {
+            get => ConfluentConfig.SaslOauthbearerMethod;
+            set => ConfluentConfig.SaslOauthbearerMethod = value;
+        }
+
+        /// <summary>
+        ///     Public identifier for the application. Must be unique across all clients that the authorization server handles. Only used when `sasl.oauthbearer.method` is set to "oidc".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SaslOauthbearerClientId
+        {
+            get => ConfluentConfig.SaslOauthbearerClientId;
+            set => ConfluentConfig.SaslOauthbearerClientId = value;
+        }
+
+        /// <summary>
+        ///     Client secret only known to the application and the authorization server. This should be a sufficiently random string that is not guessable. Only used when `sasl.oauthbearer.method` is set to "oidc".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SaslOauthbearerClientSecret
+        {
+            get => ConfluentConfig.SaslOauthbearerClientSecret;
+            set => ConfluentConfig.SaslOauthbearerClientSecret = value;
+        }
+
+        /// <summary>
+        ///     Client use this to specify the scope of the access request to the broker. Only used when `sasl.oauthbearer.method` is set to "oidc".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SaslOauthbearerScope
+        {
+            get => ConfluentConfig.SaslOauthbearerScope;
+            set => ConfluentConfig.SaslOauthbearerScope = value;
+        }
+
+        /// <summary>
+        ///     Allow additional information to be provided to the broker. Comma-separated list of key=value pairs. E.g., "supportFeatureX=true,organizationId=sales-emea".Only used when `sasl.oauthbearer.method` is set to "oidc".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SaslOauthbearerExtensions
+        {
+            get => ConfluentConfig.SaslOauthbearerExtensions;
+            set => ConfluentConfig.SaslOauthbearerExtensions = value;
+        }
+
+        /// <summary>
+        ///     OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve token. Only used when `sasl.oauthbearer.method` is set to "oidc".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SaslOauthbearerTokenEndpointUrl
+        {
+            get => ConfluentConfig.SaslOauthbearerTokenEndpointUrl;
+            set => ConfluentConfig.SaslOauthbearerTokenEndpointUrl = value;
+        }
+
+        /// <summary>
+        ///     List of plugin libraries to load (; separated). The library search path is platform dependent (see dlopen(3) for Unix and LoadLibrary() for Windows). If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -831,8 +830,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     A rack identifier for this client. This can be any string value which indicates where this client is
-        ///     physically located. It corresponds with the broker config `broker.rack`.
+        ///     A rack identifier for this client. This can be any string value which indicates where this client is physically located. It corresponds with the broker config `broker.rack`.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -880,8 +878,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     Initializes a new instance of the <see cref="ConfluentConsumerConfigProxy" /> class.
         /// </summary>
         /// <param name="clientConfig">
-        ///     The <see cref="Confluent.Kafka.ClientConfig" /> to be used to initialize the
-        ///     <see cref="Confluent.Kafka.ConsumerConfig" />.
+        ///     The <see cref="Confluent.Kafka.ClientConfig" /> to be used to initialize the <see cref="Confluent.Kafka.ConsumerConfig" />.
         /// </param>
         protected ConfluentConsumerConfigProxy(ClientConfig? clientConfig = null)
             : base(clientConfig != null ? new ConsumerConfig(clientConfig.Clone()) : new ConsumerConfig())
@@ -905,10 +902,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Action to take when there is no initial offset in offset store or the desired offset is out of range:
-        ///     'smallest','earliest' - automatically reset the offset to the smallest offset, 'largest','latest' -
-        ///     automatically reset the offset to the largest offset, 'error' - trigger an error (ERR__AUTO_OFFSET_RESET)
-        ///     which is retrieved by consuming messages and checking 'message-&gt;err'.
+        ///     Action to take when there is no initial offset in offset store or the desired offset is out of range: 'smallest','earliest' - automatically reset the offset to the smallest offset, 'largest','latest' - automatically reset the offset to the largest offset, 'error' - trigger an error (ERR__AUTO_OFFSET_RESET) which is retrieved by consuming messages and checking 'message-&gt;err'.
         ///     <br /><br />default: largest
         ///     <br />importance: high
         /// </summary>
@@ -930,10 +924,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Enable static group membership. Static group members are able to leave and rejoin a group within the
-        ///     configured `session.timeout.ms` without prompting a group rebalance. This should be used in combination
-        ///     with a larger `session.timeout.ms` to avoid group rebalances caused by transient unavailability (e.g.
-        ///     process restarts). Requires broker version &gt;= 2.3.0.
+        ///     Enable static group membership. Static group members are able to leave and rejoin a group within the configured `session.timeout.ms` without prompting a group rebalance. This should be used in combination with a larger `session.timeout.ms` to avoid group rebalances caused by transient unavailability (e.g. process restarts). Requires broker version &gt;= 2.3.0.
         ///     <br /><br />default: ''
         ///     <br />importance: medium
         /// </summary>
@@ -944,11 +935,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The name of one or more partition assignment strategies. The elected group leader will use a strategy
-        ///     supported by all members of the group to assign partitions to group members. If there is more than one
-        ///     eligible strategy, preference is determined by the order of this list (strategies earlier in the list
-        ///     have higher priority). Cooperative and non-cooperative (eager) strategies must not be mixed. Available
-        ///     strategies: range, roundrobin, cooperative-sticky.
+        ///     The name of one or more partition assignment strategies. The elected group leader will use a strategy supported by all members of the group to assign partitions to group members. If there is more than one eligible strategy, preference is determined by the order of this list (strategies earlier in the list have higher priority). Cooperative and non-cooperative (eager) strategies must not be mixed. Available strategies: range, roundrobin, cooperative-sticky.
         ///     <br /><br />default: range,roundrobin
         ///     <br />importance: medium
         /// </summary>
@@ -959,11 +946,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Client group session and failure detection timeout. The consumer sends periodic heartbeats
-        ///     (heartbeat.interval.ms) to indicate its liveness to the broker. If no hearts are received by the broker
-        ///     for a group member within the session timeout, the broker will remove the consumer from the group and
-        ///     trigger a rebalance. The allowed range is configured with the **broker** configuration properties
-        ///     `group.min.session.timeout.ms` and `group.max.session.timeout.ms`. Also see `max.poll.interval.ms`.
+        ///     Client group session and failure detection timeout. The consumer sends periodic heartbeats (heartbeat.interval.ms) to indicate its liveness to the broker. If no hearts are received by the broker for a group member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. The allowed range is configured with the **broker** configuration properties `group.min.session.timeout.ms` and `group.max.session.timeout.ms`. Also see `max.poll.interval.ms`.
         ///     <br /><br />default: 45000
         ///     <br />importance: high
         /// </summary>
@@ -996,9 +979,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     How often to query for the current client group coordinator. If the currently assigned coordinator is
-        ///     down the configured query interval will be divided by ten to more quickly recover in case of coordinator
-        ///     reassignment.
+        ///     How often to query for the current client group coordinator. If the currently assigned coordinator is down the configured query interval will be divided by ten to more quickly recover in case of coordinator reassignment.
         ///     <br /><br />default: 600000
         ///     <br />importance: low
         /// </summary>
@@ -1009,13 +990,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum allowed time between calls to consume messages (e.g., rd_kafka_consumer_poll()) for high-level
-        ///     consumers. If this interval is exceeded the consumer is considered failed and the group will rebalance in
-        ///     order to reassign the partitions to another consumer group member. Warning: Offset commits may be not
-        ///     possible at this point. Note: It is recommended to set `enable.auto.offset.store=false` for long-time
-        ///     processing applications and then explicitly store offsets (using offsets_store()) *after* message
-        ///     processing, to make sure offsets are not auto-committed prior to processing has finished. The interval is
-        ///     checked two times per second. See KIP-62 for more information.
+        ///     Maximum allowed time between calls to consume messages (e.g., rd_kafka_consumer_poll()) for high-level consumers. If this interval is exceeded the consumer is considered failed and the group will rebalance in order to reassign the partitions to another consumer group member. Warning: Offset commits may be not possible at this point. Note: It is recommended to set `enable.auto.offset.store=false` for long-time processing applications and then explicitly store offsets (using offsets_store()) *after* message processing, to make sure offsets are not auto-committed prior to processing has finished. The interval is checked two times per second. See KIP-62 for more information.
         ///     <br /><br />default: 300000
         ///     <br />importance: high
         /// </summary>
@@ -1026,9 +1001,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Automatically and periodically commit offsets in the background. Note: setting this to false does not
-        ///     prevent the consumer from fetching previously committed start offsets. To circumvent this behaviour set
-        ///     specific start offsets per partition in the call to assign().
+        ///     Automatically and periodically commit offsets in the background. Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this behaviour set specific start offsets per partition in the call to assign().
         ///     <br /><br />default: true
         ///     <br />importance: high
         /// </summary>
@@ -1039,8 +1012,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The frequency in milliseconds that the consumer offsets are committed (written) to offset storage. (0 =
-        ///     disable). This setting is used by the high-level consumer.
+        ///     The frequency in milliseconds that the consumer offsets are committed (written) to offset storage. (0 = disable). This setting is used by the high-level consumer.
         ///     <br /><br />default: 5000
         ///     <br />importance: medium
         /// </summary>
@@ -1051,8 +1023,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Automatically store offset of last message provided to application. The offset store is an in-memory
-        ///     store of the next offset to (auto-)commit for each partition.
+        ///     Automatically store offset of last message provided to application. The offset store is an in-memory store of the next offset to (auto-)commit for each partition.
         ///     <br /><br />default: true
         ///     <br />importance: high
         /// </summary>
@@ -1074,11 +1045,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum number of kilobytes of queued pre-fetched messages in the local consumer queue. If using the
-        ///     high-level consumer this setting applies to the single consumer queue, regardless of the number of
-        ///     partitions. When using the legacy simple consumer or when separate partition queues are used this setting
-        ///     applies per partition. This value may be overshot by fetch.message.max.bytes. This property has higher
-        ///     priority than queued.min.messages.
+        ///     Maximum number of kilobytes of queued pre-fetched messages in the local consumer queue. If using the high-level consumer this setting applies to the single consumer queue, regardless of the number of partitions. When using the legacy simple consumer or when separate partition queues are used this setting applies per partition. This value may be overshot by fetch.message.max.bytes. This property has higher priority than queued.min.messages.
         ///     <br /><br />default: 65536
         ///     <br />importance: medium
         /// </summary>
@@ -1100,9 +1067,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Initial maximum number of bytes per topic+partition to request when fetching messages from the broker. If
-        ///     the client encounters a message larger than this value it will gradually try to increase it until the
-        ///     entire message can be fetched.
+        ///     Initial maximum number of bytes per topic+partition to request when fetching messages from the broker. If the client encounters a message larger than this value it will gradually try to increase it until the entire message can be fetched.
         ///     <br /><br />default: 1048576
         ///     <br />importance: medium
         /// </summary>
@@ -1113,12 +1078,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum amount of data the broker shall return for a Fetch request. Messages are fetched in batches by
-        ///     the consumer and if the first message batch in the first non-empty partition of the Fetch request is
-        ///     larger than this value, then the message batch will still be returned to ensure the consumer can make
-        ///     progress. The maximum message batch size accepted by the broker is defined via `message.max.bytes`
-        ///     (broker config) or `max.message.bytes` (broker topic config). `fetch.max.bytes` is automatically adjusted
-        ///     upwards to be at least `message.max.bytes` (consumer config).
+        ///     Maximum amount of data the broker shall return for a Fetch request. Messages are fetched in batches by the consumer and if the first message batch in the first non-empty partition of the Fetch request is larger than this value, then the message batch will still be returned to ensure the consumer can make progress. The maximum message batch size accepted by the broker is defined via `message.max.bytes` (broker config) or `max.message.bytes` (broker topic config). `fetch.max.bytes` is automatically adjusted upwards to be at least `message.max.bytes` (consumer config).
         ///     <br /><br />default: 52428800
         ///     <br />importance: medium
         /// </summary>
@@ -1129,8 +1089,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Minimum number of bytes the broker responds with. If fetch.wait.max.ms expires the accumulated data will
-        ///     be sent to the client regardless of this setting.
+        ///     Minimum number of bytes the broker responds with. If fetch.wait.max.ms expires the accumulated data will be sent to the client regardless of this setting.
         ///     <br /><br />default: 1
         ///     <br />importance: low
         /// </summary>
@@ -1152,9 +1111,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Controls how to read messages written transactionally: `read_committed` - only return transactional
-        ///     messages which have been committed. `read_uncommitted` - return all messages, even transactional messages
-        ///     which have been aborted.
+        ///     Controls how to read messages written transactionally: `read_committed` - only return transactional messages which have been committed. `read_uncommitted` - return all messages, even transactional messages which have been aborted.
         ///     <br /><br />default: read_committed
         ///     <br />importance: high
         /// </summary>
@@ -1176,8 +1133,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Verify CRC32 of consumed messages, ensuring no on-the-wire or on-disk corruption to the messages
-        ///     occurred. This check comes at slightly increased CPU usage.
+        ///     Verify CRC32 of consumed messages, ensuring no on-the-wire or on-disk corruption to the messages occurred. This check comes at slightly increased CPU usage.
         ///     <br /><br />default: false
         ///     <br />importance: medium
         /// </summary>
@@ -1188,10 +1144,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The
-        ///     broker must also be configured with `auto.create.topics.enable=true` for this configuraiton to take
-        ///     effect. Note: The default value (false) is different from the Java consumer (true). Requires broker
-        ///     version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also be configured with `auto.create.topics.enable=true` for this configuraiton to take effect. Note: The default value (false) is different from the Java consumer (true). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
         ///     <br /><br />default: false
         ///     <br />importance: low
         /// </summary>
@@ -1224,8 +1177,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     Initializes a new instance of the <see cref="ConfluentProducerConfigProxy" /> class.
         /// </summary>
         /// <param name="clientConfig">
-        ///     The <see cref="Confluent.Kafka.ClientConfig" /> to be used to initialize the
-        ///     <see cref="Confluent.Kafka.ProducerConfig" />.
+        ///     The <see cref="Confluent.Kafka.ClientConfig" /> to be used to initialize the <see cref="Confluent.Kafka.ProducerConfig" />.
         /// </param>
         protected ConfluentProducerConfigProxy(ClientConfig? clientConfig = null)
             : base(clientConfig != null ? new ProducerConfig(clientConfig.Clone()) : new ProducerConfig())
@@ -1282,8 +1234,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The ack timeout of the producer request in milliseconds. This value is only enforced by the broker and
-        ///     relies on `request.required.acks` being != 0.
+        ///     The ack timeout of the producer request in milliseconds. This value is only enforced by the broker and relies on `request.required.acks` being != 0.
         ///     <br /><br />default: 30000
         ///     <br />importance: medium
         /// </summary>
@@ -1294,11 +1245,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Local message timeout. This value is only enforced locally and limits the time a produced message waits
-        ///     for successful delivery. A time of 0 is infinite. This is the maximum time librdkafka may use to deliver
-        ///     a message (including retries). Delivery error occurs when either the retry count or the message timeout
-        ///     are exceeded. The message timeout is automatically adjusted to `transaction.timeout.ms` if
-        ///     `transactional.id` is configured.
+        ///     Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery. A time of 0 is infinite. This is the maximum time librdkafka may use to deliver a message (including retries). Delivery error occurs when either the retry count or the message timeout are exceeded. The message timeout is automatically adjusted to `transaction.timeout.ms` if `transactional.id` is configured.
         ///     <br /><br />default: 300000
         ///     <br />importance: high
         /// </summary>
@@ -1309,13 +1256,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Partitioner: `random` - random distribution, `consistent` - CRC32 hash of key (Empty and NULL keys are
-        ///     mapped to single partition), `consistent_random` - CRC32 hash of key (Empty and NULL keys are randomly
-        ///     partitioned), `murmur2` - Java Producer compatible Murmur2 hash of key (NULL keys are mapped to single
-        ///     partition), `murmur2_random` - Java Producer compatible Murmur2 hash of key (NULL keys are randomly
-        ///     partitioned. This is functionally equivalent to the default partitioner in the Java Producer.), `fnv1a` -
-        ///     FNV-1a hash of key (NULL keys are mapped to single partition), `fnv1a_random` - FNV-1a hash of key (NULL
-        ///     keys are randomly partitioned).
+        ///     Partitioner: `random` - random distribution, `consistent` - CRC32 hash of key (Empty and NULL keys are mapped to single partition), `consistent_random` - CRC32 hash of key (Empty and NULL keys are randomly partitioned), `murmur2` - Java Producer compatible Murmur2 hash of key (NULL keys are mapped to single partition), `murmur2_random` - Java Producer compatible Murmur2 hash of key (NULL keys are randomly partitioned. This is functionally equivalent to the default partitioner in the Java Producer.), `fnv1a` - FNV-1a hash of key (NULL keys are mapped to single partition), `fnv1a_random` - FNV-1a hash of key (NULL keys are randomly partitioned).
         ///     <br /><br />default: consistent_random
         ///     <br />importance: high
         /// </summary>
@@ -1326,10 +1267,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Compression level parameter for algorithm selected by configuration property `compression.codec`. Higher
-        ///     values will result in better compression at the cost of more CPU usage. Usable range is
-        ///     algorithm-dependent: [0-9] for gzip; [0-12] for lz4; only 0 for snappy; -1 = codec-dependent default
-        ///     compression level.
+        ///     Compression level parameter for algorithm selected by configuration property `compression.codec`. Higher values will result in better compression at the cost of more CPU usage. Usable range is algorithm-dependent: [0-9] for gzip; [0-12] for lz4; only 0 for snappy; -1 = codec-dependent default compression level.
         ///     <br /><br />default: -1
         ///     <br />importance: medium
         /// </summary>
@@ -1340,12 +1278,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Enables the transactional producer. The transactional.id is used to identify the same transactional
-        ///     producer instance across process restarts. It allows the producer to guarantee that transactions
-        ///     corresponding to earlier instances of the same producer have been finalized prior to starting any new
-        ///     transactions, and that any zombie instances are fenced off. If no transactional.id is provided, then the
-        ///     producer is limited to idempotent delivery (if enable.idempotence is set). Requires broker version &gt;=
-        ///     0.11.0.
+        ///     Enables the transactional producer. The transactional.id is used to identify the same transactional producer instance across process restarts. It allows the producer to guarantee that transactions corresponding to earlier instances of the same producer have been finalized prior to starting any new transactions, and that any zombie instances are fenced off. If no transactional.id is provided, then the producer is limited to idempotent delivery (if enable.idempotence is set). Requires broker version &gt;= 0.11.0.
         ///     <br /><br />default: ''
         ///     <br />importance: high
         /// </summary>
@@ -1356,14 +1289,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction
-        ///     status update from the producer before proactively aborting the ongoing transaction. If this value is
-        ///     larger than the `transaction.max.timeout.ms` setting in the broker, the init_transactions() call will
-        ///     fail with ERR_INVALID_TRANSACTION_TIMEOUT. The transaction timeout automatically adjusts
-        ///     `message.timeout.ms` and `socket.timeout.ms`, unless explicitly configured in which case they must not
-        ///     exceed the transaction timeout (`socket.timeout.ms` must be at least 100ms lower than
-        ///     `transaction.timeout.ms`). This is also the default timeout value if no timeout (-1) is supplied to the
-        ///     transactional API methods.
+        ///     The maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction status update from the producer before proactively aborting the ongoing transaction. If this value is larger than the `transaction.max.timeout.ms` setting in the broker, the init_transactions() call will fail with ERR_INVALID_TRANSACTION_TIMEOUT. The transaction timeout automatically adjusts `message.timeout.ms` and `socket.timeout.ms`, unless explicitly configured in which case they must not exceed the transaction timeout (`socket.timeout.ms` must be at least 100ms lower than `transaction.timeout.ms`). This is also the default timeout value if no timeout (-1) is supplied to the transactional API methods.
         ///     <br /><br />default: 60000
         ///     <br />importance: medium
         /// </summary>
@@ -1374,11 +1300,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     When set to `true`, the producer will ensure that messages are successfully produced exactly once and in
-        ///     the original produce order. The following configuration properties are adjusted automatically (if not
-        ///     modified by the user) when idempotence is enabled: `max.in.flight.requests.per.connection=5` (must be
-        ///     less than or equal to 5), `retries=INT32_MAX` (must be greater than 0), `acks=all`,
-        ///     `queuing.strategy=fifo`. Producer instantation will fail if user-supplied configuration is incompatible.
+        ///     When set to `true`, the producer will ensure that messages are successfully produced exactly once and in the original produce order. The following configuration properties are adjusted automatically (if not modified by the user) when idempotence is enabled: `max.in.flight.requests.per.connection=5` (must be less than or equal to 5), `retries=INT32_MAX` (must be greater than 0), `acks=all`, `queuing.strategy=fifo`. Producer instantation will fail if user-supplied configuration is incompatible.
         ///     <br /><br />default: false
         ///     <br />importance: high
         /// </summary>
@@ -1389,10 +1311,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     **EXPERIMENTAL**: subject to change or removal. When set to `true`, any error that could result in a gap
-        ///     in the produced message series when a batch of messages fails, will raise a fatal error
-        ///     (ERR__GAPLESS_GUARANTEE) and stop the producer. Messages failing due to `message.timeout.ms` are not
-        ///     covered by this guarantee. Requires `enable.idempotence=true`.
+        ///     **EXPERIMENTAL**: subject to change or removal. When set to `true`, any error that could result in a gap in the produced message series when a batch of messages fails, will raise a fatal error (ERR__GAPLESS_GUARANTEE) and stop the producer. Messages failing due to `message.timeout.ms` are not covered by this guarantee. Requires `enable.idempotence=true`.
         ///     <br /><br />default: false
         ///     <br />importance: low
         /// </summary>
@@ -1403,8 +1322,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum number of messages allowed on the producer queue. This queue is shared by all topics and
-        ///     partitions.
+        ///     Maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.
         ///     <br /><br />default: 100000
         ///     <br />importance: high
         /// </summary>
@@ -1415,8 +1333,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum total message size sum allowed on the producer queue. This queue is shared by all topics and
-        ///     partitions. This property has higher priority than queue.buffering.max.messages.
+        ///     Maximum total message size sum allowed on the producer queue. This queue is shared by all topics and partitions. This property has higher priority than queue.buffering.max.messages.
         ///     <br /><br />default: 1048576
         ///     <br />importance: high
         /// </summary>
@@ -1427,10 +1344,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Delay in milliseconds to wait for messages in the producer queue to accumulate before constructing
-        ///     message batches (MessageSets) to transmit to brokers. A higher value allows larger and more effective
-        ///     (less overhead, improved compression) batches of messages to accumulate at the expense of increased
-        ///     message delivery latency.
+        ///     Delay in milliseconds to wait for messages in the producer queue to accumulate before constructing message batches (MessageSets) to transmit to brokers. A higher value allows larger and more effective (less overhead, improved compression) batches of messages to accumulate at the expense of increased message delivery latency.
         ///     <br /><br />default: 5
         ///     <br />importance: high
         /// </summary>
@@ -1441,8 +1355,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     How many times to retry sending a failing Message. **Note:** retrying may cause reordering unless
-        ///     `enable.idempotence` is set to true.
+        ///     How many times to retry sending a failing Message. **Note:** retrying may cause reordering unless `enable.idempotence` is set to true.
         ///     <br /><br />default: 2147483647
         ///     <br />importance: high
         /// </summary>
@@ -1464,11 +1377,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's
-        ///     message accumulator. If the number of not yet transmitted requests equals or exceeds this number, produce
-        ///     request creation that would have otherwise been triggered (for example, in accordance with linger.ms)
-        ///     will be delayed. A lower number yields larger and more effective batches. A higher value can improve
-        ///     latency when using compression on slow machines.
+        ///     The threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's message accumulator. If the number of not yet transmitted requests equals or exceeds this number, produce request creation that would have otherwise been triggered (for example, in accordance with linger.ms) will be delayed. A lower number yields larger and more effective batches. A higher value can improve latency when using compression on slow machines.
         ///     <br /><br />default: 1
         ///     <br />importance: low
         /// </summary>
@@ -1479,8 +1388,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     compression codec to use for compressing message sets. This is the default value for all topics, may be
-        ///     overridden by the topic configuration property `compression.codec`.
+        ///     compression codec to use for compressing message sets. This is the default value for all topics, may be overridden by the topic configuration property `compression.codec`.
         ///     <br /><br />default: none
         ///     <br />importance: medium
         /// </summary>
@@ -1491,8 +1399,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum number of messages batched in one MessageSet. The total MessageSet size is also limited by
-        ///     batch.size and message.max.bytes.
+        ///     Maximum number of messages batched in one MessageSet. The total MessageSet size is also limited by batch.size and message.max.bytes.
         ///     <br /><br />default: 10000
         ///     <br />importance: medium
         /// </summary>
@@ -1503,10 +1410,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum size (in bytes) of all messages batched in one MessageSet, including protocol framing overhead.
-        ///     This limit is applied after the first message has been added to the batch, regardless of the first
-        ///     message's size, this is to ensure that messages that exceed batch.size are produced. The total MessageSet
-        ///     size is also limited by batch.num.messages and message.max.bytes.
+        ///     Maximum size (in bytes) of all messages batched in one MessageSet, including protocol framing overhead. This limit is applied after the first message has been added to the batch, regardless of the first message's size, this is to ensure that messages that exceed batch.size are produced. The total MessageSet size is also limited by batch.num.messages and message.max.bytes.
         ///     <br /><br />default: 1000000
         ///     <br />importance: medium
         /// </summary>
@@ -1517,11 +1421,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Delay in milliseconds to wait to assign new sticky partitions for each topic. By default, set to double
-        ///     the time of linger.ms. To disable sticky behavior, set to 0. This behavior affects messages with the key
-        ///     NULL in all cases, and messages with key lengths of zero when the consistent_random partitioner is in
-        ///     use. These messages would otherwise be assigned randomly. A higher value allows for more effective
-        ///     batching of these messages.
+        ///     Delay in milliseconds to wait to assign new sticky partitions for each topic. By default, set to double the time of linger.ms. To disable sticky behavior, set to 0. This behavior affects messages with the key NULL in all cases, and messages with key lengths of zero when the consistent_random partitioner is in use. These messages would otherwise be assigned randomly. A higher value allows for more effective batching of these messages.
         ///     <br /><br />default: 10
         ///     <br />importance: low
         /// </summary>
