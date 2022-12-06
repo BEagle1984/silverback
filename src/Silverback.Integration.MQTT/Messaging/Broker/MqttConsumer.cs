@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Broker
         internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
         {
             var headers = Endpoint.Configuration.AreHeadersSupported
-                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties.ToSilverbackHeaders())
+                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
                 : new MessageHeaderCollection();
 
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
