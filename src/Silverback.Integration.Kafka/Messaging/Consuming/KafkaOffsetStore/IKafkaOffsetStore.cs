@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ public interface IKafkaOffsetStore
     ///     The consumer group id.
     /// </param>
     /// <returns>
-    ///     The collection of <see cref="KafkaOffset"/> that have been stored.
+    ///     The collection of <see cref="KafkaOffset" /> that have been stored.
     /// </returns>
     IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId);
 

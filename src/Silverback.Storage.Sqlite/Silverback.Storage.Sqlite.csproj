@@ -22,14 +22,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
-    <ProjectReference Include="..\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
+    <ProjectReference Include="..\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.0" />
-    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="5.0.0"/>
+    <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
   </ItemGroup>
 
 </Project>

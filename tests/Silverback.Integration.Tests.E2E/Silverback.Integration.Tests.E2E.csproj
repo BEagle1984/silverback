@@ -12,15 +12,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.11" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.10" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="NSubstitute" Version="4.2.2" />
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="FluentAssertions" Version="6.2.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.11"/>
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.10"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.10"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
+    <PackageReference Include="NSubstitute" Version="4.2.2"/>
+    <PackageReference Include="xunit" Version="2.4.1"/>
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -28,17 +28,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Storage.Sqlite\Silverback.Storage.Sqlite.csproj" />
-    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT.Testing\Silverback.Integration.MQTT.Testing.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Storage.Sqlite\Silverback.Storage.Sqlite.csproj"/>
+    <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT.Testing\Silverback.Integration.MQTT.Testing.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

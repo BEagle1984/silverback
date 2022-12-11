@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -33,7 +33,7 @@ internal abstract class MessageStreamProvider : IMessageStreamProvider, IDisposa
     /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream{TMessage}" />
     public abstract ILazyMessageStreamEnumerable<TMessage> CreateLazyStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null);
 
-    /// <inheritdoc cref="Abort"/>
+    /// <inheritdoc cref="Abort" />
     /// <remarks>
     ///     The abort is performed only if the streams haven't been completed already.
     /// </remarks>

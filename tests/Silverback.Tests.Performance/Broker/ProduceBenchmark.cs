@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -65,9 +65,10 @@ public class ProduceBenchmark
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://benchmark")
-                        .AddProducer(producer => producer
-                        .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks"))
-                        .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks"))
+                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
 
         BrokerClientsConnectorService clientsConnectorService = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
         AsyncHelper.RunSynchronously(() => clientsConnectorService.StartAsync(CancellationToken.None));

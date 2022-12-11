@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Sergio Aquilini
+// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -101,14 +101,14 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         return processingTasks.Count;
     }
 
-    /// <inheritdoc cref="MessageStreamProvider.AbortIfPending"/>
+    /// <inheritdoc cref="MessageStreamProvider.AbortIfPending" />
     public override void AbortIfPending()
     {
         if (!_completed)
             Abort();
     }
 
-    /// <inheritdoc cref="MessageStreamProvider.Abort"/>
+    /// <inheritdoc cref="MessageStreamProvider.Abort" />
     public override void Abort()
     {
         if (_completed)
@@ -129,7 +129,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         _aborted = true;
     }
 
-    /// <inheritdoc cref="MessageStreamProvider.CompleteAsync"/>
+    /// <inheritdoc cref="MessageStreamProvider.CompleteAsync" />
     public override async ValueTask CompleteAsync(CancellationToken cancellationToken = default)
     {
         if (_aborted)
