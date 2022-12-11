@@ -33,7 +33,15 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --filter "CI!=false"
+        --filter "CI!=false&&Category!=E2E"
+    displayName: 'Run E2E tests'
+  - script: |
+      dotnet test Silverback.sln \
+        --configuration $(buildConfiguration) \
+        --no-build \
+        --verbosity Normal \
+        --logger trx \
+        --filter "CI!=false&&Category==E2E"
     displayName: 'Run tests'
   # Publish results
   - task: PublishTestResults@2

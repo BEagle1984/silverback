@@ -52,11 +52,23 @@ steps:
         --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
-        --filter "CI!=false" \
+        --filter "CI!=false&&Category!=E2E" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
     displayName: 'Run tests'
+  - script: |
+      dotnet test Silverback.sln \
+        --configuration $(buildConfiguration) \
+        --no-build \
+        --verbosity Normal \
+        --logger trx \
+        --collect "Code coverage" \
+        --filter "CI!=false&&Category==E2E" \
+        -p:CollectCoverage=true \
+        -p:CoverletOutputFormat=opencover%2ccobertura \
+        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+    displayName: 'Run E2E tests'
   - task: SonarCloudAnalyze@1
     condition: succeededOrFailed()
     displayName: 'Run SonarCloud analysis'
