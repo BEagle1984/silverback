@@ -42,21 +42,6 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteAsyncMethodWithArgumentAndReturningTask()
-    {
-        int result = 1;
-        AsyncHelper.RunSynchronously(() => AsyncMethod(2));
-
-        result.Should().Be(3);
-
-        async Task AsyncMethod(int arg)
-        {
-            await Task.Delay(50);
-            result += arg;
-        }
-    }
-
-    [Fact]
     public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningTaskThrows()
     {
         Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
@@ -80,6 +65,119 @@ public class AsyncHelperFixture
         static async Task<int> AsyncMethod()
         {
             await Task.Delay(50);
+            throw new NotSupportedException("test");
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldExecuteAsyncMethodReturningValueTask()
+    {
+        bool done = false;
+
+        AsyncHelper.RunSynchronously(AsyncMethod);
+
+        done.Should().BeTrue();
+
+        async ValueTask AsyncMethod()
+        {
+            await Task.Delay(50);
+            done = true;
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldExecuteSyncMethodReturningValueTask()
+    {
+        bool done = false;
+
+        AsyncHelper.RunSynchronously(SyncMethod);
+
+        done.Should().BeTrue();
+
+        ValueTask SyncMethod()
+        {
+            done = true;
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldExecuteAsyncMethodReturningValueTaskWithResult()
+    {
+        int result = AsyncHelper.RunSynchronously(AsyncMethod);
+
+        result.Should().Be(3);
+
+        static async ValueTask<int> AsyncMethod()
+        {
+            await Task.Delay(50);
+            return 3;
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldExecuteSyncMethodReturningValueTaskWithResult()
+    {
+        int result = AsyncHelper.RunSynchronously(SyncMethod);
+
+        result.Should().Be(3);
+
+        static ValueTask<int> SyncMethod()
+        {
+            return new ValueTask<int>(3);
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningValueTaskThrows()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static async ValueTask AsyncMethod()
+        {
+            await Task.Delay(50);
+            throw new NotSupportedException("test");
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldRethrow_WhenSyncMethodReturningValueTaskThrows()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static ValueTask AsyncMethod()
+        {
+            throw new NotSupportedException("test");
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningValueTaskWithResultThrows()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static async ValueTask<int> AsyncMethod()
+        {
+            await Task.Delay(50);
+            throw new NotSupportedException("test");
+        }
+    }
+
+    [Fact]
+    public void RunSynchronously_ShouldRethrow_WhenSyncMethodReturningValueTaskWithResultThrows()
+    {
+        Action act = () => AsyncHelper.RunSynchronously(SyncMethod);
+
+        act.Should().Throw<NotSupportedException>();
+
+        static ValueTask<int> SyncMethod()
+        {
             throw new NotSupportedException("test");
         }
     }

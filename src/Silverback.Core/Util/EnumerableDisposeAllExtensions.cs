@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util;
 
-// TODO: Test
 internal static class EnumerableDisposeAllExtensions
 {
     public static async ValueTask DisposeAllAsync(this IEnumerable enumerable)
     {
         foreach (object obj in enumerable)
         {
-            if (obj is IAsyncDisposable asyncDisposable)
+            switch (obj)
             {
-                await asyncDisposable.DisposeAsync().ConfigureAwait(false);
-                continue;
+                case IAsyncDisposable asyncDisposable:
+                    await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                    break;
+                case IDisposable disposable:
+                    disposable.Dispose();
+                    break;
             }
-
-            if (obj is IDisposable disposable)
-                disposable.Dispose();
         }
     }
 }

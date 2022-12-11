@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Linq;
 using FluentAssertions;
 using Silverback.Util;
@@ -24,7 +23,7 @@ public class MergeableActionCollectionFixture
         collection.AddOrAppend("second", Action2);
 
         collection.Should().HaveCount(2);
-        collection.Select(action => action.Action).Should().BeEquivalentTo(new Action<int>[] { Action1, Action2 });
+        collection.Select(action => action.Action).Should().BeEquivalentTo(new[] { Action1, Action2 });
         collection.First().Action.Invoke(1);
         collection.Skip(1).First().Action.Invoke(2);
         call1.Should().Be(1);

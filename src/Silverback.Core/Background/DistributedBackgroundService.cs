@@ -50,7 +50,6 @@ public abstract class DistributedBackgroundService : BackgroundService
         _logger.LogBackgroundServiceStarting(this);
 
         // Run another task to avoid deadlocks
-        // TODO: Needed?
         return Task.Run(
             async () =>
             {
