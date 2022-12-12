@@ -1022,7 +1022,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task ConsumerAssing_GroupIdNotSet_OffsetsNotCommitted()
+        public async Task ConsumerAssign_GroupIdEmpty_OffsetsNotCommitted()
         {
             int receivedMessages = 0;
             Host.ConfigureServices(
@@ -1048,6 +1048,44 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             {
                                                 config.GroupId = string.Empty; // No group.id is set
                                             })))
+                        .AddDelegateSubscriber(
+                            (TestEventOne _) => Interlocked.Increment(ref receivedMessages)))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedMessages == 10);
+
+            DefaultTopic.GetCommittedOffsetsCount("not-set").Should().Be(0);
+        }
+
+        [Fact]
+        public async Task ConsumerAssign_GroupIdNotSet_OffsetsNotCommitted()
+        {
+            int receivedMessages = 0;
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName, topics => topics)))
                         .AddDelegateSubscriber(
                             (TestEventOne _) => Interlocked.Increment(ref receivedMessages)))
                 .Run();
