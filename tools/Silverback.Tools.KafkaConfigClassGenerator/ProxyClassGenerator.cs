@@ -137,8 +137,14 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
                 _builder.AppendLine($"        public {propertyType} {property.Name}");
                 _builder.AppendLine("        {");
 
-                if (property.GetGetMethod() != null)
+                if (property.Name == "GroupId" && property.GetGetMethod() != null)
+                {
+                    _builder.AppendLine("            get;");
+                }
+                else if (property.GetGetMethod() != null)
+                {
                     _builder.AppendLine($"            get => ConfluentConfig.{property.Name};");
+                }
 
                 if (property.Name == "DeliveryReportFields")
                 {
@@ -147,6 +153,10 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
                     _builder.AppendLine("                if (value != null)");
                     _builder.AppendLine($"                    ConfluentConfig.{property.Name} = value;");
                     _builder.AppendLine("            }");
+                }
+                else if (property.Name == "GroupId" && property.GetSetMethod() != null)
+                {
+                    _builder.AppendLine("            set;");
                 }
                 else if (property.GetSetMethod() != null)
                 {
