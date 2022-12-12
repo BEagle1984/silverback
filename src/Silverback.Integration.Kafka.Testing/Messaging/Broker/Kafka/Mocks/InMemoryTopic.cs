@@ -237,11 +237,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private void Rebalance(string groupId)
         {
-            if (groupId == "not-set")
-            {
-                return;
-            }
-
             lock (_consumersLock)
             {
                 _groupsPendingRebalance.Remove(groupId);
