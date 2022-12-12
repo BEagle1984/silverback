@@ -38,7 +38,7 @@ public class ActivityConsumerBehavior : IConsumerBehavior
 
         using Activity activity = ActivitySources.StartConsumeActivity(context.Envelope);
 
-        _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.Configuration).EnrichInboundActivity(activity, context);
+        _activityEnricherFactory.GetEnricher(context.Envelope.Endpoint.Configuration).EnrichInboundActivity(activity, context);
 
         await next(context).ConfigureAwait(false);
     }

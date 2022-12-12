@@ -51,8 +51,6 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddTransient<IBrokerClientsInitializer, KafkaProducersInitializer>()
             .AddTransient<IBrokerClientsInitializer, KafkaConsumersInitializer>()
             .AddTransient<KafkaProducersInitializer>()
-            .AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpointConfiguration>, KafkaActivityEnricher>()
-            .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpointConfiguration>, KafkaActivityEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddTransient<KafkaOffsetStoreScope>(
@@ -66,6 +64,7 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
 
         AddChunkEnricher(brokerOptionsBuilder);
         AddBrokerLogEnrichers(brokerOptionsBuilder);
+        AddActivityEnrichers(brokerOptionsBuilder);
 
         return brokerOptionsBuilder;
     }
@@ -86,11 +85,24 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
         BrokerLogEnricherFactory? logEnricherFactory = brokerOptionsBuilder.SilverbackBuilder.Services.GetSingletonServiceInstance<BrokerLogEnricherFactory>();
 
         if (logEnricherFactory == null)
-            throw new InvalidOperationException("ConsumerLogEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
+            throw new InvalidOperationException("BrokerLogEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!logEnricherFactory.HasFactory<KafkaProducerEndpointConfiguration>())
             logEnricherFactory.AddFactory<KafkaProducerEndpointConfiguration>(() => new KafkaLogEnricher());
         if (!logEnricherFactory.HasFactory<KafkaConsumerEndpointConfiguration>())
             logEnricherFactory.AddFactory<KafkaConsumerEndpointConfiguration>(() => new KafkaLogEnricher());
+    }
+
+    private static void AddActivityEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)
+    {
+        ActivityEnricherFactory? activityEnricherFactory = brokerOptionsBuilder.SilverbackBuilder.Services.GetSingletonServiceInstance<ActivityEnricherFactory>();
+
+        if (activityEnricherFactory == null)
+            throw new InvalidOperationException("ActivityEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
+
+        if (!activityEnricherFactory.HasFactory<KafkaProducerEndpointConfiguration>())
+            activityEnricherFactory.AddFactory<KafkaProducerEndpointConfiguration>(() => new KafkaActivityEnricher());
+        if (!activityEnricherFactory.HasFactory<KafkaConsumerEndpointConfiguration>())
+            activityEnricherFactory.AddFactory<KafkaConsumerEndpointConfiguration>(() => new KafkaActivityEnricher());
     }
 }

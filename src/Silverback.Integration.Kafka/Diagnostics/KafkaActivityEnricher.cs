@@ -14,8 +14,7 @@ namespace Silverback.Diagnostics;
 /// <summary>
 ///     Enriches the <see cref="Activity" /> with Kafka specific tags.
 /// </summary>
-public class KafkaActivityEnricher
-    : IBrokerActivityEnricher<KafkaConsumerEndpointConfiguration>, IBrokerActivityEnricher<KafkaProducerEndpointConfiguration>
+public class KafkaActivityEnricher : IBrokerActivityEnricher<KafkaConsumerEndpointConfiguration>, IBrokerActivityEnricher<KafkaProducerEndpointConfiguration>
 {
     internal const string KafkaMessageKey = "messaging.kafka.message_key";
 

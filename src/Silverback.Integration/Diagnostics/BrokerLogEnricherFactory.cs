@@ -6,8 +6,8 @@ using Silverback.Messaging.Configuration;
 
 namespace Silverback.Diagnostics;
 
-/// <inheritdoc cref="IBrokerLogEnricherFactory.GetEnricher" />
-public class BrokerLogEnricherFactory : TypeBasedExtensibleFactory<IBrokerLogEnricher, EndpointConfiguration>, IBrokerLogEnricherFactory
+/// <inheritdoc cref="IBrokerLogEnricherFactory" />
+public sealed class BrokerLogEnricherFactory : TypeBasedExtensibleFactory<IBrokerLogEnricher, EndpointConfiguration>, IBrokerLogEnricherFactory
 {
     /// <inheritdoc cref="IBrokerLogEnricherFactory.GetEnricher" />
     public IBrokerLogEnricher GetEnricher(EndpointConfiguration configuration) =>

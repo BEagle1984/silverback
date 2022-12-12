@@ -9,7 +9,6 @@ namespace Silverback;
 /// <summary>
 ///     Used to persist objects that are valid within the same DI scope. This is used for example to share the storage transaction.
 /// </summary>
-// TODO: Create interface to simplify testing and "hide" SetObject/GetObject -> Define extensions on ISilverbackContext
 public class SilverbackContext
 {
     private readonly Dictionary<int, object> _objects = new();

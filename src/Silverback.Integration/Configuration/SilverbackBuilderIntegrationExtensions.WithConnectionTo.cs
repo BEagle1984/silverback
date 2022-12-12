@@ -88,7 +88,6 @@ public static partial class SilverbackBuilderIntegrationExtensions
 
     private static void AddLoggers(SilverbackBuilder builder) =>
         builder
-            .AddTypeBasedExtensibleFactory<IBrokerLogEnricherFactory, BrokerLogEnricherFactory>()
             .Services
             .AddSingleton(typeof(IConsumerLogger<>), typeof(ConsumerLogger<>))
             .AddSingleton(typeof(IProducerLogger<>), typeof(ProducerLogger<>))
@@ -96,9 +95,11 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddSingleton<InternalProducerLoggerFactory>();
 
     private static void AddEnrichers(SilverbackBuilder builder) =>
-        builder.Services
-            .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>()
-            .AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();
+        builder
+            .AddTypeBasedExtensibleFactory<IBrokerLogEnricherFactory, BrokerLogEnricherFactory>()
+            .AddTypeBasedExtensibleFactory<IActivityEnricherFactory, ActivityEnricherFactory>()
+            .Services
+            .AddSingleton<IBrokerOutboundMessageEnrichersFactory, BrokerOutboundMessageEnrichersFactory>();
 
     private static void AddBrokerBehaviors(SilverbackBuilder builder)
     {

@@ -464,7 +464,4 @@ public class StreamPublisherTests
         receivedEvents.Should().HaveCount(1);
         receivedEvents[0].Should().BeOfType<TestEventTwo>();
     }
-
-    // TODO
-    // * Test behaviors?
 }

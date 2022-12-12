@@ -13,11 +13,11 @@ public interface IActivityEnricherFactory
     /// <summary>
     ///     Returns the <see cref="IBrokerActivityEnricher" /> for the specified endpoint.
     /// </summary>
-    /// <param name="endpointConfiguration">
+    /// <param name="configuration">
     ///     The endpoint.
     /// </param>
     /// <returns>
     ///     The <see cref="IBrokerActivityEnricher" /> that matches the specified endpoint type.
     /// </returns>
-    IBrokerActivityEnricher GetActivityEnricher(EndpointConfiguration endpointConfiguration);
+    IBrokerActivityEnricher GetEnricher(EndpointConfiguration configuration);
 }
