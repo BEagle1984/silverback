@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -20,6 +21,8 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
     private readonly ISilverbackLogger<BrokerClientCallbackInvoker> _logger;
 
     private List<Type>? _callbackTypes;
+
+    private ConcurrentDictionary<Type, bool> _hasCallbacks = new();
 
     private bool _appStopping;
 
@@ -192,12 +195,16 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
         return callbacks.OfType<TCallback>().SortBySortIndex();
     }
 
-    // TODO: Cache
     private bool HasAny<TCallback>()
     {
+        // If the types haven't been initialized yet (very first call), just return true to go through the procedure
+        // once and load them.
         if (_callbackTypes == null)
             return true;
 
-        return _callbackTypes.Any(type => typeof(TCallback).IsAssignableFrom(type));
+        return _hasCallbacks.GetOrAdd(
+            typeof(TCallback),
+            static (_, types) => types.Any(type => typeof(TCallback).IsAssignableFrom(type)),
+            _callbackTypes);
     }
 }
