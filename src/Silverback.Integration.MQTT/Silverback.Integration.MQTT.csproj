@@ -22,11 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="3.0.16"/>
+    <PackageReference Include="MQTTnet" Version="3.0.16" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 
 </Project>

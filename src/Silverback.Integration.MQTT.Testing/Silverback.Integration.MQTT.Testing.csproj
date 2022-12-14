@@ -22,8 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj"/>
-    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj"/>
+    <ProjectReference Include="..\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

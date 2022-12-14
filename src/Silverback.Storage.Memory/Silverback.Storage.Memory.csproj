@@ -22,9 +22,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
-    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj"/>
-    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

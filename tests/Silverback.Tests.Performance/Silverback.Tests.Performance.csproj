@@ -9,16 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1"/>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj"/>
-    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj"/>
-    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj"/>
-    <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj"/>
-    <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj"/>
-    <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj"/>
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
   </ItemGroup>
 
 </Project>

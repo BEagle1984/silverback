@@ -22,11 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Reactive" Version="5.0.0"/>
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj"/>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
 
 </Project>
