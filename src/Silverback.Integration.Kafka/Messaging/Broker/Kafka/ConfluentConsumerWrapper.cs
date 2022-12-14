@@ -31,10 +31,12 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private readonly IConfluentAdminClientBuilder _adminClientBuilder;
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
 
     private IAdminClient? _adminClient;
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private KafkaConsumer? _consumer;
 
     public ConfluentConsumerWrapper(

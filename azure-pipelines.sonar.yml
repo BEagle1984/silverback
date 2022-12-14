@@ -11,23 +11,8 @@ steps:
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
-      version: '2.2.x'
-    displayName: 'Install sdk 2.2.x'
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '3.1.x'
-    displayName: 'Install sdk 3.1.x'
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '5.0.x'
-    displayName: 'Install sdk 5.0.x'
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '6.0.x'
-    displayName: 'Install sdk 6.0.x'
+      version: '7.0.x'
+    displayName: 'Install sdk 7.0.x'
   # Build, test and analyze
   - task: SonarCloudPrepare@1
     inputs:

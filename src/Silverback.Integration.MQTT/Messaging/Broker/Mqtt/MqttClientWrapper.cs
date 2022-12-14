@@ -28,6 +28,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     private const int ConnectionCheckDelayMilliseconds = 5000;
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly IMqttClient _mqttClient;
 
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;

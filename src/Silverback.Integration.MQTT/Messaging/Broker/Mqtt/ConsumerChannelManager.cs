@@ -17,12 +17,12 @@ namespace Silverback.Messaging.Broker.Mqtt;
 
 internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHandler, IDisposable
 {
-    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The consumer is the owner of this class and its lifecycle is handled elsewhere")]
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly MqttConsumer _consumer;
 
     private readonly IConsumerLogger<IConsumer> _logger;
 
-    [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly IMqttClientWrapper _mqttClientWrapper;
 
     // The parallelism is currently fixed to 1 but could be made configurable for QoS=0.
@@ -37,9 +37,7 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
 
     private TaskCompletionSource<bool> _readTaskCompletionSource;
 
-    public ConsumerChannelManager(
-        MqttConsumer consumer,
-        IConsumerLogger<IConsumer> logger)
+    public ConsumerChannelManager(MqttConsumer consumer, IConsumerLogger<IConsumer> logger)
     {
         _consumer = Check.NotNull(consumer, nameof(consumer));
         _logger = Check.NotNull(logger, nameof(logger));

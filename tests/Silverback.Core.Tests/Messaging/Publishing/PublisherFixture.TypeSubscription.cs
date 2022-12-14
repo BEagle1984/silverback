@@ -372,7 +372,7 @@ public partial class PublisherFixture
         }
     }
 
-    private class SimpleNotExclusiveSubscriber
+    private sealed class SimpleNotExclusiveSubscriber : IDisposable
     {
         private readonly TestingCollection<TestEventOne> _messages1;
 
@@ -393,6 +393,11 @@ public partial class PublisherFixture
         [Subscribe(Exclusive = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public async Task Subscriber2Async(TestEventOne message) => await ExecuteAsync(message, _messages2);
+
+        public void Dispose()
+        {
+            _countdownEvent.Dispose();
+        }
 
         private async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {

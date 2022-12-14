@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal sealed class ConsumerChannelsManager : IDisposable
 {
-    [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly KafkaConsumer _consumer;
 
     private readonly IBrokerClientCallbacksInvoker _callbacksInvoker;
@@ -32,10 +32,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
 
     private bool _isDisposed;
 
-    public ConsumerChannelsManager(
-        KafkaConsumer consumer,
-        IBrokerClientCallbacksInvoker callbacksInvoker,
-        ISilverbackLogger logger)
+    public ConsumerChannelsManager(KafkaConsumer consumer, IBrokerClientCallbacksInvoker callbacksInvoker, ISilverbackLogger logger)
     {
         _consumer = Check.NotNull(consumer, nameof(consumer));
         _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));

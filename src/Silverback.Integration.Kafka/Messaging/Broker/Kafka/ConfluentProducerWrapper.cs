@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -15,6 +16,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 {
     private readonly IConfluentProducerBuilder _producerBuilder;
 
+    [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
     public ConfluentProducerWrapper(

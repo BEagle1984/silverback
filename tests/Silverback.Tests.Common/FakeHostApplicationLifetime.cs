@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Silverback.Tests;
 
-public class FakeHostApplicationLifetime : IHostApplicationLifetime
+public sealed class FakeHostApplicationLifetime : IHostApplicationLifetime, IDisposable
 {
     private readonly CancellationTokenSource _startedCancellationTokenSource = new();
 
@@ -28,4 +28,11 @@ public class FakeHostApplicationLifetime : IHostApplicationLifetime
     public void TriggerApplicationStopped() => _stoppedCancellationTokenSource.Cancel();
 
     public void StopApplication() => throw new NotSupportedException();
+
+    public void Dispose()
+    {
+        _startedCancellationTokenSource.Dispose();
+        _stoppingCancellationTokenSource.Dispose();
+        _stoppedCancellationTokenSource.Dispose();
+    }
 }

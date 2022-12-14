@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Silverback.Lock;
 /// <summary>
 ///     This implementation of <see cref="DistributedLock" /> is not really distributed and is meant for testing purposes only.
 /// </summary>
-public sealed class InMemoryLock : DistributedLock
+public sealed class InMemoryLock : DistributedLock, IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
@@ -24,6 +25,12 @@ public sealed class InMemoryLock : DistributedLock
     public InMemoryLock(DistributedLockSettings settings)
         : base(settings)
     {
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    public void Dispose()
+    {
+        _semaphore.Dispose();
     }
 
     /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Sequences.Unbounded;
 
@@ -11,6 +12,7 @@ namespace Silverback.Messaging.Sequences;
 /// <summary>
 ///     The temporary store for the sequences being consumed.
 /// </summary>
+[SuppressMessage("Naming", "CA1710:Identifiers should have correct suffix", Justification = "Avoid confusion with ISequenceStoreCollection")]
 public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposable, IDisposable
 {
     /// <summary>
