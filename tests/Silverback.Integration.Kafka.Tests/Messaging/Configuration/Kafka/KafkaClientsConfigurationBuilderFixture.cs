@@ -37,7 +37,7 @@ public class KafkaClientsConfigurationBuilderFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1")))
                         .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(1);
@@ -62,7 +62,7 @@ public class KafkaClientsConfigurationBuilderFixture
                         .AddProducer(producer => producer.Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic1")))
                         .AddProducer(producer => producer.Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
@@ -96,7 +96,7 @@ public class KafkaClientsConfigurationBuilderFixture
                                 .WithTransactionalId("trans")
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
@@ -131,7 +131,7 @@ public class KafkaClientsConfigurationBuilderFixture
                                 .WithGroupId("consumer2")
                                 .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(2);
@@ -165,7 +165,7 @@ public class KafkaClientsConfigurationBuilderFixture
                                 .WithFetchMinBytes(42)
                                 .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(1);

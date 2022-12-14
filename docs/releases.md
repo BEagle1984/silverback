@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [4.0.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0-beta.1)
+## [5.0.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v5.0.0-beta.1)
 
 ### What's new
 
@@ -22,6 +22,7 @@ uid: releases
   * New Outbox with Enlist for transaction
   * StorageInitializer to create tables
   * Client side offset storage (w/ transaction)
+  * Fluent API for connection options
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

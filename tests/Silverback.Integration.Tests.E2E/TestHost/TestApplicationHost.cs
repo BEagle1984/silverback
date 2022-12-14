@@ -141,9 +141,9 @@ public sealed class TestApplicationHost : IDisposable
 
     private async ValueTask WaitUntilBrokerClientsAreConnectedAsync()
     {
-        BrokerConnectionOptions connectionOptions = ServiceProvider.GetRequiredService<BrokerConnectionOptions>();
+        BrokerClientConnectionOptions clientConnectionOptions = ServiceProvider.GetRequiredService<BrokerClientConnectionOptions>();
 
-        if (connectionOptions.Mode == BrokerConnectionMode.Manual)
+        if (clientConnectionOptions.Mode == BrokerClientConnectionMode.Manual)
             return;
 
         await WaitUntilBrokerClientsAreConnectedAsync<IKafkaTestingHelper>();

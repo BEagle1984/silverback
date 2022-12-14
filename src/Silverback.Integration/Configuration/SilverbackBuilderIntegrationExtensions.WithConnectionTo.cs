@@ -73,8 +73,8 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddSingleton<IConsumerCollection>(serviceProvider => serviceProvider.GetService<ConsumerCollection>())
             .AddHostedService<BrokerClientsConnectorService>()
             .AddTransient<IBrokerClientsConnector, BrokerClientsConnector>()
-            .AddTransient<BrokerClientsConfiguratorsInvoker>()
-            .AddSingleton(new BrokerConnectionOptions());
+            .AddTransient<BrokerClientsBootstrapper>()
+            .AddSingleton(new BrokerClientConnectionOptions());
 
     private static void AddOutboundRouting(SilverbackBuilder builder) =>
         builder

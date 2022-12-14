@@ -40,11 +40,7 @@ public class RebalanceFixture : KafkaFixture
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.Manual
-                            }))
+                        .ManuallyConnect())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
@@ -113,11 +109,7 @@ public class RebalanceFixture : KafkaFixture
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5))
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.Manual
-                            }))
+                        .ManuallyConnect())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")

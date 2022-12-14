@@ -18,10 +18,8 @@ internal sealed class BrokerClientCollection : IReadOnlyCollection<IBrokerClient
 
     public void Add(IBrokerClient client) => _clients.Add(client);
 
-    // TODO: Investigate why version with limited parallelism causes errors in BrokerConnectorServiceFixture
     public ValueTask ConnectAllAsync() => _clients.ParallelForEachAsync(client => client.ConnectAsync());
 
-    // TODO: Investigate why version with limited parallelism causes errors in BrokerConnectorServiceFixture
     public ValueTask DisconnectAllAsync() => _clients.ParallelForEachAsync(client => client.DisconnectAsync());
 
     public void Dispose() => _clients.ForEach(client => client.Dispose());

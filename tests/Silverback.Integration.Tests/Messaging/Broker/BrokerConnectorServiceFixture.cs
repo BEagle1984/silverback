@@ -28,13 +28,7 @@ public class BrokerConnectorServiceFixture
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.Startup
-                            })));
+                .WithConnectionToMessageBroker(options => options.ConnectAtStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         clients.Add(Substitute.For<IBrokerClient>());
@@ -59,15 +53,7 @@ public class BrokerConnectorServiceFixture
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.Startup,
-                                RetryOnFailure = true,
-                                RetryInterval = TimeSpan.FromMilliseconds(100)
-                            })));
+                .WithConnectionToMessageBroker(options => options.ConnectAtStartup().RetryOnConnectionFailure(TimeSpan.FromMilliseconds(100))));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
@@ -104,14 +90,7 @@ public class BrokerConnectorServiceFixture
                 .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.Startup,
-                                RetryOnFailure = false
-                            })));
+                .WithConnectionToMessageBroker(options => options.ConnectAtStartup().DisableRetryOnConnectionFailure()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
 
@@ -151,13 +130,7 @@ public class BrokerConnectorServiceFixture
                 .AddTransient(_ => lifetimeEvents)
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .WithConnectionOptions(
-                            new BrokerConnectionOptions
-                            {
-                                Mode = BrokerConnectionMode.AfterStartup
-                            })));
+                .WithConnectionToMessageBroker(options => options.ConnectAfterStartup()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         clients.Add(Substitute.For<IBrokerClient>());
@@ -192,12 +165,7 @@ public class BrokerConnectorServiceFixture
                 .AddTransient(_ => lifetimeEvents)
                 .AddFakeLogger()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options.WithConnectionOptions(
-                        new BrokerConnectionOptions
-                        {
-                            Mode = BrokerConnectionMode.Manual
-                        })));
+                .WithConnectionToMessageBroker(options => options.ManuallyConnect()));
 
         BrokerClientCollection clients = serviceProvider.GetRequiredService<BrokerClientCollection>();
         clients.Add(Substitute.For<IBrokerClient>());
@@ -216,10 +184,10 @@ public class BrokerConnectorServiceFixture
     }
 
     [Theory]
-    [InlineData(BrokerConnectionMode.Manual)]
-    [InlineData(BrokerConnectionMode.Startup)]
-    [InlineData(BrokerConnectionMode.AfterStartup)]
-    public async Task StartAsync_ShouldAlwaysSetupGracefulDisconnectRegardlessOfMode(BrokerConnectionMode mode)
+    [InlineData(BrokerClientConnectionMode.Manual)]
+    [InlineData(BrokerClientConnectionMode.Startup)]
+    [InlineData(BrokerClientConnectionMode.AfterStartup)]
+    public async Task StartAsync_ShouldAlwaysSetupGracefulDisconnectRegardlessOfMode(BrokerClientConnectionMode mode)
     {
         CancellationTokenSource appStoppingTokenSource = new();
         CancellationTokenSource appStoppedTokenSource = new();
@@ -234,7 +202,7 @@ public class BrokerConnectorServiceFixture
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options.WithConnectionOptions(
-                        new BrokerConnectionOptions
+                        new BrokerClientConnectionOptions
                         {
                             Mode = mode
                         })));

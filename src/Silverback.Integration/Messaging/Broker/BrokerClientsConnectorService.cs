@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class BrokerClientsConnectorService : IHostedService
 {
-    private readonly BrokerConnectionOptions _connectionOptions;
+    private readonly BrokerClientConnectionOptions _clientConnectionOptions;
 
     private readonly IBrokerClientsConnector _connector;
 
@@ -20,12 +20,12 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     private readonly TaskCompletionSource<bool> _brokerDisconnectedTaskCompletionSource = new();
 
     public BrokerClientsConnectorService(
-        BrokerConnectionOptions connectionOptions,
+        BrokerClientConnectionOptions clientConnectionOptions,
         IHostApplicationLifetime applicationLifetime,
         IBrokerClientsConnector connector)
     {
         _connector = Check.NotNull(connector, nameof(connector));
-        _connectionOptions = Check.NotNull(connectionOptions, nameof(connectionOptions));
+        _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
 
         Check.NotNull(applicationLifetime, nameof(applicationLifetime));
         applicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
@@ -39,7 +39,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     {
         await _connector.InitializeAsync().ConfigureAwait(false);
 
-        if (_connectionOptions.Mode == BrokerConnectionMode.Startup)
+        if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.Startup)
             await _connector.ConnectAllAsync(_applicationStoppingToken).ConfigureAwait(false);
     }
 
@@ -48,7 +48,7 @@ internal sealed class BrokerClientsConnectorService : IHostedService
     /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
     private void OnApplicationStarted()
     {
-        if (_connectionOptions.Mode == BrokerConnectionMode.AfterStartup)
+        if (_clientConnectionOptions.Mode == BrokerClientConnectionMode.AfterStartup)
             _connector.ConnectAllAsync(_applicationStoppingToken).FireAndForget();
     }
 

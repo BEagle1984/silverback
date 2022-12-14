@@ -11,8 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
-// TODO: Review class and method names
-internal sealed class BrokerClientsConfiguratorsInvoker
+internal sealed class BrokerClientsBootstrapper
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -20,7 +19,7 @@ internal sealed class BrokerClientsConfiguratorsInvoker
 
     private readonly ISilverbackLogger<BrokerClientsConfigurationBuilder> _logger;
 
-    public BrokerClientsConfiguratorsInvoker(
+    public BrokerClientsBootstrapper(
         IServiceScopeFactory scopeFactory,
         IBrokerClientCallbacksInvoker callbackInvoker,
         ISilverbackLogger<BrokerClientsConfigurationBuilder> logger)
@@ -30,7 +29,7 @@ internal sealed class BrokerClientsConfiguratorsInvoker
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
-    public async ValueTask InvokeConfiguratorsAsync()
+    public async ValueTask InitializeAllAsync()
     {
         using IServiceScope? scope = _scopeFactory.CreateScope();
 

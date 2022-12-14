@@ -15,9 +15,9 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
 {
     private readonly BrokerClientCollection _brokerClients;
 
-    private readonly BrokerClientsConfiguratorsInvoker _brokerClientsConfiguratorsInvoker;
+    private readonly BrokerClientsBootstrapper _brokerClientsBootstrapper;
 
-    private readonly BrokerConnectionOptions _connectionOptions;
+    private readonly BrokerClientConnectionOptions _clientConnectionOptions;
 
     private readonly ISilverbackLogger<BrokerClientsConnectorService> _logger;
 
@@ -25,13 +25,13 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
 
     public BrokerClientsConnector(
         BrokerClientCollection brokerClients,
-        BrokerClientsConfiguratorsInvoker brokerClientsConfiguratorsInvoker,
-        BrokerConnectionOptions connectionOptions,
+        BrokerClientsBootstrapper brokerClientsBootstrapper,
+        BrokerClientConnectionOptions clientConnectionOptions,
         ISilverbackLogger<BrokerClientsConnectorService> logger)
     {
         _brokerClients = Check.NotNull(brokerClients, nameof(brokerClients));
-        _brokerClientsConfiguratorsInvoker = Check.NotNull(brokerClientsConfiguratorsInvoker, nameof(brokerClientsConfiguratorsInvoker));
-        _connectionOptions = Check.NotNull(connectionOptions, nameof(connectionOptions));
+        _brokerClientsBootstrapper = Check.NotNull(brokerClientsBootstrapper, nameof(brokerClientsBootstrapper));
+        _clientConnectionOptions = Check.NotNull(clientConnectionOptions, nameof(clientConnectionOptions));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -43,7 +43,7 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
 
         _isInitialized = true;
 
-        await _brokerClientsConfiguratorsInvoker.InvokeConfiguratorsAsync().ConfigureAwait(false);
+        await _brokerClientsBootstrapper.InitializeAllAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.ConnectAllAsync" />
@@ -64,7 +64,7 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
             {
                 _logger.LogBrokerClientsInitializationError(ex);
 
-                if (!_connectionOptions.RetryOnFailure)
+                if (!_clientConnectionOptions.RetryOnFailure)
                     break;
             }
 
@@ -79,7 +79,7 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
     {
         try
         {
-            await Task.Delay(_connectionOptions.RetryInterval, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(_clientConnectionOptions.RetryInterval, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

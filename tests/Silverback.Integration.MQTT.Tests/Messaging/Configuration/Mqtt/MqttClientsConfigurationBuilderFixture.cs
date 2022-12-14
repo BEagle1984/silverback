@@ -43,7 +43,7 @@ public class MqttClientsConfigurationBuilderFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic2")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(1);
@@ -797,7 +797,7 @@ public class MqttClientsConfigurationBuilderFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
@@ -837,7 +837,7 @@ public class MqttClientsConfigurationBuilderFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic3"))
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("topic4")))));
 
-        await serviceProvider.GetRequiredService<BrokerClientsConfiguratorsInvoker>().InvokeConfiguratorsAsync();
+        await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
         ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
         producers.Should().HaveCount(2);
