@@ -20,7 +20,7 @@ public partial class MqttTestingHelper
     {
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        using IServiceScope? scope = _serviceScopeFactory.CreateScope();
+        using IServiceScope scope = _serviceScopeFactory.CreateScope();
         MqttClientsInitializer? clientsInitializer = scope.ServiceProvider.GetService<MqttClientsInitializer>();
 
         if (clientsInitializer == null)

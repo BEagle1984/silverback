@@ -226,7 +226,7 @@ public static class RawProduceComparison
         string runTitle = GetRunTitle("Silverback ProduceAsync not awaited", lingerMs, batchSize);
         WriteTitle(runTitle);
 
-        ServiceProvider? serviceProvider = new ServiceCollection()
+        ServiceProvider serviceProvider = new ServiceCollection()
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -282,7 +282,7 @@ public static class RawProduceComparison
         string runTitle = GetRunTitle("Silverback ProduceAsync w/ callbacks", lingerMs, batchSize);
         WriteTitle(runTitle);
 
-        ServiceProvider? serviceProvider = new ServiceCollection()
+        ServiceProvider serviceProvider = new ServiceCollection()
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -346,7 +346,7 @@ public static class RawProduceComparison
         string runTitle = GetRunTitle("Silverback Produce w/ callbacks", lingerMs, batchSize);
         WriteTitle(runTitle);
 
-        ServiceProvider? serviceProvider = new ServiceCollection()
+        ServiceProvider serviceProvider = new ServiceCollection()
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -408,7 +408,7 @@ public static class RawProduceComparison
         string runTitle = GetRunTitle("Silverback RawProduceAsync w/ callbacks", lingerMs, batchSize);
         WriteTitle(runTitle);
 
-        ServiceProvider? serviceProvider = new ServiceCollection()
+        ServiceProvider serviceProvider = new ServiceCollection()
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())
@@ -474,7 +474,7 @@ public static class RawProduceComparison
             batchSize);
         WriteTitle(runTitle);
 
-        ServiceProvider? serviceProvider = new ServiceCollection()
+        ServiceProvider serviceProvider = new ServiceCollection()
             .AddLogging()
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options.AddKafka())

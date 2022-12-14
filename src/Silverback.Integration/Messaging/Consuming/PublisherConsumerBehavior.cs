@@ -133,7 +133,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 sequence.SequenceId
             });
 
-        IStreamPublisher? publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
+        IStreamPublisher publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
         IReadOnlyCollection<Task> processingTasks = await publisher.PublishAsync(sequence.StreamProvider).ConfigureAwait(false);
 

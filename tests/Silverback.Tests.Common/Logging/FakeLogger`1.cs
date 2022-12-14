@@ -19,8 +19,8 @@ public class FakeLogger<T> : ILogger<T>
         LogLevel logLevel,
         EventId eventId,
         TState state,
-        Exception exception,
-        Func<TState, Exception, string> formatter) => _logger.Log(
+        Exception? exception,
+        Func<TState, Exception?, string> formatter) => _logger.Log(
         logLevel,
         eventId,
         state,
@@ -29,5 +29,6 @@ public class FakeLogger<T> : ILogger<T>
 
     public bool IsEnabled(LogLevel logLevel) => _logger.IsEnabled(logLevel);
 
-    public IDisposable BeginScope<TState>(TState state) => _logger.BeginScope(state);
+    public IDisposable? BeginScope<TState>(TState state)
+        where TState : notnull => _logger.BeginScope(state);
 }

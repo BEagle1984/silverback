@@ -29,8 +29,8 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
         LogLevel logLevel,
         EventId eventId,
         TState state,
-        Exception exception,
-        Func<TState, Exception, string> formatter) =>
+        Exception? exception,
+        Func<TState, Exception?, string> formatter) =>
         _innerLogger.Log(
             GetActualLogLevel(
                 logLevel,

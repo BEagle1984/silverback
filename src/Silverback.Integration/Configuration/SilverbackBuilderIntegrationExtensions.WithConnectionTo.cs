@@ -68,9 +68,9 @@ public static partial class SilverbackBuilderIntegrationExtensions
         builder.Services
             .AddSingleton<BrokerClientCollection>()
             .AddSingleton<ProducerCollection>()
-            .AddSingleton<IProducerCollection>(serviceProvider => serviceProvider.GetService<ProducerCollection>())
+            .AddSingleton<IProducerCollection>(serviceProvider => serviceProvider.GetRequiredService<ProducerCollection>())
             .AddSingleton<ConsumerCollection>()
-            .AddSingleton<IConsumerCollection>(serviceProvider => serviceProvider.GetService<ConsumerCollection>())
+            .AddSingleton<IConsumerCollection>(serviceProvider => serviceProvider.GetRequiredService<ConsumerCollection>())
             .AddHostedService<BrokerClientsConnectorService>()
             .AddTransient<IBrokerClientsConnector, BrokerClientsConnector>()
             .AddTransient<BrokerClientsBootstrapper>()

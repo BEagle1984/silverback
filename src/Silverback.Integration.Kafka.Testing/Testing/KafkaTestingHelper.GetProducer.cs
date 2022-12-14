@@ -20,7 +20,7 @@ public partial class KafkaTestingHelper
     {
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        using IServiceScope? scope = _serviceScopeFactory.CreateScope();
+        using IServiceScope scope = _serviceScopeFactory.CreateScope();
         KafkaProducersInitializer? producersInitializer = scope.ServiceProvider.GetService<KafkaProducersInitializer>();
 
         if (producersInitializer == null)

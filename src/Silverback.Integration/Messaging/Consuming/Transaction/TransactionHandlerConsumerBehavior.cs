@@ -43,7 +43,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
         try
         {
-            IServiceScope? scope = context.ServiceProvider.CreateScope();
+            IServiceScope scope = context.ServiceProvider.CreateScope();
 
             context.ReplaceServiceScope(scope);
             context.TransactionManager = new ConsumerTransactionManager(

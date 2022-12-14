@@ -21,7 +21,7 @@ public partial class SilverbackBuilder
         where TFactoryInterface : class
         where TFactory : class, TFactoryInterface, IExtensibleFactory, new()
     {
-        Services.AddSingleton<TFactoryInterface, TFactory>(serviceProvider => serviceProvider.GetService<TFactory>())
+        Services.AddSingleton<TFactoryInterface, TFactory>(serviceProvider => serviceProvider.GetRequiredService<TFactory>())
             .AddSingleton(new TFactory());
 
         return this;
@@ -37,7 +37,7 @@ public partial class SilverbackBuilder
         where TFactoryInterface : class
         where TFactory : class, TFactoryInterface, ITypeBasedExtensibleFactory, new()
     {
-        Services.AddSingleton<TFactoryInterface, TFactory>(serviceProvider => serviceProvider.GetService<TFactory>())
+        Services.AddSingleton<TFactoryInterface, TFactory>(serviceProvider => serviceProvider.GetRequiredService<TFactory>())
             .AddSingleton(new TFactory());
 
         return this;

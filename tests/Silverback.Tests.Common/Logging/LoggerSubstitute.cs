@@ -76,7 +76,8 @@ public class LoggerSubstitute : ILogger
 
     public bool IsEnabled(LogLevel logLevel) => logLevel >= _factory.MinLevel;
 
-    public IDisposable BeginScope<TState>(TState state) => null!;
+    public IDisposable? BeginScope<TState>(TState state)
+        where TState : notnull => null;
 
     private bool ContainsMatchingCall(
         LogLevel logLevel,

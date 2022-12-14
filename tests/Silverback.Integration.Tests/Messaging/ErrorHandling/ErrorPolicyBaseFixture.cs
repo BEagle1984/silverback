@@ -226,7 +226,7 @@ public class ErrorPolicyBaseFixture
     public async Task HandleErrorAsync_ShouldPublishMessage()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
-        ServiceProvider? serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
+        ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
         IErrorPolicyImplementation policy = new TestErrorPolicy
@@ -253,7 +253,7 @@ public class ErrorPolicyBaseFixture
     public async Task HandleErrorAsync_ShouldNotPublishMessage_WhenFactoryReturnsNull()
     {
         IPublisher? publisher = Substitute.For<IPublisher>();
-        ServiceProvider? serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
+        ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
         IErrorPolicyImplementation policy = new TestErrorPolicy

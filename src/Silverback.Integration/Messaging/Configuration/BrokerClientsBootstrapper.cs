@@ -31,7 +31,7 @@ internal sealed class BrokerClientsBootstrapper
 
     public async ValueTask InitializeAllAsync()
     {
-        using IServiceScope? scope = _scopeFactory.CreateScope();
+        using IServiceScope scope = _scopeFactory.CreateScope();
 
         InvokeConfigurators(scope);
         InvokeClientsInitializers(scope);
@@ -73,7 +73,7 @@ internal sealed class BrokerClientsBootstrapper
 
     private async ValueTask InvokeCallbacksAsync()
     {
-        using IServiceScope? scope = _scopeFactory.CreateScope();
+        using IServiceScope scope = _scopeFactory.CreateScope();
         await _callbackInvoker.InvokeAsync<IBrokerClientsConfiguredCallback>(
                 handler => handler.OnBrokerClientsConfiguredAsync(),
                 scope.ServiceProvider)
