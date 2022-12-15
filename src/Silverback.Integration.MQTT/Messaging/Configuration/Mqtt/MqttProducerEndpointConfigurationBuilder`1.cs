@@ -37,10 +37,6 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
     {
     }
 
-    /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
-    // TODO: Test
-    public override string? EndpointRawName => _endpointResolver?.RawName;
-
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.This" />
     protected override MqttProducerEndpointConfigurationBuilder<TMessage> This => this;
 

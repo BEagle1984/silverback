@@ -31,10 +31,6 @@ public class MqttConsumerEndpointConfigurationBuilder<TMessage>
     {
     }
 
-    /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
-    // TODO: Test
-    public override string? EndpointRawName => _topicNames == null ? null : string.Join(',', _topicNames);
-
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.This" />
     protected override MqttConsumerEndpointConfigurationBuilder<TMessage> This => this;
 

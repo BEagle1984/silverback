@@ -408,16 +408,6 @@ public static class IntegrationLogEvents
         "Null message skipped.");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being skipped
-    ///     since already processed (according to the stored offsets or message id).
-    /// </summary>
-    // TODO: Still needed in this form?
-    public static LogEvent MessageAlreadyProcessed { get; } = new(
-        LogLevel.Information,
-        GetEventId(72, nameof(MessageAlreadyProcessed)),
-        "Message skipped because already processed.");
-
-    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written
     ///     to the outbox.
     /// </summary>

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-// TODO: Rename namespace to Producer or Producing
 namespace Silverback.Messaging.Producing;
 
 /// <summary>

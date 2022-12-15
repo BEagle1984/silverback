@@ -36,8 +36,6 @@ internal sealed class ConsumerLogger
 
     private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _nullMessageSkipped;
 
-    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _messageAlreadyProcessed;
-
     private readonly Action<ILogger, string, string, string?, string?, string?, string?, Exception?> _invalidMessageConsumed;
 
     public ConsumerLogger(IBrokerLogEnricher logEnricher)
@@ -54,7 +52,6 @@ internal sealed class ConsumerLogger
         _rollbackToRetryFailed = _logEnricher.Define(IntegrationLogEvents.RollbackToRetryFailed);
         _rollbackToSkipFailed = _logEnricher.Define(IntegrationLogEvents.RollbackToSkipFailed);
         _nullMessageSkipped = _logEnricher.Define(IntegrationLogEvents.NullMessageSkipped);
-        _messageAlreadyProcessed = _logEnricher.Define(IntegrationLogEvents.MessageAlreadyProcessed);
         _invalidMessageConsumed = _logEnricher.Define<string>(IntegrationLogEvents.InvalidMessageConsumed);
     }
 
@@ -254,26 +251,6 @@ internal sealed class ConsumerLogger
             envelope.BrokerMessageIdentifier);
 
         _nullMessageSkipped.Invoke(
-            logger.InnerLogger,
-            envelope.Endpoint.DisplayName,
-            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-            value1,
-            value2,
-            null);
-    }
-
-    public void LogAlreadyProcessed(ISilverbackLogger logger, IRawInboundEnvelope envelope)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.MessageAlreadyProcessed))
-            return;
-
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-            envelope.Endpoint,
-            envelope.Headers,
-            envelope.BrokerMessageIdentifier);
-
-        _messageAlreadyProcessed.Invoke(
             logger.InnerLogger,
             envelope.Endpoint.DisplayName,
             envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),

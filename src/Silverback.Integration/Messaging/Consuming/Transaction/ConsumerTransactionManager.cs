@@ -48,9 +48,6 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <inheritdoc cref="IConsumerTransactionManager.Aborted" />
     public AsyncEvent<ConsumerPipelineContext> Aborted { get; } = new();
 
-    /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
-    public bool IsCompleted => _isAborted || _isCommitted;
-
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public async Task CommitAsync()
     {

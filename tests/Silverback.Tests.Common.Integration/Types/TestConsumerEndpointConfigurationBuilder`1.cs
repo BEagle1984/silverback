@@ -13,8 +13,6 @@ public class TestConsumerEndpointConfigurationBuilder<TMessage>
     {
     }
 
-    public override string EndpointRawName => "test";
-
     protected override TestConsumerEndpointConfigurationBuilder<TMessage> This => this;
 
     protected override TestConsumerEndpointConfiguration CreateConfiguration() => new("test");

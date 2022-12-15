@@ -44,7 +44,6 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     ///     Gets the strategy to be used to produce the messages.
     ///     The default is the <see cref="DefaultProduceStrategy" />.
     /// </summary>
-    // TODO: Remove and replace just producer in route?
     public IProduceStrategy Strategy { get; init; } = new DefaultProduceStrategy();
 
     /// <summary>

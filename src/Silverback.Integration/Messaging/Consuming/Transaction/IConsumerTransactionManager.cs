@@ -33,11 +33,6 @@ public interface IConsumerTransactionManager
     AsyncEvent<ConsumerPipelineContext> Aborted { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether the transaction has completed.
-    /// </summary>
-    bool IsCompleted { get; }
-
-    /// <summary>
     ///     Commits the transaction.
     /// </summary>
     /// <returns>

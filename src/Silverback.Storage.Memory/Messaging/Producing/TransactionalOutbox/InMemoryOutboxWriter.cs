@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Threading.Tasks;
-using Silverback.Collections;
 using Silverback.Storage;
 using Silverback.Util;
 
@@ -13,17 +12,17 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class InMemoryOutboxWriter : IOutboxWriter
 {
-    private readonly InMemoryStorage<OutboxMessage> _storage;
+    private readonly InMemoryOutbox _outbox;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="InMemoryOutboxWriter" /> class.
     /// </summary>
-    /// <param name="storage">
-    ///     The in-memory storage shared between the <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" />.
+    /// <param name="outbox">
+    ///     The in-memory outbox shared between the <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" />.
     /// </param>
-    public InMemoryOutboxWriter(InMemoryStorage<OutboxMessage> storage)
+    public InMemoryOutboxWriter(InMemoryOutbox outbox)
     {
-        _storage = Check.NotNull(storage, nameof(storage));
+        _outbox = Check.NotNull(outbox, nameof(outbox));
     }
 
     /// <inheritdoc cref="AddAsync" />
@@ -34,7 +33,7 @@ public class InMemoryOutboxWriter : IOutboxWriter
             // TODO: Log warning
         }
 
-        _storage.Add(outboxMessage);
+        _outbox.Add(outboxMessage);
         return Task.CompletedTask;
     }
 }

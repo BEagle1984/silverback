@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Collections;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -14,33 +13,33 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class InMemoryOutboxReader : IOutboxReader
 {
-    private readonly InMemoryStorage<OutboxMessage> _storage;
+    private readonly InMemoryOutbox _outbox;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="InMemoryOutboxReader" /> class.
     /// </summary>
-    /// <param name="storage">
-    ///     The in-memory storage shared between the <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" />.
+    /// <param name="outbox">
+    ///     The in-memory outbox shared between the <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" />.
     /// </param>
-    public InMemoryOutboxReader(InMemoryStorage<OutboxMessage> storage)
+    public InMemoryOutboxReader(InMemoryOutbox outbox)
     {
-        _storage = Check.NotNull(storage, nameof(storage));
+        _outbox = Check.NotNull(outbox, nameof(outbox));
     }
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
-    public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => Task.FromResult(_storage.Get(count));
+    public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) => Task.FromResult(_outbox.Get(count));
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
-    public Task<int> GetLengthAsync() => Task.FromResult(_storage.ItemsCount);
+    public Task<int> GetLengthAsync() => Task.FromResult(_outbox.ItemsCount);
 
     /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
-    public Task<TimeSpan> GetMaxAgeAsync() => Task.FromResult(_storage.GetMaxAge());
+    public Task<TimeSpan> GetMaxAgeAsync() => Task.FromResult(_outbox.GetMaxAge());
 
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
     public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
-        _storage.Remove(outboxMessages);
+        _outbox.Remove(outboxMessages);
         return Task.CompletedTask;
     }
 }

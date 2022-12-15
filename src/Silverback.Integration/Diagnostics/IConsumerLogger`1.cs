@@ -116,14 +116,6 @@ public interface IConsumerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     void LogNullMessageSkipped(IRawInboundEnvelope envelope);
 
     /// <summary>
-    ///     Logs the <see cref="IntegrationLogEvents.MessageAlreadyProcessed" /> event.
-    /// </summary>
-    /// <param name="envelope">
-    ///     The <see cref="IRawInboundEnvelope" />.
-    /// </param>
-    void LogAlreadyProcessed(IRawInboundEnvelope envelope);
-
-    /// <summary>
     ///     Logs the <see cref="IntegrationLogEvents.InvalidMessageConsumed" /> event.
     /// </summary>
     /// <param name="envelope">

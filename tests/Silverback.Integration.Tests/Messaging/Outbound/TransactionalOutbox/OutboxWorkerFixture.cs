@@ -51,8 +51,8 @@ public class OutboxWorkerFixture
     //                     .AddOutbound<TestEventTwo>(_configuration2)));
     //     IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
     //     IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
-    //     InMemoryStorageFactory storageFactory = serviceProvider.GetRequiredService<InMemoryStorageFactory>();
-    //     InMemoryStorage<OutboxMessage> storage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(outboxSettings);
+    //     InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
+    //     InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
     //     TestBroker broker = serviceProvider.GetRequiredService<TestBroker>();
     //     IOutboxWorker outboxWorker = serviceProvider.GetServices<IHostedService>().OfType<OutboxWorkerService>().Single().OutboxWorker;
     //

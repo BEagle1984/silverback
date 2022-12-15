@@ -3,24 +3,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Util;
 
-namespace Silverback.Collections;
+namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <summary>
-///     This class is used as in-memory storage for various items.
+///     The in-memory outbox.
 /// </summary>
-/// <typeparam name="T">
-///     The type of the entities.
-/// </typeparam>
-// TODO: Rename to InMemoryStore (unify with other stores)
-// TODO: Needed only to share items between outbox reader and writer? Does it make sense to keep it abstracted and in its own namespace?
-public class InMemoryStorage<T>
-    where T : class
+public class InMemoryOutbox
 {
-    private readonly List<InMemoryStoredItem<T>> _items = new();
+    private readonly List<StoredOutboxMessage> _storedOutboxMessages = new();
 
     /// <summary>
     ///     Gets the number of items in the storage.
@@ -29,9 +22,9 @@ public class InMemoryStorage<T>
     {
         get
         {
-            lock (_items)
+            lock (_storedOutboxMessages)
             {
-                return _items.Count;
+                return _storedOutboxMessages.Count;
             }
         }
     }
@@ -44,12 +37,12 @@ public class InMemoryStorage<T>
     /// </returns>
     public TimeSpan GetMaxAge()
     {
-        lock (_items)
+        lock (_storedOutboxMessages)
         {
-            if (_items.Count == 0)
+            if (_storedOutboxMessages.Count == 0)
                 return TimeSpan.Zero;
 
-            DateTime oldestInsertDateTime = _items.Min(item => item.InsertDateTime);
+            DateTime oldestInsertDateTime = _storedOutboxMessages.Min(item => item.InsertDateTime);
 
             return oldestInsertDateTime == default
                 ? TimeSpan.Zero
@@ -66,50 +59,52 @@ public class InMemoryStorage<T>
     /// <returns>
     ///     The items.
     /// </returns>
-    public IReadOnlyCollection<T> Get(int count)
+    public IReadOnlyCollection<OutboxMessage> Get(int count)
     {
-        lock (_items)
+        lock (_storedOutboxMessages)
         {
-            return _items.Take(count).Select(item => item.Item).ToList();
+            return _storedOutboxMessages.Take(count).Select(storedOutboxMessage => storedOutboxMessage.OutboxMessage).ToArray();
         }
     }
 
     /// <summary>
     ///     Adds the specified item to the storage.
     /// </summary>
-    /// <param name="item">
-    ///     The item to add.
+    /// <param name="outboxMessage">
+    ///     The message to add.
     /// </param>
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "_items is locked when used inside SinglePhaseNotification")]
-    public void Add(T item)
+    public void Add(OutboxMessage outboxMessage)
     {
-        InMemoryStoredItem<T> inMemoryStoredItem = new(item);
-
-        lock (_items)
+        lock (_storedOutboxMessages)
         {
-            _items.Add(inMemoryStoredItem);
+            _storedOutboxMessages.Add(new StoredOutboxMessage(outboxMessage));
         }
     }
 
     /// <summary>
     ///     Removes the specified items from the storage.
     /// </summary>
-    /// <param name="itemsToRemove">
-    ///     The items to remove.
+    /// <param name="outboxMessages">
+    ///     The messages to remove.
     /// </param>
-    public void Remove(IEnumerable<T> itemsToRemove)
+    public void Remove(IEnumerable<OutboxMessage> outboxMessages)
     {
-        Check.NotNull(itemsToRemove, nameof(itemsToRemove));
+        Check.NotNull(outboxMessages, nameof(outboxMessages));
 
-        lock (_items)
+        lock (_storedOutboxMessages)
         {
-            foreach (T itemToRemove in itemsToRemove)
+            foreach (OutboxMessage outboxMessage in outboxMessages)
             {
-                int index = _items.FindIndex(item => item.Item == itemToRemove);
+                int index = _storedOutboxMessages.FindIndex(storedOutboxMessage => storedOutboxMessage.OutboxMessage == outboxMessage);
 
                 if (index >= 0)
-                    _items.RemoveAt(index);
+                    _storedOutboxMessages.RemoveAt(index);
             }
         }
+    }
+
+    private record StoredOutboxMessage(OutboxMessage OutboxMessage)
+    {
+        public DateTime InsertDateTime { get; } = DateTime.UtcNow;
     }
 }

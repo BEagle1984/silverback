@@ -14,19 +14,17 @@ namespace Silverback.Configuration;
 public static class SilverbackBuilderMqttExtensions
 {
     /// <summary>
-    ///     Adds the MQTT endpoints.
+    ///     Adds the MQTT clients.
     /// </summary>
     /// <param name="silverbackBuilder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </param>
     /// <param name="configureAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientsConfigurationBuilder" /> and adds
-    ///     the outbound and inbound endpoints.
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientsConfigurationBuilder" /> and configures the clients.
     /// </param>
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: Review summary and document in release notes
     public static SilverbackBuilder AddMqttClients(
         this SilverbackBuilder silverbackBuilder,
         Action<MqttClientsConfigurationBuilder> configureAction)

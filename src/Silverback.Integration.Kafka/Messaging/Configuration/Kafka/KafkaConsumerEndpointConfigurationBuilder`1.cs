@@ -35,12 +35,6 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     {
     }
 
-    /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.EndpointRawName" />
-    // TODO: Test
-    public override string? EndpointRawName => _topicPartitionOffsets == null
-        ? null
-        : string.Join(',', _topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.Topic));
-
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.This" />
     protected override KafkaConsumerEndpointConfigurationBuilder<TMessage> This => this;
 

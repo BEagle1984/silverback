@@ -124,11 +124,4 @@ public partial class OffsetStoreFixture
         await AsyncTestingUtil.WaitAsync(() => received >= 8);
         received.Should().Be(8);
     }
-
-    [Fact]
-    public Task ConsumerEndpoint_ShouldIgnoreTransaction_WhenUsingInMemoryStorage()
-    {
-        // TODO: Implement
-        return Task.CompletedTask;
-    }
 }

@@ -49,7 +49,7 @@ public interface IConsumer
     ///     soon as the stopping signal has been sent, while the process will be completed in another asynchronous
     ///     <see cref="Task" />.
     /// </returns>
-    ValueTask TriggerReconnectAsync(); // TODO: Check name
+    ValueTask TriggerReconnectAsync();
 
     /// <summary>
     ///     Starts consuming. Used after <see cref="StopAsync" /> has been called to resume consuming.

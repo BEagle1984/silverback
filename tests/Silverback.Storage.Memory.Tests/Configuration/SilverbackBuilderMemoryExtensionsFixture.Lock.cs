@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.Memory.Configuration;
 
-public partial class SilverbackBuilderMemoryExtensionsFixture
+public class SilverbackBuilderMemoryExtensionsFixture
 {
     [Fact]
     public void AddInMemoryLock_ShouldConfigureLockFactory()

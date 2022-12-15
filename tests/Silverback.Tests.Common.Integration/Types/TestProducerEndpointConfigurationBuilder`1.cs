@@ -15,8 +15,6 @@ public class TestProducerEndpointConfigurationBuilder<TMessage>
     {
     }
 
-    public override string EndpointRawName => _topic;
-
     protected override TestProducerEndpointConfigurationBuilder<TMessage> This => this;
 
     public TestProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic)

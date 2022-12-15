@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Collections;
 using Silverback.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
@@ -36,23 +35,10 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
         if (readerFactory == null || writerFactory == null)
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
-        InMemoryStorageFactory? storageFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<InMemoryStorageFactory>();
+        InMemoryOutboxFactory outboxFactory = GetInMemoryOutboxFactory(builder);
 
-        if (storageFactory == null)
-            throw new InvalidOperationException("InMemoryStorageFactory not found, AddInMemoryStorage has not been called.");
-
-        readerFactory.OverrideFactories(
-            settings =>
-            {
-                InMemoryStorage<OutboxMessage> inMemoryStorage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(settings);
-                return new InMemoryOutboxReader(inMemoryStorage);
-            });
-        writerFactory.OverrideFactories(
-            settings =>
-            {
-                InMemoryStorage<OutboxMessage> inMemoryStorage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(settings);
-                return new InMemoryOutboxWriter(inMemoryStorage);
-            });
+        readerFactory.OverrideFactories(settings => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
+        writerFactory.OverrideFactories(settings => new InMemoryOutboxWriter(outboxFactory.GetOutbox(settings)));
 
         return builder;
     }
@@ -70,41 +56,35 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        builder.SilverbackBuilder.AddInMemoryStorage();
-
         OutboxReaderFactory? readerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxReaderFactory>();
         OutboxWriterFactory? writerFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<OutboxWriterFactory>();
 
         if (readerFactory == null || writerFactory == null)
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
-        InMemoryStorageFactory? storageFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<InMemoryStorageFactory>();
-
-        if (storageFactory == null)
-            throw new InvalidOperationException("InMemoryStorageFactory not found, AddInMemoryStorage has not been called.");
+        InMemoryOutboxFactory outboxFactory = GetInMemoryOutboxFactory(builder);
 
         if (!readerFactory.HasFactory<InMemoryOutboxSettings>())
-        {
-            readerFactory.AddFactory<InMemoryOutboxSettings>(
-                settings =>
-                {
-                    InMemoryStorage<OutboxMessage> inMemoryStorage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(settings);
-                    return new InMemoryOutboxReader(inMemoryStorage);
-                });
-        }
+            readerFactory.AddFactory<InMemoryOutboxSettings>(settings => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
 
         if (!writerFactory.HasFactory<InMemoryOutboxSettings>())
-        {
-            writerFactory.AddFactory<InMemoryOutboxSettings>(
-                settings =>
-                {
-                    InMemoryStorage<OutboxMessage> inMemoryStorage = storageFactory.GetStorage<OutboxSettings, OutboxMessage>(settings);
-                    return new InMemoryOutboxWriter(inMemoryStorage);
-                });
-        }
+            writerFactory.AddFactory<InMemoryOutboxSettings>(settings => new InMemoryOutboxWriter(outboxFactory.GetOutbox(settings)));
 
         builder.SilverbackBuilder.AddInMemoryLock();
 
         return builder;
+    }
+
+    private static InMemoryOutboxFactory GetInMemoryOutboxFactory(BrokerOptionsBuilder builder)
+    {
+        InMemoryOutboxFactory? outboxFactory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<InMemoryOutboxFactory>();
+
+        if (outboxFactory == null)
+        {
+            outboxFactory = new InMemoryOutboxFactory();
+            builder.SilverbackBuilder.Services.AddSingleton(outboxFactory);
+        }
+
+        return outboxFactory;
     }
 }

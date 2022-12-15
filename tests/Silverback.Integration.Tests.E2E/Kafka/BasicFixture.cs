@@ -23,7 +23,6 @@ public class BasicFixture : KafkaFixture
     {
     }
 
-    // TODO: Needed?
     [Fact]
     public async Task ProducerAndConsumerEndpoints_ShouldProduceAndConsume()
     {
