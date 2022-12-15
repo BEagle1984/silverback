@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -24,21 +25,27 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Consumer is not KafkaConsumer kafkaConsumer || kafkaConsumer.Configuration.ClientSideOffsetStore == null)
+        if (context.Consumer is KafkaConsumer { Configuration.ClientSideOffsetStore: { } } kafkaConsumer)
         {
-            await next(context).ConfigureAwait(false);
-            return;
+            context.ServiceProvider
+                .GetRequiredService<SilverbackContext>()
+                .SetKafkaOffsetStoreScope(CreateOffsetStoreScope(context, kafkaConsumer.Configuration.ClientSideOffsetStore));
+            context.TransactionManager.Committing.AddHandler(CommitOffsetsAsync);
         }
 
-        IKafkaOffsetStoreFactory offsetStoreFactory = context.ServiceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        IKafkaOffsetStore offsetStore = offsetStoreFactory.GetStore(kafkaConsumer.Configuration.ClientSideOffsetStore);
-        KafkaOffsetStoreScope offsetStoreScope = new(offsetStore, context);
-
-        SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
-        silverbackContext.SetKafkaOffsetStoreScope(offsetStoreScope);
-
         await next(context).ConfigureAwait(false);
+    }
 
-        await offsetStoreScope.StoreOffsetsAsync().ConfigureAwait(false);
+    private static KafkaOffsetStoreScope CreateOffsetStoreScope(ConsumerPipelineContext context, KafkaOffsetStoreSettings storeSettings) =>
+        new(context.ServiceProvider.GetRequiredService<IKafkaOffsetStoreFactory>().GetStore(storeSettings), context);
+
+    private static ValueTask CommitOffsetsAsync(ConsumerPipelineContext context)
+    {
+        SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
+
+        if (!silverbackContext.TryGetKafkaOffsetStoreScope(out KafkaOffsetStoreScope? offsetStoreScope))
+            throw new InvalidOperationException("KafkaOffsetStoreScope not found.");
+
+        return new ValueTask(offsetStoreScope.StoreOffsetsAsync());
     }
 }

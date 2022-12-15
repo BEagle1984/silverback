@@ -10,6 +10,5 @@ namespace Silverback.Messaging.Broker;
 
 internal class ConsumerCollection : List<IConsumer>, IConsumerCollection, IAsyncDisposable
 {
-    // TODO: Implement find methods (by id/name/friendly name)
     public ValueTask DisposeAsync() => this.DisposeAllAsync();
 }

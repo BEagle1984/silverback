@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,6 +17,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Storage;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
@@ -232,5 +234,67 @@ public partial class OffsetStoreFixture
 
         await AsyncTestingUtil.WaitAsync(() => received >= 13);
         received.Should().Be(13);
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldStoreBatchOffsets_WhenUsingSqlite()
+    {
+        int received = 0;
+
+        await Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
+                            .AddSqliteKafkaOffsetStore())
+                    .AddKafkaClients(
+                        clients => clients
+                            .WithBootstrapServers("PLAINTEXT://e2e")
+                            .AddConsumer(
+                                consumer => consumer
+                                    .WithGroupId(DefaultGroupId)
+                                    .DisableOffsetsCommit()
+                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(Host.SqliteConnectionString))
+                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(5))))
+                    .AddDelegateSubscriber<IEnumerable<TestEventOne>>(
+                        batch =>
+                            batch.ForEach(_ => Interlocked.Increment(ref received)))
+                    .AddIntegrationSpy())
+            .RunAsync(waitUntilBrokerClientsConnected: false);
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(Host.SqliteConnectionString);
+
+        await Helper.WaitUntilConnectedAsync();
+
+        KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        for (int i = 0; i < 5; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => received >= 5);
+
+        received.Should().Be(5);
+        Helper.ConsumerGroups.Should().HaveCount(1);
+        Helper.ConsumerGroups.First().CommittedOffsets.Should().BeEmpty();
+
+        await consumer.Client.DisconnectAsync();
+
+        // If offsets are properly stored, those will be used to reposition while reconnecting
+        await consumer.Client.ConnectAsync();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne());
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => received >= 8);
+        received.Should().Be(8);
     }
 }

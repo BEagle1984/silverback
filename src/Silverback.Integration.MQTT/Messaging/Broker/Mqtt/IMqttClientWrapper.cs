@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 public interface IMqttClientWrapper : IBrokerClient, IApplicationMessageReceiver
 {
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TSender}" /> that is fired when the connection with the broker is established.
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the connection with the broker is established.
     /// </summary>
     AsyncEvent<BrokerClient> Connected { get; }
 

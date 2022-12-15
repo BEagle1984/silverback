@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Broker;
 
@@ -12,18 +11,6 @@ namespace Silverback.Messaging.Broker;
 /// </summary>
 public interface IProducerCollection : IReadOnlyList<IProducer>
 {
-    /// <summary>
-    ///     Adds the specified producer to the collection.
-    /// </summary>
-    /// <param name="producer">
-    ///     The <see cref="IProducer" />.
-    /// </param>
-    /// <param name="routing">
-    ///     An optional value specifying whether the messages published to the in-memory bus must be routed to this producer, when compatible
-    ///     with the type specified by the <see cref="ProducerEndpointConfiguration.MessageType" />.
-    /// </param>
-    void Add(IProducer producer, bool routing = true);
-
     /// <summary>
     ///     Gets a producer for the specified endpoint.
     /// </summary>

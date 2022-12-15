@@ -104,8 +104,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
         {
             try
             {
-                await context.TransactionManager.RollbackAsync(exception, stopConsuming: false)
-                    .ConfigureAwait(false);
+                await context.TransactionManager.RollbackAsync(exception, stopConsuming: false).ConfigureAwait(false);
 
                 return true;
             }

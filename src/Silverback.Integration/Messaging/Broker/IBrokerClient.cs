@@ -23,25 +23,25 @@ public interface IBrokerClient : IDisposable, IAsyncDisposable
     string DisplayName { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TSender}" /> that is fired when the <see cref="ConnectAsync" /> method is called
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="ConnectAsync" /> method is called
     ///     and the client is initializing.
     /// </summary>
     AsyncEvent<BrokerClient> Initializing { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TSender}" /> that is fired when the <see cref="ConnectAsync" /> method has been called
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="ConnectAsync" /> method has been called
     ///     and the client has been successfully initialized. The connection with the broker will eventually be established.
     /// </summary>
     AsyncEvent<BrokerClient> Initialized { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TSender}" /> that is fired when the <see cref="DisconnectAsync" /> method is called
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="DisconnectAsync" /> method is called
     ///     and the client is disconnecting.
     /// </summary>
     AsyncEvent<BrokerClient> Disconnecting { get; }
 
     /// <summary>
-    ///     Gets the <see cref="AsyncEvent{TSender}" /> that is fired when the <see cref="DisconnectAsync" /> method has been called
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the <see cref="DisconnectAsync" /> method has been called
     ///     and the client is disconnected.
     /// </summary>
     AsyncEvent<BrokerClient> Disconnected { get; }

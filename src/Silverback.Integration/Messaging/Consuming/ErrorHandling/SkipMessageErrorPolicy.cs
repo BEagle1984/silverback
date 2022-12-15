@@ -77,8 +77,7 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
         {
             try
             {
-                await context.TransactionManager.RollbackAsync(exception, true)
-                    .ConfigureAwait(false);
+                await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 
                 return true;
             }

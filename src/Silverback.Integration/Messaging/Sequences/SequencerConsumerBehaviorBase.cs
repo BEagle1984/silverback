@@ -202,8 +202,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
         while (!addToSequenceResult.IsSuccess);
 
-        _logger.LogMessageAddedToSequence(context.Envelope, sequence);
         AddSequenceTagToActivity(sequence);
+        _logger.LogMessageAddedToSequence(context.Envelope, sequence);
 
         return sequence;
     }

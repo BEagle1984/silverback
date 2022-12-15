@@ -3,27 +3,39 @@
 
 using System;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Consuming.Transaction;
 
 /// <summary>
-///     Handles the consumer transaction. It commits or rolls back both the consumer and the enlisted
-///     transactional services (see <see cref="ITransactional" />).
+///     Handles the consumer transaction.
 /// </summary>
 public interface IConsumerTransactionManager
 {
     /// <summary>
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired before the consumer is committed.
+    /// </summary>
+    AsyncEvent<ConsumerPipelineContext> Committing { get; }
+
+    /// <summary>
+    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is committed.
+    /// </summary>
+    AsyncEvent<ConsumerPipelineContext> Committed { get; }
+
+    /// <summary>
+    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is before the consumer is aborted.
+    /// </summary>
+    AsyncEvent<ConsumerPipelineContext> Aborting { get; }
+
+    /// <summary>
+    ///    Gets the <see cref="AsyncEvent{TArg}" /> that is after the consumer is aborted.
+    /// </summary>
+    AsyncEvent<ConsumerPipelineContext> Aborted { get; }
+
+    /// <summary>
     ///     Gets a value indicating whether the transaction has completed.
     /// </summary>
     bool IsCompleted { get; }
-
-    /// <summary>
-    ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
-    /// </summary>
-    /// <param name="transactionalService">
-    ///     The service to be enlisted.
-    /// </param>
-    void Enlist(ITransactional transactionalService);
 
     /// <summary>
     ///     Commits the transaction.

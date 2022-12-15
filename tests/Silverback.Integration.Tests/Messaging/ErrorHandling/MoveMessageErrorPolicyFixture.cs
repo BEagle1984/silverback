@@ -116,7 +116,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -139,7 +139,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
@@ -164,7 +164,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
@@ -191,7 +191,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
 
@@ -224,7 +224,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
             {
@@ -255,7 +255,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
             {
@@ -289,7 +289,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
@@ -312,7 +312,7 @@ public class MoveMessageErrorPolicyFixture
     {
         IProducer producer = Substitute.For<IProducer>();
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().Add(producer);
+        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
         IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2").Build(_serviceProvider);
         InboundEnvelope envelope = new(
