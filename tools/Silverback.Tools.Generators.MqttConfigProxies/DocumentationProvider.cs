@@ -9,33 +9,40 @@ using MQTTnet.Client.Options;
 namespace Silverback.Tools.Generators.MqttConfigProxies;
 
 [SuppressMessage("ReSharper", "CognitiveComplexity", Justification = "Don't care")]
+[SuppressMessage("Maintainability", "CA1502: Avoid excessive complexity", Justification = "Don't care")]
 internal static class DocumentationProvider
 {
-    public static string GetSummary(PropertyInfo property)
+    public static void AppendSummary(this StringBuilder builder, PropertyInfo property)
     {
+        builder.AppendLine("    /// <summary>");
+
         switch (property.DeclaringType!.Name)
         {
             case nameof(MqttClientOptions):
-                return GetSummaryForMqttClientOptions(property);
+                AppendSummaryForMqttClientOptions(builder, property);
+                break;
             case nameof(MqttClientCredentials):
-                return GetSummaryForMqttClientCredentials(property);
+                AppendSummaryForMqttClientCredentials(builder, property);
+                break;
             case nameof(MqttClientTcpOptions):
-                return GetSummaryForMqttClientTcpOptions(property);
+                AppendSummaryForMqttClientTcpOptions(builder, property);
+                break;
             case nameof(MqttClientWebSocketOptions):
-                return GetSummaryForMqttClientWebSocketOptions(property);
+                AppendSummaryForMqttClientWebSocketOptions(builder, property);
+                break;
             case nameof(MqttClientTlsOptions):
-                return GetSummaryForMqttClientTlsOptions(property);
+                AppendSummaryForMqttClientTlsOptions(builder, property);
+                break;
             case nameof(MqttClientWebSocketProxyOptions):
-                return GetSummaryForMqttClientWebSocketProxyOptions(property);
-            default:
-                return string.Empty;
+                AppendSummaryForMqttClientWebSocketProxyOptions(builder, property);
+                break;
         }
+
+        builder.AppendLine("    /// </summary>");
     }
 
-    private static string GetSummaryForMqttClientOptions(PropertyInfo property)
+    private static void AppendSummaryForMqttClientOptions(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientOptions.ClientId):
@@ -102,17 +109,11 @@ internal static class DocumentationProvider
             case nameof(MqttClientOptions.PacketInspector):
                 builder.AppendLine("    ///     Gets <see cref=\"IMqttPacketInspector\"/> that will be used to inspect packets before they are sent and after they are received.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 
-    private static string GetSummaryForMqttClientCredentials(PropertyInfo property)
+    private static void AppendSummaryForMqttClientCredentials(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientCredentials.Username):
@@ -121,17 +122,11 @@ internal static class DocumentationProvider
             case nameof(MqttClientCredentials.Password):
                 builder.AppendLine("    /// Gets the password.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 
-    private static string GetSummaryForMqttClientTcpOptions(PropertyInfo property)
+    private static void AppendSummaryForMqttClientTcpOptions(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientTcpOptions.Server):
@@ -152,17 +147,11 @@ internal static class DocumentationProvider
             case nameof(MqttClientTcpOptions.AddressFamily):
                 builder.AppendLine("    /// Gets the address family of the underlying <see cref=\"Socket\" />.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 
-    private static string GetSummaryForMqttClientWebSocketOptions(PropertyInfo property)
+    private static void AppendSummaryForMqttClientWebSocketOptions(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientWebSocketOptions.Uri):
@@ -177,17 +166,11 @@ internal static class DocumentationProvider
             case nameof(MqttClientWebSocketOptions.CookieContainer):
                 builder.AppendLine("    /// Gets the cookies associated with the request.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 
-    private static string GetSummaryForMqttClientTlsOptions(PropertyInfo property)
+    private static void AppendSummaryForMqttClientTlsOptions(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientTlsOptions.UseTls):
@@ -209,17 +192,11 @@ internal static class DocumentationProvider
             case nameof(MqttClientTlsOptions.CertificateValidationHandler):
                 builder.AppendLine("    /// Gets the function to be used to validate the remote certificate.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 
-    private static string GetSummaryForMqttClientWebSocketProxyOptions(PropertyInfo property)
+    private static void AppendSummaryForMqttClientWebSocketProxyOptions(StringBuilder builder, PropertyInfo property)
     {
-        StringBuilder builder = new();
-
         switch (property.Name)
         {
             case nameof(MqttClientWebSocketProxyOptions.Address):
@@ -240,10 +217,6 @@ internal static class DocumentationProvider
             case nameof(MqttClientWebSocketProxyOptions.BypassList):
                 builder.AppendLine("    /// Gets the bypass list.");
                 break;
-            default:
-                return string.Empty;
         }
-
-        return builder.ToString();
     }
 }

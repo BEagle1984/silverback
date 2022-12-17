@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="3.0.16" />
     <PackageReference Include="System.CodeDom" Version="7.0.0" />
   </ItemGroup>
 

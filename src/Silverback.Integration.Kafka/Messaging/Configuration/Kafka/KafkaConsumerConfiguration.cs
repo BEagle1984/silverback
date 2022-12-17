@@ -33,12 +33,12 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         ClientConfig.EnableAutoCommit ??= true;
         ClientConfig.GroupId ??= UnsetGroupId;
 
-        // This property is not exposed and it's hardcoded to false
+        // This property is not exposed and hardcoded: the offsets will be explicitly stored only after successful processing
         ClientConfig.EnableAutoOffsetStore = false;
     }
 
     /// <summary>
-    ///     Gets or sets the client group.id. All clients sharing the same group.id belong to the same group. The default is <c>null</c>
+    ///     Gets the client group id. All clients sharing the same group id belong to the same group. The default is <c>null</c>
     ///     (which will internally be replaced with <c>"not-set"</c> since the underlying library requires a value).
     /// </summary>
     public string GroupId
@@ -72,7 +72,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     public KafkaOffsetStoreSettings? ClientSideOffsetStore { get; init; }
 
     /// <summary>
-    ///     Gets or sets a value indicating whether the offsets must be automatically and periodically committed in the background.
+    ///     Gets a value indicating whether the offsets must be automatically and periodically committed in the background.<br />
     ///     Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this
     ///     behaviour set specific start offsets per partition in the call to assign(). The default is <c>true</c>.
     /// </summary>
@@ -83,13 +83,13 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     }
 
     /// <summary>
-    ///     Gets or sets the number of message to be processed before committing the offset to the server. The most
+    ///     Gets the number of message to be processed before committing the offset to the server. The most
     ///     reliable level is 1 but it reduces throughput.
     /// </summary>
     public int? CommitOffsetEach { get; init; }
 
     /// <summary>
-    ///     Gets or sets a value specifying whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
+    ///     Gets a value indicating whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
     ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default is <c>true</c>.
     /// </summary>
     public bool EnableAutoRecovery { get; init; } = true;

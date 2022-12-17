@@ -666,7 +666,7 @@ public partial class MqttClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    [SuppressMessage("", "CA1054", Justification = "URI declared as string in the underlying library")]
+    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Declared as string in the underlying library")]
     public MqttClientConfigurationBuilder ConnectViaWebSocket(string uri)
     {
         Check.NotNull(uri, nameof(uri));

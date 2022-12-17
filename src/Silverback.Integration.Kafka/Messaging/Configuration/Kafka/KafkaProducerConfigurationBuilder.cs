@@ -25,8 +25,6 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaProducerConfigurationBuilder This => this;
 
-    // TODO: Produce without type name? To create producer config without actual outbound route (mapped to no type)
-
     /// <summary>
     ///     Adds a producer endpoint, which is a topic or partition and its related configuration (serializer, etc.).
     /// </summary>
@@ -114,7 +112,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     This is the default.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerConfigurationBuilder ThrowIfNotAcknowledged()
     {
@@ -126,7 +124,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     Specifies that no exception has be thrown by the producer if the persistence is not acknowledge by the broker.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerConfigurationBuilder IgnoreIfNotAcknowledged()
     {
@@ -139,7 +137,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     This is the default.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerConfigurationBuilder DisposeOnException()
     {
@@ -151,7 +149,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     Specifies tjat the producer don't have to be disposed and recreated if a <see cref="KafkaException" /> is thrown.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerConfigurationBuilder DisableDisposeOnException()
     {
@@ -166,7 +164,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     The flush operation timeout.
     /// </param>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerConfigurationBuilder WithFlushTimeout(TimeSpan timeout)
     {
@@ -178,17 +176,25 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     Enable notification of delivery reports.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder EnableDeliveryReports() => WithEnableDeliveryReports(true);
+    public KafkaProducerConfigurationBuilder EnableDeliveryReports()
+    {
+        ClientConfig.EnableDeliveryReports = true;
+        return this;
+    }
 
     /// <summary>
     ///     Disable notification of delivery reports. This will enable "fire and forget" semantics and give a small boost in performance.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder DisableDeliveryReports() => WithEnableDeliveryReports(false);
+    public KafkaProducerConfigurationBuilder DisableDeliveryReports()
+    {
+        ClientConfig.EnableDeliveryReports = false;
+        return this;
+    }
 
     /// <summary>
     ///     The producer will ensure that messages are successfully produced exactly once and in the original produce order.
@@ -197,17 +203,25 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     `acks=all`, `queuing.strategy=fifo`. Producer instantiation will fail if user-supplied configuration is incompatible.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder EnableIdempotence() => WithEnableIdempotence(true);
+    public KafkaProducerConfigurationBuilder EnableIdempotence()
+    {
+        ClientConfig.EnableIdempotence = true;
+        return this;
+    }
 
     /// <summary>
     ///     The producer will <b>not</b> ensure that messages are successfully produced exactly once and in the original produce order.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder DisableIdempotence() => WithEnableIdempotence(false);
+    public KafkaProducerConfigurationBuilder DisableIdempotence()
+    {
+        ClientConfig.EnableIdempotence = false;
+        return this;
+    }
 
     /// <summary>
     ///     Builds the <see cref="KafkaProducerConfiguration" /> instance.
@@ -231,4 +245,246 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
 
         return configuration;
     }
+
+    /// <summary>
+    ///     Sets the ack timeout of the producer request in milliseconds. This value is only enforced by the broker and relies on
+    ///     <c>request.required.acks</c> being != 0.
+    /// </summary>
+    /// <param name="requestTimeoutMs">
+    ///     The ack timeout of the producer request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs);
+
+    /// <summary>
+    ///     Sets the local message timeout (in milliseconds). This value is only enforced locally and limits the time a produced message waits
+    ///     for successful delivery. A time of 0 is infinite. This is the maximum time to deliver a message (including retries) and a delivery
+    ///     error will occur when either the retry count or the message timeout are exceeded. The message timeout is automatically adjusted to
+    ///     <see cref="KafkaProducerConfiguration.TransactionTimeoutMs" /> if  <see cref="KafkaProducerConfiguration.TransactionalId" /> is set.
+    /// </summary>
+    /// <param name="messageTimeoutMs">
+    ///     The local message timeout.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithMessageTimeoutMs(int? messageTimeoutMs);
+
+    /// <summary>
+    ///     Sets the partitioner to be used to decide the target partition for a message: <see cref="Confluent.Kafka.Partitioner.Random" />
+    ///     to randomly distribute the messages, <see cref="Confluent.Kafka.Partitioner.Consistent" /> to use the CRC32 hash of the message key
+    ///     (empty and null keys are mapped to a single partition), <see cref="Confluent.Kafka.Partitioner.ConsistentRandom" /> to use the CRC32
+    ///     hash of the message key (but empty and null keys are randomly partitioned), <see cref="Confluent.Kafka.Partitioner.Murmur2" /> to use
+    ///     a Java Producer compatible Murmur2 hash of the message key (null keys are mapped to a single partition), or
+    ///     <see cref="Confluent.Kafka.Partitioner.Murmur2Random" /> to use a Java Producer compatible Murmur2 hash of the message key (but null
+    ///     keys are randomly partitioned).<br />
+    ///     The default is <see cref="Confluent.Kafka.Partitioner.ConsistentRandom" />, while <see cref="Confluent.Kafka.Partitioner.Murmur2Random" />
+    ///     is functionally equivalent to the default partitioner in the Java Producer.
+    /// </summary>
+    /// <param name="partitioner">
+    ///     The partitioner to be used to decide the target partition for a message.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithPartitioner(Partitioner? partitioner);
+
+    /// <summary>
+    ///     Sets the compression level parameter for the algorithm selected by configuration property <see cref="CompressionType" />. Higher
+    ///     values will result in better compression at the cost of higher CPU usage. Usable range is algorithm-dependent: [0-9] for gzip,
+    ///     [0-12] for lz4, only 0 for snappy. -1 = codec-dependent default compression level.
+    /// </summary>
+    /// <param name="compressionLevel">
+    ///     The compression level parameter for the algorithm selected by configuration property <see cref="CompressionType" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithCompressionLevel(int? compressionLevel);
+
+    /// <summary>
+    ///     Sets the identifier to be used to identify the same transactional producer instance across process restarts. This is required to
+    ///     enable the transactional producer and it allows the producer to guarantee that transactions corresponding to earlier instances of
+    ///     the same producer have been finalized prior to starting any new transaction, and that any zombie instances are fenced off. If no
+    ///     <see cref="KafkaProducerConfiguration.TransactionalId" /> is provided, then the producer is limited to idempotent delivery (see
+    ///     <see cref="EnableIdempotence" />). Requires broker version &gt;= 0.11.0.
+    /// </summary>
+    /// <param name="transactionalId">
+    ///     The identifier to be used to identify the same transactional producer instance across process restarts.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithTransactionalId(string? transactionalId);
+
+    /// <summary>
+    ///     Sets the maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction status update from
+    ///     the producer before proactively aborting the ongoing transaction. If this value is larger than the <c>transaction.max.timeout.ms</c>
+    ///     setting in the broker, the init transaction call will fail with ERR_INVALID_TRANSACTION_TIMEOUT. The transaction timeout automatically
+    ///     adjusts <see cref="KafkaProducerConfiguration.MessageTimeoutMs" /> and <see cref="KafkaClientConfiguration{TClientConfig}.SocketTimeoutMs" /> unless explicitly configured in which case
+    ///     they must not exceed the transaction timeout (<see cref="KafkaClientConfiguration{TClientConfig}.SocketTimeoutMs" /> must be at least 100ms lower than
+    ///     <see cref="KafkaProducerConfiguration.TransactionTimeoutMs" />).
+    /// </summary>
+    /// <param name="transactionTimeoutMs">
+    ///     The maximum amount of time that the transaction coordinator will wait for a transaction status update from the producer before
+    ///     proactively aborting the ongoing transaction.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithTransactionTimeoutMs(int? transactionTimeoutMs);
+
+    /// <summary>
+    ///     Specifies that an error that could result in a gap in the produced message series when a batch of messages fails, must raise a
+    ///     fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref="KafkaProducerConfiguration.MessageTimeoutMs" />
+    ///     are not covered by this guarantee. Requires <see cref="EnableIdempotence" />=true.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder EnableGaplessGuarantee()
+    {
+        WithEnableGaplessGuarantee(true);
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the gapless guarantee.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder DisableGaplessGuarantee()
+    {
+        WithEnableGaplessGuarantee(false);
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.
+    /// </summary>
+    /// <param name="queueBufferingMaxMessages">
+    ///     The maximum number of messages allowed on the producer queue.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithQueueBufferingMaxMessages(int? queueBufferingMaxMessages);
+
+    /// <summary>
+    ///     Sets the maximum total message size sum allowed on the producer queue. This queue is shared by all topics and partitions. This
+    ///     property has higher priority than <see cref="KafkaProducerConfiguration.QueueBufferingMaxMessages" />.
+    /// </summary>
+    /// <param name="queueBufferingMaxKbytes">
+    ///     The maximum total message size sum allowed on the producer queue.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithQueueBufferingMaxKbytes(int? queueBufferingMaxKbytes);
+
+    /// <summary>
+    ///     Sets the delay in milliseconds to wait for messages in the producer queue to accumulate before constructing message batches to
+    ///     transmit to brokers. A higher value allows larger and more effective (less overhead, improved compression) batches of messages to
+    ///     accumulate at the expense of increased message delivery latency.
+    /// </summary>
+    /// <param name="lingerMs">
+    ///     The delay to wait for messages in the producer queue to accumulate before constructing message batches.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithLingerMs(double? lingerMs);
+
+    /// <summary>
+    ///     Sets how many times to retry sending a failing message.<br />
+    ///     Note: retrying may cause reordering unless <see cref="EnableIdempotence" /> is set to <c>true</c>.
+    /// </summary>
+    /// <param name="messageSendMaxRetries">
+    ///     How many times to retry sending a failing message.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithMessageSendMaxRetries(int? messageSendMaxRetries);
+
+    /// <summary>
+    ///     Sets the backoff time in milliseconds before retrying a request.
+    /// </summary>
+    /// <param name="retryBackoffMs">
+    ///     The backoff time before retrying a request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithRetryBackoffMs(int? retryBackoffMs);
+
+    /// <summary>
+    ///     Sets the threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's message accumulator.
+    ///     If the number of not yet transmitted requests equals or exceeds this number, produce request creation that would have otherwise
+    ///     been triggered (for example, in accordance with <see cref="KafkaProducerConfiguration.LingerMs" />) will be delayed. A lower number
+    ///     yields larger and more effective batches. A higher value can improve latency when using compression on slow machines.
+    /// </summary>
+    /// <param name="queueBufferingBackpressureThreshold">
+    ///     The threshold of outstanding not yet transmitted broker requests.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithQueueBufferingBackpressureThreshold(int? queueBufferingBackpressureThreshold);
+
+    /// <summary>
+    ///     Sets the compression codec to be used to compress message sets. This is the default value for all topics, may be overridden by the
+    ///     topic configuration property <c>compression.codec</c>.
+    /// </summary>
+    /// <param name="compressionType">
+    ///     The compression codec to be used to compress message sets.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithCompressionType(CompressionType? compressionType);
+
+    /// <summary>
+    ///     Sets the maximum number of messages batched in one message set. The total message set size is also limited by
+    ///     <see cref="KafkaProducerConfiguration.BatchSize" /> and <see cref="KafkaClientConfiguration{TClientConfig}.MessageMaxBytes" />.
+    /// </summary>
+    /// <param name="batchNumMessages">
+    ///     The maximum number of messages batched in one message set.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithBatchNumMessages(int? batchNumMessages);
+
+    /// <summary>
+    ///     Sets the maximum size (in bytes) of all messages batched in one message set, including the protocol framing overhead. This limit
+    ///     is applied after the first message has been added to the batch, regardless of the first message size, this is to ensure that messages
+    ///     that exceed the <see cref="KafkaProducerConfiguration.BatchSize" /> are still produced. The total message set size is also limited by
+    ///     <see cref="KafkaProducerConfiguration.BatchNumMessages" /> and <see cref="KafkaClientConfiguration{TClientConfig}.MessageMaxBytes" />.
+    /// </summary>
+    /// <param name="batchSize">
+    ///     The maximum size of all messages batched in one message set.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithBatchSize(int? batchSize);
+
+    /// <summary>
+    ///     Sets the delay in milliseconds to wait to assign new sticky partitions for each topic. By default this is set to double the time
+    ///     of <see cref="KafkaProducerConfiguration.LingerMs" />. To disable sticky behavior, set it to 0. This behavior affects messages with
+    ///     the key <c>null</c> in all cases, and messages with key lengths of zero when the <see cref="Confluent.Kafka.Partitioner.ConsistentRandom" />
+    ///     partitioner is in use. These messages would otherwise be assigned randomly. A higher value allows for more effective batching of
+    ///     these messages.
+    /// </summary>
+    /// <param name="stickyPartitioningLingerMs">
+    ///     The delay in milliseconds to wait to assign new sticky partitions for each topic.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaProducerConfigurationBuilder WithStickyPartitioningLingerMs(int? stickyPartitioningLingerMs);
 }

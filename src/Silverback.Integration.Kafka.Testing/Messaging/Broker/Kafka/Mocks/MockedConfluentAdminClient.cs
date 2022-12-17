@@ -63,6 +63,9 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
         IEnumerable<PartitionsSpecification> partitionsSpecifications,
         CreatePartitionsOptions? options = null) => throw new NotSupportedException();
 
+    public Task DeleteGroupsAsync(IList<string> groups, DeleteGroupsOptions? options = null) =>
+        throw new NotSupportedException();
+
     public Task DeleteTopicsAsync(IEnumerable<string> topics, DeleteTopicsOptions? options = null) =>
         throw new NotSupportedException();
 
@@ -81,6 +84,15 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
     public Task<List<DeleteRecordsResult>> DeleteRecordsAsync(
         IEnumerable<TopicPartitionOffset> topicPartitionOffsets,
         DeleteRecordsOptions? options = null) => throw new NotSupportedException();
+
+    public Task CreateAclsAsync(IEnumerable<AclBinding> aclBindings, CreateAclsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<DescribeAclsResult> DescribeAclsAsync(AclBindingFilter aclBindingFilter, DescribeAclsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<List<DeleteAclsResult>> DeleteAclsAsync(IEnumerable<AclBindingFilter> aclBindingFilters, DeleteAclsOptions? options = null) =>
+        throw new NotSupportedException();
 
     public void Dispose()
     {

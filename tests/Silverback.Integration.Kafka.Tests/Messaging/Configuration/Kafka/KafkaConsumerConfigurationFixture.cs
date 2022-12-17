@@ -18,6 +18,30 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 public class KafkaConsumerConfigurationFixture
 {
     [Fact]
+    public void Constructor_ShouldSetEnableAutoCommit()
+    {
+        KafkaConsumerConfiguration configuration = new();
+
+        configuration.EnableAutoCommit.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Constructor_ShouldSetGroupIdToUnset()
+    {
+        KafkaConsumerConfiguration configuration = new();
+
+        configuration.GroupId.Should().Be("not-set");
+    }
+
+    [Fact]
+    public void Constructor_ShouldDisableAutoOffsetStore()
+    {
+        KafkaConsumerConfiguration configuration = new();
+
+        configuration.GetConfluentClientConfig().EnableAutoOffsetStore.Should().BeFalse();
+    }
+
+    [Fact]
     public void CloneConstructor_ShouldCloneWrappedClientConfig()
     {
         KafkaConsumerConfiguration configuration1 = new()

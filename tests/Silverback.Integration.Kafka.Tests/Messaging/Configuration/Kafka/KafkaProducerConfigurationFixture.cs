@@ -19,7 +19,15 @@ public class KafkaProducerConfigurationFixture
     {
         KafkaProducerConfiguration configuration = new();
 
-        configuration.DeliveryReportFields.Should().Be("key,status");
+        configuration.GetConfluentClientConfig().DeliveryReportFields.Should().Be("key,status");
+    }
+
+    [Fact]
+    public void Constructor_ShouldForceEnableBackgroundPoll()
+    {
+        KafkaProducerConfiguration configuration = new();
+
+        configuration.GetConfluentClientConfig().EnableBackgroundPoll.Should().BeTrue();
     }
 
     [Fact]
@@ -71,28 +79,6 @@ public class KafkaProducerConfigurationFixture
         };
 
         configuration.AreDeliveryReportsEnabled.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData(true, "all", true)]
-    [InlineData(true, "some,fields,and,status", true)]
-    [InlineData(null, "all", true)]
-    [InlineData(null, "some,fields,and,status", true)]
-    [InlineData(true, "some,fields", false)]
-    [InlineData(false, "all", false)]
-    [InlineData(false, "some,fields,and,status", false)]
-    public void ArePersistenceStatusReportsEnabled_ShouldReturnCorrectValue(
-        bool? enableDeliveryReports,
-        string deliveryReportFields,
-        bool expected)
-    {
-        KafkaProducerConfiguration configuration = new()
-        {
-            EnableDeliveryReports = enableDeliveryReports,
-            DeliveryReportFields = deliveryReportFields
-        };
-
-        configuration.ArePersistenceStatusReportsEnabled.Should().Be(expected);
     }
 
     [Fact]
@@ -158,19 +144,12 @@ public class KafkaProducerConfigurationFixture
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
-    [Theory]
-    [InlineData(true, "some,fields")]
-    [InlineData(null, "some,fields")]
-    [InlineData(false, "all")]
-    [InlineData(false, "status")]
-    public void Validate_ShouldThrow_WhenThrowIfNotAcknowledgedIsTrueButDeliveryReportIsDisabled(
-        bool? enableDeliveryReports,
-        string deliveryReportFields)
+    [Fact]
+    public void Validate_ShouldThrow_WhenThrowIfNotAcknowledgedIsTrueButDeliveryReportIsDisabled()
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
-            EnableDeliveryReports = enableDeliveryReports,
-            DeliveryReportFields = deliveryReportFields
+            EnableDeliveryReports = false
         };
 
         Action act = () => configuration.Validate();
@@ -179,20 +158,13 @@ public class KafkaProducerConfigurationFixture
     }
 
     [Theory]
-    [InlineData(true, "")]
-    [InlineData(true, "all")]
-    [InlineData(true, "status")]
-    [InlineData(null, "")]
-    [InlineData(null, "all")]
-    [InlineData(null, "status")]
-    public void Validate_ShouldNotThrow_WhenThrowIfNotAcknowledgedIsTrueAndDeliveryReportIsEnabled(
-        bool? enableDeliveryReports,
-        string deliveryReportFields)
+    [InlineData(true)]
+    [InlineData(null)]
+    public void Validate_ShouldNotThrow_WhenThrowIfNotAcknowledgedIsTrueAndDeliveryReportIsEnabled(bool? enableDeliveryReports)
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
-            EnableDeliveryReports = enableDeliveryReports,
-            DeliveryReportFields = deliveryReportFields
+            EnableDeliveryReports = enableDeliveryReports
         };
 
         Action act = () => configuration.Validate();

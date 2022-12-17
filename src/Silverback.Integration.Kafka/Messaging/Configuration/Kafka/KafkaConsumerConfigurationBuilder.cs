@@ -126,13 +126,13 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
-    ///     Client group id string. All clients sharing the same group.id belong to the same group.
+    ///     Sets the client group id string. All clients sharing the same group.id belong to the same group.
     /// </summary>
     /// <param name="groupId">
-    ///     Client group id string. All clients sharing the same group.id belong to the same group.
+    ///     The client group id string. All clients sharing the same group.id belong to the same group.
     /// </param>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder WithGroupId(string? groupId)
     {
@@ -144,7 +144,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     Enable the offsets commit. This is the default.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder EnableOffsetsCommit()
     {
@@ -160,7 +160,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     <see cref="KafkaConsumerConfiguration.CommitOffsetEach" /> setting (see <see cref="CommitOffsetEach" />).
     /// </remarks>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisableOffsetsCommit()
     {
@@ -178,7 +178,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     (see <see cref="CommitOffsetEach" />).
     /// </remarks>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder EnableAutoCommit()
     {
@@ -194,7 +194,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     See also <see cref="CommitOffsetEach" />.
     /// </remarks>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisableAutoCommit() => WithEnableAutoCommit(false);
 
@@ -209,7 +209,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     The number of message to be processed before committing the offset to the server.
     /// </param>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder CommitOffsetEach(int commitOffsetEach)
     {
@@ -226,7 +226,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     A <see cref="Func{T}" /> that takes the <see cref="KafkaOffsetStoreSettingsBuilder" /> and configures it.
     /// </param>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(Func<KafkaOffsetStoreSettingsBuilder, IKafkaOffsetStoreSettingsImplementationBuilder> settingsBuilderFunc)
     {
@@ -243,7 +243,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     The offset store settings.
     /// </param>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder StoreOffsetsClientSide(KafkaOffsetStoreSettings settings)
     {
@@ -259,7 +259,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). This is the default.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder EnableAutoRecovery()
     {
@@ -272,7 +272,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported).
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisableAutoRecovery()
     {
@@ -284,7 +284,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     Invoke the <see cref="IKafkaPartitionEofCallback" /> whenever a partition end of file is reached.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder EnablePartitionEof() => WithEnablePartitionEof(true);
 
@@ -292,7 +292,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     Don't invoke the <see cref="IKafkaPartitionEofCallback" /> when a partition end of file is reached.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisablePartitionEof() => WithEnablePartitionEof(false);
 
@@ -303,7 +303,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder AllowAutoCreateTopics() => WithAllowAutoCreateTopics(true);
 
@@ -311,7 +311,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     Disallow automatic topic creation on the broker when subscribing to or assigning non-existent topics.
     /// </summary>
     /// <returns>
-    ///     The client configuration builder so that additional calls can be chained.
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisallowAutoCreateTopics() => WithAllowAutoCreateTopics(false);
 
@@ -374,6 +374,259 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     public KafkaConsumerConfigurationBuilder LimitBackpressure(int backpressureLimit)
     {
         _backpressureLimit = backpressureLimit;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets a comma-separated list of fields that may be optionally set in <see cref="ConsumeResult{TKey,TValue}" /> objects returned by
+    ///     the <see cref="Consumer{TKey,TValue}.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve
+    ///     throughput and reduce memory consumption. Allowed values: <c>headers</c>, <c>timestamp</c>, <c>topic</c>, <c>all</c>, <c>none</c>.
+    /// </summary>
+    /// <param name="consumeResultFields">
+    ///     A comma-separated list of fields that may be optionally set in <see cref="ConsumeResult{TKey,TValue}" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithConsumeResultFields(string? consumeResultFields);
+
+    /// <summary>
+    ///     Sets the action to take when there is no initial offset in the offset store or the desired offset is out of range:
+    ///     <see cref="Confluent.Kafka.AutoOffsetReset.Earliest" /> to automatically reset to the smallest offset,
+    ///     <see cref="Confluent.Kafka.AutoOffsetReset.Latest" /> to automatically reset to the largest offset, and
+    ///     <see cref="Confluent.Kafka.AutoOffsetReset.Error" /> to trigger an error (ERR__AUTO_OFFSET_RESET).
+    /// </summary>
+    /// <param name="autoOffsetReset">
+    ///     The action to take when there is no initial offset in the offset store or the desired offset is out of range.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithAutoOffsetReset(AutoOffsetReset? autoOffsetReset);
+
+    /// <summary>
+    ///     Sets the static instance id used to enable static group membership. Static group members are able to leave and rejoin a group within
+    ///     the configured <see cref="KafkaConsumerConfiguration.SessionTimeoutMs" /> without prompting a group rebalance. This should be used in
+    ///     combination with a larger <see cref="KafkaConsumerConfiguration.SessionTimeoutMs" /> to avoid group rebalances caused by transient
+    ///     unavailability (e.g. process restarts). Requires broker version &gt;= 2.3.0.
+    /// </summary>
+    /// <param name="groupInstanceId">
+    ///     The static instance id used to enable static group membership.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithGroupInstanceId(string? groupInstanceId);
+
+    /// <summary>
+    ///     Sets the partition assignment strategy: <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" /> to co-localize the partitions
+    ///     of several topics, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.RoundRobin" /> to evenly distribute the partitions among
+    ///     the consumer group members, <see cref="Confluent.Kafka.PartitionAssignmentStrategy.CooperativeSticky" /> to evenly distribute the
+    ///     partitions and limit minimize the partitions movements. The default is <see cref="Confluent.Kafka.PartitionAssignmentStrategy.Range" />.
+    /// </summary>
+    /// <param name="partitionAssignmentStrategy">
+    ///     The partition assignment strategy.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithPartitionAssignmentStrategy(PartitionAssignmentStrategy? partitionAssignmentStrategy);
+
+    /// <summary>
+    ///     Sets the client group session and failure detection timeout (in milliseconds). The consumer sends periodic heartbeats
+    ///     <see cref="KafkaConsumerConfiguration.HeartbeatIntervalMs" /> to indicate its liveness to the broker. If no heartbeat is received
+    ///     by the broker for a group member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance.
+    ///     Also see <see cref="KafkaConsumerConfiguration.MaxPollIntervalMs" />.
+    /// </summary>
+    /// <param name="sessionTimeoutMs">
+    ///     The client group session and failure detection timeout.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithSessionTimeoutMs(int? sessionTimeoutMs);
+
+    /// <summary>
+    ///     Sets the interval (in milliseconds) at which the heartbeats have to be sent to the broker.
+    /// </summary>
+    /// <param name="heartbeatIntervalMs">
+    ///     The interval at which the heartbeats have to be sent.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithHeartbeatIntervalMs(int? heartbeatIntervalMs);
+
+    /// <summary>
+    ///     Sets the group protocol type.
+    /// </summary>
+    /// <param name="groupProtocolType">
+    ///     The group protocol type.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithGroupProtocolType(string? groupProtocolType);
+
+    /// <summary>
+    ///     Sets the interval (in milliseconds) at which the current group coordinator must be queried. If the currently assigned coordinator
+    ///     is down the configured query interval will be divided by ten to more quickly recover in case of coordinator reassignment.
+    /// </summary>
+    /// <param name="coordinatorQueryIntervalMs">
+    ///     The interval at which the current group coordinator must be queried.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithCoordinatorQueryIntervalMs(int? coordinatorQueryIntervalMs);
+
+    /// <summary>
+    ///     Sets the maximum allowed time (in milliseconds) between calls to consume messages. If this interval is exceeded the consumer is
+    ///     considered failed and the group will rebalance in order to reassign the partitions to another consumer group member.<br />
+    ///     Warning: Offset commits may be not possible at this point.
+    /// </summary>
+    /// <param name="maxPollIntervalMs">
+    ///     The maximum allowed time between calls to consume messages.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithMaxPollIntervalMs(int? maxPollIntervalMs);
+
+    /// <summary>
+    ///     Sets the frequency in milliseconds at which the consumer offsets are committed.
+    /// </summary>
+    /// <param name="autoCommitIntervalMs">
+    ///     The frequency at which the consumer offsets are committed.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithAutoCommitIntervalMs(int? autoCommitIntervalMs);
+
+    /// <summary>
+    ///     Sets the minimum number of messages per topic and partition that the underlying library must try to maintain in the local consumer queue.
+    /// </summary>
+    /// <param name="queuedMinMessages">
+    ///     The minimum number of messages that must be maintained in the local consumer queue.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithQueuedMinMessages(int? queuedMinMessages);
+
+    /// <summary>
+    ///     Sets the maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue. This setting applies to
+    ///     the single consumer queue, regardless of the number of partitions. This value may be overshot by
+    ///     <see cref="KafkaConsumerConfiguration.FetchMaxBytes" />. This property has higher priority than
+    ///     <see cref="KafkaConsumerConfiguration.QueuedMinMessages" />.
+    /// </summary>
+    /// <param name="queuedMaxMessagesKbytes">
+    ///     The maximum number of kilobytes of queued pre-fetched messages to store in the local consumer queue.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithQueuedMaxMessagesKbytes(int? queuedMaxMessagesKbytes);
+
+    /// <summary>
+    ///     Sets the maximum time (in milliseconds) that the broker may wait to fill the fetch response with enough messages to match the
+    ///     size specified by <see cref="KafkaConsumerConfiguration.FetchMinBytes" />.
+    /// </summary>
+    /// <param name="fetchWaitMaxMs">
+    ///     The maximum time that the broker may wait to fill the fetch response.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithFetchWaitMaxMs(int? fetchWaitMaxMs);
+
+    /// <summary>
+    ///     Sets the initial maximum number of bytes per topic and partition to request when fetching messages from the broker. If the client
+    ///     encounters a message larger than this value it will gradually try to increase it until the entire message can be fetched.
+    /// </summary>
+    /// <param name="maxPartitionFetchBytes">
+    ///     The initial maximum number of bytes per topic and partition to request when fetching messages.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithMaxPartitionFetchBytes(int? maxPartitionFetchBytes);
+
+    /// <summary>
+    ///     Sets the maximum amount of data the broker shall return for a fetch request. The messages are fetched in batches by the consumer
+    ///     and if the first message batch in the first non-empty partition of the fetch request is larger than this value, then the message
+    ///     batch will still be returned to ensure that the consumer can make progress. The maximum message batch size accepted by the broker
+    ///     is defined via <c>message.max.bytes</c> (broker config) or <c>max.message.bytes</c> (broker topic config). This value is automatically
+    ///     adjusted upwards to be at least <c>message.max.bytes</c> (consumer config).
+    /// </summary>
+    /// <param name="fetchMaxBytes">
+    ///     The maximum amount of data the broker shall return for a fetch request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithFetchMaxBytes(int? fetchMaxBytes);
+
+    /// <summary>
+    ///     Sets the minimum number of bytes that the broker must respond with. If <see cref="KafkaConsumerConfiguration.FetchWaitMaxMs" />
+    ///     expires the accumulated data will be sent to the client regardless of this setting.
+    /// </summary>
+    /// <param name="fetchMinBytes">
+    ///     The minimum number of bytes that the broker must respond with.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithFetchMinBytes(int? fetchMinBytes);
+
+    /// <summary>
+    ///     Sets how long to postpone the next fetch request for a topic and partition in case of a fetch error.
+    /// </summary>
+    /// <param name="fetchErrorBackoffMs">
+    ///     How long to postpone the next fetch request in case of a fetch error.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithFetchErrorBackoffMs(int? fetchErrorBackoffMs);
+
+    /// <summary>
+    ///     Sets a value indicating how to read messages written inside a transaction: <see cref="Confluent.Kafka.IsolationLevel.ReadCommitted" />
+    ///     to only return transactional messages which have been committed, or <see cref="Confluent.Kafka.IsolationLevel.ReadUncommitted" /> to
+    ///     return all messages, even transactional messages which have been aborted.
+    /// </summary>
+    /// <param name="isolationLevel">
+    ///     A value indicating how to read messages written inside a transaction.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithIsolationLevel(IsolationLevel? isolationLevel);
+
+    /// <summary>
+    ///     Enables the verification of the CRC32 of the consumed messages, ensuring no on-the-wire or on-disk corruption to the messages
+    ///     occurred. This check comes at slightly increased CPU usage.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder EnableCheckCrcs()
+    {
+        WithCheckCrcs(true);
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the verification of the CRC32 of the consumed messages, ensuring no on-the-wire or on-disk corruption to the messages
+    ///     occurred. This check comes at slightly increased CPU usage.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisableCheckCrcs()
+    {
+        WithCheckCrcs(false);
         return this;
     }
 
