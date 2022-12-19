@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             _logger = logger;
         }
 
-        public IMqttNetScopedLogger CreateScopedLogger(string source) => new MqttNetScopedLogger(this, source);
+        public bool IsEnabled => true;
 
         public void Publish(
             MqttNetLogLevel logLevel,

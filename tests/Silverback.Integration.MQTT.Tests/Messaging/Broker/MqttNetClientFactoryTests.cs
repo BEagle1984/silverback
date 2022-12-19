@@ -4,7 +4,7 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Diagnostics;
 using NSubstitute;
 using Silverback.Diagnostics;

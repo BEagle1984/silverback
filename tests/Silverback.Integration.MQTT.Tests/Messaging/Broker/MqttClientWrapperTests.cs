@@ -5,9 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet.Client;
-using MQTTnet.Client.Connecting;
-using MQTTnet.Client.Disconnecting;
-using MQTTnet.Client.Options;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
@@ -86,8 +83,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var mqttClientConfig = new MqttClientConfig();
 
             var mqttClient = Substitute.For<IMqttClient>();
-            mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+            mqttClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>())
+                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientConnectResult()));
 
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
@@ -117,8 +114,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         public async Task DisconnectAsync_CalledWhenNotConnected_ClientDisconnectNotCalled()
         {
             var mqttClient = Substitute.For<IMqttClient>();
-            mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
-                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientAuthenticateResult()));
+            mqttClient.ConnectAsync(Arg.Any<MqttClientOptions>(), Arg.Any<CancellationToken>())
+                .ReturnsForAnyArgs(_ => Task.FromResult(new MqttClientConnectResult()));
             mqttClient.IsConnected.Returns(false);
 
             var clientWrapper = new MqttClientWrapper(

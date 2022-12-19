@@ -4,11 +4,23 @@ uid: releases
 
 # Releases
 
+## [4.0.0](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.1.3.436](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.3.436)
+* Upgrade to [Confluent.Kafka 1.9.3](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.9.3)
+* Upgrade to Newtonsoft.Json 13.0.2
+ 
+### Breaking changes
+
+* Some breaking changes in MQTTnet 4 are reflected into Silverback
+
 ## [3.8.0](https://github.com/BEagle1984/silverback/releases/tag/v3.8.0)
 
 ### What's new
 
-* Topic name resolvers can be used to filter the messages to be produce:  returning `null` will discard the message
+* Topic name resolvers can be used to filter the messages to be produce: returning `null` will discard the message
 
 ### Fixes
 

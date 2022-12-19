@@ -98,7 +98,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMessageSerializer" />.
         /// </param>
         /// <returns>
-        ///     The endpoint builder so that additional calls can be chained.
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
         /// </returns>
         IMqttLastWillMessageBuilder SerializeUsing(IMessageSerializer serializer);
 
@@ -113,9 +113,66 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     configures it.
         /// </param>
         /// <returns>
-        ///     The endpoint builder so that additional calls can be chained.
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
         /// </returns>
-        IMqttLastWillMessageBuilder SerializeAsJson(
-            Action<IJsonMessageSerializerBuilder>? serializerBuilderAction = null);
+        IMqttLastWillMessageBuilder SerializeAsJson(Action<IJsonMessageSerializerBuilder>? serializerBuilderAction = null);
+
+        /// <summary>
+        ///     Specifies the content type.
+        /// </summary>
+        /// <param name="contentType">
+        ///     The content type.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder WithContentType(string? contentType);
+
+        /// <summary>
+        ///     Specifies the correlation data.
+        /// </summary>
+        /// <param name="correlationData">
+        ///     The correlation data.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder WithCorrelationData(byte[]? correlationData);
+
+        /// <summary>
+        ///     Specifies the response topic.
+        /// </summary>
+        /// <param name="topic">
+        ///     The response topic.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder WithResponseTopic(string? topic);
+
+        /// <summary>
+        ///     Specifies the payload format indicator.
+        /// </summary>
+        /// <param name="formatIndicator">
+        ///     The format indicator.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder WithPayloadFormatIndicator(MqttPayloadFormatIndicator formatIndicator);
+
+        /// <summary>
+        ///     Adds a user property to be sent with the will message.
+        /// </summary>
+        /// <param name="name">
+        ///     The property name.
+        /// </param>
+        /// <param name="value">
+        ///     The property value.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder AddUserProperty(string name, string value);
     }
 }

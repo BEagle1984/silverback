@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)))
-                        .AddIntegrationSpy())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();

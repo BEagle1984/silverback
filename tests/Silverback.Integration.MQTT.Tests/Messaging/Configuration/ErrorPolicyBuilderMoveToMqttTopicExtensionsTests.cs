@@ -3,7 +3,7 @@
 
 using System;
 using FluentAssertions;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;

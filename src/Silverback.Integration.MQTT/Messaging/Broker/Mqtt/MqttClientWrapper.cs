@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Exceptions;
+using MQTTnet.Packets;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -97,10 +97,20 @@ namespace Silverback.Messaging.Broker.Mqtt
         }
 
         public Task SubscribeAsync(IReadOnlyCollection<MqttTopicFilter> topicFilters) =>
-            MqttClient.SubscribeAsync(topicFilters.AsArray());
+            MqttClient.SubscribeAsync(
+                new MqttClientSubscribeOptions
+                {
+                    TopicFilters = topicFilters.AsList()
+                });
 
         public Task UnsubscribeAsync(IReadOnlyCollection<string> topicFilters) =>
-            _isConnected ? MqttClient.UnsubscribeAsync(topicFilters.AsArray()) : Task.CompletedTask;
+            _isConnected
+                ? MqttClient.UnsubscribeAsync(
+                    new MqttClientUnsubscribeOptions
+                    {
+                        TopicFilters = topicFilters.AsList()
+                    })
+                : Task.CompletedTask;
 
         public async Task DisconnectAsync(object sender)
         {
