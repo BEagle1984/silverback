@@ -263,9 +263,7 @@ namespace Silverback.Messaging.Broker
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             if (!Endpoint.Configuration.IsGroupIdSet)
-            {
                 return Task.CompletedTask;
-            }
 
             IEnumerable<TopicPartitionOffset> lastOffsets = brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
@@ -558,6 +556,7 @@ namespace Silverback.Messaging.Broker
         {
             if (Endpoint.Configuration.IsAutoCommitEnabled || !Endpoint.Configuration.IsGroupIdSet || _messagesSinceCommit == 0)
                 return;
+
             try
             {
                 var offsets = ConfluentConsumer.Commit();

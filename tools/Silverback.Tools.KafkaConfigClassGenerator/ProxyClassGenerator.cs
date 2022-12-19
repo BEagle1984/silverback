@@ -132,9 +132,10 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
             foreach (var property in GetProperties())
             {
                 var propertyType = GetPropertyTypeString(property.PropertyType);
+                var isAbstract = property.Name == "GroupId";
                 WriteSummary(property);
 
-                _builder.AppendLine($"        public {propertyType} {property.Name}");
+                _builder.AppendLine($"        public {(isAbstract ? "abstract " : string.Empty)}{propertyType} {property.Name}");
                 _builder.AppendLine("        {");
 
                 if (property.Name == "GroupId" && property.GetGetMethod() != null)

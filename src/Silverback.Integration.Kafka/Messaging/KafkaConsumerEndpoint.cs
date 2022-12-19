@@ -308,9 +308,7 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
             if (MaxDegreeOfParallelism < 1)
-            {
                 throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
-            }
 
             if (BackpressureLimit < 1)
                 throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
