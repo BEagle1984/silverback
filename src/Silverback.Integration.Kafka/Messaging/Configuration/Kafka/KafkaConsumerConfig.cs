@@ -13,6 +13,15 @@ namespace Silverback.Messaging.Configuration.Kafka
     [SuppressMessage("ReSharper", "SA1623", Justification = "Comments style is in-line with Confluent.Kafka")]
     public sealed class KafkaConsumerConfig : ConfluentConsumerConfigProxy, IEquatable<KafkaConsumerConfig>
     {
+        /// <summary>
+        ///     If the KafkaConsumer does not have a group.id for consumer group partition assignment and offset
+        ///     storage, then a fake value is set as workaround for the current limitations of confluent-kafka-dotnet and librdkafka.
+        ///     See also
+        ///     <see href="https://github.com/confluentinc/confluent-kafka-dotnet/issues/225" />
+        ///     <see href="https://github.com/edenhill/librdkafka/issues/593" /> for more information.
+        /// </summary>
+        private const string GroupIdNotSet = "not-set";
+
         private const bool KafkaDefaultAutoCommitEnabled = true;
 
         /// <summary>
@@ -25,6 +34,38 @@ namespace Silverback.Messaging.Configuration.Kafka
         public KafkaConsumerConfig(KafkaClientConfig? clientConfig = null)
             : base(clientConfig?.GetConfluentConfig())
         {
+            if (string.IsNullOrWhiteSpace(GroupId))
+            {
+                GroupId = GroupIdNotSet;
+            }
+        }
+
+        /// <summary>
+        ///     Returns a boolean indicating whether group.id is set.
+        /// </summary>
+        public bool IsGroupIdSet { get; private set; }
+
+        /// <summary>
+        ///     Client group id string. All clients sharing the same group.id belong to the same group.
+        ///     <br /><br />default: ''
+        ///     <br />importance: high.
+        /// </summary>
+        public override string GroupId
+        {
+            get => ConfluentConfig.GroupId;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value) || value == GroupIdNotSet)
+                {
+                    ConfluentConfig.GroupId = GroupIdNotSet;
+                    IsGroupIdSet = false;
+                }
+                else
+                {
+                    ConfluentConfig.GroupId = value;
+                    IsGroupIdSet = true;
+                }
+            }
         }
 
         /// <summary>

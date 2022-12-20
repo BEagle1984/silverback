@@ -41,8 +41,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             endpoint.Name.Should().Be("topic");
             endpoint.Names.Should().BeEquivalentTo("topic");
-            endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new[] { new TopicPartitionOffset("topic", 2, Offset.Unset) });
+            endpoint.TopicPartitions.Should().BeEquivalentTo(new[] { new TopicPartitionOffset("topic", 2, Offset.Unset) });
         }
 
         [Fact]
@@ -121,8 +120,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         public void Constructor_SingleTopicAndPartitionResolverWithOffsets_TopicsAndResolverSet()
         {
             Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(
-                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
 
             var endpoint = new KafkaConsumerEndpoint(
                 "topic1",
@@ -138,8 +136,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         public void Constructor_MultipleTopicsAndPartitionResolverWithOffsets_TopicsAndResolverSet()
         {
             Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(
-                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
 
             var endpoint = new KafkaConsumerEndpoint(
                 new[] { "topic1", "topic2" },
@@ -149,6 +146,35 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeNull();
             endpoint.TopicPartitionsResolver.Should().Be(resolver);
+        }
+
+        [Fact]
+        public void Constructor_NoClientConfiguration_GroupIdNotSet()
+        {
+            var endpoint = new KafkaConsumerEndpoint("topic");
+
+            endpoint.Configuration.GroupId.Should().Be("not-set");
+            endpoint.Configuration.IsGroupIdSet.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("myGroup", "myGroup", true)]
+        [InlineData("not-set", "not-set", false)]
+        [InlineData("", "not-set", false)]
+        [InlineData(" ", "not-set", false)]
+        [InlineData(null, "not-set", false)]
+        public void Constructor_WithClientConfiguration_IsGroupIdSet_CorrectlySet(string groupId, string expectedGroupId, bool expected)
+        {
+            var endpoint = new KafkaConsumerEndpoint("topic")
+            {
+                Configuration =
+                {
+                    GroupId = groupId
+                }
+            };
+
+            endpoint.Configuration.GroupId.Should().Be(expectedGroupId);
+            endpoint.Configuration.IsGroupIdSet.Should().Be(expected);
         }
 
         [Fact]

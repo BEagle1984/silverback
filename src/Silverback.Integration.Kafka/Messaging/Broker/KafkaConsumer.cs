@@ -127,8 +127,7 @@ namespace Silverback.Messaging.Broker
 
             AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
 
-            if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitOffsets();
+            CommitOffsets();
 
             AsyncHelper.RunSynchronously(() => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
             SequenceStores.Clear();
@@ -189,7 +188,7 @@ namespace Silverback.Messaging.Broker
 
         internal void CreateSequenceStores(int count)
         {
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 if (SequenceStores.Count <= i)
                     SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
@@ -207,8 +206,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
         protected override Task DisconnectCoreAsync()
         {
-            if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitOffsets();
+            CommitOffsets();
 
             DisposeConfluentConsumer();
 
@@ -264,7 +262,10 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
-            var lastOffsets = brokerMessageIdentifiers
+            if (!Endpoint.Configuration.IsGroupIdSet)
+                return Task.CompletedTask;
+
+            IEnumerable<TopicPartitionOffset> lastOffsets = brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
                 .Select(
                     offsetsGroup => offsetsGroup
@@ -553,7 +554,7 @@ namespace Silverback.Messaging.Broker
 
         private void CommitOffsets()
         {
-            if (_messagesSinceCommit == 0)
+            if (Endpoint.Configuration.IsAutoCommitEnabled || !Endpoint.Configuration.IsGroupIdSet || _messagesSinceCommit == 0)
                 return;
 
             try

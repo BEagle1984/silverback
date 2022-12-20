@@ -87,8 +87,7 @@ namespace Silverback.Messaging
             IEnumerable<TopicPartition> topicPartitions,
             KafkaClientConfig? clientConfig = null)
             : this(
-                topicPartitions?.Select(
-                    topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
+                topicPartitions?.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
                 clientConfig)
         {
         }
@@ -309,10 +308,7 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
             if (MaxDegreeOfParallelism < 1)
-            {
-                throw new EndpointConfigurationException(
-                    "MaxDegreeOfParallelism must be greater or equal to 1.");
-            }
+                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
 
             if (BackpressureLimit < 1)
                 throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");

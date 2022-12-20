@@ -918,11 +918,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <br /><br />default: ''
         ///     <br />importance: high
         /// </summary>
-        public string GroupId
-        {
-            get => ConfluentConfig.GroupId;
-            set => ConfluentConfig.GroupId = value;
-        }
+        public abstract string GroupId { get; set; }
 
         /// <summary>
         ///     Enable static group membership. Static group members are able to leave and rejoin a group within the configured `session.timeout.ms` without prompting a group rebalance. This should be used in combination with a larger `session.timeout.ms` to avoid group rebalances caused by transient unavailability (e.g. process restarts). Requires broker version &gt;= 2.3.0.

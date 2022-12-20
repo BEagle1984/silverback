@@ -28,9 +28,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -54,7 +52,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ConsumeFrom(
                                             new TopicPartition("topic1", 2),
-                                            new TopicPartition("topic2", 2))))
+                                            new TopicPartition("topic2", 2))
+                                        .Configure(config => config.GroupId = "group")))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -78,9 +77,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -101,7 +98,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ConsumeFrom(
                                             "topic1",
-                                            partitions => partitions)))
+                                            partitions => partitions)
+                                        .Configure(config => config.GroupId = "group")))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -123,9 +121,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -149,7 +145,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ConsumeFrom(
                                             new[] { "topic1", "topic2" },
-                                            partitions => partitions)))
+                                            partitions => partitions)
+                                        .Configure(config => config.GroupId = "group")))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 

@@ -25,6 +25,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             config.IsAutoCommitEnabled.Should().Be(expected);
         }
 
+        [Theory]
+        [InlineData("myGroup", "myGroup", true)]
+        [InlineData("not-set", "not-set", false)]
+        [InlineData("", "not-set", false)]
+        [InlineData(" ", "not-set", false)]
+        [InlineData(null, "not-set", false)]
+        public void IsGroupIdSet_CorrectlySet(string groupId, string expectedGroupId, bool expected)
+        {
+            var config = new KafkaConsumerConfig
+            {
+                GroupId = groupId
+            };
+
+            config.GroupId.Should().Be(expectedGroupId);
+            config.IsGroupIdSet.Should().Be(expected);
+        }
+
         [Fact]
         public void Validate_ValidConfiguration_NoExceptionThrown()
         {
