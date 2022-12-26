@@ -3,7 +3,7 @@
 
 using System;
 using MQTTnet;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Packets;
 using Silverback.Tools.Generators.Common;
 
@@ -30,7 +30,7 @@ public static class TypesMapper
     public static (string PropertyType, bool IsMapped) GetMappedPropertyTypeString(Type propertyType) =>
         propertyType.Name switch
         {
-            nameof(IMqttClientCredentials) => ("MqttClientCredentials?", true),
+            nameof(MqttClientCredentials) => ("MqttClientCredentials?", true),
             nameof(MqttApplicationMessage) => ("MqttLastWillMessageConfiguration?", true),
             nameof(IMqttClientChannelOptions) => ("MqttClientChannelConfiguration?", true),
             nameof(MqttClientTlsOptions) => ("MqttClientTlsConfiguration?", true),

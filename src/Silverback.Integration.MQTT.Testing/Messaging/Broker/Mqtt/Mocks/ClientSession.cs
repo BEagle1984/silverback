@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
 using Silverback.Util;
@@ -93,7 +93,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
         }
     }
 
-    public async ValueTask PushAsync(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+    public async ValueTask PushAsync(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         lock (_subscriptions)
         {
@@ -129,8 +129,8 @@ internal sealed class ClientSession : IDisposable, IClientSession
                 new MqttPublishPacket(),
                 (_, _) => Task.CompletedTask);
 
-            Task messageHandlingTask =
-                Client.HandleApplicationMessageReceivedAsync(eventArgs)
+            Task messageHandlingTask = Client
+                .OnMessageReceivedAsync(eventArgs)
                     .ContinueWith(_ => Interlocked.Decrement(ref _pendingMessagesCount), TaskScheduler.Default);
 
             if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)

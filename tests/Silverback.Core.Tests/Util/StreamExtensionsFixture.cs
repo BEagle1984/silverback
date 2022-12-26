@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Util;
@@ -15,7 +14,7 @@ public class StreamExtensionsFixture
     [Fact]
     public async Task ReadAllAsync_ShouldReturnByteArrayEquivalentToMemoryStream()
     {
-        byte[] buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
         MemoryStream stream = new(buffer);
 
         byte[]? result = await stream.ReadAllAsync();
@@ -26,7 +25,7 @@ public class StreamExtensionsFixture
     [Fact]
     public async Task ReadAllAsync_ShouldReturnByteArrayEquivalentToBufferedStream()
     {
-        byte[] buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
         BufferedStream stream = new(new MemoryStream(buffer));
 
         byte[]? result = await stream.ReadAllAsync();
@@ -46,7 +45,7 @@ public class StreamExtensionsFixture
     [Fact]
     public void ReadAll_ShouldReturnByteArrayEquivalentToMemoryStream()
     {
-        byte[] buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
         MemoryStream stream = new(buffer);
 
         byte[]? result = stream.ReadAll();
@@ -57,7 +56,7 @@ public class StreamExtensionsFixture
     [Fact]
     public void ReadAll_ShouldReturnByteArrayEquivalentToBufferedStream()
     {
-        byte[] buffer = Encoding.UTF8.GetBytes("Silverback rocks!");
+        byte[] buffer = "Silverback rocks!"u8.ToArray();
         BufferedStream stream = new(new MemoryStream(buffer));
 
         byte[]? result = stream.ReadAll();

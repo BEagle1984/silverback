@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using MQTTnet.Client;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -33,6 +34,7 @@ public class MqttClientIdFilterAttributeFixture
         clientWrapper.Initializing.Returns(new AsyncEvent<BrokerClient>());
         clientWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
         clientWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+        clientWrapper.MessageReceived.Returns(new AsyncEvent<MqttApplicationMessageReceivedEventArgs>());
         clientWrapper.Configuration.Returns(new MqttClientConfiguration());
         IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
         serviceProvider.GetService(typeof(ISequenceStore)).Returns(Substitute.For<ISequenceStore>());

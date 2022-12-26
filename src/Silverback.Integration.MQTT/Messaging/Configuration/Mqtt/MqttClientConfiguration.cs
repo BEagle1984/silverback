@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Configuration;
@@ -51,6 +51,11 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public IValueReadOnlyCollection<MqttProducerEndpointConfiguration> ProducerEndpoints { get; init; } = ValueReadOnlyCollection.Empty<MqttProducerEndpointConfiguration>();
 
     /// <summary>
+    ///     Gets the optional last will message to be sent when the client ungracefully disconnects.
+    /// </summary>
+    public MqttLastWillMessageConfiguration? WillMessage { get; init; }
+
+    /// <summary>
     ///     Gets a value indicating whether the headers (user properties) are supported according to the configured protocol version.
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
@@ -69,6 +74,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
         ProducerEndpoints.ForEach(endpoint => endpoint.Validate());
         ConsumerEndpoints.ForEach(endpoint => endpoint.Validate());
+        WillMessage?.Validate();
 
         CheckDuplicateConsumerTopics();
 
@@ -103,6 +109,8 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
         options.ProtocolVersion = ProtocolVersion;
         options.UserProperties = UserProperties.Select(property => property.ToMqttNetType()).ToList();
         options.ChannelOptions = Channel?.ToMqttNetType();
+        WillMessage?.MapToMqttNetType(options);
+
         return options;
     }
 

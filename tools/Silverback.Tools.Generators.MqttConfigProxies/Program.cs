@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Packets;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
@@ -15,7 +15,6 @@ internal static class Program
 
         state.AddType<MqttClientOptions>();
         state.AddType<MqttUserProperty>();
-        state.AddType<MqttClientCredentials>();
         state.AddType<MqttClientTcpOptions>();
         state.AddType<MqttClientWebSocketOptions>();
         state.AddType<MqttClientTlsOptions>();

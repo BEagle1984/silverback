@@ -2,9 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using MQTTnet;
 using MQTTnet.Protocol;
+using Silverback.Collections;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
@@ -20,6 +22,8 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </typeparam>
 public class MqttLastWillMessageConfigurationBuilder<TMessage>
 {
+    private readonly List<MqttUserProperty> _userProperties = new();
+
     private string? _topic;
 
     private object? _message;
@@ -30,10 +34,15 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
 
     private bool _retain;
 
-    /// <summary>
-    ///     Gets the desired delay in seconds.
-    /// </summary>
-    public uint? Delay { get; private set; }
+    private uint? _delay;
+
+    private string? _contentType;
+
+    private byte[]? _correlationData;
+
+    private MqttPayloadFormatIndicator? _payloadFormatIndicator;
+
+    private string? _responseTopic;
 
     /// <summary>
     ///     Specifies the name of the topic to produce the LWT message to.
@@ -51,7 +60,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     }
 
     /// <summary>
-    ///     Specifies the LWT message to be published.
+    ///     Sets the payload of the last will message to be published.
     /// </summary>
     /// <param name="message">
     ///     The actual LWT message to be published.
@@ -66,7 +75,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     }
 
     /// <summary>
-    ///     Specifies the LWT message delay.
+    ///     Sets the last will message delay.
     /// </summary>
     /// t
     /// <param name="delay">
@@ -79,7 +88,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     {
         Check.Range(delay, nameof(delay), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
 
-        Delay = (uint)delay.TotalSeconds;
+        _delay = (uint)delay.TotalSeconds;
         return this;
     }
 
@@ -174,6 +183,86 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     }
 
     /// <summary>
+    ///     Sets the content type.
+    /// </summary>
+    /// <param name="contentType">
+    ///     The content type.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithContentType(string? contentType)
+    {
+        _contentType = contentType;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the correlation data.
+    /// </summary>
+    /// <param name="correlationData">
+    ///     The correlation data.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithCorrelationData(byte[]? correlationData)
+    {
+        _correlationData = correlationData;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the payload format indicator.
+    /// </summary>
+    /// <param name="payloadFormatIndicator">
+    ///     The payload format indicator.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithPayloadFormatIndicator(MqttPayloadFormatIndicator? payloadFormatIndicator)
+    {
+        _payloadFormatIndicator = payloadFormatIndicator;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the response topic.
+    /// </summary>
+    /// <param name="topic">
+    ///     The response topic.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithPayloadFormatIndicator(string? topic)
+    {
+        _responseTopic = topic;
+        return this;
+    }
+
+    /// <summary>
+    ///     Adds a user property to the last will message.
+    /// </summary>
+    /// <param name="name">
+    ///     The property name.
+    /// </param>
+    /// <param name="value">
+    ///     The property value.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> AddUserProperty(string name, string? value)
+    {
+        Check.NotNull(name, nameof(name));
+
+        _userProperties.Add(new MqttUserProperty(name, value));
+        return this;
+    }
+
+    /// <summary>
     ///     Builds the <see cref="MqttApplicationMessage" /> instance.
     /// </summary>
     /// <returns>
@@ -187,16 +276,28 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
         if (!string.IsNullOrEmpty(_topic))
         {
             MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerEndpointConfiguration());
-            payloadStream = AsyncHelper
-                .RunSynchronously(() => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint).AsTask());
+            payloadStream = AsyncHelper.RunSynchronously(
+                () => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint));
         }
 
-        return new MqttLastWillMessageConfiguration
+        MqttLastWillMessageConfiguration configuration = new()
         {
             Topic = _topic ?? string.Empty,
             Payload = payloadStream.ReadAll(),
             QualityOfServiceLevel = _qosLevel,
-            Retain = _retain
+            Retain = _retain,
+            ContentType = _contentType,
+            CorrelationData = _correlationData,
+            ResponseTopic = _responseTopic,
+            UserProperties = _userProperties.AsValueReadOnlyCollection()
         };
+
+        if (_delay.HasValue)
+            configuration = configuration with { Delay = _delay.Value };
+
+        if (_payloadFormatIndicator.HasValue)
+            configuration = configuration with { PayloadFormatIndicator = _payloadFormatIndicator.Value };
+
+        return configuration;
     }
 }

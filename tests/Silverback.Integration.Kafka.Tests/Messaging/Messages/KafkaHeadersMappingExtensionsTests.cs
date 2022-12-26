@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Text;
 using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
@@ -25,8 +24,8 @@ public class KafkaHeadersMappingExtensionsTests
         confluentHeaders.Should().BeEquivalentTo(
             new[]
             {
-                new Header("one", Encoding.UTF8.GetBytes("1")),
-                new Header("two", Encoding.UTF8.GetBytes("2"))
+                new Header("one", "1"u8.ToArray()),
+                new Header("two", "2"u8.ToArray())
             });
     }
 
@@ -45,8 +44,8 @@ public class KafkaHeadersMappingExtensionsTests
         confluentHeaders.Should().BeEquivalentTo(
             new[]
             {
-                new Header("one", Encoding.UTF8.GetBytes("1")),
-                new Header("two", Encoding.UTF8.GetBytes("2"))
+                new Header("one", "1"u8.ToArray()),
+                new Header("two", "2"u8.ToArray())
             });
     }
 }

@@ -7,15 +7,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using MQTTnet;
-using MQTTnet.Client.Receiving;
+using MQTTnet.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 
-internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHandler, IDisposable
+internal sealed class ConsumerChannelManager : IDisposable
 {
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly MqttConsumer _consumer;
@@ -48,7 +47,7 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
         _readTaskCompletionSource = new TaskCompletionSource<bool>();
 
         _mqttClientWrapper = consumer.Client;
-        _mqttClientWrapper.ApplicationMessageReceivedHandler = this;
+        _mqttClientWrapper.MessageReceived.AddHandler(OnMessageReceivedAsync);
     }
 
     public Task Stopping => _readTaskCompletionSource.Task;
@@ -86,7 +85,17 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
             _readTaskCompletionSource.TrySetResult(true);
     }
 
-    public async Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
+    public void Dispose()
+    {
+        _mqttClientWrapper.MessageReceived.RemoveHandler(OnMessageReceivedAsync);
+        StopReading();
+        _readCancellationTokenSource.Dispose();
+        _parallelismLimiterSemaphoreSlim.Dispose();
+    }
+
+    private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() => Channel.CreateBounded<ConsumedApplicationMessage>(10);
+
+    private async ValueTask OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
     {
         ConsumedApplicationMessage receivedMessage = new(eventArgs.ApplicationMessage);
 
@@ -100,15 +109,6 @@ internal sealed class ConsumerChannelManager : IMqttApplicationMessageReceivedHa
             await Task.Delay(10).ConfigureAwait(false);
         }
     }
-
-    public void Dispose()
-    {
-        StopReading();
-        _readCancellationTokenSource.Dispose();
-        _parallelismLimiterSemaphoreSlim.Dispose();
-    }
-
-    private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() => Channel.CreateBounded<ConsumedApplicationMessage>(10);
 
     [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
     private async Task ReadChannelAsync()

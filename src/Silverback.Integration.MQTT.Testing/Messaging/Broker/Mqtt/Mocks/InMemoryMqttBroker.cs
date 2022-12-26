@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -99,7 +99,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     }
 
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
-    public ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, IMqttClientOptions clientOptions)
+    public ValueTask PublishAsync(MockedMqttClient client, MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         if (!TryGetClientSession(client, out ClientSession? publisherSession) || !publisherSession.IsConnected)
             throw new InvalidOperationException("The client is not connected.");
@@ -138,7 +138,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private void RemoveClientSession(MockedMqttClient client) => _sessions.Remove(GetClientSessionKey(client));
 
-    private void StoreMessage(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+    private void StoreMessage(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         lock (_messagesByTopic)
         {

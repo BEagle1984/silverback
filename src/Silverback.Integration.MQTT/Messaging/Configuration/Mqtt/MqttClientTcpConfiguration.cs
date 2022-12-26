@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using Silverback.Configuration;
 
 namespace Silverback.Messaging.Configuration.Mqtt;

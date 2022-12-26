@@ -5,10 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using Silverback.Collections;
 using Silverback.Configuration;
-#if NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER
 using System.Net.Security;
 #endif
 
@@ -25,7 +25,7 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
     [SuppressMessage("Security", "CA5398:Avoid hardcoded SslProtocols values", Justification = "Needed for proper initialization")]
     public MqttClientTlsConfiguration()
     {
-#if NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER
         SslProtocol = SslProtocols.Tls13;
 #else
         SslProtocol = SslProtocols.Tls12;
@@ -37,11 +37,16 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
     /// </summary>
     public IValueReadOnlyCollection<X509Certificate>? Certificates { get; init; }
 
-#if NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER
     /// <summary>
     ///     Gets the TLS protocols to use.
     /// </summary>
     public IValueReadOnlyCollection<SslApplicationProtocol>? ApplicationProtocols { get; init; }
+
+    /// <summary>
+    ///     Gets the <see cref="System.Net.Security.CipherSuitesPolicy" />.
+    /// </summary>
+    public CipherSuitesPolicy? CipherSuitesPolicy { get; init; }
 #endif
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
@@ -56,8 +61,9 @@ public partial record MqttClientTlsConfiguration : IValidatableSettings
 
         options.Certificates = Certificates?.ToList();
 
-#if NETCOREAPP3_1 || NET5_0
+#if NETCOREAPP3_1 || NET5_0_OR_GREATER
         options.ApplicationProtocols = ApplicationProtocols?.ToList();
+        options.CipherSuitesPolicy = CipherSuitesPolicy;
 #endif
 
         return options;

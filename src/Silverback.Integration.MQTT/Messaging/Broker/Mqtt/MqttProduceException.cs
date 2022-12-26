@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
-using MQTTnet.Client.Publishing;
+using MQTTnet.Client;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 

@@ -5,11 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 using NSubstitute;
@@ -267,14 +265,14 @@ public class MqttClientConfigurationBuilderFixture
     }
 
     [Fact]
-    public void WithCommunicationTimeout_ShouldSetTimeout()
+    public void WithTimeout_ShouldSetTimeout()
     {
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
-        builder.WithCommunicationTimeout(TimeSpan.FromSeconds(42));
+        builder.WithTimeout(TimeSpan.FromSeconds(42));
 
         MqttClientConfiguration config = builder.Build();
-        config.CommunicationTimeout.TotalSeconds.Should().Be(42);
+        config.Timeout.TotalSeconds.Should().Be(42);
     }
 
     [Fact]
@@ -348,10 +346,10 @@ public class MqttClientConfigurationBuilderFixture
                 .ProduceTo("testaments"));
 
         MqttClientConfiguration config = builder.Build();
-        config.WillMessage.Should().NotBeNull();
-        config.WillMessage!.Topic.Should().Be("testaments");
+        config.WillMessage.ShouldNotBeNull();
+        config.WillMessage.Topic.Should().Be("testaments");
         config.WillMessage.Payload.Should().NotBeNullOrEmpty();
-        config.WillDelayInterval.Should().Be(42);
+        config.WillMessage.Delay.Should().Be(42);
     }
 
     [Fact]
@@ -539,37 +537,37 @@ public class MqttClientConfigurationBuilderFixture
         builder.WithCredentials("user", "pass");
 
         MqttClientConfiguration config = builder.Build();
-        config.Credentials.Should().NotBeNull();
-        config.Credentials!.Username.Should().Be("user");
-        config.Credentials!.Password.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("pass"));
+        config.Credentials.ShouldNotBeNull();
+        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
+        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo("pass"u8.ToArray());
     }
 
     [Fact]
     public void WithCredentials_ShouldSetCredentialsWithBytesPassword()
     {
-        byte[] passwordBytes = Encoding.UTF8.GetBytes("pass");
+        byte[] passwordBytes = "pass"u8.ToArray();
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
         builder.WithCredentials("user", passwordBytes);
 
         MqttClientConfiguration config = builder.Build();
-        config.Credentials.Should().NotBeNull();
-        config.Credentials!.Username.Should().Be("user");
-        config.Credentials!.Password.Should().BeEquivalentTo(passwordBytes);
+        config.Credentials.ShouldNotBeNull();
+        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
+        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
     }
 
     [Fact]
     public void WithCredentials_ShouldSetCredentialsFromClientCredentials()
     {
-        byte[] passwordBytes = Encoding.UTF8.GetBytes("pass");
+        byte[] passwordBytes = "pass"u8.ToArray();
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
         builder.WithCredentials(new MqttClientCredentials("user", passwordBytes));
 
         MqttClientConfiguration config = builder.Build();
-        config.Credentials.Should().NotBeNull();
-        config.Credentials!.Username.Should().Be("user");
-        config.Credentials!.Password.Should().BeEquivalentTo(passwordBytes);
+        config.Credentials.ShouldNotBeNull();
+        config.Credentials.GetUserName(config.GetMqttClientOptions()).Should().Be("user");
+        config.Credentials.GetPassword(config.GetMqttClientOptions()).Should().BeEquivalentTo(passwordBytes);
     }
 
     [Fact]
@@ -612,6 +610,34 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration config = builder.Build();
         config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
+    }
+
+    // TODO: Test all ConnectTo() possibilities
+    [Fact]
+    public void ConnectTo_ShouldConnectViaTcp()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.ConnectTo("mqtt://test:42");
+
+        MqttClientConfiguration configuration = builder.Build();
+
+        configuration.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
+        configuration.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
+    }
+
+    [Fact]
+    public void ConnectTo_ShouldConnectViaTcpWithSsl()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.ConnectTo("mqtts://test:42");
+
+        MqttClientConfiguration configuration = builder.Build();
+
+        configuration.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
+        configuration.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
+        configuration.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
     }
 
     [Fact]
@@ -821,46 +847,6 @@ public class MqttClientConfigurationBuilderFixture
         config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
     }
 
-    [Fact]
-    public void UsePacketInspector_ShouldSetInspectorFromInstance()
-    {
-        TestPacketInspector instance = new();
-        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
-
-        builder.UsePacketInspector(instance);
-
-        MqttClientConfiguration config = builder.Build();
-        config.PacketInspector.Should().BeSameAs(instance);
-    }
-
-    [Fact]
-    public void UsePacketInspector_ShouldSetInspectorFromGenericTypeArgument()
-    {
-        IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(TestPacketInspector)).Returns(new TestPacketInspector());
-
-        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint(serviceProvider);
-
-        builder.UsePacketInspector<TestPacketInspector>();
-
-        MqttClientConfiguration config = builder.Build();
-        config.PacketInspector.Should().BeOfType<TestPacketInspector>();
-    }
-
-    [Fact]
-    public void UsePacketInspector_ShouldSetInspectorFromType()
-    {
-        IServiceProvider? serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(TestPacketInspector)).Returns(new TestPacketInspector());
-
-        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint(serviceProvider);
-
-        builder.UsePacketInspector(typeof(TestPacketInspector));
-
-        MqttClientConfiguration config = builder.Build();
-        config.PacketInspector.Should().BeOfType<TestPacketInspector>();
-    }
-
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>
         GetBuilderWithValidConfiguration(serviceProvider).Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 
@@ -870,13 +856,5 @@ public class MqttClientConfigurationBuilderFixture
     private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
     {
         public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) => Task.CompletedTask;
-    }
-
-    private sealed class TestPacketInspector : IMqttPacketInspector
-    {
-        public void ProcessMqttPacket(ProcessMqttPacketContext context)
-        {
-            // Nothing to do
-        }
     }
 }

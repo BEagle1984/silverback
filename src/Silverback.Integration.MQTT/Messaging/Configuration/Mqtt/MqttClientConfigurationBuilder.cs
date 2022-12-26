@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Util;
@@ -226,19 +226,46 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the communication timeout. The default is 10 seconds.
+    ///     Sets the timeout which will be applied at socket level and internal operations.
+    ///     The default value is the same as for sockets in .NET in general.
     /// </summary>
-    /// <param name="timeout">
+    /// <param name="value">
     ///     The <see cref="TimeSpan" /> representing the timeout.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder WithCommunicationTimeout(TimeSpan timeout)
+    public partial MqttClientConfigurationBuilder WithTimeout(TimeSpan value)
     {
-        Check.Range(timeout, nameof(timeout), TimeSpan.Zero, TimeSpan.MaxValue);
+        Check.Range(value, nameof(value), TimeSpan.Zero, TimeSpan.MaxValue);
 
-        _configuration = _configuration with { CommunicationTimeout = timeout };
+        _configuration = _configuration with { Timeout = value };
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the bridge must attempt to indicate to the remote broker that it is a bridge and not an ordinary client. If successful,
+    ///     this means that the loop detection will be more effective and that the retained messages will be propagated correctly. Not all brokers
+    ///     support this feature, so it may be necessary to disable it if your bridge does not connect properly.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder EnableTryPrivate()
+    {
+        _configuration = _configuration with { TryPrivate = true };
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the <see cref="MqttClientConfiguration.TryPrivate" />.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder DisableTryPrivate()
+    {
+        _configuration = _configuration with { TryPrivate = false };
         return this;
     }
 
@@ -334,8 +361,7 @@ public partial class MqttClientConfigurationBuilder
         lastWillBuilderAction.Invoke(lastWillMessageConfigurationBuilder);
         _configuration = _configuration with
         {
-            WillMessage = lastWillMessageConfigurationBuilder.Build(),
-            WillDelayInterval = lastWillMessageConfigurationBuilder.Delay
+            WillMessage = lastWillMessageConfigurationBuilder.Build()
         };
         return this;
     }
@@ -522,7 +548,10 @@ public partial class MqttClientConfigurationBuilder
     {
         Check.NotNull(username, nameof(username));
 
-        _configuration = _configuration with { Credentials = new MqttClientCredentials(username, password) };
+        _configuration = _configuration with
+        {
+            Credentials = new MqttClientCredentials(username, password != null ? Encoding.UTF8.GetBytes(password) : null)
+        };
         return this;
     }
 
@@ -549,17 +578,17 @@ public partial class MqttClientConfigurationBuilder
     /// <summary>
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
-    /// <param name="credentials">
-    ///     The <see cref="MqttClientCredentials" />.
+    /// <param name="credentialsProvider">
+    ///     The <see cref="IMqttClientCredentialsProvider" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder WithCredentials(MqttClientCredentials credentials)
+    public MqttClientConfigurationBuilder WithCredentials(IMqttClientCredentialsProvider credentialsProvider)
     {
-        Check.NotNull(credentials, nameof(credentials));
+        Check.NotNull(credentialsProvider, nameof(credentialsProvider));
 
-        _configuration = _configuration with { Credentials = credentials };
+        _configuration = _configuration with { Credentials = credentialsProvider };
         return this;
     }
 
@@ -610,6 +639,63 @@ public partial class MqttClientConfigurationBuilder
             throw new InvalidOperationException("The service provider is not set.");
 
         UseExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)_serviceProvider.GetRequiredService(handlerType));
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the URI of the MQTT server.
+    /// </summary>
+    /// <param name="serverUri">
+    ///     The URI of the MQTT server.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder ConnectTo(string serverUri)
+    {
+        Check.NotNullOrEmpty(serverUri, nameof(serverUri));
+        return ConnectTo(new Uri(serverUri, UriKind.Absolute));
+    }
+
+    /// <summary>
+    ///     Specifies the URI of the MQTT server.
+    /// </summary>
+    /// <param name="serverUri">
+    ///     The URI of the MQTT server.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder ConnectTo(Uri serverUri)
+    {
+        Check.NotNull(serverUri, nameof(serverUri));
+
+        int? port = serverUri.IsDefaultPort ? null : serverUri.Port;
+        switch (serverUri.Scheme.ToUpperInvariant())
+        {
+            case "TCP":
+            case "MQTT":
+                ConnectViaTcp(serverUri.Host, port);
+                break;
+            case "MQTTS":
+                ConnectViaTcp(serverUri.Host, port).EnableTls();
+                break;
+            case "WS":
+            case "WSS":
+                ConnectViaWebSocket(serverUri.ToString());
+                break;
+            default:
+                throw new ArgumentException("Unexpected scheme in uri.");
+        }
+
+        if (!string.IsNullOrEmpty(serverUri.UserInfo))
+        {
+            string[] userInfo = serverUri.UserInfo.Split(':');
+            string username = userInfo[0];
+            string password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
+            WithCredentials(username, password);
+        }
+
         return this;
     }
 
@@ -695,56 +781,6 @@ public partial class MqttClientConfigurationBuilder
         Check.NotNull(configuration, nameof(configuration));
 
         _configuration = _configuration with { Channel = configuration };
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <param name="inspector">
-    ///     The <see cref="IMqttPacketInspector" /> instance to be used.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder UsePacketInspector(IMqttPacketInspector inspector)
-    {
-        Check.NotNull(inspector, nameof(inspector));
-
-        _configuration = _configuration with { PacketInspector = inspector };
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <typeparam name="TInspector">
-    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
-    ///     <see cref="IServiceProvider" />.
-    /// </typeparam>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder UsePacketInspector<TInspector>()
-        where TInspector : IMqttPacketInspector =>
-        UsePacketInspector(typeof(TInspector));
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <param name="handlerType">
-    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
-    ///     <see cref="IServiceProvider" />.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder UsePacketInspector(Type handlerType)
-    {
-        if (_serviceProvider == null)
-            throw new InvalidOperationException("The service provider is not set.");
-
-        UsePacketInspector((IMqttPacketInspector)_serviceProvider.GetRequiredService(handlerType));
         return this;
     }
 

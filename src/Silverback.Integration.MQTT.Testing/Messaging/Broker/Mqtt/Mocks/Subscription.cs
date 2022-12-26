@@ -3,22 +3,22 @@
 
 using System;
 using MQTTnet;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
 internal sealed class Subscription : ParsedTopic
 {
-    private readonly IMqttClientOptions _clientOptions;
+    private readonly MqttClientOptions _clientOptions;
 
-    public Subscription(IMqttClientOptions clientOptions, string topic)
+    public Subscription(MqttClientOptions clientOptions, string topic)
         : base(topic)
     {
         _clientOptions = clientOptions;
     }
 
-    public bool IsMatch(MqttApplicationMessage message, IMqttClientOptions clientOptions)
+    public bool IsMatch(MqttApplicationMessage message, MqttClientOptions clientOptions)
     {
         if (!IsSameBroker(clientOptions))
             return false;
@@ -26,7 +26,7 @@ internal sealed class Subscription : ParsedTopic
         return Regex?.IsMatch(message.Topic) ?? Topic == message.Topic;
     }
 
-    private bool IsSameBroker(IMqttClientOptions clientOptions)
+    private bool IsSameBroker(MqttClientOptions clientOptions)
     {
         if (clientOptions.ChannelOptions is MqttClientTcpOptions tcpOptions1 &&
             _clientOptions.ChannelOptions is MqttClientTcpOptions tcpOptions2)

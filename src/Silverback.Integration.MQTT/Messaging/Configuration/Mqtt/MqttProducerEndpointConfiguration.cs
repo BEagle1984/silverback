@@ -10,12 +10,6 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public sealed record MqttProducerEndpointConfiguration : ProducerEndpointConfiguration<MqttProducerEndpoint>
 {
-    // /// <summary>
-    // ///     Gets the MQTT client configuration. This is actually a wrapper around the
-    // ///     <see cref="MqttClientOptions" /> from the MQTTnet library.
-    // /// </summary>
-    // public MqttClientConfiguration Client { get; init; } = new();
-
     /// <summary>
     ///     Gets the quality of service level (at most once, at least once or exactly once).
     ///     The default is <see cref="MqttQualityOfServiceLevel.AtMostOnce" />.
@@ -34,7 +28,7 @@ public sealed record MqttProducerEndpointConfiguration : ProducerEndpointConfigu
     ///     store the message for matching subscribers indefinitely.
     ///     The default is <c>null</c>.
     /// </summary>
-    public uint? MessageExpiryInterval { get; init; }
+    public uint MessageExpiryInterval { get; init; }
 
     /// <inheritdoc cref="EndpointConfiguration.ValidateCore" />
     protected override void ValidateCore()

@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Packets;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 
@@ -14,12 +14,17 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     Wraps the underlying <see cref="MqttClient" /> and handles the connection lifecycle.
 /// </summary>
-public interface IMqttClientWrapper : IBrokerClient, IApplicationMessageReceiver
+public interface IMqttClientWrapper : IBrokerClient
 {
     /// <summary>
     ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when the connection with the broker is established.
     /// </summary>
     AsyncEvent<BrokerClient> Connected { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="AsyncEvent{TArg}" /> that is fired when a message is received.
+    /// </summary>
+    AsyncEvent<MqttApplicationMessageReceivedEventArgs> MessageReceived { get; }
 
     /// <summary>
     ///     Gets a value indicating whether the client is connected with the broker.

@@ -61,7 +61,8 @@ public class MqttLastWillMessageConfigurationBuilderTests
             .ProduceTo("testaments")
             .WithDelay(TimeSpan.FromSeconds(42));
 
-        configurationBuilder.Delay.Should().Be(42);
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
+        willMessage.Delay.Should().Be(42);
     }
 
     [Fact]

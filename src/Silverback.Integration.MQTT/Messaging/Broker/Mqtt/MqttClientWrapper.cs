@@ -11,9 +11,8 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Publishing;
-using MQTTnet.Client.Receiving;
 using MQTTnet.Exceptions;
+using MQTTnet.Packets;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -68,6 +67,8 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
                             .WithQualityOfServiceLevel(endpoint.QualityOfServiceLevel)
                             .Build()))
             .ToArray();
+
+        _mqttClient.ApplicationMessageReceivedAsync += OnMessageReceivedAsync;
     }
 
     public IReadOnlyCollection<MqttTopicFilter> SubscribedTopicsFilters => _subscribedTopicsFilters;
@@ -76,13 +77,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     public AsyncEvent<BrokerClient> Connected { get; } = new();
 
-    public bool IsConnected => _mqttClient.IsConnected;
+    public AsyncEvent<MqttApplicationMessageReceivedEventArgs> MessageReceived { get; } = new();
 
-    public IMqttApplicationMessageReceivedHandler ApplicationMessageReceivedHandler
-    {
-        get => _mqttClient.ApplicationMessageReceivedHandler;
-        set => _mqttClient.ApplicationMessageReceivedHandler = value;
-    }
+    public bool IsConnected => _mqttClient.IsConnected;
 
     public ValueTask ProduceAsync(
         byte[]? content,
@@ -187,11 +184,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
     {
         try
         {
-            await _mqttClient
-                .ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken)
-                .ConfigureAwait(false);
+            await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken).ConfigureAwait(false);
 
-            await _mqttClient.SubscribeAsync(_subscribedTopicsFilters).ConfigureAwait(false);
+            MqttClientSubscribeOptions subscribeOptions = new()
+            {
+                TopicFilters = _subscribedTopicsFilters.AsList()
+            };
+            await _mqttClient.SubscribeAsync(subscribeOptions, cancellationToken).ConfigureAwait(false);
 
             // The client might briefly connect and then disconnect immediately (e.g. when connecting with
             // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real
@@ -273,6 +272,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
                 result);
         }
     }
+
+    private Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs messageReceivedEventArgs) =>
+        MessageReceived.InvokeAsync(messageReceivedEventArgs).AsTask();
 
     private void WaitFlushingCompletes()
     {

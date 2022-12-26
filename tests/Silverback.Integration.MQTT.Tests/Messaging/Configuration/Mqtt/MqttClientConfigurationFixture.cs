@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using MQTTnet.Client.Options;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
@@ -207,7 +207,11 @@ public class MqttClientConfigurationFixture
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
-            WillMessage = new MqttLastWillMessageConfiguration { Topic = null! }
+            WillMessage = new MqttLastWillMessageConfiguration
+            {
+                Payload = new byte[10],
+                Topic = null!
+            }
         };
 
         Action act = () => configuration.Validate();
@@ -342,7 +346,10 @@ public class MqttClientConfigurationFixture
             ClientId = "client42",
             ProtocolVersion = MqttProtocolVersion.V310,
             Channel = new MqttClientWebSocketConfiguration { Uri = "test-server" },
-            WillMessage = new MqttLastWillMessageConfiguration { Topic = "topic1" }
+            WillMessage = new MqttLastWillMessageConfiguration
+            {
+                Topic = "topic1"
+            }
         };
 
         MqttClientOptions options = configuration.GetMqttClientOptions();
@@ -350,7 +357,7 @@ public class MqttClientConfigurationFixture
         options.ClientId.Should().Be("client42");
         options.ProtocolVersion.Should().Be(MqttProtocolVersion.V310);
         options.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("test-server");
-        options.WillMessage.Topic.Should().Be("topic1");
+        options.WillTopic.Should().Be("topic1");
     }
 
     [Fact]

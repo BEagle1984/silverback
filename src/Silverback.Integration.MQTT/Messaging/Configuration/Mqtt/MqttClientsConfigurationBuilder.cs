@@ -4,8 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using MQTTnet.Client.ExtendedAuthenticationExchange;
-using MQTTnet.Diagnostics.PacketInspection;
+using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Util;
 
@@ -36,19 +35,46 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the communication timeout. The default is 10 seconds.
+    ///     Sets the the timeout which will be applied at socket level and internal operations.
+    ///     The default value is the same as for sockets in .NET in general.
     /// </summary>
-    /// <param name="timeout">
+    /// <param name="value">
     ///     The <see cref="TimeSpan" /> representing the timeout.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder WithCommunicationTimeout(TimeSpan timeout)
+    public partial MqttClientsConfigurationBuilder WithTimeout(TimeSpan value)
     {
-        Check.Range(timeout, nameof(timeout), TimeSpan.Zero, TimeSpan.MaxValue);
+        Check.Range(value, nameof(value), TimeSpan.Zero, TimeSpan.MaxValue);
 
-        _sharedConfigurationActions.Add(builder => builder.WithCommunicationTimeout(timeout));
+        _sharedConfigurationActions.Add(builder => builder.WithTimeout(value));
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the bridge must attempt to indicate to the remote broker that it is a bridge and not an ordinary client. If successful,
+    ///     this means that the loop detection will be more effective and that the retained messages will be propagated correctly. Not all brokers
+    ///     support this feature, so it may be necessary to disable it if your bridge does not connect properly.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder EnableTryPrivate()
+    {
+        _sharedConfigurationActions.Add(builder => builder.EnableTryPrivate());
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the <see cref="MqttClientConfiguration.TryPrivate" />.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder DisableTryPrivate()
+    {
+        _sharedConfigurationActions.Add(builder => builder.DisableTryPrivate());
         return this;
     }
 
@@ -332,17 +358,17 @@ public sealed partial class MqttClientsConfigurationBuilder
     /// <summary>
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
-    /// <param name="credentials">
-    ///     The <see cref="MqttClientCredentials" />.
+    /// <param name="credentialsProvider">
+    ///     The <see cref="IMqttClientCredentialsProvider" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder WithCredentials(MqttClientCredentials credentials)
+    public MqttClientsConfigurationBuilder WithCredentials(IMqttClientCredentialsProvider credentialsProvider)
     {
-        Check.NotNull(credentials, nameof(credentials));
+        Check.NotNull(credentialsProvider, nameof(credentialsProvider));
 
-        _sharedConfigurationActions.Add(builder => builder.WithCredentials(credentials));
+        _sharedConfigurationActions.Add(builder => builder.WithCredentials(credentialsProvider));
         return this;
     }
 
@@ -390,6 +416,38 @@ public sealed partial class MqttClientsConfigurationBuilder
     public MqttClientsConfigurationBuilder UseExtendedAuthenticationExchangeHandler(Type handlerType)
     {
         _sharedConfigurationActions.Add(builder => builder.UseExtendedAuthenticationExchangeHandler(handlerType));
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the URI of the MQTT server.
+    /// </summary>
+    /// <param name="serverUri">
+    ///     The URI of the MQTT server.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder ConnectTo(string serverUri)
+    {
+        Check.NotNullOrEmpty(serverUri, nameof(serverUri));
+        return ConnectTo(new Uri(serverUri, UriKind.Absolute));
+    }
+
+    /// <summary>
+    ///     Specifies the URI of the MQTT server.
+    /// </summary>
+    /// <param name="serverUri">
+    ///     The URI of the MQTT server.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder ConnectTo(Uri serverUri)
+    {
+        Check.NotNull(serverUri, nameof(serverUri));
+
+        _sharedConfigurationActions.Add(builder => builder.ConnectTo(serverUri));
         return this;
     }
 
@@ -462,53 +520,6 @@ public sealed partial class MqttClientsConfigurationBuilder
         Check.NotNull(configuration, nameof(configuration));
 
         _sharedConfigurationActions.Add(builder => builder.ConnectViaWebSocket(configuration));
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <param name="inspector">
-    ///     The <see cref="IMqttPacketInspector" /> instance to be used.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder UsePacketInspector(IMqttPacketInspector inspector)
-    {
-        Check.NotNull(inspector, nameof(inspector));
-
-        _sharedConfigurationActions.Add(builder => builder.UsePacketInspector(inspector));
-        return this;
-    }
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <typeparam name="TInspector">
-    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
-    ///     <see cref="IServiceProvider" />.
-    /// </typeparam>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder UsePacketInspector<TInspector>()
-        where TInspector : IMqttPacketInspector =>
-        UsePacketInspector(typeof(TInspector));
-
-    /// <summary>
-    ///     Sets the package inspector to be used.
-    /// </summary>
-    /// <param name="handlerType">
-    ///     The type of the <see cref="IMqttPacketInspector" /> to be used. The instance will be resolved via the
-    ///     <see cref="IServiceProvider" />.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder UsePacketInspector(Type handlerType)
-    {
-        _sharedConfigurationActions.Add(builder => builder.UsePacketInspector(handlerType));
         return this;
     }
 
