@@ -137,7 +137,6 @@ internal sealed class ConsumerChannelManager : IDisposable
             IsReading = false;
             _readTaskCompletionSource.TrySetResult(false);
 
-            // TODO: Review logic and log messages (the entire client is disconnected)
             await _mqttClientWrapper.DisconnectAsync().ConfigureAwait(false);
         }
 

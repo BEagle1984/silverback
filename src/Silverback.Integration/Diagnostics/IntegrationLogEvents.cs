@@ -47,7 +47,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageFatalError { get; } = new(
         LogLevel.Critical,
         GetEventId(3, nameof(ProcessingConsumedMessageFatalError)),
-        "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+        "Fatal error occurred processing the consumed message. The client will be disconnected.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message and
@@ -56,7 +56,7 @@ public static class IntegrationLogEvents
     public static LogEvent ConsumerFatalError { get; } = new(
         LogLevel.Critical,
         GetEventId(4, nameof(ConsumerFatalError)),
-        "Fatal error occurred processing the consumed message. The consumer will be stopped. | consumerName: {consumerName}");
+        "Fatal error occurred processing the consumed message. The client will be disconnected. | consumerName: {consumerName}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message is produced.
@@ -329,7 +329,7 @@ public static class IntegrationLogEvents
         LogLevel.Trace,
         GetEventId(55, nameof(PolicyChainCompleted)),
         "All policies have been applied but the message(s) couldn't be successfully processed. " +
-        "The consumer will be stopped.");
+        "The client will be disconnected.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be processed and the
