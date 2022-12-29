@@ -18,6 +18,7 @@ using Xunit;
 namespace Silverback.Tests.Core.Messaging.Publishing;
 
 [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "False positive in test code")]
+[SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Test code")]
 public partial class PublisherFixture
 {
     [Fact]

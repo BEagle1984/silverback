@@ -51,38 +51,26 @@ public class MessageValidatorBenchmark
     }
 
     [Benchmark]
-    public void ValidMessage()
-    {
+    public void ValidMessage() =>
         MessageValidator.IsValid(_validMessage, MessageValidationMode.LogWarning, out _);
-    }
 
     [Benchmark]
-    public void SinglePropertyInvalid()
-    {
+    public void SinglePropertyInvalid() =>
         MessageValidator.IsValid(_messageHavingSinglePropertyInvalid, MessageValidationMode.LogWarning, out _);
-    }
 
     [Benchmark]
-    public void AllPropertiesInvalid()
-    {
+    public void AllPropertiesInvalid() =>
         MessageValidator.IsValid(_messageHavingAllPropertiesInvalid, MessageValidationMode.LogWarning, out _);
-    }
 
     [Benchmark]
-    public void ValidLargeMessage()
-    {
+    public void ValidLargeMessage() =>
         MessageValidator.IsValid(_validLargeMessage, MessageValidationMode.LogWarning, out _);
-    }
 
     [Benchmark]
-    public void LargeMessageHavingSinglePropertyInvalid()
-    {
+    public void LargeMessageHavingSinglePropertyInvalid() =>
         MessageValidator.IsValid(_largeMessageHavingSinglePropertyInvalid, MessageValidationMode.LogWarning, out _);
-    }
 
     [Benchmark]
-    public void LargeMessageHavingSeveralPropertiesInvalid()
-    {
+    public void LargeMessageHavingSeveralPropertiesInvalid() =>
         MessageValidator.IsValid(_largeMessageHavingSeveralPropertiesInvalid, MessageValidationMode.LogWarning, out _);
-    }
 }

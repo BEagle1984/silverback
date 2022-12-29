@@ -14,6 +14,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util;
 
+[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "False positives")]
 public class TaskExtensionsFixture
 {
     [Fact]

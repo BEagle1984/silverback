@@ -15,6 +15,7 @@ using Xunit;
 namespace Silverback.Tests.Core.Configuration;
 
 [SuppressMessage("ReSharper", "LocalFunctionCanBeMadeStatic", Justification = "Test code")]
+[SuppressMessage("Style", "IDE0062:Make local function \'static\'", Justification = "Test code")]
 public partial class SilverbackBuilderFixture
 {
     [Fact]

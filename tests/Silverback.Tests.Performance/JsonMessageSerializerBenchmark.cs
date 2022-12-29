@@ -28,29 +28,21 @@ public class JsonMessageSerializerBenchmark
 
     [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
     [BenchmarkCategory("Serialize")]
-    public async Task SerializeAsyncUsingLegacySerializer()
-    {
+    public async Task SerializeAsyncUsingLegacySerializer() =>
         await _newtonsoftSerializer.SerializeAsync(WeekWhetherForecastsEvent.Sample, _messageHeaderCollection, _producerEndpoint);
-    }
 
     [Benchmark(Description = "New System.Text based JsonMessageSerializer")]
     [BenchmarkCategory("Serialize")]
-    public async Task SerializeUsingNewSerializer()
-    {
+    public async Task SerializeUsingNewSerializer() =>
         await _serializer.SerializeAsync(WeekWhetherForecastsEvent.Sample, _messageHeaderCollection, _producerEndpoint);
-    }
 
     [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
     [BenchmarkCategory("Deserialize")]
-    public async Task DeserializeUsingLegacySerializer()
-    {
+    public async Task DeserializeUsingLegacySerializer() =>
         await _newtonsoftSerializer.SerializeAsync(WeekWhetherForecastsEvent.Sample, _messageHeaderCollection, _producerEndpoint);
-    }
 
     [Benchmark(Description = "New System.Text based JsonMessageSerializer")]
     [BenchmarkCategory("Deserialize")]
-    public async Task DeserializeUsingNewSerializer()
-    {
+    public async Task DeserializeUsingNewSerializer() =>
         await _serializer.SerializeAsync(WeekWhetherForecastsEvent.Sample, _messageHeaderCollection, _producerEndpoint);
-    }
 }

@@ -34,7 +34,7 @@ public class NullLockFixture
     {
         DistributedLockHandle handle = await NullLock.Instance.AcquireAsync();
 
-        Action act = () => handle.Dispose();
+        Action act = handle.Dispose;
 
         act.Should().NotThrow();
     }

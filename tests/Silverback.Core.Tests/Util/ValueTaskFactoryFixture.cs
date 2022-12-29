@@ -22,8 +22,9 @@ public class ValueTaskFactoryFixture
     }
 
     [Fact]
-    [SuppressMessage("", "CA2012", Justification = "Test method")]
-    [SuppressMessage("", "VSTHRD104", Justification = "Test method")]
+    [SuppressMessage("Usage", "VSTHRD104:Offer async methods", Justification = "Test method")]
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Test method")]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Test method")]
     public void FromResult_ShouldReturnCompletedValueTask()
     {
         ValueTask<int> result = ValueTaskFactory.FromResult(42);

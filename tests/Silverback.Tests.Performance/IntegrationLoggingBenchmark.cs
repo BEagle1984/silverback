@@ -100,22 +100,13 @@ public class IntegrationLoggingBenchmark
     }
 
     [Benchmark]
-    public void LogInbound()
-    {
-        _consumerLogger.LogProcessing(_inboundEnvelope);
-    }
+    public void LogInbound() => _consumerLogger.LogProcessing(_inboundEnvelope);
 
     [Benchmark]
-    public void LogOutbound()
-    {
-        _producerLogger.LogProduced(_outboundEnvelope);
-    }
+    public void LogOutbound() => _producerLogger.LogProduced(_outboundEnvelope);
 
     [Benchmark]
-    public void LogDisabled()
-    {
-        _producerLogger.LogStoringIntoOutbox(_outboundEnvelope);
-    }
+    public void LogDisabled() => _producerLogger.LogStoringIntoOutbox(_outboundEnvelope);
 
     private class TestClient : IBrokerClient
     {

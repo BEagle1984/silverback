@@ -405,6 +405,33 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     public partial KafkaConsumerConfigurationBuilder WithAutoOffsetReset(AutoOffsetReset? autoOffsetReset);
 
     /// <summary>
+    ///     Specifies that the offset needs to be reset to the smallest offset, when there is no initial offset in the offset store or the desired
+    ///     offset is out of range.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder AutoResetOffsetToEarliest() => WithAutoOffsetReset(AutoOffsetReset.Earliest);
+
+    /// <summary>
+    ///     Specifies that the offset needs to be reset to the largest offset, when there is no initial offset in the offset store or the desired
+    ///     offset is out of range.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder AutoResetOffsetToLatest() => WithAutoOffsetReset(AutoOffsetReset.Latest);
+
+    /// <summary>
+    ///     Specifies that an error (ERR__AUTO_OFFSET_RESET) must be triggered, when there is no initial offset in the offset store or the
+    ///     desired offset is out of range.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisableAutoOffsetReset() => WithAutoOffsetReset(AutoOffsetReset.Error);
+
+    /// <summary>
     ///     Sets the static instance id used to enable static group membership. Static group members are able to leave and rejoin a group within
     ///     the configured <see cref="KafkaConsumerConfiguration.SessionTimeoutMs" /> without prompting a group rebalance. This should be used in
     ///     combination with a larger <see cref="KafkaConsumerConfiguration.SessionTimeoutMs" /> to avoid group rebalances caused by transient
