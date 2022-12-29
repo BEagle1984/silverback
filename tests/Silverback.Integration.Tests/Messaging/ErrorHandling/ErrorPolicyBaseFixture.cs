@@ -105,13 +105,13 @@ public class ErrorPolicyBaseFixture
     [MemberData(nameof(IncludedExceptions_TestData))]
     public void CanHandle_ShouldEvaluateExceptionType_WhenIncludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                IncludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
-            }
-            .Build(Substitute.For<IServiceProvider>());
+        TestErrorPolicy policy = new()
+        {
+            IncludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
                     null,
@@ -129,13 +129,13 @@ public class ErrorPolicyBaseFixture
     [MemberData(nameof(ExcludedException_TestData))]
     public void CanHandle_ShouldEvaluateExceptionType_WhenExcludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                ExcludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
-            }
-            .Build(Substitute.For<IServiceProvider>());
+        TestErrorPolicy policy = new()
+        {
+            ExcludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
                     null,
@@ -153,14 +153,14 @@ public class ErrorPolicyBaseFixture
     [MemberData(nameof(IncludedAndExcludedExceptions_TestData))]
     public void CanHandle_ShouldEvaluateExceptionType_WhenIncludedAndExcludedExceptionsAreSpecified(Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                IncludedExceptions = new[] { typeof(ArgumentException), typeof(FormatException) },
-                ExcludedExceptions = new[] { typeof(ArgumentOutOfRangeException) }
-            }
-            .Build(Substitute.For<IServiceProvider>());
+        TestErrorPolicy policy = new()
+        {
+            IncludedExceptions = new[] { typeof(ArgumentException), typeof(FormatException) },
+            ExcludedExceptions = new[] { typeof(ArgumentOutOfRangeException) }
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 new InboundEnvelope(
                     null,
@@ -178,14 +178,14 @@ public class ErrorPolicyBaseFixture
     [MemberData(nameof(ApplyRule_TestData))]
     public void CanHandle_ShouldEvaluateApplyRule(IInboundEnvelope envelope, Exception exception, bool mustApply)
     {
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                ApplyRule = (inboundEnvelope, ex) =>
-                    inboundEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no"
-            }
-            .Build(Substitute.For<IServiceProvider>());
+        TestErrorPolicy policy = new()
+        {
+            ApplyRule = (inboundEnvelope, ex) =>
+                inboundEnvelope.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no"
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope),
             exception);
 
@@ -209,13 +209,13 @@ public class ErrorPolicyBaseFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                MaxFailedAttempts = 3
-            }
-            .Build(Substitute.For<IServiceProvider>());
+        TestErrorPolicy policy = new()
+        {
+            MaxFailedAttempts = 3
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope),
             new InvalidOperationException());
 
@@ -229,11 +229,11 @@ public class ErrorPolicyBaseFixture
         ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                MessageToPublishFactory = (_, exception) => new TestEventTwo { Content = exception.Message }
-            }
-            .Build(serviceProvider);
+        TestErrorPolicy policy = new()
+        {
+            MessageToPublishFactory = (_, exception) => new TestEventTwo { Content = exception.Message }
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(serviceProvider);
 
         InboundEnvelope envelope = new(
             Stream.Null,
@@ -242,7 +242,7 @@ public class ErrorPolicyBaseFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        await policy.HandleErrorAsync(
+        await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
             new TimeoutException("Exception message."));
 
@@ -256,11 +256,11 @@ public class ErrorPolicyBaseFixture
         ServiceProvider serviceProvider = new ServiceCollection().AddScoped(_ => publisher)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
-        IErrorPolicyImplementation policy = new TestErrorPolicy
-            {
-                MessageToPublishFactory = (_, _) => null
-            }
-            .Build(serviceProvider);
+        TestErrorPolicy policy = new()
+        {
+            MessageToPublishFactory = (_, _) => null
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(serviceProvider);
 
         InboundEnvelope envelope = new(
             Stream.Null,
@@ -272,7 +272,7 @@ public class ErrorPolicyBaseFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        await policy.HandleErrorAsync(
+        await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
             new ArgumentNullException());
 

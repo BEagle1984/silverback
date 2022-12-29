@@ -51,7 +51,7 @@ public class OutboxWorkerSettingsFixture
     {
         OutboxWorkerSettings settings = new(new TestOutboxSettings());
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().NotThrow();
     }
@@ -64,7 +64,7 @@ public class OutboxWorkerSettingsFixture
             Interval = TimeSpan.FromSeconds(-42)
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }
@@ -77,7 +77,7 @@ public class OutboxWorkerSettingsFixture
             BatchSize = -42
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }

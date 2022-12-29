@@ -43,7 +43,7 @@ public class InMemoryOutboxSettingsFixture
     {
         InMemoryOutboxSettings outboxSettings = new("my-outbox");
 
-        Action act = () => outboxSettings.Validate();
+        Action act = outboxSettings.Validate;
 
         act.Should().NotThrow();
     }
@@ -56,7 +56,7 @@ public class InMemoryOutboxSettingsFixture
     {
         InMemoryOutboxSettings outboxSettings = new(outboxName!);
 
-        Action act = () => outboxSettings.Validate();
+        Action act = outboxSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }

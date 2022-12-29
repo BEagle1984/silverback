@@ -31,7 +31,7 @@ public class InboundSpySubscriber
     }
 
     [Subscribe]
-    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
     private void OnInbound(IInboundEnvelope envelope) => _integrationSpy.AddInboundEnvelope(envelope);
 }

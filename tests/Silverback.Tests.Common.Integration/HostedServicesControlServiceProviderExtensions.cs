@@ -21,13 +21,11 @@ public static class HostedServicesControlServiceProviderExtensions
         GetSilverbackServicesHostedServices(serviceProvider)
             .ForEach(service => service.Resume());
 
-    private static IEnumerable<RecurringDistributedBackgroundService> GetSilverbackServicesHostedServices(IServiceProvider serviceProvider)
-    {
-        return serviceProvider.GetServices<IHostedService>()
+    private static IEnumerable<RecurringDistributedBackgroundService> GetSilverbackServicesHostedServices(IServiceProvider serviceProvider) =>
+        serviceProvider.GetServices<IHostedService>()
             .OfType<RecurringDistributedBackgroundService>()
             .Where(
                 service =>
                     service.GetType().Namespace != null &&
                     service.GetType().Namespace!.StartsWith("Silverback", StringComparison.Ordinal));
-    }
 }

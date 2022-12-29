@@ -20,9 +20,9 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
 
     private readonly ISilverbackLogger<BrokerClientCallbackInvoker> _logger;
 
-    private List<Type>? _callbackTypes;
+    private readonly ConcurrentDictionary<Type, bool> _hasCallbacks = new();
 
-    private ConcurrentDictionary<Type, bool> _hasCallbacks = new();
+    private List<Type>? _callbackTypes;
 
     private bool _appStopping;
 
@@ -189,8 +189,7 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
     {
         List<IBrokerClientCallback> callbacks = scopedServiceProvider.GetServices<IBrokerClientCallback>().ToList();
 
-        if (_callbackTypes == null)
-            _callbackTypes = callbacks.Select(callback => callback.GetType()).ToList();
+        _callbackTypes ??= callbacks.Select(callback => callback.GetType()).ToList();
 
         return callbacks.OfType<TCallback>().SortBySortIndex();
     }

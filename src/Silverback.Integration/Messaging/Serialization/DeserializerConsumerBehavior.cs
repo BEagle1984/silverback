@@ -67,23 +67,14 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
             : SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
     }
 
-    private static IRawInboundEnvelope? HandleNullMessage(IRawInboundEnvelope envelope, Type deserializedType)
-    {
-        switch (envelope.Endpoint.Configuration.NullMessageHandlingStrategy)
+    private static IRawInboundEnvelope? HandleNullMessage(IRawInboundEnvelope envelope, Type deserializedType) =>
+        envelope.Endpoint.Configuration.NullMessageHandlingStrategy switch
         {
-            case NullMessageHandlingStrategy.Tombstone:
-                return CreateTombstoneEnvelope(envelope, deserializedType);
-            case NullMessageHandlingStrategy.Legacy:
-                return SerializationHelper.CreateTypedInboundEnvelope(
-                    envelope,
-                    null,
-                    deserializedType);
-            case NullMessageHandlingStrategy.Skip:
-                return null;
-            default:
-                throw new InvalidOperationException("Unknown NullMessageHandling value.");
-        }
-    }
+            NullMessageHandlingStrategy.Tombstone => CreateTombstoneEnvelope(envelope, deserializedType),
+            NullMessageHandlingStrategy.Legacy => SerializationHelper.CreateTypedInboundEnvelope(envelope, null, deserializedType),
+            NullMessageHandlingStrategy.Skip => null,
+            _ => throw new InvalidOperationException("Unknown NullMessageHandling value.")
+        };
 
     private static IRawInboundEnvelope CreateTombstoneEnvelope(
         IRawInboundEnvelope envelope,

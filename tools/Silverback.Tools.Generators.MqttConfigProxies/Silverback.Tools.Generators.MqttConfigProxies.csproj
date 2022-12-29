@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
     <RootNamespace>Silverback.Tools.Generators.MqttConfigProxies</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>

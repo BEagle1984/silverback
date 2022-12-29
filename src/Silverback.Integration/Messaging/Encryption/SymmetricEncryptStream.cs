@@ -109,7 +109,7 @@ public class SymmetricEncryptStream : SilverbackCryptoStream
         return length;
     }
 
-    [SuppressMessage("", "CA5401", Justification = "User choice to use a fix IV")]
+    [SuppressMessage("Security", "CA5401:Do not use CreateEncryptor with non-default IV", Justification = "User choice to use a fix IV")]
     private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
     {
         if (settings.Key == null)

@@ -2,10 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
@@ -136,14 +136,12 @@ public class BrokerClientCallbacksFixture : KafkaFixture
         }
     }
 
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private sealed class OtherBrokerClientsConfiguredCallback : BrokerClientsConfiguredCallback
     {
     }
 
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private sealed class ProducingBrokerClientsConfiguredCallback : IBrokerClientsConfiguredCallback
     {
         private readonly IPublisher _publisher;

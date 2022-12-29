@@ -28,7 +28,7 @@ internal static class SequenceExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    [SuppressMessage("", "CA1031", Justification = "All exceptions have to be caught and opt. rethrown")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "All exceptions have to be caught and opt. rethrown")]
     [SuppressMessage("", "CA2219", Justification = "It's OK to overwrite the exception in this case")]
     public static async Task AwaitProcessingAsync(this ISequence sequence, bool rethrowExceptions)
     {

@@ -111,7 +111,7 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
         ProduceCore(message.ReadAll(), headers, endpoint, onSuccess, onError);
 
     /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("", "CA1031", Justification = "Exception forwarded")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]
     protected override void ProduceCore(
         byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -203,7 +203,7 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
         await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint, onSuccess, onError).ConfigureAwait(false);
 
     /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged/forwarded")]
     protected override ValueTask ProduceCoreAsync(
         byte[]? message,
         IReadOnlyCollection<MessageHeader>? headers,

@@ -171,7 +171,7 @@ internal static class MqttLoggerExtensions
             exception);
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Can't do anything but swallow all exceptions")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Can't do anything but swallow all exceptions")]
     private static string FormatMqttClientMessage(string message, object[]? parameters)
     {
         try

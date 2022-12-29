@@ -44,18 +44,17 @@ public partial class PublisherFixture
 
         public TestActivityListener()
         {
-            _listener = new ActivityListener();
-            _listener.ShouldListenTo = _ => true;
-            _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded;
-            _listener.ActivityStarted = activity => _activities.Add(activity);
+            _listener = new ActivityListener
+            {
+                ShouldListenTo = _ => true,
+                Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                ActivityStarted = _activities.Add
+            };
             ActivitySource.AddActivityListener(_listener);
         }
 
         public IEnumerable<Activity> Activities => _activities;
 
-        public void Dispose()
-        {
-            _listener.Dispose();
-        }
+        public void Dispose() => _listener.Dispose();
     }
 }

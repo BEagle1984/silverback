@@ -14,11 +14,9 @@ namespace Silverback.Util;
 internal static class Check
 {
     [ContractAnnotation("value:null => halt")]
-    public static T NotNull<T>(
-        [NoEnumeration] [ValidatedNotNull] T? value,
-        [InvokerParameterName] string parameterName)
+    public static T NotNull<T>([NoEnumeration, ValidatedNotNull] T? value, [InvokerParameterName] string parameterName)
     {
-        if (ReferenceEquals(value, null))
+        if (value is null)
         {
             NotNullOrEmpty(parameterName, nameof(parameterName));
             throw new ArgumentNullException(parameterName);
@@ -28,9 +26,7 @@ internal static class Check
     }
 
     [ContractAnnotation("value:null => halt")]
-    public static IReadOnlyCollection<T> NotEmpty<T>(
-        [ValidatedNotNull] IReadOnlyCollection<T>? value,
-        [InvokerParameterName] string parameterName)
+    public static IReadOnlyCollection<T> NotEmpty<T>([ValidatedNotNull] IReadOnlyCollection<T>? value, [InvokerParameterName] string parameterName)
     {
         value = NotNull(value, parameterName);
 

@@ -98,7 +98,7 @@ internal static class KafkaEventsBinder
             invokeDuringShutdown: false);
     }
 
-    [SuppressMessage("", "CA1508", Justification = "False positive: topicPartitionOffsets set in handler action")]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive: topicPartitionOffsets set in handler action")]
     private static IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
         List<TopicPartition> topicPartitions,
         IConfluentConsumerWrapper consumerWrapper,
@@ -171,7 +171,7 @@ internal static class KafkaEventsBinder
         callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(callback => callback.OnOffsetsCommitted(offsets, consumerWrapper.Consumer));
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private static void OnError(
         Error error,
         IConfluentConsumerWrapper consumerWrapper,
@@ -200,7 +200,7 @@ internal static class KafkaEventsBinder
             logger.LogConfluentConsumerError(error, consumerWrapper.Consumer);
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private static void OnLog(
         LogMessage logMessage,
         IConfluentProducerWrapper producerWrapper,
@@ -241,7 +241,7 @@ internal static class KafkaEventsBinder
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private static void OnLog(
         LogMessage logMessage,
         IConfluentConsumerWrapper consumerWrapper,

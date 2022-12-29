@@ -74,7 +74,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null) =>
         throw new NotSupportedException();
 
-    [SuppressMessage("", "CA1031", Justification = "Exception forwarded to callback")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded to callback")]
     public void Produce(
         TopicPartition topicPartition,
         Message<byte[]?, byte[]?> message,
@@ -146,10 +146,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         TimeSpan timeout) =>
         throw new NotSupportedException();
 
-    public void Dispose()
-    {
-        _isDisposed = true;
-    }
+    public void Dispose() => _isDisposed = true;
 
     private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
     {

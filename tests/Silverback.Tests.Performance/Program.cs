@@ -21,4 +21,3 @@ using Silverback.Tests.Performance;
 */
 
 BenchmarkRunner.Run(typeof(KafkaKeyHelperBenchmark));
-

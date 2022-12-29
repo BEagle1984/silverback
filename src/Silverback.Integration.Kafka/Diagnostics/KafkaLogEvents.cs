@@ -11,7 +11,7 @@ namespace Silverback.Diagnostics;
 ///     Contains the <see cref="LogEvent" /> constants of all events logged by the
 ///     Silverback.Integration.Kafka package.
 /// </summary>
-[SuppressMessage("", "SA1118", Justification = "Cleaner and clearer this way")]
+[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "Clearer and cleaner")]
 public static class KafkaLogEvents
 {
     /// <summary>

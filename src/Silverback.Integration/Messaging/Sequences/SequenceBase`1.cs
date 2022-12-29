@@ -188,10 +188,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     /// <inheritdoc cref="ISequenceImplementation.SetActivity" />
-    void ISequenceImplementation.SetActivity(Activity activity)
-    {
-        Activity = activity;
-    }
+    void ISequenceImplementation.SetActivity(Activity activity) => Activity = activity;
 
     /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
     public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
@@ -411,6 +408,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     protected virtual void Dispose(bool disposing)
     {
         if (_isDisposed)
@@ -509,7 +507,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private void ResetTimeout()
     {
         if (!_enforceTimeout)
@@ -606,7 +604,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _abortingTaskCompletionSource?.SetResult(true);
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Exception notified")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception notified")]
     private async Task<bool> RollbackTransactionAndNotifyProcessingCompletedAsync(Exception? exception)
     {
         bool done = true;

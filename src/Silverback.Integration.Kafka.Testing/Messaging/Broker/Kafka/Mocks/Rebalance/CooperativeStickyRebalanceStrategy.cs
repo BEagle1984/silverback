@@ -58,12 +58,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
                 if (AssignUnassignedPartition(assignment, unassignedPartitions, assignedPartitions))
                     continue;
 
-                if (MoveAssignedPartition(
-                        assignment,
-                        partitionAssignments,
-                        partitionsPerConsumer,
-                        assignedPartitions,
-                        revokedPartitions))
+                if (MoveAssignedPartition(assignment, partitionAssignments, partitionsPerConsumer, assignedPartitions, revokedPartitions))
                     continue;
 
                 break;

@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>$(TestsTargetFramework)</TargetFramework>
     <RootNamespace>Silverback.Tests.Integration.Kafka</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>

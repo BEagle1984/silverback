@@ -158,8 +158,7 @@ public abstract class SequenceReaderBase : ISequenceReader
         async ValueTask AwaitOrAbortPreviousSequenceAsync(ISequence sequence)
         {
             // Prevent Sequence and RawSequence to mess with each other
-            if (HandlesRawMessages && sequence is Sequence ||
-                !HandlesRawMessages && sequence is RawSequence)
+            if (HandlesRawMessages && sequence is Sequence || !HandlesRawMessages && sequence is RawSequence)
                 return;
 
             if (!sequence.IsComplete)

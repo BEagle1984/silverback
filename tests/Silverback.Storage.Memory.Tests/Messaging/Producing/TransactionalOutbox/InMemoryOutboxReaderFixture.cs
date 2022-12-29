@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -245,7 +244,6 @@ public class InMemoryOutboxReaderFixture
         maxAge.Should().Be(TimeSpan.Zero);
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
     private class TestMessage
     {
     }

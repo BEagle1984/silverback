@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Broker.Behaviors;
 ///     Contains the sort index constants of the default <see cref="IBrokerBehavior" /> added by
 ///     Silverback.Integration.
 /// </summary>
-[SuppressMessage("", "CA1034", Justification = Justifications.AllowedForConstants)]
+[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "OK for constants")]
 public static class BrokerBehaviorsSortIndexes
 {
     /// <summary>

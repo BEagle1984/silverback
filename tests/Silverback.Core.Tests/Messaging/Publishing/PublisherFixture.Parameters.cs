@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
@@ -60,16 +61,13 @@ public partial class PublisherFixture
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class SubscriberWithParameters
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public void SyncSubscriber(TestEventOne message, Counter counter) => counter.Increment();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task AsyncSubscriber(TestEventOne message, Counter counter) => counter.IncrementAsync();
     }
 }

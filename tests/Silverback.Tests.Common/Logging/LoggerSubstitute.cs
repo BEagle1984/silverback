@@ -59,20 +59,8 @@ public class LoggerSubstitute : ILogger
             eventId,
             exceptionMessage);
 
-    public void Log<TState>(
-        LogLevel logLevel,
-        EventId eventId,
-        TState state,
-        Exception? exception,
-        Func<TState, Exception?, string> formatter)
-    {
-        _receivedCalls.Add(
-            new ReceivedCall(
-                logLevel,
-                exception,
-                formatter.Invoke(state, exception),
-                eventId.Id));
-    }
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
+        _receivedCalls.Add(new ReceivedCall(logLevel, exception, formatter.Invoke(state, exception), eventId.Id));
 
     public bool IsEnabled(LogLevel logLevel) => logLevel >= _factory.MinLevel;
 

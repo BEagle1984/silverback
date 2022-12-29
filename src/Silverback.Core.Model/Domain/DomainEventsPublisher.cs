@@ -84,7 +84,7 @@ public class DomainEventsPublisher
     /// </summary>
     public void PublishDomainEvents() => AsyncHelper.RunSynchronously(() => PublishDomainEventsAsync(ExecutionFlow.Sync));
 
-    [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     private async ValueTask PublishDomainEventsAsync(ExecutionFlow executionFlow)
     {
         IReadOnlyCollection<object> events = GetDomainEvents();
@@ -93,9 +93,9 @@ public class DomainEventsPublisher
         while (events.Any())
         {
             if (executionFlow == ExecutionFlow.Async)
-                await events.ForEachAsync(message => _publisher.PublishAsync(message)).ConfigureAwait(false);
+                await events.ForEachAsync(_publisher.PublishAsync).ConfigureAwait(false);
             else
-                events.ForEach(message => _publisher.Publish(message));
+                events.ForEach(_publisher.Publish);
 
             events = GetDomainEvents();
         }

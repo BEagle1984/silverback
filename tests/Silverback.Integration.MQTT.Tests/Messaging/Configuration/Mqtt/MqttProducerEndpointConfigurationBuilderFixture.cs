@@ -145,7 +145,6 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         configuration.MessageExpiryInterval.Should().Be(42 * 60);
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {

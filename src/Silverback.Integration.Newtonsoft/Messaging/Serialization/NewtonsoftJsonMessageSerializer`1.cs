@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,15 +34,12 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
     /// <summary>
     ///     Gets or sets the settings to be applied to the Json.NET serializer.
     /// </summary>
-    [SuppressMessage("", "CA2326", Justification = "TypeNameHandling.Auto for backward compatibility")]
-    [SuppressMessage("", "CA2327", Justification = "TypeNameHandling.Auto for backward compatibility")]
     public JsonSerializerSettings Settings { get; set; } = new()
     {
         Formatting = Formatting.None,
         DateFormatHandling = DateFormatHandling.IsoDateFormat,
         NullValueHandling = NullValueHandling.Ignore,
-        DefaultValueHandling = DefaultValueHandling.Ignore,
-        TypeNameHandling = TypeNameHandling.Auto
+        DefaultValueHandling = DefaultValueHandling.Ignore
     };
 
     /// <summary>
@@ -64,7 +60,6 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
         };
 
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-    [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         Check.NotNull(headers, nameof(headers));
@@ -115,7 +110,7 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj))
+        if (obj is null)
             return false;
 
         if (ReferenceEquals(this, obj))

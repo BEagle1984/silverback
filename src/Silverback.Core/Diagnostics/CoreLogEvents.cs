@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Background;
@@ -24,76 +23,6 @@ public static class CoreLogEvents
         GetEventId(11, nameof(SubscriberResultDiscarded)),
         "Discarding result of type {type} because it doesn't match the expected return type " +
         "{expectedType}.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent AcquiringDistributedLock { get; } = new(
-        LogLevel.Information,
-        GetEventId(21, nameof(AcquiringDistributedLock)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent DistributedLockAcquired { get; } = new(
-        LogLevel.Information,
-        GetEventId(22, nameof(DistributedLockAcquired)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent FailedToAcquireDistributedLock { get; } = new(
-        LogLevel.Debug,
-        GetEventId(23, nameof(FailedToAcquireDistributedLock)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent DistributedLockReleased { get; } = new(
-        LogLevel.Information,
-        GetEventId(24, nameof(DistributedLockReleased)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent FailedToReleaseDistributedLock { get; } = new(
-        LogLevel.Warning,
-        GetEventId(25, nameof(FailedToReleaseDistributedLock)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent FailedToCheckDistributedLock { get; } = new(
-        LogLevel.Error,
-        GetEventId(26, nameof(FailedToCheckDistributedLock)),
-        "Not used anymore.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent FailedToSendDistributedLockHeartbeat { get; } = new(
-        LogLevel.Error,
-        GetEventId(27, nameof(FailedToSendDistributedLockHeartbeat)),
-        "Not used anymore.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written the
@@ -140,16 +69,6 @@ public static class CoreLogEvents
         LogLevel.Debug,
         GetEventId(52, nameof(RecurringBackgroundServiceSleeping)),
         "Background service {backgroundService} sleeping for {delay} milliseconds.");
-
-    /// <summary>
-    ///     Reserved, not used anymore.
-    /// </summary>
-    [SuppressMessage("", "SA1623", Justification = "Reserved id")]
-    [Obsolete("Not used anymore.", true)]
-    public static LogEvent RecurringBackgroundServiceException { get; } = new(
-        LogLevel.Warning,
-        GetEventId(53, nameof(RecurringBackgroundServiceException)),
-        "Not used anymore.");
 
     private static EventId GetEventId(int id, string name) => new(id, $"Silverback.Core_{name}");
 }

@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Messages;
 
+[SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Make the tested method evident")]
 public class MessageHeaderCollectionFixture
 {
     [Fact]

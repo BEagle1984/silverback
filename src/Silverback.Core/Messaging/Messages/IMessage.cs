@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages;
 ///     features like automatic republishing. It is a good practice for all messages to implement this
 ///     interface but it's not mandatory.
 /// </summary>
-[SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
+[SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
 public interface IMessage
 {
 }

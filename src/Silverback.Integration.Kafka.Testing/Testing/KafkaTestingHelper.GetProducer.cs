@@ -34,7 +34,7 @@ public partial class KafkaTestingHelper
             .InitializeProducers($"test-{Guid.NewGuid():N}", producerConfiguration, false)
             .Single();
 
-        AsyncHelper.RunSynchronously(() => newProducer.Client.ConnectAsync());
+        AsyncHelper.RunSynchronously(newProducer.Client.ConnectAsync);
 
         return newProducer;
     }

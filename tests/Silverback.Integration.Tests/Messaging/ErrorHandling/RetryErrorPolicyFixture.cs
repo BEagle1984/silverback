@@ -44,11 +44,11 @@ public class RetryErrorPolicyFixture
     [InlineData(7, false)]
     public void CanHandle_ShouldEvaluateFailedAttempts(int failedAttempts, bool expectedResult)
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy
-            {
-                MaxFailedAttempts = 3
-            }
-            .Build(_serviceProvider);
+        RetryErrorPolicy policy = new()
+        {
+            MaxFailedAttempts = 3
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
@@ -63,7 +63,7 @@ public class RetryErrorPolicyFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        bool canHandle = policy.CanHandle(
+        bool canHandle = policyImplementation.CanHandle(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
@@ -102,11 +102,11 @@ public class RetryErrorPolicyFixture
     [Fact]
     public async Task HandleErrorAsync_ShouldReturnTrue()
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy
-            {
-                MaxFailedAttempts = 3
-            }
-            .Build(_serviceProvider);
+        RetryErrorPolicy policy = new()
+        {
+            MaxFailedAttempts = 3
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
         InboundEnvelope envelope = new(
             "hey oh!",
@@ -116,7 +116,7 @@ public class RetryErrorPolicyFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        bool result = await policy.HandleErrorAsync(
+        bool result = await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
             new InvalidOperationException("test"));
 
@@ -126,11 +126,11 @@ public class RetryErrorPolicyFixture
     [Fact]
     public async Task HandleErrorAsync_ShouldRollbackOffsetAndAbortTransaction()
     {
-        IErrorPolicyImplementation policy = new RetryErrorPolicy
-            {
-                MaxFailedAttempts = 3
-            }
-            .Build(_serviceProvider);
+        RetryErrorPolicy policy = new()
+        {
+            MaxFailedAttempts = 3
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
         InboundEnvelope envelope = new(
             "hey oh!",
             new MemoryStream(),
@@ -141,7 +141,7 @@ public class RetryErrorPolicyFixture
 
         IConsumerTransactionManager? transactionManager = Substitute.For<IConsumerTransactionManager>();
 
-        await policy.HandleErrorAsync(
+        await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(
                 envelope,
                 _serviceProvider,

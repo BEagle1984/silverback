@@ -9,7 +9,7 @@ namespace Silverback.Util;
 
 internal static class CancellationTokenExtensions
 {
-    [SuppressMessage("", "VSTHRD200", Justification = "Named after ValueTask.AsTask")]
+    [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Named after ValueTask.AsTask")]
     public static Task AsTask(this CancellationToken cancellationToken)
     {
         TaskCompletionSource<bool> taskCompletionSource = new();

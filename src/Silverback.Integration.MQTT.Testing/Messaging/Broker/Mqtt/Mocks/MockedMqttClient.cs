@@ -148,10 +148,7 @@ public sealed class MockedMqttClient : IMqttClient
         CancellationToken cancellationToken) => Task.CompletedTask;
 
     /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose()
-    {
-        _isDisposed = true;
-    }
+    public void Dispose() => _isDisposed = true;
 
     [SuppressMessage("Usage", "VSTHRD110", MessageId = "Observe result of async calls", Justification = "False positive")]
     internal Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>

@@ -200,26 +200,17 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
                 });
 
             EnsurePartitionAssignmentsDictionaryIsInitialized();
-
-            RebalanceResult result;
-
             IReadOnlyList<TopicPartition> partitionsToAssign = GetPartitionsToAssign();
             List<SubscriptionPartitionAssignment> subscriptionPartitionAssignments =
                 _partitionAssignments.Values.OfType<SubscriptionPartitionAssignment>().ToList();
-
-            switch (GetAssignmentStrategy())
+            RebalanceResult result = GetAssignmentStrategy() switch
             {
-                case PartitionAssignmentStrategy.CooperativeSticky:
-                    result = CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments);
-                    break;
+                PartitionAssignmentStrategy.CooperativeSticky =>
+                    CooperativeStickyRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments),
 
-                // RoundRobin and Range strategies aren't properly implemented but it shouldn't make any
-                // difference for the in-memory tests
-                default:
-                    result = SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments);
-                    break;
-            }
-
+                // RoundRobin and Range strategies aren't properly implemented but it shouldn't make any difference for the in-memory tests
+                _ => SimpleRebalanceStrategy.Rebalance(partitionsToAssign, subscriptionPartitionAssignments)
+            };
             InvokePartitionsRevokedCallbacks(result);
 
             IsRebalancing = false;
@@ -261,10 +252,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         _subscribedConsumers.SingleOrDefault(subscribedConsumer => subscribedConsumer.Consumer == consumer)?
             .PartitionsAssignedTaskCompletionSource.TrySetResult(true);
 
-    public void Dispose()
-    {
-        _subscriptionsChangeSemaphore.Dispose();
-    }
+    public void Dispose() => _subscriptionsChangeSemaphore.Dispose();
 
     private void UnsubscribeCore(IMockedConfluentConsumer consumer)
     {

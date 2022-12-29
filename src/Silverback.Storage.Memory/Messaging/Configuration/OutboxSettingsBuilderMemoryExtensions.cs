@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
@@ -17,5 +19,6 @@ public static class OutboxSettingsBuilderMemoryExtensions
     /// <returns>
     ///     The <see cref="InMemoryOutboxSettingsBuilder" />.
     /// </returns>
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extension method (fluent API)")]
     public static InMemoryOutboxSettingsBuilder UseMemory(this OutboxSettingsBuilder builder) => new();
 }

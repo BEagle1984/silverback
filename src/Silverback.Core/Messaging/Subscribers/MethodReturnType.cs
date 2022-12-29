@@ -95,13 +95,10 @@ public record MethodReturnType
     /// <returns>
     ///     The unwrapped result, or <c>null</c> if the method doesn't have a return value.
     /// </returns>
-    public object? AwaitAndUnwrapResult(object? invokeResult)
-    {
-        if ((IsTask || IsValueTask) && invokeResult != null)
-            return AsyncHelper.RunSynchronously(() => AwaitAndUnwrapResultAsync(invokeResult));
-
-        return invokeResult;
-    }
+    public object? AwaitAndUnwrapResult(object? invokeResult) =>
+        (IsTask || IsValueTask) && invokeResult != null
+            ? AsyncHelper.RunSynchronously(() => AwaitAndUnwrapResultAsync(invokeResult))
+            : invokeResult;
 
     /// <summary>
     ///     Handles the result of the method invoked via reflection awaiting the <see cref="Task" /> or <see cref="ValueTask" /> and
@@ -143,6 +140,6 @@ public record MethodReturnType
     private static async Task<object?> AwaitAndUnwrapResultCoreAsync(Task task, PropertyInfo? resultPropertyInfo)
     {
         await task.ConfigureAwait(false);
-        return resultPropertyInfo != null ? resultPropertyInfo.GetValue(task) : null;
+        return resultPropertyInfo?.GetValue(task);
     }
 }

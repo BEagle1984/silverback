@@ -45,7 +45,7 @@ public class InMemoryLockFixture
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
         handle.Dispose();
-        Action act = () => handle.Dispose();
+        Action act = handle.Dispose;
 
         act.Should().NotThrow();
     }

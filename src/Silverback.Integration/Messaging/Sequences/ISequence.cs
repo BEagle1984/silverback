@@ -120,7 +120,7 @@ public interface ISequence : IDisposable
     /// <returns>
     ///     The <see cref="IMessageStreamEnumerable{TMessage}" />.
     /// </returns>
-    [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
+    [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "IMessageStreamEnumerable is both sync and async")]
     IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null);
 
     /// <summary>

@@ -212,28 +212,18 @@ public class GroupIdFilterFixture : KafkaFixture
     }
 
     [UsedImplicitly]
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class Subscriber
     {
         private int _received;
 
         public int Received => _received;
 
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedMember.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedParameter.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        public void OnMessageReceived(IMessage message) =>
-            Interlocked.Increment(ref _received);
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
+        [UsedImplicitly]
+        public void OnMessageReceived(IMessage message) => Interlocked.Increment(ref _received);
     }
 
     [UsedImplicitly]
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class DecoratedSubscriber
     {
         private int _receivedConsumer1;
@@ -244,33 +234,18 @@ public class GroupIdFilterFixture : KafkaFixture
 
         public int ReceivedConsumer2 => _receivedConsumer2;
 
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
+        [UsedImplicitly]
         [KafkaGroupIdFilter("group1")]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedMember.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedParameter.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnConsumer1Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer1);
 
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
+        [UsedImplicitly]
         [KafkaGroupIdFilter("group2")]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedMember.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedParameter.Local",
-            Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         public void OnConsumer2Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer2);
     }
 
     [UsedImplicitly]
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class StreamSubscriber
     {
         private int _receivedConsumer1;
@@ -281,19 +256,13 @@ public class GroupIdFilterFixture : KafkaFixture
 
         public int ReceivedConsumer2 => _receivedConsumer2;
 
+        [UsedImplicitly]
         [KafkaGroupIdFilter("group1")]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedMember.Local",
-            Justification = Justifications.CalledBySilverback)]
         public Task OnConsumer1Received(IAsyncEnumerable<IMessage> messages) =>
             messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer1));
 
+        [UsedImplicitly]
         [KafkaGroupIdFilter("group2")]
-        [SuppressMessage(
-            "ReSharper",
-            "UnusedMember.Local",
-            Justification = Justifications.CalledBySilverback)]
         public Task OnConsumer2Received(IAsyncEnumerable<IMessage> messages) =>
             messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer2));
     }

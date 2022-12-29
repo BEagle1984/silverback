@@ -161,7 +161,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected bool IsStopping { get; private set; }
 
     /// <inheritdoc cref="IConsumer.TriggerReconnectAsync" />
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async ValueTask TriggerReconnectAsync()
     {
         lock (_reconnectLock)
@@ -387,7 +387,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Context is disposed by the TransactionHandler")]
     protected virtual async ValueTask HandleMessageAsync(
         byte[]? message,
         IReadOnlyCollection<MessageHeader> headers,
@@ -433,7 +433,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected virtual void Dispose(bool disposing)
     {
         if (!disposing || _isDisposed)

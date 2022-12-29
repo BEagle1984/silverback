@@ -176,11 +176,8 @@ public partial class BatchFixture
             }
         }
 
-        static ValueTask HandleIncompatibleBatch(IAsyncEnumerable<TestEventTwo> eventsStream)
-        {
-            // Do nothing, this is just an incompatible subscriber
-            return ValueTask.CompletedTask;
-        }
+        // Do nothing, this is just an incompatible subscriber
+        static ValueTask HandleIncompatibleBatch(IAsyncEnumerable<TestEventTwo> eventsStream) => ValueTask.CompletedTask;
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 

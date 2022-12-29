@@ -40,7 +40,10 @@ public class EnumerableSortExtensionsFixture
 
     private class Item
     {
-        public Item(string id) => Id = id;
+        public Item(string id)
+        {
+            Id = id;
+        }
 
         public string Id { get; }
     }
@@ -48,7 +51,10 @@ public class EnumerableSortExtensionsFixture
     private sealed class SortedItem : Item, ISorted
     {
         public SortedItem(int sortIndex)
-            : base(sortIndex.ToString(CultureInfo.InvariantCulture)) => SortIndex = sortIndex;
+            : base(sortIndex.ToString(CultureInfo.InvariantCulture))
+        {
+            SortIndex = sortIndex;
+        }
 
         public int SortIndex { get; }
     }

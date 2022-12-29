@@ -23,11 +23,6 @@ public static class ValueReadOnlyCollectionExtensions
     /// <returns>
     ///     An <see cref="IValueReadOnlyCollection{T}" /> that wraps the <see cref="IReadOnlyCollection{T}" />.
     /// </returns>
-    public static IValueReadOnlyCollection<T> AsValueReadOnlyCollection<T>(this IEnumerable<T> collection)
-    {
-        if (collection is IValueReadOnlyCollection<T> valueCollection)
-            return valueCollection;
-
-        return new ValueReadOnlyCollection<T>(collection);
-    }
+    public static IValueReadOnlyCollection<T> AsValueReadOnlyCollection<T>(this IEnumerable<T> collection) =>
+        collection as IValueReadOnlyCollection<T> ?? new ValueReadOnlyCollection<T>(collection);
 }

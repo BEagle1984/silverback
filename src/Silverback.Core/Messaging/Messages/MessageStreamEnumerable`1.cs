@@ -139,7 +139,8 @@ internal sealed class MessageStreamEnumerable<TMessage>
         }
     }
 
-    [SuppressMessage("", "VSTHRD200", Justification = "The name is fine")]
+    [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Reviewed")]
+
     private async IAsyncEnumerable<TMessage> GetAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))

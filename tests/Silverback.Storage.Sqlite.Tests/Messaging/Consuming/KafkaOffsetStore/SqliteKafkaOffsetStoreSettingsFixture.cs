@@ -32,7 +32,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
     {
         SqliteKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string", "my-offsets");
 
-        Action act = () => kafkaOffsetStoreSettings.Validate();
+        Action act = kafkaOffsetStoreSettings.Validate;
 
         act.Should().NotThrow();
     }
@@ -45,7 +45,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
     {
         SqliteKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string") { TableName = tableName! };
 
-        Action act = () => kafkaOffsetStoreSettings.Validate();
+        Action act = kafkaOffsetStoreSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }
@@ -58,7 +58,7 @@ public class SqliteKafkaOffsetStoreSettingsFixture
     {
         SqliteKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new(connectionString!, "my-offsets");
 
-        Action act = () => kafkaOffsetStoreSettings.Validate();
+        Action act = kafkaOffsetStoreSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }

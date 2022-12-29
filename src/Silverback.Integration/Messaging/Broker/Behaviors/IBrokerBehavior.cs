@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Behaviors;
 ///     <see cref="IProducer" /> (see <see cref="IProducerBehavior" />) or the <see cref="IConsumer" /> (see
 ///     <see cref="IConsumerBehavior" />).
 /// </summary>
-[SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
+[SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
 public interface IBrokerBehavior
 {
 }

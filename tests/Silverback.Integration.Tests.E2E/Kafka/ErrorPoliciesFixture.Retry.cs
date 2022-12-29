@@ -551,7 +551,7 @@ public partial class ErrorPoliciesFixture
             await foreach (IIntegrationEvent dummy in batch)
             {
                 tryMessageCount++;
-                if (tryMessageCount != 2 && tryMessageCount != 4 && tryMessageCount != 5)
+                if (tryMessageCount is not 2 and not 4 and not 5)
                     throw new InvalidOperationException($"Retry {tryMessageCount}!");
             }
 

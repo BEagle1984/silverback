@@ -58,7 +58,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]
-    [SuppressMessage("", "IDE0051", Justification = "Invoked via Reflection")]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Invoked via Reflection")]
     private static LazyMessageStreamObservable<TMessage> CreateObservable<TMessage>(ILazyMessageStreamEnumerable<TMessage> enumerable) =>
         new(enumerable);
 }

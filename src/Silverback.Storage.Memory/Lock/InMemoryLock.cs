@@ -28,10 +28,7 @@ public sealed class InMemoryLock : DistributedLock, IDisposable
     }
 
     /// <inheritdoc cref="IDisposable.Dispose" />
-    public void Dispose()
-    {
-        _semaphore.Dispose();
-    }
+    public void Dispose() => _semaphore.Dispose();
 
     /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />
     protected override async ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken)

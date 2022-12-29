@@ -32,7 +32,7 @@ public class ProducerEndpointConfigurationFixture
     {
         TestProducerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow<BrokerConfigurationException>();
     }
@@ -42,7 +42,7 @@ public class ProducerEndpointConfigurationFixture
     {
         TestProducerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -52,7 +52,7 @@ public class ProducerEndpointConfigurationFixture
     {
         TestProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -62,7 +62,7 @@ public class ProducerEndpointConfigurationFixture
     {
         TestProducerEndpointConfiguration configuration = GetValidConfiguration() with { Strategy = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }

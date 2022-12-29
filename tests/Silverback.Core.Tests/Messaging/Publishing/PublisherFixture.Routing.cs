@@ -2,9 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
@@ -417,7 +417,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TestEvent message) => _messages.Add(message);
     }
 
@@ -430,7 +430,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(IEvent message) => _messages.Add(message);
     }
 
@@ -443,7 +443,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TMessage message) => _messages.Add(message);
     }
 
@@ -456,7 +456,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TestEventOne message) => _messages.Add(message);
     }
 }

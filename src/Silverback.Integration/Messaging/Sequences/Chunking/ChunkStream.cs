@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -103,22 +104,13 @@ public sealed class ChunkStream : Stream
     }
 
     /// <inheritdoc cref="Stream.Seek" />
-    public override long Seek(long offset, SeekOrigin origin)
-    {
-        throw new NotSupportedException();
-    }
+    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
     /// <inheritdoc cref="Stream.SetLength" />
-    public override void SetLength(long value)
-    {
-        throw new NotSupportedException();
-    }
+    public override void SetLength(long value) => throw new NotSupportedException();
 
     /// <inheritdoc cref="Stream.Write(byte[], int, int)" />
-    public override void Write(byte[] buffer, int offset, int count)
-    {
-        throw new NotSupportedException();
-    }
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
     /// <inheritdoc cref="Stream.Close" />
     public override void Close()
@@ -139,6 +131,7 @@ public sealed class ChunkStream : Stream
     }
 
     /// <inheritdoc cref="Stream.Dispose(bool)" />
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     protected override void Dispose(bool disposing)
     {
         _asyncEnumerator?.DisposeAsync().AsTask().Wait();

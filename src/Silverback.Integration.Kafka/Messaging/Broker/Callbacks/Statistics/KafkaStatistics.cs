@@ -18,76 +18,74 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class KafkaStatistics
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
 
     [JsonPropertyName("client_id")]
-    public string ClientId { get; set; } = string.Empty;
+    public string ClientId { get; init; } = string.Empty;
 
     [JsonPropertyName("type")]
-    public string Type { get; set; } = string.Empty;
+    public string Type { get; init; } = string.Empty;
 
     [JsonPropertyName("ts")]
-    public long Ts { get; set; }
+    public long Ts { get; init; }
 
     [JsonPropertyName("time")]
-    public long Time { get; set; }
+    public long Time { get; init; }
 
     [JsonPropertyName("replyq")]
-    public long ReplyQ { get; set; }
+    public long ReplyQ { get; init; }
 
     [JsonPropertyName("msg_cnt")]
-    public long MsgCnt { get; set; }
+    public long MsgCnt { get; init; }
 
     [JsonPropertyName("msg_size")]
-    public long MsgSize { get; set; }
+    public long MsgSize { get; init; }
 
     [JsonPropertyName("msg_max")]
-    public long MsgMax { get; set; }
+    public long MsgMax { get; init; }
 
     [JsonPropertyName("msg_size_max")]
-    public long MsgSizeMax { get; set; }
+    public long MsgSizeMax { get; init; }
 
     [JsonPropertyName("simple_cnt")]
-    public long SimpleCnt { get; set; }
+    public long SimpleCnt { get; init; }
 
     [JsonPropertyName("metadata_cache_cnt")]
-    public long MetadataCacheCnt { get; set; }
+    public long MetadataCacheCnt { get; init; }
 
     [JsonPropertyName("brokers")]
-    [SuppressMessage("", "CA2227", Justification = "DTO")]
-    public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new();
+    public Dictionary<string, BrokerStatistics> Brokers { get; init; } = new();
 
     [JsonPropertyName("topics")]
-    [SuppressMessage("", "CA2227", Justification = "DTO")]
-    public Dictionary<string, TopicStatistics> Topics { get; set; } = new();
+    public Dictionary<string, TopicStatistics> Topics { get; init; } = new();
 
     [JsonPropertyName("cgrp")]
-    public ConsumerGroupStatistics ConsumerGroup { get; set; } = new();
+    public ConsumerGroupStatistics ConsumerGroup { get; init; } = new();
 
     [JsonPropertyName("eos")]
-    public ExactlyOnceSemanticsStatistics ExactlyOnceSemantics { get; set; } = new();
+    public ExactlyOnceSemanticsStatistics ExactlyOnceSemantics { get; init; } = new();
 
     [JsonPropertyName("tx")]
-    public long Tx { get; set; }
+    public long Tx { get; init; }
 
     [JsonPropertyName("tx_bytes")]
-    public long TxBytes { get; set; }
+    public long TxBytes { get; init; }
 
     [JsonPropertyName("rx")]
-    public long Rx { get; set; }
+    public long Rx { get; init; }
 
     [JsonPropertyName("rx_bytes")]
-    public long RxBytes { get; set; }
+    public long RxBytes { get; init; }
 
     [JsonPropertyName("txmsgs")]
-    public long TxMsgs { get; set; }
+    public long TxMsgs { get; init; }
 
     [JsonPropertyName("txmsg_bytes")]
-    public long TxMsgBytes { get; set; }
+    public long TxMsgBytes { get; init; }
 
     [JsonPropertyName("rxmsgs")]
-    public long RxMsgs { get; set; }
+    public long RxMsgs { get; init; }
 
     [JsonPropertyName("rxmsg_bytes")]
-    public long RxMsgBytes { get; set; }
+    public long RxMsgBytes { get; init; }
 }

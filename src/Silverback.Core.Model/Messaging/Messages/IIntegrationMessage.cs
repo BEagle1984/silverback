@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Messages;
 ///     A message that is sent over the message broker. It is further specialized as
 ///     <see cref="IIntegrationEvent" /> and <see cref="IIntegrationCommand" />.
 /// </summary>
-[SuppressMessage("", "CA1040", Justification = Justifications.MarkerInterface)]
+[SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
 public interface IIntegrationMessage : IMessage
 {
 }

@@ -13,97 +13,95 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class BrokerStatistics
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
 
     [JsonPropertyName("nodeid")]
-    public long NodeId { get; set; }
+    public long NodeId { get; init; }
 
     [JsonPropertyName("nodename")]
-    public string NodeName { get; set; } = string.Empty;
+    public string NodeName { get; init; } = string.Empty;
 
     [JsonPropertyName("source")]
-    public string Source { get; set; } = string.Empty;
+    public string Source { get; init; } = string.Empty;
 
     [JsonPropertyName("state")]
-    public string State { get; set; } = string.Empty;
+    public string State { get; init; } = string.Empty;
 
     [JsonPropertyName("stateage")]
-    public long StateAge { get; set; }
+    public long StateAge { get; init; }
 
     [JsonPropertyName("outbuf_cnt")]
-    public long OutbufCnt { get; set; }
+    public long OutbufCnt { get; init; }
 
     [JsonPropertyName("outbuf_msg_cnt")]
-    public long OutbufMsgCnt { get; set; }
+    public long OutbufMsgCnt { get; init; }
 
     [JsonPropertyName("waitresp_cnt")]
-    public long WaitRespCnt { get; set; }
+    public long WaitRespCnt { get; init; }
 
     [JsonPropertyName("waitresp_msg_cnt")]
-    public long WaitRespMsgCnt { get; set; }
+    public long WaitRespMsgCnt { get; init; }
 
     [JsonPropertyName("tx")]
-    public long Tx { get; set; }
+    public long Tx { get; init; }
 
     [JsonPropertyName("txbytes")]
-    public long TxBytes { get; set; }
+    public long TxBytes { get; init; }
 
     [JsonPropertyName("txerrs")]
-    public long TxErrs { get; set; }
+    public long TxErrs { get; init; }
 
     [JsonPropertyName("txretries")]
-    public long TxRetries { get; set; }
+    public long TxRetries { get; init; }
 
     [JsonPropertyName("req_timeouts")]
-    public long ReqTimeouts { get; set; }
+    public long ReqTimeouts { get; init; }
 
     [JsonPropertyName("rx")]
-    public long Rx { get; set; }
+    public long Rx { get; init; }
 
     [JsonPropertyName("rxbytes")]
-    public long RxBytes { get; set; }
+    public long RxBytes { get; init; }
 
     [JsonPropertyName("rxerrs")]
-    public long RxErrs { get; set; }
+    public long RxErrs { get; init; }
 
     [JsonPropertyName("rxcorriderrs")]
-    public long RxCorriderrs { get; set; }
+    public long RxCorriderrs { get; init; }
 
     [JsonPropertyName("rxpartial")]
-    public long RxPartial { get; set; }
+    public long RxPartial { get; init; }
 
     [JsonPropertyName("zbuf_grow")]
-    public long ZBufGrow { get; set; }
+    public long ZBufGrow { get; init; }
 
     [JsonPropertyName("buf_grow")]
-    public long BufGrow { get; set; }
+    public long BufGrow { get; init; }
 
     [JsonPropertyName("wakeups")]
-    public long Wakeups { get; set; }
+    public long Wakeups { get; init; }
 
     [JsonPropertyName("connects")]
-    public long Connects { get; set; }
+    public long Connects { get; init; }
 
     [JsonPropertyName("disconnects")]
-    public long Disconnects { get; set; }
+    public long Disconnects { get; init; }
 
     [JsonPropertyName("int_latency")]
-    public WindowStatistics IntLatency { get; set; } = new();
+    public WindowStatistics IntLatency { get; init; } = new();
 
     [JsonPropertyName("outbuf_latency")]
-    public WindowStatistics OutbufLatency { get; set; } = new();
+    public WindowStatistics OutbufLatency { get; init; } = new();
 
     [JsonPropertyName("rtt")]
-    public WindowStatistics Rtt { get; set; } = new();
+    public WindowStatistics Rtt { get; init; } = new();
 
     [JsonPropertyName("throttle")]
-    public WindowStatistics Throttle { get; set; } = new();
+    public WindowStatistics Throttle { get; init; } = new();
 
     [JsonPropertyName("req")]
-    [SuppressMessage("", "CA2227", Justification = "DTO")]
-    public Dictionary<string, long> Requests { get; set; } = new();
+    public Dictionary<string, long> Requests { get; init; } = new();
 
     [JsonPropertyName("toppars")]
-    [SuppressMessage("", "CA2227", Justification = "DTO")]
-    public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } = new();
+    public Dictionary<string, TopicPartitions> TopicPartitions { get; init; } = new();
 }

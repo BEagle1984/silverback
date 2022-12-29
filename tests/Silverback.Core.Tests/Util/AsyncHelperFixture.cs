@@ -122,10 +122,7 @@ public class AsyncHelperFixture
 
         result.Should().Be(3);
 
-        static ValueTask<int> SyncMethod()
-        {
-            return new ValueTask<int>(3);
-        }
+        static ValueTask<int> SyncMethod() => new(3);
     }
 
     [Fact]
@@ -149,10 +146,7 @@ public class AsyncHelperFixture
 
         act.Should().Throw<NotSupportedException>();
 
-        static ValueTask AsyncMethod()
-        {
-            throw new NotSupportedException("test");
-        }
+        static ValueTask AsyncMethod() => throw new NotSupportedException("test");
     }
 
     [Fact]
@@ -176,9 +170,6 @@ public class AsyncHelperFixture
 
         act.Should().Throw<NotSupportedException>();
 
-        static ValueTask<int> SyncMethod()
-        {
-            throw new NotSupportedException("test");
-        }
+        static ValueTask<int> SyncMethod() => throw new NotSupportedException("test");
     }
 }

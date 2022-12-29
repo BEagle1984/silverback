@@ -17,7 +17,7 @@ public class KafkaProducerEndpointConfigurationFixture
     {
         KafkaProducerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow();
     }
@@ -27,7 +27,7 @@ public class KafkaProducerEndpointConfigurationFixture
     {
         KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -37,7 +37,7 @@ public class KafkaProducerEndpointConfigurationFixture
     {
         KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -47,7 +47,7 @@ public class KafkaProducerEndpointConfigurationFixture
     {
         KafkaProducerEndpointConfiguration configuration = GetValidConfiguration() with { Strategy = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }

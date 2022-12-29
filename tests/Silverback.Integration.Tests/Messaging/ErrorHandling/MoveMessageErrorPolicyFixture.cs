@@ -226,11 +226,11 @@ public class MoveMessageErrorPolicyFixture
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
         _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
-            {
-                TransformMessageAction = (outboundEnvelope, _) => outboundEnvelope.Message = new TestEventTwo()
-            }
-            .Build(_serviceProvider);
+        MoveMessageErrorPolicy policy = new("topic2")
+        {
+            TransformMessageAction = (outboundEnvelope, _) => outboundEnvelope.Message = new TestEventTwo()
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
         InboundEnvelope inboundEnvelope = new(
             new TestEventOne(),
@@ -240,7 +240,7 @@ public class MoveMessageErrorPolicyFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        await policy.HandleErrorAsync(
+        await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 
@@ -257,14 +257,14 @@ public class MoveMessageErrorPolicyFixture
         producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
         _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
 
-        IErrorPolicyImplementation policy = new MoveMessageErrorPolicy("topic2")
+        MoveMessageErrorPolicy policy = new("topic2")
+        {
+            TransformMessageAction = (outboundEnvelope, ex) =>
             {
-                TransformMessageAction = (outboundEnvelope, ex) =>
-                {
-                    outboundEnvelope.Headers.Add("error", ex.GetType().Name);
-                }
+                outboundEnvelope.Headers.Add("error", ex.GetType().Name);
             }
-            .Build(_serviceProvider);
+        };
+        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
 
         InboundEnvelope inboundEnvelope = new(
             new TestEventOne(),
@@ -274,7 +274,7 @@ public class MoveMessageErrorPolicyFixture
             Substitute.For<IConsumer>(),
             new TestOffset());
 
-        await policy.HandleErrorAsync(
+        await policyImplementation.HandleErrorAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
             new InvalidOperationException("test"));
 

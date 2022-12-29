@@ -8,35 +8,15 @@ namespace Silverback.Util;
 
 internal static class EnumerableAsCollectionExtensions
 {
-    public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable)
-    {
-        if (enumerable is IReadOnlyCollection<T> collection)
-            return collection;
+    public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable) =>
+        enumerable as IReadOnlyCollection<T> ?? enumerable.ToList();
 
-        return enumerable.ToList();
-    }
+    public static IReadOnlyList<T> AsReadOnlyList<T>(this IEnumerable<T> enumerable) =>
+        enumerable as IReadOnlyList<T> ?? enumerable.ToList();
 
-    public static IReadOnlyList<T> AsReadOnlyList<T>(this IEnumerable<T> enumerable)
-    {
-        if (enumerable is IReadOnlyList<T> collection)
-            return collection;
+    public static List<T> AsList<T>(this IEnumerable<T> enumerable) =>
+        enumerable as List<T> ?? enumerable.ToList();
 
-        return enumerable.ToList();
-    }
-
-    public static List<T> AsList<T>(this IEnumerable<T> enumerable)
-    {
-        if (enumerable is List<T> list)
-            return list;
-
-        return enumerable.ToList();
-    }
-
-    public static T[] AsArray<T>(this IEnumerable<T> enumerable)
-    {
-        if (enumerable is T[] array)
-            return array;
-
-        return enumerable.ToArray();
-    }
+    public static T[] AsArray<T>(this IEnumerable<T> enumerable) =>
+        enumerable as T[] ?? enumerable.ToArray();
 }

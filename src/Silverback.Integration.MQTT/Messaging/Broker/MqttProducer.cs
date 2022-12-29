@@ -106,10 +106,8 @@ public sealed class MqttProducer : Producer<MqttProducerEndpoint>
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError)
-    {
+        Action<Exception> onError) =>
         AsyncHelper.RunSynchronously(() => Client.ProduceAsync(message, headers, endpoint, onSuccess, onError));
-    }
 
     /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
     protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
@@ -126,12 +124,7 @@ public sealed class MqttProducer : Producer<MqttProducerEndpoint>
     {
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
 
-        await Client.ProduceAsync(
-            message,
-            headers,
-            endpoint,
-            identifier => taskCompletionSource.SetResult(identifier),
-            exception => taskCompletionSource.SetException(exception)).ConfigureAwait(false);
+        await Client.ProduceAsync(message, headers, endpoint, taskCompletionSource.SetResult, taskCompletionSource.SetException).ConfigureAwait(false);
 
         return await taskCompletionSource.Task.ConfigureAwait(false);
     }

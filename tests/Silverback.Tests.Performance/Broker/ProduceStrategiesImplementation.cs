@@ -24,6 +24,7 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
 
     public ProduceStrategiesImplementation()
     {
+        // Produce each SampleMessage to a samples-perf topic
         _rootServiceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -32,8 +33,6 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://localhost:9092")
-
-                        // Produce each SampleMessage to a samples-perf topic
                         .AddProducer(producer => producer.Produce<SampleMessage1>(endpoint => endpoint.ProduceTo("samples-perf-1")))
                         .AddProducer(producer => producer.Produce<SampleMessage2>(endpoint => endpoint.ProduceTo("samples-perf-2")))
                         .AddProducer(producer => producer.Produce<SampleMessage3>(endpoint => endpoint.ProduceTo("samples-perf-3")))

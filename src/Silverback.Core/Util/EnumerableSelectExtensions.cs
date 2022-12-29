@@ -65,12 +65,8 @@ internal static class EnumerableSelectExtensions
         this IEnumerable<T> source,
         Func<T, TResult> selector,
         bool parallel,
-        int? maxDegreeOfParallelism = null)
-    {
-        return parallel
-            ? source.ParallelSelect(selector, maxDegreeOfParallelism)
-            : source.Select(selector);
-    }
+        int? maxDegreeOfParallelism = null) =>
+        parallel ? source.ParallelSelect(selector, maxDegreeOfParallelism) : source.Select(selector);
 
     public static async ValueTask<IEnumerable<TResult>> SelectAsync<T, TResult>(
         this IEnumerable<T> source,
@@ -78,10 +74,7 @@ internal static class EnumerableSelectExtensions
     {
         List<TResult> results = new();
 
-        async ValueTask InvokeSelector(T item)
-        {
-            results.Add(await selector.Invoke(item).ConfigureAwait(false));
-        }
+        async ValueTask InvokeSelector(T item) => results.Add(await selector.Invoke(item).ConfigureAwait(false));
 
         await source.ForEachAsync(InvokeSelector).ConfigureAwait(false);
         return results;
@@ -91,12 +84,8 @@ internal static class EnumerableSelectExtensions
         this IEnumerable<T> source,
         Func<T, ValueTask<TResult>> selector,
         bool parallel,
-        int? maxDegreeOfParallelism = null)
-    {
-        return parallel
-            ? source.ParallelSelectAsync(selector, maxDegreeOfParallelism)
-            : source.SelectAsync(selector);
-    }
+        int? maxDegreeOfParallelism = null) =>
+        parallel ? source.ParallelSelectAsync(selector, maxDegreeOfParallelism) : source.SelectAsync(selector);
 
     public static async ValueTask<IEnumerable<TResult>> SelectManyAsync<T, TResult>(
         this IEnumerable<T> source,

@@ -1,8 +1,8 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -42,8 +42,7 @@ public partial class SilverbackBuilderFixture
             });
     }
 
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class UnhandledMessage
     {
     }

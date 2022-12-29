@@ -4,7 +4,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
@@ -122,7 +121,6 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
 
     public void Dispose() => _sqliteConnection.Dispose();
 
-    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
     private class TestMessage
     {
     }

@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 
 internal static class KafkaStatisticsDeserializer
 {
-    [SuppressMessage("", "CA1031", Justification = "Exception logged")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public static KafkaStatistics? TryDeserialize(string json, ISilverbackLogger logger)
     {
         try

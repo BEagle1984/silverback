@@ -12,46 +12,46 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class WindowStatistics
 {
     [JsonPropertyName("min")]
-    public long Min { get; set; }
+    public long Min { get; init; }
 
     [JsonPropertyName("max")]
-    public long Max { get; set; }
+    public long Max { get; init; }
 
     [JsonPropertyName("avg")]
-    public long Avg { get; set; }
+    public long Avg { get; init; }
 
     [JsonPropertyName("sum")]
-    public long Sum { get; set; }
+    public long Sum { get; init; }
 
     [JsonPropertyName("stddev")]
-    public long StdDev { get; set; }
+    public long StdDev { get; init; }
 
     [JsonPropertyName("p50")]
-    public long P50 { get; set; }
+    public long P50 { get; init; }
 
     [JsonPropertyName("p75")]
-    public long P75 { get; set; }
+    public long P75 { get; init; }
 
     [JsonPropertyName("p90")]
-    public long P90 { get; set; }
+    public long P90 { get; init; }
 
     [JsonPropertyName("p95")]
-    public long P95 { get; set; }
+    public long P95 { get; init; }
 
     [JsonPropertyName("p99")]
-    public long P99 { get; set; }
+    public long P99 { get; init; }
 
     [JsonPropertyName("p99_99")]
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Named after the JSON field")]
-    [SuppressMessage("", "CA1707", Justification = "Named after the JSON field")]
-    public long P99_99 { get; set; }
+    [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Named after the JSON field")]
+    public long P99_99 { get; init; }
 
     [JsonPropertyName("outofrange")]
-    public long OutOfRange { get; set; }
+    public long OutOfRange { get; init; }
 
     [JsonPropertyName("hdrsize")]
-    public long HdrSize { get; set; }
+    public long HdrSize { get; init; }
 
     [JsonPropertyName("cnt")]
-    public long Cnt { get; set; }
+    public long Cnt { get; init; }
 }

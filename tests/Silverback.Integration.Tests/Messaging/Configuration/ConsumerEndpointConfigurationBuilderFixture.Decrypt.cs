@@ -33,10 +33,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         byte[]? key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();
 
-        byte[] DecryptionKeyCallback(string? keyIdentifier)
-        {
-            return key;
-        }
+        byte[] DecryptionKeyCallback(string? keyIdentifier) => key;
 
         TestConsumerEndpointConfiguration configuration = builder.DecryptUsingAes(DecryptionKeyCallback, iv).Build();
 

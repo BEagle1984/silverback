@@ -116,16 +116,11 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
 
-        if (partitionFunction == null)
-        {
-            _endpointResolver = new KafkaDynamicProducerEndpointResolver(message => topicFunction.Invoke((TMessage?)message));
-        }
-        else
-        {
-            _endpointResolver = new KafkaDynamicProducerEndpointResolver(
+        _endpointResolver = partitionFunction == null
+            ? new KafkaDynamicProducerEndpointResolver(message => topicFunction.Invoke((TMessage?)message))
+            : (IProducerEndpointResolver<KafkaProducerEndpoint>)new KafkaDynamicProducerEndpointResolver(
                 message => topicFunction.Invoke((TMessage?)message),
                 message => partitionFunction.Invoke((TMessage?)message));
-        }
 
         return this;
     }
@@ -142,9 +137,9 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<TMessage?, TopicPartition> topicPartitionFunction)
     {
         Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
-        _endpointResolver = new KafkaDynamicProducerEndpointResolver(
-            message =>
-                topicPartitionFunction.Invoke((TMessage?)message));
+
+        _endpointResolver = new KafkaDynamicProducerEndpointResolver(message => topicPartitionFunction.Invoke((TMessage?)message));
+
         return this;
     }
 

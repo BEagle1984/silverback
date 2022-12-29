@@ -110,19 +110,12 @@ public partial class OutboxFixture
                                 .Produce<TestEventOne>(
                                     endpoint => endpoint
                                         .ProduceTo(
-                                            message =>
+                                            message => message?.ContentEventOne switch
                                             {
-                                                switch (message?.ContentEventOne)
-                                                {
-                                                    case "1":
-                                                        return "topic1";
-                                                    case "2":
-                                                        return "topic2";
-                                                    case "3":
-                                                        return "topic3";
-                                                    default:
-                                                        throw new InvalidOperationException();
-                                                }
+                                                "1" => "topic1",
+                                                "2" => "topic2",
+                                                "3" => "topic3",
+                                                _ => throw new InvalidOperationException()
                                             })
                                         .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
                         .AddConsumer(

@@ -72,7 +72,7 @@ public record SkipMessageErrorPolicy : ErrorPolicyBase
             return true;
         }
 
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
         private async Task<bool> TryRollbackAsync(ConsumerPipelineContext context, Exception exception)
         {
             try

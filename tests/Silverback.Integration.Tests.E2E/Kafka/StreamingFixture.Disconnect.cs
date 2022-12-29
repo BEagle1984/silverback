@@ -96,9 +96,7 @@ public partial class StreamingFixture
                 .AddDelegateSubscriber<IMessageStreamObservable<TestEventOne>>(HandleUnboundedStream));
 
         void HandleUnboundedStream(IMessageStreamObservable<TestEventOne> observable) =>
-            observable.Subscribe(
-                message => receivedMessages.Add(message),
-                () => completed = true);
+            observable.Subscribe(receivedMessages.Add, () => completed = true);
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
         await producer.ProduceAsync(new TestEventOne());

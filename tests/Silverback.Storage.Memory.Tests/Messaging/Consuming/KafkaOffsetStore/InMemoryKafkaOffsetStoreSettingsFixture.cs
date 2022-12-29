@@ -31,7 +31,7 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
     {
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("my-offsetStore");
 
-        Action act = () => kafkaOffsetStoreSettings.Validate();
+        Action act = kafkaOffsetStoreSettings.Validate;
 
         act.Should().NotThrow();
     }
@@ -44,7 +44,7 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
     {
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new(offsetStoreName!);
 
-        Action act = () => kafkaOffsetStoreSettings.Validate();
+        Action act = kafkaOffsetStoreSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }

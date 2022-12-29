@@ -195,7 +195,6 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         public Stream? Content { get; set; }
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class BinaryMessageWithoutDefaultConstructor : IBinaryMessage
     {

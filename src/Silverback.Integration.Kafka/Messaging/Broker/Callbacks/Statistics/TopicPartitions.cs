@@ -12,8 +12,8 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class TopicPartitions
 {
     [JsonPropertyName("topic")]
-    public string Topic { get; set; } = string.Empty;
+    public string Topic { get; init; } = string.Empty;
 
     [JsonPropertyName("partition")]
-    public long Partition { get; set; }
+    public long Partition { get; init; }
 }

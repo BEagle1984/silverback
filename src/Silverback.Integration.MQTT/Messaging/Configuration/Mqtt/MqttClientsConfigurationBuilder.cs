@@ -655,7 +655,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     {
         foreach (Action<MqttClientConfigurationBuilder> sharedAction in _sharedConfigurationActions)
         {
-            _configurationActions.PrependToAll(builder => sharedAction.Invoke(builder));
+            _configurationActions.PrependToAll(sharedAction.Invoke);
         }
 
         return _configurationActions;

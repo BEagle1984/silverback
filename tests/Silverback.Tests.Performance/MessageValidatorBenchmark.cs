@@ -19,7 +19,7 @@ namespace Silverback.Tests.Performance;
 // | LargeMessageHavingSeveralPropertiesInvalid | 12.420 us | 0.0482 us | 0.0451 us | 1.4191 | 0.0153 |     - |     15 KB |
 [SimpleJob]
 [MemoryDiagnoser]
-[SuppressMessage("", "CA1822", Justification = "Benchmarks must be instance methods")]
+[SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Benchmarks must be instance methods")]
 public class MessageValidatorBenchmark
 {
     private readonly TestValidationMessage _messageHavingSinglePropertyInvalid;

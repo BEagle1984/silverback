@@ -22,6 +22,7 @@ public static class MessageSerializerExtensions
         await serializer.SerializeAsync(message, headers ?? new MessageHeaderCollection(), NullProducerEndpoint.Instance) ??
         throw new InvalidOperationException("Serializer returned null");
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static Stream Serialize(
         this IMessageSerializer serializer,
         object message,

@@ -133,8 +133,5 @@ public sealed class MessageObservableFixture : IDisposable
         count.Should().Be(3);
     }
 
-    public void Dispose()
-    {
-        _streamProvider.Dispose();
-    }
+    public void Dispose() => _streamProvider.Dispose();
 }

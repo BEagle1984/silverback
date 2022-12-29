@@ -18,7 +18,7 @@ public class MqttProducerEndpointConfigurationFixture
     {
         MqttProducerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow();
     }
@@ -28,7 +28,7 @@ public class MqttProducerEndpointConfigurationFixture
     {
         MqttProducerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -38,7 +38,7 @@ public class MqttProducerEndpointConfigurationFixture
     {
         MqttProducerEndpointConfiguration configuration = GetValidConfiguration() with { Endpoint = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -51,7 +51,7 @@ public class MqttProducerEndpointConfigurationFixture
             Chunk = new ChunkSettings { Size = 42 }
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("Chunking cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");

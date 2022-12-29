@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -572,227 +573,179 @@ public partial class PublisherFixture
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishSingleMessageSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public TestCommandOne SyncSubscriber(TestEventOne message) => new();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<TestCommandOne> AsyncSubscriber(TestEventOne message) => Task.FromResult(new TestCommandOne());
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishSingleMessageAsInterfaceSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ICommand SyncSubscriber(TestEventOne message) => new TestCommandOne();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<ICommand> AsyncSubscriber(TestEventOne message) => Task.FromResult<ICommand>(new TestCommandTwo());
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<ICommand> AsyncValueTaskSubscriber(TestEventOne message) =>
             ValueTaskFactory.FromResult<ICommand>(new TestCommandOne());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishEnumerableSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) => new TestCommandOne[] { new(), new() };
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<List<TestCommandOne>> AsyncSubscriber(TestEventOne message) => Task.FromResult(new List<TestCommandOne> { new(), new() });
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<IReadOnlyCollection<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
             ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>(new TestCommandOne[] { new(), new() });
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishEnumerableOfInterfaceSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<IMessage> SyncSubscriber(TestEventOne message) => new TestCommandOne[] { new(), new() };
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<List<ICommand>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new List<ICommand>(new TestCommandTwo[] { new(), new() }));
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<IReadOnlyCollection<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
             ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>(new TestCommandOne[] { new(), new() });
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishAsyncEnumerableSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IAsyncEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) =>
             new TestCommandOne[] { new(), new() }.ToAsyncEnumerable();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<IAsyncEnumerable<TestCommandOne>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new List<TestCommandOne> { new(), new() }.ToAsyncEnumerable());
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<IAsyncEnumerable<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
             ValueTaskFactory.FromResult(new TestCommandOne[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishAsyncEnumerableOfInterfaceSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IAsyncEnumerable<IMessage> SyncSubscriber(TestEventOne message) =>
             new TestCommandOne[] { new(), new() }.ToAsyncEnumerable();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<IAsyncEnumerable<ICommand>> AsyncSubscriber(TestEventOne message) =>
             Task.FromResult(new ICommand[] { new TestCommandTwo(), new TestCommandTwo() }.ToAsyncEnumerable());
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<IAsyncEnumerable<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
             ValueTaskFactory.FromResult<IAsyncEnumerable<ICommand>>(new TestCommandTwo[] { new(), new() }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class QueryHandler
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public string Handle(TestQueryOne message) => "result-1-sync";
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<string> HandleAsync(TestQueryOne message) => Task.FromResult("result-1-async");
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<string> Handle(TestQueryTwo message) => new[] { "result-2-sync-1", "result-2-sync-2" }.ToList();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<string[]> HandleAsync(TestQueryTwo message) => Task.FromResult(new[] { "result-2-async-1", "result-2-async-2" });
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IAsyncEnumerable<string> Handle(TestQueryThree message) => new[] { "result-2-sync-1", "result-2-sync-2" }.ToAsyncEnumerable();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<IAsyncEnumerable<string>> HandleAsync(TestQueryThree message) =>
             Task.FromResult(new[] { "result-2-async-1", "result-2-async-2" }.ToAsyncEnumerable());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class WrongTypeQueryHandler
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public int Handle(TestQueryOne message) => 42;
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<int[]> HandleAsync(TestQueryOne message) => Task.FromResult(new[] { 42, 42 });
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<int> Handle(TestQueryTwo message) => new[] { 42, 42 }.ToList();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<int> HandleAsync(TestQueryTwo message) => Task.FromResult(42);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class NullQueryHandler
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public string? Handle(TestQueryOne message) => null;
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<string?> HandleAsync(TestQueryOne message) => Task.FromResult<string?>(null);
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<string>? Handle(TestQueryTwo message) => null;
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<string[]?> HandleAsync(TestQueryTwo message) => Task.FromResult<string[]?>(null);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class EmptyQueryHandler
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public IEnumerable<string> Handle(TestQueryTwo message) => Enumerable.Empty<string>();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<string[]> HandleAsync(TestQueryTwo message) => Task.FromResult(Array.Empty<string>());
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private class PublishUnhandledMessageSubscriber
     {
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public UnhandledMessage SyncSubscriber(TestEventOne message) => new();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public Task<UnhandledMessage> AsyncSubscriber(TestEventOne message) => Task.FromResult(new UnhandledMessage());
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
+        [UsedImplicitly]
         public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
     }
 

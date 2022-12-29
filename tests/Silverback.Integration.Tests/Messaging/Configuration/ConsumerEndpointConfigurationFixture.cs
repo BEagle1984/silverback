@@ -16,7 +16,7 @@ public class ConsumerEndpointConfigurationFixture
     {
         TestConsumerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow<BrokerConfigurationException>();
     }
@@ -26,7 +26,7 @@ public class ConsumerEndpointConfigurationFixture
     {
         TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -36,7 +36,7 @@ public class ConsumerEndpointConfigurationFixture
     {
         TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { Sequence = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -46,7 +46,7 @@ public class ConsumerEndpointConfigurationFixture
     {
         TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { ErrorPolicy = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }

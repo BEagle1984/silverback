@@ -4,13 +4,11 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
-[SuppressMessage("", "CA1812", Justification = "Class used via DI")]
 internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
 {
     private readonly IMockedKafkaOptions _options;

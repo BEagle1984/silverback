@@ -98,7 +98,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
                 this));
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
-    [SuppressMessage("", "VSTHRD103", Justification = "Method executes synchronously")]
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes synchronously")]
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
         try
@@ -149,7 +149,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
             onError);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("", "VSTHRD103", Justification = "OK to call sync ProduceCore")]
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "OK to call sync ProduceCore")]
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError)
     {
         try
@@ -748,7 +748,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected virtual void Dispose(bool disposing)
     {
         if (!disposing || _isDisposed)

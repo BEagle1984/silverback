@@ -967,8 +967,8 @@ public partial class KafkaClientsConfigurationBuilder
     {
         foreach (Action<IKafkaClientConfigurationBuilder> sharedAction in _sharedConfigurationActions)
         {
-            _configurationActions.ProducerConfigurationActions.PrependToAll(builder => sharedAction.Invoke(builder));
-            _configurationActions.ConsumerConfigurationActions.PrependToAll(builder => sharedAction.Invoke(builder));
+            _configurationActions.ProducerConfigurationActions.PrependToAll(sharedAction.Invoke);
+            _configurationActions.ConsumerConfigurationActions.PrependToAll(sharedAction.Invoke);
         }
 
         return _configurationActions;

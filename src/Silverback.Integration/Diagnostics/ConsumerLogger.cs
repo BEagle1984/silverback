@@ -283,6 +283,7 @@ internal sealed class ConsumerLogger
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public void LogConsumerTrace(
         ISilverbackLogger logger,
         LogLevel logLevel,

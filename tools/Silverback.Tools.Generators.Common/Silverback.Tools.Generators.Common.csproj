@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>$(ToolsTargetFramework)</TargetFramework>
     <RootNamespace>Silverback.Tools.Generators.Common</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>

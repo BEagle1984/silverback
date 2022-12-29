@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -87,7 +86,6 @@ public partial class BrokerClientCallbacksFixture
         }
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class SendMessageDisconnectingCallback : IMqttClientDisconnectingCallback
     {
         private readonly IPublisher _publisher;

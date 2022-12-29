@@ -45,6 +45,6 @@ public class OutboxMessageEndpoint
     /// <remarks>
     ///     This value will not be set for the static endpoints.
     /// </remarks>
-    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = Justifications.CanExposeByteArray)]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
     public byte[]? SerializedEndpoint { get; }
 }

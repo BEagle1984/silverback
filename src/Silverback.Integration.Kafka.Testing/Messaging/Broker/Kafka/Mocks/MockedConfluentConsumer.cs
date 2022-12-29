@@ -82,11 +82,9 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     internal Action<IConsumer<byte[]?, byte[]?>, Error>? ErrorHandler { get; set; }
 
-    internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
-        PartitionsAssignedHandler { get; set; }
+    internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>? PartitionsAssignedHandler { get; set; }
 
-    internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>,
-        IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler { get; set; }
+    internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler { get; set; }
 
     internal Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? OffsetsCommittedHandler { get; set; }
 
@@ -216,7 +214,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         {
             partitions
                 .Where(partition => !_pausedPartitions.Contains(partition))
-                .ForEach(partition => _pausedPartitions.Add(partition));
+                .ForEach(_pausedPartitions.Add);
         }
     }
 
@@ -225,7 +223,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         lock (_pausedPartitions)
         {
             partitions
-                .Where(partition => _pausedPartitions.Contains(partition))
+                .Where(_pausedPartitions.Contains)
                 .ForEach(partition => _pausedPartitions.Remove(partition));
         }
     }
@@ -268,10 +266,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         Disposed = true;
     }
 
-    internal void OnRebalancing()
-    {
-        PartitionsAssigned = false;
-    }
+    internal void OnRebalancing() => PartitionsAssigned = false;
 
     internal void OnPartitionsRevoked(IReadOnlyCollection<TopicPartition> topicPartitions)
     {
@@ -348,6 +343,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         return false;
     }
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     private void EnsurePartitionsAssigned(CancellationToken cancellationToken)
     {
         if (PartitionsAssigned)
@@ -415,7 +411,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Ensures retry in next iteration")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Ensures retry in next iteration")]
     private async Task AutoCommitAsync()
     {
         while (!Disposed)

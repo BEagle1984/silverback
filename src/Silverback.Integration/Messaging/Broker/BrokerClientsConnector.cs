@@ -47,7 +47,7 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
     }
 
     /// <inheritdoc cref="IBrokerClientsConnector.ConnectAllAsync" />
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async ValueTask ConnectAllAsync(CancellationToken cancellationToken = default)
     {
         await InitializeAsync().ConfigureAwait(false);

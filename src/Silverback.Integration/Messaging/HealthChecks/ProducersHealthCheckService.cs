@@ -28,7 +28,7 @@ public class ProducersHealthCheckService : IProducersHealthCheckService
     }
 
     /// <inheritdoc cref="IProducersHealthCheckService.SendPingMessagesAsync" />
-    [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception is returned")]
     public async Task<IReadOnlyCollection<EndpointCheckResult>> SendPingMessagesAsync()
     {
         if (!_producers.All(producer => producer.Client.Status is ClientStatus.Initialized or ClientStatus.Initializing))
@@ -38,7 +38,7 @@ public class ProducersHealthCheckService : IProducersHealthCheckService
         return await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Exception reported in the result.")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception reported in the result.")]
     private static async Task<EndpointCheckResult> PingEndpointAsync(IProducer producer)
     {
         try

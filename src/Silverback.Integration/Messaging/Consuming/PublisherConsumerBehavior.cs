@@ -121,7 +121,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         return sequence;
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to log and forward")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]
     private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
     {
         _logger.LogConsumerLowLevelTrace(

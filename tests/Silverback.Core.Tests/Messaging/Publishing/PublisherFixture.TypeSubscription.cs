@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
@@ -260,7 +261,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TestEventOne message) => _messages.Add(message);
     }
 
@@ -273,7 +274,7 @@ public partial class PublisherFixture
             _messages = messages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TestEventOne message) => _messages.Add(message);
     }
 
@@ -292,13 +293,13 @@ public partial class PublisherFixture
             _asyncValueTaskMessages = asyncValueTaskMessages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void SyncSubscriber(TestEventOne message) => _syncMessages.Add(message);
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public Task AsyncSubscriber(TestEventOne message) => _asyncMessages.AddAsync(message).AsTask();
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public ValueTask AsyncValueTaskSubscriber(TestEventOne message) => _asyncValueTaskMessages.AddAsync(message);
     }
 
@@ -320,20 +321,20 @@ public partial class PublisherFixture
             _privateDecoratedMessages = privateDecoratedMessages;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void PublicSubscriber(TestEventOne message) => _publicMessages.Add(message);
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void PublicDecoratedSubscriber(TestEventOne message) => _publicDecoratedMessages.Add(message);
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+        [UsedImplicitly]
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
         private void PrivateSubscriber(TestEventOne message) => _privateMessages.Add(message);
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
-        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+        [UsedImplicitly]
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
         private void PrivateDecoratedSubscriber(TestEventOne message) => _privateDecoratedMessages.Add(message);
     }
 
@@ -352,11 +353,11 @@ public partial class PublisherFixture
         }
 
         [Subscribe(Exclusive = true)]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public async Task Subscriber1Async(TestEventOne message) => await ExecuteAsync(message, _messages1);
 
         [Subscribe(Exclusive = true)]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public async Task Subscriber2Async(TestEventOne message) => await ExecuteAsync(message, _messages2);
 
         private async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
@@ -387,17 +388,14 @@ public partial class PublisherFixture
         }
 
         [Subscribe(Exclusive = false)]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public async Task Subscriber1Async(TestEventOne message) => await ExecuteAsync(message, _messages1);
 
         [Subscribe(Exclusive = false)]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public async Task Subscriber2Async(TestEventOne message) => await ExecuteAsync(message, _messages2);
 
-        public void Dispose()
-        {
-            _countdownEvent.Dispose();
-        }
+        public void Dispose() => _countdownEvent.Dispose();
 
         private async Task ExecuteAsync(TestEventOne message, TestingCollection<TestEventOne> messages)
         {

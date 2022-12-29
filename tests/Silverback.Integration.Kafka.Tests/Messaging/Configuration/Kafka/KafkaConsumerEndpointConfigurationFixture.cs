@@ -121,7 +121,7 @@ public class KafkaConsumerEndpointConfigurationFixture
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow<BrokerConfigurationException>();
     }
@@ -131,7 +131,7 @@ public class KafkaConsumerEndpointConfigurationFixture
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with { TopicPartitions = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -144,7 +144,7 @@ public class KafkaConsumerEndpointConfigurationFixture
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(Array.Empty<TopicPartitionOffset>())
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -163,7 +163,7 @@ public class KafkaConsumerEndpointConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -181,7 +181,7 @@ public class KafkaConsumerEndpointConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -199,7 +199,7 @@ public class KafkaConsumerEndpointConfigurationFixture
             PartitionOffsetsProvider = _ => ValueTask.FromResult(Enumerable.Empty<TopicPartitionOffset>())
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -217,7 +217,7 @@ public class KafkaConsumerEndpointConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -235,7 +235,7 @@ public class KafkaConsumerEndpointConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("Cannot mix Partition.Any with a specific partition assignment*");
@@ -257,7 +257,7 @@ public class KafkaConsumerEndpointConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow();
     }
@@ -270,7 +270,7 @@ public class KafkaConsumerEndpointConfigurationFixture
             Serializer = null!
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -283,7 +283,7 @@ public class KafkaConsumerEndpointConfigurationFixture
             Sequence = null!
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }

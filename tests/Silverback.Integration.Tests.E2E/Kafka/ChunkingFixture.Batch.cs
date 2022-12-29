@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -427,36 +426,9 @@ public partial class ChunkingFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(chunksPerMessage * messagesCount);
     }
 
-    [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ShouldAbortSequence_WhenDisconnectingWhileJsonConsumedInBatch()
-    {
-        throw new NotImplementedException();
-    }
-
-    [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ShouldAbortSequence_WhenDisconnectingWhileBinaryMessageConsumedInBatch()
-    {
-        throw new NotImplementedException();
-    }
-
-    [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ShouldAbortSequence_WhenDeserializationFailsWhileJsonConsumedInBatch()
-    {
-        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
-        throw new NotImplementedException();
-    }
-
-    [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ShouldAbortSequence_WhenProcessingFailsWhileJsonConsumedInBatch()
-    {
-        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
-        throw new NotImplementedException();
-    }
-
-    [Fact(Skip = "Not yet implemented")]
-    public Task Chunking_ShouldAbortSequence_WhenProcessingFailsWhileBinaryMessageConsumedInBatch()
-    {
-        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
-        throw new NotImplementedException();
-    }
+    // TODO: Chunking_ShouldAbortSequence_WhenDisconnectingWhileJsonConsumedInBatch() => throw new NotImplementedException();
+    // TODO: Chunking_ShouldAbortSequence_WhenDisconnectingWhileBinaryMessageConsumedInBatch() => throw new NotImplementedException();
+    // TODO: Chunking_ShouldAbortSequence_WhenDeserializationFailsWhileJsonConsumedInBatch() (Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?)
+    // TODO: Chunking_ShouldAbortSequence_WhenProcessingFailsWhileJsonConsumedInBatch() (Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?)
+    // TODO: Chunking_ShouldAbortSequence_WhenProcessingFailsWhileBinaryMessageConsumedInBatch() (Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?)
 }

@@ -8,7 +8,7 @@ using Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 namespace Silverback.Messaging.Subscribers;
 
-[SuppressMessage("", "CA1001", Justification = "Observable disposed by caller")]
+[SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Observable disposed by caller")]
 internal sealed class LazyMessageStreamObservable<TMessage> : ILazyArgumentValue
 {
     private readonly ILazyMessageStreamEnumerable<TMessage> _lazyStream;

@@ -23,6 +23,7 @@ uid: releases
   * StorageInitializer to create tables
   * Client side offset storage (w/ transaction)
   * Fluent API for connection options
+  * JsonSerializer typename handling none by default (Security)
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

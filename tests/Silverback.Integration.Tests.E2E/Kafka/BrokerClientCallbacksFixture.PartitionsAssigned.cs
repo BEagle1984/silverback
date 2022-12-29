@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -99,7 +98,6 @@ public partial class BrokerClientCallbacksFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private class ResetOffsetPartitionsAssignedCallback : IKafkaPartitionsAssignedCallback
     {
         public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
@@ -108,7 +106,6 @@ public partial class BrokerClientCallbacksFixture
             topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class NoResetPartitionsAssignedCallback : IKafkaPartitionsAssignedCallback
     {
         public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(

@@ -133,11 +133,8 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     }
 
     /// <inheritdoc cref="IConfluentConsumerBuilder.SetLogHandler" />
-    public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler)
-    {
-        // Not yet implemented / not needed
-        return this;
-    }
+    // Not yet implemented / not needed
+    public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler) => this;
 
     /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
     public IConsumer<byte[]?, byte[]?> Build()
@@ -145,14 +142,13 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
         if (_config == null)
             throw new InvalidOperationException("SetConfig must be called to provide the consumer configuration.");
 
-        MockedConfluentConsumer consumer = new(_config, _topics, _consumerGroups, _options);
-
-        consumer.StatisticsHandler = _statisticsHandler;
-        consumer.ErrorHandler = _errorHandler;
-        consumer.PartitionsAssignedHandler = _partitionsAssignedHandler;
-        consumer.PartitionsRevokedHandler = _partitionsRevokedHandler;
-        consumer.OffsetsCommittedHandler = _offsetsCommittedHandler;
-
-        return consumer;
+        return new MockedConfluentConsumer(_config, _topics, _consumerGroups, _options)
+        {
+            StatisticsHandler = _statisticsHandler,
+            ErrorHandler = _errorHandler,
+            PartitionsAssignedHandler = _partitionsAssignedHandler,
+            PartitionsRevokedHandler = _partitionsRevokedHandler,
+            OffsetsCommittedHandler = _offsetsCommittedHandler
+        };
     }
 }

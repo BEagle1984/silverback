@@ -415,9 +415,7 @@ public partial class BatchFixture : KafkaFixture
             List<TestEventOne> list = new();
             receivedBatches.Add(list);
 
-            batch.Subscribe(
-                message => list.Add(message),
-                () => Interlocked.Increment(ref completedBatches));
+            batch.Subscribe(list.Add, () => Interlocked.Increment(ref completedBatches));
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

@@ -49,7 +49,7 @@ public class OutboxMessage
     /// <summary>
     ///     Gets the message raw binary content (body).
     /// </summary>
-    [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
     public byte[]? Content { get; }
 
     /// <summary>

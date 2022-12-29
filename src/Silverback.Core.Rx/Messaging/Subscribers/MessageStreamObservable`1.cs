@@ -25,7 +25,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 
     private bool _isDisposed;
 
-    [SuppressMessage("", "CA1031", Justification = "Exception rethrown by the Subscribe method")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception rethrown by the Subscribe method")]
     public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
     {
         Task.Run(

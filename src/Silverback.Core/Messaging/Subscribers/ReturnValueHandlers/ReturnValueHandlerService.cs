@@ -23,7 +23,8 @@ internal sealed class ReturnValueHandlerService
         _returnValueHandlers = returnValueHandlers.Reverse().ToList();
     }
 
-    [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
+    [SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Method executes sync or async")]
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, ExecutionFlow executionFlow)
     {
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")

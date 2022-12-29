@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -76,11 +77,10 @@ public partial class PublisherFixture
         public TestingCollection<TMessage> ReceivedMessages { get; } = new();
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [UsedImplicitly]
         public void Subscriber(TMessage message) => ReceivedMessages.Add(message);
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private class TestSubscriber : TestSubscriber<object>
     {

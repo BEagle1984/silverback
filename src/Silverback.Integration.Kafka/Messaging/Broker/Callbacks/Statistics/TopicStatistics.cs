@@ -13,19 +13,17 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class TopicStatistics
 {
     [JsonPropertyName("topic")]
-    public string Topic { get; set; } = string.Empty;
+    public string Topic { get; init; } = string.Empty;
 
     [JsonPropertyName("metadata_age")]
-    public long MetadataAge { get; set; }
+    public long MetadataAge { get; init; }
 
     [JsonPropertyName("batchsize")]
-    public WindowStatistics BatchSize { get; set; } = new();
+    public WindowStatistics BatchSize { get; init; } = new();
 
     [JsonPropertyName("batchcnt")]
-    public WindowStatistics BatchCnt { get; set; } = new();
+    public WindowStatistics BatchCnt { get; init; } = new();
 
     [JsonPropertyName("partitions")]
-    [SuppressMessage("", "CA2227", Justification = "DTO")]
-    public Dictionary<string, PartitionStatistics> Partitions { get; set; } =
-        new();
+    public Dictionary<string, PartitionStatistics> Partitions { get; init; } = new();
 }

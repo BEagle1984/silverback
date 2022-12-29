@@ -318,7 +318,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     private ValueTask OnClientConnectedAsync(BrokerClient client) => StartAsync();
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     [SuppressMessage("ReSharper", "RedundantSuppressNullableWarningExpression", Justification = "Needed to avoid other false positives")]
     private async Task RestartConsumeLoopAfterRollbackAsync(
         IEnumerable<Task?> channelsManagerStoppingTasks,

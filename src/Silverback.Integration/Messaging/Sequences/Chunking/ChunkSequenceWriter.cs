@@ -77,7 +77,7 @@ public class ChunkSequenceWriter : ISequenceWriter
             IOutboundEnvelope chunkEnvelope = CreateChunkEnvelope(
                 chunkIndex,
                 chunksCount,
-                bufferMemory.Slice(0, readBytesCount).ToArray(),
+                bufferMemory[..readBytesCount].ToArray(),
                 envelope);
 
             if (chunkIndex > 0 && firstChunkMessageHeader != null)

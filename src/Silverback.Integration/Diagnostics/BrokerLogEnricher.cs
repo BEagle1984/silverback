@@ -41,15 +41,13 @@ public abstract class BrokerLogEnricher : IBrokerLogEnricher
     }
 
     /// <inheritdoc cref="IBrokerLogEnricher.Enrich(string)" />
-    public string Enrich(string message)
-    {
-        return $"{message} | " +
-               "endpointName: {endpointName}, " +
-               "messageType: {messageType}, " +
-               "messageId: {messageId}, " +
-               $"{AdditionalPropertyName1}: {{{AdditionalPropertyName1}}}, " +
-               $"{AdditionalPropertyName2}: {{{AdditionalPropertyName2}}}";
-    }
+    public string Enrich(string message) =>
+        $"{message} | " +
+        "endpointName: {endpointName}, " +
+        "messageType: {messageType}, " +
+        "messageId: {messageId}, " +
+        $"{AdditionalPropertyName1}: {{{AdditionalPropertyName1}}}, " +
+        $"{AdditionalPropertyName2}: {{{AdditionalPropertyName2}}}";
 
     /// <inheritdoc cref="IBrokerLogEnricher.GetAdditionalValues" />
     public abstract (string? Value1, string? Value2) GetAdditionalValues(

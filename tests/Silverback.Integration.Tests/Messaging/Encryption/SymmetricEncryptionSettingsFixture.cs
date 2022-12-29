@@ -19,7 +19,7 @@ public class SymmetricEncryptionSettingsFixture
             AlgorithmName = null!
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<BrokerConfigurationException>().WithMessage("The algorithm name is required.");
     }
@@ -32,7 +32,7 @@ public class SymmetricEncryptionSettingsFixture
             Key = null
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<BrokerConfigurationException>().WithMessage("A Key is required.");
     }

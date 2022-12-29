@@ -40,7 +40,7 @@ public class MqttConsumerEndpointConfigurationFixture
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow<BrokerConfigurationException>();
     }
@@ -53,7 +53,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Serializer = null!
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -66,7 +66,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Sequence = null!
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -79,7 +79,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Topics = null!
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("At least 1 topic must be specified.");
@@ -93,7 +93,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Topics = new ValueReadOnlyCollection<string>(Array.Empty<string>())
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("At least 1 topic must be specified.");
@@ -109,7 +109,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Topics = new ValueReadOnlyCollection<string>(new[] { topicName! })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("A topic name cannot be null or empty.");
@@ -123,7 +123,7 @@ public class MqttConsumerEndpointConfigurationFixture
             Batch = new BatchSettings { Size = 42 }
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("Batch processing cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");

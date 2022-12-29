@@ -40,16 +40,13 @@ internal sealed class TypeSubscription : ISubscription
 
     public TypeSubscriptionOptions Options { get; }
 
-    public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)
-    {
-        if (_subscriberInstance != null)
-            return GetSubscribedMethods(_subscriberInstance, serviceProvider).ToList();
-
-        return _subscribedMethods ??= serviceProvider
-            .GetServices(SubscriberType)
-            .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
-            .ToList();
-    }
+    public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        _subscriberInstance != null
+            ? GetSubscribedMethods(_subscriberInstance, serviceProvider).ToList()
+            : _subscribedMethods ??= serviceProvider
+                .GetServices(SubscriberType)
+                .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
+                .ToList();
 
     private IEnumerable<SubscribedMethod> GetSubscribedMethods(object? subscriber, IServiceProvider serviceProvider)
     {

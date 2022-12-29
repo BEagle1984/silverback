@@ -66,13 +66,10 @@ public class ProduceBehaviorFixture
     {
         public List<IOutboundEnvelope> ProducedEnvelopes { get; } = new();
 
-        public bool Equals(IProduceStrategy? other)
-        {
-            throw new NotImplementedException();
-        }
+        public bool Equals(IProduceStrategy? other) => throw new NotSupportedException();
 
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration) =>
-            new TestProduceStrategyImplementation(envelope => ProducedEnvelopes.Add(envelope));
+            new TestProduceStrategyImplementation(ProducedEnvelopes.Add);
 
         private class TestProduceStrategyImplementation : IProduceStrategyImplementation
         {

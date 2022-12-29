@@ -94,7 +94,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     public void Commit()
     {
-        if (Status != ClientStatus.Initialized && Status != ClientStatus.Disconnecting)
+        if (Status is not ClientStatus.Initialized and not ClientStatus.Disconnecting)
             throw new InvalidOperationException("The consumer is not connected.");
 
         if (_confluentConsumer == null)
@@ -174,7 +174,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
             Subscribe();
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected override ValueTask DisconnectCoreAsync()
     {
         if (!_configuration.EnableAutoCommit)

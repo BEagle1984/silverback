@@ -28,8 +28,7 @@ public class OutboxHealthCheckService : IOutboxHealthCheckService
     /// <inheritdoc cref="IOutboxHealthCheckService.CheckIsHealthyAsync" />
     public async Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null)
     {
-        if (maxQueueLength != null &&
-            await _queueReader.GetLengthAsync().ConfigureAwait(false) > maxQueueLength)
+        if (maxQueueLength != null && await _queueReader.GetLengthAsync().ConfigureAwait(false) > maxQueueLength)
             return false;
 
         return await _queueReader.GetMaxAgeAsync().ConfigureAwait(false) <= (maxAge ?? DefaultMaxAge);

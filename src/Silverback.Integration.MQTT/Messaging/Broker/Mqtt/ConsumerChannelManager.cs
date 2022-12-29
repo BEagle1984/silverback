@@ -110,7 +110,7 @@ internal sealed class ConsumerChannelManager : IDisposable
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task ReadChannelAsync()
     {
         // Clear the current activity to ensure we don't propagate the previous traceId

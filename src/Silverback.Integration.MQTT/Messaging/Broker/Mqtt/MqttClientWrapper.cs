@@ -179,7 +179,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         return true;
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task<bool> TryConnectClientAsync(bool isFirstTry, CancellationToken cancellationToken)
     {
         try
@@ -211,7 +211,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged/forwarded")]
     private async Task ProcessPublishQueueAsync(CancellationToken cancellationToken)
     {
         try
@@ -276,6 +276,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
     private Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs messageReceivedEventArgs) =>
         MessageReceived.InvokeAsync(messageReceivedEventArgs).AsTask();
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     private void WaitFlushingCompletes()
     {
         if (_publishQueueChannel.Reader.Completion.IsCompleted)

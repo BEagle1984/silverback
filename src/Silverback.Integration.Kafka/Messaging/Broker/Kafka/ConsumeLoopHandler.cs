@@ -153,8 +153,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             await _consumer.Client.DisconnectAsync().ConfigureAwait(false);
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-    [SuppressMessage("", "CA1508", Justification = "_channelsManager is set on partitions assignment")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private bool ConsumeOnce(CancellationToken cancellationToken)
     {
         try

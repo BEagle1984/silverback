@@ -78,21 +78,25 @@ internal static class TaskExtensions
         return await task.ConfigureAwait(false);
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extension method")]
     public static void FireAndForget(this Task task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extension method")]
     public static void FireAndForget(this ValueTask task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extension method")]
     public static void FireAndForget<T>(this Task<T> task)
     {
         // This method is used just to trick the compiler and avoid CS4014
     }
 
+    [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Extension method")]
     public static void FireAndForget<T>(this ValueTask<T> task)
     {
         // This method is used just to trick the compiler and avoid CS4014

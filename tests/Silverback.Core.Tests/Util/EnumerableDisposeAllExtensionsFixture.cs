@@ -45,10 +45,7 @@ public class EnumerableDisposeAllExtensionsFixture
     {
         public bool Disposed { get; private set; }
 
-        public void Dispose()
-        {
-            Disposed = true;
-        }
+        public void Dispose() => Disposed = true;
     }
 
     private class AsyncDisposable : IAsyncDisposable, IMustDispose
@@ -70,10 +67,7 @@ public class EnumerableDisposeAllExtensionsFixture
 
         public bool AsyncDisposed { get; set; }
 
-        public void Dispose()
-        {
-            SyncDisposed = true;
-        }
+        public void Dispose() => SyncDisposed = true;
 
         public ValueTask DisposeAsync()
         {

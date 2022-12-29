@@ -28,35 +28,29 @@ internal static class SubscribedMethodInvoker
             return MethodInvocationResult.NotInvoked;
 
         object?[] arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider);
-
-        object? returnValue;
-
-        switch (subscribedMethod.MessageArgumentResolver)
+        object? returnValue = subscribedMethod.MessageArgumentResolver switch
         {
-            case ISingleMessageArgumentResolver singleResolver:
-                returnValue = await InvokeWithSingleMessageAsync(
+            ISingleMessageArgumentResolver resolver =>
+                await InvokeWithSingleMessageAsync(
                     message,
                     subscribedMethod,
                     arguments,
-                    singleResolver,
+                    resolver,
                     serviceProvider,
-                    executionFlow).ConfigureAwait(false);
-                break;
-            case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
-                returnValue = InvokeWithStreamEnumerable(
+                    executionFlow).ConfigureAwait(false),
+            IStreamEnumerableMessageArgumentResolver resolver =>
+                InvokeWithStreamEnumerable(
                     (IMessageStreamProvider)message,
                     subscribedMethod,
                     arguments,
-                    streamEnumerableResolver,
-                    serviceProvider);
-
-                break;
-            default:
+                    resolver,
+                    serviceProvider),
+            _ =>
                 throw new SubscribedMethodInvocationException(
                     $"The message argument resolver ({subscribedMethod.MessageArgumentResolver}) " +
                     "must implement either ISingleMessageArgumentResolver, IEnumerableMessageArgumentResolver " +
-                    "or IStreamEnumerableMessageArgumentResolver.");
-        }
+                    "or IStreamEnumerableMessageArgumentResolver.")
+        };
 
         if (returnValue == null)
             return MethodInvocationResult.Invoked;

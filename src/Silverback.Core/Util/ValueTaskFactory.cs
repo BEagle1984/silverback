@@ -12,7 +12,7 @@ namespace Silverback.Util;
 ///     This will become obsolete with .NET 5, where the <see cref="ValueTask" /> will expose these
 ///     static methods.
 /// </summary>
-[SuppressMessage("", "VSTHRD200", Justification = "Named after Task methods")]
+[SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Named after Task methods")]
 internal static class ValueTaskFactory
 {
     /// <summary>

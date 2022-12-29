@@ -44,11 +44,8 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
     }
 
     /// <inheritdoc cref="IConfluentProducerBuilder.SetLogHandler" />
-    public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler)
-    {
-        // Not yet implemented / not needed
-        return this;
-    }
+    // Not yet implemented / not needed
+    public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler) => this;
 
     /// <inheritdoc cref="IConfluentProducerBuilder.Build" />
     public IProducer<byte[]?, byte[]?> Build()
@@ -56,10 +53,9 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
         if (_config == null)
             throw new InvalidOperationException("SetConfig must be called to provide the producer configuration.");
 
-        MockedConfluentProducer producer = new(_config, _topics);
-
-        producer.StatisticsHandler = _statisticsHandler;
-
-        return producer;
+        return new MockedConfluentProducer(_config, _topics)
+        {
+            StatisticsHandler = _statisticsHandler
+        };
     }
 }

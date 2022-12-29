@@ -4,32 +4,25 @@
 using System;
 using MQTTnet.Client;
 using MQTTnet.Packets;
+using Silverback.Tools.Generators.MqttConfigProxies;
 
-namespace Silverback.Tools.Generators.MqttConfigProxies;
+State state = new();
 
-internal static class Program
+state.AddType<MqttClientOptions>();
+state.AddType<MqttUserProperty>();
+state.AddType<MqttClientTcpOptions>();
+state.AddType<MqttClientWebSocketOptions>();
+state.AddType<MqttClientTlsOptions>();
+state.AddType<MqttClientWebSocketProxyOptions>();
+
+while (state.GeneratorQueue.TryDequeue(out Type? type))
 {
-    private static void Main()
-    {
-        State state = new();
-
-        state.AddType<MqttClientOptions>();
-        state.AddType<MqttUserProperty>();
-        state.AddType<MqttClientTcpOptions>();
-        state.AddType<MqttClientWebSocketOptions>();
-        state.AddType<MqttClientTlsOptions>();
-        state.AddType<MqttClientWebSocketProxyOptions>();
-
-        while (state.GeneratorQueue.TryDequeue(out Type? type))
-        {
-            Console.Write(new ProxyClassGenerator(type, state).Generate());
-            Console.WriteLine();
-        }
-
-        Console.Write(new BuilderGenerator("MqttClientConfigurationBuilder").Generate());
-        Console.WriteLine();
-
-        Console.Write(new BuilderGenerator("MqttClientsConfigurationBuilder").Generate());
-        Console.WriteLine();
-    }
+    Console.Write(new ProxyClassGenerator(type, state).Generate());
+    Console.WriteLine();
 }
+
+Console.Write(new BuilderGenerator("MqttClientConfigurationBuilder").Generate());
+Console.WriteLine();
+
+Console.Write(new BuilderGenerator("MqttClientsConfigurationBuilder").Generate());
+Console.WriteLine();

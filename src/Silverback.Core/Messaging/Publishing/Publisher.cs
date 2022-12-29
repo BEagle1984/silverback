@@ -59,6 +59,7 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
     public void Publish(object message, bool throwIfUnhandled) =>
         PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult();
 
@@ -68,6 +69,7 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
         CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult()).ToList();
 

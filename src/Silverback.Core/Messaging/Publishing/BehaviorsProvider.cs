@@ -30,9 +30,7 @@ public class BehaviorsProvider : IBehaviorsProvider
     /// <inheritdoc cref="IBehaviorsProvider.CreateStack" />
     public Stack<IBehavior> CreateStack() => new(GetBehaviors());
 
-    private IReadOnlyCollection<IBehavior> GetBehaviors()
-    {
-        // Reverse the behaviors order since they will be put in a Stack<T>
-        return _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().Reverse().ToList();
-    }
+    // Reverse the behaviors order since they will be put in a Stack<T>
+    private IReadOnlyCollection<IBehavior> GetBehaviors() =>
+        _behaviors ??= _serviceProvider.GetServices<IBehavior>().SortBySortIndex().Reverse().ToList();
 }

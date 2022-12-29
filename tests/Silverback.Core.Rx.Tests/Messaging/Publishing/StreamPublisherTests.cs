@@ -449,7 +449,7 @@ public class StreamPublisherTests
                 .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle));
 
         void Handle(IMessageStreamObservable<IEvent> observable) =>
-            observable.Subscribe(message => receivedEvents.Add(message));
+            observable.Subscribe(receivedEvents.Add);
 
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 

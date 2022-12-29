@@ -115,25 +115,12 @@ public sealed record KafkaDynamicProducerEndpointResolver
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
-        Func<object?, string> topicFunction = message => string.Format(
-            CultureInfo.InvariantCulture,
-            topicFormatString,
-            topicArgumentsFunction.Invoke(message));
+        string FormatTopic(object? message) =>
+            string.Format(CultureInfo.InvariantCulture, topicFormatString, topicArgumentsFunction.Invoke(message));
 
-        if (partitionFunction == null)
-        {
-            _topicPartitionFunction = (message, _) =>
-                new TopicPartition(
-                    topicFunction.Invoke(message),
-                    Partition.Any);
-        }
-        else
-        {
-            _topicPartitionFunction = (message, _) =>
-                new TopicPartition(
-                    topicFunction.Invoke(message),
-                    partitionFunction.Invoke(message));
-        }
+        _topicPartitionFunction = partitionFunction == null
+            ? (message, _) => new TopicPartition(FormatTopic(message), Partition.Any)
+            : (message, _) => new TopicPartition(FormatTopic(message), partitionFunction.Invoke(message));
     }
 
     internal KafkaDynamicProducerEndpointResolver(

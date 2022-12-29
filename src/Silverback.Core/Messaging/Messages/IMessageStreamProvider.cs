@@ -37,10 +37,8 @@ public interface IMessageStreamProvider
     /// <returns>
     ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
     /// </returns>
-    [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
-    IMessageStreamEnumerable<object> CreateStream(
-        Type messageType,
-        IReadOnlyCollection<IMessageFilter>? filters = null);
+    [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Stream is both sync and async")]
+    IMessageStreamEnumerable<object> CreateStream(Type messageType, IReadOnlyCollection<IMessageFilter>? filters = null);
 
     /// <summary>
     ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> that will be linked with this
@@ -55,7 +53,7 @@ public interface IMessageStreamProvider
     /// <returns>
     ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
     /// </returns>
-    [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
+    [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Stream is both sync and async")]
     IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(IReadOnlyCollection<IMessageFilter>? filters = null);
 
     /// <summary>
@@ -72,9 +70,7 @@ public interface IMessageStreamProvider
     /// <returns>
     ///     The linked <see cref="ILazyMessageStreamEnumerable{TMessage}" />.
     /// </returns>
-    ILazyMessageStreamEnumerable<object> CreateLazyStream(
-        Type messageType,
-        IReadOnlyCollection<IMessageFilter>? filters = null);
+    ILazyMessageStreamEnumerable<object> CreateLazyStream(Type messageType, IReadOnlyCollection<IMessageFilter>? filters = null);
 
     /// <summary>
     ///     Creates a new <see cref="ILazyMessageStreamEnumerable{TMessage}" /> that will be linked with this

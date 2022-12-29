@@ -56,7 +56,7 @@ internal sealed class BrokerClientsBootstrapper
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private void InvokeConfigurator(
         IBrokerClientsConfigurator configurator,
         BrokerClientsConfigurationBuilder brokerClientsConfigurationBuilder)

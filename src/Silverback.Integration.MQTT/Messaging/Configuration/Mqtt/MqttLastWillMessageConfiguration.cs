@@ -23,7 +23,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     /// <summary>
     ///     Gets the correlation data.
     /// </summary>
-    [SuppressMessage("", "CA1819:Properties should not return arrays", Justification = "Same as wrapped library")]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Same as wrapped library")]
     public byte[]? CorrelationData { get; init; }
 
     /// <summary>
@@ -40,7 +40,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     /// <summary>
     ///     Gets the message payload.
     /// </summary>
-    [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
     public byte[]? Payload { get; init; }
 
     /// <summary>

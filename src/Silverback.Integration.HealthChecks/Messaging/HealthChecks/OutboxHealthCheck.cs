@@ -49,7 +49,7 @@ public class OutboxHealthCheck : IHealthCheck
             return new HealthCheckResult(HealthStatus.Healthy);
 
         string errorMessage = "The outbox exceeded the configured limits " +
-                              $"(max message age: {MaxMessageAge.ToString()}, " +
+                              $"(max message age: {MaxMessageAge}, " +
                               $"max queue length: {MaxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
 
         return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);

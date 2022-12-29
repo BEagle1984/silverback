@@ -48,8 +48,8 @@ internal sealed class SubscribedMethodsCacheSingleton
 
         lock (_cache)
         {
-            if (_cache.ContainsKey(messageType))
-                return _cache[messageType];
+            if (_cache.TryGetValue(messageType, out IReadOnlyCollection<SubscribedMethod>? value))
+                return value;
         }
 
         List<SubscribedMethod> subscribers = GetAllSubscribedMethods(serviceProvider)
@@ -70,8 +70,7 @@ internal sealed class SubscribedMethodsCacheSingleton
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IEnvelope { AutoUnwrap: true } envelope &&
-            subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
+        if (message is IEnvelope { AutoUnwrap: true } envelope && subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
             return true;
 
         if (subscribedMethod.MessageType.IsInstanceOfType(message))
@@ -91,11 +90,15 @@ internal sealed class SubscribedMethodsCacheSingleton
         // routed by the MessageStreamEnumerable.
         if (typeof(IEnvelope).IsAssignableFrom(streamProvider.MessageType) &&
             !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType))
+        {
             return true;
+        }
 
         if (streamProvider.MessageType.IsAssignableFrom(subscribedMethod.MessageType) ||
             subscribedMethod.MessageType.IsAssignableFrom(streamProvider.MessageType))
+        {
             return true;
+        }
 
         return false;
     }

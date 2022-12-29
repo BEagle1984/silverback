@@ -13,7 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
-[SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used via DI")]
 internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 {
     private readonly Dictionary<string, ClientSession> _sessions = new();
@@ -22,10 +22,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 
     private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
 
-    [SuppressMessage(
-        "ReSharper",
-        "InconsistentlySynchronizedField",
-        Justification = "Lock (dis-)connect only")]
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only")]
     public IClientSession GetClientSession(string clientId) =>
         _sessions.Single(sessionPair => sessionPair.Key.StartsWith($"{clientId}|", StringComparison.Ordinal)).Value;
 
@@ -126,10 +123,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        _sessions.Values.ForEach(session => session.Dispose());
-    }
+    public void Dispose() => _sessions.Values.ForEach(session => session.Dispose());
 
     private static string GetClientSessionKey(MockedMqttClient client) => $"{client.Options?.ClientId}|{client.Options?.ChannelOptions}";
 

@@ -35,7 +35,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed with the Context")]
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Exception rethrown by the Subscribe method")]
     public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
@@ -120,7 +120,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context) =>
         Task.Run(() => AwaitSequenceProcessingAsync(context)).FireAndForget();
 
-    [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync")]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is sync")]
     private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
     {

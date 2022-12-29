@@ -19,7 +19,7 @@ public class SymmetricDecryptionSettingsFixture
             AlgorithmName = null!
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<BrokerConfigurationException>().WithMessage("The algorithm name is required.");
     }
@@ -33,7 +33,7 @@ public class SymmetricDecryptionSettingsFixture
             KeyProvider = null
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<BrokerConfigurationException>().WithMessage("A Key or a KeyProvider is required.");
     }
@@ -47,7 +47,7 @@ public class SymmetricDecryptionSettingsFixture
             KeyProvider = _ => Array.Empty<byte>()
         };
 
-        Action act = () => settings.Validate();
+        Action act = settings.Validate;
 
         act.Should().Throw<BrokerConfigurationException>().WithMessage("Cannot set both the Key and the KeyProvider.");
     }

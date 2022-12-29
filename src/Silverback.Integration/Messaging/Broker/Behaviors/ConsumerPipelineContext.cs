@@ -174,10 +174,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     Sets the <see cref="IsSequenceEnd" /> property to <c>true</c>, indicating that the current message was recognized as the end of
     ///     the sequence.
     /// </summary>
-    public void SetIsSequenceEnd()
-    {
-        IsSequenceEnd = true;
-    }
+    public void SetIsSequenceEnd() => IsSequenceEnd = true;
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()

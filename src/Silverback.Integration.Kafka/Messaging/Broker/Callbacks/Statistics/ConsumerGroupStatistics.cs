@@ -12,23 +12,23 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class ConsumerGroupStatistics
 {
     [JsonPropertyName("state")]
-    public string State { get; set; } = string.Empty;
+    public string State { get; init; } = string.Empty;
 
     [JsonPropertyName("stateage")]
-    public long StateAge { get; set; }
+    public long StateAge { get; init; }
 
     [JsonPropertyName("join_state")]
-    public string JoinState { get; set; } = string.Empty;
+    public string JoinState { get; init; } = string.Empty;
 
     [JsonPropertyName("rebalance_age")]
-    public long RebalanceAge { get; set; }
+    public long RebalanceAge { get; init; }
 
     [JsonPropertyName("rebalance_cnt")]
-    public long RebalanceCnt { get; set; }
+    public long RebalanceCnt { get; init; }
 
     [JsonPropertyName("rebalance_reason")]
-    public string RebalanceReason { get; set; } = string.Empty;
+    public string RebalanceReason { get; init; } = string.Empty;
 
     [JsonPropertyName("assignment_size")]
-    public long AssignmentSize { get; set; }
+    public long AssignmentSize { get; init; }
 }

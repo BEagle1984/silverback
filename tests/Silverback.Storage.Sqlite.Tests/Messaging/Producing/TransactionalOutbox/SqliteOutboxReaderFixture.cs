@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -272,7 +271,6 @@ public sealed class SqliteOutboxReaderFixture : IDisposable
 
     public void Dispose() => _sqliteConnection.Dispose();
 
-    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
     private class TestMessage
     {
     }

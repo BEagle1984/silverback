@@ -50,13 +50,13 @@ public abstract record SymmetricEncryptionSettingsBase : IValidatableSettings
     ///         message that will also be prepended to the actual encrypted message to be available to the consumer.
     ///     </para>
     /// </summary>
-    [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
     public byte[]? InitializationVector { get; init; }
 
     /// <summary>
     ///     Gets the secret key for the symmetric algorithm.
     /// </summary>
-    [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Reviewed")]
     public byte[]? Key { get; init; }
 
     /// <summary>

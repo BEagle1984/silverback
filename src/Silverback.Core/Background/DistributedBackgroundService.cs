@@ -44,7 +44,7 @@ public abstract class DistributedBackgroundService : BackgroundService
     protected IDistributedLock DistributedLock { get; }
 
     /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected sealed override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogBackgroundServiceStarting(this);

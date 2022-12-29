@@ -334,6 +334,7 @@ internal static class IntegrationLoggerExtensions
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public static void LogLowLevelTrace(this ISilverbackLogger logger, string message, Func<object[]> argumentsProvider)
     {
         if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
@@ -348,6 +349,7 @@ internal static class IntegrationLoggerExtensions
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public static void LogLowLevelTrace(
         this ISilverbackLogger logger,
         Exception? exception,
@@ -367,6 +369,7 @@ internal static class IntegrationLoggerExtensions
 
     [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
     [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
+    [SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Optimized via IsEnabled")]
     public static void LogConsumerLowLevelTrace(
         this ISilverbackLogger logger,
         IConsumer? consumer,
@@ -384,32 +387,6 @@ internal static class IntegrationLoggerExtensions
         logger.InnerLogger.Log(
             IntegrationLogEvents.LowLevelTracing.Level,
             IntegrationLogEvents.LowLevelTracing.EventId,
-            message + " | consumerName: {consumerName}",
-            args.ToArray());
-    }
-
-    // TODO: TEST
-    [SuppressMessage("ReSharper", "TemplateIsNotCompileTimeConstantProblem", Justification = "Optimized via IsEnabled")]
-    [SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Optimized via IsEnabled")]
-    public static void LogConsumerLowLevelTrace(
-        this ISilverbackLogger logger,
-        IConsumer? consumer,
-        Exception exception,
-        string message,
-        Func<object?[]>? argumentsProvider = null)
-    {
-        if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
-            return;
-
-        List<object?> args = new(argumentsProvider?.Invoke() ?? Array.Empty<object>())
-        {
-            consumer?.DisplayName ?? string.Empty
-        };
-
-        logger.InnerLogger.Log(
-            IntegrationLogEvents.LowLevelTracing.Level,
-            IntegrationLogEvents.LowLevelTracing.EventId,
-            exception,
             message + " | consumerName: {consumerName}",
             args.ToArray());
     }

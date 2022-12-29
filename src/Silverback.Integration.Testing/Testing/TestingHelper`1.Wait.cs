@@ -17,6 +17,7 @@ namespace Silverback.Testing;
 /// <content>
 ///     Implements the <c>Wait</c> methods.
 /// </content>
+[SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Used for testing only")]
 public abstract partial class TestingHelper
 {
     /// <inheritdoc cref="ITestingHelper.WaitUntilConnectedAsync(TimeSpan?)" />
@@ -122,7 +123,7 @@ public abstract partial class TestingHelper
     }
 
     /// <inheritdoc cref="ITestingHelper.IsOutboxEmptyAsync" />
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     public async ValueTask<bool> IsOutboxEmptyAsync()
     {
         try

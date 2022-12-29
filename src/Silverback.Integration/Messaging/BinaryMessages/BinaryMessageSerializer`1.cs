@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -26,7 +25,6 @@ public class BinaryMessageSerializer<TModel> : IBinaryMessageSerializer
     public bool RequireHeaders => false;
 
     /// <inheritdoc cref="BinaryMessageSerializer{TModel}.SerializeAsync" />
-    [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         Check.NotNull(headers, nameof(headers));
@@ -41,9 +39,7 @@ public class BinaryMessageSerializer<TModel> : IBinaryMessageSerializer
         if (message is byte[] inputBytes)
             return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
-        IBinaryMessage? binaryMessage = message as IBinaryMessage;
-
-        if (binaryMessage == null)
+        if (message is not IBinaryMessage binaryMessage)
             throw new ArgumentException("The message is not implementing the IBinaryMessage interface.", nameof(message));
 
         headers.AddOrReplace(DefaultMessageHeaders.MessageType, message.GetType().AssemblyQualifiedName);

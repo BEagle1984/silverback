@@ -61,10 +61,8 @@ internal static class ActivityExtensions
         }
     }
 
-    public static void AddEndpointName(this Activity activity, string endpointName)
-    {
+    public static void AddEndpointName(this Activity activity, string endpointName) =>
         activity.SetTag(ActivityTagNames.MessageDestination, endpointName);
-    }
 
     public static Activity? StartWithTraceId(
         this ActivitySource activitySource,

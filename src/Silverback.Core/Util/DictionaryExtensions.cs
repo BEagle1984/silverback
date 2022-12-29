@@ -9,13 +9,8 @@ namespace Silverback.Util;
 internal static class DictionaryExtensions
 {
     public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> factory)
-        where TKey : notnull
-    {
-        if (dictionary.TryGetValue(key, out TValue? value))
-            return value;
-
-        return dictionary[key] = factory(key);
-    }
+        where TKey : notnull =>
+        dictionary.TryGetValue(key, out TValue? value) ? value : (dictionary[key] = factory(key));
 
     public static TValue GetOrAddDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key)
         where TKey : notnull
@@ -27,13 +22,10 @@ internal static class DictionaryExtensions
         TKey key,
         Func<TKey, TValue> addValueFactory,
         Func<TKey, TValue, TValue> updateValueFactory)
-        where TKey : notnull
-    {
-        if (dictionary.ContainsKey(key))
-            dictionary[key] = updateValueFactory.Invoke(key, dictionary[key]);
-        else
-            dictionary[key] = addValueFactory.Invoke(key);
-    }
+        where TKey : notnull =>
+        dictionary[key] = dictionary.TryGetValue(key, out TValue? value)
+            ? updateValueFactory.Invoke(key, value)
+            : addValueFactory.Invoke(key);
 
     public static void AddOrUpdate<TKey, TValue, TData>(
         this Dictionary<TKey, TValue> dictionary,
@@ -41,11 +33,8 @@ internal static class DictionaryExtensions
         Func<TKey, TData, TValue> addValueFactory,
         Func<TKey, TValue, TData, TValue> updateValueFactory,
         TData data)
-        where TKey : notnull
-    {
-        if (dictionary.ContainsKey(key))
-            dictionary[key] = updateValueFactory.Invoke(key, dictionary[key], data);
-        else
-            dictionary[key] = addValueFactory.Invoke(key, data);
-    }
+        where TKey : notnull =>
+        dictionary[key] = dictionary.TryGetValue(key, out TValue? value)
+            ? updateValueFactory.Invoke(key, value, data)
+            : addValueFactory.Invoke(key, data);
 }

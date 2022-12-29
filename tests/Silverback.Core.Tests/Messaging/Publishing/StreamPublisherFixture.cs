@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -685,8 +685,7 @@ public class StreamPublisherFixture
     {
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used for testing")]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used for testing")]
+    [UsedImplicitly]
     private class TestCommandOne : IMessage
     {
     }

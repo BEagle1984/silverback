@@ -44,7 +44,7 @@ public class SqliteOutboxSettingsFixture
     {
         SqliteOutboxSettings outboxSettings = new("connection-string", "my-outbox");
 
-        Action act = () => outboxSettings.Validate();
+        Action act = outboxSettings.Validate;
 
         act.Should().NotThrow();
     }
@@ -57,7 +57,7 @@ public class SqliteOutboxSettingsFixture
     {
         SqliteOutboxSettings outboxSettings = new("connection-string") { TableName = tableName! };
 
-        Action act = () => outboxSettings.Validate();
+        Action act = outboxSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }
@@ -70,7 +70,7 @@ public class SqliteOutboxSettingsFixture
     {
         SqliteOutboxSettings outboxSettings = new(connectionString!, "my-outbox");
 
-        Action act = () => outboxSettings.Validate();
+        Action act = outboxSettings.Validate;
 
         act.Should().Throw<SilverbackConfigurationException>();
     }

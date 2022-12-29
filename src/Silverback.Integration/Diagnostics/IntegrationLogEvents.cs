@@ -18,7 +18,7 @@ namespace Silverback.Diagnostics;
 ///     Contains the <see cref="LogEvent" /> constants of all events logged by the Silverback.Integration
 ///     package.
 /// </summary>
-[SuppressMessage("", "SA1118", Justification = "Cleaner and clearer this way")]
+[SuppressMessage("ReSharper", "SA1118", Justification = "Cleaner and clearer this way")]
 public static class IntegrationLogEvents
 {
     /// <summary>

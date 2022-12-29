@@ -197,7 +197,6 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         configuration.RawName.Should().StartWith("dynamic-TestTypedEndpointResolver-");
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class TestTypedEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>
     {

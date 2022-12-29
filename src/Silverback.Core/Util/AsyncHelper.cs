@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,13 +38,14 @@ internal static class AsyncHelper
             return;
 
         TaskFactory
-            .StartNew(() => valueTask.AsTask(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
+            .StartNew(valueTask.AsTask, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
             .Unwrap()
             .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
     }
 
+    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static TResult RunSynchronously<TResult>(Func<ValueTask<TResult>> asyncFunc)
     {
         ValueTask<TResult> valueTask = asyncFunc.Invoke();
@@ -52,7 +54,7 @@ internal static class AsyncHelper
             return valueTask.GetAwaiter().GetResult();
 
         return TaskFactory
-            .StartNew(() => valueTask.AsTask(), CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
+            .StartNew(valueTask.AsTask, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default)
             .Unwrap()
             .ConfigureAwait(false)
             .GetAwaiter()

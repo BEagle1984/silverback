@@ -168,8 +168,5 @@ public sealed class ChunkSequenceReaderTests : IDisposable
         sequence.Should().BeOfType<IncompleteSequence>();
     }
 
-    public void Dispose()
-    {
-        AsyncHelper.RunSynchronously(() => _defaultSequenceStore.DisposeAsync().AsTask());
-    }
+    public void Dispose() => AsyncHelper.RunSynchronously(() => _defaultSequenceStore.DisposeAsync().AsTask());
 }

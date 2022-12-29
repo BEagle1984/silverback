@@ -2,11 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -79,8 +79,7 @@ public partial class BrokerClientCallbacksFixture
         callbackKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(8);
     }
 
-    [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+    [UsedImplicitly]
     private sealed class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
     {
         public int AllPartitionsEofCallbackCount => PartitionEofCallbacksDictionary.Sum(pair => pair.Value);

@@ -14,8 +14,7 @@ internal static class DbTransactionExtensions
         DbConnection? connection = transaction.Connection;
         transaction.Commit();
 
-        if (connection != null)
-            connection.CloseAndDispose();
+        connection?.CloseAndDispose();
 
         transaction.Dispose();
     }
@@ -36,8 +35,7 @@ internal static class DbTransactionExtensions
         DbConnection? connection = transaction.Connection;
         transaction.Rollback();
 
-        if (connection != null)
-            connection.CloseAndDispose();
+        connection?.CloseAndDispose();
 
         transaction.Dispose();
     }

@@ -47,7 +47,7 @@ public class RawSequencerConsumerBehavior : SequencerConsumerBehaviorBase
     }
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.AwaitOtherBehaviorIfNeededAsync" />
-    [SuppressMessage("", "CA1031", Justification = "Catched in the sequence handling methods")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Catched in the sequence handling methods")]
     protected override async ValueTask AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
     {
         try

@@ -86,7 +86,7 @@ public class KafkaProducerConfigurationFixture
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration();
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow();
     }
@@ -96,7 +96,7 @@ public class KafkaProducerConfigurationFixture
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with { Endpoints = null! };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -109,7 +109,7 @@ public class KafkaProducerConfigurationFixture
             Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(Array.Empty<KafkaProducerEndpointConfiguration>())
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -126,7 +126,7 @@ public class KafkaProducerConfigurationFixture
                 })
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -139,7 +139,7 @@ public class KafkaProducerConfigurationFixture
             BootstrapServers = string.Empty
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -152,7 +152,7 @@ public class KafkaProducerConfigurationFixture
             EnableDeliveryReports = false
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
@@ -167,7 +167,7 @@ public class KafkaProducerConfigurationFixture
             EnableDeliveryReports = enableDeliveryReports
         };
 
-        Action act = () => configuration.Validate();
+        Action act = configuration.Validate;
 
         act.Should().NotThrow();
     }

@@ -13,8 +13,10 @@ dotnet_diagnostic.CA1062.severity = none
 dotnet_diagnostic.CA1506.severity = none
 # CA1707: Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity = none
-# CA1806 Do not ignore method results
+# CA1806: Do not ignore method results
 dotnet_diagnostic.CA1806.severity = none
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
@@ -39,7 +41,9 @@ dotnet_diagnostic.SA1601.severity = none
 dotnet_diagnostic.SA1602.severity = none
 
 # Microsoft.VisualStudio.Threading.Analyzers
-# VSTHRD200: Naming styles (Async suffix)
-dotnet_diagnostic.VSTHRD200.severity = none
 # VSTHRD103: Call async methods when in an async method
 dotnet_diagnostic.VSTHRD103.severity = none
+# VSTHRD111: Use .ConfigureAwait(bool)
+dotnet_diagnostic.VSTHRD111.severity = none
+# VSTHRD200: Naming styles (Async suffix)
+dotnet_diagnostic.VSTHRD200.severity = none

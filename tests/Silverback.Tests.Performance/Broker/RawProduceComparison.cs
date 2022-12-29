@@ -91,7 +91,7 @@ public static class RawProduceComparison
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
     private static async Task<Stats> RunConfluent(
         int count,
         Message<byte[], byte[]> message,
@@ -171,7 +171,7 @@ public static class RawProduceComparison
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
     private static async Task<Stats> RunConfluentWithoutAwait(
         int count,
         Message<byte[], byte[]> message,
@@ -220,7 +220,7 @@ public static class RawProduceComparison
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
     private static async Task<Stats> RunSilverbackProduceAsync(int count, Message<byte[], byte[]> message, int? lingerMs, int? batchSize)
     {
         string runTitle = GetRunTitle("Silverback ProduceAsync not awaited", lingerMs, batchSize);
@@ -336,7 +336,7 @@ public static class RawProduceComparison
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
-    [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Silverback")]
     private static async Task<Stats> RunSilverbackProduceWithCallbacks(
         int count,
         Message<byte[], byte[]> message,

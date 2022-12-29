@@ -126,7 +126,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         }
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
     private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
     {
         if (sequence.ParentSequence != null)

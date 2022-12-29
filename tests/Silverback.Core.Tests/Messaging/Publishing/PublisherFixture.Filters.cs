@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -62,7 +63,6 @@ public partial class PublisherFixture
             message is TestEventOne { Message: "yes" } or IEnvelope { Message: TestEventOne { Message: "yes" } };
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private class TestFilteredSubscriber
     {
@@ -71,13 +71,11 @@ public partial class PublisherFixture
         public TestingCollection<IEnvelope> ReceivedEnvelopes { get; } = new();
 
         [EventOneFilter]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [UsedImplicitly]
         public void OnMessageReceived(IEvent message) => ReceivedMessages.Add(message);
 
         [EventOneFilter]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [UsedImplicitly]
         public void OnEnvelopeReceived(IEnvelope envelope) => ReceivedEnvelopes.Add(envelope);
     }
 }

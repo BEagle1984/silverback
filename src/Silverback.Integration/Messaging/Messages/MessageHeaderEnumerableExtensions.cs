@@ -146,7 +146,7 @@ public static class MessageHeaderEnumerableExtensions
     /// <returns>
     ///     The header value converted to the target type, or <c>null</c> if not found.
     /// </returns>
-    [SuppressMessage("", "CA1031", Justification = "Rethrown if desired")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Rethrown if desired")]
     public static object? GetValue(
         this IEnumerable<MessageHeader> headers,
         string name,

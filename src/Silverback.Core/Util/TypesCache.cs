@@ -33,7 +33,7 @@ internal static class TypesCache
         return type;
     }
 
-    [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Can catch all, the operation is retried")]
     private static Type? ResolveType(string typeName, bool throwOnError)
     {
         Type? type = null;

@@ -9,7 +9,9 @@ using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
+#pragma warning disable IDE0130
 namespace Microsoft.Extensions.DependencyInjection;
+#pragma warning restore IDE0130
 
 /// <summary>
 ///     Adds methods such as <see cref="AddProducersCheck" />, <see cref="AddConsumersCheck" /> and <see cref="AddOutboxCheck" /> to the

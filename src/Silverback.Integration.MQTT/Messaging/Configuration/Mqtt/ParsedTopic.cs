@@ -36,10 +36,8 @@ internal class ParsedTopic
         const string sharedSubscriptionPrefix = "$share/";
         if (topic.StartsWith(sharedSubscriptionPrefix, StringComparison.Ordinal))
         {
-            group = topic.Substring(
-                sharedSubscriptionPrefix.Length,
-                topic.IndexOf('/', sharedSubscriptionPrefix.Length) - sharedSubscriptionPrefix.Length);
-            actualTopic = topic.Substring(topic.IndexOf('/', sharedSubscriptionPrefix.Length) + 1);
+            group = topic[sharedSubscriptionPrefix.Length..topic.IndexOf('/', sharedSubscriptionPrefix.Length)];
+            actualTopic = topic[(topic.IndexOf('/', sharedSubscriptionPrefix.Length) + 1)..];
             return true;
         }
 

@@ -55,7 +55,7 @@ public class ErrorPolicyChain : IErrorPolicy
         int totalAttempts = 0;
         foreach (ErrorPolicyBase policy in policies)
         {
-            if (policy.MaxFailedAttempts == null || policy.MaxFailedAttempts <= 0)
+            if (policy.MaxFailedAttempts is null or <= 0)
                 continue;
 
             totalAttempts += policy.MaxFailedAttempts.Value;

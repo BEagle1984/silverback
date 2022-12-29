@@ -155,7 +155,7 @@ internal sealed class ConsumerChannelsManager : IDisposable
         _isDisposed = true;
     }
 
-    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task ReadChannelAsync(PartitionChannel partitionChannel)
     {
         try

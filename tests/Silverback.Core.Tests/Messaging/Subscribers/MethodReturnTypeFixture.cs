@@ -6,14 +6,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Silverback.Messaging.Subscribers;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Subscribers;
 
-[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Test code")]
 [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Test code")]
 [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
+[UsedImplicitly]
 public class MethodReturnTypeFixture
 {
     [Theory]
@@ -36,19 +37,27 @@ public class MethodReturnTypeFixture
         returnType.HasResult.Should().Be(hasReturnValue);
     }
 
+    [UsedImplicitly]
     private object ReturningObject() => new();
 
+    [UsedImplicitly]
     private int ReturningInt() => 42;
 
+    [UsedImplicitly]
     private Task ReturningTask() => Task.CompletedTask;
 
+    [UsedImplicitly]
     private Task<object> ReturningTaskWithObjectResult() => Task.FromResult(new object());
 
+    [UsedImplicitly]
     private Task<int> ReturningTaskWithIntResult() => Task.FromResult(42);
 
+    [UsedImplicitly]
     private ValueTask ReturningValueTask() => ValueTask.CompletedTask;
 
+    [UsedImplicitly]
     private ValueTask<object> ReturningValueTaskWithObjectResult() => ValueTask.FromResult(new object());
 
+    [UsedImplicitly]
     private ValueTask<int> ReturningValueTaskWithIntResult() => ValueTask.FromResult(42);
 }

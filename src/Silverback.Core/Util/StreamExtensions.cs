@@ -30,11 +30,9 @@ internal static class StreamExtensions
         if (stream is MemoryStream memoryStream)
             return memoryStream.ToArray();
 
-        using (MemoryStream tempMemoryStream = new())
-        {
-            stream.CopyTo(tempMemoryStream);
-            return tempMemoryStream.ToArray();
-        }
+        using MemoryStream tempMemoryStream = new();
+        stream.CopyTo(tempMemoryStream);
+        return tempMemoryStream.ToArray();
     }
 
     public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count)

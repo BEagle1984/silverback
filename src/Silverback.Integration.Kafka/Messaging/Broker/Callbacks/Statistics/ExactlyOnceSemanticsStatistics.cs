@@ -12,26 +12,26 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics;
 public class ExactlyOnceSemanticsStatistics
 {
     [JsonPropertyName("idemp_state")]
-    public string IdempState { get; set; } = string.Empty;
+    public string IdempState { get; init; } = string.Empty;
 
     [JsonPropertyName("idemp_stateage")]
-    public long IdempStateAge { get; set; }
+    public long IdempStateAge { get; init; }
 
     [JsonPropertyName("txn_state")]
-    public string TxnState { get; set; } = string.Empty;
+    public string TxnState { get; init; } = string.Empty;
 
     [JsonPropertyName("txn_stateage")]
-    public long TxnStateAge { get; set; }
+    public long TxnStateAge { get; init; }
 
     [JsonPropertyName("txn_may_enq")]
-    public bool TxnMayEnq { get; set; }
+    public bool TxnMayEnq { get; init; }
 
     [JsonPropertyName("producer_id")]
-    public long ProducerId { get; set; }
+    public long ProducerId { get; init; }
 
     [JsonPropertyName("producer_epoch")]
-    public long ProducerEpoch { get; set; }
+    public long ProducerEpoch { get; init; }
 
     [JsonPropertyName("epoch_cnt")]
-    public long EpochCnt { get; set; }
+    public long EpochCnt { get; init; }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -366,7 +365,6 @@ public class BrokerClientCallbacksInvokerFixture
         public void Handle() => CallCount++;
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class ThrowingCallbackOneHandler : ICallbackOne
     {
         public void Handle() => throw new InvalidOperationException("test");
@@ -405,7 +403,6 @@ public class BrokerClientCallbacksInvokerFixture
         }
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class ThrowingCallbackOneHandlerAsync : ICallbackOneAsync
     {
         public Task HandleAsync() => throw new InvalidOperationException("test");

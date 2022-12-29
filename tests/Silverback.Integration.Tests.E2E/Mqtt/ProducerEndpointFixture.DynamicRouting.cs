@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,19 +34,12 @@ public partial class ProducerEndpointFixture
                                 .Produce<TestEventOne>(
                                     endpoint => endpoint
                                         .ProduceTo(
-                                            message =>
+                                            message => message?.ContentEventOne switch
                                             {
-                                                switch (message?.ContentEventOne)
-                                                {
-                                                    case "1":
-                                                        return "topic1";
-                                                    case "2":
-                                                        return "topic2";
-                                                    case "3":
-                                                        return "topic3";
-                                                    default:
-                                                        throw new InvalidOperationException();
-                                                }
+                                                "1" => "topic1",
+                                                "2" => "topic2",
+                                                "3" => "topic3",
+                                                _ => throw new InvalidOperationException()
                                             })))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -87,19 +79,12 @@ public partial class ProducerEndpointFixture
                                     endpoint => endpoint
                                         .ProduceTo(
                                             "topic{0}",
-                                            message =>
+                                            message => message?.ContentEventOne switch
                                             {
-                                                switch (message?.ContentEventOne)
-                                                {
-                                                    case "1":
-                                                        return new[] { "1" };
-                                                    case "2":
-                                                        return new[] { "2" };
-                                                    case "3":
-                                                        return new[] { "3" };
-                                                    default:
-                                                        throw new InvalidOperationException();
-                                                }
+                                                "1" => new[] { "1" },
+                                                "2" => new[] { "2" },
+                                                "3" => new[] { "3" },
+                                                _ => throw new InvalidOperationException()
                                             })))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -156,7 +141,6 @@ public partial class ProducerEndpointFixture
         Helper.GetMessages("topic3").Should().HaveCount(2);
     }
 
-    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {
         public string GetTopic(TestEventOne? message) =>
