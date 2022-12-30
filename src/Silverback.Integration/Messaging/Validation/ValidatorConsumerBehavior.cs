@@ -38,15 +38,13 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
-            context.Envelope is IInboundEnvelope { Message: { } } deserializeEnvelope)
+            context.Envelope is IInboundEnvelope { Message: { } } deserializedEnvelope &&
+            !MessageValidator.IsValid(
+                deserializedEnvelope.Message,
+                context.Envelope.Endpoint.Configuration.MessageValidationMode,
+                out string? validationErrors))
         {
-            if (!MessageValidator.IsValid(
-                    deserializeEnvelope.Message,
-                    context.Envelope.Endpoint.Configuration.MessageValidationMode,
-                    out string? validationErrors))
-            {
-                _logger.LogInvalidMessage(context.Envelope, validationErrors);
-            }
+            _logger.LogInvalidMessage(context.Envelope, validationErrors);
         }
 
         await next(context).ConfigureAwait(false);

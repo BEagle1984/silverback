@@ -65,7 +65,7 @@ public sealed class MockedMqttClient : IMqttClient
     public MqttClientOptions? Options { get; private set; }
 
     /// <inheritdoc cref="IMqttClient.ConnectAsync" />
-    public async Task<MqttClientConnectResult> ConnectAsync(MqttClientOptions options, CancellationToken cancellationToken)
+    public async Task<MqttClientConnectResult> ConnectAsync(MqttClientOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options, nameof(options));
 
@@ -89,7 +89,7 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
-    public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken)
+    public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken = default)
     {
         EnsureNotDisposed();
 
@@ -101,7 +101,7 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.SubscribeAsync" />
-    public Task<MqttClientSubscribeResult> SubscribeAsync(MqttClientSubscribeOptions options, CancellationToken cancellationToken)
+    public Task<MqttClientSubscribeResult> SubscribeAsync(MqttClientSubscribeOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options, nameof(options));
         EnsureNotDisposed();
@@ -112,7 +112,7 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.UnsubscribeAsync" />
-    public Task<MqttClientUnsubscribeResult> UnsubscribeAsync(MqttClientUnsubscribeOptions options, CancellationToken cancellationToken)
+    public Task<MqttClientUnsubscribeResult> UnsubscribeAsync(MqttClientUnsubscribeOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options, nameof(options));
         EnsureNotDisposed();
@@ -123,7 +123,7 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.PublishAsync" />
-    public async Task<MqttClientPublishResult> PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken)
+    public async Task<MqttClientPublishResult> PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken = default)
     {
         Check.NotNull(applicationMessage, nameof(applicationMessage));
         EnsureNotDisposed();

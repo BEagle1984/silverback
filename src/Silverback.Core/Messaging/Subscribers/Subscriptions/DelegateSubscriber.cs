@@ -81,7 +81,7 @@ internal static class DelegateSubscriber
     public static object Create<TMessage, T2, T3, T4, TResult>(Func<TMessage, T2, T3, T4, ValueTask<TResult>> handler) =>
         new SyncOrAsyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>(handler);
 
-    public class SyncSubscriber<TMessage>
+    private sealed class SyncSubscriber<TMessage>
     {
         private readonly Action<TMessage> _handler;
 
@@ -94,7 +94,7 @@ internal static class DelegateSubscriber
         public void Execute(TMessage message) => _handler.Invoke(message);
     }
 
-    private class SyncSubscriberWithResult<TMessage, TResult>
+    private sealed class SyncSubscriberWithResult<TMessage, TResult>
     {
         private readonly Func<TMessage, TResult> _handler;
 
@@ -107,7 +107,7 @@ internal static class DelegateSubscriber
         public TResult Execute(TMessage message) => _handler.Invoke(message);
     }
 
-    private class AsyncSubscriber<TMessage>
+    private sealed class AsyncSubscriber<TMessage>
     {
         private readonly Func<TMessage, Task> _handler;
 
@@ -120,7 +120,7 @@ internal static class DelegateSubscriber
         public Task ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
-    private class AsyncSubscriberWithResult<TMessage, TResult>
+    private sealed class AsyncSubscriberWithResult<TMessage, TResult>
     {
         private readonly Func<TMessage, Task<TResult>> _handler;
 
@@ -133,7 +133,7 @@ internal static class DelegateSubscriber
         public Task<TResult> ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
-    private class SyncOrAsyncSubscriber<TMessage>
+    private sealed class SyncOrAsyncSubscriber<TMessage>
     {
         private readonly Func<TMessage, ValueTask> _handler;
 
@@ -146,7 +146,7 @@ internal static class DelegateSubscriber
         public ValueTask ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
-    private class SyncOrAsyncSubscriberWithResult<TMessage, TResult>
+    private sealed class SyncOrAsyncSubscriberWithResult<TMessage, TResult>
     {
         private readonly Func<TMessage, ValueTask<TResult>> _handler;
 
@@ -159,7 +159,7 @@ internal static class DelegateSubscriber
         public ValueTask<TResult> ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
-    private class SyncSubscriberT2<TMessage, T2>
+    private sealed class SyncSubscriberT2<TMessage, T2>
     {
         private readonly Action<TMessage, T2> _handler;
 
@@ -172,7 +172,7 @@ internal static class DelegateSubscriber
         public void Execute(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class SyncSubscriberWithResultT2<TMessage, T2, TResult>
+    private sealed class SyncSubscriberWithResultT2<TMessage, T2, TResult>
     {
         private readonly Func<TMessage, T2, TResult> _handler;
 
@@ -185,7 +185,7 @@ internal static class DelegateSubscriber
         public TResult Execute(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class AsyncSubscriberT2<TMessage, T2>
+    private sealed class AsyncSubscriberT2<TMessage, T2>
     {
         private readonly Func<TMessage, T2, Task> _handler;
 
@@ -198,7 +198,7 @@ internal static class DelegateSubscriber
         public Task ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class AsyncSubscriberWithResultT2<TMessage, T2, TResult>
+    private sealed class AsyncSubscriberWithResultT2<TMessage, T2, TResult>
     {
         private readonly Func<TMessage, T2, Task<TResult>> _handler;
 
@@ -211,7 +211,7 @@ internal static class DelegateSubscriber
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class SyncOrAsyncSubscriberT2<TMessage, T2>
+    private sealed class SyncOrAsyncSubscriberT2<TMessage, T2>
     {
         private readonly Func<TMessage, T2, ValueTask> _handler;
 
@@ -224,7 +224,7 @@ internal static class DelegateSubscriber
         public ValueTask ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class SyncOrAsyncSubscriberWithResultT2<TMessage, T2, TResult>
+    private sealed class SyncOrAsyncSubscriberWithResultT2<TMessage, T2, TResult>
     {
         private readonly Func<TMessage, T2, ValueTask<TResult>> _handler;
 
@@ -237,7 +237,7 @@ internal static class DelegateSubscriber
         public ValueTask<TResult> ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
-    private class SyncSubscriberT3<TMessage, T2, T3>
+    private sealed class SyncSubscriberT3<TMessage, T2, T3>
     {
         private readonly Action<TMessage, T2, T3> _handler;
 
@@ -250,7 +250,7 @@ internal static class DelegateSubscriber
         public void Execute(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class SyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
+    private sealed class SyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
     {
         private readonly Func<TMessage, T2, T3, TResult> _handler;
 
@@ -263,7 +263,7 @@ internal static class DelegateSubscriber
         public TResult Execute(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class AsyncSubscriberT3<TMessage, T2, T3>
+    private sealed class AsyncSubscriberT3<TMessage, T2, T3>
     {
         private readonly Func<TMessage, T2, T3, Task> _handler;
 
@@ -276,7 +276,7 @@ internal static class DelegateSubscriber
         public Task ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class AsyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
+    private sealed class AsyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
     {
         private readonly Func<TMessage, T2, T3, Task<TResult>> _handler;
 
@@ -289,7 +289,7 @@ internal static class DelegateSubscriber
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class SyncOrAsyncSubscriberT3<TMessage, T2, T3>
+    private sealed class SyncOrAsyncSubscriberT3<TMessage, T2, T3>
     {
         private readonly Func<TMessage, T2, T3, ValueTask> _handler;
 
@@ -302,7 +302,7 @@ internal static class DelegateSubscriber
         public ValueTask ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class SyncOrAsyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
+    private sealed class SyncOrAsyncSubscriberWithResultT3<TMessage, T2, T3, TResult>
     {
         private readonly Func<TMessage, T2, T3, ValueTask<TResult>> _handler;
 
@@ -315,7 +315,7 @@ internal static class DelegateSubscriber
         public ValueTask<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
-    private class SyncSubscriberT4<TMessage, T2, T3, T4>
+    private sealed class SyncSubscriberT4<TMessage, T2, T3, T4>
     {
         private readonly Action<TMessage, T2, T3, T4> _handler;
 
@@ -328,7 +328,7 @@ internal static class DelegateSubscriber
         public void Execute(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
-    private class SyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
+    private sealed class SyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
     {
         private readonly Func<TMessage, T2, T3, T4, TResult> _handler;
 
@@ -341,7 +341,7 @@ internal static class DelegateSubscriber
         public TResult Execute(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
-    private class AsyncSubscriberT4<TMessage, T2, T3, T4>
+    private sealed class AsyncSubscriberT4<TMessage, T2, T3, T4>
     {
         private readonly Func<TMessage, T2, T3, T4, Task> _handler;
 
@@ -354,7 +354,7 @@ internal static class DelegateSubscriber
         public Task ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
-    private class AsyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
+    private sealed class AsyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
     {
         private readonly Func<TMessage, T2, T3, T4, Task<TResult>> _handler;
 
@@ -367,7 +367,7 @@ internal static class DelegateSubscriber
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
-    private class SyncOrAsyncSubscriberT4<TMessage, T2, T3, T4>
+    private sealed class SyncOrAsyncSubscriberT4<TMessage, T2, T3, T4>
     {
         private readonly Func<TMessage, T2, T3, T4, ValueTask> _handler;
 
@@ -380,7 +380,7 @@ internal static class DelegateSubscriber
         public ValueTask ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
-    private class SyncOrAsyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
+    private sealed class SyncOrAsyncSubscriberWithResultT4<TMessage, T2, T3, T4, TResult>
     {
         private readonly Func<TMessage, T2, T3, T4, ValueTask<TResult>> _handler;
 

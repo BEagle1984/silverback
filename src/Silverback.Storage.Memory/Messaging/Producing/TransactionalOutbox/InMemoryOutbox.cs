@@ -103,7 +103,7 @@ public class InMemoryOutbox
         }
     }
 
-    private record StoredOutboxMessage(OutboxMessage OutboxMessage)
+    private sealed record StoredOutboxMessage(OutboxMessage OutboxMessage)
     {
         public DateTime InsertDateTime { get; } = DateTime.UtcNow;
     }

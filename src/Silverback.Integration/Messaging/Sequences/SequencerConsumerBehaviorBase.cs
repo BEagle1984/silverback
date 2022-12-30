@@ -170,10 +170,10 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
     private static void StartActivityIfNeeded(ISequence sequence)
     {
-        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation)
+        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation &&
+            ActivitySources.StartSequenceActivity() is { } sequenceActivity)
         {
-            if (ActivitySources.StartSequenceActivity() is { } sequenceActivity)
-                sequenceImplementation.SetActivity(sequenceActivity);
+            sequenceImplementation.SetActivity(sequenceActivity);
         }
     }
 

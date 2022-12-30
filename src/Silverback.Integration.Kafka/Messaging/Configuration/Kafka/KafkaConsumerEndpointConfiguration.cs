@@ -124,20 +124,3 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
     private bool GetIsStaticAssignment() =>
         PartitionOffsetsProvider != null || TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any);
 }
-
-// /// <summary>
-// ///     The offset storage modes.
-// /// </summary>
-// [Flags]
-// public enum OffsetStorageMode
-// {
-//     /// <summary>
-//     ///     The offsets are committed and persisted on the broker. This is the default.
-//     /// </summary>
-//     Server = 0,
-//
-//     /// <summary>
-//     ///     The offsets are stored in the configured
-//     /// </summary>
-//     Client = 1
-// }

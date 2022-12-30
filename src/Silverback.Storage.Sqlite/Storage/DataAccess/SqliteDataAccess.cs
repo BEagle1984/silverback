@@ -223,5 +223,5 @@ internal class SqliteDataAccess
         return sqliteTransaction;
     }
 
-    private record ConnectionAndTransaction(DbConnection Connection, DbTransaction? Transaction, bool IsNewTransaction);
+    private sealed record ConnectionAndTransaction(DbConnection Connection, DbTransaction? Transaction, bool IsNewTransaction);
 }

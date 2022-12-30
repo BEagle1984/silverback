@@ -10,26 +10,24 @@ using Silverback.Messaging.Sequences.Chunking;
 namespace Silverback.Messaging.Sequences;
 
 /// <summary>
-///     A set of logically related messages, like the chunks belonging to the same message or the
-///     messages in a dataset.
+///     A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.
 /// </summary>
 internal interface ISequenceImplementation : ISequence
 {
     /// <summary>
-    ///     Gets a <see cref="Task" /> that completes when the sequence went through both behaviors. This is
-    ///     necessary to synchronize completion when mixing Chunking with another sequence.
+    ///     Gets a <see cref="Task" /> that completes when the sequence went through both behaviors. This is necessary to synchronize
+    ///     completion when mixing Chunking with another sequence.
     /// </summary>
     Task SequencerBehaviorsTask { get; }
 
     /// <summary>
-    ///     Gets a <see cref="Task" /> that will complete when the processing is completed (including
-    ///     commit/rollback of the transaction).
+    ///     Gets a <see cref="Task" /> that will complete when the processing is completed (including commit/rollback of the transaction).
     /// </summary>
     Task ProcessingCompletedTask { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether this sequence should create a new activity. This should be true if the
-    ///     sequence contains independent messages.
+    ///     Gets a value indicating whether this sequence should create a new activity. This should be true if the sequence contains
+    ///     independent messages.
     /// </summary>
     bool ShouldCreateNewActivity { get; }
 
@@ -39,8 +37,7 @@ internal interface ISequenceImplementation : ISequence
     Activity? Activity { get; }
 
     /// <summary>
-    ///     Sets a value indicating whether the first message in the sequence was consumed and this instance was
-    ///     just created.
+    ///     Sets a value indicating whether the first message in the sequence was consumed and this instance was just created.
     /// </summary>
     /// <param name="value">
     ///     The value to be set.
@@ -48,8 +45,8 @@ internal interface ISequenceImplementation : ISequence
     void SetIsNew(bool value);
 
     /// <summary>
-    ///     Sets the <see cref="ISequence" /> that were added to this sequence (e.g. the
-    ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+    ///     Sets the <see cref="ISequence" /> that were added to this sequence (e.g. the <see cref="ChunkSequence" /> whose aggregated message
+    ///     is added to a <see cref="BatchSequence" />.
     /// </summary>
     /// <param name="parentSequence">
     ///     The parent sequence.
@@ -57,8 +54,8 @@ internal interface ISequenceImplementation : ISequence
     void SetParentSequence(ISequence parentSequence);
 
     /// <summary>
-    ///     Completes the <see cref="Task" /> that is used to notify when the sequence went through both
-    ///     behaviors. See <see cref="SequencerBehaviorsTask" />.
+    ///     Completes the <see cref="Task" /> that is used to notify when the sequence went through both behaviors. See
+    ///     <see cref="SequencerBehaviorsTask" />.
     /// </summary>
     void CompleteSequencerBehaviorsTask();
 

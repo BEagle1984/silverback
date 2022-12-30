@@ -47,8 +47,6 @@ public sealed class JsonMessageSerializer<TMessage> : IJsonMessageSerializer, IE
 
         Type type = message.GetType();
 
-        // TODO: Setting to disable type header? if (type != _type)?
-        // if (type != _type)
         headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
         byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
@@ -65,11 +63,6 @@ public sealed class JsonMessageSerializer<TMessage> : IJsonMessageSerializer, IE
         Check.NotNull(endpoint, nameof(endpoint));
 
         Type type = SerializationHelper.GetTypeFromHeaders(headers) ?? _type;
-
-        // if (!_type.IsAssignableFrom(type))
-        {
-            // TODO: Log warning?
-        }
 
         if (messageStream == null)
             return new DeserializedMessage(null, type);

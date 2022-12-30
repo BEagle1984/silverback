@@ -35,15 +35,14 @@ public class ValidatorProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Message != null && context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None)
+        if (context.Envelope.Message != null &&
+            context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
+            !MessageValidator.IsValid(
+                context.Envelope.Message,
+                context.Envelope.Endpoint.Configuration.MessageValidationMode,
+                out string? validationErrors))
         {
-            if (!MessageValidator.IsValid(
-                    context.Envelope.Message,
-                    context.Envelope.Endpoint.Configuration.MessageValidationMode,
-                    out string? validationErrors))
-            {
-                _logger.LogInvalidMessage(context.Envelope, validationErrors);
-            }
+            _logger.LogInvalidMessage(context.Envelope, validationErrors);
         }
 
         await next(context).ConfigureAwait(false);

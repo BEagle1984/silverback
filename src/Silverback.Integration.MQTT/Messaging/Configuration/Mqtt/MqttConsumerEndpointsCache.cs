@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -40,18 +41,13 @@ internal class MqttConsumerEndpointsCache
         if (_endpoints.TryGetValue(topic, out MqttConsumerEndpoint? endpoint))
             return endpoint;
 
-        foreach (WildcardSubscription subscription in _wildcardSubscriptions)
-        {
-            if (subscription.Regex.IsMatch(topic))
-            {
-                endpoint = new MqttConsumerEndpoint(topic, subscription.EndpointConfiguration);
-                _endpoints.TryAdd(topic, endpoint);
-                return endpoint;
-            }
-        }
+        WildcardSubscription subscription = _wildcardSubscriptions.FirstOrDefault(subscription => subscription.Regex.IsMatch(topic)) ??
+                                            throw new InvalidOperationException($"No configuration found for the specified topic '{topic}'.");
 
-        throw new InvalidOperationException($"No configuration found for the specified topic '{topic}'.");
+        endpoint = new MqttConsumerEndpoint(topic, subscription.EndpointConfiguration);
+        _endpoints.TryAdd(topic, endpoint);
+        return endpoint;
     }
 
-    private record WildcardSubscription(Regex Regex, MqttConsumerEndpointConfiguration EndpointConfiguration);
+    private sealed record WildcardSubscription(Regex Regex, MqttConsumerEndpointConfiguration EndpointConfiguration);
 }
