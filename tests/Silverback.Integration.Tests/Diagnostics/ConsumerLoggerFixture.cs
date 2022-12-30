@@ -104,7 +104,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogProcessingFatalError(envelope, new ArithmeticException());
 
         string expectedMessage =
-            "Fatal error occurred processing the consumed message. The consumer will be stopped. | " +
+            "Fatal error occurred processing the consumed message. The client will be disconnected. | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
             "messageId: 1234, " +

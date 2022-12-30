@@ -53,7 +53,7 @@ public class IntegrationLoggerExtensionsFixture
         _loggerSubstitute.Received(
             LogLevel.Critical,
             typeof(InvalidCastException),
-            "Fatal error occurred processing the consumed message. The consumer will be stopped. | consumerName: consumer1",
+            "Fatal error occurred processing the consumed message. The client will be disconnected. | consumerName: consumer1",
             1004);
     }
 
