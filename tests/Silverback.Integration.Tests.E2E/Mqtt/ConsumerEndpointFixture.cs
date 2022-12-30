@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -269,7 +268,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
     }
 
     [Fact]
-    public async Task ConsumerEndpoint_ShouldThrowWhenStoppingConsumer()
+    public async Task ConsumerEndpoint_ShouldConsumeAfterStopAndStart()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -287,11 +286,27 @@ public partial class ConsumerEndpointFixture : MqttFixture
                 .AddIntegrationSpyAndSubscriber());
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
-        Func<Task> act = () => consumer.StopAsync().AsTask();
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
 
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("Stopping is not supported by the MqttConsumer. Disconnect the client instead.");
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
+
+        await consumer.StopAsync();
+
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Task.Delay(100);
+
+        await consumer.StartAsync();
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Count.Should().Be(4);
     }
 
     [Fact]
@@ -327,8 +342,6 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "4" });
-
-        await Task.Delay(200);
 
         await consumer.Client.ConnectAsync();
 

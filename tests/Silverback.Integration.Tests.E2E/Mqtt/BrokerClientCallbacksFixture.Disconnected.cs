@@ -62,7 +62,7 @@ public partial class BrokerClientCallbacksFixture
                         .AddClient(
                             client => client
                                 .WithClientId(DefaultClientId).ConnectViaTcp("e2e-mqtt-broker")
-                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                                .Produce<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName)) // Produce to same topic to test disconnect deadlocks
                                 .Consume(consumer => consumer.ConsumeFrom(DefaultTopicName))))
                 .AddScopedBrokerClientCallback<SendMessageDisconnectingCallback>()
                 .AddIntegrationSpyAndSubscriber());

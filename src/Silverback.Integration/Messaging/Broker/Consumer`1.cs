@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -30,6 +31,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     private readonly ConsumerStatusInfo _statusInfo = new();
 
     private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary = new();
+
+    private readonly SemaphoreSlim _startStopSemaphore = new(1);
 
     private readonly object _reconnectLock = new();
 
@@ -151,6 +154,11 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected ISequenceStoreCollection SequenceStores { get; }
 
     /// <summary>
+    ///     Gets a value indicating whether the consumer is starting (or connecting to start).
+    /// </summary>
+    protected bool IsStarting { get; private set; }
+
+    /// <summary>
     ///     Gets a value indicating whether the consumer is started.
     /// </summary>
     protected bool IsStarted { get; private set; }
@@ -195,19 +203,29 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <inheritdoc cref="IConsumer.StartAsync" />
     public async ValueTask StartAsync()
     {
+        await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+
         if (IsStarted)
+        {
+            _startStopSemaphore.Release();
             return;
+        }
 
         if (Client.Status is not (ClientStatus.Initialized or ClientStatus.Initializing))
+        {
+            _startStopSemaphore.Release();
             throw new InvalidOperationException("The underlying client is not connected.");
+        }
+
+        IsStarting = true;
 
         _logger.LogConsumerLowLevelTrace(this, "Starting consumer...");
 
         try
         {
-            IsStarted = true;
-
             await StartCoreAsync().ConfigureAwait(false);
+
+            IsStarted = true;
 
             _logger.LogConsumerLowLevelTrace(this, "Consumer started.");
         }
@@ -216,13 +234,23 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             _logger.LogConsumerStartError(this, ex);
             throw;
         }
+        finally
+        {
+            IsStarting = false;
+            _startStopSemaphore.Release();
+        }
     }
 
     /// <inheritdoc cref="IConsumer.StopAsync" />
     public async ValueTask StopAsync()
     {
-        if (!IsStarted || IsStopping)
+        await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
+
+        if (!IsStarted)
+        {
+            _startStopSemaphore.Release();
             return;
+        }
 
         IsStopping = true;
 
@@ -244,6 +272,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         finally
         {
             IsStopping = false;
+            _startStopSemaphore.Release();
         }
     }
 
@@ -415,20 +444,19 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <summary>
     ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Connected" />.
     /// </summary>
-    protected void SetReadyStatus() => _statusInfo.SetConnected();
+    protected void SetConnectedStatus() => _statusInfo.SetConnected();
 
     /// <summary>
-    ///     Called when the connection is lost to transitions the consumer back to
-    ///     <see cref="ConsumerStatus.Started" />.
+    ///     Called when the connection is lost to transitions the consumer back to <see cref="ConsumerStatus.Started" />.
     /// </summary>
-    protected void RevertReadyStatus()
+    protected void RevertConnectedStatus()
     {
         if (_statusInfo.Status > ConsumerStatus.Started)
             _statusInfo.SetStarted(true);
     }
 
     /// <summary>
-    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.
+    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
@@ -439,13 +467,15 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         if (!disposing || _isDisposed)
             return;
 
-        _isDisposed = true;
-
         AsyncHelper.RunSynchronously(StopAsync);
         SequenceStores.Dispose();
 
         Client.Initialized.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
+
+        _startStopSemaphore.Dispose();
+
+        _isDisposed = true;
     }
 
     /// <summary>
@@ -455,7 +485,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     A value indicating whether the consumer is started and not being stopped.
     /// </returns>
     protected bool IsStartedAndNotStopping() =>
-        Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && IsStarted && !IsStopping;
+        Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && (IsStarting || IsStarted) && !IsStopping;
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {

@@ -70,8 +70,7 @@ internal sealed class ConsumerChannelManager : IDisposable
         if (_readTaskCompletionSource.Task.IsCompleted)
             _readTaskCompletionSource = new TaskCompletionSource<bool>();
 
-        if (_channel.Reader.Completion.IsCompleted)
-            _channel = CreateBoundedChannel();
+        EnsureChannelReady();
 
         Task.Run(ReadChannelAsync).FireAndForget();
     }
@@ -95,11 +94,19 @@ internal sealed class ConsumerChannelManager : IDisposable
 
     private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() => Channel.CreateBounded<ConsumedApplicationMessage>(10);
 
+    private void EnsureChannelReady()
+    {
+        if (_channel.Reader.Completion.IsCompleted)
+            _channel = CreateBoundedChannel();
+    }
+
     private async ValueTask OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
     {
         ConsumedApplicationMessage receivedMessage = new(eventArgs.ApplicationMessage);
 
         _logger.LogConsuming(receivedMessage, _consumer);
+
+        EnsureChannelReady();
 
         await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 

@@ -73,7 +73,6 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         Client.Connected.AddHandler(OnClientConnectedAsync);
         Client.Disconnected.AddHandler(OnClientDisconnectedAsync);
-        Client.Initializing.AddHandler(OnClientStartingAsync);
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.Client" />
@@ -97,7 +96,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
-        // If another message is still pending, cancel it's task (might happen in case of timeout)
+        // If another message is still pending, cancel its task (might happen in case of timeout)
         if (!_inProcessingMessages.TryAdd(message.Id, message))
             throw new InvalidOperationException("The message has been processed already.");
 
@@ -119,9 +118,6 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
     protected override ValueTask StopCoreAsync()
     {
-        if (Client.IsConnected && Client.Status != ClientStatus.Disconnecting)
-            throw new InvalidOperationException("Stopping is not supported by the MqttConsumer. Disconnect the client instead.");
-
         _channelManager.StopReading();
         return default;
     }
@@ -157,28 +153,22 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         Client.Connected.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnected.RemoveHandler(OnClientDisconnectedAsync);
-        Client.Initializing.RemoveHandler(OnClientStartingAsync);
     }
-
-    private ValueTask OnClientStartingAsync(BrokerClient client) => StartAsync();
 
     private async ValueTask OnClientConnectedAsync(BrokerClient client)
     {
         Client.SubscribedTopicsFilters.ForEach(topicFilter => _logger.LogConsumerSubscribed(topicFilter.Topic, this));
 
-        if (!IsStartedAndNotStopping())
-            return;
-
         await StartAsync().ConfigureAwait(false);
 
-        SetReadyStatus();
+        SetConnectedStatus();
     }
 
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
 
-        RevertReadyStatus();
+        RevertConnectedStatus();
 
         await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
     }

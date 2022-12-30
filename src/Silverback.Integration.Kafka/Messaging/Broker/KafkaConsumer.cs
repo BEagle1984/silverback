@@ -147,7 +147,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
         _channelsManager.StartReading(topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
 
-        SetReadyStatus();
+        SetConnectedStatus();
 
         return topicPartitionOffsets;
     }
@@ -156,7 +156,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     {
         IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
 
-        RevertReadyStatus();
+        RevertConnectedStatus();
 
         _consumeLoopHandler.StopAsync().FireAndForget();
 
@@ -194,7 +194,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         else
         {
             _logger.LogPollTimeoutNoAutoRecovery(logMessage, this);
-            RevertReadyStatus();
+            RevertConnectedStatus();
         }
 
         return true;
@@ -215,9 +215,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
         }
 
-        headers.AddOrReplace(
-            KafkaMessageHeaders.Timestamp,
-            message.Timestamp.UtcDateTime.ToString("O"));
+        headers.AddOrReplace(KafkaMessageHeaders.Timestamp, message.Timestamp.UtcDateTime.ToString("O"));
 
         await HandleMessageAsync(
                 message.Value,
@@ -235,7 +233,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         if (Configuration.IsStaticAssignment || Client.Assignment.Count > 0)
         {
             _channelsManager.StartReading(Client.Assignment);
-            SetReadyStatus();
+            SetConnectedStatus();
         }
 
         // The consume loop must start immediately because the partitions assignment is received
@@ -353,7 +351,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     private void StartConsumeLoopHandler()
     {
-        if (!IsStarted || IsStopping)
+        if (!(IsStarted || IsStarting) || IsStopping)
             return;
 
         _consumeLoopHandler.Start();
