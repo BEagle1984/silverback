@@ -161,9 +161,7 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
             return result;
 
         using IServiceScope scope = _serviceProvider.CreateScope();
-        await scope.ServiceProvider.GetRequiredService<IPublisher>()
-            .PublishAsync(message)
-            .ConfigureAwait(false);
+        await scope.ServiceProvider.GetRequiredService<IPublisher>().PublishAsync(message).ConfigureAwait(false);
 
         return result;
     }

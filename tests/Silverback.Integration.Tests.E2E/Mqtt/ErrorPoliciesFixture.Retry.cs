@@ -233,6 +233,8 @@ public partial class ErrorPoliciesFixture
 
         IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
         consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
     }
 }

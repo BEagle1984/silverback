@@ -24,8 +24,6 @@ internal static class ErrorPoliciesHelper
         if (!errorPolicyImplementation.CanHandle(context, exception))
             return false;
 
-        return await errorPolicyImplementation
-            .HandleErrorAsync(context, exception)
-            .ConfigureAwait(false);
+        return await errorPolicyImplementation.HandleErrorAsync(context, exception).ConfigureAwait(false);
     }
 }

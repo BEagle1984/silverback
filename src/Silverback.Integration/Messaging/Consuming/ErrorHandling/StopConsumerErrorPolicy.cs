@@ -54,9 +54,6 @@ public record StopConsumerErrorPolicy : ErrorPolicyBase
         {
         }
 
-        protected override Task<bool> ApplyPolicyAsync(
-            ConsumerPipelineContext context,
-            Exception exception) =>
-            Task.FromResult(false);
+        protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception) => Task.FromResult(false);
     }
 }

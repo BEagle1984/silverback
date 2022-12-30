@@ -256,30 +256,20 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
     }
 
-    private async Task<bool> HandleExceptionAsync(
-        ConsumerPipelineContext context,
-        Exception exception)
+    private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
     {
         _logger.LogProcessingError(context.Envelope, exception);
 
         try
         {
-            bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception)
-                .ConfigureAwait(false);
+            bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
 
             if (!handled)
             {
-                if (context.Sequence != null &&
-                    (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
-                {
-                    await context.Sequence.Context.TransactionManager.RollbackAsync(exception)
-                        .ConfigureAwait(false);
-                }
+                if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
+                    await context.Sequence.Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
                 else
-                {
-                    await context.TransactionManager.RollbackAsync(exception)
-                        .ConfigureAwait(false);
-                }
+                    await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
             }
 
             return handled;
