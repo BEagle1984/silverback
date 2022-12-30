@@ -37,7 +37,7 @@ steps:
         --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
-        --filter "CI!=false&&Category!=E2E" \
+        --filter "CI!=false&Category!~E2E" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
@@ -49,7 +49,7 @@ steps:
         --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
-        --filter "CI!=false&&Category==E2E" \
+        --filter "CI!=false&Category~E2E" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
@@ -64,12 +64,6 @@ steps:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
-      testRunner: VSTest
+      testRunner: 'VSTest'
       testResultsFiles: '**/*.trx'
     displayName: 'Publish test results'
-  - task: PublishCodeCoverageResults@1
-    condition: succeededOrFailed()
-    inputs:
-      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
-      codecoverageTool: cobertura
-    displayName: 'Publish code coverage results'
