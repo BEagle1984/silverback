@@ -124,19 +124,19 @@ public sealed class TestApplicationHost : IDisposable
             await WaitUntilBrokerClientsAreConnectedAsync();
         }
 
-        logger?.LogInformation("Starting end-to-end test {testMethod}", _testMethodName);
+        logger?.LogInformation("Starting end-to-end test {TestMethod}", _testMethodName);
     }
 
     public void Dispose()
     {
         ILogger<TestApplicationHost>? logger = _scopedServiceProvider?.GetService<ILogger<TestApplicationHost>>();
-        logger?.LogInformation("Disposing test host ({testMethod})", _testMethodName);
+        logger?.LogInformation("Disposing test host ({TestMethod})", _testMethodName);
 
         _sqliteConnection?.Dispose();
         _httpClient?.Dispose();
         _applicationFactory?.Dispose();
 
-        logger?.LogInformation("Test host disposed ({testMethod})", _testMethodName);
+        logger?.LogInformation("Test host disposed ({TestMethod})", _testMethodName);
     }
 
     private async ValueTask WaitUntilBrokerClientsAreConnectedAsync()
