@@ -285,12 +285,19 @@ public partial class MqttClientConfigurationBuilder
     /// <summary>
     ///     Specifies that a persistent session has to be created for this client.
     /// </summary>
+    /// <param name="sessionExpiryInterval">
+    ///     The <see cref="TimeSpan" /> representing the session expiry interval.
+    /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder RequestPersistentSession()
+    public MqttClientConfigurationBuilder RequestPersistentSession(TimeSpan sessionExpiryInterval = default)
     {
         _configuration = _configuration with { CleanSession = false };
+
+        if (sessionExpiryInterval != default)
+            WithSessionExpiration(sessionExpiryInterval);
+
         return this;
     }
 
