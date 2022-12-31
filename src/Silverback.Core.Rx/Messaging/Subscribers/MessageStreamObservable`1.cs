@@ -15,9 +15,9 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 {
     private readonly ISubject<TMessage> _subject = new Subject<TMessage>();
 
-    private readonly SemaphoreSlim _subscribeSemaphoreSlim = new(0, 1);
+    private readonly SemaphoreSlim _subscribeSemaphore = new(0, 1);
 
-    private readonly SemaphoreSlim _completeSemaphoreSlim = new(0, 1);
+    private readonly SemaphoreSlim _completeSemaphore = new(0, 1);
 
     private IDisposable? _subscription;
 
@@ -33,7 +33,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
                 {
                     try
                     {
-                        await _subscribeSemaphoreSlim.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
+                        await _subscribeSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
 
                         if (_isDisposed)
                             return;
@@ -53,7 +53,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
 
                         _subscription?.Dispose();
 
-                        _completeSemaphoreSlim.Release();
+                        _completeSemaphore.Release();
                     }
                 })
             .FireAndForget();
@@ -62,8 +62,8 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
     public void Dispose()
     {
         _isDisposed = true;
-        _completeSemaphoreSlim.Dispose();
-        _subscribeSemaphoreSlim.Dispose();
+        _completeSemaphore.Dispose();
+        _subscribeSemaphore.Dispose();
         _subscription?.Dispose();
         _subscription = null;
     }
@@ -78,8 +78,8 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
             _subscription = _subject.Subscribe(observer);
         }
 
-        _subscribeSemaphoreSlim.Release();
-        _completeSemaphoreSlim.Wait(); // TODO: Needs cancellation token?
+        _subscribeSemaphore.Release();
+        _completeSemaphore.Wait(); // TODO: Needs cancellation token?
 
         if (_exception != null)
             throw _exception; // TODO: Wrap into another exception?

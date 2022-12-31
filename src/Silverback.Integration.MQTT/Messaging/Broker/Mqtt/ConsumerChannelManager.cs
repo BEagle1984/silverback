@@ -28,7 +28,7 @@ internal sealed class ConsumerChannelManager : IDisposable
     // QoS=1+ requires the acks to come in the right order so better not mess with it (in the normal case
     // the broker doesn't even send the next message before the ack is received and increasing this value
     // will only cause trouble in edge cases like ack timeouts).
-    private readonly SemaphoreSlim _parallelismLimiterSemaphoreSlim = new(1, 1);
+    private readonly SemaphoreSlim _parallelismLimiterSemaphore = new(1, 1);
 
     private Channel<ConsumedApplicationMessage> _channel;
 
@@ -89,7 +89,7 @@ internal sealed class ConsumerChannelManager : IDisposable
         _mqttClientWrapper.MessageReceived.RemoveHandler(OnMessageReceivedAsync);
         StopReading();
         _readCancellationTokenSource.Dispose();
-        _parallelismLimiterSemaphoreSlim.Dispose();
+        _parallelismLimiterSemaphore.Dispose();
     }
 
     private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() => Channel.CreateBounded<ConsumedApplicationMessage>(10);
@@ -162,7 +162,7 @@ internal sealed class ConsumerChannelManager : IDisposable
         ConsumedApplicationMessage consumedMessage =
             await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
 
-        await _parallelismLimiterSemaphoreSlim.WaitAsync(_readCancellationTokenSource.Token)
+        await _parallelismLimiterSemaphore.WaitAsync(_readCancellationTokenSource.Token)
             .ConfigureAwait(false);
 
         try
@@ -171,7 +171,7 @@ internal sealed class ConsumerChannelManager : IDisposable
         }
         finally
         {
-            _parallelismLimiterSemaphoreSlim.Release();
+            _parallelismLimiterSemaphore.Release();
         }
     }
 
