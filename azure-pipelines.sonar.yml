@@ -7,12 +7,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-  # Install .net core sdk
+  # Install .NET SDK
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '5.0.x'
+    displayName: 'Install SDK 5.0.x'
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
       version: '7.0.x'
-    displayName: 'Install sdk 7.0.x'
+    displayName: 'Install SDK 7.0.x'
   # Build, test and analyze
   - task: SonarCloudPrepare@1
     inputs:
@@ -24,7 +29,7 @@ steps:
       projectVersion: '3.2.0'
       extraProperties: |
         sonar.exclusions=**/obj/**,**/*.dll
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.*.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     displayName: 'Prepare code analysis on SonarCloud'
   - script: |
@@ -37,23 +42,10 @@ steps:
         --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
-        --filter "CI!=false&Category!~E2E" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run tests'
-  - script: |
-      dotnet test Silverback.sln \
-        --configuration $(buildConfiguration) \
-        --no-build \
-        --verbosity Normal \
-        --logger trx \
-        --collect "Code coverage" \
-        --filter "CI!=false&Category~E2E" \
-        -p:CollectCoverage=true \
-        -p:CoverletOutputFormat=opencover%2ccobertura \
-        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
-    displayName: 'Run E2E tests'
+    displayName: 'Run tests (all target frameworks)'
   - task: SonarCloudAnalyze@1
     condition: succeededOrFailed()
     displayName: 'Run SonarCloud analysis'
@@ -67,3 +59,9 @@ steps:
       testRunner: 'VSTest'
       testResultsFiles: '**/*.trx'
     displayName: 'Publish test results'
+  - task: PublishCodeCoverageResults@1
+    condition: succeededOrFailed()
+    inputs:
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.*.cobertura.xml'
+      codecoverageTool: 'Cobertura'
+    displayName: 'Publish code coverage results'

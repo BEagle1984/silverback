@@ -87,7 +87,7 @@ public partial class ChunkingFixture
     }
 
     [Fact]
-    public async Task Chunking_ShouldDiscardIncompleteBinartMessageAfterTimeout()
+    public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
         List<byte[]?> receivedFiles = new();

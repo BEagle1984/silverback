@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Collections;
 using Silverback.Messaging.Configuration;
@@ -30,6 +31,7 @@ public sealed record TestConsumerEndpointConfiguration : ConsumerEndpointConfigu
 
     public string GroupId { get; init; } = "default-group";
 
+    [SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "A new instance is desired")]
     public static TestConsumerEndpointConfiguration GetDefault() => new("test");
 
     public TestConsumerEndpoint GetDefaultEndpoint() => new(TopicNames.First(), this);

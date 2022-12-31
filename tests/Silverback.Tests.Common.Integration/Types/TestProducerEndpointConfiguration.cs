@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
 
@@ -26,6 +27,7 @@ public sealed record TestProducerEndpointConfiguration : ProducerEndpointConfigu
         Endpoint = new TestDynamicProducerEndpointResolver(topic[0]);
     }
 
+    [SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "A new instance is desired")]
     public static TestProducerEndpointConfiguration GetDefault() => new()
     {
         Endpoint = new TestStaticProducerEndpointResolver("test")

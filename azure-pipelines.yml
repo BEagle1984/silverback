@@ -7,12 +7,12 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-  # Install .net core sdk
+  # Install .NET SDK
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
       version: '7.0.x'
-    displayName: 'Install sdk 7.0.x'
+    displayName: 'Install SDK 7.0.x'
   # Build and test
   - script: |
       dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
@@ -23,16 +23,18 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --filter "CI!=false&Category!~E2E"
-    displayName: 'Run tests'
+        --filter "CI!=false&Category!~E2E" \
+        --framework net7.0
+    displayName: 'Run unit tests (net7.0)'
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --filter "CI!=false&Category~E2E"
-    displayName: 'Run E2E tests'
+        --filter "CI!=false&Category~E2E" \
+        --framework net7.0
+    displayName: 'Run E2E integration tests (net7.0)'
   # Publish results
   - task: PublishTestResults@2
     condition: succeededOrFailed()

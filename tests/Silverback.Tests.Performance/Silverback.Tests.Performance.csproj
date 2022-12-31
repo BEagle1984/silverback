@@ -5,8 +5,8 @@
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(TestsTargetFramework)</TargetFramework>
-  </PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />

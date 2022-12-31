@@ -9,8 +9,10 @@
 
   <PropertyGroup Label="Build">
     <DefaultTargetFrameworks>netstandard2.1;net6.0</DefaultTargetFrameworks>
-    <TestsTargetFramework>net7.0</TestsTargetFramework>
-    <ToolsTargetFramework>net7.0</ToolsTargetFramework>
+    <CurrentLatestFramework>net7.0</CurrentLatestFramework>
+    <TestsTargetFrameworks>net5.0;$(CurrentLatestFramework)</TestsTargetFrameworks>
+    <SamplesTargetFramework>$(CurrentLatestFramework)</SamplesTargetFramework>
+    <ToolsTargetFramework>$(CurrentLatestFramework)</ToolsTargetFramework>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>

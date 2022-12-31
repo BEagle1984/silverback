@@ -506,7 +506,12 @@ public partial class ErrorPoliciesFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
+#if NET5_0
+        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(7);
+#else
         Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(8);
+#endif
+
         Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>

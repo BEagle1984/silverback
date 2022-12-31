@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging.Broker;
@@ -189,6 +190,7 @@ public class KafkaOffsetTests
     }
 
     [Fact]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Test code")]
     public void EqualsOffset_Null_FalseReturned()
     {
         KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
@@ -199,6 +201,7 @@ public class KafkaOffsetTests
     }
 
     [Fact]
+    [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "Test code")]
     public void EqualsObject_Null_FalseReturned()
     {
         KafkaOffset? offset1 = new(new TopicPartitionOffset("test-topic", 0, 42));
