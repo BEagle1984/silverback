@@ -11,6 +11,7 @@ uid: releases
 * Upgrade to [MQTTnet 4.1.3.436](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.3.436)
 * Upgrade to [Confluent.Kafka 1.9.3](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.9.3)
 * Upgrade to Newtonsoft.Json 13.0.2
+* Disable server-side offset commit in <xref:Silverback.Messaging.Broker.KafkaConsumer> when `GroupId` is  not set 
  
 ### Breaking changes
 
