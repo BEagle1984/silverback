@@ -8,7 +8,7 @@
     <title>DDD and Domain Events | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="DDD and Domain Events | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -94,16 +94,16 @@
 </div>
 <p>The <a class="xref" href="../api/Silverback.Messaging.Messages.MessagesSource-1.html#Silverback_Messaging_Messages_MessagesSource_1_AddEvent__0_">DomainEntity.AddEvent</a> method adds the domain event to the events collection, to be published when the entity is saved.
 To enable this mechanism we just need to override the various <code>SaveChanges</code> methods to plug-in the <a class="xref" href="../api/Silverback.EntityFrameworkCore.DbContextEventsPublisher.html">DbContextEventsPublisher</a> contained in the <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_entity" role="tab" aria-controls="tabpanel_bHGHmlrG6S_entity" data-tab="entity" tabindex="0" aria-selected="true">Sample Entity</a>
+<a href="#tabpanel_CeZOj-G++Q_entity" role="tab" aria-controls="tabpanel_CeZOj-G++Q_entity" data-tab="entity" tabindex="0" aria-selected="true">Sample Entity</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_dbcontext" role="tab" aria-controls="tabpanel_bHGHmlrG6S_dbcontext" data-tab="dbcontext" tabindex="-1">DbContext</a>
+<a href="#tabpanel_CeZOj-G++Q_dbcontext" role="tab" aria-controls="tabpanel_CeZOj-G++Q_dbcontext" data-tab="dbcontext" tabindex="-1">DbContext</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_entity" role="tabpanel" data-tab="entity">
+<section id="tabpanel_CeZOj-G++Q_entity" role="tabpanel" data-tab="entity">
 
 <pre><code class="lang-csharp">using Silverback.Domain;
 
@@ -140,7 +140,7 @@ namespace Sample
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_dbcontext" role="tabpanel" data-tab="dbcontext" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_dbcontext" role="tabpanel" data-tab="dbcontext" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">using Microsoft.EntityFrameworkCore;
 using Silverback.EntityFrameworkCore;

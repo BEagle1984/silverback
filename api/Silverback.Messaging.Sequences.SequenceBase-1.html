@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SequenceBase&lt;TEnvelope&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -167,7 +167,7 @@ messages in a dataset.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected SequenceBase(string sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true, TimeSpan? timeout = null, IMessageStreamProvider streamProvider = null, bool trackIdentifiers = true)</code></pre>
+    <pre><code class="lang-csharp hljs">protected SequenceBase(string sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true, TimeSpan? timeout = default(TimeSpan? ), IMessageStreamProvider streamProvider = null, bool trackIdentifiers = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -936,7 +936,7 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">AddToSequenceResult</span>&gt;</td>
         <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains
 a flag indicating whether the operation was successful and the number of streams that have been
 actually pushed.</p>
@@ -958,7 +958,7 @@ actually pushed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual async Task&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence sequence, bool throwIfUnhandled)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task&lt;AddToSequenceResult&gt; AddCoreAsync(TEnvelope envelope, ISequence sequence, bool throwIfUnhandled)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1001,7 +1001,7 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.AddToSequenceResult.html">AddToSequenceResult</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">AddToSequenceResult</span>&gt;</td>
         <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains
 a flag indicating whether the operation was successful and the number of streams that have been
 actually pushed.</p>
@@ -1023,7 +1023,7 @@ actually pushed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual async Task CompleteAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task CompleteAsync(CancellationToken cancellationToken = default(CancellationToken))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

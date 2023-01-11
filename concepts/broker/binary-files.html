@@ -8,7 +8,7 @@
     <title>Binary Files | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Binary Files | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -91,19 +91,19 @@
 <h2 id="producer-configuration">Producer configuration</h2>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface is meant to transfer files over the message broker and is natively supported by Silverback. This means that the raw file content will be transferred in its original form.</p>
 <p>For convenience the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> class already implements the <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface. This class exposes a <code>ContentType</code> property as well, resulting in the <code>content-type</code> <a class="xref" href="headers.html">header</a> to be produced.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-fluent" data-tab="producer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q_producer-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-fluent" data-tab="producer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-legacy" data-tab="producer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q_producer-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-legacy" data-tab="producer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-service" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-service" data-tab="producer-service" tabindex="-1">Publisher</a>
+<a href="#tabpanel_CeZOj-G++Q_producer-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-service" data-tab="producer-service" tabindex="-1">Publisher</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_producer-fluent" role="tabpanel" data-tab="producer-fluent">
+<section id="tabpanel_CeZOj-G++Q_producer-fluent" role="tabpanel" data-tab="producer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -119,7 +119,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_producer-legacy" role="tabpanel" data-tab="producer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_producer-legacy" role="tabpanel" data-tab="producer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -136,7 +136,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_producer-service" role="tabpanel" data-tab="producer-service" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_producer-service" role="tabpanel" data-tab="producer-service" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class FileTransferService
 {
@@ -158,22 +158,22 @@
 </div>
 
 <p>Otherwise you can implement the interface yourself or extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (e.g. to add some additional headers, as explained in the <a class="xref" href="headers.html">Message Headers</a> section).</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-fluent" data-tab="producer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q-1_producer-custom-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_producer-custom-fluent" data-tab="producer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-legacy" data-tab="producer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q-1_producer-custom-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_producer-custom-legacy" data-tab="producer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-model" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-model" data-tab="producer-custom-model" tabindex="-1">Message</a>
+<a href="#tabpanel_CeZOj-G++Q-1_producer-custom-model" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_producer-custom-model" data-tab="producer-custom-model" tabindex="-1">Message</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_producer-custom-service" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_producer-custom-service" data-tab="producer-custom-service" tabindex="-1">Publisher</a>
+<a href="#tabpanel_CeZOj-G++Q-1_producer-custom-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_producer-custom-service" data-tab="producer-custom-service" tabindex="-1">Publisher</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-1_producer-custom-fluent" role="tabpanel" data-tab="producer-custom-fluent">
+<section id="tabpanel_CeZOj-G++Q-1_producer-custom-fluent" role="tabpanel" data-tab="producer-custom-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -189,7 +189,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_producer-custom-legacy" role="tabpanel" data-tab="producer-custom-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_producer-custom-legacy" role="tabpanel" data-tab="producer-custom-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -206,7 +206,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_producer-custom-model" role="tabpanel" data-tab="producer-custom-model" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_producer-custom-model" role="tabpanel" data-tab="producer-custom-model" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyBinaryFileMessage : BinaryFileMessage
 {
@@ -215,7 +215,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_producer-custom-service" role="tabpanel" data-tab="producer-custom-service" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_producer-custom-service" role="tabpanel" data-tab="producer-custom-service" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class FileTransferService
 {
@@ -245,19 +245,19 @@
 </div>
 <h2 id="consumer-configuration">Consumer configuration</h2>
 <p>You don't need to do anything special to consume a binary file, if all necessary headers are in place (ensured by Silverback, if it was used to produce the message). The message will be wrapped again in a <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> that can be subscribed like any other message.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_consumer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-fluent" data-tab="consumer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q-2_consumer-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_consumer-fluent" data-tab="consumer-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_consumer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-legacy" data-tab="consumer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q-2_consumer-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_consumer-legacy" data-tab="consumer-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_consumer-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_CeZOj-G++Q-2_consumer-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-2_consumer-fluent" role="tabpanel" data-tab="consumer-fluent">
+<section id="tabpanel_CeZOj-G++Q-2_consumer-fluent" role="tabpanel" data-tab="consumer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -277,7 +277,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_consumer-legacy" role="tabpanel" data-tab="consumer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-2_consumer-legacy" role="tabpanel" data-tab="consumer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -294,7 +294,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class FileSubscriberService
 {
@@ -308,19 +308,19 @@
 </div>
 
 <p>If the message wasn't produced by Silverback chances are that the message type header is not there. In that case you need to explicitly configure the <a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> in the inbound endpoint.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" data-tab="consumer-explicit-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q-3_consumer-explicit-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_consumer-explicit-fluent" data-tab="consumer-explicit-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" data-tab="consumer-explicit-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q-3_consumer-explicit-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_consumer-explicit-legacy" data-tab="consumer-explicit-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" data-tab="consumer-explicit-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_CeZOj-G++Q-3_consumer-explicit-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_consumer-explicit-subscriber" data-tab="consumer-explicit-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-fluent" role="tabpanel" data-tab="consumer-explicit-fluent">
+<section id="tabpanel_CeZOj-G++Q-3_consumer-explicit-fluent" role="tabpanel" data-tab="consumer-explicit-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -341,7 +341,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-legacy" role="tabpanel" data-tab="consumer-explicit-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-3_consumer-explicit-legacy" role="tabpanel" data-tab="consumer-explicit-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -359,7 +359,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-3_consumer-explicit-subscriber" role="tabpanel" data-tab="consumer-explicit-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-3_consumer-explicit-subscriber" role="tabpanel" data-tab="consumer-explicit-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class FileSubscriberService
 {
@@ -374,22 +374,22 @@
 
 <p>If you need to read additional headers you can either extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (suggested approach) or subscribe to an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> .</p>
 <p>The following snippet assumes that the files aren't being streamed by a Silverback producer, otherwise it wouldn't be necessary to explicitly set the serializer and the type would be inferred from the <code>x-message-type</code> header.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-4">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" data-tab="consumer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q-4_consumer-custom-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_consumer-custom-fluent" data-tab="consumer-custom-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" data-tab="consumer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q-4_consumer-custom-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_consumer-custom-legacy" data-tab="consumer-custom-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-model" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-model" data-tab="consumer-custom-model" tabindex="-1">Message</a>
+<a href="#tabpanel_CeZOj-G++Q-4_consumer-custom-model" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_consumer-custom-model" data-tab="consumer-custom-model" tabindex="-1">Message</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" data-tab="consumer-custom-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_CeZOj-G++Q-4_consumer-custom-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_consumer-custom-subscriber" data-tab="consumer-custom-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-fluent" role="tabpanel" data-tab="consumer-custom-fluent">
+<section id="tabpanel_CeZOj-G++Q-4_consumer-custom-fluent" role="tabpanel" data-tab="consumer-custom-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -406,7 +406,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-legacy" role="tabpanel" data-tab="consumer-custom-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-4_consumer-custom-legacy" role="tabpanel" data-tab="consumer-custom-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -424,7 +424,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-model" role="tabpanel" data-tab="consumer-custom-model" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-4_consumer-custom-model" role="tabpanel" data-tab="consumer-custom-model" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyBinaryFileMessage : BinaryFileMessage
 {
@@ -433,7 +433,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-4_consumer-custom-subscriber" role="tabpanel" data-tab="consumer-custom-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-4_consumer-custom-subscriber" role="tabpanel" data-tab="consumer-custom-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class FileSubscriberService
 {

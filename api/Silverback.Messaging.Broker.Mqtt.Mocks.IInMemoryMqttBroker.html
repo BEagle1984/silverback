@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IInMemoryMqttBroker
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -105,19 +105,19 @@ for testing purposes.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_Options_IMqttClientOptions_MQTTnet_Client_Receiving_IMqttApplicationMessageReceivedHandler_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.Options.IMqttClientOptions%2CMQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_MqttClientOptions_Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.MqttClientOptions%2CSilverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L53">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L50">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_Options_IMqttClientOptions_MQTTnet_Client_Receiving_IMqttApplicationMessageReceivedHandler_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.Options.IMqttClientOptions,MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler)">Connect(IMqttClientOptions, IMqttApplicationMessageReceivedHandler)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_MqttClientOptions_Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.MqttClientOptions,Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient)">Connect(MqttClientOptions, MockedMqttClient)</h4>
   <div class="markdown level1 summary"><p>Connects the specified client.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)</code></pre>
+    <pre><code class="lang-csharp hljs">void Connect(MqttClientOptions clientOptions, MockedMqttClient mockedMqttClient)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -130,16 +130,15 @@ for testing purposes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Options.IMqttClientOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientOptions</span></td>
         <td><span class="parametername">clientOptions</span></td>
         <td><p>The client options.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler</span></td>
-        <td><span class="parametername">handler</span></td>
-        <td><p>The <span class="xref">MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler</span> to be pushed with the messages published to
-the subscribed topics.</p>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html">MockedMqttClient</a></td>
+        <td><span class="parametername">mockedMqttClient</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html">MockedMqttClient</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -149,7 +148,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Disconnect_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Disconnect(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L61">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L58">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Disconnect_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Disconnect*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Disconnect_System_String_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Disconnect(System.String)">Disconnect(String)</h4>
@@ -183,7 +182,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetClientSession_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetClientSession(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L30">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L28">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetClientSession_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetClientSession*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetClientSession_System_String_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetClientSession(System.String)">GetClientSession(String)</h4>
@@ -233,7 +232,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetMessages_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetMessages(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L41">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L39">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetMessages_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetMessages*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_GetMessages_System_String_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetMessages(System.String)">GetMessages(String)</h4>
@@ -280,19 +279,19 @@ the subscribed topics.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_Options_IMqttClientOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String%2CMQTTnet.MqttApplicationMessage%2CMQTTnet.Client.Options.IMqttClientOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_MqttClientOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String%2CMQTTnet.MqttApplicationMessage%2CMQTTnet.Client.MqttClientOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L100">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L97">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_Options_IMqttClientOptions_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.Options.IMqttClientOptions)">PublishAsync(String, MqttApplicationMessage, IMqttClientOptions)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_MqttClientOptions_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.MqttClientOptions)">PublishAsync(String, MqttApplicationMessage, MqttClientOptions)</h4>
   <div class="markdown level1 summary"><p>Publishes a message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task PublishAsync(string clientId, MqttApplicationMessage message, IMqttClientOptions clientOptions)</code></pre>
+    <pre><code class="lang-csharp hljs">Task PublishAsync(string clientId, MqttApplicationMessage message, MqttClientOptions clientOptions)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -317,9 +316,9 @@ the subscribed topics.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Options.IMqttClientOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientOptions</span></td>
         <td><span class="parametername">clientOptions</span></td>
-        <td><p>The <span class="xref">MQTTnet.Client.Options.IMqttClientOptions</span> of the producing <span class="xref">MQTTnet.Client.MqttClient</span>.</p>
+        <td><p>The <span class="xref">MQTTnet.Client.MqttClientOptions</span> of the producing <span class="xref">MQTTnet.Client.MqttClient</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -345,7 +344,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Subscribe_System_String_System_Collections_Generic_IReadOnlyCollection_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Subscribe(System.String%2CSystem.Collections.Generic.IReadOnlyCollection%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L72">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L69">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Subscribe_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Subscribe*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Subscribe_System_String_System_Collections_Generic_IReadOnlyCollection_System_String__" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Subscribe(System.String,System.Collections.Generic.IReadOnlyCollection{System.String})">Subscribe(String, IReadOnlyCollection&lt;String&gt;)</h4>
@@ -385,7 +384,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Unsubscribe_System_String_System_Collections_Generic_IReadOnlyCollection_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Unsubscribe(System.String%2CSystem.Collections.Generic.IReadOnlyCollection%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L83">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L80">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Unsubscribe_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Unsubscribe*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Unsubscribe_System_String_System_Collections_Generic_IReadOnlyCollection_System_String__" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Unsubscribe(System.String,System.Collections.Generic.IReadOnlyCollection{System.String})">Unsubscribe(String, IReadOnlyCollection&lt;String&gt;)</h4>
@@ -425,7 +424,7 @@ the subscribed topics.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_WaitUntilAllMessagesAreConsumedAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L115">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L112">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_WaitUntilAllMessagesAreConsumedAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(System.Threading.CancellationToken)">WaitUntilAllMessagesAreConsumedAsync(CancellationToken)</h4>
@@ -482,7 +481,7 @@ processed and committed.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L19" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/IInMemoryMqttBroker.cs/#L17" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

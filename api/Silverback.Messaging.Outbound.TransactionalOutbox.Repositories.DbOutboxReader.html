@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class DbOutboxReader
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -197,7 +197,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -247,7 +247,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task AcknowledgeAsync(IEnumerable&lt;OutboxStoredMessage&gt; outboxMessages)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AcknowledgeAsync(IEnumerable&lt;OutboxStoredMessage&gt; outboxMessages)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -331,7 +331,7 @@ the outbox was written.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;TimeSpan&gt; GetMaxAgeAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;TimeSpan&gt; GetMaxAgeAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -364,7 +364,7 @@ must be acknowledged for the messages to be removed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;IReadOnlyCollection&lt;OutboxStoredMessage&gt;&gt; ReadAsync(int count)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IReadOnlyCollection&lt;OutboxStoredMessage&gt;&gt; ReadAsync(int count)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

@@ -8,7 +8,7 @@
     <title>Multiple Consumer Groups (in same process) | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Multiple Consumer Groups (in same process) | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -88,19 +88,19 @@
 
 <p>In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
 <p>A much safer approach is to bind multiple consumers to the same topic, using a different consumer group id. This will cause the message to be consumed multiple times (once per consumer group) and being committed independently. The <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> can be used to execute a subscribed method according to the group id.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_groups-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_groups-fluent" data-tab="groups-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_CeZOj-G++Q_groups-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_groups-fluent" data-tab="groups-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_groups-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_groups-legacy" data-tab="groups-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_CeZOj-G++Q_groups-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_groups-legacy" data-tab="groups-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_groups-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S_groups-subscriber" data-tab="groups-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_CeZOj-G++Q_groups-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q_groups-subscriber" data-tab="groups-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_groups-fluent" role="tabpanel" data-tab="groups-fluent">
+<section id="tabpanel_CeZOj-G++Q_groups-fluent" role="tabpanel" data-tab="groups-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -126,7 +126,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_groups-legacy" role="tabpanel" data-tab="groups-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_groups-legacy" role="tabpanel" data-tab="groups-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -153,7 +153,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_groups-subscriber" role="tabpanel" data-tab="groups-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_groups-subscriber" role="tabpanel" data-tab="groups-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MySubscriber
 {

@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Serialization | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Serialization | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="serialization">
+<h1 id="serialization">Serialization</h1>
+
+<p>Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.</p>
+<h2 id="default-json-serialization">Default JSON serialization</h2>
+<p>The default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> internally uses System.Text.Json to serialize the messages as JSON and encode them in UTF-8.</p>
+<p>A few headers are added to the message, in particular <code>x-message-type</code> is used by the <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> to know the message type when deserializing. It also leverages the Newtonsoft's <a href="https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm">automatic type handling</a> to automatically resolve the actual type of the nested properties.</p>
+<p>The deserializer function provided by <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> will obviously try to map the message to a type with the exact assembly qualified name found in the <code>x-message-type</code> header. It is therefore a good practice to share the message models among the services, maybe through a nuget package.</p>
+<p>This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.</p>
+<p>Have a look at the <a class="xref" href="../quickstart/message-broker/03-headers.html">Message Headers</a> section for an overview on the headers that are appended to the messages.</p>
+<h2 id="fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</h2>
+<p>If you are consuming a message coming from another system (not based on Silverback), chances are that the type name is not being delivered as header.</p>
+<p>In that case you can resort to the typed <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>. This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.</p>
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder.AddInbound(
+            new KafkaConsumerEndpoint(&quot;order-events&quot;)
+            {
+                Serializer = new JsonMessageSerializer&lt;OrderEvent&gt;
+            });
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> can be also be tweaked modifying its <code>Options</code>.</p>
+</div>
+<h2 id="newtonsoftjson">Newtonsoft.Json</h2>
+<p>In the releases previous to 3.0.0 the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> was based on Newtonsoft.Json instead of System.Text.Json. For backward compatibility reasons and since System.Text.Json may not support all use cases covered by Newtonsoft.Json, the old serializers have been renamed to <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html"><code>NewtonsoftJsonMessageSerializer</code></a>/<a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html"><code>NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</code></a> and moved into a dedicated NuGet package: Silverback.Integration.Newtonsoft.</p>
+<h2 id="apache-avro">Apache Avro</h2>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.AvroMessageSerializer-1.html"><code>AvroMessageSerializer&lt;TMessage&gt;</code></a> contained in the Silverback.Integration.Kafka.SchemaRegistry package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder.AddOutbound&lt;OrderEvent&gt;(
+            new KafkaConsumerEndpoint(&quot;order-events&quot;)
+            {
+                Serializer = new AvroMessageSerializer&lt;OrderEvent&gt;
+                {
+                    SchemaRegistryConfig = new SchemaRegistryConfig
+                    {
+                        Url = &quot;schema-registry:8081&quot;
+                    },
+                    AvroSerializerConfig = new AvroSerializerConfig
+                    {
+                        AutoRegisterSchemas = true
+                    }
+                },
+            });
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The C# message models can be generated from an Avro schema using <a href="https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/">AvroGen</a>.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.</p>
+</div>
+<h2 id="custom-serializer">Custom serializer</h2>
+<p>In some cases you may want to build your very own custom serializer implementing <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> directly.</p>
+<pre><code class="lang-csharp">public class MyCustomSerializer : IMessageSerializer
+{
+    public byte[] Serialize(object message, MessageHeaderCollection messageHeaders)
+    {
+        ...
+    }
+
+    public object Deserialize(byte[] message, MessageHeaderCollection messageHeaders)
+    {
+        ...
+    }
+
+    public byte[] Serialize(
+        object message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public object Deserialize(
+        byte[] message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public Task&lt;byte[]&gt; SerializeAsync(
+        object message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+
+    public Task&lt;object&gt; DeserializeAsync(
+        byte[] message,
+        MessageHeaderCollection messageHeaders,
+        MessageSerializationContext context)
+    {
+        ...
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>You may need to implement <code>IKafkaMessageSerializer</code> if you want to have full control over the serialization of the Kafka key as well.</p>
+</div>
+<h2 id="binary-files">Binary Files</h2>
+<p>Please refer to the <a class="xref" href="04-binary-files.html">Binary Files</a> page if you need to prduce or consume raw binary files.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/advanced/01-serialization.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

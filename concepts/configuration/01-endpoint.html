@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Endpoint | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Endpoint | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="endpoint">
+<h1 id="endpoint">Endpoint</h1>
+
+<p>The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it's own implementation of <code>IEndpoint</code>.</p>
+<h2 id="kafka">Kafka</h2>
+<p><a href="https://www.nuget.org/packages/Silverback.Integration.Kafka">Silverback.Integration.Kafka</a> uses 2 different classes to specify inbound and outbound endpoints configuration.</p>
+<p>For a more in-depth documentation about the Kafka configuration refer to the <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet documentation</a>.</p>
+<h3 id="kafkaproducerendpoint">KafkaProducerEndpoint</h3>
+<p>Used for outbound endpoints. See <a class="xref" href="../../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new KafkaProducerEndpoint(&quot;basket-events&quot;)
+{
+    Configuration = new KafkaProducerConfig
+    {
+        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+    },
+    Chunk = ...
+}
+</code></pre>
+<h3 id="kafkaconsumerendpoint">KafkaConsumerEndpoint</h3>
+<p>Used for inbound endpoints. See <a class="xref" href="../../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new KafkaConsumerEndpoint(
+    &quot;order-events&quot;, 
+    &quot;inventory-events&quot;)
+{
+    Configuration = new KafkaConsumerConfig
+    {
+        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
+        GroupId = &quot;my-consumer&quot;,
+        AutoOffsetReset = AutoOffsetResetType.Earliest
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>You can decide whether to use one consumer per topic or subscribe multiple topics with the same consumer (passing multiple topic names in the endpoint constructor, as shown in the example above). There are advantages and disadvantages of both solutions and the best choice really depends on your specific requirements, the amount of messages being produced, etc. Anyway the main difference is that when subscribing multiple topics you will still consume one message after the other but they will simply be interleaved (this may or may not be an issue, it depends) and on the other hand each consumer will use some resources, so creating multiple consumers will result in a bigger overhead.</p>
+</div>
+<h2 id="rabbitmq">RabbitMQ</h2>
+<p><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is a bit more intricated and uses 4 different classes to specify inbound and outbound endpoints configuration.</p>
+<p>For a more in-depth documentation about the RabbitMQ configuration refer to the <a href="https://www.rabbitmq.com/getstarted.html">RabbitMQ tutorials and documentation</a>.</p>
+<h3 id="rabbitqueueproducerendpoint">RabbitQueueProducerEndpoint</h3>
+<p>Used for outbound endpoints that produce directly to a queue. See <a class="xref" href="../../api/Silverback.Messaging.RabbitQueueProducerEndpoint.html">RabbitQueueProducerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new RabbitQueueProducerEndpoint(&quot;inventory-commands-queue&quot;)
+{
+    Connection = new RabbitConnectionConfig
+    {
+        HostName = &quot;localhost&quot;,
+        UserName = &quot;guest&quot;,
+        Password = &quot;guest&quot;
+    },
+    Queue = new RabbitQueueConfig
+    {
+        IsDurable = true,
+        IsExclusive = false,
+        IsAutoDeleteEnabled = false
+    }
+}
+</code></pre>
+<h3 id="rabbitexchangeproducerendpoint">RabbitExchangeProducerEndpoint</h3>
+<p>Used for outbound endpoints that produce to an exchange. See <a class="xref" href="../../api/Silverback.Messaging.RabbitExchangeProducerEndpoint.html">RabbitExchangeProducerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new RabbitExchangeProducerEndpoint(&quot;order-events&quot;)
+{
+    Connection = new RabbitConnectionConfig
+    {
+        HostName = &quot;localhost&quot;,
+        UserName = &quot;guest&quot;,
+        Password = &quot;guest&quot;
+    },
+    Exchange = new RabbitExchangeConfig
+    {
+        IsDurable = true,
+        IsAutoDeleteEnabled = false,
+        ExchangeType = ExchangeType.Fanout
+    }
+}   
+</code></pre>
+<h3 id="rabbitqueueconsumerendpoint">RabbitQueueConsumerEndpoint</h3>
+<p>Used for inbound endpoints that consume directly from a queue. See <a class="xref" href="../../api/Silverback.Messaging.RabbitQueueConsumerEndpoint.html">RabbitQueueConsumerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new RabbitQueueConsumerEndpoint(&quot;inventory-commands-queue&quot;)
+{
+    Connection = new RabbitConnectionConfig
+    {
+        HostName = &quot;localhost&quot;,
+        UserName = &quot;guest&quot;,
+        Password = &quot;guest&quot;
+    },
+    Queue = new RabbitQueueConfig
+    {
+        IsDurable = true,
+        IsExclusive = false,
+        IsAutoDeleteEnabled = false
+    }
+}
+</code></pre>
+<h3 id="rabbitexchangeconsumerendpoint">RabbitExchangeConsumerEndpoint</h3>
+<p>Used for inbound endpoints that consume from an exchange. See <a class="xref" href="../../api/Silverback.Messaging.RabbitExchangeConsumerEndpoint.html">RabbitExchangeConsumerEndpoint</a> for details.</p>
+<pre><code class="lang-csharp">new RabbitExchangeConsumerEndpoint(&quot;order-events&quot;)
+{
+    Connection = new RabbitConnectionConfig
+    {
+        HostName = &quot;localhost&quot;,
+        UserName = &quot;guest&quot;,
+        Password = &quot;guest&quot;
+    },
+    Exchange = new RabbitExchangeConfig
+    {
+        IsDurable = true,
+        IsAutoDeleteEnabled = false,
+        ExchangeType = ExchangeType.Fanout
+    },
+    QueueName = &quot;my-consumer-group&quot;,
+    Queue = new RabbitQueueConfig
+    {
+        IsDurable = true,
+        IsExclusive = false,
+        IsAutoDeleteEnabled = false
+    }
+}   
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/configuration/01-endpoint.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

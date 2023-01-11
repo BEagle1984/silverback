@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RabbitProducer
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -631,7 +631,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override async Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -707,7 +707,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override async Task ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -799,7 +799,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override async Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -875,7 +875,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override async Task ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

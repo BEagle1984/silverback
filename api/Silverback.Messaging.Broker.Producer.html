@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Producer
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -367,7 +367,7 @@ messages.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task ConnectAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ConnectAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -431,7 +431,7 @@ messages.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task DisconnectAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task DisconnectAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -707,7 +707,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;IBrokerMessageIdentifier&gt; ProduceAsync(IOutboundEnvelope envelope)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IBrokerMessageIdentifier&gt; ProduceAsync(IOutboundEnvelope envelope)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -758,7 +758,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task ProduceAsync(IOutboundEnvelope envelope, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ProduceAsync(IOutboundEnvelope envelope, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2307,7 +2307,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;IBrokerMessageIdentifier&gt; RawProduceAsync(string actualEndpointName, byte[] messageContent, IReadOnlyCollection&lt;MessageHeader&gt; headers = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IBrokerMessageIdentifier&gt; RawProduceAsync(string actualEndpointName, byte[] messageContent, IReadOnlyCollection&lt;MessageHeader&gt; headers = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2449,7 +2449,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;IBrokerMessageIdentifier&gt; RawProduceAsync(string actualEndpointName, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IBrokerMessageIdentifier&gt; RawProduceAsync(string actualEndpointName, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

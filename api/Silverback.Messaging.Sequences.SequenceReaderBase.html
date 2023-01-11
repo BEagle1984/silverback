@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SequenceReaderBase
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -273,7 +273,7 @@ value indicating whether this reader can and must handle the message.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual async Task&lt;ISequence&gt; CreateNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task&lt;ISequence&gt; CreateNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -441,7 +441,7 @@ value indicating whether this reader can and must handle the message.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;ISequence&gt; GetSequenceAsync(ConsumerPipelineContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;ISequence&gt; GetSequenceAsync(ConsumerPipelineContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

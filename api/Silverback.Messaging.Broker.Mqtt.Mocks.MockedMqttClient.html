@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class MockedMqttClient
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -102,10 +102,7 @@ broker.</p>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">MQTTnet.Client.IMqttClient</span></div>
-    <div><span class="xref">MQTTnet.IApplicationMessageReceiver</span></div>
-    <div><span class="xref">MQTTnet.IApplicationMessagePublisher</span></div>
     <div><span class="xref">System.IDisposable</span></div>
-    <div><span class="xref">MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -135,7 +132,7 @@ broker.</p>
   <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.Testing.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class MockedMqttClient : IMqttClient, IApplicationMessageReceiver, IApplicationMessagePublisher, IDisposable, IMqttApplicationMessageReceivedHandler</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class MockedMqttClient : IMqttClient, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -144,7 +141,7 @@ broker.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.%23ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker%2CSilverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L48">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L39">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker,Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)">MockedMqttClient(IInMemoryMqttBroker, IMockedMqttOptions)</h4>
@@ -183,100 +180,10 @@ broker.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedHandler.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L61">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedHandler_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedHandler" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler">ApplicationMessageReceivedHandler</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttApplicationMessageReceivedHandler ApplicationMessageReceivedHandler { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedHandler.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L64">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedHandler_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedHandler" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler">ConnectedHandler</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientConnectedHandler ConnectedHandler { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">MQTTnet.Client.Connecting.IMqttClientConnectedHandler</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedHandler.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L67">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedHandler_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedHandler" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler">DisconnectedHandler</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientDisconnectedHandler DisconnectedHandler { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">MQTTnet.Client.Disconnecting.IMqttClientDisconnectedHandler</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConnected.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L55">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L70">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConnected_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConnected" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected">IsConnected</h4>
@@ -303,18 +210,19 @@ broker.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConsumerConnected.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L58">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L65">View source</a>
   </span>
-  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options">Options</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConsumerConnected_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected*"></a>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConsumerConnected" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected">IsConsumerConnected</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the client is connected and a message handler is bound to it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientOptions Options { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool IsConsumerConnected { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -326,7 +234,37 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Options.IMqttClientOptions</span></td>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L73">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options*"></a>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options">Options</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MqttClientOptions Options { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">MQTTnet.Client.MqttClientOptions</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -335,18 +273,18 @@ broker.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_Options_IMqttClientOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.Options.IMqttClientOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_MqttClientOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.MqttClientOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L75">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L78">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_Options_IMqttClientOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.Options.IMqttClientOptions,System.Threading.CancellationToken)">ConnectAsync(IMqttClientOptions, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_MqttClientOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.MqttClientOptions,System.Threading.CancellationToken)">ConnectAsync(MqttClientOptions, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;MqttClientAuthenticateResult&gt; ConnectAsync(IMqttClientOptions options, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;MqttClientConnectResult&gt; ConnectAsync(MqttClientOptions options, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -359,7 +297,7 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Options.IMqttClientOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientOptions</span></td>
         <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
@@ -380,20 +318,20 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.Connecting.MqttClientAuthenticateResult</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.MqttClientConnectResult</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_Disconnecting_MqttClientDisconnectOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_MqttClientDisconnectOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.MqttClientDisconnectOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L101">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L109">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_Disconnecting_MqttClientDisconnectOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions,System.Threading.CancellationToken)">DisconnectAsync(MqttClientDisconnectOptions, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_MqttClientDisconnectOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.MqttClientDisconnectOptions,System.Threading.CancellationToken)">DisconnectAsync(MqttClientDisconnectOptions, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -411,7 +349,7 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientDisconnectOptions</span></td>
         <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
@@ -442,7 +380,7 @@ broker.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Dispose.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L177">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L175">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Dispose_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Dispose" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose">Dispose()</h4>
@@ -454,57 +392,10 @@ broker.</p>
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_HandleApplicationMessageReceivedAsync_MQTTnet_MqttApplicationMessageReceivedEventArgs_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync(MQTTnet.MqttApplicationMessageReceivedEventArgs)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L170">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_HandleApplicationMessageReceivedAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_HandleApplicationMessageReceivedAsync_MQTTnet_MqttApplicationMessageReceivedEventArgs_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync(MQTTnet.MqttApplicationMessageReceivedEventArgs)">HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">MQTTnet.MqttApplicationMessageReceivedEventArgs</span></td>
-        <td><span class="parametername">eventArgs</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PingAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PingAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L162">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L167">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PingAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PingAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PingAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PingAsync(System.Threading.CancellationToken)">PingAsync(CancellationToken)</h4>
@@ -551,7 +442,7 @@ broker.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PublishAsync_MQTTnet_MqttApplicationMessage_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PublishAsync(MQTTnet.MqttApplicationMessage%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L143">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L148">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PublishAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PublishAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_PublishAsync_MQTTnet_MqttApplicationMessage_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PublishAsync(MQTTnet.MqttApplicationMessage,System.Threading.CancellationToken)">PublishAsync(MqttApplicationMessage, CancellationToken)</h4>
@@ -559,7 +450,7 @@ broker.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public async Task&lt;MqttClientPublishResult&gt; PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;MqttClientPublishResult&gt; PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -593,20 +484,20 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.Publishing.MqttClientPublishResult</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.MqttClientPublishResult</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_ExtendedAuthenticationExchange_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.MqttExtendedAuthenticationExchangeData%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L165">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L170">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_ExtendedAuthenticationExchange_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)">SendExtendedAuthenticationExchangeDataAsync(MqttExtendedAuthenticationExchangeData, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)">SendExtendedAuthenticationExchangeDataAsync(MqttExtendedAuthenticationExchangeData, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -624,7 +515,7 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttExtendedAuthenticationExchangeData</span></td>
         <td><span class="parametername">data</span></td>
         <td></td>
       </tr>
@@ -652,13 +543,13 @@ broker.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_Subscribing_MqttClientSubscribeOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.Subscribing.MqttClientSubscribeOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_MqttClientSubscribeOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.MqttClientSubscribeOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L113">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L122">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_Subscribing_MqttClientSubscribeOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.Subscribing.MqttClientSubscribeOptions,System.Threading.CancellationToken)">SubscribeAsync(MqttClientSubscribeOptions, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_MqttClientSubscribeOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.MqttClientSubscribeOptions,System.Threading.CancellationToken)">SubscribeAsync(MqttClientSubscribeOptions, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -676,7 +567,7 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Subscribing.MqttClientSubscribeOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientSubscribeOptions</span></td>
         <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
@@ -697,20 +588,20 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.Subscribing.MqttClientSubscribeResult</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.MqttClientSubscribeResult</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_Unsubscribing_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.MqttClientUnsubscribeOptions%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L128">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L135">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_Unsubscribing_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)">UnsubscribeAsync(MqttClientUnsubscribeOptions, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)">UnsubscribeAsync(MqttClientUnsubscribeOptions, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -728,7 +619,7 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions</span></td>
+        <td><span class="xref">MQTTnet.Client.MqttClientUnsubscribeOptions</span></td>
         <td><span class="parametername">options</span></td>
         <td></td>
       </tr>
@@ -749,7 +640,154 @@ broker.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeResult</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">MQTTnet.Client.MqttClientUnsubscribeResult</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L46">View source</a>
+  </span>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedAsync" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedAsync">ApplicationMessageReceivedAsync</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Func&lt;MqttApplicationMessageReceivedEventArgs, Task&gt; ApplicationMessageReceivedAsync</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">MQTTnet.Client.MqttApplicationMessageReceivedEventArgs</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L49">View source</a>
+  </span>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedAsync" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedAsync">ConnectedAsync</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Func&lt;MqttClientConnectedEventArgs, Task&gt; ConnectedAsync</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">MQTTnet.Client.MqttClientConnectedEventArgs</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectingAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectingAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L52">View source</a>
+  </span>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectingAsync" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectingAsync">ConnectingAsync</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Func&lt;MqttClientConnectingEventArgs, Task&gt; ConnectingAsync</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">MQTTnet.Client.MqttClientConnectingEventArgs</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L55">View source</a>
+  </span>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedAsync" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedAsync">DisconnectedAsync</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Func&lt;MqttClientDisconnectedEventArgs, Task&gt; DisconnectedAsync</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">MQTTnet.Client.MqttClientDisconnectedEventArgs</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_InspectPackage.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L59">View source</a>
+  </span>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_InspectPackage" data-uid="Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage">InspectPackage</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event Func&lt;InspectMqttPacketEventArgs, Task&gt; InspectPackage</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">MQTTnet.Diagnostics.InspectMqttPacketEventArgs</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -759,16 +797,7 @@ broker.</p>
       <span class="xref">MQTTnet.Client.IMqttClient</span>
   </div>
   <div>
-      <span class="xref">MQTTnet.IApplicationMessageReceiver</span>
-  </div>
-  <div>
-      <span class="xref">MQTTnet.IApplicationMessagePublisher</span>
-  </div>
-  <div>
       <span class="xref">System.IDisposable</span>
-  </div>
-  <div>
-      <span class="xref">MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler</span>
   </div>
 </article>
           </div>
@@ -781,7 +810,7 @@ broker.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L29" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Broker/Mqtt/Mocks/MockedMqttClient.cs/#L20" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>
