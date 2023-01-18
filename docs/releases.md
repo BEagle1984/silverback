@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [4.0.1](https://github.com/BEagle1984/silverback/releases/tag/v4.0.1)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.1.4.563](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.4.563)
+  
 ## [4.0.0](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0)
 
 ### What's new
