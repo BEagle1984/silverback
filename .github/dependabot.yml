@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "Confluent.*"
+      - dependency-name: "MQTTnet"
+    commit-message:
+      prefix: "chore"
+    open-pull-requests-limit: 10
