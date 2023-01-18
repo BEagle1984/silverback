@@ -3978,6 +3978,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.IntegrationLogEvents.EndpointConfiguratorError
   nameWithType: IntegrationLogEvents.EndpointConfiguratorError
+- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
+  name: ErrorAbortingInboundSequence
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence
+  commentId: P:Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
+  nameWithType: IntegrationLogEvents.ErrorAbortingInboundSequence
+- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence*
+  name: ErrorAbortingInboundSequence
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence_
+  commentId: Overload:Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorAbortingInboundSequence
+  nameWithType: IntegrationLogEvents.ErrorAbortingInboundSequence
 - uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorInitializingActivity
   name: ErrorInitializingActivity
   href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity
@@ -4459,19 +4472,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceStarted
   nameWithType: IntegrationLogEvents.SequenceStarted
-- uid: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
-  name: SequenceTimeoutError
-  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError
-  commentId: P:Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
-  fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
-  nameWithType: IntegrationLogEvents.SequenceTimeoutError
-- uid: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError*
-  name: SequenceTimeoutError
-  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceTimeoutError_
-  commentId: Overload:Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
-  isSpec: "True"
-  fullName: Silverback.Diagnostics.IntegrationLogEvents.SequenceTimeoutError
-  nameWithType: IntegrationLogEvents.SequenceTimeoutError
 - uid: Silverback.Diagnostics.IntegrationLogEvents.SkippingIncompleteSequence
   name: SkippingIncompleteSequence
   href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence
@@ -5282,19 +5282,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.MqttLogEvents.ProducerQueueProcessingCanceled
   nameWithType: MqttLogEvents.ProducerQueueProcessingCanceled
-- uid: Silverback.Diagnostics.MqttLogEvents.Reconnected
-  name: Reconnected
-  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_Reconnected
-  commentId: P:Silverback.Diagnostics.MqttLogEvents.Reconnected
-  fullName: Silverback.Diagnostics.MqttLogEvents.Reconnected
-  nameWithType: MqttLogEvents.Reconnected
-- uid: Silverback.Diagnostics.MqttLogEvents.Reconnected*
-  name: Reconnected
-  href: api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_Reconnected_
-  commentId: Overload:Silverback.Diagnostics.MqttLogEvents.Reconnected
-  isSpec: "True"
-  fullName: Silverback.Diagnostics.MqttLogEvents.Reconnected
-  nameWithType: MqttLogEvents.Reconnected
 - uid: Silverback.Diagnostics.RabbitLogEvents
   name: RabbitLogEvents
   href: api/Silverback.Diagnostics.RabbitLogEvents.html
@@ -7425,13 +7412,13 @@ references:
   fullName: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetIsSequenceEnd
   nameWithType: ConsumerPipelineContext.SetIsSequenceEnd
 - uid: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence,System.Boolean@)
-  name: SetSequence(ISequence, Boolean)
+  name: SetSequence(ISequence, in Boolean)
   href: api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html#Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_SetSequence_Silverback_Messaging_Sequences_ISequence_System_Boolean__
   commentId: M:Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence,System.Boolean@)
   name.vb: SetSequence(ISequence, ByRef Boolean)
-  fullName: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence, System.Boolean)
+  fullName: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence, in System.Boolean)
   fullName.vb: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence(Silverback.Messaging.Sequences.ISequence, ByRef System.Boolean)
-  nameWithType: ConsumerPipelineContext.SetSequence(ISequence, Boolean)
+  nameWithType: ConsumerPipelineContext.SetSequence(ISequence, in Boolean)
   nameWithType.vb: ConsumerPipelineContext.SetSequence(ISequence, ByRef Boolean)
 - uid: Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.SetSequence*
   name: SetSequence
@@ -12072,12 +12059,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache
   fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache
   nameWithType: IConfluentProducersCache
-- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
-  name: DisposeProducer(KafkaProducer)
-  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_Silverback_Messaging_Broker_KafkaProducer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
-  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Broker.KafkaProducer)
-  nameWithType: IConfluentProducersCache.DisposeProducer(KafkaProducer)
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
+  name: DisposeProducer(KafkaProducerConfig)
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_
+  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig)
+  nameWithType: IConfluentProducersCache.DisposeProducer(KafkaProducerConfig)
 - uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer*
   name: DisposeProducer
   href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_DisposeProducer_
@@ -12085,12 +12072,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.DisposeProducer
   nameWithType: IConfluentProducersCache.DisposeProducer
-- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
-  name: GetProducer(KafkaProducer)
-  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_Silverback_Messaging_Broker_KafkaProducer_
-  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
-  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Broker.KafkaProducer)
-  nameWithType: IConfluentProducersCache.GetProducer(KafkaProducer)
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig,Silverback.Messaging.Broker.KafkaProducer)
+  name: GetProducer(KafkaProducerConfig, KafkaProducer)
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_Silverback_Messaging_Broker_KafkaProducer_
+  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig,Silverback.Messaging.Broker.KafkaProducer)
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer(Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig, Silverback.Messaging.Broker.KafkaProducer)
+  nameWithType: IConfluentProducersCache.GetProducer(KafkaProducerConfig, KafkaProducer)
 - uid: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer*
   name: GetProducer
   href: api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html#Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_GetProducer_
@@ -12136,12 +12123,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder
   fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder
   nameWithType: MockedConfluentConsumerBuilder
-- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(System.IServiceProvider,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  name: MockedConfluentConsumerBuilder(IServiceProvider, IMockedKafkaOptions)
-  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_System_IServiceProvider_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_
-  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(System.IServiceProvider,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(System.IServiceProvider, Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
-  nameWithType: MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(IServiceProvider, IMockedKafkaOptions)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  name: MockedConfluentConsumerBuilder(IInMemoryTopicCollection, IMockedKafkaOptions)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection,Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection, Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  nameWithType: MockedConfluentConsumerBuilder.MockedConfluentConsumerBuilder(IInMemoryTopicCollection, IMockedKafkaOptions)
 - uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.#ctor*
   name: MockedConfluentConsumerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentConsumerBuilder__ctor_
@@ -12295,12 +12282,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder
   fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder
   nameWithType: MockedConfluentProducerBuilder
-- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(System.IServiceProvider)
-  name: MockedConfluentProducerBuilder(IServiceProvider)
-  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_System_IServiceProvider_
-  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(System.IServiceProvider)
-  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(System.IServiceProvider)
-  nameWithType: MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(IServiceProvider)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
+  name: MockedConfluentProducerBuilder(IInMemoryTopicCollection)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection)
+  nameWithType: MockedConfluentProducerBuilder.MockedConfluentProducerBuilder(IInMemoryTopicCollection)
 - uid: Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.#ctor*
   name: MockedConfluentProducerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentProducerBuilder__ctor_
@@ -12391,19 +12378,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.FirstOffset
   nameWithType: IInMemoryPartition.FirstOffset
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
-  name: GetAllMessages()
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_GetAllMessages
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages()
-  nameWithType: IInMemoryPartition.GetAllMessages()
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages*
-  name: GetAllMessages
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_GetAllMessages_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.GetAllMessages
-  nameWithType: IInMemoryPartition.GetAllMessages
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.LastOffset
   name: LastOffset
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_LastOffset
@@ -12417,6 +12391,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.LastOffset
   nameWithType: IInMemoryPartition.LastOffset
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
+  name: Messages
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Messages
+  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
+  nameWithType: IInMemoryPartition.Messages
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages*
+  name: Messages
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Messages_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Messages
+  nameWithType: IInMemoryPartition.Messages
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Partition
   name: Partition
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_Partition
@@ -12430,19 +12417,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.Partition
   nameWithType: IInMemoryPartition.Partition
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
-  name: TotalMessagesCount
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TotalMessagesCount
-  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
-  nameWithType: IInMemoryPartition.TotalMessagesCount
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount*
-  name: TotalMessagesCount
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TotalMessagesCount_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TotalMessagesCount
-  nameWithType: IInMemoryPartition.TotalMessagesCount
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.TryPull(Confluent.Kafka.Offset,Confluent.Kafka.ConsumeResult{System.Byte[],System.Byte[]}@)
   name: TryPull(Offset, out ConsumeResult<Byte[], Byte[]>)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryPartition_TryPull_Confluent_Kafka_Offset_Confluent_Kafka_ConsumeResult_System_Byte___System_Byte_____
@@ -12465,19 +12439,6 @@ references:
   commentId: T:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic
   nameWithType: IInMemoryTopic
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
-  name: AbortTransaction(Guid)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_AbortTransaction_System_Guid_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction(System.Guid)
-  nameWithType: IInMemoryTopic.AbortTransaction(Guid)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction*
-  name: AbortTransaction
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_AbortTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.AbortTransaction
-  nameWithType: IInMemoryTopic.AbortTransaction
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Assign(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,Confluent.Kafka.Partition)
   name: Assign(IMockedConfluentConsumer, Partition)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Assign_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_Confluent_Kafka_Partition_
@@ -12520,19 +12481,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Commit
   nameWithType: IInMemoryTopic.Commit
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
-  name: CommitTransaction(Guid)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_CommitTransaction_System_Guid_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction(System.Guid)
-  nameWithType: IInMemoryTopic.CommitTransaction(Guid)
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction*
-  name: CommitTransaction
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_CommitTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.CommitTransaction
-  nameWithType: IInMemoryTopic.CommitTransaction
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.TimeSpan,System.Threading.CancellationToken)
   name: EnsurePartitionsAssigned(IMockedConfluentConsumer, TimeSpan, CancellationToken)
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_EnsurePartitionsAssigned_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_TimeSpan_System_Threading_CancellationToken_
@@ -12663,15 +12611,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Partitions
   nameWithType: IInMemoryTopic.Partitions
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]},System.Guid)
-  name: Push(Int32, Message<Byte[], Byte[]>, Guid)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_System_Int32_Confluent_Kafka_Message_System_Byte___System_Byte____System_Guid_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]},System.Guid)
-  name.vb: Push(Int32, Message(Of Byte(), Byte()), Guid)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message<System.Byte[], System.Byte[]>, System.Guid)
-  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message(Of System.Byte(), System.Byte()), System.Guid)
-  nameWithType: IInMemoryTopic.Push(Int32, Message<Byte[], Byte[]>, Guid)
-  nameWithType.vb: IInMemoryTopic.Push(Int32, Message(Of Byte(), Byte()), Guid)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]})
+  name: Push(Int32, Message<Byte[], Byte[]>)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_System_Int32_Confluent_Kafka_Message_System_Byte___System_Byte____
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32,Confluent.Kafka.Message{System.Byte[],System.Byte[]})
+  name.vb: Push(Int32, Message(Of Byte(), Byte()))
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message<System.Byte[], System.Byte[]>)
+  fullName.vb: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push(System.Int32, Confluent.Kafka.Message(Of System.Byte(), System.Byte()))
+  nameWithType: IInMemoryTopic.Push(Int32, Message<Byte[], Byte[]>)
+  nameWithType.vb: IInMemoryTopic.Push(Int32, Message(Of Byte(), Byte()))
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Push*
   name: Push
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_Push_
@@ -12731,6 +12679,31 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync
   nameWithType: IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
+  name: IInMemoryTopicCollection
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html
+  commentId: T:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection
+  nameWithType: IInMemoryTopicCollection
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,Confluent.Kafka.ClientConfig)
+  name: Get(String, ClientConfig)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_System_String_Confluent_Kafka_ClientConfig_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,Confluent.Kafka.ClientConfig)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String, Confluent.Kafka.ClientConfig)
+  nameWithType: IInMemoryTopicCollection.Get(String, ClientConfig)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,System.String)
+  name: Get(String, String)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_System_String_System_String_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String,System.String)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get(System.String, System.String)
+  nameWithType: IInMemoryTopicCollection.Get(String, String)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get*
+  name: Get
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopicCollection_Get_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection.Get
+  nameWithType: IInMemoryTopicCollection.Get
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer
   name: IMockedConfluentConsumer
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html
@@ -12808,57 +12781,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaBroker.KafkaBroker
   nameWithType: KafkaBroker.KafkaBroker
-- uid: Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
-  name: Dispose(Boolean)
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_Dispose_System_Boolean_
-  commentId: M:Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
-  fullName: Silverback.Messaging.Broker.KafkaBroker.Dispose(System.Boolean)
-  nameWithType: KafkaBroker.Dispose(Boolean)
-- uid: Silverback.Messaging.Broker.KafkaBroker.Dispose*
-  name: Dispose
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_Dispose_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.Dispose
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaBroker.Dispose
-  nameWithType: KafkaBroker.Dispose
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
-  name: GetProducer(IProducerEndpoint)
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_Silverback_Messaging_IProducerEndpoint_
-  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer(Silverback.Messaging.IProducerEndpoint)
-  nameWithType: KafkaBroker.GetProducer(IProducerEndpoint)
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
-  name: GetProducer(String)
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_System_String_
-  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer(System.String)
-  nameWithType: KafkaBroker.GetProducer(String)
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetProducer*
-  name: GetProducer
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetProducer_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.GetProducer
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetProducer
-  nameWithType: KafkaBroker.GetProducer
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
-  name: GetTransactionalProducer(IProducerEndpoint)
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_Silverback_Messaging_IProducerEndpoint_
-  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(Silverback.Messaging.IProducerEndpoint)
-  nameWithType: KafkaBroker.GetTransactionalProducer(IProducerEndpoint)
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
-  name: GetTransactionalProducer(String)
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_System_String_
-  commentId: M:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer(System.String)
-  nameWithType: KafkaBroker.GetTransactionalProducer(String)
-- uid: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer*
-  name: GetTransactionalProducer
-  href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_GetTransactionalProducer_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaBroker.GetTransactionalProducer
-  nameWithType: KafkaBroker.GetTransactionalProducer
 - uid: Silverback.Messaging.Broker.KafkaBroker.InstantiateConsumer(Silverback.Messaging.KafkaConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)
   name: InstantiateConsumer(KafkaConsumerEndpoint, IBrokerBehaviorsProvider<IConsumerBehavior>, IServiceProvider)
   href: api/Silverback.Messaging.Broker.KafkaBroker.html#Silverback_Messaging_Broker_KafkaBroker_InstantiateConsumer_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_
@@ -13334,12 +13256,6 @@ references:
   commentId: M:Silverback.Messaging.Broker.KafkaProducer.Dispose
   fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose()
   nameWithType: KafkaProducer.Dispose()
-- uid: Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
-  name: Dispose(Boolean)
-  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_Dispose_System_Boolean_
-  commentId: M:Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
-  fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)
-  nameWithType: KafkaProducer.Dispose(Boolean)
 - uid: Silverback.Messaging.Broker.KafkaProducer.Dispose*
   name: Dispose
   href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_Dispose_
@@ -13347,19 +13263,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaProducer.Dispose
   nameWithType: KafkaProducer.Dispose
-- uid: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
-  name: GetConfluentProducer()
-  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer
-  commentId: M:Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
-  fullName: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer()
-  nameWithType: KafkaProducer.GetConfluentProducer()
-- uid: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer*
-  name: GetConfluentProducer
-  href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer
-  nameWithType: KafkaProducer.GetConfluentProducer
 - uid: Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)
   name: ProduceCore(Object, Byte[], IReadOnlyCollection<MessageHeader>, String)
   href: api/Silverback.Messaging.Broker.KafkaProducer.html#Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_
@@ -13446,80 +13349,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync
   nameWithType: KafkaProducer.ProduceCoreAsync
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer
-  name: KafkaTransactionalProducer
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html
-  commentId: T:Silverback.Messaging.Broker.KafkaTransactionalProducer
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer
-  nameWithType: KafkaTransactionalProducer
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentProducersCache,System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})
-  name: KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider<IProducerBehavior>, IConfluentProducersCache, IServiceProvider, IOutboundLogger<KafkaProducer>)
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_KafkaProducer__
-  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentProducersCache,System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})
-  name.vb: KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider(Of IProducerBehavior), IConfluentProducersCache, IServiceProvider, IOutboundLogger(Of KafkaProducer))
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer(Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaProducerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider<Silverback.Messaging.Broker.Behaviors.IProducerBehavior>, Silverback.Messaging.Broker.Kafka.IConfluentProducersCache, System.IServiceProvider, Silverback.Diagnostics.IOutboundLogger<Silverback.Messaging.Broker.KafkaProducer>)
-  fullName.vb: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer(Silverback.Messaging.Broker.KafkaBroker, Silverback.Messaging.KafkaProducerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider(Of Silverback.Messaging.Broker.Behaviors.IProducerBehavior), Silverback.Messaging.Broker.Kafka.IConfluentProducersCache, System.IServiceProvider, Silverback.Diagnostics.IOutboundLogger(Of Silverback.Messaging.Broker.KafkaProducer))
-  nameWithType: KafkaTransactionalProducer.KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider<IProducerBehavior>, IConfluentProducersCache, IServiceProvider, IOutboundLogger<KafkaProducer>)
-  nameWithType.vb: KafkaTransactionalProducer.KafkaTransactionalProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider(Of IProducerBehavior), IConfluentProducersCache, IServiceProvider, IOutboundLogger(Of KafkaProducer))
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor*
-  name: KafkaTransactionalProducer
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer__ctor_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.#ctor
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.KafkaTransactionalProducer
-  nameWithType: KafkaTransactionalProducer.KafkaTransactionalProducer
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
-  name: AbortTransaction()
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_AbortTransaction
-  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction()
-  nameWithType: KafkaTransactionalProducer.AbortTransaction()
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction*
-  name: AbortTransaction
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_AbortTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.AbortTransaction
-  nameWithType: KafkaTransactionalProducer.AbortTransaction
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
-  name: BeginTransaction()
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_BeginTransaction
-  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction()
-  nameWithType: KafkaTransactionalProducer.BeginTransaction()
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction*
-  name: BeginTransaction
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_BeginTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.BeginTransaction
-  nameWithType: KafkaTransactionalProducer.BeginTransaction
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
-  name: CommitTransaction()
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_CommitTransaction
-  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction()
-  nameWithType: KafkaTransactionalProducer.CommitTransaction()
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction*
-  name: CommitTransaction
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_CommitTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.CommitTransaction
-  nameWithType: KafkaTransactionalProducer.CommitTransaction
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
-  name: InitTransaction()
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_InitTransaction
-  commentId: M:Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction()
-  nameWithType: KafkaTransactionalProducer.InitTransaction()
-- uid: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction*
-  name: InitTransaction
-  href: api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html#Silverback_Messaging_Broker_KafkaTransactionalProducer_InitTransaction_
-  commentId: Overload:Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.KafkaTransactionalProducer.InitTransaction
-  nameWithType: KafkaTransactionalProducer.InitTransaction
 - uid: Silverback.Messaging.Broker.Mqtt
   name: Silverback.Messaging.Broker.Mqtt
   href: api/Silverback.Messaging.Broker.Mqtt.html
@@ -13608,12 +13437,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker
   nameWithType: IInMemoryMqttBroker
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.MqttClientOptions,Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient)
-  name: Connect(MqttClientOptions, MockedMqttClient)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_MqttClientOptions_Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.MqttClientOptions,Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.MqttClientOptions, Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient)
-  nameWithType: IInMemoryMqttBroker.Connect(MqttClientOptions, MockedMqttClient)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.Options.IMqttClientOptions,MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler)
+  name: Connect(IMqttClientOptions, IMqttApplicationMessageReceivedHandler)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_MQTTnet_Client_Options_IMqttClientOptions_MQTTnet_Client_Receiving_IMqttApplicationMessageReceivedHandler_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.Options.IMqttClientOptions,MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect(MQTTnet.Client.Options.IMqttClientOptions, MQTTnet.Client.Receiving.IMqttApplicationMessageReceivedHandler)
+  nameWithType: IInMemoryMqttBroker.Connect(IMqttClientOptions, IMqttApplicationMessageReceivedHandler)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.Connect*
   name: Connect
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Connect_
@@ -13660,12 +13489,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.GetMessages
   nameWithType: IInMemoryMqttBroker.GetMessages
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.MqttClientOptions)
-  name: PublishAsync(String, MqttApplicationMessage, MqttClientOptions)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_MqttClientOptions_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.MqttClientOptions)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String, MQTTnet.MqttApplicationMessage, MQTTnet.Client.MqttClientOptions)
-  nameWithType: IInMemoryMqttBroker.PublishAsync(String, MqttApplicationMessage, MqttClientOptions)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.Options.IMqttClientOptions)
+  name: PublishAsync(String, MqttApplicationMessage, IMqttClientOptions)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_System_String_MQTTnet_MqttApplicationMessage_MQTTnet_Client_Options_IMqttClientOptions_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String,MQTTnet.MqttApplicationMessage,MQTTnet.Client.Options.IMqttClientOptions)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync(System.String, MQTTnet.MqttApplicationMessage, MQTTnet.Client.Options.IMqttClientOptions)
+  nameWithType: IInMemoryMqttBroker.PublishAsync(String, MqttApplicationMessage, IMqttClientOptions)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.PublishAsync*
   name: PublishAsync
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html#Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_PublishAsync_
@@ -13737,18 +13566,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.MockedMqttClient
   nameWithType: MockedMqttClient.MockedMqttClient
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedAsync
-  name: ApplicationMessageReceivedAsync
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedAsync
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedAsync
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedAsync
-  nameWithType: MockedMqttClient.ApplicationMessageReceivedAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.MqttClientOptions,System.Threading.CancellationToken)
-  name: ConnectAsync(MqttClientOptions, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_MqttClientOptions_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.MqttClientOptions,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.MqttClientOptions, System.Threading.CancellationToken)
-  nameWithType: MockedMqttClient.ConnectAsync(MqttClientOptions, CancellationToken)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler
+  name: ApplicationMessageReceivedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedHandler
+  commentId: P:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler
+  nameWithType: MockedMqttClient.ApplicationMessageReceivedHandler
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler*
+  name: ApplicationMessageReceivedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ApplicationMessageReceivedHandler_
+  commentId: Overload:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ApplicationMessageReceivedHandler
+  nameWithType: MockedMqttClient.ApplicationMessageReceivedHandler
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.Options.IMqttClientOptions,System.Threading.CancellationToken)
+  name: ConnectAsync(IMqttClientOptions, CancellationToken)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_MQTTnet_Client_Options_IMqttClientOptions_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.Options.IMqttClientOptions,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync(MQTTnet.Client.Options.IMqttClientOptions, System.Threading.CancellationToken)
+  nameWithType: MockedMqttClient.ConnectAsync(IMqttClientOptions, CancellationToken)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync*
   name: ConnectAsync
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectAsync_
@@ -13756,23 +13592,24 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectAsync
   nameWithType: MockedMqttClient.ConnectAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedAsync
-  name: ConnectedAsync
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedAsync
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedAsync
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedAsync
-  nameWithType: MockedMqttClient.ConnectedAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectingAsync
-  name: ConnectingAsync
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectingAsync
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectingAsync
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectingAsync
-  nameWithType: MockedMqttClient.ConnectingAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.MqttClientDisconnectOptions,System.Threading.CancellationToken)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler
+  name: ConnectedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedHandler
+  commentId: P:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler
+  nameWithType: MockedMqttClient.ConnectedHandler
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler*
+  name: ConnectedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_ConnectedHandler_
+  commentId: Overload:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.ConnectedHandler
+  nameWithType: MockedMqttClient.ConnectedHandler
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions,System.Threading.CancellationToken)
   name: DisconnectAsync(MqttClientDisconnectOptions, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_MqttClientDisconnectOptions_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.MqttClientDisconnectOptions,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.MqttClientDisconnectOptions, System.Threading.CancellationToken)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectAsync_MQTTnet_Client_Disconnecting_MqttClientDisconnectOptions_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync(MQTTnet.Client.Disconnecting.MqttClientDisconnectOptions, System.Threading.CancellationToken)
   nameWithType: MockedMqttClient.DisconnectAsync(MqttClientDisconnectOptions, CancellationToken)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync*
   name: DisconnectAsync
@@ -13781,12 +13618,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectAsync
   nameWithType: MockedMqttClient.DisconnectAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedAsync
-  name: DisconnectedAsync
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedAsync
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedAsync
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedAsync
-  nameWithType: MockedMqttClient.DisconnectedAsync
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler
+  name: DisconnectedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedHandler
+  commentId: P:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler
+  nameWithType: MockedMqttClient.DisconnectedHandler
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler*
+  name: DisconnectedHandler
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_DisconnectedHandler_
+  commentId: Overload:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.DisconnectedHandler
+  nameWithType: MockedMqttClient.DisconnectedHandler
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose
   name: Dispose()
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Dispose
@@ -13800,12 +13644,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose
   nameWithType: MockedMqttClient.Dispose
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  name: InspectPackage
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_InspectPackage
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  nameWithType: MockedMqttClient.InspectPackage
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync(MQTTnet.MqttApplicationMessageReceivedEventArgs)
+  name: HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_HandleApplicationMessageReceivedAsync_MQTTnet_MqttApplicationMessageReceivedEventArgs_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync(MQTTnet.MqttApplicationMessageReceivedEventArgs)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync(MQTTnet.MqttApplicationMessageReceivedEventArgs)
+  nameWithType: MockedMqttClient.HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync*
+  name: HandleApplicationMessageReceivedAsync
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_HandleApplicationMessageReceivedAsync_
+  commentId: Overload:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.HandleApplicationMessageReceivedAsync
+  nameWithType: MockedMqttClient.HandleApplicationMessageReceivedAsync
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected
   name: IsConnected
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConnected
@@ -13819,19 +13670,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected
   nameWithType: MockedMqttClient.IsConnected
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected
-  name: IsConsumerConnected
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConsumerConnected
-  commentId: P:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected
-  nameWithType: MockedMqttClient.IsConsumerConnected
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected*
-  name: IsConsumerConnected
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConsumerConnected_
-  commentId: Overload:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected
-  isSpec: "True"
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConsumerConnected
-  nameWithType: MockedMqttClient.IsConsumerConnected
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Options
   name: Options
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_Options
@@ -13871,11 +13709,11 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.PublishAsync
   nameWithType: MockedMqttClient.PublishAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)
   name: SendExtendedAuthenticationExchangeDataAsync(MqttExtendedAuthenticationExchangeData, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.MqttExtendedAuthenticationExchangeData, System.Threading.CancellationToken)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SendExtendedAuthenticationExchangeDataAsync_MQTTnet_Client_ExtendedAuthenticationExchange_MqttExtendedAuthenticationExchangeData_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MQTTnet.Client.ExtendedAuthenticationExchange.MqttExtendedAuthenticationExchangeData, System.Threading.CancellationToken)
   nameWithType: MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync(MqttExtendedAuthenticationExchangeData, CancellationToken)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync*
   name: SendExtendedAuthenticationExchangeDataAsync
@@ -13884,11 +13722,11 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync
   nameWithType: MockedMqttClient.SendExtendedAuthenticationExchangeDataAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.MqttClientSubscribeOptions,System.Threading.CancellationToken)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.Subscribing.MqttClientSubscribeOptions,System.Threading.CancellationToken)
   name: SubscribeAsync(MqttClientSubscribeOptions, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_MqttClientSubscribeOptions_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.MqttClientSubscribeOptions,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.MqttClientSubscribeOptions, System.Threading.CancellationToken)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_SubscribeAsync_MQTTnet_Client_Subscribing_MqttClientSubscribeOptions_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.Subscribing.MqttClientSubscribeOptions,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync(MQTTnet.Client.Subscribing.MqttClientSubscribeOptions, System.Threading.CancellationToken)
   nameWithType: MockedMqttClient.SubscribeAsync(MqttClientSubscribeOptions, CancellationToken)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync*
   name: SubscribeAsync
@@ -13897,11 +13735,11 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.SubscribeAsync
   nameWithType: MockedMqttClient.SubscribeAsync
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)
   name: UnsubscribeAsync(MqttClientUnsubscribeOptions, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.MqttClientUnsubscribeOptions, System.Threading.CancellationToken)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_UnsubscribeAsync_MQTTnet_Client_Unsubscribing_MqttClientUnsubscribeOptions_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync(MQTTnet.Client.Unsubscribing.MqttClientUnsubscribeOptions, System.Threading.CancellationToken)
   nameWithType: MockedMqttClient.UnsubscribeAsync(MqttClientUnsubscribeOptions, CancellationToken)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.UnsubscribeAsync*
   name: UnsubscribeAsync
@@ -13966,11 +13804,11 @@ references:
   commentId: M:Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String)
   fullName: Silverback.Messaging.Broker.Mqtt.MqttProduceException.MqttProduceException(System.String)
   nameWithType: MqttProduceException.MqttProduceException(String)
-- uid: Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,MQTTnet.Client.MqttClientPublishResult)
+- uid: Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,MQTTnet.Client.Publishing.MqttClientPublishResult)
   name: MqttProduceException(String, MqttClientPublishResult)
-  href: api/Silverback.Messaging.Broker.Mqtt.MqttProduceException.html#Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_System_String_MQTTnet_Client_MqttClientPublishResult_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,MQTTnet.Client.MqttClientPublishResult)
-  fullName: Silverback.Messaging.Broker.Mqtt.MqttProduceException.MqttProduceException(System.String, MQTTnet.Client.MqttClientPublishResult)
+  href: api/Silverback.Messaging.Broker.Mqtt.MqttProduceException.html#Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_System_String_MQTTnet_Client_Publishing_MqttClientPublishResult_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,MQTTnet.Client.Publishing.MqttClientPublishResult)
+  fullName: Silverback.Messaging.Broker.Mqtt.MqttProduceException.MqttProduceException(System.String, MQTTnet.Client.Publishing.MqttClientPublishResult)
   nameWithType: MqttProduceException.MqttProduceException(String, MqttClientPublishResult)
 - uid: Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,System.Exception)
   name: MqttProduceException(String, Exception)
@@ -18399,32 +18237,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslMechanism
   nameWithType: ConfluentClientConfigProxy.SaslMechanism
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId
-  name: SaslOauthbearerClientId
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerClientId
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerClientId
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId*
-  name: SaslOauthbearerClientId
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerClientId_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientId
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerClientId
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-  name: SaslOauthbearerClientSecret
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerClientSecret
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret*
-  name: SaslOauthbearerClientSecret
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerClientSecret_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerClientSecret
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerClientSecret
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerConfig
   name: SaslOauthbearerConfig
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerConfig
@@ -18438,58 +18250,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerConfig
   nameWithType: ConfluentClientConfigProxy.SaslOauthbearerConfig
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions
-  name: SaslOauthbearerExtensions
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerExtensions
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerExtensions
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions*
-  name: SaslOauthbearerExtensions
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerExtensions_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerExtensions
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerExtensions
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod
-  name: SaslOauthbearerMethod
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerMethod
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerMethod
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod*
-  name: SaslOauthbearerMethod
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerMethod_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerMethod
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerMethod
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope
-  name: SaslOauthbearerScope
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerScope
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerScope
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope*
-  name: SaslOauthbearerScope
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerScope_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerScope
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerScope
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-  name: SaslOauthbearerTokenEndpointUrl
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerTokenEndpointUrl
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl*
-  name: SaslOauthbearerTokenEndpointUrl
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslOauthbearerTokenEndpointUrl_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
-  nameWithType: ConfluentClientConfigProxy.SaslOauthbearerTokenEndpointUrl
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SaslPassword
   name: SaslPassword
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SaslPassword
@@ -18529,19 +18289,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SecurityProtocol
   nameWithType: ConfluentClientConfigProxy.SecurityProtocol
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-  name: SocketConnectionSetupTimeoutMs
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SocketConnectionSetupTimeoutMs
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-  nameWithType: ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs*
-  name: SocketConnectionSetupTimeoutMs
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SocketConnectionSetupTimeoutMs_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
-  nameWithType: ConfluentClientConfigProxy.SocketConnectionSetupTimeoutMs
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SocketKeepaliveEnable
   name: SocketKeepaliveEnable
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SocketKeepaliveEnable
@@ -18646,19 +18393,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaLocation
   nameWithType: ConfluentClientConfigProxy.SslCaLocation
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem
-  name: SslCaPem
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslCaPem
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem
-  nameWithType: ConfluentClientConfigProxy.SslCaPem
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem*
-  name: SslCaPem
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslCaPem_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCaPem
-  nameWithType: ConfluentClientConfigProxy.SslCaPem
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslCertificateLocation
   name: SslCertificateLocation
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslCertificateLocation
@@ -20168,19 +19902,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode
   nameWithType: KafkaConsumerConfig.GetHashCode
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId
-  name: GroupId
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GroupId
-  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId
-  nameWithType: KafkaConsumerConfig.GroupId
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId*
-  name: GroupId
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GroupId_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GroupId
-  nameWithType: KafkaConsumerConfig.GroupId
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsAutoCommitEnabled
   name: IsAutoCommitEnabled
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsAutoCommitEnabled
@@ -20194,19 +19915,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsAutoCommitEnabled
   nameWithType: KafkaConsumerConfig.IsAutoCommitEnabled
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet
-  name: IsGroupIdSet
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsGroupIdSet
-  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet
-  nameWithType: KafkaConsumerConfig.IsGroupIdSet
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet*
-  name: IsGroupIdSet
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsGroupIdSet_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsGroupIdSet
-  nameWithType: KafkaConsumerConfig.IsGroupIdSet
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate
   name: Validate()
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate
@@ -20506,19 +20214,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.ThrowIfNotAcknowledged
   nameWithType: KafkaProducerConfig.ThrowIfNotAcknowledged
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
-  name: TransactionInitTimeout
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_TransactionInitTimeout
-  commentId: P:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
-  nameWithType: KafkaProducerConfig.TransactionInitTimeout
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout*
-  name: TransactionInitTimeout
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_TransactionInitTimeout_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.TransactionInitTimeout
-  nameWithType: KafkaProducerConfig.TransactionInitTimeout
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.Validate
   name: Validate()
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig_Validate
@@ -20777,32 +20472,13 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.AddUserProperty
   nameWithType: IMqttClientConfigBuilder.AddUserProperty
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.String)
-  name: ConnectTo(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.String)
-  nameWithType: IMqttClientConfigBuilder.ConnectTo(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.Uri)
-  name: ConnectTo(Uri)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_System_Uri_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.Uri)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.Uri)
-  nameWithType: IMqttClientConfigBuilder.ConnectTo(Uri)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo*
-  name: ConnectTo
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo
-  nameWithType: IMqttClientConfigBuilder.ConnectTo
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.MqttClientTcpOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.Options.MqttClientTcpOptions})
   name: ConnectViaTcp(Action<MqttClientTcpOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_MqttClientTcpOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.MqttClientTcpOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_Options_MqttClientTcpOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.Options.MqttClientTcpOptions})
   name.vb: ConnectViaTcp(Action(Of MqttClientTcpOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action<MQTTnet.Client.MqttClientTcpOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action(Of MQTTnet.Client.MqttClientTcpOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action<MQTTnet.Client.Options.MqttClientTcpOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action(Of MQTTnet.Client.Options.MqttClientTcpOptions))
   nameWithType: IMqttClientConfigBuilder.ConnectViaTcp(Action<MqttClientTcpOptions>)
   nameWithType.vb: IMqttClientConfigBuilder.ConnectViaTcp(Action(Of MqttClientTcpOptions))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.String,System.Nullable{System.Int32})
@@ -20821,28 +20497,28 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp
   nameWithType: IMqttClientConfigBuilder.ConnectViaTcp
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.Options.MqttClientWebSocketOptions})
   name: ConnectViaWebSocket(Action<MqttClientWebSocketOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_Options_MqttClientWebSocketOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.Options.MqttClientWebSocketOptions})
   name.vb: ConnectViaWebSocket(Action(Of MqttClientWebSocketOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action<MQTTnet.Client.MqttClientWebSocketOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action(Of MQTTnet.Client.MqttClientWebSocketOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action<MQTTnet.Client.Options.MqttClientWebSocketOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action(Of MQTTnet.Client.Options.MqttClientWebSocketOptions))
   nameWithType: IMqttClientConfigBuilder.ConnectViaWebSocket(Action<MqttClientWebSocketOptions>)
   nameWithType.vb: IMqttClientConfigBuilder.ConnectViaWebSocket(Action(Of MqttClientWebSocketOptions))
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
   name: ConnectViaWebSocket(String, MqttClientOptionsBuilderWebSocketParameters)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_Options_MqttClientOptionsBuilderWebSocketParameters_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
   nameWithType: IMqttClientConfigBuilder.ConnectViaWebSocket(String, MqttClientOptionsBuilderWebSocketParameters)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters})
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters})
   name: ConnectViaWebSocket(String, Action<MqttClientOptionsBuilderWebSocketParameters>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters})
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_Options_MqttClientOptionsBuilderWebSocketParameters__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters})
   name.vb: ConnectViaWebSocket(String, Action(Of MqttClientOptionsBuilderWebSocketParameters))
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action<MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action(Of MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action<MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action(Of MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters))
   nameWithType: IMqttClientConfigBuilder.ConnectViaWebSocket(String, Action<MqttClientOptionsBuilderWebSocketParameters>)
   nameWithType.vb: IMqttClientConfigBuilder.ConnectViaWebSocket(String, Action(Of MqttClientOptionsBuilderWebSocketParameters))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket*
@@ -20910,19 +20586,19 @@ references:
   commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls()
   nameWithType: IMqttClientConfigBuilder.EnableTls()
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
   name: EnableTls(MqttClientOptionsBuilderTlsParameters)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_Options_MqttClientOptionsBuilderTlsParameters_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
   nameWithType: IMqttClientConfigBuilder.EnableTls(MqttClientOptionsBuilderTlsParameters)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientOptionsBuilderTlsParameters})
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters})
   name: EnableTls(Action<MqttClientOptionsBuilderTlsParameters>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientOptionsBuilderTlsParameters})
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_Options_MqttClientOptionsBuilderTlsParameters__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters})
   name.vb: EnableTls(Action(Of MqttClientOptionsBuilderTlsParameters))
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action<MQTTnet.Client.MqttClientOptionsBuilderTlsParameters>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action(Of MQTTnet.Client.MqttClientOptionsBuilderTlsParameters))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action<MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action(Of MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters))
   nameWithType: IMqttClientConfigBuilder.EnableTls(Action<MqttClientOptionsBuilderTlsParameters>)
   nameWithType.vb: IMqttClientConfigBuilder.EnableTls(Action(Of MqttClientOptionsBuilderTlsParameters))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*
@@ -20932,12 +20608,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls
   nameWithType: IMqttClientConfigBuilder.EnableTls
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  name: LimitPacketSize(UInt32)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_System_UInt32_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  nameWithType: IMqttClientConfigBuilder.LimitPacketSize(UInt32)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  name: LimitPacketSize(Int64)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_System_Int64_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  nameWithType: IMqttClientConfigBuilder.LimitPacketSize(Int64)
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize*
   name: LimitPacketSize
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_
@@ -20958,12 +20634,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitTopicAlias
   nameWithType: IMqttClientConfigBuilder.LimitTopicAlias
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  name: LimitUnacknowledgedPublications(UInt16)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_System_UInt16_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  nameWithType: IMqttClientConfigBuilder.LimitUnacknowledgedPublications(UInt16)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  name: LimitUnacknowledgedPublications(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  nameWithType: IMqttClientConfigBuilder.LimitUnacknowledgedPublications(Int32)
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications*
   name: LimitUnacknowledgedPublications
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_
@@ -21052,11 +20728,11 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendLastWillMessage
   nameWithType: IMqttClientConfigBuilder.SendLastWillMessage
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
   name: UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_IMqttExtendedAuthenticationExchangeHandler_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_ExtendedAuthenticationExchange_IMqttExtendedAuthenticationExchangeHandler_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
   nameWithType: IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler)
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(System.Type)
   name: UseExtendedAuthenticationExchangeHandler(Type)
@@ -21093,13 +20769,13 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProtocolVersion
   nameWithType: IMqttClientConfigBuilder.UseProtocolVersion
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.MqttClientWebSocketProxyOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.Options.MqttClientWebSocketProxyOptions})
   name: UseProxy(Action<MqttClientWebSocketProxyOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_MqttClientWebSocketProxyOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.MqttClientWebSocketProxyOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_Options_MqttClientWebSocketProxyOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.Options.MqttClientWebSocketProxyOptions})
   name.vb: UseProxy(Action(Of MqttClientWebSocketProxyOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action<MQTTnet.Client.MqttClientWebSocketProxyOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action(Of MQTTnet.Client.MqttClientWebSocketProxyOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action<MQTTnet.Client.Options.MqttClientWebSocketProxyOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action(Of MQTTnet.Client.Options.MqttClientWebSocketProxyOptions))
   nameWithType: IMqttClientConfigBuilder.UseProxy(Action<MqttClientWebSocketProxyOptions>)
   nameWithType.vb: IMqttClientConfigBuilder.UseProxy(Action(Of MqttClientWebSocketProxyOptions))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.String,System.String,System.String,System.String,System.Boolean,System.String[])
@@ -21147,12 +20823,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithClientId
   nameWithType: IMqttClientConfigBuilder.WithClientId
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  name: WithCredentials(IMqttClientCredentialsProvider)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_MQTTnet_Client_IMqttClientCredentialsProvider_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  nameWithType: IMqttClientConfigBuilder.WithCredentials(IMqttClientCredentialsProvider)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  name: WithCommunicationTimeout(TimeSpan)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCommunicationTimeout_System_TimeSpan_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  nameWithType: IMqttClientConfigBuilder.WithCommunicationTimeout(TimeSpan)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout*
+  name: WithCommunicationTimeout
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCommunicationTimeout_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCommunicationTimeout
+  nameWithType: IMqttClientConfigBuilder.WithCommunicationTimeout
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  name: WithCredentials(IMqttClientCredentials)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_MQTTnet_Client_Options_IMqttClientCredentials_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  nameWithType: IMqttClientConfigBuilder.WithCredentials(IMqttClientCredentials)
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(System.String,System.Byte[])
   name: WithCredentials(String, Byte[])
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_System_String_System_Byte___
@@ -21175,19 +20864,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials
   nameWithType: IMqttClientConfigBuilder.WithCredentials
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate
-  name: WithoutTryPrivate()
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithoutTryPrivate
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate()
-  nameWithType: IMqttClientConfigBuilder.WithoutTryPrivate()
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate*
-  name: WithoutTryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithoutTryPrivate_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate
-  nameWithType: IMqttClientConfigBuilder.WithoutTryPrivate
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithSessionExpiration(System.TimeSpan)
   name: WithSessionExpiration(TimeSpan)
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithSessionExpiration_System_TimeSpan_
@@ -21201,32 +20877,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithSessionExpiration
   nameWithType: IMqttClientConfigBuilder.WithSessionExpiration
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  name: WithTimeout(TimeSpan)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTimeout_System_TimeSpan_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  nameWithType: IMqttClientConfigBuilder.WithTimeout(TimeSpan)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout*
-  name: WithTimeout
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTimeout_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout
-  nameWithType: IMqttClientConfigBuilder.WithTimeout
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate
-  name: WithTryPrivate()
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTryPrivate
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate()
-  nameWithType: IMqttClientConfigBuilder.WithTryPrivate()
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate*
-  name: WithTryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTryPrivate_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate
-  nameWithType: IMqttClientConfigBuilder.WithTryPrivate
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder
   name: IMqttConsumerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html
@@ -21458,19 +21108,6 @@ references:
   commentId: T:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder
   nameWithType: IMqttLastWillMessageBuilder
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty(System.String,System.String)
-  name: AddUserProperty(String, String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_AddUserProperty_System_String_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty(System.String,System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty(System.String, System.String)
-  nameWithType: IMqttLastWillMessageBuilder.AddUserProperty(String, String)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty*
-  name: AddUserProperty
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_AddUserProperty_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.AddUserProperty
-  nameWithType: IMqttLastWillMessageBuilder.AddUserProperty
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.Message(System.Object)
   name: Message(Object)
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_Message_System_Object_
@@ -21565,35 +21202,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithAtMostOnceQoS
   nameWithType: IMqttLastWillMessageBuilder.WithAtMostOnceQoS
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType(System.String)
-  name: WithContentType(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithContentType_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType(System.String)
-  nameWithType: IMqttLastWillMessageBuilder.WithContentType(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType*
-  name: WithContentType
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithContentType_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithContentType
-  nameWithType: IMqttLastWillMessageBuilder.WithContentType
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  name: WithCorrelationData(Byte[])
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithCorrelationData_System_Byte___
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  name.vb: WithCorrelationData(Byte())
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData(System.Byte())
-  nameWithType: IMqttLastWillMessageBuilder.WithCorrelationData(Byte[])
-  nameWithType.vb: IMqttLastWillMessageBuilder.WithCorrelationData(Byte())
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData*
-  name: WithCorrelationData
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithCorrelationData_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithCorrelationData
-  nameWithType: IMqttLastWillMessageBuilder.WithCorrelationData
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithDelay(System.TimeSpan)
   name: WithDelay(TimeSpan)
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithDelay_System_TimeSpan_
@@ -21620,19 +21228,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithExactlyOnceQoS
   nameWithType: IMqttLastWillMessageBuilder.WithExactlyOnceQoS
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  name: WithPayloadFormatIndicator(MqttPayloadFormatIndicator)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithPayloadFormatIndicator_MQTTnet_Protocol_MqttPayloadFormatIndicator_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  nameWithType: IMqttLastWillMessageBuilder.WithPayloadFormatIndicator(MqttPayloadFormatIndicator)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator*
-  name: WithPayloadFormatIndicator
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithPayloadFormatIndicator_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithPayloadFormatIndicator
-  nameWithType: IMqttLastWillMessageBuilder.WithPayloadFormatIndicator
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)
   name: WithQualityOfServiceLevel(MqttQualityOfServiceLevel)
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_
@@ -21646,19 +21241,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithQualityOfServiceLevel
   nameWithType: IMqttLastWillMessageBuilder.WithQualityOfServiceLevel
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  name: WithResponseTopic(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithResponseTopic_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  nameWithType: IMqttLastWillMessageBuilder.WithResponseTopic(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic*
-  name: WithResponseTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder_WithResponseTopic_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.WithResponseTopic
-  nameWithType: IMqttLastWillMessageBuilder.WithResponseTopic
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder
   name: IMqttProducerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html
@@ -21876,11 +21458,11 @@ references:
   commentId: T:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig
   nameWithType: MqttClientConfig
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(MQTTnet.Client.MqttClientOptions)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(MQTTnet.Client.Options.MqttClientOptions)
   name: MqttClientConfig(MqttClientOptions)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_MQTTnet_Client_MqttClientOptions_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(MQTTnet.Client.MqttClientOptions)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.MqttClientConfig(MQTTnet.Client.MqttClientOptions)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_MQTTnet_Client_Options_MqttClientOptions_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(MQTTnet.Client.Options.MqttClientOptions)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.MqttClientConfig(MQTTnet.Client.Options.MqttClientOptions)
   nameWithType: MqttClientConfig.MqttClientConfig(MqttClientOptions)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor*
   name: MqttClientConfig
@@ -21954,6 +21536,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.ClientId
   nameWithType: MqttClientConfig.ClientId
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout
+  name: CommunicationTimeout
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_CommunicationTimeout
+  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout
+  nameWithType: MqttClientConfig.CommunicationTimeout
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout*
+  name: CommunicationTimeout
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_CommunicationTimeout_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.CommunicationTimeout
+  nameWithType: MqttClientConfig.CommunicationTimeout
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Credentials
   name: Credentials
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Credentials
@@ -22103,19 +21698,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.SessionExpiryInterval
   nameWithType: MqttClientConfig.SessionExpiryInterval
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout
-  name: Timeout
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Timeout
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout
-  nameWithType: MqttClientConfig.Timeout
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout*
-  name: Timeout
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Timeout_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Timeout
-  nameWithType: MqttClientConfig.Timeout
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TopicAliasMaximum
   name: TopicAliasMaximum
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_TopicAliasMaximum
@@ -22129,19 +21711,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TopicAliasMaximum
   nameWithType: MqttClientConfig.TopicAliasMaximum
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate
-  name: TryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_TryPrivate
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate
-  nameWithType: MqttClientConfig.TryPrivate
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate*
-  name: TryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_TryPrivate_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.TryPrivate
-  nameWithType: MqttClientConfig.TryPrivate
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.UserProperties
   name: UserProperties
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_UserProperties
@@ -22168,32 +21737,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.Validate
   nameWithType: MqttClientConfig.Validate
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType
-  name: WillContentType
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillContentType
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType
-  nameWithType: MqttClientConfig.WillContentType
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType*
-  name: WillContentType
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillContentType_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillContentType
-  nameWithType: MqttClientConfig.WillContentType
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData
-  name: WillCorrelationData
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillCorrelationData
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData
-  nameWithType: MqttClientConfig.WillCorrelationData
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData*
-  name: WillCorrelationData
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillCorrelationData_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillCorrelationData
-  nameWithType: MqttClientConfig.WillCorrelationData
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillDelayInterval
   name: WillDelayInterval
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillDelayInterval
@@ -22207,136 +21750,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillDelayInterval
   nameWithType: MqttClientConfig.WillDelayInterval
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval
-  name: WillMessageExpiryInterval
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillMessageExpiryInterval
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval
-  nameWithType: MqttClientConfig.WillMessageExpiryInterval
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval*
-  name: WillMessageExpiryInterval
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillMessageExpiryInterval_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage
+  name: WillMessage
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillMessage
+  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage
+  nameWithType: MqttClientConfig.WillMessage
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage*
+  name: WillMessage
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillMessage_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage
   isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessageExpiryInterval
-  nameWithType: MqttClientConfig.WillMessageExpiryInterval
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload
-  name: WillPayload
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillPayload
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload
-  nameWithType: MqttClientConfig.WillPayload
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload*
-  name: WillPayload
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillPayload_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayload
-  nameWithType: MqttClientConfig.WillPayload
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator
-  name: WillPayloadFormatIndicator
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillPayloadFormatIndicator
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator
-  nameWithType: MqttClientConfig.WillPayloadFormatIndicator
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator*
-  name: WillPayloadFormatIndicator
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillPayloadFormatIndicator_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillPayloadFormatIndicator
-  nameWithType: MqttClientConfig.WillPayloadFormatIndicator
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel
-  name: WillQualityOfServiceLevel
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillQualityOfServiceLevel
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel
-  nameWithType: MqttClientConfig.WillQualityOfServiceLevel
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel*
-  name: WillQualityOfServiceLevel
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillQualityOfServiceLevel_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillQualityOfServiceLevel
-  nameWithType: MqttClientConfig.WillQualityOfServiceLevel
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic
-  name: WillResponseTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillResponseTopic
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic
-  nameWithType: MqttClientConfig.WillResponseTopic
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic*
-  name: WillResponseTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillResponseTopic_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillResponseTopic
-  nameWithType: MqttClientConfig.WillResponseTopic
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain
-  name: WillRetain
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillRetain
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain
-  nameWithType: MqttClientConfig.WillRetain
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain*
-  name: WillRetain
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillRetain_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillRetain
-  nameWithType: MqttClientConfig.WillRetain
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic
-  name: WillTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillTopic
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic
-  nameWithType: MqttClientConfig.WillTopic
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic*
-  name: WillTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillTopic_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillTopic
-  nameWithType: MqttClientConfig.WillTopic
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties
-  name: WillUserProperties
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillUserProperties
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties
-  nameWithType: MqttClientConfig.WillUserProperties
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties*
-  name: WillUserProperties
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WillUserProperties_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillUserProperties
-  nameWithType: MqttClientConfig.WillUserProperties
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize
-  name: WriterBufferSize
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WriterBufferSize
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize
-  nameWithType: MqttClientConfig.WriterBufferSize
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize*
-  name: WriterBufferSize
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WriterBufferSize_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSize
-  nameWithType: MqttClientConfig.WriterBufferSize
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax
-  name: WriterBufferSizeMax
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WriterBufferSizeMax
-  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax
-  nameWithType: MqttClientConfig.WriterBufferSizeMax
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax*
-  name: WriterBufferSizeMax
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_WriterBufferSizeMax_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WriterBufferSizeMax
-  nameWithType: MqttClientConfig.WriterBufferSizeMax
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.WillMessage
+  nameWithType: MqttClientConfig.WillMessage
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder
   name: MqttClientConfigBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html
@@ -22388,32 +21814,13 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.Build
   nameWithType: MqttClientConfigBuilder.Build
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.String)
-  name: ConnectTo(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectTo_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.String)
-  nameWithType: MqttClientConfigBuilder.ConnectTo(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.Uri)
-  name: ConnectTo(Uri)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectTo_System_Uri_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.Uri)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo(System.Uri)
-  nameWithType: MqttClientConfigBuilder.ConnectTo(Uri)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo*
-  name: ConnectTo
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectTo_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectTo
-  nameWithType: MqttClientConfigBuilder.ConnectTo
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.MqttClientTcpOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.Options.MqttClientTcpOptions})
   name: ConnectViaTcp(Action<MqttClientTcpOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_MqttClientTcpOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.MqttClientTcpOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_Options_MqttClientTcpOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.Options.MqttClientTcpOptions})
   name.vb: ConnectViaTcp(Action(Of MqttClientTcpOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action<MQTTnet.Client.MqttClientTcpOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action(Of MQTTnet.Client.MqttClientTcpOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action<MQTTnet.Client.Options.MqttClientTcpOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action(Of MQTTnet.Client.Options.MqttClientTcpOptions))
   nameWithType: MqttClientConfigBuilder.ConnectViaTcp(Action<MqttClientTcpOptions>)
   nameWithType.vb: MqttClientConfigBuilder.ConnectViaTcp(Action(Of MqttClientTcpOptions))
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.String,System.Nullable{System.Int32})
@@ -22432,28 +21839,28 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp
   nameWithType: MqttClientConfigBuilder.ConnectViaTcp
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.Options.MqttClientWebSocketOptions})
   name: ConnectViaWebSocket(Action<MqttClientWebSocketOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_Options_MqttClientWebSocketOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.Options.MqttClientWebSocketOptions})
   name.vb: ConnectViaWebSocket(Action(Of MqttClientWebSocketOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action<MQTTnet.Client.MqttClientWebSocketOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action(Of MQTTnet.Client.MqttClientWebSocketOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action<MQTTnet.Client.Options.MqttClientWebSocketOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action(Of MQTTnet.Client.Options.MqttClientWebSocketOptions))
   nameWithType: MqttClientConfigBuilder.ConnectViaWebSocket(Action<MqttClientWebSocketOptions>)
   nameWithType.vb: MqttClientConfigBuilder.ConnectViaWebSocket(Action(Of MqttClientWebSocketOptions))
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
   name: ConnectViaWebSocket(String, MqttClientOptionsBuilderWebSocketParameters)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_Options_MqttClientOptionsBuilderWebSocketParameters_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters)
   nameWithType: MqttClientConfigBuilder.ConnectViaWebSocket(String, MqttClientOptionsBuilderWebSocketParameters)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters})
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters})
   name: ConnectViaWebSocket(String, Action<MqttClientOptionsBuilderWebSocketParameters>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters})
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_Options_MqttClientOptionsBuilderWebSocketParameters__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters})
   name.vb: ConnectViaWebSocket(String, Action(Of MqttClientOptionsBuilderWebSocketParameters))
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action<MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action(Of MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters))
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action<MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String, System.Action(Of MQTTnet.Client.Options.MqttClientOptionsBuilderWebSocketParameters))
   nameWithType: MqttClientConfigBuilder.ConnectViaWebSocket(String, Action<MqttClientOptionsBuilderWebSocketParameters>)
   nameWithType.vb: MqttClientConfigBuilder.ConnectViaWebSocket(String, Action(Of MqttClientOptionsBuilderWebSocketParameters))
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket*
@@ -22521,19 +21928,19 @@ references:
   commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls()
   nameWithType: MqttClientConfigBuilder.EnableTls()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
   name: EnableTls(MqttClientOptionsBuilderTlsParameters)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_MQTTnet_Client_Options_MqttClientOptionsBuilderTlsParameters_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters)
   nameWithType: MqttClientConfigBuilder.EnableTls(MqttClientOptionsBuilderTlsParameters)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientOptionsBuilderTlsParameters})
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters})
   name: EnableTls(Action<MqttClientOptionsBuilderTlsParameters>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientOptionsBuilderTlsParameters})
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_Options_MqttClientOptionsBuilderTlsParameters__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters})
   name.vb: EnableTls(Action(Of MqttClientOptionsBuilderTlsParameters))
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action<MQTTnet.Client.MqttClientOptionsBuilderTlsParameters>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action(Of MQTTnet.Client.MqttClientOptionsBuilderTlsParameters))
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action<MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action(Of MQTTnet.Client.Options.MqttClientOptionsBuilderTlsParameters))
   nameWithType: MqttClientConfigBuilder.EnableTls(Action<MqttClientOptionsBuilderTlsParameters>)
   nameWithType.vb: MqttClientConfigBuilder.EnableTls(Action(Of MqttClientOptionsBuilderTlsParameters))
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls*
@@ -22543,12 +21950,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls
   nameWithType: MqttClientConfigBuilder.EnableTls
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  name: LimitPacketSize(UInt32)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitPacketSize_System_UInt32_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.UInt32)
-  nameWithType: MqttClientConfigBuilder.LimitPacketSize(UInt32)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  name: LimitPacketSize(Int64)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitPacketSize_System_Int64_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize(System.Int64)
+  nameWithType: MqttClientConfigBuilder.LimitPacketSize(Int64)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitPacketSize*
   name: LimitPacketSize
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitPacketSize_
@@ -22569,12 +21976,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitTopicAlias
   nameWithType: MqttClientConfigBuilder.LimitTopicAlias
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  name: LimitUnacknowledgedPublications(UInt16)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitUnacknowledgedPublications_System_UInt16_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)
-  nameWithType: MqttClientConfigBuilder.LimitUnacknowledgedPublications(UInt16)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  name: LimitUnacknowledgedPublications(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitUnacknowledgedPublications_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications(System.Int32)
+  nameWithType: MqttClientConfigBuilder.LimitUnacknowledgedPublications(Int32)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.LimitUnacknowledgedPublications*
   name: LimitUnacknowledgedPublications
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_LimitUnacknowledgedPublications_
@@ -22663,11 +22070,11 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendLastWillMessage
   nameWithType: MqttClientConfigBuilder.SendLastWillMessage
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
   name: UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_IMqttExtendedAuthenticationExchangeHandler_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_ExtendedAuthenticationExchange_IMqttExtendedAuthenticationExchangeHandler_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler)
   nameWithType: MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(System.Type)
   name: UseExtendedAuthenticationExchangeHandler(Type)
@@ -22704,13 +22111,13 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProtocolVersion
   nameWithType: MqttClientConfigBuilder.UseProtocolVersion
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.MqttClientWebSocketProxyOptions})
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.Options.MqttClientWebSocketProxyOptions})
   name: UseProxy(Action<MqttClientWebSocketProxyOptions>)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_MqttClientWebSocketProxyOptions__
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.MqttClientWebSocketProxyOptions})
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_Options_MqttClientWebSocketProxyOptions__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.Options.MqttClientWebSocketProxyOptions})
   name.vb: UseProxy(Action(Of MqttClientWebSocketProxyOptions))
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action<MQTTnet.Client.MqttClientWebSocketProxyOptions>)
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action(Of MQTTnet.Client.MqttClientWebSocketProxyOptions))
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action<MQTTnet.Client.Options.MqttClientWebSocketProxyOptions>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action(Of MQTTnet.Client.Options.MqttClientWebSocketProxyOptions))
   nameWithType: MqttClientConfigBuilder.UseProxy(Action<MqttClientWebSocketProxyOptions>)
   nameWithType.vb: MqttClientConfigBuilder.UseProxy(Action(Of MqttClientWebSocketProxyOptions))
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.String,System.String,System.String,System.String,System.Boolean,System.String[])
@@ -22758,12 +22165,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithClientId
   nameWithType: MqttClientConfigBuilder.WithClientId
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  name: WithCredentials(IMqttClientCredentialsProvider)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCredentials_MQTTnet_Client_IMqttClientCredentialsProvider_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)
-  nameWithType: MqttClientConfigBuilder.WithCredentials(IMqttClientCredentialsProvider)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  name: WithCommunicationTimeout(TimeSpan)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCommunicationTimeout_System_TimeSpan_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)
+  nameWithType: MqttClientConfigBuilder.WithCommunicationTimeout(TimeSpan)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout*
+  name: WithCommunicationTimeout
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCommunicationTimeout_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout
+  nameWithType: MqttClientConfigBuilder.WithCommunicationTimeout
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  name: WithCredentials(IMqttClientCredentials)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCredentials_MQTTnet_Client_Options_IMqttClientCredentials_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(MQTTnet.Client.Options.IMqttClientCredentials)
+  nameWithType: MqttClientConfigBuilder.WithCredentials(IMqttClientCredentials)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials(System.String,System.Byte[])
   name: WithCredentials(String, Byte[])
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCredentials_System_String_System_Byte___
@@ -22786,19 +22206,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCredentials
   nameWithType: MqttClientConfigBuilder.WithCredentials
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate
-  name: WithoutTryPrivate()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithoutTryPrivate
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate()
-  nameWithType: MqttClientConfigBuilder.WithoutTryPrivate()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate*
-  name: WithoutTryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithoutTryPrivate_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithoutTryPrivate
-  nameWithType: MqttClientConfigBuilder.WithoutTryPrivate
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithSessionExpiration(System.TimeSpan)
   name: WithSessionExpiration(TimeSpan)
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithSessionExpiration_System_TimeSpan_
@@ -22812,32 +22219,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithSessionExpiration
   nameWithType: MqttClientConfigBuilder.WithSessionExpiration
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  name: WithTimeout(TimeSpan)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithTimeout_System_TimeSpan_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout(System.TimeSpan)
-  nameWithType: MqttClientConfigBuilder.WithTimeout(TimeSpan)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout*
-  name: WithTimeout
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithTimeout_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTimeout
-  nameWithType: MqttClientConfigBuilder.WithTimeout
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate
-  name: WithTryPrivate()
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithTryPrivate
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate()
-  nameWithType: MqttClientConfigBuilder.WithTryPrivate()
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate*
-  name: WithTryPrivate
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithTryPrivate_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithTryPrivate
-  nameWithType: MqttClientConfigBuilder.WithTryPrivate
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder
   name: MqttConsumerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html
@@ -22982,25 +22363,12 @@ references:
   commentId: T:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder
   nameWithType: MqttLastWillMessageBuilder
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty(System.String,System.String)
-  name: AddUserProperty(String, String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_AddUserProperty_System_String_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty(System.String,System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty(System.String, System.String)
-  nameWithType: MqttLastWillMessageBuilder.AddUserProperty(String, String)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty*
-  name: AddUserProperty
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_AddUserProperty_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.AddUserProperty
-  nameWithType: MqttLastWillMessageBuilder.AddUserProperty
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build(MQTTnet.Client.MqttClientOptionsBuilder)
-  name: Build(MqttClientOptionsBuilder)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Build_MQTTnet_Client_MqttClientOptionsBuilder_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build(MQTTnet.Client.MqttClientOptionsBuilder)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build(MQTTnet.Client.MqttClientOptionsBuilder)
-  nameWithType: MqttLastWillMessageBuilder.Build(MqttClientOptionsBuilder)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build
+  name: Build()
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Build
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build()
+  nameWithType: MqttLastWillMessageBuilder.Build()
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build*
   name: Build
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Build_
@@ -23008,6 +22376,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Build
   nameWithType: MqttLastWillMessageBuilder.Build
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay
+  name: Delay
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Delay
+  commentId: P:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay
+  nameWithType: MqttLastWillMessageBuilder.Delay
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay*
+  name: Delay
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Delay_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Delay
+  nameWithType: MqttLastWillMessageBuilder.Delay
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.Message(System.Object)
   name: Message(Object)
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_Message_System_Object_
@@ -23102,35 +22483,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithAtMostOnceQoS
   nameWithType: MqttLastWillMessageBuilder.WithAtMostOnceQoS
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType(System.String)
-  name: WithContentType(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithContentType_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType(System.String)
-  nameWithType: MqttLastWillMessageBuilder.WithContentType(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType*
-  name: WithContentType
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithContentType_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithContentType
-  nameWithType: MqttLastWillMessageBuilder.WithContentType
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  name: WithCorrelationData(Byte[])
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithCorrelationData_System_Byte___
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  name.vb: WithCorrelationData(Byte())
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData(System.Byte[])
-  fullName.vb: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData(System.Byte())
-  nameWithType: MqttLastWillMessageBuilder.WithCorrelationData(Byte[])
-  nameWithType.vb: MqttLastWillMessageBuilder.WithCorrelationData(Byte())
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData*
-  name: WithCorrelationData
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithCorrelationData_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithCorrelationData
-  nameWithType: MqttLastWillMessageBuilder.WithCorrelationData
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithDelay(System.TimeSpan)
   name: WithDelay(TimeSpan)
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithDelay_System_TimeSpan_
@@ -23157,19 +22509,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithExactlyOnceQoS
   nameWithType: MqttLastWillMessageBuilder.WithExactlyOnceQoS
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  name: WithPayloadFormatIndicator(MqttPayloadFormatIndicator)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithPayloadFormatIndicator_MQTTnet_Protocol_MqttPayloadFormatIndicator_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator(MQTTnet.Protocol.MqttPayloadFormatIndicator)
-  nameWithType: MqttLastWillMessageBuilder.WithPayloadFormatIndicator(MqttPayloadFormatIndicator)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator*
-  name: WithPayloadFormatIndicator
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithPayloadFormatIndicator_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithPayloadFormatIndicator
-  nameWithType: MqttLastWillMessageBuilder.WithPayloadFormatIndicator
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)
   name: WithQualityOfServiceLevel(MqttQualityOfServiceLevel)
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_
@@ -23183,19 +22522,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithQualityOfServiceLevel
   nameWithType: MqttLastWillMessageBuilder.WithQualityOfServiceLevel
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  name: WithResponseTopic(String)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithResponseTopic_System_String_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic(System.String)
-  nameWithType: MqttLastWillMessageBuilder.WithResponseTopic(String)
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic*
-  name: WithResponseTopic
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttLastWillMessageBuilder_WithResponseTopic_
-  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.WithResponseTopic
-  nameWithType: MqttLastWillMessageBuilder.WithResponseTopic
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder
   name: MqttProducerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.html

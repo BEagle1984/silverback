@@ -8,7 +8,7 @@
     <title>Serialization | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Serialization | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -99,16 +99,16 @@
 <h2 id="fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</h2>
 <p>If you are consuming a message coming from another system (not based on Silverback), chances are that the message type name is not being delivered as header.</p>
 <p>In that case you can resort to the typed <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>. This serializer works like the default one seen in the previous chapter, but the message type is hard-coded, instead of being resolved according to the message header.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
+<section id="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -148,7 +148,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -179,16 +179,16 @@
 </div>
 <h2 id="json-using-newtonsoftjson">JSON using Newtonsoft.Json</h2>
 <p>Prior to release 3.0.0 the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> was based on <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> instead of <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a>. For backward compatibility reasons and since <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> may not support all use cases covered by <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a>, the old serializers have been renamed to <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a> and moved into the dedicated <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_newtonsoft-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_newtonsoft-fluent" data-tab="newtonsoft-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" data-tab="newtonsoft-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_newtonsoft-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_newtonsoft-legacy" data-tab="newtonsoft-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" data-tab="newtonsoft-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_newtonsoft-fluent" role="tabpanel" data-tab="newtonsoft-fluent">
+<section id="tabpanel_bHGHmlrG6S-1_newtonsoft-fluent" role="tabpanel" data-tab="newtonsoft-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -223,7 +223,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-1_newtonsoft-legacy" role="tabpanel" data-tab="newtonsoft-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_newtonsoft-legacy" role="tabpanel" data-tab="newtonsoft-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -254,16 +254,16 @@
 </div>
 <h2 id="apache-avro">Apache Avro</h2>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a> contained in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry">Silverback.Integration.Kafka.SchemaRegistry</a> package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_avro-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_avro-fluent" data-tab="avro-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-2_avro-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_avro-fluent" data-tab="avro-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_avro-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_avro-legacy" data-tab="avro-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-2_avro-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_avro-legacy" data-tab="avro-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-2_avro-fluent" role="tabpanel" data-tab="avro-fluent">
+<section id="tabpanel_bHGHmlrG6S-2_avro-fluent" role="tabpanel" data-tab="avro-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -307,7 +307,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-2_avro-legacy" role="tabpanel" data-tab="avro-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-2_avro-legacy" role="tabpanel" data-tab="avro-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -367,16 +367,16 @@
 </div>
 <h2 id="custom-serializer">Custom serializer</h2>
 <p>In some cases you may want to build your very own custom serializer implementing <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> directly.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_custom-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_custom-fluent" data-tab="custom-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-3_custom-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_custom-fluent" data-tab="custom-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_custom-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_custom-legacy" data-tab="custom-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-3_custom-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_custom-legacy" data-tab="custom-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-3_custom-fluent" role="tabpanel" data-tab="custom-fluent">
+<section id="tabpanel_bHGHmlrG6S-3_custom-fluent" role="tabpanel" data-tab="custom-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -400,7 +400,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-3_custom-legacy" role="tabpanel" data-tab="custom-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-3_custom-legacy" role="tabpanel" data-tab="custom-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {

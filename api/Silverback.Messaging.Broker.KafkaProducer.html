@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class KafkaProducer
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -99,7 +99,6 @@
     <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a></div>
     <div class="level2"><a class="xref" href="Silverback.Messaging.Broker.Producer-2.html">Producer</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaBroker.html">KafkaBroker</a>, <a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>&gt;</div>
     <div class="level3"><span class="xref">KafkaProducer</span></div>
-      <div class="level4"><a class="xref" href="Silverback.Messaging.Broker.KafkaTransactionalProducer.html">KafkaTransactionalProducer</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -239,7 +238,7 @@
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
   <h5 id="Silverback_Messaging_Broker_KafkaProducer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class KafkaProducer : Producer&lt;KafkaBroker, KafkaProducerEndpoint&gt;, IProducer, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class KafkaProducer : Producer&lt;KafkaBroker, KafkaProducerEndpoint&gt;, IProducer, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -248,7 +247,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_KafkaProducer__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.%23ctor(Silverback.Messaging.Broker.KafkaBroker%2CSilverback.Messaging.KafkaProducerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IProducerBehavior%7D%2CSilverback.Messaging.Broker.Kafka.IConfluentProducersCache%2CSystem.IServiceProvider%2CSilverback.Diagnostics.IOutboundLogger%7BSilverback.Messaging.Broker.KafkaProducer%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L52">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L52">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer__ctor_" data-uid="Silverback.Messaging.Broker.KafkaProducer.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentProducersCache_System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_KafkaProducer__" data-uid="Silverback.Messaging.Broker.KafkaProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentProducersCache,System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})">KafkaProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IConfluentProducersCache, IServiceProvider, IOutboundLogger&lt;KafkaProducer&gt;)</h4>
@@ -314,7 +313,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_Dispose.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L69">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L69">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_Dispose_" data-uid="Silverback.Messaging.Broker.KafkaProducer.Dispose*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_Dispose" data-uid="Silverback.Messaging.Broker.KafkaProducer.Dispose">Dispose()</h4>
@@ -326,78 +325,10 @@
   </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L83">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_KafkaProducer_Dispose_" data-uid="Silverback.Messaging.Broker.KafkaProducer.Dispose*"></a>
-  <h4 id="Silverback_Messaging_Broker_KafkaProducer_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Broker.KafkaProducer.Dispose(System.Boolean)">Dispose(Boolean)</h4>
-  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-resources.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void Dispose(bool disposing)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">disposing</span></td>
-        <td><p>A value indicating whether the method has been called by the <code>Dispose</code> method and not from the
-finalizer.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L263">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer_" data-uid="Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer*"></a>
-  <h4 id="Silverback_Messaging_Broker_KafkaProducer_GetConfluentProducer" data-uid="Silverback.Messaging.Broker.KafkaProducer.GetConfluentProducer">GetConfluentProducer()</h4>
-  <div class="markdown level1 summary"><p>Returns the cached <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> or creates a new one.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected IProducer&lt;byte[], byte[]&gt; GetConfluentProducer()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Confluent.Kafka.IProducer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;</td>
-        <td><p>The <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L100">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L84">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
@@ -472,7 +403,7 @@ produce.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L118">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L103">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
@@ -547,7 +478,7 @@ are called when the message is actually produced (or the produce failed).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L92">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L75">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
@@ -622,7 +553,7 @@ produce.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L108">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L93">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCore(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
@@ -697,7 +628,7 @@ are called when the message is actually produced (or the produce failed).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L185">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L172">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
@@ -706,7 +637,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override async Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -773,7 +704,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L244">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L231">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
@@ -865,7 +796,7 @@ are called when the message is actually produced (or the produce failed).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L172">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L159">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
@@ -874,7 +805,7 @@ are called when the message is actually produced (or the produce failed).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override async Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -941,7 +872,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L227">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L214">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.KafkaProducer.ProduceCoreAsync(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
@@ -950,7 +881,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override async Task ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1046,7 +977,7 @@ are called when the message is actually produced (or the produce failed).</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaProducer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaProducer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L23" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/testinghelper/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaProducer.cs/#L23" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

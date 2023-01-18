@@ -8,7 +8,7 @@
     <title>MQTT - Files Streaming | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="MQTT - Files Streaming | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -90,22 +90,22 @@
 <p>See also: <a class="xref" href="../../concepts/broker/binary-files.html">Binary Files</a>, <a class="xref" href="../../concepts/broker/chunking.html">Chunking</a></p>
 <h2 id="producer">Producer</h2>
 <p>The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom <code>BinaryFileMessage</code> to forward further metadata (the file name in this example).</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producer-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S_producer-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producer-endpoints" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_bHGHmlrG6S_producer-endpoints" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producer-custom-message" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-custom-message" data-tab="producer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+<a href="#tabpanel_bHGHmlrG6S_producer-custom-message" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-custom-message" data-tab="producer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producer-controller" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-controller" data-tab="producer-controller" tabindex="-1">API Controller</a>
+<a href="#tabpanel_bHGHmlrG6S_producer-controller" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-controller" data-tab="producer-controller" tabindex="-1">API Controller</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_producer-startup" role="tabpanel" data-tab="producer-startup">
+<section id="tabpanel_bHGHmlrG6S_producer-startup" role="tabpanel" data-tab="producer-startup">
 <pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -151,7 +151,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -183,7 +183,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q_producer-custom-message" role="tabpanel" data-tab="producer-custom-message" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_producer-custom-message" role="tabpanel" data-tab="producer-custom-message" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
 
 namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Messages
@@ -195,7 +195,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Messages
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q_producer-controller" role="tabpanel" data-tab="producer-controller" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_producer-controller" role="tabpanel" data-tab="producer-controller" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.ProducerController">using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -273,22 +273,22 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer.Controllers
 <p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/BinaryFileStreaming.Producer</a></em></p>
 <h2 id="consumer">Consumer</h2>
 <p>The consumer simply streams the file to a temporary folder in the local file system.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumer-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumer-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumer-endpoints" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumer-endpoints" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumer-custom-message" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-custom-message" data-tab="consumer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumer-custom-message" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-custom-message" data-tab="consumer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumer-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumer-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<section id="tabpanel_bHGHmlrG6S-1_consumer-startup" role="tabpanel" data-tab="consumer-startup">
 <pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
 using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers;
 
@@ -321,7 +321,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q-1_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.EndpointsConfigurator">using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration;
 using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
@@ -377,7 +377,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q-1_consumer-custom-message" role="tabpanel" data-tab="consumer-custom-message" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_consumer-custom-message" role="tabpanel" data-tab="consumer-custom-message" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
 
 namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages
@@ -389,7 +389,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages
     }
 }
 </code></pre></section>
-<section id="tabpanel_CeZOj-G++Q-1_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.BinaryFileSubscriber">using System;
 using System.IO;
 using System.Threading.Tasks;

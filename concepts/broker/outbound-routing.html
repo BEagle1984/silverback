@@ -8,7 +8,7 @@
     <title>Outbound Messages Routing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Outbound Messages Routing | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.58.9.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -95,19 +95,19 @@
 <h2 id="endpoint-name-resolver">Endpoint name resolver</h2>
 <p>Using an endpoint name resolver is fairly simple and just requires a slightly different configuration in the <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>.</p>
 <p>Here below a few examples of custom routing. Please refer to the <a class="xref" href="../../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>/<a class="xref" href="../../api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> or <a class="xref" href="../../api/Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a>/<a class="xref" href="../../api/Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a> API documentation for further information about all the possibilities.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_resolvers-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_resolvers-fluent" data-tab="resolvers-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S_resolvers-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-fluent" data-tab="resolvers-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_resolvers-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_resolvers-legacy" data-tab="resolvers-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S_resolvers-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-legacy" data-tab="resolvers-legacy" tabindex="-1">Legacy</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_resolvers-resolver" role="tab" aria-controls="tabpanel_CeZOj-G++Q_resolvers-resolver" data-tab="resolvers-resolver" tabindex="-1">ProducerEndpointNameResolver</a>
+<a href="#tabpanel_bHGHmlrG6S_resolvers-resolver" role="tab" aria-controls="tabpanel_bHGHmlrG6S_resolvers-resolver" data-tab="resolvers-resolver" tabindex="-1">ProducerEndpointNameResolver</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_resolvers-fluent" role="tabpanel" data-tab="resolvers-fluent">
+<section id="tabpanel_bHGHmlrG6S_resolvers-fluent" role="tabpanel" data-tab="resolvers-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -164,7 +164,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_resolvers-legacy" role="tabpanel" data-tab="resolvers-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_resolvers-legacy" role="tabpanel" data-tab="resolvers-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -246,7 +246,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_resolvers-resolver" role="tabpanel" data-tab="resolvers-resolver" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_resolvers-resolver" role="tabpanel" data-tab="resolvers-resolver" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointNameResolver : ProducerEndpointNameResolver&lt;TestEventOne&gt;
 {
@@ -270,16 +270,16 @@
 </div>
 <h2 id="custom-router">Custom router</h2>
 <p>In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_genericrouter-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_genericrouter-startup" data-tab="genericrouter-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S-1_genericrouter-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_genericrouter-startup" data-tab="genericrouter-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_genericrouter-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_genericrouter-configurator" data-tab="genericrouter-configurator" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_bHGHmlrG6S-1_genericrouter-configurator" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_genericrouter-configurator" data-tab="genericrouter-configurator" tabindex="-1">EndpointsConfigurator</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_genericrouter-startup" role="tabpanel" data-tab="genericrouter-startup">
+<section id="tabpanel_bHGHmlrG6S-1_genericrouter-startup" role="tabpanel" data-tab="genericrouter-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -294,7 +294,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-1_genericrouter-configurator" role="tabpanel" data-tab="genericrouter-configurator" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_genericrouter-configurator" role="tabpanel" data-tab="genericrouter-configurator" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -320,19 +320,19 @@
 </div>
 
 <p>Alternatively, an actual router class can also be created to encapsulate the routing logic.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_router-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_router-startup" data-tab="router-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S-2_router-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router-startup" data-tab="router-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_router-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_router-configurator" data-tab="router-configurator" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_bHGHmlrG6S-2_router-configurator" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router-configurator" data-tab="router-configurator" tabindex="-1">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_router" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_router" data-tab="router" tabindex="-1">Router</a>
+<a href="#tabpanel_bHGHmlrG6S-2_router" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_router" data-tab="router" tabindex="-1">Router</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-2_router-startup" role="tabpanel" data-tab="router-startup">
+<section id="tabpanel_bHGHmlrG6S-2_router-startup" role="tabpanel" data-tab="router-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -348,7 +348,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-2_router-configurator" role="tabpanel" data-tab="router-configurator" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-2_router-configurator" role="tabpanel" data-tab="router-configurator" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -357,7 +357,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-2_router" role="tabpanel" data-tab="router" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-2_router" role="tabpanel" data-tab="router" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class PrioritizedRouter : OutboundRouter&lt;IPrioritizedCommand&gt;
 {
