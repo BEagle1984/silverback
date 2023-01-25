@@ -42,7 +42,7 @@ dotnet_diagnostic.SA1503.severity = none
 
 # Microsoft.CodeAnalysis.NetAnalyzers
 # CA1716: Identifiers should not match keywords
-dotnet_diagnostic.CA1716.severity = silent
+dotnet_diagnostic.CA1716.severity = none
 # CA1852: Seal internal types
 dotnet_diagnostic.CA1852.severity = none
 
