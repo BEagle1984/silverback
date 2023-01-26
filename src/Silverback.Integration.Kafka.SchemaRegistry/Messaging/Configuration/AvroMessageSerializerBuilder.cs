@@ -37,6 +37,22 @@ public class AvroMessageSerializerBuilder
     }
 
     /// <summary>
+    ///     Specifies the message type.
+    /// </summary>
+    /// <param name="messageType">
+    ///     The type of the message to serialize or deserialize.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public AvroMessageSerializerBuilder UseType(Type messageType)
+    {
+        Type serializerType = typeof(AvroMessageSerializer<>).MakeGenericType(messageType);
+        _serializer = (AvroMessageSerializerBase)Activator.CreateInstance(serializerType)!;
+        return this;
+    }
+
+    /// <summary>
     ///     Configures the <see cref="SchemaRegistryConfig" /> and the <see cref="AvroSerializerConfig" />.
     /// </summary>
     /// <param name="configureSchemaRegistryAction">

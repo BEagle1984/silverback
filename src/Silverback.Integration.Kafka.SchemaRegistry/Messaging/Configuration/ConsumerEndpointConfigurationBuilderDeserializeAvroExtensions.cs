@@ -29,21 +29,21 @@ public static class ConsumerEndpointConfigurationBuilderDeserializeAvroExtension
     ///     The endpoint builder.
     /// </param>
     /// <param name="serializerBuilderAction">
-    ///     An optional <see cref="Action{T}" /> that takes the <see cref="AvroMessageSerializerBuilder" /> and configures it.
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="AvroMessageDeserializerBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
     public static TBuilder DeserializeAvro<TMessage, TConfiguration, TBuilder>(
         this ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder> endpointBuilder,
-        Action<AvroMessageSerializerBuilder>? serializerBuilderAction = null)
+        Action<AvroMessageDeserializerBuilder>? serializerBuilderAction = null)
         where TMessage : class
         where TConfiguration : ConsumerEndpointConfiguration
         where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
     {
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
-        AvroMessageSerializerBuilder serializerBuilder = new();
+        AvroMessageDeserializerBuilder serializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
             serializerBuilder.UseType<TMessage>();

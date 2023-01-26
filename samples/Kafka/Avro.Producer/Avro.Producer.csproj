@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <RootNamespace>Silverback.Samples.Kafka.Avro.Producer</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka.SchemaRegistry" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Avro.Common\Avro.Common.csproj" />
+  </ItemGroup>
+
+</Project>

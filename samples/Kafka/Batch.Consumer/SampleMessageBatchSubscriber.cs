@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Messages;
-using Silverback.Samples.Common;
 using Silverback.Samples.Kafka.Batch.Common;
 
 namespace Silverback.Samples.Kafka.Batch.Consumer
@@ -30,9 +27,9 @@ namespace Silverback.Samples.Kafka.Batch.Consumer
             }
 
             _logger.LogInformation(
-                $"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}" +
-                $"Received batch of {count} message -> sum: {sum}" +
-                $"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}");
+                "Received batch of {Count} message -> sum: {Sum}",
+                count,
+                sum);
         }
     }
 }

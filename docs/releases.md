@@ -11,64 +11,63 @@ uid: releases
 * Support Kafka cooperative sticky partition assignment strategy
 * Increase default [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) to 100
 * TO-BE-REVIEWED
-  * New AddHeader overloads with only message
-  * New WithMessageId overloads with only message
-  * WithKafkaKey overloads with only message
-  * AddInbound/AddOutbound with message type (influencing AddHeader etc.)
-  * Default serializer is typed and now works with sub-typed (document in serializer page)
-  * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
-  * Builders for client config?
-  * New Storage packages (see...)
-  * New Outbox with Enlist for transaction
-  * StorageInitializer to create tables
-  * Client side offset storage (w/ transaction)
-  * Fluent API for connection options
-  * JsonSerializer typename handling none by default (Security)
+    * New AddHeader overloads with only message
+    * New WithMessageId overloads with only message
+    * WithKafkaKey overloads with only message
+    * AddInbound/AddOutbound with message type (influencing AddHeader etc.)
+    * Default serializer is typed and now works with sub-typed (document in serializer page)
+    * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
+    * Builders for client config?
+    * New Storage packages (see...)
+    * New Outbox with Enlist for transaction
+    * StorageInitializer to create tables
+    * Client side offset storage (w/ transaction)
+    * Fluent API for connection options
+    * JsonSerializer typename handling none by default (Security)
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies
 * Support subscribers returning `ValueTask`
-
 
 ### Breaking Changes
 
 * Changed some details in <xref:Silverback.Messaging.Broker.IBroker>/<xref:Silverback.Messaging.Broker.IConsumer> and their implementations
 * Reorganized the configuration namespaces, some extension methods might have been moved to a different namespace, thus requiring a different `using`.
 * Refactored the endpoint models
-  * Changed the endpoint models to [records](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) with init-only properties
-  * Removed constructors with parameters
-  * Refactored, redesigned and deprecated some properties
-  * Building the endpoints directly is still supported but the strongly recommended preferred way is to use the builders, therefore from now on the documentation will only show that approach
-  * TO-DO: Endpoint to Configuration and related renames (builders, etc.)
+    * Changed the endpoint models to [records](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) with init-only properties
+    * Removed constructors with parameters
+    * Refactored, redesigned and deprecated some properties
+    * Building the endpoints directly is still supported but the strongly recommended preferred way is to use the builders, therefore from now on the documentation will only show that approach
+    * TO-DO: Endpoint to Configuration and related renames (builders, etc.)
 * Removed the `IOutboundRouter` interface and all `AddOutbound` overloads accepting a custom `IOutboundRouter`
 * Removed all builders interfaces and exposed the actual classes directly (e.g. `ISilverbackBuilder` to `SilverbackBuilder`)
 * Replaced `Endpoint`, `ProducerEndpoint` and `ConsumerEndpoint` with <xref:EndpointConfiguration>, <xref:ProducerConfiguration>, <xref:ConsumerConfiguration>
 * Removed `IEndpoint`, `ProducerEndpoint` and `IConsumerEndpoint` interfaces
 * `SubscriptionOptions` to `TypeSubscriptionOption` / `DelegateSubscriptionOptions`
 * TO-BE-COMPARED / TO-BE-REVIEWED
-  * IMessageSerializer
-  * IKafkaProducerEndpointNameResolver
-  * ConsumerBuilder / ProducerBuilder
-  * UseEndpointNameResolver to UseEndpointResolver (and interface name)
-  * ProduceTo with delegates only receive message instead of envelope (same for resolver)
-  * Endpoint builders functions now work with `TMessage` instead of `Envelope<TMessage>` (e.g. `ProducerTo`)
-  * AddOutboundEndpointsCheck renamed to AddProducersCheck
-  * IOutboundQueueHealthCheckService to IOutboxHealthCheckService
-  * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
-  * EndpointsConfiguration redesigned completely
-    * Endpoints configuration moved completely under `Messaging.Configuration` namespace
-  * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
-  * Broker -> BrokerBase
-  * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
-  * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
-  * DistributedBackgroundService / RecurringDBS
-  * IOutboxReader / IOutboxWriter namespace + move to storage
-  * Publisher and behaviors to `ValueTask`
-  * `Helper.GetProducer` and other differences
-  * `Add*BrokerCallbackHandler` to `Add*BrokerClientCallback` (`IBrokerCallback` to `IBrokerClientCallback`)
-  * `IEndpointsConfiguredCallback` to `IBrokerClientsConfiguredCallback`
-  * Removed `EndpointBuilder.WithName()` -> replaced by name parameter
-  * Renamed Inbound namespace to Consuming and Outbound to Producing
+    * IMessageSerializer
+    * IKafkaProducerEndpointNameResolver
+    * ConsumerBuilder / ProducerBuilder
+    * UseEndpointNameResolver to UseEndpointResolver (and interface name)
+    * ProduceTo with delegates only receive message instead of envelope (same for resolver)
+    * Endpoint builders functions now work with `TMessage` instead of `Envelope<TMessage>` (e.g. `ProducerTo`)
+    * AddOutboundEndpointsCheck renamed to AddProducersCheck
+    * IOutboundQueueHealthCheckService to IOutboxHealthCheckService
+    * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
+    * EndpointsConfiguration redesigned completely
+        * Endpoints configuration moved completely under `Messaging.Configuration` namespace
+    * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
+    * Broker -> BrokerBase
+    * AddConsumer -> AddConsumerAsync / GetProducer -> GetProducerAsync
+    * BinaryFileMessage and serializers renamed to BinaryFile + ConsumeBinaryFiles -> ConsumeBinaryMessages
+    * DistributedBackgroundService / RecurringDBS
+    * IOutboxReader / IOutboxWriter namespace + move to storage
+    * Publisher and behaviors to `ValueTask`
+    * `Helper.GetProducer` and other differences
+    * `Add*BrokerCallbackHandler` to `Add*BrokerClientCallback` (`IBrokerCallback` to `IBrokerClientCallback`)
+    * `IEndpointsConfiguredCallback` to `IBrokerClientsConfiguredCallback`
+    * Removed `EndpointBuilder.WithName()` -> replaced by name parameter
+    * Renamed Inbound namespace to Consuming and Outbound to Producing
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext
@@ -82,12 +81,39 @@ uid: releases
 * Changes to Kafka callbacks (stats etc.) -> replaced producer/consumer
 * PartitionOffsetsProvider returns `ValueTask`
 * Many interfaces changed to return a `ValueTask` instead of `Task`:
-  * `IPublisher` async methods
-  * `IBehavior`, `IProducerBehavior`, `IConsumerBehavior`
+    * `IPublisher` async methods
+    * `IBehavior`, `IProducerBehavior`, `IConsumerBehavior`
 
 ### Deprecation Notice
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
+
+## [4.1.0](https://github.com/BEagle1984/silverback/releases/tag/v4.1.0)
+
+### What's new
+
+* Upgrade to [Confluent.Kafka 2.0.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.0.2)
+* Replace the deprecated package `Confluent.Kafka.SchemaRegistry.Serdes` with `Confluent.Kafka.SchemaRegistry.Serdes.Avro`
+* Simplify the Avro serializer configuration and add samples (see <xref:sample-kafka-avro>)
+  
+## [4.0.1](https://github.com/BEagle1984/silverback/releases/tag/v4.0.1)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.1.4.563](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.4.563)
+  
+## [4.0.0](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.1.3.436](https://github.com/chkr1011/MQTTnet/releases/tag/v4.1.3.436)
+* Upgrade to [Confluent.Kafka 1.9.3](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.9.3)
+* Upgrade to Newtonsoft.Json 13.0.2
+* Disable server-side offset commit in <xref:Silverback.Messaging.Broker.KafkaConsumer> when `GroupId` is  not set 
+ 
+### Breaking changes
+
+* Some breaking changes in MQTTnet 4 are reflected into Silverback
 
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 

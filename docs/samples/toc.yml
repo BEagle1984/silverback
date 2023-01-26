@@ -8,6 +8,8 @@
       href: kafka/batch.md
     - name: Files Streaming
       href: kafka/binaryfile-streaming.md
+    - name: Avro
+      href: kafka/avro.md
 - name: MQTT
   items:
     - name: Basic

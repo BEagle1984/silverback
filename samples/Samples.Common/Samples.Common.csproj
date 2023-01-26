@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-      <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
+      <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
       <RootNamespace>Silverback.Samples.Common</RootNamespace>
       <LangVersion>$(LangVersion)</LangVersion>
       <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>

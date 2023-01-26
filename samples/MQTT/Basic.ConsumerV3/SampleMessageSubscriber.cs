@@ -13,6 +13,6 @@ namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
         }
 
         public void OnMessageReceived(SampleMessage message) =>
-            _logger.LogInformation($"Received {message.Number}");
+            _logger.LogInformation("Received {MessageNumber}", message.Number);
     }
 }

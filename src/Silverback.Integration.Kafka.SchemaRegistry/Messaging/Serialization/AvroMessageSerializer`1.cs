@@ -46,10 +46,7 @@ public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
     }
 
     /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-    public override byte[] SerializeKey(
-        string key,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint)
+    public override byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
     {
         Check.NotNullOrEmpty(key, nameof(key));
 
@@ -59,25 +56,17 @@ public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
     }
 
     /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-    public override string DeserializeKey(
-        byte[] key,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaConsumerEndpoint endpoint)
+    public override string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader>? headers, KafkaConsumerEndpoint endpoint)
     {
         Check.NotNull(key, nameof(key));
 
         return AsyncHelper.RunSynchronously(() => DeserializeAsync<string>(key, MessageComponentType.Key, endpoint))!;
     }
 
-    private static SerializationContext GetConfluentSerializationContext(
-        MessageComponentType componentType,
-        Endpoint endpoint) =>
+    private static SerializationContext GetConfluentSerializationContext(MessageComponentType componentType, Endpoint endpoint) =>
         new(componentType, endpoint.RawName);
 
-    private async ValueTask<byte[]?> SerializeAsync<TValue>(
-        object? message,
-        MessageComponentType componentType,
-        ProducerEndpoint endpoint)
+    private async ValueTask<byte[]?> SerializeAsync<TValue>(object? message, MessageComponentType componentType, ProducerEndpoint endpoint)
     {
         if (message == null)
             return null;
