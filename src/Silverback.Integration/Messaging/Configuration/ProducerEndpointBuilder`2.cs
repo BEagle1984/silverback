@@ -39,12 +39,17 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProducerEndpointBuilder{TEndpoint,TBuilder}" /> class.
         /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message being produced.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
-        protected ProducerEndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
-            : base(endpointsConfigurationBuilder)
+        protected ProducerEndpointBuilder(
+            Type? messageType,
+            IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+            : base(messageType, endpointsConfigurationBuilder)
         {
         }
 

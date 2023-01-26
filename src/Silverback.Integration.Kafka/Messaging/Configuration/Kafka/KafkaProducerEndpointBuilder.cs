@@ -30,14 +30,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
+        /// <param name="messageType">
+        ///     The type of the message being produced.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
         public KafkaProducerEndpointBuilder(
             KafkaClientConfig? clientConfig = null,
+            Type? messageType = null,
             IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
-            : base(endpointsConfigurationBuilder)
+            : base(messageType, endpointsConfigurationBuilder)
         {
             _clientConfig = clientConfig;
         }

@@ -24,33 +24,35 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
         }
 
         [Fact]
-        public void DeserializeAvro_Default_SerializerSet()
+        public void DeserializeAvro_WithSetMessageType_TypedSerializerSet()
+        {
+            var builder = new TestConsumerEndpointBuilder(typeof(TestEventOne));
+
+            var endpoint = builder.DeserializeAvro().Build();
+
+            endpoint.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        }
+
+        [Fact]
+        public void DeserializeAvro_UseTypeWithGenericArgument_SerializerSet()
         {
             var builder = new TestConsumerEndpointBuilder();
 
             var endpoint = builder.DeserializeAvro(serializer => serializer.UseType<TestEventOne>())
                 .Build();
 
-            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+            endpoint.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
         }
 
         [Fact]
-        public void DeserializeAvro_Configure_SchemaRegistryAndSerializerConfigSet()
+        public void DeserializeAvro_UseType_SerializerSet()
         {
             var builder = new TestConsumerEndpointBuilder();
 
-            var endpoint = builder.DeserializeAvro(
-                serializer => serializer
-                    .UseType<TestEventOne>()
-                    .Configure(
-                        schemaRegistryConfig => { schemaRegistryConfig.Url = "some-url"; },
-                        serializerConfig => { serializerConfig.BufferBytes = 42; })).Build();
+            var endpoint = builder.DeserializeAvro(serializer => serializer.UseType(typeof(TestEventOne)))
+                .Build();
 
-            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
-            endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should()
-                .Be("some-url");
-            endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().AvroSerializerConfig.BufferBytes.Should()
-                .Be(42);
+            endpoint.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
         }
     }
 }

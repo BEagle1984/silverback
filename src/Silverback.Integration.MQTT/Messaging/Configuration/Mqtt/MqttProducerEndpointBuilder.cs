@@ -30,14 +30,18 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <param name="clientConfig">
         ///     The <see cref="MqttClientConfig" />.
         /// </param>
+        /// <param name="messageType">
+        ///     The type of the message being produced.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
         public MqttProducerEndpointBuilder(
             MqttClientConfig clientConfig,
+            Type? messageType = null,
             IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
-            : base(endpointsConfigurationBuilder)
+            : base(messageType, endpointsConfigurationBuilder)
         {
             _clientConfig = clientConfig;
         }

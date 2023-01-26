@@ -56,8 +56,7 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotEmpty(key, nameof(key));
 
-            byte[]? serializedKey = AsyncHelper.RunValueTaskSynchronously(
-                () => SerializeAsync<string>(key, MessageComponentType.Key, context));
+            byte[]? serializedKey = AsyncHelper.RunValueTaskSynchronously(() => SerializeAsync<string>(key, MessageComponentType.Key, context));
 
             return serializedKey ?? Array.Empty<byte>();
         }
@@ -70,8 +69,7 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotNull(key, nameof(key));
 
-            return AsyncHelper.RunSynchronously(
-                () => DeserializeAsync<string>(key, MessageComponentType.Key, context))!;
+            return AsyncHelper.RunSynchronously(() => DeserializeAsync<string>(key, MessageComponentType.Key, context))!;
         }
 
         private static SerializationContext GetConfluentSerializationContext(

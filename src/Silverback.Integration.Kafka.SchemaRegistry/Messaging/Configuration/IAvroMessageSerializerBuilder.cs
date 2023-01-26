@@ -16,11 +16,22 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Specifies the message type.
         /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message to serialize or deserialize.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IAvroMessageSerializerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IAvroMessageSerializerBuilder UseType(Type messageType);
+
+        /// <summary>
+        ///     Specifies the message type.
+        /// </summary>
         /// <typeparam name="TMessage">
         ///     The type of the message to serialize or deserialize.
         /// </typeparam>
         /// <returns>
-        ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+        ///     The <see cref="IAvroMessageSerializerBuilder" /> so that additional calls can be chained.
         /// </returns>
         IAvroMessageSerializerBuilder UseType<TMessage>()
             where TMessage : class;
@@ -35,7 +46,7 @@ namespace Silverback.Messaging.Configuration
         ///     An <see cref="Action{T}" /> that takes the <see cref="AvroSerializerConfig" /> and configures it.
         /// </param>
         /// <returns>
-        ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+        ///     The <see cref="IAvroMessageSerializerBuilder" /> so that additional calls can be chained.
         /// </returns>
         IAvroMessageSerializerBuilder Configure(
             Action<SchemaRegistryConfig> configureSchemaRegistryAction,

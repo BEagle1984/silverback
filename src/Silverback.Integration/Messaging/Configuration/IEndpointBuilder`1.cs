@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 
@@ -15,6 +16,15 @@ namespace Silverback.Messaging.Configuration
     public interface IEndpointBuilder<out TBuilder>
         where TBuilder : IEndpointBuilder<TBuilder>
     {
+        /// <summary>
+        ///     Gets the type of the message being produced or consumed.
+        /// </summary>
+        /// <remarks>
+        ///     This value might be used during the configuration to automatically determine some configurations (e.g. the
+        ///     correct serializer to be used) without having to specify the message type once again.
+        /// </remarks>
+        Type? MessageType { get; }
+
         /// <summary>
         ///     Specifies an optional friendly name to be used to identify the endpoint. This name can be used to
         ///     filter or retrieve the endpoints and will also be included in the <see cref="IEndpoint.DisplayName" />,

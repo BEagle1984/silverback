@@ -21,15 +21,6 @@ namespace Silverback.Messaging.Configuration
         where TBuilder : IConsumerEndpointBuilder<TBuilder>
     {
         /// <summary>
-        ///     Gets the type of the message being consumed.
-        /// </summary>
-        /// <remarks>
-        ///     This value might be used during the configuration to automatically determine some configurations (e.g. the
-        ///     correct deserializer to be used) without having to specify the message type once again.
-        /// </remarks>
-        Type? MessageType { get; }
-
-        /// <summary>
         ///     Specifies the <see cref="IMessageSerializer" /> to be used to deserialize the messages.
         /// </summary>
         /// <param name="serializer">

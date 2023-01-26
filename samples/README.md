@@ -42,6 +42,16 @@ Binary file streaming through Kafka.
     1. http://localhost:10001/swagger
 1. The consumed files will be saved in `samples/temp` 
 
+### Avro
+
+Produce and consume messages serialized as Avro using the schema registry.
+
+1. Run the two applications
+    1. `dotnet run -p ./samples/Kafka/Avro.Producer/.`
+    1. `dotnet run -p ./samples/Kafka/Avro.Consumer/.`
+1. Observe the console output while the messages are produced and consumed
+
+
 ## MQTT
 
 ### Basic

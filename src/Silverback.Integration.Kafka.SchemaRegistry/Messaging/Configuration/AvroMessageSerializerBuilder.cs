@@ -18,6 +18,14 @@ namespace Silverback.Messaging.Configuration
 
         private Action<AvroSerializerConfig>? _configureSerializerAction;
 
+        /// <inheritdoc cref="IAvroMessageSerializerBuilder.UseType" />
+        public IAvroMessageSerializerBuilder UseType(Type messageType)
+        {
+            var serializerType = typeof(AvroMessageSerializer<>).MakeGenericType(messageType);
+            _serializer = (AvroMessageSerializerBase)Activator.CreateInstance(serializerType);
+            return this;
+        }
+
         /// <inheritdoc cref="IAvroMessageSerializerBuilder.UseType{TMessage}" />
         public IAvroMessageSerializerBuilder UseType<TMessage>()
             where TMessage : class
@@ -49,8 +57,7 @@ namespace Silverback.Messaging.Configuration
         {
             if (_serializer == null)
             {
-                throw new InvalidOperationException(
-                    "The message type was not specified. Please call UseType<TMessage>.");
+                throw new InvalidOperationException("The message type was not specified. Please call UseType<TMessage>.");
             }
 
             _configureSchemaRegistryAction?.Invoke(_serializer.SchemaRegistryConfig);

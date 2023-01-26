@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointBuilder">
         ///     The endpoint builder.
         /// </param>
-        /// <param name="serializerBuilderAction">
+        /// <param name="deserializerBuilderAction">
         ///     An optional <see cref="Action{T}" /> that takes the <see cref="IAvroMessageSerializerBuilder" /> and
         ///     configures it.
         /// </param>
@@ -32,14 +32,18 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static TBuilder DeserializeAvro<TBuilder>(
             this IConsumerEndpointBuilder<TBuilder> endpointBuilder,
-            Action<IAvroMessageSerializerBuilder>? serializerBuilderAction = null)
+            Action<IAvroMessageDeserializerBuilder>? deserializerBuilderAction = null)
             where TBuilder : IConsumerEndpointBuilder<TBuilder>
         {
             Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
-            var serializerBuilder = new AvroMessageSerializerBuilder();
-            serializerBuilderAction?.Invoke(serializerBuilder);
-            endpointBuilder.DeserializeUsing(serializerBuilder.Build());
+            var deserializerBuilder = new AvroMessageDeserializerBuilder();
+
+            if (endpointBuilder.MessageType != null)
+                deserializerBuilder.UseType(endpointBuilder.MessageType);
+
+            deserializerBuilderAction?.Invoke(deserializerBuilder);
+            endpointBuilder.DeserializeUsing(deserializerBuilder.Build());
 
             return (TBuilder)endpointBuilder;
         }

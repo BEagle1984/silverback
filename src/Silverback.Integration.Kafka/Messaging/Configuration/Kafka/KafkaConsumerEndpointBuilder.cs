@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <see cref="KafkaConsumerConfig" />.
         /// </param>
         /// <param name="messageType">
-        ///     Gets the type of the message being consumed.
+        ///     The type of the message being consumed.
         /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the

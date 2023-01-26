@@ -62,11 +62,11 @@ namespace Silverback.Samples.Mqtt.Basic.ProducerV3
                         Number = number
                     });
 
-                _logger.LogInformation($"Produced {number}");
+                _logger.LogInformation("Produced {Number}", number);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to produce {number}");
+                _logger.LogError(ex, "Failed to produce {Number}", number);
             }
         }
     }

@@ -37,6 +37,10 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
             var serializerBuilder = new AvroMessageSerializerBuilder();
+
+            if (endpointBuilder.MessageType != null)
+                serializerBuilder.UseType(endpointBuilder.MessageType);
+
             serializerBuilderAction?.Invoke(serializerBuilder);
             endpointBuilder.SerializeUsing(serializerBuilder.Build());
 

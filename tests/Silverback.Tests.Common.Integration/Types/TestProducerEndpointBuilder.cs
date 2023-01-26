@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.Types
@@ -9,6 +10,13 @@ namespace Silverback.Tests.Types
         : ProducerEndpointBuilder<TestProducerEndpoint, TestProducerEndpointBuilder>
     {
         private string _topicName = "test";
+
+        public TestProducerEndpointBuilder(
+            Type? messageType = null,
+            IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+            : base(messageType, endpointsConfigurationBuilder)
+        {
+        }
 
         protected override TestProducerEndpointBuilder This => this;
 

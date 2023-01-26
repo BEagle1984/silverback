@@ -114,7 +114,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new MqttProducerEndpointBuilder(ClientConfig, this);
+            var builder = new MqttProducerEndpointBuilder(ClientConfig, messageType, this);
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build(), preloadProducers);

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
@@ -32,14 +33,23 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Initializes a new instance of the <see cref="EndpointBuilder{TEndpoint,TBuilder}" /> class.
         /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message being produced or consumed.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
-        protected EndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+        protected EndpointBuilder(
+            Type? messageType,
+            IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         {
+            MessageType = messageType;
             EndpointsConfigurationBuilder = endpointsConfigurationBuilder;
         }
+
+        /// <inheritdoc cref="IEndpointBuilder{TBuilder}.MessageType" />
+        public Type? MessageType { get; }
 
         /// <summary>
         ///     Gets the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the builder.

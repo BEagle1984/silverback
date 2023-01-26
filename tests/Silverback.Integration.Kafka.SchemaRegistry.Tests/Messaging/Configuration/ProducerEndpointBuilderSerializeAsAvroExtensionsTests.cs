@@ -24,11 +24,32 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
         }
 
         [Fact]
-        public void SerializeAsAvro_Default_SerializerSet()
+        public void SerializeAsAvro_WithSetMessageType_TypedSerializerSet()
+        {
+            var builder = new TestProducerEndpointBuilder(typeof(TestEventOne));
+
+            var endpoint = builder.SerializeAsAvro().Build();
+
+            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        }
+
+        [Fact]
+        public void SerializeAsAvro_UseTypeWithGenericArgument_SerializerSet()
         {
             var builder = new TestProducerEndpointBuilder();
 
             var endpoint = builder.SerializeAsAvro(serializer => serializer.UseType<TestEventOne>())
+                .Build();
+
+            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        }
+
+        [Fact]
+        public void SerializeAsAvro_UseType_SerializerSet()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.SerializeAsAvro(serializer => serializer.UseType(typeof(TestEventOne)))
                 .Build();
 
             endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
@@ -43,8 +64,14 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
                 serializer => serializer
                     .UseType<TestEventOne>()
                     .Configure(
-                        schemaRegistryConfig => { schemaRegistryConfig.Url = "some-url"; },
-                        serializerConfig => { serializerConfig.BufferBytes = 42; })).Build();
+                        schemaRegistryConfig =>
+                        {
+                            schemaRegistryConfig.Url = "some-url";
+                        },
+                        serializerConfig =>
+                        {
+                            serializerConfig.BufferBytes = 42;
+                        })).Build();
 
             endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
             endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should()

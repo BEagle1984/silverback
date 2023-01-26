@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Configuration.Kafka
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new KafkaProducerEndpointBuilder(ClientConfig, this);
+            var builder = new KafkaProducerEndpointBuilder(ClientConfig, messageType, this);
             endpointBuilderAction.Invoke(builder);
 
             this.AddOutbound(messageType, builder.Build(), preloadProducers);
