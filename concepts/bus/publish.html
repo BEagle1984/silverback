@@ -87,7 +87,7 @@
 <h1 id="publishing">Publishing</h1>
 
 <h2 id="basic-publishing">Basic Publishing</h2>
-<p>To publish the message you just need an instance of <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> (or derived interfaces if using <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a>, as shown later on).</p>
+<p>To publish the message you just need an instance of &lt;xref:Silverback.Messaging.Publishing.IPublisher&gt; (or derived interfaces if using <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a>, as shown later on).</p>
 <pre><code class="lang-csharp">using Silverback.Messaging.Publishing;
 
 public class PublishingService
@@ -120,13 +120,13 @@ public class PublishingService
 </code></pre>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>Please note the required call to <code>Single()</code>, because Silverback allows you to have multiple subscribers for the same message and therefore collect multiple return values. This is not needed if using <a class="xref" href="../../api/Silverback.Messaging.Publishing.IQueryPublisher.html">IQueryPublisher</a> or <a class="xref" href="../../api/Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a> described in the <a class="xref" href="model.html">Creating the Message model</a> page.</p>
+<p>Please note the required call to <code>Single()</code>, because Silverback allows you to have multiple subscribers for the same message and therefore collect multiple return values. This is not needed if using &lt;xref:Silverback.Messaging.Publishing.IQueryPublisher&gt; or &lt;xref:Silverback.Messaging.Publishing.ICommandPublisher&gt; described in the <a class="xref" href="model.html">Creating the Message model</a> page.</p>
 </div>
 <h2 id="silverbackcoremodel">Silverback.Core.Model</h2>
 <p><a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> has been introduced in the previous page <a class="xref" href="model.html">Creating the Message model</a>.</p>
-<p>Each message type (<a class="xref" href="../../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>/<a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>) also comes with its specialized <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> as quickly shown in the following sub-chapters.</p>
+<p>Each message type (&lt;xref:Silverback.Messaging.Messages.IEvent&gt;, &lt;xref:Silverback.Messaging.Messages.ICommand&gt;/&lt;xref:Silverback.Messaging.Messages.ICommand`1&gt; and &lt;xref:Silverback.Messaging.Messages.IQuery`1&gt;) also comes with its specialized &lt;xref:Silverback.Messaging.Publishing.IPublisher&gt; as quickly shown in the following sub-chapters.</p>
 <h3 id="events">Events</h3>
-<p>The messages implementing <a class="xref" href="../../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a>, <a class="xref" href="../../api/Silverback.Domain.IDomainEvent.html">IDomainEvent</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationEvent.html">IIntegrationEvent</a> can be published using an <a class="xref" href="../../api/Silverback.Messaging.Publishing.IEventPublisher.html">IEventPublisher</a>.</p>
+<p>The messages implementing &lt;xref:Silverback.Messaging.Messages.IEvent&gt;, &lt;xref:Silverback.Domain.IDomainEvent&gt; or &lt;xref:Silverback.Messaging.Messages.IIntegrationEvent&gt; can be published using an &lt;xref:Silverback.Messaging.Publishing.IEventPublisher&gt;.</p>
 <pre><code class="lang-csharp">using Silverback.Messaging.Publishing;
 
 public class PublishingService
@@ -146,7 +146,7 @@ public class PublishingService
 }
 </code></pre>
 <h3 id="commands">Commands</h3>
-<p>The messages that implement <a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a>, <a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationCommand.html">IIntegrationCommand</a> can be published using an <a class="xref" href="../../api/Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a>.</p>
+<p>The messages that implement &lt;xref:Silverback.Messaging.Messages.ICommand&gt;, &lt;xref:Silverback.Messaging.Messages.ICommand`1&gt; or &lt;xref:Silverback.Messaging.Messages.IIntegrationCommand&gt; can be published using an &lt;xref:Silverback.Messaging.Publishing.ICommandPublisher&gt;.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -201,7 +201,7 @@ public class PublishingService
 </section>
 </div>
 <h3 id="queries">Queries</h3>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Publishing.IQueryPublisher.html">IQueryPublisher</a> ca be used to publish the messages implementing the <a class="xref" href="../../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> interface.</p>
+<p>The &lt;xref:Silverback.Messaging.Publishing.IQueryPublisher&gt; ca be used to publish the messages implementing the &lt;xref:Silverback.Messaging.Messages.IQuery`1&gt; interface.</p>
 <pre><code class="lang-csharp">using Silverback.Messaging.Publishing;
 
 public class PublishingService

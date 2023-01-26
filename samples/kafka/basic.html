@@ -241,11 +241,11 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                         Number = number
                     });
 
-                _logger.LogInformation($&quot;Produced {number}&quot;);
+                _logger.LogInformation(&quot;Produced {Number}&quot;, number);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $&quot;Failed to produce {number}&quot;);
+                _logger.LogError(ex, &quot;Failed to produce {Number}&quot;, number);
             }
         }
     }
@@ -362,7 +362,7 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
         }
 
         public void OnMessageReceived(SampleMessage message) =&gt;
-            _logger.LogInformation($&quot;Received {message.Number}&quot;);
+            _logger.LogInformation(&quot;Received {MessageNumber}&quot;, message.Number);
     }
 }
 </code></pre></section>

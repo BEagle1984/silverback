@@ -93,7 +93,7 @@
 <ul>
 <li><code>WithConnectionToMessageBroker</code> registers the services necessary to connect to a message broker</li>
 <li><code>AddKafka</code>, <code>AddMqtt</code>, <code>AddRabbit</code>, etc. register the message broker implementation(s)</li>
-<li><code>AddEndpointsConfigurator</code> is used to outsource the endpoints configuration into a separate class implementing the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> interface (of course multiple configurators can be registered)</li>
+<li><code>AddEndpointsConfigurator</code> is used to outsource the endpoints configuration into a separate class implementing the &lt;xref:Silverback.Messaging.Configuration.IEndpointsConfigurator&gt; interface (of course multiple configurators can be registered)</li>
 <li><code>AddInbound</code> is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters</li>
 <li><code>AddOutbound</code> works the other way around and subscribes to the internal bus to forward the integration messages to the message broker</li>
 </ul>
@@ -318,14 +318,14 @@
 
 <div class="TIP">
 <h5>Tip</h5>
-<p>All <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> implementations are registered as scoped services. Multiple implementations can be registered to split the configuration and of course dependencies (such as <code>IOption</code> or a <code>DbContext</code>) can be injected to load the configuration variables.</p>
+<p>All &lt;xref:Silverback.Messaging.Configuration.IEndpointsConfigurator&gt; implementations are registered as scoped services. Multiple implementations can be registered to split the configuration and of course dependencies (such as <code>IOption</code> or a <code>DbContext</code>) can be injected to load the configuration variables.</p>
 </div>
 <div class="IMPORTANT">
 <h5>Important</h5>
 <p>Starting from version 3.0.0 the broker(s) will be connected and all consumers started automatically at startup, unless explicitly disabled (see the <a href="#connection-modes">Connection modes</a> chapter for details).</p>
 </div>
 <h3 id="inline-endpoints-configuration">Inline endpoints configuration</h3>
-<p>The preferred and suggested way to configure the message broker endpoints is using the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> but you can use <code>AddEndpoints</code> (or <code>AddKafkaEndpoints</code> etc.) directly and configure everything inline.</p>
+<p>The preferred and suggested way to configure the message broker endpoints is using the &lt;xref:Silverback.Messaging.Configuration.IEndpointsConfigurator&gt; but you can use <code>AddEndpoints</code> (or <code>AddKafkaEndpoints</code> etc.) directly and configure everything inline.</p>
 <pre><code class="lang-csharp">public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -466,11 +466,11 @@
 
 <div class="TIP">
 <h5>Tip</h5>
-<p>See the <a class="xref" href="../../api/Silverback.Messaging.Configuration.BrokerConnectionOptions.html">BrokerConnectionOptions</a> documentation for details about the different options.</p>
+<p>See the &lt;xref:Silverback.Messaging.Configuration.BrokerConnectionOptions&gt; documentation for details about the different options.</p>
 </div>
 <div class="NOTE">
 <h5>Note</h5>
-<p>Use <a class="xref" href="../../api/Silverback.Messaging.Broker.IBrokerCollection.html">IBrokerCollection</a> instead of <a class="xref" href="../../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a> when multiple broker implementations are used.</p>
+<p>Use &lt;xref:Silverback.Messaging.Broker.IBrokerCollection&gt; instead of &lt;xref:Silverback.Messaging.Broker.IBroker&gt; when multiple broker implementations are used.</p>
 </div>
 <div class="IMPORTANT">
 <h5>Important</h5>
@@ -482,9 +482,9 @@
 <p>The <a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks">Silverback.Integration.HealthChecks</a> package contains some extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> that can be used to monitor the connection to the message broker.</p>
 <p>Currently, two checks exists:</p>
 <ul>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>: Adds a health check that verifies that all consumers are connected.</li>
+<li><a href="xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
+<li><a href="xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
+<li><a href="xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>: Adds a health check that verifies that all consumers are connected.</li>
 </ul>
 <p>The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.</p>
 <pre><code class="lang-csharp">public class Startup
@@ -505,7 +505,7 @@
 }
 </code></pre>
 <h2 id="consumer-management-api">Consumer management API</h2>
-<p>The consumer exposes some information and statistics that can be used to programmatically check the consumer status (see <a class="xref" href="../../api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StatusInfo">IConsumer</a>). A consumer can also be connected, started, stopped and disconnected at will.</p>
+<p>The consumer exposes some information and statistics that can be used to programmatically check the consumer status (see &lt;xref:Silverback.Messaging.Broker.IConsumer#Silverback_Messaging_Broker_IConsumer_StatusInfo&gt;). A consumer can also be connected, started, stopped and disconnected at will.</p>
 <p>The following example shows a sample service that is used to monitor the total number of consumed message and restart the faulted consumers (the consumers get disconnected when an unhandled exception is thrown while processing the consumed message).</p>
 <pre><code class="lang-csharp">public class ConsumerManagementService
 {

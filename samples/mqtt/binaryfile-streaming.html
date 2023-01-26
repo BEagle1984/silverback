@@ -416,7 +416,7 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers
 
             var filename = Guid.NewGuid().ToString(&quot;N&quot;) + binaryFileMessage.Filename;
 
-            _logger.LogInformation($&quot;Saving binary file as {filename}...&quot;);
+            _logger.LogInformation(&quot;Saving binary file as {Filename}...&quot;, filename);
 
             // Create a FileStream to save the file
             using var fileStream = File.OpenWrite(Path.Combine(OutputPath, filename));
@@ -430,7 +430,9 @@ namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers
             }
 
             _logger.LogInformation(
-                $&quot;Written {fileStream.Length} bytes into {filename}.&quot;);
+                &quot;Written {FileStreamLength} bytes into {Filename}&quot;,
+                fileStream.Length,
+                filename);
         }
 
         private static void EnsureTargetFolderExists()
