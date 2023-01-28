@@ -8,7 +8,7 @@
     <title>Enabling Silverback | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Enabling Silverback | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -98,7 +98,7 @@
 }
 </code></pre>
 <h2 id="configuring-silverback">Configuring Silverback</h2>
-<p>The <a href="xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">AddSilverback</a> method highlighted in the previous chapter returns an &lt;xref:Silverback.Messaging.Configuration.ISilverbackBuilder&gt; that exposes all the methods needed to configure Silverback and wire everything up.</p>
+<p>The <a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions.html#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">AddSilverback</a> method highlighted in the previous chapter returns an <a class="xref" href="../../api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that exposes all the methods needed to configure Silverback and wire everything up.</p>
 <p>The several configuration options will are exhaustively presented in each dedicated section of this documentation but here is a basic sample startup.</p>
 <pre><code class="lang-csharp">public class Startup
 {
@@ -115,7 +115,7 @@
     }
 }
 </code></pre>
-<p>Note that <a href="xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">AddSilverback</a> should be called only once but you can use the <a href="xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionConfigureSilverbackExtensions_ConfigureSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">ConfigureSilverback</a> extension method on the <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a> to retrieve the &lt;xref:Silverback.Messaging.Configuration.ISilverbackBuilder&gt; instance once again.</p>
+<p>Note that <a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions.html#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">AddSilverback</a> should be called only once but you can use the <a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions.html#Microsoft_Extensions_DependencyInjection_ServiceCollectionConfigureSilverbackExtensions_ConfigureSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_">ConfigureSilverback</a> extension method on the <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a> to retrieve the <a class="xref" href="../../api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> instance once again.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">

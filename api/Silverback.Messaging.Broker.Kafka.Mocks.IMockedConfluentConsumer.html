@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IMockedConfluentConsumer
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IMockedConfluentConsumer
+   | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer">
+  
+  
+  <h1 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer" class="text-break">Interface IMockedConfluentConsumer
+  </h1>
+  <div class="markdown level0 summary"><p>A mocked implementation of <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> from Confluent.Kafka that consumes
+from an <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscribe(System.Collections.Generic.IEnumerable&lt;System.String&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscribe(System.String)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Unsubscribe()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalAssign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalAssign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalUnassign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Unassign()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.StoreOffset(Confluent.Kafka.ConsumeResult&lt;System.Byte[], System.Byte[]&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.StoreOffset(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit(Confluent.Kafka.ConsumeResult&lt;System.Byte[], System.Byte[]&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Seek(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Pause(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Resume(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Committed(System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Committed(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Position(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.OffsetsForTimes(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionTimestamp&gt;, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.GetWatermarkOffsets(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.QueryWatermarkOffsets(Confluent.Kafka.TopicPartition, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Close()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.MemberId</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assignment</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscription</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.ConsumerGroupMetadata</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.AddBrokers(System.String)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.Handle</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.Name</span>
+    </div>
+    <div>
+      <span class="xref">System.IDisposable.Dispose()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.html">Silverback.Messaging.Broker.Kafka.Mocks</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.Testing.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMockedConfluentConsumer : IConsumer&lt;byte[], byte[]&gt;, IClient, IDisposable</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_Disposed.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.Disposed%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Messaging/Broker/Kafka/Mocks/IMockedConfluentConsumer.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_Disposed_" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.Disposed*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_Disposed" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.Disposed">Disposed</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this instance was disposed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool Disposed { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_EnablePartitionEof.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Messaging/Broker/Kafka/Mocks/IMockedConfluentConsumer.cs/#L22">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_EnablePartitionEof_" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_EnablePartitionEof" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof">EnablePartitionEof</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the partition EOF event has to be emitted.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool EnablePartitionEof { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_GroupId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.GroupId%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Messaging/Broker/Kafka/Mocks/IMockedConfluentConsumer.cs/#L17">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_GroupId_" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.GroupId*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_GroupId" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.GroupId">GroupId</h4>
+  <div class="markdown level1 summary"><p>Gets the consumer group id.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string GroupId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_PartitionsAssigned.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.PartitionsAssigned%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Messaging/Broker/Kafka/Mocks/IMockedConfluentConsumer.cs/#L31">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_PartitionsAssigned_" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.PartitionsAssigned*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_PartitionsAssigned" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.PartitionsAssigned">PartitionsAssigned</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the partitions have been assigned to the consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool PartitionsAssigned { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_PartitionsAssigned_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This value indicates that the rebalance process is over. It could be that no partition has actually
+been assigned.</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Messaging/Broker/Kafka/Mocks/IMockedConfluentConsumer.cs/#L12" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

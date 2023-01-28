@@ -8,7 +8,7 @@
     <title>Testing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Testing | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -195,7 +195,7 @@
 }
 </code></pre>
 <h2 id="testing-helper">Testing helper</h2>
-<p>The testing helpers (such has &lt;xref:Silverback.Testing.IKafkaTestingHelper&gt;) contain some methods that simplify testing with the message broker, given it's asynchronous nature.</p>
+<p>The testing helpers (such has <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>) contain some methods that simplify testing with the message broker, given it's asynchronous nature.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -237,7 +237,7 @@
 }
 </code></pre>
 <h2 id="integrationspy">IntegrationSpy</h2>
-<p>The &lt;xref:Silverback.Testing.IIntegrationSpy&gt; ships with the <a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a> package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.</p>
+<p>The <a class="xref" href="../../api/Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> ships with the <a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a> package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -283,8 +283,8 @@
 </code></pre>
 <h2 id="mocked-kafka">Mocked Kafka</h2>
 <p>Many aspects of the Kafka broker have been mocked to replicated as much as possible the behavior you have when connected with the real broker. This new implementation supports commits, kafka events, offset reset, partitioning, rebalance, etc.</p>
-<p>The implementation revolves around the &lt;xref:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection&gt;. This type is registered as singleton and can be resolved in the tests to gain access to the &lt;xref:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic&gt; instances directly and inspect their partitions, offsets, etc.
-Alternatively the &lt;xref:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic&gt; can be retrieved via the <code>GetTopic</code> method of the &lt;xref:Silverback.Testing.IKafkaTestingHelper&gt;.</p>
+<p>The implementation revolves around the &lt;xref:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopicCollection&gt;. This type is registered as singleton and can be resolved in the tests to gain access to the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> instances directly and inspect their partitions, offsets, etc.
+Alternatively the <a class="xref" href="../../api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> can be retrieved via the <code>GetTopic</code> method of the <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>.</p>
 <h3 id="partitioning">Partitioning</h3>
 <p>By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. The setting is per broker and there's currently no way to configure each topic independently.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;

@@ -8,7 +8,7 @@
     <title>Serialization | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Serialization | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -88,17 +88,17 @@
 
 <p>Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therefore completely customizable.</p>
 <h2 id="default-json-serialization">Default JSON serialization</h2>
-<p>The default &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt; internally uses <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to serialize the messages as JSON and encode them in UTF-8.</p>
-<p>A few headers are added to the message, in particular <code>x-message-type</code> is used by the &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt; to know the message type when deserializing it in the consumer, thus allowing messages of different types being sent over the same topic or queue.</p>
+<p>The default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> internally uses <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to serialize the messages as JSON and encode them in UTF-8.</p>
+<p>A few headers are added to the message, in particular <code>x-message-type</code> is used by the <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> to know the message type when deserializing it in the consumer, thus allowing messages of different types being sent over the same topic or queue.</p>
 <div class="WARNING">
 <h5>Warning</h5>
-<p>The &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt; will obviously try to map the message to a type with the exact assembly qualified name found in the <code>x-message-type</code> header. It is therefore a good practice to share the message models among the services, maybe through a shared project or a nuget package.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> will obviously try to map the message to a type with the exact assembly qualified name found in the <code>x-message-type</code> header. It is therefore a good practice to share the message models among the services, maybe through a shared project or a nuget package.</p>
 </div>
 <p>This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.</p>
 <p>Have a look at the <a class="xref" href="headers.html">Message Headers</a> section for an overview on the headers that are appended to the messages.</p>
 <h2 id="fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</h2>
 <p>If you are consuming a message coming from another system (not based on Silverback), chances are that the message type name is not being delivered as header.</p>
-<p>In that case you can resort to the typed &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer`1&gt;. This serializer works like the default one seen in the previous chapter, but the message type is hard-coded, instead of being resolved according to the message header.</p>
+<p>In that case you can resort to the typed <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>. This serializer works like the default one seen in the previous chapter, but the message type is hard-coded, instead of being resolved according to the message header.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -178,7 +178,7 @@
 </section>
 </div>
 <h2 id="json-using-newtonsoftjson">JSON using Newtonsoft.Json</h2>
-<p>Prior to release 3.0.0 the default &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt; was based on <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> instead of <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a>. For backward compatibility reasons and since <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> may not support all use cases covered by <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a>, the old serializers have been renamed to &lt;xref:Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer&gt; and &lt;xref:Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer`1&gt; and moved into the dedicated <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package.</p>
+<p>Prior to release 3.0.0 the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> was based on <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> instead of <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a>. For backward compatibility reasons and since <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> may not support all use cases covered by <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a>, the old serializers have been renamed to <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and <a class="xref" href="../../api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a> and moved into the dedicated <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
@@ -253,7 +253,7 @@
 </section>
 </div>
 <h2 id="apache-avro">Apache Avro</h2>
-<p>The &lt;xref:Silverback.Messaging.Serialization.AvroMessageSerializer`1&gt; contained in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry">Silverback.Integration.Kafka.SchemaRegistry</a> package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a> contained in the <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry">Silverback.Integration.Kafka.SchemaRegistry</a> package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
@@ -366,7 +366,7 @@
 <p>This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.</p>
 </div>
 <h2 id="custom-serializer">Custom serializer</h2>
-<p>In some cases you may want to build your very own custom serializer implementing &lt;xref:Silverback.Messaging.Serialization.IMessageSerializer&gt; directly.</p>
+<p>In some cases you may want to build your very own custom serializer implementing <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> directly.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">

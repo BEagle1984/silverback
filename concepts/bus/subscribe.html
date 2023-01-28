@@ -8,7 +8,7 @@
     <title>Subscribing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Subscribing | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -153,8 +153,8 @@ public class OrderCreatedEvent : OrderEvent
 </section>
 </div>
 <h3 id="subscription-options">Subscription options</h3>
-<p>All public methods are automatically subscribed by default but the &lt;xref:Silverback.Messaging.Subscribers.SubscribeAttribute&gt; can be used to decorate the non-public methods and subscribe them as well.</p>
-<p>The &lt;xref:Silverback.Messaging.Subscribers.SubscribeAttribute&gt; can also be used to customize the subscription options, see the attribute properties for details.</p>
+<p>All public methods are automatically subscribed by default but the <a class="xref" href="../../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> can be used to decorate the non-public methods and subscribe them as well.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> can also be used to customize the subscription options, see the attribute properties for details.</p>
 <p>It is also possible to disable the automatic subscription of the public methods.</p>
 <pre><code class="lang-csharp">public class Startup
 {
@@ -168,7 +168,7 @@ public class OrderCreatedEvent : OrderEvent
 }
 </code></pre>
 <h2 id="delegate-based-subscription">Delegate based subscription</h2>
-<p>In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the <a href="xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions">AddDelegateSubscriber</a> method.</p>
+<p>In some cases you may prefer to subscribe a method delegate (or an inline lambda) directly using the <a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.html">AddDelegateSubscriber</a> method.</p>
 <pre><code class="lang-csharp">public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -285,7 +285,7 @@ public class OrderCreatedEvent : OrderEvent
 </section>
 </div>
 
-<p>Silverback recognizes per default only the messages implementing &lt;xref:Silverback.Messaging.Messages.IMessage&gt; but you can register your own types (you can register base types and interfaces as well).</p>
+<p>Silverback recognizes per default only the messages implementing <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessage.html">IMessage</a> but you can register your own types (you can register base types and interfaces as well).</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
