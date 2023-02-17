@@ -13,18 +13,9 @@ namespace Silverback.Messaging.BinaryMessages;
 /// <summary>
 ///     Handles the <see cref="IBinaryMessage" />. It's not really a serializer, since the raw binary content is transmitted as-is.
 /// </summary>
-/// <typeparam name="TModel">
-///     The type of the <see cref="IBinaryMessage" /> implementation.
-/// </typeparam>
-public class BinaryMessageSerializer<TModel> : IBinaryMessageSerializer
-    where TModel : IBinaryMessage, new()
+public class BinaryMessageSerializer : IBinaryMessageSerializer, IEquatable<BinaryMessageSerializer>
 {
-    private readonly Type _type = typeof(TModel);
-
-    /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
-    public bool RequireHeaders => false;
-
-    /// <inheritdoc cref="BinaryMessageSerializer{TModel}.SerializeAsync" />
+    /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         Check.NotNull(headers, nameof(headers));
@@ -47,20 +38,24 @@ public class BinaryMessageSerializer<TModel> : IBinaryMessageSerializer
         return ValueTaskFactory.FromResult(binaryMessage.Content);
     }
 
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-    public ValueTask<DeserializedMessage> DeserializeAsync(
-        Stream? messageStream,
-        MessageHeaderCollection headers,
-        ConsumerEndpoint endpoint)
+    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+    public bool Equals(BinaryMessageSerializer? other) => true;
+
+    /// <inheritdoc cref="object.Equals(object)" />
+    public override bool Equals(object? obj)
     {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
+        if (obj is null)
+            return false;
 
-        Type type = SerializationHelper.GetTypeFromHeaders(headers) ?? _type;
+        if (ReferenceEquals(this, obj))
+            return true;
 
-        TModel binaryMessage = type == _type ? new TModel() : (TModel)Activator.CreateInstance(type)!;
-        binaryMessage.Content = messageStream;
+        if (obj.GetType() != GetType())
+            return false;
 
-        return ValueTaskFactory.FromResult(new DeserializedMessage(binaryMessage, type));
+        return Equals((BinaryMessageSerializer)obj);
     }
+
+    /// <inheritdoc cref="object.GetHashCode" />
+    public override int GetHashCode() => 42;
 }

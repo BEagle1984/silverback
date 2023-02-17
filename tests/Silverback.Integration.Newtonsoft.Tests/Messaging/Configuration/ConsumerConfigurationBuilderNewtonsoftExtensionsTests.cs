@@ -13,96 +13,96 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration;
 public class ConsumerConfigurationBuilderNewtonsoftExtensionsTests
 {
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_Default_SerializerSet()
+    public void DeserializeJsonUsingNewtonsoft_Default_DeserializerSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_WithSetMessageType_TypedSerializerSet()
+    public void DeserializeJsonUsingNewtonsoft_WithSetMessageType_TypedDeserializerSet()
     {
         TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft().Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseFixedTypeWithGenericArgument_SerializerSet()
+    public void DeserializeJsonUsingNewtonsoft_UseModelWithGenericArgument_DeserializerSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder
-            .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType<object>())
+            .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel<object>())
             .Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseFixedType_SerializerSet()
+    public void DeserializeJsonUsingNewtonsoft_UseModel_DeserializerSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder
-            .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType(typeof(TestEventOne)))
+            .DeserializeJsonUsingNewtonsoft(deserializer => deserializer.UseModel(typeof(TestEventOne)))
             .Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_Configure_SerializerAndOptionsSet()
+    public void DeserializeJsonUsingNewtonsoft_Configure_DeserializerAndOptionsSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-            serializer => serializer.Configure(
+            deserializer => deserializer.Configure(
                 settings =>
                 {
                     settings.MaxDepth = 42;
                 })).Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
-        configuration.Serializer.As<NewtonsoftJsonMessageSerializer<object>>().Settings.MaxDepth.Should().Be(42);
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>().Settings.MaxDepth.Should().Be(42);
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_WithEncoding_SerializerAndEncodingSet()
+    public void DeserializeJsonUsingNewtonsoft_WithEncoding_DeserializerAndEncodingSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-                serializer => serializer
+                deserializer => deserializer
                     .WithEncoding(MessageEncoding.Unicode))
             .Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
-        configuration.Serializer.As<NewtonsoftJsonMessageSerializer<object>>().Encoding.Should()
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>().Encoding.Should()
             .Be(MessageEncoding.Unicode);
     }
 
     [Fact]
-    public void DeserializeJsonUsingNewtonsoft_UseFixedTypeAndConfigure_SerializerAndOptionsSet()
+    public void DeserializeJsonUsingNewtonsoft_UseModelAndConfigure_DeserializerAndOptionsSet()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration configuration = builder.DeserializeJsonUsingNewtonsoft(
-            serializer => serializer
-                .UseFixedType<object>()
+            deserializer => deserializer
+                .UseModel<object>()
                 .Configure(
                     settings =>
                     {
                         settings.MaxDepth = 42;
                     })).Build();
 
-        configuration.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<object>>();
-        configuration.Serializer.As<NewtonsoftJsonMessageSerializer<object>>().Settings.MaxDepth.Should()
+        configuration.Deserializer.Should().BeOfType<NewtonsoftJsonMessageDeserializer<object>>();
+        configuration.Deserializer.As<NewtonsoftJsonMessageDeserializer<object>>().Settings.MaxDepth.Should()
             .Be(42);
     }
 }

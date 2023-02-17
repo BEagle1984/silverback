@@ -15,68 +15,61 @@ namespace Silverback.Messaging.Configuration;
 public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {
     /// <summary>
-    ///     Specifies the <see cref="IMessageSerializer" /> to be used to deserialize the messages.
+    ///     Specifies the <see cref="IMessageDeserializer" /> to be used to deserialize the messages.
     /// </summary>
-    /// <param name="serializer">
-    ///     The <see cref="IMessageSerializer" />.
+    /// <param name="deserializer">
+    ///     The <see cref="IMessageDeserializer" />.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder DeserializeUsing(IMessageSerializer serializer) => UseSerializer(Check.NotNull(serializer, nameof(serializer)));
-
-    /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer{TMessage}" /> to deserialize the consumed JSON.
-    ///     </para>
-    ///     <para>
-    ///         By default this serializer relies on the message type header to determine the type of the message to be deserialized. This
-    ///         behavior can be changed using the builder action and specifying a fixed message type.
-    ///     </para>
-    /// </summary>
-    /// <param name="serializerBuilderAction">
-    ///     An optional <see cref="Action{T}" /> that takes the <see cref="JsonMessageSerializerBuilder" /> and configures it.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder DeserializeJson(Action<JsonMessageSerializerBuilder>? serializerBuilderAction = null)
+    public TBuilder DeserializeUsing(IMessageDeserializer deserializer)
     {
-        JsonMessageSerializerBuilder serializerBuilder = new();
-
-        if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseFixedType<TMessage>();
-
-        serializerBuilderAction?.Invoke(serializerBuilder);
-        return DeserializeUsing(serializerBuilder.Build());
+        _deserializer = Check.NotNull(deserializer, nameof(deserializer));
+        return This;
     }
 
     /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="BinaryMessageSerializer{TModel}" /> to wrap the consumed binary messages
-    ///         into a <see cref="BinaryMessage" />.
-    ///     </para>
-    ///     <para>
-    ///         This settings will force the <see cref="BinaryMessageSerializer{TModel}" /> to be used regardless of the message type header.
-    ///     </para>
+    ///     Sets the deserializer to an instance of <see cref="JsonMessageDeserializer{TMessage}" /> to deserialize the consumed JSON.
+    /// </summary>
+    /// <param name="deserializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="JsonMessageDeserializerBuilder" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder DeserializeJson(Action<JsonMessageDeserializerBuilder>? deserializerBuilderAction = null)
+    {
+        JsonMessageDeserializerBuilder deserializerBuilder = new();
+
+        if (typeof(TMessage) != typeof(object))
+            deserializerBuilder.UseModel<TMessage>();
+
+        deserializerBuilderAction?.Invoke(deserializerBuilder);
+        return DeserializeUsing(deserializerBuilder.Build());
+    }
+
+    /// <summary>
+    ///     Sets the serializer to an instance of <see cref="BinaryMessageDeserializer{TModel}" /> to wrap the consumed binary messages
+    ///     into a <see cref="BinaryMessage" />.
     /// </summary>
     /// <remarks>
     ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary messages.
     /// </remarks>
-    /// <param name="serializerBuilderAction">
-    ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryMessageSerializerBuilder" /> and configures it.
+    /// <param name="deserializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="BinaryMessageDeserializerBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ConsumeBinaryMessages(Action<BinaryMessageSerializerBuilder>? serializerBuilderAction = null)
+    public TBuilder ConsumeBinaryMessages(Action<BinaryMessageDeserializerBuilder>? deserializerBuilderAction = null)
     {
-        BinaryMessageSerializerBuilder serializerBuilder = new();
+        BinaryMessageDeserializerBuilder deserializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseModel(typeof(TMessage));
+            deserializerBuilder.UseModel(typeof(TMessage));
 
-        serializerBuilderAction?.Invoke(serializerBuilder);
-        return DeserializeUsing(serializerBuilder.Build());
+        deserializerBuilderAction?.Invoke(deserializerBuilder);
+        return DeserializeUsing(deserializerBuilder.Build());
     }
 }

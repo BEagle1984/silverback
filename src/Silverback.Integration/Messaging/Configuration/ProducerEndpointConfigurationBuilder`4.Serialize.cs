@@ -5,6 +5,7 @@ using System;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -14,15 +15,22 @@ namespace Silverback.Messaging.Configuration;
 public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
     /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="JsonMessageSerializer{TMessage}" /> to serialize the produced messages as JSON.
-    ///     </para>
-    ///     <para>
-    ///         By default this serializer forwards the message type in an header to let the consumer know which type has to be deserialized.
-    ///         This approach allows to mix messages of different types in the same endpoint and it's ideal when both the producer and the
-    ///         consumer are using Silverback but might not be optimal for interoperability. This behavior can be changed using the builder
-    ///         action and specifying a fixed message type.
-    ///     </para>
+    ///     Specifies the <see cref="IMessageSerializer" /> to be used to serialize the messages.
+    /// </summary>
+    /// <param name="serializer">
+    ///     The <see cref="IMessageSerializer" />.
+    /// </param>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder SerializeUsing(IMessageSerializer serializer)
+    {
+        _serializer = Check.NotNull(serializer, nameof(serializer));
+        return This;
+    }
+
+    /// <summary>
+    ///     Sets the serializer to an instance of <see cref="JsonMessageSerializer" /> to serialize the produced messages as JSON.
     /// </summary>
     /// <param name="serializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="JsonMessageSerializerBuilder" /> and configures it.
@@ -33,25 +41,12 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder SerializeAsJson(Action<JsonMessageSerializerBuilder>? serializerBuilderAction = null)
     {
         JsonMessageSerializerBuilder serializerBuilder = new();
-
-        if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseFixedType<TMessage>();
-
         serializerBuilderAction?.Invoke(serializerBuilder);
         return SerializeUsing(serializerBuilder.Build());
     }
 
     /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="BinaryMessageSerializer{TModel}" /> to produce the
-    ///         <see cref="IBinaryMessage" />.
-    ///     </para>
-    ///     <para>
-    ///         By default this serializer forwards the message type in an header to let the consumer know which type has to be deserialized.
-    ///         This approach allows to mix messages of different types in the same endpoint and it's ideal when both the producer and the
-    ///         consumer are using Silverback but might not be optimal for interoperability. This behavior can be changed using the builder
-    ///         action and specifying a fixed message type.
-    ///     </para>
+    ///     Sets the serializer to an instance of <see cref="BinaryMessageSerializer" /> to produce the <see cref="IBinaryMessage" />.
     /// </summary>
     /// <remarks>
     ///     This replaces the <see cref="IMessageSerializer" /> and the endpoint will only be able to deal with binary messages.
@@ -65,10 +60,6 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder ProduceBinaryMessages(Action<BinaryMessageSerializerBuilder>? serializerBuilderAction = null)
     {
         BinaryMessageSerializerBuilder serializerBuilder = new();
-
-        if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseModel(typeof(TMessage));
-
         serializerBuilderAction?.Invoke(serializerBuilder);
         return SerializeUsing(serializerBuilder.Build());
     }

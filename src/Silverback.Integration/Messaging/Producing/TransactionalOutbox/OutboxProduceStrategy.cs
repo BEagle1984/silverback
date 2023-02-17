@@ -105,7 +105,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             // TODO: Move this on read side or get completely rid of it, in favor of endpoint name matching only
             string? messageTypeName = headers?.GetValue(DefaultMessageHeaders.MessageType);
-            Type? messageType = messageTypeName == null ? null : TypesCache.GetType(messageTypeName);
+            Type? messageType = TypesCache.GetType(messageTypeName);
 
             await _outboxWriter.AddAsync(
                     new OutboxMessage(

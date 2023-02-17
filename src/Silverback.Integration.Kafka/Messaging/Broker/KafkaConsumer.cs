@@ -206,11 +206,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     {
         MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
 
-        (KafkaConsumerEndpoint endpoint, IKafkaMessageSerializer serializer) = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
+        (KafkaConsumerEndpoint endpoint, IKafkaMessageDeserializer deserializer) = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 
         if (message.Key != null)
         {
-            string deserializedKafkaKey = serializer.DeserializeKey(message.Key, headers, endpoint);
+            string deserializedKafkaKey = deserializer.DeserializeKey(message.Key, headers, endpoint);
             headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
         }

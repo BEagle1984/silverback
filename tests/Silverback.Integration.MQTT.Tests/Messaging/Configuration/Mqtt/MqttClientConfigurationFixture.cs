@@ -232,7 +232,7 @@ public class MqttClientConfigurationFixture
                     new MqttProducerEndpointConfiguration
                     {
                         Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
-                        Serializer = new JsonMessageSerializer<object>()
+                        Serializer = new JsonMessageSerializer()
                     }
                 })
         };
@@ -243,7 +243,7 @@ public class MqttClientConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenProtocolIs300AndConsumerSerializerRequiresHeaders()
+    public void Validate_ShouldThrow_WhenProtocolIs300AndConsumerDeserializerRequiresHeaders()
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
@@ -254,7 +254,7 @@ public class MqttClientConfigurationFixture
                     new MqttConsumerEndpointConfiguration
                     {
                         Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Serializer = new JsonMessageSerializer<object>()
+                        Deserializer = new JsonMessageDeserializer<object>()
                     }
                 })
         };
@@ -266,7 +266,7 @@ public class MqttClientConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldNotThrow_WhenProtocolIs300ButSerializersDoNotRequireHeaders()
+    public void Validate_ShouldNotThrow_WhenProtocolIs300ButDeserializersDoNotRequireHeaders()
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
@@ -277,7 +277,7 @@ public class MqttClientConfigurationFixture
                     new MqttConsumerEndpointConfiguration
                     {
                         Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Serializer = new JsonMessageSerializer<TestEventOne>()
+                        Deserializer = new JsonMessageDeserializer<TestEventOne>()
                     }
                 })
         };
@@ -299,7 +299,7 @@ public class MqttClientConfigurationFixture
                     new MqttConsumerEndpointConfiguration
                     {
                         Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Serializer = new JsonMessageSerializer<TestEventOne>(),
+                        Deserializer = new JsonMessageDeserializer<TestEventOne>(),
                         ErrorPolicy = new ErrorPolicyChain(
                             new MoveMessageErrorPolicy("topic2")
                             {
@@ -327,7 +327,7 @@ public class MqttClientConfigurationFixture
                     new MqttConsumerEndpointConfiguration
                     {
                         Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Serializer = new JsonMessageSerializer<TestEventOne>(),
+                        Deserializer = new JsonMessageDeserializer<TestEventOne>(),
                         ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy { MaxFailedAttempts = 5 })
                     }
                 })
@@ -393,7 +393,7 @@ public class MqttClientConfigurationFixture
                     new MqttProducerEndpointConfiguration
                     {
                         Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
-                        Serializer = new JsonMessageSerializer<TestEventOne>()
+                        Serializer = new JsonMessageSerializer()
                     }
                 })
         };

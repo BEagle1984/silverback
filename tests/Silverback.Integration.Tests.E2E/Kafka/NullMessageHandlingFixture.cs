@@ -261,7 +261,7 @@ public class NullMessageHandlingFixture : KafkaFixture
                                 .Consume<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeUsing(new CustomSerializer()))))
+                                        .DeserializeUsing(new CustomDeserializer()))))
                 .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -271,8 +271,8 @@ public class NullMessageHandlingFixture : KafkaFixture
 
         Helper.Spy.RawInboundEnvelopes.Should().HaveCount(1);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<CustomSerializer.RawMessage>();
-        Helper.Spy.InboundEnvelopes[0].Message.As<CustomSerializer.RawMessage>().Content.Should()
+        Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<CustomDeserializer.RawMessage>();
+        Helper.Spy.InboundEnvelopes[0].Message.As<CustomDeserializer.RawMessage>().Content.Should()
             .BeNull();
     }
 
@@ -341,12 +341,9 @@ public class NullMessageHandlingFixture : KafkaFixture
         Helper.Spy.OutboundEnvelopes[0].Message.As<Tombstone>().MessageId.Should().Be("42");
     }
 
-    private sealed class CustomSerializer : IMessageSerializer
+    private sealed class CustomDeserializer : IMessageDeserializer
     {
         public bool RequireHeaders => false;
-
-        public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection messageHeaders, ProducerEndpoint endpoint) =>
-            throw new NotSupportedException();
 
         public ValueTask<DeserializedMessage> DeserializeAsync(
             Stream? messageStream,
@@ -357,9 +354,17 @@ public class NullMessageHandlingFixture : KafkaFixture
             return ValueTask.FromResult(new DeserializedMessage(wrapper, typeof(RawMessage)));
         }
 
-        public class RawMessage
+        public IMessageSerializer GetCompatibleSerializer() => new CustomSerializer();
+
+        public sealed class RawMessage
         {
             public byte[]? Content { get; init; }
+        }
+
+        private sealed class CustomSerializer : IMessageSerializer
+        {
+            public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint) =>
+                throw new NotSupportedException();
         }
     }
 }

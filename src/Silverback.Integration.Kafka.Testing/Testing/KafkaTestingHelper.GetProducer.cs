@@ -67,7 +67,7 @@ public partial class KafkaTestingHelper
         KafkaProducerEndpointConfigurationBuilder<object> endpoint,
         KafkaConsumerEndpointConfiguration endpointConfiguration)
     {
-        endpoint.SerializeUsing(endpointConfiguration.Serializer);
+        endpoint.SerializeUsing(endpointConfiguration.Deserializer.GetCompatibleSerializer());
         endpoint.ProduceTo(endpointConfiguration.TopicPartitions.First().TopicPartition);
     }
 }

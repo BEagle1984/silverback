@@ -16,8 +16,8 @@ public class AvroMessageDeserializerBuilderFixture
     {
         AvroMessageDeserializerBuilder builder = new();
 
-        IMessageSerializer serializer = builder
-            .UseType<TestEventOne>()
+        IMessageDeserializer deserializer = builder
+            .UseModel<TestEventOne>()
             .Configure(
                 schemaRegistryConfig =>
                 {
@@ -29,7 +29,7 @@ public class AvroMessageDeserializerBuilderFixture
                 })
             .Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
-        serializer.As<AvroMessageDeserializer<TestEventOne>>().SchemaRegistryConfig.Url.Should().Be("some-url");
+        deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        deserializer.As<AvroMessageDeserializer<TestEventOne>>().SchemaRegistryConfig.Url.Should().Be("some-url");
     }
 }

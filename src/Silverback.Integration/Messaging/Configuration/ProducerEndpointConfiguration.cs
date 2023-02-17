@@ -8,6 +8,7 @@ using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -33,6 +34,12 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
                 RawName = _endpoint.RawName;
         }
     }
+
+    /// <summary>
+    ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize the messages being produced.
+    ///     The default is the <see cref="JsonMessageSerializer" />.
+    /// </summary>
+    public IMessageSerializer Serializer { get; init; } = DefaultSerializers.Json;
 
     /// <summary>
     ///     Gets the message chunking settings. This option can be used to split large messages into smaller chunks.
@@ -74,6 +81,9 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
                 "An endpoint resolver is required. " +
                 $"Set the {nameof(Endpoint)} property or use ProduceTo or UseEndpointResolver to set it.");
         }
+
+        if (Serializer == null)
+            throw new BrokerConfigurationException("A serializer is required.");
 
         if (MessageType == null)
             throw new BrokerConfigurationException("The message type is required.");

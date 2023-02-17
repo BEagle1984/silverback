@@ -135,9 +135,9 @@ public class KafkaClientsConfigurationBuilderFixture
 
         ConsumerCollection consumers = serviceProvider.GetRequiredService<ConsumerCollection>();
         consumers.Should().HaveCount(2);
-        consumers[0].As<KafkaConsumer>().Configuration.Endpoints.First().Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        consumers[0].As<KafkaConsumer>().Configuration.Endpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
         consumers[0].As<KafkaConsumer>().Configuration.Endpoints.First().RawName.Should().Be("topic1");
-        consumers[1].As<KafkaConsumer>().Configuration.Endpoints.First().Serializer.Should().BeOfType<JsonMessageSerializer<TestEventTwo>>();
+        consumers[1].As<KafkaConsumer>().Configuration.Endpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventTwo>>();
         consumers[1].As<KafkaConsumer>().Configuration.Endpoints.First().RawName.Should().Be("topic2");
     }
 

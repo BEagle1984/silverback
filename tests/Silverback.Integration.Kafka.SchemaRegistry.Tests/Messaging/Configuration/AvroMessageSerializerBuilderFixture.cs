@@ -17,7 +17,7 @@ public class AvroMessageSerializerBuilderFixture
         AvroMessageSerializerBuilder builder = new();
 
         IMessageSerializer serializer = builder
-            .UseType<TestEventOne>()
+            .UseModel<TestEventOne>()
             .Configure(
                 schemaRegistryConfig =>
                 {

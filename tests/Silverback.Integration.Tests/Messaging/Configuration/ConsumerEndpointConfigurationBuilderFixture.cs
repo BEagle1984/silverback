@@ -41,11 +41,11 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     public void DeserializeUsing_ShouldSetSerializer()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
-        BinaryMessageSerializer<BinaryMessage> serializer = new();
+        BinaryMessageDeserializer<BinaryMessage> deserializer = new();
 
-        TestConsumerEndpointConfiguration endpoint = builder.DeserializeUsing(serializer).Build();
+        TestConsumerEndpointConfiguration endpoint = builder.DeserializeUsing(deserializer).Build();
 
-        endpoint.Serializer.Should().BeSameAs(serializer);
+        endpoint.Deserializer.Should().BeSameAs(deserializer);
     }
 
     [Fact]

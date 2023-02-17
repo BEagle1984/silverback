@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -27,8 +25,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
 {
     private readonly string? _friendlyName;
 
-    private IMessageSerializer? _serializer;
-
     private MessageValidationMode _messageValidationMode = MessageValidationMode.LogWarning;
 
     /// <summary>
@@ -49,21 +45,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     ///     This is necessary to work around casting in the base classes.
     /// </remarks>
     protected abstract TBuilder This { get; }
-
-    /// <summary>
-    ///     Specifies the <see cref="IMessageSerializer" /> to be used serialize or deserialize the messages.
-    /// </summary>
-    /// <param name="serializer">
-    ///     The <see cref="IMessageSerializer" />.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder UseSerializer(IMessageSerializer serializer)
-    {
-        _serializer = Check.NotNull(serializer, nameof(serializer));
-        return This;
-    }
 
     /// <summary>
     ///     Enables the message validation and logs a warning if the message is not valid.
@@ -119,7 +100,6 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
         TConfiguration configuration = CreateConfiguration() with
         {
             FriendlyName = _friendlyName,
-            Serializer = _serializer ?? DefaultSerializers.Json,
             MessageValidationMode = _messageValidationMode
         };
 

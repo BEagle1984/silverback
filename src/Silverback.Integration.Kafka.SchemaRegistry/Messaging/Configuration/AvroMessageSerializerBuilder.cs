@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public class AvroMessageSerializerBuilder
 {
-    private AvroMessageSerializerBase? _serializer;
+    private IAvroMessageSerializer? _serializer;
 
     private Action<SchemaRegistryConfig>? _configureSchemaRegistryAction;
 
@@ -24,12 +24,12 @@ public class AvroMessageSerializerBuilder
     ///     Specifies the message type.
     /// </summary>
     /// <typeparam name="TMessage">
-    ///     The type of the message to serialize or deserialize.
+    ///     The type of the message to serialize.
     /// </typeparam>
     /// <returns>
     ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public AvroMessageSerializerBuilder UseType<TMessage>()
+    public AvroMessageSerializerBuilder UseModel<TMessage>()
         where TMessage : class
     {
         _serializer = new AvroMessageSerializer<TMessage>();
@@ -45,10 +45,10 @@ public class AvroMessageSerializerBuilder
     /// <returns>
     ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public AvroMessageSerializerBuilder UseType(Type messageType)
+    public AvroMessageSerializerBuilder UseModel(Type messageType)
     {
         Type serializerType = typeof(AvroMessageSerializer<>).MakeGenericType(messageType);
-        _serializer = (AvroMessageSerializerBase)Activator.CreateInstance(serializerType)!;
+        _serializer = (IAvroMessageSerializer)Activator.CreateInstance(serializerType)!;
         return this;
     }
 
@@ -85,7 +85,7 @@ public class AvroMessageSerializerBuilder
     public IMessageSerializer Build()
     {
         if (_serializer == null)
-            throw new InvalidOperationException("The message type was not specified. Please call UseType<TMessage>.");
+            throw new InvalidOperationException("The message type was not specified. Please call UseModel<TMessage>.");
 
         _configureSchemaRegistryAction?.Invoke(_serializer.SchemaRegistryConfig);
         _configureSerializerAction?.Invoke(_serializer.AvroSerializerConfig);

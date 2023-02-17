@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public class AvroMessageDeserializerBuilder
 {
-    private AvroMessageDeserializerBase? _deserializer;
+    private IAvroMessageDeserializer? _deserializer;
 
     private Action<SchemaRegistryConfig>? _configureSchemaRegistryAction;
 
@@ -24,12 +24,12 @@ public class AvroMessageDeserializerBuilder
     ///     Specifies the message type.
     /// </summary>
     /// <typeparam name="TMessage">
-    ///     The type of the message to serialize or deserialize.
+    ///     The type of the message to deserialize.
     /// </typeparam>
     /// <returns>
     ///     The <see cref="AvroMessageDeserializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public AvroMessageDeserializerBuilder UseType<TMessage>()
+    public AvroMessageDeserializerBuilder UseModel<TMessage>()
         where TMessage : class
     {
         _deserializer = new AvroMessageDeserializer<TMessage>();
@@ -45,10 +45,10 @@ public class AvroMessageDeserializerBuilder
     /// <returns>
     ///     The <see cref="AvroMessageDeserializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public AvroMessageDeserializerBuilder UseType(Type messageType)
+    public AvroMessageDeserializerBuilder UseModel(Type messageType)
     {
         Type deserializerType = typeof(AvroMessageDeserializer<>).MakeGenericType(messageType);
-        _deserializer = (AvroMessageDeserializerBase)Activator.CreateInstance(deserializerType)!;
+        _deserializer = (IAvroMessageDeserializer)Activator.CreateInstance(deserializerType)!;
         return this;
     }
 
@@ -77,16 +77,16 @@ public class AvroMessageDeserializerBuilder
     }
 
     /// <summary>
-    ///     Builds the <see cref="IMessageSerializer" /> instance.
+    ///     Builds the <see cref="IMessageDeserializer" /> instance.
     /// </summary>
     /// <returns>
-    ///     The <see cref="IMessageSerializer" />.
+    ///     The <see cref="IMessageDeserializer" />.
     /// </returns>
-    public IMessageSerializer Build()
+    public IMessageDeserializer Build()
     {
         if (_deserializer == null)
         {
-            throw new InvalidOperationException("The message type was not specified. Please call UseType<TMessage>.");
+            throw new InvalidOperationException("The message type was not specified. Please call UseModel<TMessage>.");
         }
 
         _configureSchemaRegistryAction?.Invoke(_deserializer.SchemaRegistryConfig);

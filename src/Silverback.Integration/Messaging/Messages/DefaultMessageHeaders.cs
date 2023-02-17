@@ -18,14 +18,13 @@ public static class DefaultMessageHeaders
     public const string MessageId = "x-message-id";
 
     /// <summary>
-    ///     The assembly qualified name of the message type. Used by the default
-    ///     <see cref="JsonMessageSerializer{TMessage}" />.
+    ///     The assembly qualified name of the message type. Used by the default <see cref="JsonMessageSerializer" />.
     /// </summary>
     public const string MessageType = "x-message-type";
 
     /// <summary>
-    ///     If an exception if thrown the failed attempts will be incremented and stored as header. This is
-    ///     necessary for the error policies to work.
+    ///     If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the error policies
+    ///     to work.
     /// </summary>
     public const string FailedAttempts = "x-failed-attempts";
 

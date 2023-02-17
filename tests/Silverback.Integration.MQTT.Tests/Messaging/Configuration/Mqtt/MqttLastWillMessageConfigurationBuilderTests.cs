@@ -44,7 +44,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
         MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
         willMessage.Payload.Should().NotBeNullOrEmpty();
 
-        (object? deserializedMessage, Type _) = await new JsonMessageSerializer<TestEventOne>().DeserializeAsync(
+        (object? deserializedMessage, Type _) = await new JsonMessageDeserializer<TestEventOne>().DeserializeAsync(
             new MemoryStream(willMessage.Payload!),
             new MessageHeaderCollection(),
             TestConsumerEndpoint.GetDefault());
@@ -134,7 +134,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
     public async Task SerializeUsing_NewtonsoftJsonSerializer_PayloadSerialized()
     {
         TestEventOne message = new() { Content = "Hello MQTT!" };
-        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new()
+        NewtonsoftJsonMessageSerializer serializer = new()
         {
             Encoding = MessageEncoding.Unicode,
             Settings = new JsonSerializerSettings
@@ -162,7 +162,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
     public async Task SerializeAsJson_Action_PayloadSerialized()
     {
         TestEventOne message = new() { Content = "Hello MQTT!" };
-        JsonMessageSerializer<TestEventOne> serializer = new()
+        JsonMessageSerializer serializer = new()
         {
             Options = new JsonSerializerOptions
             {

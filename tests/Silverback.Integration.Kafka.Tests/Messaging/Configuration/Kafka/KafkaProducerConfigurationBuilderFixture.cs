@@ -55,11 +55,11 @@ public class KafkaProducerConfigurationBuilderFixture
         KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.Endpoint.As<KafkaStaticProducerEndpointResolver>().TopicPartition
             .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         KafkaProducerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
         endpoint2.Endpoint.As<KafkaStaticProducerEndpointResolver>().TopicPartition
             .Should().BeEquivalentTo(new TopicPartition("topic2", Partition.Any));
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventTwo>>();
+        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class KafkaProducerConfigurationBuilderFixture
         endpoint.MessageType.Should().Be<object>();
         endpoint.Endpoint.As<KafkaStaticProducerEndpointResolver>().TopicPartition
             .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class KafkaProducerConfigurationBuilderFixture
         KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.Endpoint.As<KafkaStaticProducerEndpointResolver>().TopicPartition
             .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public class KafkaProducerConfigurationBuilderFixture
         KafkaProducerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.Endpoint.As<KafkaStaticProducerEndpointResolver>().TopicPartition
             .Should().BeEquivalentTo(new TopicPartition("topic1", Partition.Any));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         endpoint1.Chunk!.Size.Should().Be(42);
     }
 

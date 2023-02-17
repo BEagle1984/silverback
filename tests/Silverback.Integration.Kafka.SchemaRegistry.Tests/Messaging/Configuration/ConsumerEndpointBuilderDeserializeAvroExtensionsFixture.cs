@@ -24,36 +24,36 @@ public class ConsumerEndpointBuilderDeserializeAvroExtensionsFixture
     }
 
     [Fact]
-    public void DeserializeAvro_ShouldSetSerializer()
+    public void DeserializeAvro_ShouldSetDeserializer()
     {
         TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder.DeserializeAvro().Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
-    public void DeserializeAvro_ShouldSetSerializer_WhenUseTypeWithGenericArgumentIsCalled()
+    public void DeserializeAvro_ShouldSetDeserializer_WhenUseModelWithGenericArgumentIsCalled()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(serializer => serializer.UseType<TestEventOne>())
+            .DeserializeAvro(deserializer => deserializer.UseModel<TestEventOne>())
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
-    public void DeserializeAvro_ShouldSetSerializer_WhenUseTypeIsCalled()
+    public void DeserializeAvro_ShouldSetDeserializer_WhenUseModelIsCalled()
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(serializer => serializer.UseType(typeof(TestEventOne)))
+            .DeserializeAvro(deserializer => deserializer.UseModel(typeof(TestEventOne)))
             .Build();
 
-        endpointConfiguration.Serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
 }

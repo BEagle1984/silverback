@@ -17,6 +17,12 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     private static readonly IErrorPolicy DefaultErrorPolicy = new StopConsumerErrorPolicy();
 
     /// <summary>
+    ///     Gets the <see cref="IMessageDeserializer" /> to be used to deserialize the consumed messages.
+    ///     The default is the <see cref="JsonMessageDeserializer{TMessage}" />.
+    /// </summary>
+    public IMessageDeserializer Deserializer { get; init; } = DefaultDeserializers.Json;
+
+    /// <summary>
     ///     Gets the batch settings. Can be used to enable and setup batch processing.
     ///     The default is <c>null</c>, which means that batch processing is disabled.
     /// </summary>
@@ -55,6 +61,9 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     protected override void ValidateCore()
     {
         base.ValidateCore();
+
+        if (Deserializer == null)
+            throw new BrokerConfigurationException("A deserializer is required.");
 
         if (Sequence == null)
             throw new BrokerConfigurationException("The sequence configuration is required.");

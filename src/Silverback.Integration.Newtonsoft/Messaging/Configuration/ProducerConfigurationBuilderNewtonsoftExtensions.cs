@@ -14,16 +14,7 @@ namespace Silverback.Messaging.Configuration;
 public static class ProducerConfigurationBuilderNewtonsoftExtensions
 {
     /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer{TMessage}" /> (or
-    ///         <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />) to serialize the produced messages as JSON.
-    ///     </para>
-    ///     <para>
-    ///         By default this serializer forwards the message type in an header to let the consumer know which type has to be
-    ///         deserialized. This approach allows to mix messages of different types in the same endpoint and it's ideal when both the
-    ///         producer and the consumer are using Silverback but might not be optimal for interoperability. This behavior can be changed
-    ///         using the builder action and specifying a fixed message type.
-    ///     </para>
+    ///     Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer" />  to serialize the produced messages as JSON.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages being produced.
@@ -56,13 +47,8 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
         NewtonsoftJsonMessageSerializerBuilder serializerBuilder = new();
-
-        if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseFixedType<TMessage>();
-
         serializerBuilderAction?.Invoke(serializerBuilder);
         endpointBuilder.SerializeUsing(serializerBuilder.Build());
-
         return (TBuilder)endpointBuilder;
     }
 }

@@ -88,7 +88,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         };
         TestConsumerEndpointConfiguration endpointConfiguration = new("test")
         {
-            Serializer = new BinaryMessageSerializer<BinaryMessage>()
+            Deserializer = new BinaryMessageDeserializer<BinaryMessage>()
         };
 
         RawInboundEnvelope envelope = new(

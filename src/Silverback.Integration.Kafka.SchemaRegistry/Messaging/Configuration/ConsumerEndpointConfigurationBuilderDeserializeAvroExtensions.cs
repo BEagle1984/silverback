@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration;
 public static class ConsumerEndpointConfigurationBuilderDeserializeAvroExtensions
 {
     /// <summary>
-    ///     Sets the serializer to an instance of <see cref="AvroMessageSerializer{TMessage}" /> to deserialize
+    ///     Sets the deserializer to an instance of <see cref="AvroMessageDeserializer{TMessage}" /> to deserialize
     ///     the consumed Avro serialized message.
     /// </summary>
     /// <typeparam name="TMessage">
@@ -28,7 +28,7 @@ public static class ConsumerEndpointConfigurationBuilderDeserializeAvroExtension
     /// <param name="endpointBuilder">
     ///     The endpoint builder.
     /// </param>
-    /// <param name="serializerBuilderAction">
+    /// <param name="deserializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="AvroMessageDeserializerBuilder" /> and configures it.
     /// </param>
     /// <returns>
@@ -36,19 +36,19 @@ public static class ConsumerEndpointConfigurationBuilderDeserializeAvroExtension
     /// </returns>
     public static TBuilder DeserializeAvro<TMessage, TConfiguration, TBuilder>(
         this ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder> endpointBuilder,
-        Action<AvroMessageDeserializerBuilder>? serializerBuilderAction = null)
+        Action<AvroMessageDeserializerBuilder>? deserializerBuilderAction = null)
         where TMessage : class
         where TConfiguration : ConsumerEndpointConfiguration
         where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
     {
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
-        AvroMessageDeserializerBuilder serializerBuilder = new();
+        AvroMessageDeserializerBuilder deserializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseType<TMessage>();
+            deserializerBuilder.UseModel<TMessage>();
 
-        serializerBuilderAction?.Invoke(serializerBuilder);
-        return endpointBuilder.DeserializeUsing(serializerBuilder.Build());
+        deserializerBuilderAction?.Invoke(deserializerBuilder);
+        return endpointBuilder.DeserializeUsing(deserializerBuilder.Build());
     }
 }

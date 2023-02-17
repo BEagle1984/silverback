@@ -92,7 +92,7 @@ public partial class MqttTestingHelper
         MqttProducerEndpointConfigurationBuilder<object> endpoint,
         MqttConsumerEndpointConfiguration endpointConfiguration)
     {
-        endpoint.SerializeUsing(endpointConfiguration.Serializer);
+        endpoint.SerializeUsing(endpointConfiguration.Deserializer.GetCompatibleSerializer());
 
         string topic = endpointConfiguration.Topics.First(topic => topic == endpointConfiguration.RawName);
 

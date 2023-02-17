@@ -46,11 +46,11 @@ public class MqttConsumerEndpointConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenSerializerIsNull()
+    public void Validate_ShouldThrow_WhenDeserializerIsNull()
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Serializer = null!
+            Deserializer = null!
         };
 
         Action act = configuration.Validate;

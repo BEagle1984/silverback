@@ -13,14 +13,7 @@ namespace Silverback.Messaging.Configuration;
 public static class ConsumerConfigurationBuilderNewtonsoftExtensions
 {
     /// <summary>
-    ///     <para>
-    ///         Sets the serializer to an instance of <see cref="NewtonsoftJsonMessageSerializer{TMessage}" /> (or
-    ///         <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />) to deserialize the consumed JSON.
-    ///     </para>
-    ///     <para>
-    ///         By default this serializer relies on the message type header to determine the type of the message to be deserialized.
-    ///         This behavior can be changed using the builder action and specifying a fixed message type.
-    ///     </para>
+    ///     Sets the deserializer to an instance of <see cref="NewtonsoftJsonMessageDeserializer{TMessage}" /> to deserialize the consumed JSON.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages being consumed.
@@ -34,26 +27,26 @@ public static class ConsumerConfigurationBuilderNewtonsoftExtensions
     /// <param name="endpointBuilder">
     ///     The endpoint builder.
     /// </param>
-    /// <param name="serializerBuilderAction">
-    ///     An optional <see cref="Action{T}" /> that takes the <see cref="NewtonsoftJsonMessageSerializerBuilder" /> and configures it.
+    /// <param name="deserializerBuilderAction">
+    ///     An optional <see cref="Action{T}" /> that takes the <see cref="NewtonsoftJsonMessageDeserializerBuilder" /> and configures it.
     /// </param>
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
     public static TBuilder DeserializeJsonUsingNewtonsoft<TMessage, TConfiguration, TBuilder>(
         this ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder> endpointBuilder,
-        Action<NewtonsoftJsonMessageSerializerBuilder>? serializerBuilderAction = null)
+        Action<NewtonsoftJsonMessageDeserializerBuilder>? deserializerBuilderAction = null)
         where TConfiguration : ConsumerEndpointConfiguration
         where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
     {
         Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
-        NewtonsoftJsonMessageSerializerBuilder serializerBuilder = new();
+        NewtonsoftJsonMessageDeserializerBuilder serializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseFixedType<TMessage>();
+            serializerBuilder.UseModel<TMessage>();
 
-        serializerBuilderAction?.Invoke(serializerBuilder);
+        deserializerBuilderAction?.Invoke(serializerBuilder);
         endpointBuilder.DeserializeUsing(serializerBuilder.Build());
 
         return (TBuilder)endpointBuilder;

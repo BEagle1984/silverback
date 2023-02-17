@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.BinaryMessages;
 
 /// <summary>
-///     Switches to the <see cref="BinaryMessageSerializer{TModel}" /> if the message being consumed is a binary
+///     Switches to the <see cref="BinaryMessageSerializer" /> if the message being consumed is a binary
 ///     message (according to the x-message-type header).
 /// </summary>
 public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
@@ -34,7 +34,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
 
     private static async ValueTask<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
     {
-        if (envelope.Endpoint.Configuration.Serializer is IBinaryMessageSerializer)
+        if (envelope.Endpoint.Configuration.Deserializer is IBinaryMessageDeserializer)
             return envelope;
 
         Type? messageType = SerializationHelper.GetTypeFromHeaders(envelope.Headers, false);
@@ -42,7 +42,7 @@ public class BinaryMessageHandlerConsumerBehavior : IConsumerBehavior
             return envelope;
 
         (object? deserializedObject, Type deserializedType) =
-            await DefaultSerializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
+            await DefaultDeserializers.Binary.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
 
         // Create typed envelope for easier specific subscription
         return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);

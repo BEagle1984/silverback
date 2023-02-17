@@ -28,25 +28,11 @@ public class DefaultKafkaMessageSerializer : IKafkaMessageSerializer
         _serializer = serializer;
     }
 
-    /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
-    public bool RequireHeaders => _serializer.RequireHeaders;
-
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint) =>
         _serializer.SerializeAsync(message, headers, endpoint);
 
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-    public ValueTask<DeserializedMessage> DeserializeAsync(
-        Stream? messageStream,
-        MessageHeaderCollection headers,
-        ConsumerEndpoint endpoint) =>
-        _serializer.DeserializeAsync(messageStream, headers, endpoint);
-
     /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
     public byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader> headers, KafkaProducerEndpoint endpoint) =>
         Encoding.UTF8.GetBytes(key);
-
-    /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-    public string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader> headers, KafkaConsumerEndpoint endpoint) =>
-        Encoding.UTF8.GetString(key);
 }

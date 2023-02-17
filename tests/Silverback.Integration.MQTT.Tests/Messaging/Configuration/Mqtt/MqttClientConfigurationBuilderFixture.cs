@@ -73,10 +73,10 @@ public class MqttClientConfigurationBuilderFixture
         configuration.ProducerEndpoints.Should().HaveCount(2);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
         endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         MqttProducerEndpointConfiguration endpoint2 = configuration.ProducerEndpoints.Skip(1).First();
         endpoint2.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic2");
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventTwo>>();
+        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class MqttClientConfigurationBuilderFixture
         MqttProducerEndpointConfiguration endpoint = configuration.ProducerEndpoints.Single();
         endpoint.MessageType.Should().Be<object>();
         endpoint.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.ProducerEndpoints.Should().HaveCount(1);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
         endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.ProducerEndpoints.Should().HaveCount(1);
         MqttProducerEndpointConfiguration endpoint1 = configuration.ProducerEndpoints.First();
         endpoint1.Endpoint.As<MqttStaticProducerEndpointResolver>().Topic.Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer>();
         endpoint1.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 
@@ -173,11 +173,11 @@ public class MqttClientConfigurationBuilderFixture
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
         endpoint1.Topics.Should().HaveCount(1);
         endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
         MqttConsumerEndpointConfiguration endpoint2 = configuration.ConsumerEndpoints.Skip(1).First();
         endpoint2.Topics.Should().HaveCount(1);
         endpoint2.Topics.First().Should().Be("topic2");
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -195,11 +195,11 @@ public class MqttClientConfigurationBuilderFixture
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
         endpoint1.Topics.Should().HaveCount(1);
         endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
         MqttConsumerEndpointConfiguration endpoint2 = configuration.ConsumerEndpoints.Skip(1).First();
         endpoint2.Topics.Should().HaveCount(1);
         endpoint2.Topics.First().Should().Be("topic2");
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventTwo>>();
+        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventTwo>>();
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class MqttClientConfigurationBuilderFixture
         configuration.ConsumerEndpoints.Should().HaveCount(1);
         configuration.ConsumerEndpoints.First().Topics.Should().HaveCount(1);
         configuration.ConsumerEndpoints.First().Topics.Should().BeEquivalentTo("topic1");
-        configuration.ConsumerEndpoints.First().Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        configuration.ConsumerEndpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public class MqttClientConfigurationBuilderFixture
         MqttConsumerEndpointConfiguration endpoint1 = configuration.ConsumerEndpoints.First();
         endpoint1.Topics.Should().HaveCount(1);
         endpoint1.Topics.First().Should().Be("topic1");
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
         endpoint1.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
     }
 

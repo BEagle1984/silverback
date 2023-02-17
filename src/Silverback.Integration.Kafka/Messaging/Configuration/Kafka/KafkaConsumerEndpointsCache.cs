@@ -44,10 +44,10 @@ internal class KafkaConsumerEndpointsCache
     }
 
     private static CachedEndpoint GetEndpoint(TopicPartition topicPartition, KafkaConsumerEndpointConfiguration configuration) =>
-        new(new KafkaConsumerEndpoint(topicPartition, configuration), GetKafkaSerializer(configuration.Serializer));
+        new(new KafkaConsumerEndpoint(topicPartition, configuration), GetKafkaDeserializer(configuration.Deserializer));
 
-    private static IKafkaMessageSerializer GetKafkaSerializer(IMessageSerializer serializer) =>
-        serializer as IKafkaMessageSerializer ?? new DefaultKafkaMessageSerializer(serializer);
+    private static IKafkaMessageDeserializer GetKafkaDeserializer(IMessageDeserializer deserializer) =>
+        deserializer as IKafkaMessageDeserializer ?? new DefaultKafkaMessageDeserializer(deserializer);
 
-    public record CachedEndpoint(KafkaConsumerEndpoint Endpoint, IKafkaMessageSerializer Serializer);
+    public record CachedEndpoint(KafkaConsumerEndpoint Endpoint, IKafkaMessageDeserializer Deserializer);
 }

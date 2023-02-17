@@ -162,8 +162,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     }
 
     /// <summary>
-    ///     Sets the serializer to an instance of <see cref="JsonMessageSerializer{TMessage}" /> (or
-    ///     <see cref="JsonMessageSerializer{TMessage}" />) to serialize the produced messages as JSON.
+    ///     Sets the serializer to an instance of <see cref="JsonMessageSerializer" /> to serialize the produced messages as JSON.
     /// </summary>
     /// <param name="serializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="JsonMessageSerializerBuilder" /> and configures it.
@@ -174,10 +173,6 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     public MqttLastWillMessageConfigurationBuilder<TMessage> SerializeAsJson(Action<JsonMessageSerializerBuilder>? serializerBuilderAction = null)
     {
         JsonMessageSerializerBuilder serializerBuilder = new();
-
-        if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseFixedType<TMessage>();
-
         serializerBuilderAction?.Invoke(serializerBuilder);
         return SerializeUsing(serializerBuilder.Build());
     }

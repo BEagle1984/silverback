@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -13,20 +14,25 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Connects to the specified schema registry and serializes the messages in Apache Avro format.
+///     Connects to the specified schema registry and deserializes the messages from Apache Avro format.
 /// </summary>
 /// <typeparam name="TMessage">
-///     The type of the messages to be serialized and/or deserialized.
+///     The type of the messages to be deserialized.
 /// </typeparam>
-public class AvroMessageDeserializer<TMessage> : AvroMessageDeserializerBase
+public class AvroMessageDeserializer<TMessage> : IAvroMessageDeserializer
     where TMessage : class
 {
-    /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-    public override ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint) =>
-        throw new NotSupportedException();
+    /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
+    public bool RequireHeaders => false;
 
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-    public override async ValueTask<DeserializedMessage> DeserializeAsync(
+    /// <inheritdoc cref="IAvroMessageDeserializer.SchemaRegistryConfig" />
+    public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new();
+
+    /// <inheritdoc cref="IAvroMessageDeserializer.AvroDeserializerConfig" />
+    public AvroDeserializerConfig AvroDeserializerConfig { get; set; } = new();
+
+    /// <inheritdoc cref="IMessageDeserializer.DeserializeAsync" />
+    public async ValueTask<DeserializedMessage> DeserializeAsync(
         Stream? messageStream,
         MessageHeaderCollection headers,
         ConsumerEndpoint endpoint)
@@ -40,12 +46,15 @@ public class AvroMessageDeserializer<TMessage> : AvroMessageDeserializerBase
         return new DeserializedMessage(deserialized, type);
     }
 
-    /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-    public override byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint) =>
-        throw new NotSupportedException();
+    /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />
+    public IMessageSerializer GetCompatibleSerializer() => new AvroMessageSerializer<TMessage>
+    {
+        SchemaRegistryConfig = SchemaRegistryConfig,
+        AvroSerializerConfig = new AvroSerializerConfig(AvroDeserializerConfig)
+    };
 
-    /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-    public override string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader>? headers, KafkaConsumerEndpoint endpoint)
+    /// <inheritdoc cref="IKafkaMessageDeserializer.DeserializeKey" />
+    public string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader>? headers, KafkaConsumerEndpoint endpoint)
     {
         Check.NotNull(key, nameof(key));
 

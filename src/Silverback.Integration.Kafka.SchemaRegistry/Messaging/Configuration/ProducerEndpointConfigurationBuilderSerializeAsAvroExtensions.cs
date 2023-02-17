@@ -49,7 +49,7 @@ public static class ProducerEndpointConfigurationBuilderSerializeAsAvroExtension
         AvroMessageSerializerBuilder serializerBuilder = new();
 
         if (typeof(TMessage) != typeof(object))
-            serializerBuilder.UseType<TMessage>();
+            serializerBuilder.UseModel<TMessage>();
 
         serializerBuilderAction?.Invoke(serializerBuilder);
         endpointBuilder.SerializeUsing(serializerBuilder.Build());

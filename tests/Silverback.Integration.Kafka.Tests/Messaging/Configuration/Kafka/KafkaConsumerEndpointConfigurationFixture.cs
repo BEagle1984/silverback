@@ -263,11 +263,11 @@ public class KafkaConsumerEndpointConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenSerializerIsNull()
+    public void Validate_ShouldThrow_WhenDeserializerIsNull()
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Serializer = null!
+            Deserializer = null!
         };
 
         Action act = configuration.Validate;

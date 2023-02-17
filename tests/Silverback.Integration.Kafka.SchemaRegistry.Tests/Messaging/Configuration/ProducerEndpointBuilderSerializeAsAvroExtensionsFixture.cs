@@ -34,24 +34,24 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsFixture
     }
 
     [Fact]
-    public void SerializeAsAvro_ShouldSetSerializer_WhenUseTypeWithGenericArgumentIsCalled()
+    public void SerializeAsAvro_ShouldSetSerializer_WhenUseModelWithGenericArgumentIsCalled()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(serializer => serializer.UseType<TestEventOne>())
+            .SerializeAsAvro(serializer => serializer.UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
-    public void SerializeAsAvro_ShouldSetSerializer_WhenUseTypeIsCalled()
+    public void SerializeAsAvro_ShouldSetSerializer_WhenUseModelIsCalled()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(serializer => serializer.UseType(typeof(TestEventOne)))
+            .SerializeAsAvro(serializer => serializer.UseModel(typeof(TestEventOne)))
             .Build();
 
         endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();

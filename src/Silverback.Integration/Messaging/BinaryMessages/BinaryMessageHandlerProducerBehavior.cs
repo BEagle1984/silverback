@@ -4,12 +4,13 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.BinaryMessages;
 
 /// <summary>
-///     Switches to the <see cref="BinaryMessageSerializer{TModel}" /> if the message being produced implements the
+///     Switches to the <see cref="BinaryMessageSerializer" /> if the message being produced implements the
 ///     <see cref="IBinaryMessage" /> interface.
 /// </summary>
 public class BinaryMessageHandlerProducerBehavior : IProducerBehavior

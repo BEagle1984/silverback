@@ -13,16 +13,16 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
+///     Deserializes the JSON messages into an instance of <typeparamref name="TMessage" />.
 /// </summary>
 /// <typeparam name="TMessage">
-///     The type of the messages to be serialized and/or deserialized.
+///     The type of the messages to be deserialized.
 /// </typeparam>
-public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonMessageSerializer, IEquatable<NewtonsoftJsonMessageSerializer<TMessage>>
+public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJsonMessageDeserializer, IEquatable<NewtonsoftJsonMessageDeserializer<TMessage>>
 {
     private readonly Type _type = typeof(TMessage);
 
-    /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+    /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
     public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
 
     /// <summary>
@@ -59,30 +59,7 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
             _ => throw new InvalidOperationException("Unhandled encoding.")
         };
 
-    /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-    public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
-    {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
-
-        if (message == null)
-            return ValueTaskFactory.FromResult<Stream?>(null);
-
-        if (message is Stream inputStream)
-            return ValueTaskFactory.FromResult<Stream?>(inputStream);
-
-        if (message is byte[] inputBytes)
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
-
-        Type type = message.GetType();
-        string jsonString = JsonConvert.SerializeObject(message, type, Settings);
-
-        headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
-
-        return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
-    }
-
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+    /// <inheritdoc cref="IMessageDeserializer.DeserializeAsync" />
     public async ValueTask<DeserializedMessage> DeserializeAsync(
         Stream? messageStream,
         MessageHeaderCollection headers,
@@ -91,7 +68,7 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
         Check.NotNull(headers, nameof(headers));
         Check.NotNull(endpoint, nameof(endpoint));
 
-        Type type = SerializationHelper.GetTypeFromHeaders(headers) ?? _type;
+        Type type = SerializationHelper.GetTypeFromHeaders(headers, _type);
 
         if (messageStream == null)
             return new DeserializedMessage(null, type);
@@ -103,8 +80,15 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
         return new DeserializedMessage(deserializedObject, type);
     }
 
+    /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />
+    public IMessageSerializer GetCompatibleSerializer() => new NewtonsoftJsonMessageSerializer
+    {
+        Settings = Settings,
+        Encoding = Encoding
+    };
+
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(NewtonsoftJsonMessageSerializer<TMessage>? other) =>
+    public bool Equals(NewtonsoftJsonMessageDeserializer<TMessage>? other) =>
         NewtonsoftComparisonHelper.JsonEquals(this, other);
 
     /// <inheritdoc cref="object.Equals(object)" />
@@ -119,9 +103,9 @@ public sealed class NewtonsoftJsonMessageSerializer<TMessage> : INewtonsoftJsonM
         if (obj.GetType() != GetType())
             return false;
 
-        return Equals((NewtonsoftJsonMessageSerializer<TMessage>?)obj);
+        return Equals((NewtonsoftJsonMessageDeserializer<TMessage>?)obj);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage).Name);
+    public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage));
 }

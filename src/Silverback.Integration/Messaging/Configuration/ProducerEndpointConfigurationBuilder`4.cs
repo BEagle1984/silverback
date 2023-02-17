@@ -41,6 +41,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
 {
     private readonly List<IOutboundMessageEnricher> _messageEnrichers = new();
 
+    private IMessageSerializer? _serializer;
+
     private IProduceStrategy? _strategy;
 
     private int? _chunkSize;
@@ -64,17 +66,6 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
         else
             SerializeAsJson();
     }
-
-    /// <summary>
-    ///     Specifies the <see cref="IMessageSerializer" /> to be used to serialize the messages.
-    /// </summary>
-    /// <param name="serializer">
-    ///     The <see cref="IMessageSerializer" />.
-    /// </param>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder SerializeUsing(IMessageSerializer serializer) => UseSerializer(serializer);
 
     /// <summary>
     ///     Specifies the strategy to be used to produce the messages.
@@ -187,6 +178,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
 
         configuration = configuration with
         {
+            Serializer = _serializer ?? configuration.Serializer,
             MessageType = typeof(TMessage),
             Strategy = _strategy ?? configuration.Strategy,
             Chunk = _chunkSize == null

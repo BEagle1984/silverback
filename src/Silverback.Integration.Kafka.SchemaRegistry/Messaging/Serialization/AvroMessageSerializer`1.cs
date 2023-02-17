@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -16,13 +17,19 @@ namespace Silverback.Messaging.Serialization;
 ///     Connects to the specified schema registry and serializes the messages in Apache Avro format.
 /// </summary>
 /// <typeparam name="TMessage">
-///     The type of the messages to be serialized and/or deserialized.
+///     The type of the messages to be serialized.
 /// </typeparam>
-public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
+public class AvroMessageSerializer<TMessage> : IAvroMessageSerializer
     where TMessage : class
 {
+    /// <inheritdoc cref="IAvroMessageSerializer.SchemaRegistryConfig" />
+    public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new();
+
+    /// <inheritdoc cref="IAvroMessageSerializer.AvroSerializerConfig" />
+    public AvroSerializerConfig AvroSerializerConfig { get; set; } = new();
+
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-    public override async ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
+    public async ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)
     {
         byte[]? buffer = await SerializeAsync<TMessage>(message, MessageComponentType.Value, endpoint)
             .ConfigureAwait(false);
@@ -30,37 +37,14 @@ public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
         return buffer == null ? null : new MemoryStream(buffer);
     }
 
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-    public override async ValueTask<DeserializedMessage> DeserializeAsync(
-        Stream? messageStream,
-        MessageHeaderCollection headers,
-        ConsumerEndpoint endpoint)
-    {
-        byte[]? buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
-        TMessage? deserialized = await DeserializeAsync<TMessage>(buffer, MessageComponentType.Value, endpoint)
-            .ConfigureAwait(false);
-
-        Type type = deserialized?.GetType() ?? typeof(TMessage);
-
-        return new DeserializedMessage(deserialized, type);
-    }
-
     /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-    public override byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
+    public byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
     {
         Check.NotNullOrEmpty(key, nameof(key));
 
         byte[]? serializedKey = AsyncHelper.RunSynchronously(() => SerializeAsync<string>(key, MessageComponentType.Key, endpoint).AsTask());
 
         return serializedKey ?? Array.Empty<byte>();
-    }
-
-    /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-    public override string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader>? headers, KafkaConsumerEndpoint endpoint)
-    {
-        Check.NotNull(key, nameof(key));
-
-        return AsyncHelper.RunSynchronously(() => DeserializeAsync<string>(key, MessageComponentType.Key, endpoint))!;
     }
 
     private static SerializationContext GetConfluentSerializationContext(MessageComponentType componentType, Endpoint endpoint) =>
@@ -83,28 +67,6 @@ public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
             .SerializeAsync(
                 (TValue)message,
                 GetConfluentSerializationContext(componentType, endpoint))
-            .ConfigureAwait(false);
-    }
-
-    private async Task<TValue?> DeserializeAsync<TValue>(
-        byte[]? message,
-        MessageComponentType componentType,
-        ConsumerEndpoint endpoint)
-        where TValue : class
-    {
-        if (message == null)
-            return null;
-
-        AvroDeserializer<TValue> avroDeserializer = new(
-            SchemaRegistryClientFactory.GetClient(SchemaRegistryConfig),
-            AvroSerializerConfig);
-
-        SerializationContext confluentSerializationContext = GetConfluentSerializationContext(componentType, endpoint);
-
-        return await avroDeserializer.DeserializeAsync(
-                new ReadOnlyMemory<byte>(message),
-                false,
-                confluentSerializationContext)
             .ConfigureAwait(false);
     }
 }

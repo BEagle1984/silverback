@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes and deserializes the messages sent through Kafka.
+///     Serializes the messages produced to Kafka.
 /// </summary>
 public interface IKafkaMessageSerializer : IMessageSerializer
 {
@@ -27,21 +27,4 @@ public interface IKafkaMessageSerializer : IMessageSerializer
     ///     The serialization result.
     /// </returns>
     byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader> headers, KafkaProducerEndpoint endpoint);
-
-    /// <summary>
-    ///     Deserializes the byte array back into a key string.
-    /// </summary>
-    /// <param name="key">
-    ///     The byte array to be deserialized.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers collection.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint.
-    /// </param>
-    /// <returns>
-    ///     The deserialized key.
-    /// </returns>
-    string DeserializeKey(byte[] key, IReadOnlyCollection<MessageHeader> headers, KafkaConsumerEndpoint endpoint);
 }

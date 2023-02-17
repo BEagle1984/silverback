@@ -30,6 +30,8 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     where TConfiguration : ConsumerEndpointConfiguration
     where TBuilder : ConsumerEndpointConfigurationBuilder<TMessage, TConfiguration, TBuilder>
 {
+    private IMessageDeserializer? _deserializer;
+
     private IErrorPolicy? _errorPolicy;
 
     private int? _batchSize;
@@ -213,6 +215,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
 
         configuration = configuration with
         {
+            Deserializer = _deserializer ?? configuration.Deserializer,
             ErrorPolicy = _errorPolicy ?? configuration.ErrorPolicy,
             Batch = _batchSize == null
                 ? configuration.Batch

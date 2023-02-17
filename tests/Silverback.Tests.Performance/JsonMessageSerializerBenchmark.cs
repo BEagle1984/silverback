@@ -9,7 +9,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Performance.TestTypes;
 using Silverback.Tests.Types;
-using Silverback.Tests.Types.Domain;
 
 namespace Silverback.Tests.Performance;
 
@@ -18,9 +17,9 @@ namespace Silverback.Tests.Performance;
 [MemoryDiagnoser]
 public class JsonMessageSerializerBenchmark
 {
-    private readonly NewtonsoftJsonMessageSerializer<TestEventOne> _newtonsoftSerializer = new();
+    private readonly NewtonsoftJsonMessageSerializer _newtonsoftSerializer = new();
 
-    private readonly JsonMessageSerializer<TestEventOne> _serializer = new();
+    private readonly JsonMessageSerializer _serializer = new();
 
     private readonly MessageHeaderCollection _messageHeaderCollection = new();
 

@@ -12,18 +12,10 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes and deserializes the messages of type <typeparamref name="TMessage" /> in JSON format.
+///     Serializes the messages in JSON format.
 /// </summary>
-/// <typeparam name="TMessage">
-///     The type of the messages to be serialized and/or deserialized.
-/// </typeparam>
-public sealed class JsonMessageSerializer<TMessage> : IJsonMessageSerializer, IEquatable<JsonMessageSerializer<TMessage>>
+public sealed class JsonMessageSerializer : IJsonMessageSerializer, IEquatable<JsonMessageSerializer>
 {
-    private readonly Type _type = typeof(TMessage);
-
-    /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
-    public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
-
     /// <summary>
     ///     Gets or sets the options to be passed to the <see cref="JsonSerializer" />.
     /// </summary>
@@ -53,31 +45,8 @@ public sealed class JsonMessageSerializer<TMessage> : IJsonMessageSerializer, IE
         return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(bytes));
     }
 
-    /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-    public async ValueTask<DeserializedMessage> DeserializeAsync(
-        Stream? messageStream,
-        MessageHeaderCollection headers,
-        ConsumerEndpoint endpoint)
-    {
-        Check.NotNull(headers, nameof(headers));
-        Check.NotNull(endpoint, nameof(endpoint));
-
-        Type type = SerializationHelper.GetTypeFromHeaders(headers) ?? _type;
-
-        if (messageStream == null)
-            return new DeserializedMessage(null, type);
-
-        if (messageStream.CanSeek && messageStream.Length == 0)
-            return new DeserializedMessage(null, type);
-
-        object deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, type, Options).ConfigureAwait(false) ??
-                                    throw new MessageSerializerException("The deserialization returned null.");
-
-        return new DeserializedMessage(deserializedObject, type);
-    }
-
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(JsonMessageSerializer<TMessage>? other) => ComparisonHelper.JsonEquals(this, other);
+    public bool Equals(JsonMessageSerializer? other) => ComparisonHelper.JsonEquals(this, other);
 
     /// <inheritdoc cref="object.Equals(object)" />
     public override bool Equals(object? obj)
@@ -91,9 +60,9 @@ public sealed class JsonMessageSerializer<TMessage> : IJsonMessageSerializer, IE
         if (obj.GetType() != GetType())
             return false;
 
-        return Equals((JsonMessageSerializer<TMessage>?)obj);
+        return Equals((JsonMessageSerializer?)obj);
     }
 
     /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage).Name);
+    public override int GetHashCode() => 42;
 }

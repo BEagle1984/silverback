@@ -6,7 +6,7 @@ using System.Text.Json;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes and deserializes the messages in JSON format.
+///     Serializes the messages as JSON.
 /// </summary>
 internal interface IJsonMessageSerializer : IMessageSerializer
 {

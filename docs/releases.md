@@ -68,6 +68,7 @@ uid: releases
     * `IEndpointsConfiguredCallback` to `IBrokerClientsConfiguredCallback`
     * Removed `EndpointBuilder.WithName()` -> replaced by name parameter
     * Renamed Inbound namespace to Consuming and Outbound to Producing
+    * Split IMessageSerializer / IMessageDeserializer and rename UseFixedType to UseModel
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

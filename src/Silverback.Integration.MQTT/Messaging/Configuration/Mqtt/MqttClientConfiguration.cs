@@ -90,7 +90,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
         if (!AreHeadersSupported)
         {
-            if (ConsumerEndpoints.Any(endpoint => endpoint.Serializer.RequireHeaders))
+            if (ConsumerEndpoints.Any(endpoint => endpoint.Deserializer.RequireHeaders))
             {
                 throw new BrokerConfigurationException(
                     "Wrong serializer configuration. Since headers (user properties) are not " +

@@ -22,9 +22,9 @@ public class ConsumerEndpointConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenSerializerIsNull()
+    public void Validate_ShouldThrow_WhenDeserializerIsNull()
     {
-        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { Serializer = null! };
+        TestConsumerEndpointConfiguration configuration = GetValidConfiguration() with { Deserializer = null! };
 
         Action act = configuration.Validate;
 

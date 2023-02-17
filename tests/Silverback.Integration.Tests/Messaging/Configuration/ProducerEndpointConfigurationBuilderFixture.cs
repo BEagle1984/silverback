@@ -6,7 +6,6 @@ using FluentAssertions;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Validation;
@@ -41,7 +40,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     public void SerializeUsing_ShouldSetSerializer()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
-        BinaryMessageSerializer<BinaryMessage> serializer = new();
+        BinaryMessageSerializer serializer = new();
 
         TestProducerEndpointConfiguration endpoint = builder.SerializeUsing(serializer).Build();
 

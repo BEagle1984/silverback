@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     The result of <see cref="IMessageSerializer.DeserializeAsync" />.
+///     The result of <see cref="IMessageDeserializer.DeserializeAsync" />.
 /// </summary>
 /// <param name="Message">
 ///     The deserialized message.

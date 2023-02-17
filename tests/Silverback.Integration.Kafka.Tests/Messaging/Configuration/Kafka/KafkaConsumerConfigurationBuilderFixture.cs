@@ -56,11 +56,11 @@ public class KafkaConsumerConfigurationBuilderFixture
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.TopicPartitions.Should().HaveCount(1);
         endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
         KafkaConsumerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
         endpoint2.TopicPartitions.Should().HaveCount(1);
         endpoint2.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -78,11 +78,11 @@ public class KafkaConsumerConfigurationBuilderFixture
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.TopicPartitions.Should().HaveCount(1);
         endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
         KafkaConsumerEndpointConfiguration endpoint2 = configuration.Endpoints.Skip(1).First();
         endpoint2.TopicPartitions.Should().HaveCount(1);
         endpoint2.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset));
-        endpoint2.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventTwo>>();
+        endpoint2.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventTwo>>();
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class KafkaConsumerConfigurationBuilderFixture
             {
                 new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
             });
-        configuration.Endpoints.First().Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
+        configuration.Endpoints.First().Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         KafkaConsumerEndpointConfiguration endpoint1 = configuration.Endpoints.First();
         endpoint1.TopicPartitions.Should().HaveCount(1);
         endpoint1.TopicPartitions.First().Should().BeEquivalentTo(new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset));
-        endpoint1.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        endpoint1.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
         endpoint1.Batch!.Size.Should().Be(42);
     }
 

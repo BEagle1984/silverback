@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging.Configuration;
@@ -59,12 +58,6 @@ public abstract record EndpointConfiguration
     public virtual string DisplayName { get; private init; } = string.Empty;
 
     /// <summary>
-    ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages being produced or consumed.
-    ///     The default is the <see cref="JsonMessageSerializer{TMessage}" />.
-    /// </summary>
-    public virtual IMessageSerializer Serializer { get; init; } = DefaultSerializers.Json;
-
-    /// <summary>
     ///     Gets the message validation mode. This option can be used to specify if the messages have to be validated and whether an
     ///     exception must be thrown if the message is not valid. The default is <see cref="Validation.MessageValidationMode.LogWarning" />.
     /// </summary>
@@ -75,9 +68,6 @@ public abstract record EndpointConfiguration
     /// </summary>
     public void Validate()
     {
-        if (Serializer == null)
-            throw new BrokerConfigurationException("A serializer is required.");
-
         ValidateCore();
 
         if (string.IsNullOrEmpty(RawName))

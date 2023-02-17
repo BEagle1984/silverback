@@ -67,7 +67,7 @@ public class BinaryMessageHandlerProducerBehaviorTests
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
         TestProducerEndpointConfiguration endpointConfiguration = new("test")
         {
-            Serializer = new BinaryMessageSerializer<BinaryMessage>()
+            Serializer = new BinaryMessageSerializer()
         };
         OutboundEnvelope envelope = new(message, null, endpointConfiguration.GetDefaultEndpoint(), Substitute.For<IProducer>());
 
