@@ -71,9 +71,11 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             await outboxProduceStrategyImplementation.ProduceAsync(_message1);
             await outboxProduceStrategyImplementation.ProduceAsync(_message2);
 
+
             // Assert
             await producerForMessage1.Received().ProduceAsync(_message1);
             await producerForMessage2.Received().ProduceAsync(_message2);
+
         }
 
         [Fact]
@@ -94,6 +96,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             // Act
             _mockTransactionalOutboxBroker.ClearReceivedCalls();
             await outboxProduceStrategyImplementation.ProduceAsync(messageWithSameEndpoint);
+
 
             // Assert
             await producerForMessage1.Received(1).ProduceAsync(_message1);
