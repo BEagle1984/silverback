@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
-
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +13,7 @@ using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
@@ -28,6 +28,10 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
         private readonly IOutboundEnvelope _message2;
 
+        private readonly TestProducerEndpoint _endpoint1;
+
+        private readonly TestProducerEndpoint _endpoint2;
+
         public OutboxProduceStrategyTests()
         {
             ServiceProvider serviceProvider = CreateServiceProviderRequiredForTransactionalOutboxBroker();
@@ -41,18 +45,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _serviceProvider = services.BuildServiceProvider();
 
             _message1 = Substitute.For<IOutboundEnvelope>();
-            var endpoint1 = Substitute.For<IProducerEndpoint>();
+            _endpoint1 = new TestProducerEndpoint("endpoint1");
             _message1.Endpoint
-                .Returns(endpoint1);
-            endpoint1.Name
-                .Returns("endpoint1");
+                .Returns(_endpoint1);
 
             _message2 = Substitute.For<IOutboundEnvelope>();
-            var endpoint2 = Substitute.For<IProducerEndpoint>();
+            _endpoint2 = new TestProducerEndpoint("endpoint2");
             _message2.Endpoint
-                .Returns(endpoint2);
-            endpoint2.Name
-                .Returns("endpoint2");
+                .Returns(_endpoint2);
         }
 
         [Fact]
@@ -61,9 +61,12 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             // Arrange
             var outboxProduceStrategyImplementation = new OutboxProduceStrategy().Build(_serviceProvider);
             var producerForMessage1 = Substitute.For<IProducer>();
+            producerForMessage1.Endpoint.Returns(_endpoint1);
             _mockTransactionalOutboxBroker.GetProducer(_message1.Endpoint)
                 .Returns(producerForMessage1);
+
             var producerForMessage2 = Substitute.For<IProducer>();
+            producerForMessage2.Endpoint.Returns(_endpoint2);
             _mockTransactionalOutboxBroker.GetProducer(_message2.Endpoint)
                 .Returns(producerForMessage2);
 
@@ -82,12 +85,12 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             // Arrange
             var outboxProduceStrategyImplementation = new OutboxProduceStrategy().Build(_serviceProvider);
             var producerForMessage1 = Substitute.For<IProducer>();
+            producerForMessage1.Endpoint.Returns(_endpoint1);
             _mockTransactionalOutboxBroker.GetProducer(_message1.Endpoint)
                 .Returns(producerForMessage1);
 
             var messageWithSameEndpoint = Substitute.For<IOutboundEnvelope>();
-            messageWithSameEndpoint.Endpoint
-                .Returns(messageWithSameEndpoint.Endpoint);
+            messageWithSameEndpoint.Endpoint.Returns(_endpoint1);
 
             await outboxProduceStrategyImplementation.ProduceAsync(_message1);
 
