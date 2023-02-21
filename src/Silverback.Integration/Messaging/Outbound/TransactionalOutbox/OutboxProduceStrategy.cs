@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
+
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,18 +45,13 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 Check.NotNull(envelope, nameof(envelope));
 
                 _logger.LogWrittenToOutbox(envelope);
-                IProducer localProducer;
-                if (_producer == null || !_producer.Endpoint.Equals(envelope.Endpoint))
-                {
-                    localProducer = _outboundQueueBroker.GetProducer(envelope.Endpoint);
-                    _producer = localProducer;
-                }
-                else
-                {
-                    localProducer = _producer;
-                }
 
-                return localProducer.ProduceAsync(envelope);
+                IProducer? producer = _producer;
+
+                if (producer == null || !producer.Endpoint.Equals(envelope.Endpoint))
+                    producer = _producer = _outboundQueueBroker.GetProducer(envelope.Endpoint);
+
+                return producer.ProduceAsync(envelope);
             }
         }
     }

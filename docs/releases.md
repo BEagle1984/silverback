@@ -4,6 +4,13 @@ uid: releases
 
 # Releases
 
+## [4.1.1](https://github.com/BEagle1984/silverback/releases/tag/v4.1.1)
+
+### Fixes
+
+* Fix bug in outbox producer writing to the wrong endpoint [[#165](https://github.com/BEagle1984/silverback/issues/165)]
+
+
 ## [4.1.0](https://github.com/BEagle1984/silverback/releases/tag/v4.1.0)
 
 ### What's new
