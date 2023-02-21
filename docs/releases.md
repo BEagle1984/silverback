@@ -89,6 +89,12 @@ uid: releases
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
+## [4.1.1](https://github.com/BEagle1984/silverback/releases/tag/v4.1.1)
+
+### Fixes
+
+* Fix bug in outbox producer writing to the wrong endpoint [[#165](https://github.com/BEagle1984/silverback/issues/165)]
+
 ## [4.1.0](https://github.com/BEagle1984/silverback/releases/tag/v4.1.0)
 
 ### What's new
@@ -115,6 +121,55 @@ The support for RabbitMQ has been deprecated? (...in case explain motivation etc
 ### Breaking changes
 
 * Some breaking changes in MQTTnet 4 are reflected into Silverback
+
+## [3.8.0](https://github.com/BEagle1984/silverback/releases/tag/v3.8.0)
+
+### What's new
+
+* Topic name resolvers can be used to filter the messages to be produce: returning `null` will discard the message
+
+### Fixes
+
+* Fix error policies not being triggered consistently when batch consuming
+* Make `IntegrationSpy` fully thread-safe
+* Prevent errors when the [IKafkaPartitionsRevokedCallback](xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback) is invoked during application shutdown
+* Improve error handling during connection to MQTT
+
+## [3.7.3](https://github.com/BEagle1984/silverback/releases/tag/v3.7.3)
+
+### Fixes
+
+* Support topic names with symbols (e.g. hyphens) in mocked MQTT broker
+
+## [3.7.2](https://github.com/BEagle1984/silverback/releases/tag/v3.7.2)
+
+### Fixes
+
+* Correctly invoke the [IKafkaOffsetCommittedCallback](xref:Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback) when auto commit is disabled [[#167](https://github.com/BEagle1984/silverback/issues/167)]
+  
+## [3.7.1](https://github.com/BEagle1984/silverback/releases/tag/v3.7.1)
+
+### Fixes
+
+* Improve message streams abort process to avoid first chance exceptions (e.g. during dispose)
+
+## [3.7.0](https://github.com/BEagle1984/silverback/releases/tag/v3.7.0)
+
+### What's new
+
+* Implement basic support for Kafka transactions via <xref:Silverback.Messaging.Broker.KafkaTransactionalProducer> _(Note: this is just a first step and a more comprehensive implementation is planned for the upcoming release 4.0.0)_
+* Skip chunking when processing single chunk messages
+
+### Fixes
+
+* Fix possible race condition in consumer pipeline
+
+## [3.6.1](https://github.com/BEagle1984/silverback/releases/tag/v3.6.1)
+
+### Fixes
+
+* Handle race condition in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
+* Limit consumer status history
 
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 
