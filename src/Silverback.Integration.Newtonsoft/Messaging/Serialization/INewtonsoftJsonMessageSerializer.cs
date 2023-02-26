@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Newtonsoft.Json;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization;
 
@@ -11,12 +12,19 @@ namespace Silverback.Messaging.Serialization;
 internal interface INewtonsoftJsonMessageSerializer : IMessageSerializer
 {
     /// <summary>
-    ///     Gets or sets the message encoding. The default is UTF8.
+    ///     Gets the message encoding. The default is UTF8.
     /// </summary>
-    MessageEncoding Encoding { get; set; }
+    MessageEncoding Encoding { get; }
 
     /// <summary>
-    ///     Gets or sets the settings to be applied to the Json.NET serializer.
+    ///     Gets the settings to be applied to the Json.NET serializer.
     /// </summary>
-    JsonSerializerSettings Settings { get; set; }
+    JsonSerializerSettings Settings { get; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating whether the message type header (see <see cref="DefaultMessageHeaders.MessageType"/>) must be set.
+    ///     This is necessary when sending multiple message type through the same endpoint, to allow Silverback to automatically figure out
+    ///     the correct type to deserialize into.
+    /// </summary>
+    public bool MustSetTypeHeader { get; set; }
 }

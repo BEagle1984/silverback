@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Text.Json;
 using FluentAssertions;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
@@ -52,14 +51,14 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
         TestProducerEndpointConfiguration endpoint = builder.SerializeAsJson(
-            serializer => serializer.WithOptions(
-                new JsonSerializerOptions
+            serializer => serializer.Configure(
+                options =>
                 {
-                    MaxDepth = 42
+                    options.MaxDepth = 42;
                 })).Build();
 
         endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
-        endpoint.Serializer.As<JsonMessageSerializer>().Options.MaxDepth.Should().Be(42);
+        endpoint.Serializer.As<JsonMessageSerializer>().Options!.MaxDepth.Should().Be(42);
     }
 
     [Fact]

@@ -15,10 +15,10 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization;
 
-public class NewtonsoftJsonMessageSerializerTests
+public class NewtonsoftJsonMessageSerializerFixture
 {
     [Fact]
-    public async Task SerializeAsync_WithDefaultSettings_CorrectlySerialized()
+    public async Task SerializeAsync_ShouldSerialize()
     {
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = new();
@@ -32,7 +32,7 @@ public class NewtonsoftJsonMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_Message_TypeHeaderAdded()
+    public async Task SerializeAsync_ShouldAddTypeHeader()
     {
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = new();
@@ -42,6 +42,22 @@ public class NewtonsoftJsonMessageSerializerTests
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
         headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldNotAddTypeHeader_WhenDisabled()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer serializer = new()
+        {
+            MustSetTypeHeader = false
+        };
+
+        await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        headers.GetValue("x-message-type").Should().BeNull();
     }
 
     [Fact]

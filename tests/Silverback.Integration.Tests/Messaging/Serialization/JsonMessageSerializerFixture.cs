@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,13 +14,10 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Serialization;
 
-public class JsonMessageSerializerTests
+public class JsonMessageSerializerFixture
 {
-    // TODO: Test with or without type header + options like IgnoreTypeHeader
-
-
     [Fact]
-    public async Task SerializeAsync_WithDefaultSettings_CorrectlySerialized()
+    public async Task SerializeAsync_ShouldSerialize()
     {
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = new();
@@ -30,12 +26,12 @@ public class JsonMessageSerializerTests
 
         Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
-        byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+        byte[] expected = "{\"Content\":\"the message\"}"u8.ToArray();
         serialized.ReadAll().Should().BeEquivalentTo(expected);
     }
 
     [Fact]
-    public async Task SerializeAsync_Message_TypeHeaderAdded()
+    public async Task SerializeAsync_ShouldAddTypeHeader()
     {
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = new();
@@ -48,9 +44,25 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_Stream_ReturnedUnmodified()
+    public async Task SerializeAsync_ShouldNotAddTypeHeader_WhenDisabled()
     {
-        MemoryStream messageStream = new(Encoding.UTF8.GetBytes("test"));
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        JsonMessageSerializer serializer = new()
+        {
+            MustSetTypeHeader = false
+        };
+
+        await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        headers.GetValue("x-message-type").Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ShouldReturnUnmodifiedStream()
+    {
+        MemoryStream messageStream = new("test"u8.ToArray());
 
         JsonMessageSerializer serializer = new();
 
@@ -63,9 +75,9 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
+    public async Task SerializeAsync_ShouldReturnUnmodifiedByteArray()
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes("test");
+        byte[] messageBytes = "test"u8.ToArray();
 
         JsonMessageSerializer serializer = new();
 
@@ -78,7 +90,7 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public async Task SerializeAsync_NullMessage_NullReturned()
+    public async Task SerializeAsync_ShouldReturnNull_WhenMessageIsNull()
     {
         JsonMessageSerializer serializer = new();
 
@@ -89,7 +101,7 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_SameInstance_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameInstance()
     {
         JsonMessageSerializer serializer1 = new();
         JsonMessageSerializer serializer2 = serializer1;
@@ -100,7 +112,7 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_SameSettings_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenSameSettings()
     {
         JsonMessageSerializer serializer1 = new()
         {
@@ -126,7 +138,7 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_DefaultSettings_TrueReturned()
+    public void Equals_ShouldReturnTrue_WhenBothHaveDefaultSettings()
     {
         JsonMessageSerializer serializer1 = new();
         JsonMessageSerializer serializer2 = new();
@@ -137,7 +149,7 @@ public class JsonMessageSerializerTests
     }
 
     [Fact]
-    public void Equals_DifferentSettings_FalseReturned()
+    public void Equals_ShouldReturnFalse_WhenDifferentSettings()
     {
         JsonMessageSerializer serializer1 = new()
         {

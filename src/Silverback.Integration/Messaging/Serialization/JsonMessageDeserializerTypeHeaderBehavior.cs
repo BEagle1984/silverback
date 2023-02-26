@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Specifies how the <see cref="IMessageDeserializer"/> has to deserialize according to the message type header.  
+///     Specifies how the <see cref="IMessageDeserializer" /> has to deserialize according to the message type header.
 /// </summary>
 public enum JsonMessageDeserializerTypeHeaderBehavior
 {

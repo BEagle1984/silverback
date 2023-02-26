@@ -17,15 +17,11 @@ namespace Silverback.Messaging.Serialization;
 /// </summary>
 public sealed class NewtonsoftJsonMessageSerializer : INewtonsoftJsonMessageSerializer, IEquatable<NewtonsoftJsonMessageSerializer>
 {
-    /// <summary>
-    ///     Gets or sets the message encoding. The default is UTF8.
-    /// </summary>
+    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.Encoding" />
     [DefaultValue("UTF8")]
     public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
-    /// <summary>
-    ///     Gets or sets the settings to be applied to the Json.NET serializer.
-    /// </summary>
+    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.Settings" />
     public JsonSerializerSettings Settings { get; set; } = new()
     {
         Formatting = Formatting.None,
@@ -33,6 +29,9 @@ public sealed class NewtonsoftJsonMessageSerializer : INewtonsoftJsonMessageSeri
         NullValueHandling = NullValueHandling.Ignore,
         DefaultValueHandling = DefaultValueHandling.Ignore
     };
+
+    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.MustSetTypeHeader" />
+    public bool MustSetTypeHeader { get; set; } = true;
 
     /// <summary>
     ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.
@@ -69,7 +68,8 @@ public sealed class NewtonsoftJsonMessageSerializer : INewtonsoftJsonMessageSeri
         Type type = message.GetType();
         string jsonString = JsonConvert.SerializeObject(message, type, Settings);
 
-        headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
+        if (MustSetTypeHeader)
+            headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
         return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
     }

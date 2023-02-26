@@ -25,15 +25,11 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJso
     /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
     public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
 
-    /// <summary>
-    ///     Gets or sets the message encoding. The default is UTF8.
-    /// </summary>
+    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.Encoding" />
     [DefaultValue("UTF8")]
     public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
 
-    /// <summary>
-    ///     Gets or sets the settings to be applied to the Json.NET serializer.
-    /// </summary>
+    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.Settings" />
     public JsonSerializerSettings Settings { get; set; } = new()
     {
         Formatting = Formatting.None,
@@ -41,6 +37,9 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJso
         NullValueHandling = NullValueHandling.Ignore,
         DefaultValueHandling = DefaultValueHandling.Ignore
     };
+
+    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.TypeHeaderBehavior" />
+    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; set; }
 
     /// <summary>
     ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.
@@ -68,7 +67,7 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJso
         Check.NotNull(headers, nameof(headers));
         Check.NotNull(endpoint, nameof(endpoint));
 
-        Type type = SerializationHelper.GetTypeFromHeaders(headers, _type);
+        Type type = GetBaseType(headers);
 
         if (messageStream == null)
             return new DeserializedMessage(null, type);
@@ -108,4 +107,14 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJso
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage));
+
+    private Type GetBaseType(MessageHeaderCollection headers) =>
+        TypeHeaderBehavior switch
+        {
+            JsonMessageDeserializerTypeHeaderBehavior.Optional => SerializationHelper.GetTypeFromHeaders(headers, _type),
+            JsonMessageDeserializerTypeHeaderBehavior.Mandatory => SerializationHelper.GetTypeFromHeaders(headers) ??
+                                                                   throw new InvalidOperationException($"Message type header ({DefaultMessageHeaders.MessageType}) not found."),
+            JsonMessageDeserializerTypeHeaderBehavior.Ignore => _type,
+            _ => throw new InvalidOperationException("Unexpected JsonMessageDeserializerTypeHeaderBehavior")
+        };
 }

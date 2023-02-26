@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 using FluentAssertions;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
@@ -111,15 +110,15 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson(
-                deserializer => deserializer.WithOptions(
-                    new JsonSerializerOptions
+                deserializer => deserializer.Configure(
+                    options =>
                     {
-                        MaxDepth = 42
+                        options.MaxDepth = 42;
                     }))
             .Build();
 
         endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<object>>();
-        endpoint.Deserializer.As<JsonMessageDeserializer<object>>().Options.MaxDepth.Should().Be(42);
+        endpoint.Deserializer.As<JsonMessageDeserializer<object>>().Options!.MaxDepth.Should().Be(42);
     }
 
     [Fact]
@@ -131,11 +130,15 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
             .DeserializeJson(
                 deserializer => deserializer
                     .UseModel<TestEventOne>()
-                    .WithOptions(new JsonSerializerOptions { MaxDepth = 42 }))
+                    .Configure(
+                        options =>
+                        {
+                            options.MaxDepth = 42;
+                        }))
             .Build();
 
         endpoint.Deserializer.Should().BeOfType<JsonMessageDeserializer<TestEventOne>>();
-        endpoint.Deserializer.As<JsonMessageDeserializer<TestEventOne>>().Options.MaxDepth.Should().Be(42);
+        endpoint.Deserializer.As<JsonMessageDeserializer<TestEventOne>>().Options!.MaxDepth.Should().Be(42);
     }
 
     [Fact]

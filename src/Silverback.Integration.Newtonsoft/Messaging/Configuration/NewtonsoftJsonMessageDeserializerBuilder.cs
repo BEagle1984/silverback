@@ -19,6 +19,8 @@ public class NewtonsoftJsonMessageDeserializerBuilder
 
     private MessageEncoding? _encoding;
 
+    private JsonMessageDeserializerTypeHeaderBehavior? _typeHeaderBehavior;
+
     /// <summary>
     ///     Specifies a fixed message type. This will prevent the message type header to be written when
     ///     serializing and the header will be ignored when deserializing.
@@ -88,6 +90,42 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     }
 
     /// <summary>
+    ///     Specifies that the message type header must be used when sent with the consumed message, otherwise the predefined model has to be used.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageDeserializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageDeserializerBuilder WithOptionalMessageTypeHeader()
+    {
+        _typeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Optional;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that an exception must be thrown if the consumed message doesn't specify the message type header.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageDeserializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageDeserializerBuilder WithMandatoryMessageTypeHeader()
+    {
+        _typeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Mandatory;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the message type header must be ignored. The message will always be deserialized into the predefined model.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageDeserializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageDeserializerBuilder IgnoreMessageTypeHeader()
+    {
+        _typeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Ignore;
+        return this;
+    }
+
+    /// <summary>
     ///     Builds the <see cref="IMessageDeserializer" /> instance.
     /// </summary>
     /// <returns>
@@ -102,6 +140,9 @@ public class NewtonsoftJsonMessageDeserializerBuilder
 
         if (_encoding != null)
             _deserializer.Encoding = _encoding.Value;
+
+        if (_typeHeaderBehavior.HasValue)
+            _deserializer.TypeHeaderBehavior = _typeHeaderBehavior.Value;
 
         return _deserializer;
     }

@@ -23,10 +23,11 @@ public sealed class JsonMessageDeserializer<TMessage> : IJsonMessageDeserializer
     /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
     public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
 
-    /// <summary>
-    ///     Gets or sets the options to be passed to the <see cref="JsonSerializer" />.
-    /// </summary>
-    public JsonSerializerOptions Options { get; set; } = new();
+    /// <inheritdoc cref="IJsonMessageDeserializer.Options" />
+    public JsonSerializerOptions? Options { get; set; } = new();
+
+    /// <inheritdoc cref="IJsonMessageDeserializer.TypeHeaderBehavior" />
+    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; set; }
 
     /// <inheritdoc cref="IMessageDeserializer.DeserializeAsync" />
     public async ValueTask<DeserializedMessage> DeserializeAsync(
@@ -37,7 +38,7 @@ public sealed class JsonMessageDeserializer<TMessage> : IJsonMessageDeserializer
         Check.NotNull(headers, nameof(headers));
         Check.NotNull(endpoint, nameof(endpoint));
 
-        Type type = SerializationHelper.GetTypeFromHeaders(headers, _type);
+        Type type = GetBaseType(headers);
 
         if (messageStream == null)
             return new DeserializedMessage(null, type);
@@ -74,4 +75,14 @@ public sealed class JsonMessageDeserializer<TMessage> : IJsonMessageDeserializer
 
     /// <inheritdoc cref="object.GetHashCode" />
     public override int GetHashCode() => HashCode.Combine(1, typeof(TMessage).Name);
+
+    private Type GetBaseType(MessageHeaderCollection headers) =>
+        TypeHeaderBehavior switch
+        {
+            JsonMessageDeserializerTypeHeaderBehavior.Optional => SerializationHelper.GetTypeFromHeaders(headers, _type),
+            JsonMessageDeserializerTypeHeaderBehavior.Mandatory => SerializationHelper.GetTypeFromHeaders(headers) ??
+                                                                   throw new InvalidOperationException($"Message type header ({DefaultMessageHeaders.MessageType}) not found."),
+            JsonMessageDeserializerTypeHeaderBehavior.Ignore => _type,
+            _ => throw new InvalidOperationException("Unexpected JsonMessageDeserializerTypeHeaderBehavior")
+        };
 }

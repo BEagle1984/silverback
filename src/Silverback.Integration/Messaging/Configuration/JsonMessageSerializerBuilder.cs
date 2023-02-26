@@ -1,8 +1,11 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Text.Json;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -11,22 +14,53 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public sealed class JsonMessageSerializerBuilder
 {
-    private IJsonMessageSerializer? _serializer;
-
     private JsonSerializerOptions? _options;
 
+    private bool? _mustSetTypeHeader;
+
     /// <summary>
-    ///     Specifies the <see cref="JsonSerializerOptions" />.
+    ///     Configures the <see cref="JsonSerializerOptions" />.
     /// </summary>
-    /// <param name="options">
-    ///     The <see cref="JsonSerializerOptions" />.
+    /// <param name="configureAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="JsonSerializerOptions" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public JsonMessageSerializerBuilder WithOptions(JsonSerializerOptions options)
+    public JsonMessageSerializerBuilder Configure(Action<JsonSerializerOptions> configureAction)
     {
+        Check.NotNull(configureAction, nameof(configureAction));
+
+        JsonSerializerOptions options = new();
+        configureAction.Invoke(options);
         _options = options;
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType"/>) must be set.
+    ///     This is necessary when sending multiple message type through the same endpoint, to allow Silverback to automatically figure out
+    ///     the correct type to deserialize into.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public JsonMessageSerializerBuilder SetTypeHeader()
+    {
+        _mustSetTypeHeader = true;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the message type header (see <see cref="DefaultMessageHeaders.MessageType"/>) must not be set.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public JsonMessageSerializerBuilder DisableTypeHeader()
+    {
+        _mustSetTypeHeader = false;
         return this;
     }
 
@@ -38,11 +72,14 @@ public sealed class JsonMessageSerializerBuilder
     /// </returns>
     public IMessageSerializer Build()
     {
-        _serializer ??= new JsonMessageSerializer();
+        JsonMessageSerializer serializer = new();
 
         if (_options != null)
-            _serializer.Options = _options;
+            serializer.Options = _options;
 
-        return _serializer;
+        if (_mustSetTypeHeader.HasValue)
+            serializer.MustSetTypeHeader = _mustSetTypeHeader.Value;
+
+        return serializer;
     }
 }

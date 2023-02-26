@@ -16,10 +16,11 @@ namespace Silverback.Messaging.Serialization;
 /// </summary>
 public sealed class JsonMessageSerializer : IJsonMessageSerializer, IEquatable<JsonMessageSerializer>
 {
-    /// <summary>
-    ///     Gets or sets the options to be passed to the <see cref="JsonSerializer" />.
-    /// </summary>
-    public JsonSerializerOptions Options { get; set; } = new();
+    /// <inheritdoc cref="IJsonMessageSerializer.Options" />
+    public JsonSerializerOptions? Options { get; set; }
+
+    /// <inheritdoc cref="IJsonMessageSerializer.MustSetTypeHeader" />
+    public bool MustSetTypeHeader { get; set; } = true;
 
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     [SuppressMessage("", "CA2000", Justification = "MemoryStream is returned")]
@@ -39,7 +40,8 @@ public sealed class JsonMessageSerializer : IJsonMessageSerializer, IEquatable<J
 
         Type type = message.GetType();
 
-        headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
+        if (MustSetTypeHeader)
+            headers.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
         byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(message, type, Options);
         return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(bytes));

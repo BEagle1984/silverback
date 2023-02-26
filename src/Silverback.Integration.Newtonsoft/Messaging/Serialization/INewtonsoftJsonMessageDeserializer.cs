@@ -19,4 +19,9 @@ internal interface INewtonsoftJsonMessageDeserializer : IMessageDeserializer
     ///     Gets or sets the settings to be applied to the Json.NET serializer.
     /// </summary>
     JsonSerializerSettings Settings { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating how the deserialize according to the message type header.
+    /// </summary>
+    JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; set; }
 }

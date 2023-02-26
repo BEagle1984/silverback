@@ -179,10 +179,10 @@ public class MqttLastWillMessageConfigurationBuilderTests
             .ProduceTo("testaments")
             .SerializeAsJson(
                 serializerBuilder => serializerBuilder
-                    .WithOptions(
-                        new JsonSerializerOptions
+                    .Configure(
+                        options =>
                         {
-                            WriteIndented = true
+                            options.WriteIndented = true;
                         }))
             .Message(message);
 

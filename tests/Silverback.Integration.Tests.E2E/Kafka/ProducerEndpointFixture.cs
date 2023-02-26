@@ -72,10 +72,10 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                 .Produce<TestEventTwo>(
                                     endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
                                         serializer => serializer
-                                            .WithOptions(
-                                                new JsonSerializerOptions
+                                            .Configure(
+                                                options =>
                                                 {
-                                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -128,10 +128,10 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                 .Produce<TestEventTwo>(
                                     endpoint => endpoint.ProduceTo("topic2").SerializeAsJson(
                                         serializer => serializer
-                                            .WithOptions(
-                                                new JsonSerializerOptions
+                                            .Configure(
+                                                options =>
                                                 {
-                                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
