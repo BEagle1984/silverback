@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 public partial class OutboxFixture
 {
     [Fact]
-    public async Task Outbox_ShouldProduceMessages_WhenUsingMultipleOutboxes()
+    public async Task Outbox_ShouldProduceToCorrectTopic()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -33,11 +33,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox1"))
-                                .WithInterval(TimeSpan.FromMilliseconds(50)))
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox2"))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -47,43 +43,32 @@ public partial class OutboxFixture
                                 .Produce<TestEventOne>(
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
-                                        .ProduceToOutbox(
-                                            outbox => outbox
-                                                .UseSqlite(Host.SqliteConnectionString)
-                                                .WithTableName("outbox1")))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
                                 .Produce<TestEventTwo>(
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
-                                        .ProduceToOutbox(
-                                            outbox => outbox
-                                                .UseSqlite(Host.SqliteConnectionString)
-                                                .WithTableName("outbox2"))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
+                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
         SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"));
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"));
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-
-        for (int i = 0; i < 3; i++)
-        {
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventTwo());
-        }
+        await publisher.PublishAsync(new TestEventOne());
+        await publisher.PublishAsync(new TestEventTwo());
+        await publisher.PublishAsync(new TestEventOne());
+        await publisher.PublishAsync(new TestEventTwo());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
-        List<object?> inboundMessages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).ToList();
-
-        inboundMessages.OfType<TestEventOne>().Should().HaveCount(3);
-        inboundMessages.OfType<TestEventTwo>().Should().HaveCount(3);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic1").Should().HaveCount(2);
+        Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic2").Should().HaveCount(2);
     }
 
     [Fact]
@@ -196,5 +181,72 @@ public partial class OutboxFixture
         Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
         Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic1").Should().HaveCount(3);
         Helper.Spy.InboundEnvelopes.Where(envelope => envelope.Endpoint.RawName == "topic2").Should().HaveCount(3);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduce_WhenUsingMultipleOutboxes()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddSqliteOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox1"))
+                                .WithInterval(TimeSpan.FromMilliseconds(50)))
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox2"))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo("topic1")
+                                        .ProduceToOutbox(
+                                            outbox => outbox
+                                                .UseSqlite(Host.SqliteConnectionString)
+                                                .WithTableName("outbox1")))
+                                .Produce<TestEventTwo>(
+                                    endpoint => endpoint
+                                        .ProduceTo("topic2")
+                                        .ProduceToOutbox(
+                                            outbox => outbox
+                                                .UseSqlite(Host.SqliteConnectionString)
+                                                .WithTableName("outbox2"))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
+                .AddIntegrationSpyAndSubscriber());
+
+        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"));
+        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"));
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventTwo());
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(6);
+        List<object?> inboundMessages = Helper.Spy.InboundEnvelopes.Select(envelope => envelope.Message).ToList();
+
+        inboundMessages.OfType<TestEventOne>().Should().HaveCount(3);
+        inboundMessages.OfType<TestEventTwo>().Should().HaveCount(3);
     }
 }
