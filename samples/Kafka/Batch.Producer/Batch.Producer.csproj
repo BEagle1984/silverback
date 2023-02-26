@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)"/>
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Batch.Common\Batch.Common.csproj"/>
+    <ProjectReference Include="..\Batch.Common\Batch.Common.csproj" />
   </ItemGroup>
 
 </Project>

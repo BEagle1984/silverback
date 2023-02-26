@@ -21,8 +21,8 @@ The producer uses a hosted service to publish some messages in the background.
 
 # [Startup](#tab/producer-startup)
 [!code-csharp[Producer.Startup](../../../samples/Kafka/Avro.Producer/Startup.cs)]
-# [EndpointsConfigurator](#tab/producer-endpoints)
-[!code-csharp[Producer.EndpointsConfigurator](../../../samples/Kafka/Avro.Producer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/producer-endpoints)
+[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Kafka/Avro.Producer/BrokerClientsConfigurator.cs)]
 # [Background Service](#tab/producer-background-service)
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/Avro.Producer/ProducerBackgroundService.cs)]
 ***
@@ -35,8 +35,8 @@ The consumer processes the messages and outputs their value to the standard outp
 
 # [Startup](#tab/consumer-startup)
 [!code-csharp[Consumer.Startup](../../../samples/Kafka/Avro.Consumer/Startup.cs)]
-# [EndpointsConfigurator](#tab/consumer-endpoints)
-[!code-csharp[Consumer.EndpointsConfigurator](../../../samples/Kafka/Avro.Consumer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/consumer-endpoints)
+[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Kafka/Avro.Consumer/BrokerClientsConfigurator.cs)]
 # [Subscriber](#tab/consumer-subscriber)
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/Avro.Consumer/AvroMessageSubscriber.cs)]
 ***

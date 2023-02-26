@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)"/>
+    <PackageReference Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)" />
   </ItemGroup>
 
 </Project>

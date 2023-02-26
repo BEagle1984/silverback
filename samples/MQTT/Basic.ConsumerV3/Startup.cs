@@ -1,30 +1,29 @@
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3;
+
+public class Startup
 {
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Enable Silverback
-            services
-                .AddSilverback()
+        // Enable Silverback
+        services.AddSilverback()
 
-                // Use Apache Mqtt as message broker
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMqtt())
+            // Use Apache Mqtt as message broker
+            .WithConnectionToMessageBroker(
+                options => options
+                    .AddMqtt())
 
-                // Delegate the inbound/outbound endpoints configuration to a separate
-                // class.
-                .AddEndpointsConfigurator<EndpointsConfigurator>()
+            // Delegate the broker clients configuration to a separate class
+            .AddBrokerClientsConfigurator<BrokerClientsConfigurator>()
 
-                // Register the subscribers
-                .AddSingletonSubscriber<SampleMessageSubscriber>();
-        }
+            // Register the subscribers
+            .AddSingletonSubscriber<SampleMessageSubscriber>();
+    }
 
-        public void Configure()
-        {
-        }
+    public void Configure()
+    {
     }
 }

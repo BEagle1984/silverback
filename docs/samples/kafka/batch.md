@@ -23,8 +23,8 @@ The producer uses a hosted service to publish some messages in the background.
 
 # [Startup](#tab/producer-startup)
 [!code-csharp[Producer.Startup](../../../samples/Kafka/Batch.Producer/Startup.cs)]
-# [EndpointsConfigurator](#tab/producer-endpoints)
-[!code-csharp[Producer.EndpointsConfigurator](../../../samples/Kafka/Batch.Producer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/producer-endpoints)
+[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Kafka/Batch.Producer/BrokerClientsConfigurator.cs)]
 # [Background Service](#tab/producer-background-service)
 [!code-csharp[Producer.BackgroundService](../../../samples/Kafka/Batch.Producer/ProducerBackgroundService.cs)]
 ***
@@ -37,8 +37,8 @@ The consumer processes the messages in batch and outputs the batch sum to the st
 
 # [Startup](#tab/consumer-startup)
 [!code-csharp[Consumer.Startup](../../../samples/Kafka/Batch.Consumer/Startup.cs)]
-# [EndpointsConfigurator](#tab/consumer-endpoints)
-[!code-csharp[Consumer.EndpointsConfigurator](../../../samples/Kafka/Batch.Consumer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/consumer-endpoints)
+[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Kafka/Batch.Consumer/BrokerClientsConfigurator.cs)]
 # [Subscriber](#tab/consumer-subscriber)
 [!code-csharp[Consumer.Subscriber](../../../samples/Kafka/Batch.Consumer/SampleMessageBatchSubscriber.cs)]
 ***

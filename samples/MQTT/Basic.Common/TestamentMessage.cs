@@ -1,7 +1,6 @@
-﻿namespace Silverback.Samples.Mqtt.Basic.Common
+﻿namespace Silverback.Samples.Mqtt.Basic.Common;
+
+public class TestamentMessage
 {
-    public class TestamentMessage
-    {
-        public string Message { get; } = "I'm dead!";
-    }
+    public string Message { get; } = "I'm dead!";
 }

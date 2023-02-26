@@ -5,6 +5,7 @@ ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	stylecop.json = stylecop.json
 	.editorconfig = .editorconfig
+	Silverback.Samples.sln.DotSettings = Silverback.Samples.sln.DotSettings
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{4A403180-A52A-488B-A6F8-53CBF9AE604E}"

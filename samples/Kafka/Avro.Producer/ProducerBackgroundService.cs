@@ -6,69 +6,57 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Examples.Messages;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Samples.Kafka.Avro.Producer
+namespace Silverback.Samples.Kafka.Avro.Producer;
+
+public class ProducerBackgroundService : BackgroundService
 {
-    public class ProducerBackgroundService : BackgroundService
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    private readonly ILogger<ProducerBackgroundService> _logger;
+
+    public ProducerBackgroundService(
+        IServiceScopeFactory serviceScopeFactory,
+        ILogger<ProducerBackgroundService> logger)
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _serviceScopeFactory = serviceScopeFactory;
+        _logger = logger;
+    }
 
-        private readonly ILogger<ProducerBackgroundService> _logger;
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // Create a service scope and resolve the IPublisher
+        // (the IPublisher cannot be resolved from the root scope and cannot
+        // therefore be directly injected into the BackgroundService)
+        using IServiceScope scope = _serviceScopeFactory.CreateScope();
+        IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-        public ProducerBackgroundService(
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger<ProducerBackgroundService> logger)
+        int number = 0;
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
+            await ProduceMessageAsync(publisher, ++number);
+
+            await Task.Delay(100, stoppingToken);
         }
+    }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    private async Task ProduceMessageAsync(IPublisher publisher, int number)
+    {
+        try
         {
-            // Create a service scope and resolve the IPublisher
-            // (the IPublisher cannot be resolved from the root scope and cannot
-            // therefore be directly injected into the BackgroundService)
-            using var scope = _serviceScopeFactory.CreateScope();
-            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
-            var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
-
-            int number = 0;
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                // Check whether the connection has been established, since the
-                // BackgroundService will start immediately, before the application
-                // is completely bootstrapped
-                if (!broker.IsConnected)
+            await publisher.PublishAsync(
+                new AvroMessage
                 {
-                    await Task.Delay(100, stoppingToken);
-                    continue;
-                }
+                    number = number.ToString(CultureInfo.InvariantCulture)
+                });
 
-                await ProduceMessageAsync(publisher, ++number);
-
-                await Task.Delay(100, stoppingToken);
-            }
+            _logger.LogInformation("Produced {Number}", number);
         }
-
-        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        catch (Exception ex)
         {
-            try
-            {
-                await publisher.PublishAsync(
-                    new AvroMessage
-                    {
-                        number = number.ToString(CultureInfo.InvariantCulture)
-                    });
-
-                _logger.LogInformation("Produced {Number}", number);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to produce {Number}", number);
-            }
+            _logger.LogError(ex, "Failed to produce {Number}", number);
         }
     }
 }

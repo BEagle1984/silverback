@@ -4,49 +4,48 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Messages;
 
-namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers
+namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Consumer.Subscribers;
+
+public class BinaryFileSubscriber
 {
-    public class BinaryFileSubscriber
+    private const string OutputPath = "../../temp";
+
+    private readonly ILogger<BinaryFileSubscriber> _logger;
+
+    public BinaryFileSubscriber(ILogger<BinaryFileSubscriber> logger)
     {
-        private const string OutputPath = "../../temp";
+        _logger = logger;
+    }
 
-        private readonly ILogger<BinaryFileSubscriber> _logger;
+    public async Task OnBinaryFileMessageReceivedAsync(CustomBinaryFileMessage binaryFileMessage)
+    {
+        EnsureTargetFolderExists();
 
-        public BinaryFileSubscriber(ILogger<BinaryFileSubscriber> logger)
+        string filename = Guid.NewGuid().ToString("N") + binaryFileMessage.Filename;
+
+        _logger.LogInformation("Saving binary file as {Filename}...", filename);
+
+        // Create a FileStream to save the file
+        using FileStream fileStream =
+            File.OpenWrite(Path.Combine(OutputPath, filename));
+
+        if (binaryFileMessage.Content != null)
         {
-            _logger = logger;
+            // Asynchronously copy the message content to the FileStream.
+            // The message chunks are streamed directly and the entire file is
+            // never loaded into memory.
+            await binaryFileMessage.Content.CopyToAsync(fileStream);
         }
 
-        public async Task OnBinaryFileMessageReceivedAsync(
-            CustomBinaryFileMessage binaryFileMessage)
-        {
-            EnsureTargetFolderExists();
+        _logger.LogInformation(
+            "Written {FileStreamLength} bytes into {Filename}",
+            fileStream.Length,
+            filename);
+    }
 
-            var filename = Guid.NewGuid().ToString("N") + binaryFileMessage.Filename;
-
-            _logger.LogInformation("Saving binary file as {Filename}...", filename);
-
-            // Create a FileStream to save the file
-            using var fileStream = File.OpenWrite(Path.Combine(OutputPath, filename));
-
-            if (binaryFileMessage.Content != null)
-            {
-                // Asynchronously copy the message content to the FileStream.
-                // The message chunks are streamed directly and the entire file is
-                // never loaded into memory.
-                await binaryFileMessage.Content.CopyToAsync(fileStream);
-            }
-
-            _logger.LogInformation(
-                "Written {FileStreamLength} bytes into {Filename}",
-                fileStream.Length,
-                filename);
-        }
-
-        private static void EnsureTargetFolderExists()
-        {
-            if (!Directory.Exists(OutputPath))
-                Directory.CreateDirectory(OutputPath);
-        }
+    private static void EnsureTargetFolderExists()
+    {
+        if (!Directory.Exists(OutputPath))
+            Directory.CreateDirectory(OutputPath);
     }
 }

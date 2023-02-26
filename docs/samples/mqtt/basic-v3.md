@@ -23,8 +23,8 @@ The producer uses a hosted service to publish some messages in the background.
 
 # [Startup](#tab/producer-startup)
 [!code-csharp[Producer.Startup](../../../samples/Mqtt/Basic.ProducerV3/Startup.cs)]
-# [EndpointsConfigurator](#tab/producer-endpoints)
-[!code-csharp[Producer.EndpointsConfigurator](../../../samples/Mqtt/Basic.ProducerV3/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/producer-endpoints)
+[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Mqtt/Basic.ProducerV3/BrokerClientsConfigurator.cs)]
 # [Background Service](#tab/producer-background-service)
 [!code-csharp[Producer.BackgroundService](../../../samples/Mqtt/Basic.ProducerV3/ProducerBackgroundService.cs)]
 ***
@@ -37,8 +37,8 @@ The consumer processes the messages and outputs their value to the standard outp
 
 # [Startup](#tab/consumer-startup)
 [!code-csharp[Consumer.Startup](../../../samples/Mqtt/Basic.ConsumerV3/Startup.cs)]
-# [EndpointsConfigurator](#tab/consumer-endpoints)
-[!code-csharp[Consumer.EndpointsConfigurator](../../../samples/Mqtt/Basic.ConsumerV3/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/consumer-endpoints)
+[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Mqtt/Basic.ConsumerV3/BrokerClientsConfigurator.cs)]
 # [Subscriber](#tab/consumer-subscriber)
 [!code-csharp[Consumer.Subscriber](../../../samples/Mqtt/Basic.ConsumerV3/SampleMessageSubscriber.cs)]
 ***

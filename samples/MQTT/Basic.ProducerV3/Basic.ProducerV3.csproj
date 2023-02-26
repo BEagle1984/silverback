@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)"/>
+    <PackageReference Include="Silverback.Integration.Mqtt" Version="$(BaseVersion)" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Basic.Common\Basic.Common.csproj"/>
+    <ProjectReference Include="..\Basic.Common\Basic.Common.csproj" />
   </ItemGroup>
 
 </Project>

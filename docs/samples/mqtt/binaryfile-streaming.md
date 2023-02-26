@@ -10,12 +10,12 @@ See also: <xref:binary-files>, <xref:chunking>
 
 ## Producer
 
-The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom `BinaryFileMessage` to forward further metadata (the file name in this example).
+The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom `BinaryMessage` to forward further metadata (the file name in this example).
 
 # [Startup](#tab/producer-startup)
 [!code-csharp[Producer.Startup](../../../samples/Mqtt/BinaryFileStreaming.Producer/Startup.cs)]
-# [EndpointsConfigurator](#tab/producer-endpoints)
-[!code-csharp[Producer.EndpointsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Producer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/producer-endpoints)
+[!code-csharp[Producer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Producer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/producer-custom-message)
 [!code-csharp[Producer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Producer/Messages/CustomBinaryFileMessage.cs)]
 # [API Controller](#tab/producer-controller)
@@ -30,8 +30,8 @@ The consumer simply streams the file to a temporary folder in the local file sys
 
 # [Startup](#tab/consumer-startup)
 [!code-csharp[Consumer.Startup](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Startup.cs)]
-# [EndpointsConfigurator](#tab/consumer-endpoints)
-[!code-csharp[Consumer.EndpointsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Consumer/EndpointsConfigurator.cs)]
+# [BrokerClientsConfigurator](#tab/consumer-endpoints)
+[!code-csharp[Consumer.BrokerClientsConfigurator](../../../samples/Mqtt/BinaryFileStreaming.Consumer/BrokerClientsConfigurator.cs)]
 # [CustomBinaryFileMessage](#tab/consumer-custom-message)
 [!code-csharp[Consumer.CustomBinaryFileMessage](../../../samples/Mqtt/BinaryFileStreaming.Consumer/Messages/CustomBinaryFileMessage.cs)]
 # [Subscriber](#tab/consumer-subscriber)

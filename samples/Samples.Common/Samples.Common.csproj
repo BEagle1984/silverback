@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-      <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
-      <RootNamespace>Silverback.Samples.Common</RootNamespace>
-      <LangVersion>$(LangVersion)</LangVersion>
-      <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <RootNamespace>Silverback.Samples.Common</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 
 </Project>

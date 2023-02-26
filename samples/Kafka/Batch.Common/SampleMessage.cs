@@ -1,7 +1,6 @@
-﻿namespace Silverback.Samples.Kafka.Batch.Common
+﻿namespace Silverback.Samples.Kafka.Batch.Common;
+
+public class SampleMessage
 {
-    public class SampleMessage
-    {
-        public int Number { get; set; }
-    }
+    public int Number { get; set; }
 }

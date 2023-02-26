@@ -11,5 +11,5 @@
     <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Integration.Kafka.SchemaRegistry" Version="$(BaseVersion)" />
   </ItemGroup>
-  
+
 </Project>
