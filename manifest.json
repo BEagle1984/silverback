@@ -5,7 +5,7 @@
     "priority": 0.5
   },
   "homepages": [],
-  "source_base_path": "C:/source/silverback/docs",
+  "source_base_path": "C:/source/silverback-temp/docs",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -191,7 +191,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html",
-          "hash": "KtPfHZpzbdus9Oe25a9SDugLa4evjj/0/8hrmHzg8sM="
+          "hash": "2CEKUh6uLyLY0wrcvmYWa7SkgCxroxM0Ga4aPuF5EJY="
         }
       },
       "is_incremental": false,
@@ -2591,7 +2591,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html",
-          "hash": "bCkIkcQAASCQjux4tgKaJAr+r84CM1YbK5ieMlStUTY="
+          "hash": "IhJlaG5w9kPE/nnurAM4rEwWlKFSXILHjX0tfs6VZyI="
         }
       },
       "is_incremental": false,
@@ -2867,7 +2867,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html",
-          "hash": "JEDcrMwuKGWkEoNFLpIimbAL0BwzXjwh6K3HIaSK2Hw="
+          "hash": "pm0pdenXGrEyvFmDxRAfrc+z3rqtRKf40xk/7HcFKFQ="
         }
       },
       "is_incremental": false,
@@ -2891,7 +2891,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html",
-          "hash": "OgP3VoG3tlV/Ow02IgNrIwI0DD8AdxTqPR8WFp8mBxI="
+          "hash": "Q4LRKK9npqiTdhCY4EQ8XTPZiWyCIRvtR7dHhY3fuzk="
         }
       },
       "is_incremental": false,
@@ -2987,7 +2987,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html",
-          "hash": "FOkwueBqXubJedg/U5PKwBIC/DrvvBMd2JN/EzIQQOA="
+          "hash": "l7U/yXyTw1zYSD3j+Y6BvTp8yOonWTR9PRpSMpVfYgI="
         }
       },
       "is_incremental": false,
@@ -2999,7 +2999,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ISilverbackBuilder.html",
-          "hash": "9SItUPXpasVsPVSZ5s6sC+56XEQ99rn4zeRcAZ3B6sE="
+          "hash": "qsdtzA2ImmpzP9e2so/Q97MMedO1WEhWBjgLPXdD3H4="
         }
       },
       "is_incremental": false,
@@ -3071,7 +3071,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html",
-          "hash": "VcxAp6Z1JrA5vqlk5RTYNo84bbITVGvlYjUjW8S/Azk="
+          "hash": "0jv6FtyughcFDEVATMC8OUwYXD/vu5Eh8Tgjj5yExys="
         }
       },
       "is_incremental": false,
@@ -3095,7 +3095,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html",
-          "hash": "69FDCxzJRGh41MXG9ylgX4a3qRPiYjyWsHZHdgV/58s="
+          "hash": "XggzFU4leehJ4IZI8WKTa37xXrLjTq6eoaTeUfWseQE="
         }
       },
       "is_incremental": false,
@@ -3155,7 +3155,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html",
-          "hash": "eTg8qySQwH9/pCBbEo7usjfkJojU94icUV7P2/lqzmY="
+          "hash": "Y6N/17LPEpaTPg6TT6GWFzUXG7TORVZOQLnKCRi8t9o="
         }
       },
       "is_incremental": false,
@@ -3179,7 +3179,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.html",
-          "hash": "kWMG0IeGN/lTkslM6c6g1PYP/YZtoEq4B3naoxMEgAA="
+          "hash": "5ilKz8y3R09E2tYsukmJ1a0cgkQ3yOMzP2VD8pSPrX0="
         }
       },
       "is_incremental": false,
@@ -3251,7 +3251,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html",
-          "hash": "ciAk/OHFAK+c3Vkdsz0uRn7zhbBbp2OYKwMhRD34zKE="
+          "hash": "hbnyKdwgfUFyBXkcBuFlCYE2Ii/bKNkNGE/nODdc76Q="
         }
       },
       "is_incremental": false,
@@ -3287,7 +3287,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html",
-          "hash": "YGegYq0vX85VozNzZGB0GUMZyNFnzpBev5M85QOF9GU="
+          "hash": "YZp4ojtNRGsjUGP6zHQx9LJFqeY23qhppC4nz27eKSw="
         }
       },
       "is_incremental": false,
@@ -3335,7 +3335,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html",
-          "hash": "zx5jvJ48BVEnjkHSgcwbh/COmtFmnKKjLONiNAg6pFU="
+          "hash": "MUXUWgFVjFfLY1gU+p5wANxgv1DwywqSkYsHv0sB3nI="
         }
       },
       "is_incremental": false,
@@ -3359,7 +3359,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.html",
-          "hash": "HmZ9EgzAvIi1c323cZV4L2OH8XVnfPlH3zY/3hyl4Fw="
+          "hash": "JADrlCdwddJQ2BmOW1Iv+cf2vf7gliHmf4EQK5nJlL8="
         }
       },
       "is_incremental": false,
@@ -3395,7 +3395,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html",
-          "hash": "K2qVfQA3vU48t2f2dXlfquHmKtObyjjroFw/E98xOVY="
+          "hash": "Vu9zwS7vryFPXEQlBnc7kZkXxnAQ9F3sNFz7nlTSZB8="
         }
       },
       "is_incremental": false,
@@ -7578,15 +7578,12 @@
       "version": ""
     },
     {
-      "log_codes": [
-        "UidNotFound"
-      ],
       "type": "Conceptual",
       "source_relative_path": "concepts/broker/testing.md",
       "output": {
         ".html": {
           "relative_path": "concepts/broker/testing.html",
-          "hash": "rzUk1WRRiRofblPoXv6GDB6mAENGA5OR+r/VhrK8f8k="
+          "hash": "mq11g6ZdvGpcs0UdNbt11depckxykd5vSfAB736u0CI="
         }
       },
       "is_incremental": false,
@@ -8178,7 +8175,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "X3er7dzVLsdDFl1H6uxnqqFXtxEvfBHLAUWtNd1JOrU="
+          "hash": "pyO7dny5uFcSj0hyjk2OaWmv3WlC+VaGtipLsFlR098="
         }
       },
       "is_incremental": false,
@@ -8308,25 +8305,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Cannot build incrementally because docfx version changed from 2.58.9.0 to 2.59.4.0.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "DocfxVersionChanged"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 48,
-          "skipped_file_count": 0
+          "skipped_file_count": 47
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 606,
-          "skipped_file_count": 0
+          "skipped_file_count": 606
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
