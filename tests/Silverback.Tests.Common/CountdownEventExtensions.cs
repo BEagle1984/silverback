@@ -8,7 +8,6 @@ namespace Silverback.Tests;
 
 public static class CountdownEventExtensions
 {
-    // TODO: Test
     public static void WaitOrThrow(this CountdownEvent countdownEvent, TimeSpan? timeout = null)
     {
         timeout ??= TimeSpan.FromSeconds(5);

@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration;
 public partial class ProducerEndpointConfigurationBuilderFixture
 {
     [Fact]
-    public void ImplicitSerializeAsJson_Default_SerializerSet()
+    public void Build_ShouldSetJsonMessageSerializerByDefault()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
@@ -24,7 +24,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void ImplicitSerializeBinary_Default_SerializerSet()
+    public void Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage()
     {
         TestProducerEndpointConfigurationBuilder<BinaryMessage> builder = new();
 
@@ -35,7 +35,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void SerializeAsJson_Default_SerializerSet()
+    public void SerializeAsJson_ShouldSetSerializer()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
@@ -46,7 +46,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void SerializeAsJson_WithOptions_SerializerAndOptionsSet()
+    public void SerializeAsJson_ShouldSetSerializerAndOptions()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
@@ -62,7 +62,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void ProduceBinaryMessages_Default_SerializerSet()
+    public void ProduceBinaryMessages_ShouldSetSerializer()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 

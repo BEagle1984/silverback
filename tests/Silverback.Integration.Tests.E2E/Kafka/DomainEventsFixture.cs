@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-// TODO: Reimplement EventSourcing
+// TODO: Reimplement EventSourcing?
 // // Copyright (c) 2020 Sergio Aquilini
 // // This code is licensed under MIT license (see LICENSE file for details)
 //

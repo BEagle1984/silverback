@@ -11,7 +11,6 @@ namespace Silverback.Messaging.Configuration;
 /// <content>
 ///     Implements the <c>AddHeader</c> methods.
 /// </content>
-// TODO: TEST
 public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
     /// <summary>

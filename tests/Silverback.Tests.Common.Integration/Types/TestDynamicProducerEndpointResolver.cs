@@ -21,10 +21,10 @@ public sealed record TestDynamicProducerEndpointResolver : DynamicProducerEndpoi
     public override ValueTask<TestProducerEndpoint> DeserializeAsync(
         byte[] serializedEndpoint,
         TestProducerEndpointConfiguration configuration) =>
-        throw new NotImplementedException();
+        throw new NotSupportedException();
 
     public override ValueTask<byte[]> SerializeAsync(TestProducerEndpoint endpoint) =>
-        throw new NotImplementedException();
+        throw new NotSupportedException();
 
     protected override TestProducerEndpoint GetEndpointCore(
         object? message,

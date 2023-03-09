@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration;
 public partial class ProducerEndpointConfigurationBuilderFixture
 {
     [Fact]
-    public void EncryptUsingAes_WithKeyAndIV_EncryptionSettingsSet()
+    public void EncryptUsingAes_ShouldSetKeyAndIV()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
@@ -26,7 +26,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void EncryptUsingAes_WithKeyIdentifier_EncryptionSettingsSet()
+    public void EncryptUsingAes_ShouldSetKeyIdentifier()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new();
 
