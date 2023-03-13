@@ -99,6 +99,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes synchronously")]
+    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes synchronously")]
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
         try
@@ -149,7 +150,8 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
             onError);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "OK to call sync ProduceCore")]
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes synchronously")]
+    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes synchronously")]
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError)
     {
         try

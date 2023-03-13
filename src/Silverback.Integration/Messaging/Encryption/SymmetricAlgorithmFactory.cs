@@ -9,7 +9,7 @@ internal static class SymmetricAlgorithmFactory
 {
     public static SymmetricAlgorithm CreateSymmetricAlgorithm(SymmetricEncryptionSettingsBase encryptionSettings, byte[] encryptionKey)
     {
-        SymmetricAlgorithm algorithm = SymmetricAlgorithm.Create(encryptionSettings.AlgorithmName)!;
+        SymmetricAlgorithm algorithm = (SymmetricAlgorithm)CryptoConfig.CreateFromName(encryptionSettings.AlgorithmName)!;
 
         if (encryptionSettings.BlockSize != null)
             algorithm.BlockSize = encryptionSettings.BlockSize.Value;

@@ -25,6 +25,7 @@ internal sealed class ReturnValueHandlerService
 
     [SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Method executes sync or async")]
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
+    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes sync or async")]
     public async ValueTask<bool> HandleReturnValuesAsync(object? returnValue, ExecutionFlow executionFlow)
     {
         if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
