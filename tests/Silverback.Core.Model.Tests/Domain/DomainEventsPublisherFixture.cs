@@ -85,6 +85,7 @@ public sealed class DomainEventsPublisherFixture
 
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "NSubstitute setup")]
     public async Task PublishDomainEventsAsync_ShouldPublishEventsChain()
     {
         List<DomainEntity> entities = new();
