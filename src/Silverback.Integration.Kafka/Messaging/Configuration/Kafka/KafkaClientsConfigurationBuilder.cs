@@ -679,6 +679,17 @@ public partial class KafkaClientsConfigurationBuilder
     public partial KafkaClientsConfigurationBuilder WithSslKeystorePassword(string? sslKeystorePassword);
 
     /// <summary>
+    ///     Sets the comma-separated list of OpenSSL 3.0.x implementation providers.
+    /// </summary>
+    /// <param name="sslProviders">
+    ///     The comma-separated list of OpenSSL 3.0.x implementation providers.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithSslProviders(string? sslProviders);
+
+    /// <summary>
     ///     Sets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
     /// </summary>
     /// <param name="sslEngineLocation">

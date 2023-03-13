@@ -94,6 +94,21 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
     public Task<List<DeleteAclsResult>> DeleteAclsAsync(IEnumerable<AclBindingFilter> aclBindingFilters, DeleteAclsOptions? options = null) =>
         throw new NotSupportedException();
 
+    public Task<DeleteConsumerGroupOffsetsResult> DeleteConsumerGroupOffsetsAsync(string group, IEnumerable<TopicPartition> partitions, DeleteConsumerGroupOffsetsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<List<AlterConsumerGroupOffsetsResult>> AlterConsumerGroupOffsetsAsync(IEnumerable<ConsumerGroupTopicPartitionOffsets> groupPartitions, AlterConsumerGroupOffsetsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<List<ListConsumerGroupOffsetsResult>> ListConsumerGroupOffsetsAsync(IEnumerable<ConsumerGroupTopicPartitions> groupPartitions, ListConsumerGroupOffsetsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<ListConsumerGroupsResult> ListConsumerGroupsAsync(ListConsumerGroupsOptions? options = null) =>
+        throw new NotSupportedException();
+
+    public Task<DescribeConsumerGroupsResult> DescribeConsumerGroupsAsync(IEnumerable<string> groups, DescribeConsumerGroupsOptions? options = null) =>
+        throw new NotSupportedException();
+
     public void Dispose()
     {
         // Nothing to dispose, it's just a mock

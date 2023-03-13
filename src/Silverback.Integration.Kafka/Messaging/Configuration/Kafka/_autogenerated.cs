@@ -334,6 +334,17 @@ public partial record KafkaClientConfiguration<TClientConfig>
     }
 
     /// <summary>
+    ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent
+    ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.
+    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+    /// </summary>
+    public bool? AllowAutoCreateTopics
+    {
+        get => ClientConfig.AllowAutoCreateTopics;
+        init => ClientConfig.AllowAutoCreateTopics = value;
+    }
+
+    /// <summary>
     ///     Gets the protocol to be used to communicate with the brokers.
     /// </summary>
     public SecurityProtocol? SecurityProtocol
@@ -471,6 +482,15 @@ public partial record KafkaClientConfiguration<TClientConfig>
     {
         get => ClientConfig.SslKeystorePassword;
         init => ClientConfig.SslKeystorePassword = value;
+    }
+
+    /// <summary>
+    ///     Gets the comma-separated list of OpenSSL 3.0.x implementation providers.
+    /// </summary>
+    public string? SslProviders
+    {
+        get => ClientConfig.SslProviders;
+        init => ClientConfig.SslProviders = value;
     }
 
     /// <summary>
@@ -892,17 +912,6 @@ public partial record KafkaConsumerConfiguration
         get => ClientConfig.CheckCrcs;
         init => ClientConfig.CheckCrcs = value;
     }
-
-    /// <summary>
-    ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent
-    ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.
-    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
-    /// </summary>
-    public bool? AllowAutoCreateTopics
-    {
-        get => ClientConfig.AllowAutoCreateTopics;
-        init => ClientConfig.AllowAutoCreateTopics = value;
-    }
 }
 
 /// <content>
@@ -1202,6 +1211,8 @@ internal interface IKafkaClientConfigurationBuilder
 
     void WithBrokerVersionFallback(string? brokerVersionFallback);
 
+    void WithAllowAutoCreateTopics(bool? allowAutoCreateTopics);
+
     void WithSecurityProtocol(SecurityProtocol? securityProtocol);
 
     void WithSslCipherSuites(string? sslCipherSuites);
@@ -1231,6 +1242,8 @@ internal interface IKafkaClientConfigurationBuilder
     void WithSslKeystoreLocation(string? sslKeystoreLocation);
 
     void WithSslKeystorePassword(string? sslKeystorePassword);
+
+    void WithSslProviders(string? sslProviders);
 
     void WithSslEngineLocation(string? sslEngineLocation);
 
@@ -1537,6 +1550,12 @@ public partial class KafkaClientsConfigurationBuilder
         return this;
     }
 
+    public partial KafkaClientsConfigurationBuilder WithSslProviders(string? sslProviders)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithSslProviders(sslProviders));
+        return this;
+    }
+
     public partial KafkaClientsConfigurationBuilder WithSslEngineLocation(string? sslEngineLocation)
     {
         _sharedConfigurationActions.Add(builder => builder.WithSslEngineLocation(sslEngineLocation));
@@ -1678,6 +1697,12 @@ public partial class KafkaClientsConfigurationBuilder
     internal KafkaClientsConfigurationBuilder WithApiVersionRequest(bool? apiVersionRequest)
     {
         _sharedConfigurationActions.Add(builder => builder.WithApiVersionRequest(apiVersionRequest));
+        return this;
+    }
+
+    internal KafkaClientsConfigurationBuilder WithAllowAutoCreateTopics(bool? allowAutoCreateTopics)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithAllowAutoCreateTopics(allowAutoCreateTopics));
         return this;
     }
 
@@ -1961,6 +1986,12 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder> : 
         return This;
     }
 
+    public partial TBuilder WithSslProviders(string? sslProviders)
+    {
+        ClientConfig.SslProviders = sslProviders;
+        return This;
+    }
+
     public partial TBuilder WithSslEngineLocation(string? sslEngineLocation)
     {
         ClientConfig.SslEngineLocation = sslEngineLocation;
@@ -2105,6 +2136,12 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder> : 
         return This;
     }
 
+    internal TBuilder WithAllowAutoCreateTopics(bool? allowAutoCreateTopics)
+    {
+        ClientConfig.AllowAutoCreateTopics = allowAutoCreateTopics;
+        return This;
+    }
+
     internal TBuilder WithEnableSslCertificateVerification(bool? enableSslCertificateVerification)
     {
         ClientConfig.EnableSslCertificateVerification = enableSslCertificateVerification;
@@ -2181,6 +2218,8 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder> : 
 
     void IKafkaClientConfigurationBuilder.WithBrokerVersionFallback(string? brokerVersionFallback) => WithBrokerVersionFallback(brokerVersionFallback);
 
+    void IKafkaClientConfigurationBuilder.WithAllowAutoCreateTopics(bool? allowAutoCreateTopics) => WithAllowAutoCreateTopics(allowAutoCreateTopics);
+
     void IKafkaClientConfigurationBuilder.WithSecurityProtocol(SecurityProtocol? securityProtocol) => WithSecurityProtocol(securityProtocol);
 
     void IKafkaClientConfigurationBuilder.WithSslCipherSuites(string? sslCipherSuites) => WithSslCipherSuites(sslCipherSuites);
@@ -2210,6 +2249,8 @@ public partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder> : 
     void IKafkaClientConfigurationBuilder.WithSslKeystoreLocation(string? sslKeystoreLocation) => WithSslKeystoreLocation(sslKeystoreLocation);
 
     void IKafkaClientConfigurationBuilder.WithSslKeystorePassword(string? sslKeystorePassword) => WithSslKeystorePassword(sslKeystorePassword);
+
+    void IKafkaClientConfigurationBuilder.WithSslProviders(string? sslProviders) => WithSslProviders(sslProviders);
 
     void IKafkaClientConfigurationBuilder.WithSslEngineLocation(string? sslEngineLocation) => WithSslEngineLocation(sslEngineLocation);
 
@@ -2388,12 +2429,6 @@ public partial class KafkaConsumerConfigurationBuilder
     internal KafkaConsumerConfigurationBuilder WithCheckCrcs(bool? checkCrcs)
     {
         ClientConfig.CheckCrcs = checkCrcs;
-        return This;
-    }
-
-    internal KafkaConsumerConfigurationBuilder WithAllowAutoCreateTopics(bool? allowAutoCreateTopics)
-    {
-        ClientConfig.AllowAutoCreateTopics = allowAutoCreateTopics;
         return This;
     }
 }

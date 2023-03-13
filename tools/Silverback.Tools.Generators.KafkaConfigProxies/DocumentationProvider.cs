@@ -172,6 +172,11 @@ internal static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the broker API version to be used when the API version request fails or it's disabled. Older broker versions (before 0.10.0) don't support");
                 builder.AppendLine("    ///     the API version request. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value &gt;= 0.10, such as 0.10.2.1, enables the <see cref=\"ApiVersionRequest\" />.");
                 break;
+            case nameof(ClientConfig.AllowAutoCreateTopics):
+                builder.AppendLine("    ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent");
+                builder.AppendLine("    ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.");
+                builder.AppendLine("    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.");
+                break;
             case nameof(ClientConfig.SecurityProtocol):
                 builder.AppendLine("    ///     Gets the protocol to be used to communicate with the brokers.");
                 break;
@@ -221,6 +226,9 @@ internal static class DocumentationProvider
                 break;
             case nameof(ClientConfig.SslKeystorePassword):
                 builder.AppendLine("    ///     Gets the client's keystore (PKCS#12) password.");
+                break;
+            case nameof(ClientConfig.SslProviders):
+                builder.AppendLine("    ///     Gets the comma-separated list of OpenSSL 3.0.x implementation providers.");
                 break;
             case nameof(ClientConfig.SslEngineLocation):
                 builder.AppendLine("    ///     Gets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.");
@@ -386,11 +394,6 @@ internal static class DocumentationProvider
             case nameof(ConsumerConfig.CheckCrcs):
                 builder.AppendLine("    ///     Gets a value indicating whether the CRC32 of the consumed messages must be verified, ensuring no on-the-wire or on-disk corruption");
                 builder.AppendLine("    ///     to the messages occurred. This check comes at slightly increased CPU usage.");
-                break;
-            case nameof(ConsumerConfig.AllowAutoCreateTopics):
-                builder.AppendLine("    ///     Gets a value indicating whether topics can be automatically created on the broker when subscribing to or assigning a non-existent");
-                builder.AppendLine("    ///     topic. The broker must also be configured with <c>auto.create.topics.enable=true</c> for this configuration to take effect.");
-                builder.AppendLine("    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.");
                 break;
         }
     }

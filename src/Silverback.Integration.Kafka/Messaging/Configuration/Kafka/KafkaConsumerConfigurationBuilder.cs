@@ -297,25 +297,6 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     public KafkaConsumerConfigurationBuilder DisablePartitionEof() => WithEnablePartitionEof(false);
 
     /// <summary>
-    ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. T
-    ///     he broker must also be configured with `auto.create.topics.enable=true` for this configuration to take effect.
-    ///     Note: The default value (false) is different from the Java consumer (true).
-    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder AllowAutoCreateTopics() => WithAllowAutoCreateTopics(true);
-
-    /// <summary>
-    ///     Disallow automatic topic creation on the broker when subscribing to or assigning non-existent topics.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder DisallowAutoCreateTopics() => WithAllowAutoCreateTopics(false);
-
-    /// <summary>
     ///     Specifies that the partitions must be processed independently. This means that a stream will published per each partition and
     ///     the sequences (<see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) cannot span across the partitions. This option
     ///     is enabled by default. Use <see cref="ProcessAllPartitionsTogether" /> to disable it.

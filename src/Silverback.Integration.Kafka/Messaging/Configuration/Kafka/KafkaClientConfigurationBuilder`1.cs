@@ -453,6 +453,25 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     public partial TBuilder WithBrokerVersionFallback(string? brokerVersionFallback);
 
     /// <summary>
+    ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also
+    ///     be configured with `auto.create.topics.enable=true` for this configuration to take effect.
+    ///     Note: The default value (false) is different from the Java consumer (true).
+    ///     Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+    /// </summary>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder AllowAutoCreateTopics() => WithAllowAutoCreateTopics(true);
+
+    /// <summary>
+    ///     Disallow automatic topic creation on the broker when subscribing to or assigning non-existent topics.
+    /// </summary>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder DisallowAutoCreateTopics() => WithAllowAutoCreateTopics(false);
+
+    /// <summary>
     ///     Sets the protocol to be used to communicate with the brokers.
     /// </summary>
     /// <param name="securityProtocol">
@@ -621,6 +640,17 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     ///     The builder so that additional calls can be chained.
     /// </returns>
     public partial TBuilder WithSslKeystorePassword(string? sslKeystorePassword);
+
+    /// <summary>
+    ///     Sets the comma-separated list of OpenSSL 3.0.x implementation providers.
+    /// </summary>
+    /// <param name="sslProviders">
+    ///     The comma-separated list of OpenSSL 3.0.x implementation providers.
+    /// </param>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public partial TBuilder WithSslProviders(string? sslProviders);
 
     /// <summary>
     ///     Sets the path to the OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
