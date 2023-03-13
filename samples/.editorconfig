@@ -63,6 +63,8 @@ dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA1852.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
+# CA2234: Pass system uri objects instead of strings
+dotnet_diagnostic.CA2234.severity = none
 # CA3003: Review code for file path injection vulnerabilities
 dotnet_diagnostic.CA3003.severity = none
 # CA5394: Do not use insecure randomness
