@@ -65,12 +65,8 @@ public class SymmetricDecryptStream : SilverbackCryptoStream
         Check.NotNull(settings, nameof(settings));
         Check.NotNull(stream, nameof(stream));
 
-        byte[]? encryptionKey = settings.KeyProvider != null
-            ? settings.KeyProvider(keyIdentifier)
-            : settings.Key;
-
-        if (encryptionKey == null)
-            throw new InvalidOperationException("The encryption key is not set.");
+        byte[] encryptionKey = (settings.KeyProvider != null ? settings.KeyProvider(keyIdentifier) : settings.Key) ??
+                               throw new InvalidOperationException("The encryption key is not set.");
 
         using SymmetricAlgorithm algorithm =
             SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);

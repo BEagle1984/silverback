@@ -8,7 +8,7 @@ namespace Silverback.Tests;
 
 public static class StreamExtensions
 {
-    [return: NotNullIfNotNull("stream")]
+    [return: NotNullIfNotNull(nameof(stream))]
     public static byte[]? ReReadAll(this Stream? stream)
     {
         if (stream == null)

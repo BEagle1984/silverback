@@ -21,11 +21,8 @@ public partial class KafkaTestingHelper
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        KafkaProducersInitializer? producersInitializer = scope.ServiceProvider.GetService<KafkaProducersInitializer>();
-
-        if (producersInitializer == null)
-            throw new InvalidOperationException("The KafkaProducersInitializer is not initialized.");
-
+        KafkaProducersInitializer producersInitializer = scope.ServiceProvider.GetService<KafkaProducersInitializer>() ??
+                                                         throw new InvalidOperationException("The KafkaProducersInitializer is not initialized.");
         KafkaProducerConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
         KafkaProducerConfiguration producerConfiguration = builder.Build();

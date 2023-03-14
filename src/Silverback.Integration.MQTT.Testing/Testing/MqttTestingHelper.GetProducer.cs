@@ -21,11 +21,8 @@ public partial class MqttTestingHelper
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        MqttClientsInitializer? clientsInitializer = scope.ServiceProvider.GetService<MqttClientsInitializer>();
-
-        if (clientsInitializer == null)
-            throw new InvalidOperationException("The MqttClientsInitializer is not initialized.");
-
+        MqttClientsInitializer clientsInitializer = scope.ServiceProvider.GetService<MqttClientsInitializer>() ??
+                                                    throw new InvalidOperationException("The MqttClientsInitializer is not initialized.");
         MqttClientConfigurationBuilder builder = new();
         configurationBuilderAction.Invoke(builder);
         MqttClientConfiguration producerConfiguration = builder.Build();
