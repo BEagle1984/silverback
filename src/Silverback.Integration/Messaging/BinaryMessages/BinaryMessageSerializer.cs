@@ -13,7 +13,7 @@ namespace Silverback.Messaging.BinaryMessages;
 /// <summary>
 ///     Handles the <see cref="IBinaryMessage" />. It's not really a serializer, since the raw binary content is transmitted as-is.
 /// </summary>
-public class BinaryMessageSerializer : IBinaryMessageSerializer, IEquatable<BinaryMessageSerializer>
+public sealed class BinaryMessageSerializer : IBinaryMessageSerializer, IEquatable<BinaryMessageSerializer>
 {
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     public ValueTask<Stream?> SerializeAsync(object? message, MessageHeaderCollection headers, ProducerEndpoint endpoint)

@@ -16,7 +16,7 @@ namespace Silverback.Messaging.BinaryMessages;
 /// <typeparam name="TModel">
 ///     The type of the <see cref="IBinaryMessage" /> implementation.
 /// </typeparam>
-public class BinaryMessageDeserializer<TModel> : IBinaryMessageDeserializer, IEquatable<BinaryMessageDeserializer<TModel>>
+public sealed class BinaryMessageDeserializer<TModel> : IBinaryMessageDeserializer, IEquatable<BinaryMessageDeserializer<TModel>>
     where TModel : IBinaryMessage, new()
 {
     private readonly Type _type = typeof(TModel);
