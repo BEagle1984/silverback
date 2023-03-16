@@ -91,6 +91,12 @@ uid: releases
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
+## [4.1.2](https://github.com/BEagle1984/silverback/releases/tag/v4.1.2)
+
+### Fixes
+
+* Fix chained error policies attempts counter
+
 ## [4.1.1](https://github.com/BEagle1984/silverback/releases/tag/v4.1.1)
 
 ### Fixes
