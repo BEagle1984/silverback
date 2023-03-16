@@ -17,6 +17,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     public class ErrorPolicyChain : IErrorPolicy
     {
+        private bool _failedAttemptsStacked;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
         /// </summary>
@@ -50,18 +52,22 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     .Cast<ErrorPolicyImplementation>(),
                 serviceProvider.GetRequiredService<IInboundLogger<ErrorPolicyChainImplementation>>());
 
-        private static IReadOnlyCollection<ErrorPolicyBase> StackMaxFailedAttempts(
-            IReadOnlyCollection<ErrorPolicyBase> policies)
+        private IReadOnlyCollection<ErrorPolicyBase> StackMaxFailedAttempts(IReadOnlyCollection<ErrorPolicyBase> policies)
         {
+            if (_failedAttemptsStacked)
+                return policies;
+
             var totalAttempts = 0;
             foreach (var policy in policies)
             {
-                if (policy.MaxFailedAttemptsCount == null || policy.MaxFailedAttemptsCount <= 0)
+                if (policy.MaxFailedAttemptsCount is null or <= 0)
                     continue;
 
                 totalAttempts += policy.MaxFailedAttemptsCount.Value;
                 policy.MaxFailedAttemptsCount = totalAttempts;
             }
+
+            _failedAttemptsStacked = true;
 
             return policies;
         }
