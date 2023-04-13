@@ -96,6 +96,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         internal Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? OffsetsCommittedHandler { get; set; }
 
+        public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
+
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 
         public ConsumeResult<byte[]?, byte[]?> Consume(int millisecondsTimeout) =>
@@ -257,6 +259,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             throw new NotSupportedException();
 
         public Offset Position(TopicPartition partition) => throw new NotSupportedException();
+
+        public TopicPartitionOffset PositionTopicPartitionOffset(TopicPartition partition) => throw new NotSupportedException();
 
         public List<TopicPartitionOffset> OffsetsForTimes(
             IEnumerable<TopicPartitionTimestamp> timestampsToSearch,

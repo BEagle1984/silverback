@@ -25,6 +25,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public Handle Handle { get; } = new();
 
+        public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
+
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 
         public List<GroupInfo> ListGroups(TimeSpan timeout) => throw new NotSupportedException();

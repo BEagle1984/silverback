@@ -46,6 +46,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         internal Action<IProducer<byte[]?, byte[]?>, string>? StatisticsHandler { get; set; }
 
+        public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
+
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 
         public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
