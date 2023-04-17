@@ -8175,7 +8175,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "caF6P8h6z0p5FnTPWgZFHkJtf6Z8o/yLOGcNFi+vkjY="
+          "hash": "ilokPZH8TpcTr3cq2zGD8p/ZP8wxbTLpqWmTk6F+Pvw="
         }
       },
       "is_incremental": false,
@@ -8211,7 +8211,7 @@
       "output": {
         ".html": {
           "relative_path": "samples/kafka/batch.html",
-          "hash": "TvbL93+hFP8t3jUxzP1KXtug21MD5mIKZajbj5nRfp0="
+          "hash": "rUno/CsHBtJySEUZqMnPtDLzL+aXR4wknCsjUVJNOgs="
         }
       },
       "is_incremental": false,
@@ -8315,13 +8315,13 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 48,
-          "skipped_file_count": 48
+          "skipped_file_count": 46
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 606,
-          "skipped_file_count": 47
+          "skipped_file_count": 606
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
