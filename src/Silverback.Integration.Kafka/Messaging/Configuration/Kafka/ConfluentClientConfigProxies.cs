@@ -379,7 +379,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an aggressive `connections.max.idle.ms` value.
+        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an aggressive `connection.max.idle.ms` value.
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -442,6 +442,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.BrokerVersionFallback;
             set => ConfluentConfig.BrokerVersionFallback = value;
+        }
+
+        /// <summary>
+        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also be configured with `auto.create.topics.enable=true` for this configuraiton to take effect. Note: The default value (false) is different from the Java consumer (true). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+        ///     <br /><br />default: false
+        ///     <br />importance: low
+        /// </summary>
+        public bool? AllowAutoCreateTopics
+        {
+            get => ConfluentConfig.AllowAutoCreateTopics;
+            set => ConfluentConfig.AllowAutoCreateTopics = value;
         }
 
         /// <summary>
@@ -607,6 +618,15 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.SslKeystorePassword;
             set => ConfluentConfig.SslKeystorePassword = value;
+        }
+
+        /// <summary>
+        ///     Gets the comma-separated list of OpenSSL 3.0.x implementation providers.
+        /// </summary>
+        public string SslProviders
+        {
+            get => ConfluentConfig.SslProviders;
+            set => ConfluentConfig.SslProviders = value;
         }
 
         /// <summary>
@@ -1138,17 +1158,6 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.CheckCrcs;
             set => ConfluentConfig.CheckCrcs = value;
-        }
-
-        /// <summary>
-        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also be configured with `auto.create.topics.enable=true` for this configuraiton to take effect. Note: The default value (false) is different from the Java consumer (true). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
-        ///     <br /><br />default: false
-        ///     <br />importance: low
-        /// </summary>
-        public bool? AllowAutoCreateTopics
-        {
-            get => ConfluentConfig.AllowAutoCreateTopics;
-            set => ConfluentConfig.AllowAutoCreateTopics = value;
         }
 
         /// <summary>
