@@ -91,6 +91,10 @@ uid: releases
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
+## [4.2.0](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
+
+* Upgrade to [Confluent.Kafka 2.1.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.0)
+
 ## [4.1.2](https://github.com/BEagle1984/silverback/releases/tag/v4.1.2)
 
 ### Fixes
