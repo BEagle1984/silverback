@@ -55,8 +55,8 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     {
         Check.NotNull(builder, nameof(builder));
 
-        KafkaOffsetStoreFactory? factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
-                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
+        KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
+                                          throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
         if (!factory.HasFactory<SqliteKafkaOffsetStoreSettings>())
             factory.AddFactory<SqliteKafkaOffsetStoreSettings>(settings => new SqliteKafkaOffsetStore(settings));

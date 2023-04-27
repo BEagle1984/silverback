@@ -460,10 +460,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         TopicPartitionOffset topicPartitionOffset,
         [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
     {
-        if (!_lastEofOffsets.ContainsKey(topicPartitionOffset.TopicPartition))
-        {
-            _lastEofOffsets[topicPartitionOffset.TopicPartition] = -1;
-        }
+        _lastEofOffsets.TryAdd(topicPartitionOffset.TopicPartition, -1);
 
         Offset lastEofOffset = _lastEofOffsets[topicPartitionOffset.TopicPartition];
 

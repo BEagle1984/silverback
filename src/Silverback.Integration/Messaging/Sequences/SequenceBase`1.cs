@@ -490,8 +490,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         string groupKey = envelope.BrokerMessageIdentifier.GroupKey ?? string.Empty;
 
-        if (!_beginningMessageIdentifiers.ContainsKey(groupKey))
-            _beginningMessageIdentifiers[groupKey] = envelope.BrokerMessageIdentifier;
+        _beginningMessageIdentifiers.TryAdd(groupKey, envelope.BrokerMessageIdentifier);
 
         _endMessageIdentifiers[groupKey] = envelope.BrokerMessageIdentifier;
     }
