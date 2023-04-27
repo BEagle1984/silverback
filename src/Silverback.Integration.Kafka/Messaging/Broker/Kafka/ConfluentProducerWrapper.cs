@@ -19,6 +19,8 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
+    private readonly KafkaProducerConfiguration _configurtion;
+
     public ConfluentProducerWrapper(
         string name,
         IConfluentProducerBuilder producerBuilder,
@@ -27,7 +29,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         ISilverbackLogger<ConfluentProducerWrapper> logger)
         : base(name, logger)
     {
-        Check.NotNull(configuration, nameof(configuration));
+        _configurtion = Check.NotNull(configuration, nameof(configuration));
         Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
 
         _producerBuilder = Check.NotNull(producerBuilder, nameof(producerBuilder))
@@ -43,7 +45,17 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         if (_confluentProducer == null)
             throw new InvalidOperationException("The underlying producer is not initialized.");
 
-        _confluentProducer.Produce(topicPartition, message, deliveryHandler);
+        try
+        {
+            _confluentProducer.Produce(topicPartition, message, deliveryHandler);
+        }
+        catch (KafkaException)
+        {
+            if (_configurtion.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
     }
 
     public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(TopicPartition topicPartition, Message<byte[]?, byte[]?> message)
@@ -54,7 +66,17 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         if (_confluentProducer == null)
             throw new InvalidOperationException("The underlying producer is not initialized.");
 
-        return _confluentProducer.ProduceAsync(topicPartition, message);
+        try
+        {
+            return _confluentProducer.ProduceAsync(topicPartition, message);
+        }
+        catch (KafkaException)
+        {
+            if (_configurtion.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
     }
 
     protected override ValueTask ConnectCoreAsync()
@@ -66,9 +88,14 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
     protected override ValueTask DisconnectCoreAsync()
     {
         _confluentProducer?.Flush();
-        _confluentProducer?.Dispose();
-        _confluentProducer = null;
+        DisposeConfluentProducer();
 
         return default;
+    }
+
+    private void DisposeConfluentProducer()
+    {
+        _confluentProducer?.Dispose();
+        _confluentProducer = null;
     }
 }
