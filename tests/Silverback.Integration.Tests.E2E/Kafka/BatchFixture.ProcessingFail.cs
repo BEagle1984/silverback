@@ -152,7 +152,7 @@ public partial class BatchFixture
                                 .Consume<TestEventWithKafkaKey>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10))))
+                                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))))) // TODO: Check that it doesn't hang even without the timeout
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleBatch)
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleIncompatibleBatch));
 
