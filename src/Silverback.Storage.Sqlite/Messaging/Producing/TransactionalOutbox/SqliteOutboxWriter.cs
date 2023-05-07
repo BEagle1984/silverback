@@ -55,12 +55,12 @@ public class SqliteOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             context,
             _insertSql,
-            SqliteDataAccess.CreateParameter("@MessageType", outboxMessage.MessageType?.AssemblyQualifiedName),
-            SqliteDataAccess.CreateParameter("@Content", outboxMessage.Content),
-            SqliteDataAccess.CreateParameter("@Headers", outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)),
-            SqliteDataAccess.CreateParameter("@EndpointRawName", outboxMessage.Endpoint.RawName),
-            SqliteDataAccess.CreateParameter("@EndpointFriendlyName", outboxMessage.Endpoint.FriendlyName),
-            SqliteDataAccess.CreateParameter("@SerializedEndpoint", outboxMessage.Endpoint.SerializedEndpoint),
-            SqliteDataAccess.CreateParameter("@Created", DateTime.UtcNow));
+            _dataAccess.CreateParameter("@MessageType", outboxMessage.MessageType?.AssemblyQualifiedName),
+            _dataAccess.CreateParameter("@Content", outboxMessage.Content),
+            _dataAccess.CreateParameter("@Headers", outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)),
+            _dataAccess.CreateParameter("@EndpointRawName", outboxMessage.Endpoint.RawName),
+            _dataAccess.CreateParameter("@EndpointFriendlyName", outboxMessage.Endpoint.FriendlyName),
+            _dataAccess.CreateParameter("@SerializedEndpoint", outboxMessage.Endpoint.SerializedEndpoint),
+            _dataAccess.CreateParameter("@Created", DateTime.UtcNow));
     }
 }

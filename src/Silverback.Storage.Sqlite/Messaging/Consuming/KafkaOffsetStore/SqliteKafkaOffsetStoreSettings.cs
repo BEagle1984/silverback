@@ -4,17 +4,10 @@
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 
 /// <summary>
-///     The <see cref="InMemoryKafkaOffsetStore" /> settings.
+///     The <see cref="SqliteKafkaOffsetStore" /> settings.
 /// </summary>
 public record SqliteKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
 {
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="SqliteKafkaOffsetStoreSettings" /> class.
-    /// </summary>
-    public SqliteKafkaOffsetStoreSettings()
-    {
-    }
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="SqliteKafkaOffsetStoreSettings" /> class.
     /// </summary>
@@ -22,25 +15,23 @@ public record SqliteKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
     ///     The connection string to the Sqlite database.
     /// </param>
     /// <param name="tableName">
-    ///     The name of the kafkaOffsetStore table. If not specified, the default <c>"SilverbackKafkaOffsetStore"</c> will be used.
+    ///     The name of the kafkaOffsetStore table. If not specified, the default <c>"Silverback_KafkaOffsetStore"</c> will be used.
     /// </param>
     public SqliteKafkaOffsetStoreSettings(string connectionString, string? tableName = null)
     {
         ConnectionString = connectionString;
-
-        if (tableName != null)
-            TableName = tableName;
+        TableName = tableName ?? "Silverback_KafkaOffsetStore";
     }
 
     /// <summary>
     ///     Gets the connection string to the Sqlite database.
     /// </summary>
-    public string ConnectionString { get; init; } = string.Empty;
+    public string ConnectionString { get; }
 
     /// <summary>
-    ///     Gets the name of the kafkaOffsetStore table. The default is <c>"SilverbackKafkaOffsetStore"</c>.
+    ///     Gets the name of the kafkaOffsetStore table. The default is <c>"Silverback_KafkaOffsetStore"</c>.
     /// </summary>
-    public string TableName { get; init; } = "Silverback_KafkaOffsetStore";
+    public string TableName { get; }
 
     /// <inheritdoc cref="KafkaOffsetStoreSettings.Validate" />
     public override void Validate()
@@ -51,6 +42,6 @@ public record SqliteKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
             throw new SilverbackConfigurationException("The connection string is required.");
 
         if (string.IsNullOrWhiteSpace(TableName))
-            throw new SilverbackConfigurationException("The kafkaOffsetStore table name is required.");
+            throw new SilverbackConfigurationException("The KafkaOffsetStore table name is required.");
     }
 }

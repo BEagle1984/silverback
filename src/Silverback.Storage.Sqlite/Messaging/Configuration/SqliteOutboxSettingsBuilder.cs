@@ -30,10 +30,10 @@ public class SqliteOutboxSettingsBuilder : IOutboxSettingsImplementationBuilder
     ///     Sets the table name.
     /// </summary>
     /// <param name="tableName">
-    ///     The name of the outbox table. If not specified, the default <c>"SilverbackOutbox"</c> will be used.
+    ///     The name of the outbox table. If not specified, the default <c>"Silverback_Outbox"</c> will be used.
     /// </param>
     /// <returns>
-    ///     The <see cref="InMemoryOutboxSettingsBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="SqliteOutboxSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
     // TODO: Review method name (With...)
     public SqliteOutboxSettingsBuilder WithTableName(string tableName)
@@ -45,10 +45,7 @@ public class SqliteOutboxSettingsBuilder : IOutboxSettingsImplementationBuilder
     /// <inheritdoc cref="IOutboxSettingsImplementationBuilder.Build" />
     public OutboxSettings Build()
     {
-        SqliteOutboxSettings settings = new(_connectionString);
-
-        if (_tableName != null)
-            settings = settings with { TableName = _tableName };
+        SqliteOutboxSettings settings = new(_connectionString, _tableName);
 
         settings.Validate();
 

@@ -33,7 +33,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     ///     The name of the kafkaOffsetStore table. If not specified, the default <c>"SilverbackKafkaOffsetStore"</c> will be used.
     /// </param>
     /// <returns>
-    ///     The <see cref="InMemoryKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.
+    ///     The <see cref="SqliteKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.
     /// </returns>
     // TODO: Review method name (With...)
     public SqliteKafkaOffsetStoreSettingsBuilder WithTableName(string tableName)
@@ -45,10 +45,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     /// <inheritdoc cref="IKafkaOffsetStoreSettingsImplementationBuilder.Build" />
     public KafkaOffsetStoreSettings Build()
     {
-        SqliteKafkaOffsetStoreSettings settings = new(_connectionString);
-
-        if (_tableName != null)
-            settings = settings with { TableName = _tableName };
+        SqliteKafkaOffsetStoreSettings settings = new(_connectionString, _tableName);
 
         settings.Validate();
 

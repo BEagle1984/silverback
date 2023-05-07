@@ -17,8 +17,8 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnDistributedLockAccordingToSettingsType()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings2());
@@ -31,8 +31,8 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnNullLockForNullSettings()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
         IDistributedLock nullLock1 = factory.GetDistributedLock(null);
         IDistributedLock nullLock2 = factory.GetDistributedLock(null);
@@ -45,7 +45,7 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldThrow_WhenFactoryNotRegistered()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
 
         Action act = () => factory.GetDistributedLock(new LockSettings2());
 
@@ -57,8 +57,8 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnCachedLockInstance()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings1());
@@ -70,10 +70,10 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnCachedLockInstance_WhenOverridden()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
-        factory.OverrideFactories(settings => new OverrideLock(settings));
+        factory.OverrideFactories(_ => new OverrideLock());
 
         LockSettings1 lockSettings1 = new();
         IDistributedLock lock1 = factory.GetDistributedLock(lockSettings1);
@@ -87,8 +87,8 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnCachedInstanceBySettingsAndType()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
         IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1("A"));
         IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1("A"));
@@ -108,9 +108,9 @@ public class DistributedLockFactoryFixture
     public void GetDistributedLock_ShouldReturnCachedInstanceBySettingsAndType_WhenOverridden()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
-        factory.OverrideFactories(settings => new OverrideLock(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
+        factory.OverrideFactories(_ => new OverrideLock());
 
         IDistributedLock lock1A1 = factory.GetDistributedLock(new LockSettings1("A"));
         IDistributedLock lock1A2 = factory.GetDistributedLock(new LockSettings1("A"));
@@ -130,9 +130,9 @@ public class DistributedLockFactoryFixture
     public void AddFactory_ShouldThrow_WhenFactoryAlreadyRegisteredForSameType()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
 
-        Action act = () => factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        Action act = () => factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("The factory for the specified settings type is already registered.");
@@ -142,10 +142,10 @@ public class DistributedLockFactoryFixture
     public void OverrideFactories_ShouldOverrideAllFactories()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        factory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        factory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
-        factory.OverrideFactories(settings => new OverrideLock(settings));
+        factory.OverrideFactories(_ => new OverrideLock());
 
         IDistributedLock lock1 = factory.GetDistributedLock(new LockSettings1());
         IDistributedLock lock2 = factory.GetDistributedLock(new LockSettings2());
@@ -158,7 +158,7 @@ public class DistributedLockFactoryFixture
     public void HasFactory_ShouldReturnTrue_WhenFactoryIsRegistered()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
 
         bool result = factory.HasFactory<LockSettings1>();
 
@@ -169,7 +169,7 @@ public class DistributedLockFactoryFixture
     public void HasFactory_ShouldReturnFalse_WhenFactoryIsNotRegistered()
     {
         DistributedLockFactory factory = new();
-        factory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
+        factory.AddFactory<LockSettings1>(_ => new DistributedLock1());
 
         bool result = factory.HasFactory<LockSettings2>();
 
@@ -196,40 +196,25 @@ public class DistributedLockFactoryFixture
 
     private class DistributedLock1 : DistributedLock
     {
-        public DistributedLock1(LockSettings1 settings)
-            : base(settings)
-        {
-        }
-
         protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
             ValueTask.FromResult<DistributedLockHandle>(new FakeLockHandle());
     }
 
     private class DistributedLock2 : DistributedLock
     {
-        public DistributedLock2(LockSettings2 settings)
-            : base(settings)
-        {
-        }
-
         protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
             ValueTask.FromResult<DistributedLockHandle>(new FakeLockHandle());
     }
 
     private class OverrideLock : DistributedLock
     {
-        public OverrideLock(DistributedLockSettings settings)
-            : base(settings)
-        {
-        }
-
         protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
             ValueTask.FromResult<DistributedLockHandle>(new FakeLockHandle());
     }
 
     private class FakeLockHandle : DistributedLockHandle
     {
-        public override bool IsLost => false;
+        public override CancellationToken LockLostToken => CancellationToken.None;
 
         protected override void Dispose(bool disposing)
         {

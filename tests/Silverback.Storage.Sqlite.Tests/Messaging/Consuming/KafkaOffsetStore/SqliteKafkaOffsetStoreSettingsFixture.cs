@@ -11,10 +11,11 @@ namespace Silverback.Tests.Storage.Sqlite.Messaging.Consuming.KafkaOffsetStore;
 public class SqliteKafkaOffsetStoreSettingsFixture
 {
     [Fact]
-    public void Constructor_ShouldCreateDefaultSettings()
+    public void Constructor_ShouldSetConnectionStringWithDefaultTableName()
     {
-        SqliteKafkaOffsetStoreSettings settings = new();
+        SqliteKafkaOffsetStoreSettings settings = new("connection-string");
 
+        settings.ConnectionString.Should().Be("connection-string");
         settings.TableName.Should().Be("Silverback_KafkaOffsetStore");
     }
 
@@ -38,12 +39,11 @@ public class SqliteKafkaOffsetStoreSettingsFixture
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? tableName)
+    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string tableName)
     {
-        SqliteKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string") { TableName = tableName! };
+        SqliteKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string", tableName);
 
         Action act = kafkaOffsetStoreSettings.Validate;
 

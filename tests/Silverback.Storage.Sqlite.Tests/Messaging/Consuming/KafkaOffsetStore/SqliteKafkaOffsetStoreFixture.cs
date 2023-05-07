@@ -70,6 +70,47 @@ public sealed class SqliteKafkaOffsetStoreFixture : IDisposable
             },
             options => options.WithoutStrictOrdering());
     }
+    
+    [Fact]
+    public async Task GetStoredOffsets_ShouldReturnEmptyArray_WhenTableNotFound()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddKafka().AddSqliteKafkaOffsetStore()));
+
+        SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
+        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(_offsetStoreSettings);
+
+        IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
+        SqliteKafkaOffsetStore store = (SqliteKafkaOffsetStore)factory.GetStore(_offsetStoreSettings);
+
+        await store.StoreOffsetsAsync(
+            "group1",
+            new[]
+            {
+                new KafkaOffset("topic1", 0, 42),
+                new KafkaOffset("topic1", 1, 42)
+            });
+        await store.StoreOffsetsAsync(
+            "group2",
+            new[]
+            {
+                new KafkaOffset("topic1", 0, 42)
+            });
+
+        IReadOnlyCollection<KafkaOffset> offsets = store.GetStoredOffsets("group1");
+
+        offsets.Should().HaveCount(2);
+        offsets.Should().BeEquivalentTo(
+            new[]
+            {
+                new KafkaOffset("topic1", 0, 42),
+                new KafkaOffset("topic1", 1, 42)
+            },
+            options => options.WithoutStrictOrdering());
+    }
 
     [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()

@@ -28,7 +28,7 @@ public class InMemoryLockFixture
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
         handle.Should().NotBeNull();
-        handle.IsLost.Should().BeFalse();
+        handle.LockLostToken.IsCancellationRequested.Should().BeFalse();
     }
 
     [Fact]

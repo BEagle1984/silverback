@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Lock;
@@ -20,9 +21,9 @@ public abstract class DistributedLockHandle : IDisposable, IAsyncDisposable
     }
 
     /// <summary>
-    ///     Gets a value indicating whether the lock was lost.
+    ///     Gets a <see cref="CancellationToken" /> that will be cancelled if the lock is lost.
     /// </summary>
-    public abstract bool IsLost { get; }
+    public abstract CancellationToken LockLostToken { get; }
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()

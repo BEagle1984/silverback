@@ -11,25 +11,18 @@ public record InMemoryKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
     /// <summary>
     ///     Initializes a new instance of the <see cref="InMemoryKafkaOffsetStoreSettings" /> class.
     /// </summary>
-    public InMemoryKafkaOffsetStoreSettings()
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="InMemoryKafkaOffsetStoreSettings" /> class.
-    /// </summary>
     /// <param name="offsetStoreName">
     ///     The name of the offsetStore.
     /// </param>
-    public InMemoryKafkaOffsetStoreSettings(string offsetStoreName)
+    public InMemoryKafkaOffsetStoreSettings(string? offsetStoreName = null)
     {
-        OffsetStoreName = offsetStoreName;
+        OffsetStoreName = offsetStoreName ?? "default";
     }
 
     /// <summary>
     ///     Gets the name of the offsetStore.
     /// </summary>
-    public string OffsetStoreName { get; init; } = "default";
+    public string OffsetStoreName { get; }
 
     /// <inheritdoc cref="KafkaOffsetStoreSettings.Validate" />
     public override void Validate()

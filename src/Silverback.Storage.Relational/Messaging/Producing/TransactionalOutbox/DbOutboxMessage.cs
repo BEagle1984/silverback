@@ -8,7 +8,6 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <inheritdoc cref="OutboxMessage" />
-// TODO: Move to Silverback.Storage.RelationalDatabase
 public class DbOutboxMessage : OutboxMessage
 {
     /// <summary>

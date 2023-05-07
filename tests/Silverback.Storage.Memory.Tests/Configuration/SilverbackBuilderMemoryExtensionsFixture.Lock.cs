@@ -40,8 +40,8 @@ public class SilverbackBuilderMemoryExtensionsFixture
                 .UseInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
-        lockFactory.AddFactory<LockSettings1>(settings => new DistributedLock1(settings));
-        lockFactory.AddFactory<LockSettings2>(settings => new DistributedLock2(settings));
+        lockFactory.AddFactory<LockSettings1>(_ => new DistributedLock1());
+        lockFactory.AddFactory<LockSettings2>(_ => new DistributedLock2());
 
         IDistributedLock distributedLock1 = lockFactory.GetDistributedLock(new LockSettings1());
         IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(new LockSettings2());
@@ -56,29 +56,19 @@ public class SilverbackBuilderMemoryExtensionsFixture
 
     private class DistributedLock1 : DistributedLock
     {
-        public DistributedLock1(LockSettings1 settings)
-            : base(settings)
-        {
-        }
-
         protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
             ValueTask.FromResult<DistributedLockHandle>(new FakeLockHandle());
     }
 
     private class DistributedLock2 : DistributedLock
     {
-        public DistributedLock2(LockSettings2 settings)
-            : base(settings)
-        {
-        }
-
         protected override ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken) =>
             ValueTask.FromResult<DistributedLockHandle>(new FakeLockHandle());
     }
 
     private class FakeLockHandle : DistributedLockHandle
     {
-        public override bool IsLost => false;
+        public override CancellationToken LockLostToken => CancellationToken.None;
 
         protected override void Dispose(bool disposing)
         {

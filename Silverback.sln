@@ -111,6 +111,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Sqlite",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Sqlite.Tests", "tests\Silverback.Storage.Sqlite.Tests\Silverback.Storage.Sqlite.Tests.csproj", "{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Relational", "src\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj", "{2C157540-4A6C-458B-BE85-BC74D2B8B76E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.PostgreSql", "src\Silverback.Storage.PostgreSql\Silverback.Storage.PostgreSql.csproj", "{CAA4E338-C40C-4F18-B515-BFAF20CBDE2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.PostgreSql.Tests", "tests\Silverback.Storage.PostgreSql.Tests\Silverback.Storage.PostgreSql.Tests.csproj", "{77107DC7-54A9-4E89-91E9-D4482F240C94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -257,6 +263,18 @@ Global
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C157540-4A6C-458B-BE85-BC74D2B8B76E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C157540-4A6C-458B-BE85-BC74D2B8B76E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C157540-4A6C-458B-BE85-BC74D2B8B76E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C157540-4A6C-458B-BE85-BC74D2B8B76E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA4E338-C40C-4F18-B515-BFAF20CBDE2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA4E338-C40C-4F18-B515-BFAF20CBDE2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA4E338-C40C-4F18-B515-BFAF20CBDE2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA4E338-C40C-4F18-B515-BFAF20CBDE2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -286,6 +304,7 @@ Global
 		{7D93DB91-AFBA-49B3-8B6B-9FFCE3693D07} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{77107DC7-54A9-4E89-91E9-D4482F240C94} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

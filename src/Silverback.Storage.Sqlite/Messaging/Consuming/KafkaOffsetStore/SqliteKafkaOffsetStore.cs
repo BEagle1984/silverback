@@ -12,7 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 
 /// <summary>
-///     Stores the latest consumed offsets in memory.
+///     Stores the latest consumed offsets in Sqlite.
 /// </summary>
 public class SqliteKafkaOffsetStore : IKafkaOffsetStore
 {
@@ -38,31 +38,28 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
 
         _tableExistsSql = $"SELECT count(*) FROM sqlite_master WHERE type='table' AND name = '{settings.TableName}';";
 
-        _insertOrReplaceQuerySql = $"INSERT OR REPLACE INTO {settings.TableName} " +
-                                   "(GroupId, Topic, Partition, Offset) " +
+        _insertOrReplaceQuerySql = $"INSERT OR REPLACE INTO {settings.TableName} (GroupId, Topic, Partition, Offset) " +
                                    "VALUES(@GroupId, @Topic, @Partition, @Offset)";
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
     public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId)
     {
-        try
-        {
-            return _dataAccess.ExecuteQuery(
-                reader => new KafkaOffset(
-                    reader.GetString(0),
-                    reader.GetInt32(1),
-                    reader.GetInt32(2)),
-                _getQuerySql,
-                new SqliteParameter("@GroupId", groupId));
-        }
-        catch (SqliteException ex) when (ex.SqliteErrorCode == 1)
-        {
-            if (_dataAccess.ExecuteScalar<long>(_tableExistsSql) == 0)
-                return Array.Empty<KafkaOffset>();
-
-            throw;
-        }
+        // try
+        // {
+        return _dataAccess.ExecuteQuery(
+            reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
+            _getQuerySql,
+            _dataAccess.CreateParameter("@GroupId", groupId));
+        // }
+        // catch (SqliteException ex) when (ex.SqliteErrorCode == 1)
+        // {
+        //     if (_dataAccess.ExecuteScalar<long>(_tableExistsSql) == 0)
+        //         return Array.Empty<KafkaOffset>();
+        //
+        //     throw;
+        // }
+        // TODO: Neede???
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
@@ -72,10 +69,10 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
             _insertOrReplaceQuerySql,
             new[]
             {
-                new SqliteParameter("@GroupId", groupId),
-                new SqliteParameter("@Topic", string.Empty),
-                new SqliteParameter("@Partition", 0),
-                new SqliteParameter("@Offset", 0L)
+                _dataAccess.CreateParameter("@GroupId", groupId),
+                _dataAccess.CreateParameter("@Topic", string.Empty),
+                _dataAccess.CreateParameter("@Partition", 0),
+                _dataAccess.CreateParameter("@Offset", 0L)
             },
             (offset, parameters) =>
             {
