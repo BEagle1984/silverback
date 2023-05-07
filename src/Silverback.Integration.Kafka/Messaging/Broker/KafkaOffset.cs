@@ -69,7 +69,7 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     public Offset Offset { get; }
 
     /// <inheritdoc cref="IBrokerMessageIdentifier.GroupKey" />
-    public string GroupKey => TopicPartition.ToString();
+    public string GroupKey => TopicPartition.ToString() ?? string.Empty;
 
     /// <summary>
     ///     Less than operator.

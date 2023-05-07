@@ -59,25 +59,26 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
         while (!stoppingToken.IsCancellationRequested)
         {
             DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
+            using CancellationTokenSource linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, lockHandle.LockLostToken);
 
             await using (lockHandle)
             {
                 _logger.LogBackgroundServiceLockAcquired(this);
 
-                while (!lockHandle.IsLost && !stoppingToken.IsCancellationRequested)
+                while (!linkedCancellationTokenSource.IsCancellationRequested)
                 {
                     if (_enabled)
                     {
-                        await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
+                        await ExecuteLockedAsync(linkedCancellationTokenSource.Token).ConfigureAwait(false);
 
-                        if (stoppingToken.IsCancellationRequested)
+                        if (linkedCancellationTokenSource.IsCancellationRequested)
                             break;
 
-                        await SleepAsync(_interval, stoppingToken).ConfigureAwait(false);
+                        await SleepAsync(_interval, linkedCancellationTokenSource.Token).ConfigureAwait(false);
                     }
                     else
                     {
-                        await SleepAsync(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
+                        await SleepAsync(TimeSpan.FromMilliseconds(100), linkedCancellationTokenSource.Token).ConfigureAwait(false);
                     }
                 }
             }

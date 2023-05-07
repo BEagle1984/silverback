@@ -12,11 +12,6 @@ namespace Silverback.Lock;
 public interface IDistributedLock
 {
     /// <summary>
-    ///     Gets the lock settings.
-    /// </summary>
-    DistributedLockSettings Settings { get; }
-
-    /// <summary>
     ///     Acquires the lock.
     /// </summary>
     /// <param name="cancellationToken">

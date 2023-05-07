@@ -16,22 +16,34 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Storage;
+using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class OffsetStoreFixture
+[SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
+public class OffsetStoreSqliteFixture : KafkaFixture
 {
-    [Fact]
-    public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets_WhenUsingSqlite()
+    public OffsetStoreSqliteFixture(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
     {
+    }
+
+    [Fact]
+    public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         int received = 0;
 
         await Host.ConfigureServices(
                 services => services
                     .AddLogging()
+                    .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
                     .UseModel()
                     .WithConnectionToMessageBroker(
@@ -45,16 +57,11 @@ public partial class OffsetStoreFixture
                                 consumer => consumer
                                     .WithGroupId(DefaultGroupId)
                                     .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(Host.SqliteConnectionString))
+                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                     .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
                     .AddIntegrationSpy())
-            .RunAsync(waitUntilBrokerClientsConnected: false);
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(Host.SqliteConnectionString);
-
-        await Helper.WaitUntilConnectedAsync();
+            .RunAsync();
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -85,13 +92,16 @@ public partial class OffsetStoreFixture
     }
 
     [Fact]
-    public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets_WhenUsingSqlite()
+    public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         int received = 0;
 
         await Host.ConfigureServices(
                 services => services
                     .AddLogging()
+                    .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
                     .UseModel()
                     .WithConnectionToMessageBroker(
@@ -105,16 +115,11 @@ public partial class OffsetStoreFixture
                                 consumer => consumer
                                     .WithGroupId(DefaultGroupId)
                                     .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(Host.SqliteConnectionString))
+                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
                     .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
                     .AddIntegrationSpy())
-            .RunAsync(waitUntilBrokerClientsConnected: false);
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(Host.SqliteConnectionString);
-
-        await Helper.WaitUntilConnectedAsync();
+            .RunAsync();
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint("topic1[1]");
@@ -148,12 +153,15 @@ public partial class OffsetStoreFixture
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
     public async Task ConsumerEndpoint_ShouldUseTransaction_WhenUsingSqlite()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         int received = 0;
         bool mustCommit = false;
 
         await Host.ConfigureServices(
                 services => services
                     .AddLogging()
+                    .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
                     .UseModel()
                     .WithConnectionToMessageBroker(
@@ -167,15 +175,15 @@ public partial class OffsetStoreFixture
                                 consumer => consumer
                                     .WithGroupId(DefaultGroupId)
                                     .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(Host.SqliteConnectionString))
+                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                     .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
                     .AddIntegrationSpy())
-            .RunAsync(waitUntilBrokerClientsConnected: false);
+            .RunAsync();
 
         async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
         {
-            await using SqliteConnection connection = new(Host.SqliteConnectionString);
+            await using SqliteConnection connection = new(database.ConnectionString);
             await connection.OpenAsync();
 
             await using (DbTransaction transaction = await connection.BeginTransactionAsync())
@@ -193,11 +201,6 @@ public partial class OffsetStoreFixture
 
             await connection.CloseAsync();
         }
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(Host.SqliteConnectionString);
-
-        await Helper.WaitUntilConnectedAsync();
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -239,11 +242,14 @@ public partial class OffsetStoreFixture
     [Fact]
     public async Task OffsetStore_ShouldStoreBatchOffsets_WhenUsingSqlite()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         int received = 0;
 
         await Host.ConfigureServices(
                 services => services
                     .AddLogging()
+                    .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
                     .UseModel()
                     .WithConnectionToMessageBroker(
@@ -257,18 +263,13 @@ public partial class OffsetStoreFixture
                                 consumer => consumer
                                     .WithGroupId(DefaultGroupId)
                                     .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(Host.SqliteConnectionString))
+                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseSqlite(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).EnableBatchProcessing(5))))
                     .AddDelegateSubscriber<IEnumerable<TestEventOne>>(
                         batch =>
                             batch.ForEach(_ => Interlocked.Increment(ref received)))
                     .AddIntegrationSpy())
-            .RunAsync(waitUntilBrokerClientsConnected: false);
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(Host.SqliteConnectionString);
-
-        await Helper.WaitUntilConnectedAsync();
+            .RunAsync();
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

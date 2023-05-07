@@ -16,10 +16,10 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 {
     private readonly IConfluentProducerBuilder _producerBuilder;
 
+    private readonly KafkaProducerConfiguration _configuration;
+
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
-
-    private readonly KafkaProducerConfiguration _configurtion;
 
     public ConfluentProducerWrapper(
         string name,
@@ -29,7 +29,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         ISilverbackLogger<ConfluentProducerWrapper> logger)
         : base(name, logger)
     {
-        _configurtion = Check.NotNull(configuration, nameof(configuration));
+        _configuration = Check.NotNull(configuration, nameof(configuration));
         Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
 
         _producerBuilder = Check.NotNull(producerBuilder, nameof(producerBuilder))
@@ -51,7 +51,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         }
         catch (KafkaException)
         {
-            if (_configurtion.DisposeOnException)
+            if (_configuration.DisposeOnException)
                 DisposeConfluentProducer();
 
             throw;
@@ -72,7 +72,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         }
         catch (KafkaException)
         {
-            if (_configurtion.DisposeOnException)
+            if (_configuration.DisposeOnException)
                 DisposeConfluentProducer();
 
             throw;

@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
+    <Version>$(BaseVersion)</Version>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
+    <Description>$(Description) This package contains the PostgreSql storage implementation.</Description>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <PackageTags>$(Tags)</PackageTags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <PackageId>Silverback.Storage.PostgreSql</PackageId>
+    <Product>Silverback.Storage.PostgreSql</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DistributedLock.Postgres" Version="1.0.4" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+  </ItemGroup>
+
+</Project>

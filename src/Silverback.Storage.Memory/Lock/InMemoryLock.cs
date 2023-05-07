@@ -16,17 +16,6 @@ public sealed class InMemoryLock : DistributedLock, IDisposable
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="InMemoryLock" /> class.
-    /// </summary>
-    /// <param name="settings">
-    ///     The lock settings of any type.
-    /// </param>
-    public InMemoryLock(DistributedLockSettings settings)
-        : base(settings)
-    {
-    }
-
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose() => _semaphore.Dispose();
 
@@ -48,7 +37,7 @@ public sealed class InMemoryLock : DistributedLock, IDisposable
             _semaphore = semaphore;
         }
 
-        public override bool IsLost => false;
+        public override CancellationToken LockLostToken => CancellationToken.None;
 
         protected override void Dispose(bool disposing)
         {

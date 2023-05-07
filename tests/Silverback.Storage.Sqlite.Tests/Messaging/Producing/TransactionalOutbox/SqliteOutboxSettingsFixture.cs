@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Producing.TransactionalOutbox;
@@ -12,10 +13,11 @@ namespace Silverback.Tests.Storage.Sqlite.Messaging.Producing.TransactionalOutbo
 public class SqliteOutboxSettingsFixture
 {
     [Fact]
-    public void Constructor_ShouldCreateDefaultSettings()
+    public void Constructor_ShouldSetConnectionStringWithDefaultTableName()
     {
-        SqliteOutboxSettings settings = new();
+        SqliteOutboxSettings settings = new("connection-string");
 
+        settings.ConnectionString.Should().Be("connection-string");
         settings.TableName.Should().Be("Silverback_Outbox");
     }
 
@@ -36,7 +38,7 @@ public class SqliteOutboxSettingsFixture
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
         lockSettings.Should().BeOfType<InMemoryLockSettings>();
-        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.connection-string.my-outbox");
+        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be($"outbox.{"connection-string".GetSha256Hash()}.my-outbox");
     }
 
     [Fact]
@@ -50,12 +52,11 @@ public class SqliteOutboxSettingsFixture
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? tableName)
+    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string tableName)
     {
-        SqliteOutboxSettings outboxSettings = new("connection-string") { TableName = tableName! };
+        SqliteOutboxSettings outboxSettings = new("connection-string", tableName);
 
         Action act = outboxSettings.Validate;
 

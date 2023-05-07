@@ -12,7 +12,7 @@
     <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
     <RepositoryType>$(RepositoryType)</RepositoryType>
     <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
-    <Description>$(Description) This package contains an implementation of Silverback.Storage that stores the data in Sqlite.</Description>
+    <Description>$(Description) This package contains Sqlite storage implementation.</Description>
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
@@ -24,7 +24,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
+    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj" />
   </ItemGroup>
 
   <ItemGroup>

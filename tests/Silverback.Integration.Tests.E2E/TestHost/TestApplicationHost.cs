@@ -9,12 +9,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Testing;
-using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
@@ -22,10 +20,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost;
 public sealed class TestApplicationHost : IDisposable
 {
     private readonly List<Action<IServiceCollection>> _configurationActions = new();
-
-    private readonly string _sqliteConnectionString = $"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared";
-
-    private SqliteConnection? _sqliteConnection;
 
     private WebApplicationFactory<Startup>? _applicationFactory;
 
@@ -44,20 +38,6 @@ public sealed class TestApplicationHost : IDisposable
         _scopedServiceProvider ??= ServiceProvider.CreateScope().ServiceProvider;
 
     public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException();
-
-    public string SqliteConnectionString
-    {
-        get
-        {
-            if (_sqliteConnection == null)
-            {
-                _sqliteConnection = new SqliteConnection(_sqliteConnectionString);
-                _sqliteConnection.Open();
-            }
-
-            return _sqliteConnectionString;
-        }
-    }
 
     public ValueTask ConfigureServicesAndRunAsync(
         Action<IServiceCollection> configurationAction,
@@ -100,9 +80,7 @@ public sealed class TestApplicationHost : IDisposable
                                         configure
                                             .AddXUnit(_testOutputHelper)
                                             .SetMinimumLevel(LogLevel.Trace)
-                                            .AddFilter(
-                                                "Microsoft.EntityFrameworkCore",
-                                                LogLevel.Information));
+                                            .AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Information));
                             }
 
                             _configurationActions.ForEach(configAction => configAction(services));
@@ -110,9 +88,6 @@ public sealed class TestApplicationHost : IDisposable
                     .UseSolutionRelativeContentRoot(appRoot));
 
         _httpClient = _applicationFactory.CreateClient();
-
-        if (_sqliteConnection != null)
-            InitDatabase();
 
         _configurationActions.Clear();
 
@@ -132,7 +107,6 @@ public sealed class TestApplicationHost : IDisposable
         ILogger<TestApplicationHost>? logger = _scopedServiceProvider?.GetService<ILogger<TestApplicationHost>>();
         logger?.LogInformation("Disposing test host ({TestMethod})", _testMethodName);
 
-        _sqliteConnection?.Dispose();
         _httpClient?.Dispose();
         _applicationFactory?.Dispose();
 
@@ -155,11 +129,5 @@ public sealed class TestApplicationHost : IDisposable
     {
         THelper? helper = ServiceProvider.GetService<THelper>();
         return helper != null ? helper.WaitUntilConnectedAsync() : default;
-    }
-
-    private void InitDatabase()
-    {
-        using IServiceScope scope = ServiceProvider.CreateScope();
-        scope.ServiceProvider.GetService<TestDbContext>()?.Database.EnsureCreated();
     }
 }

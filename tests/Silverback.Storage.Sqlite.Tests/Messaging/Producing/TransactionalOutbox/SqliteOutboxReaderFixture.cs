@@ -36,7 +36,7 @@ public sealed class SqliteOutboxReaderFixture : IDisposable
         _sqliteConnection = new SqliteConnection(_outboxSettings.ConnectionString);
         _sqliteConnection.Open();
 
-        _dataAccess = new SqliteDataAccess(_sqliteConnection.ConnectionString);
+        _dataAccess = new SqliteDataAccess(_outboxSettings.ConnectionString);
         _outboxWriter = new SqliteOutboxWriter(_outboxSettings);
     }
 

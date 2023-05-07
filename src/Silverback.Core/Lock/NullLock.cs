@@ -11,7 +11,6 @@ namespace Silverback.Lock;
 internal sealed class NullLock : DistributedLock
 {
     private NullLock()
-        : base(new NullLockSettings())
     {
     }
 
@@ -23,7 +22,7 @@ internal sealed class NullLock : DistributedLock
 
     private sealed class NullLockHandle : DistributedLockHandle
     {
-        public override bool IsLost => false;
+        public override CancellationToken LockLostToken => CancellationToken.None;
 
         protected override void Dispose(bool disposing)
         {

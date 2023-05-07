@@ -37,10 +37,9 @@ public class InMemoryKafkaOffsetStoreSettingsFixture
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenStoreNameIsNullOrWhitespace(string? offsetStoreName)
+    public void Validate_ShouldThrow_WhenStoreNameIsEmptyOrWhitespace(string? offsetStoreName)
     {
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new(offsetStoreName!);
 

@@ -3,7 +3,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Util;
 
 namespace Silverback.Lock;
 
@@ -12,20 +11,6 @@ namespace Silverback.Lock;
 /// </summary>
 public abstract class DistributedLock : IDistributedLock
 {
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="DistributedLock" /> class.
-    /// </summary>
-    /// <param name="settings">
-    ///     The lock settings.
-    /// </param>
-    protected DistributedLock(DistributedLockSettings settings)
-    {
-        Settings = Check.NotNull(settings, nameof(settings));
-    }
-
-    /// <inheritdoc cref="IDistributedLock.Settings" />
-    public DistributedLockSettings Settings { get; }
-
     /// <inheritdoc cref="IDistributedLock.AcquireAsync" />
     public ValueTask<DistributedLockHandle> AcquireAsync(CancellationToken cancellationToken = default) =>
         AcquireCoreAsync(cancellationToken);
