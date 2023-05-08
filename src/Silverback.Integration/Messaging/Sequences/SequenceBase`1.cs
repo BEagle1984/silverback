@@ -449,8 +449,6 @@ namespace Silverback.Messaging.Sequences
                 _addingSemaphoreSlim.Wait();
                 _addingSemaphoreSlim.Dispose();
 
-                Context.Dispose();
-
                 // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
                 if (!SequencerBehaviorsTask.IsCompleted)
                     _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
@@ -621,8 +619,6 @@ namespace Silverback.Messaging.Sequences
                     case SequenceAbortReason.IncompleteSequence:
                         await Context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
                         break;
-                    case SequenceAbortReason.None:
-                        throw new InvalidOperationException("Reason shouldn't be None.");
                     case SequenceAbortReason.ConsumerAborted:
                     case SequenceAbortReason.Disposing:
                         done = await Context.TransactionManager.RollbackAsync(

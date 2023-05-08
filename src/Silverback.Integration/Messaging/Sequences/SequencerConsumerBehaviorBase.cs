@@ -85,7 +85,18 @@ namespace Silverback.Messaging.Sequences
 
                 // Loop again if the retrieved sequence has completed already in the meanwhile
                 if (!sequence.IsPending || sequence.IsCompleting)
+                {
+                    // If the sequence was new, it means it was never handed over to the transaction handler
+                    // (no message was added to the sequence so far, the timeout elapsed before the sequence
+                    // was used).
+                    if (sequence.IsNew)
+                    {
+                        await context.SequenceStore.RemoveAsync(sequence.SequenceId).ConfigureAwait(false);
+                        sequence.Dispose();
+                    }
+
                     continue;
+                }
 
                 AddToSequenceResult addResult =
                     await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
@@ -101,18 +112,7 @@ namespace Silverback.Messaging.Sequences
             }
 
             if (sequence.IsComplete)
-            {
-                await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
-
-                // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
-                if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
-                    sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
-                {
-                    context.SetIsSequenceEnd();
-                }
-
-                _logger.LogSequenceCompleted(sequence);
-            }
+                await HandleCompletedSequenceAsync(context, sequence).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -249,6 +249,20 @@ namespace Silverback.Messaging.Sequences
             }
 
             return sequence;
+        }
+
+        private async Task HandleCompletedSequenceAsync(ConsumerPipelineContext context, ISequence sequence)
+        {
+            await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
+
+            // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
+            if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
+                sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
+            {
+                context.SetIsSequenceEnd();
+            }
+
+            _logger.LogSequenceCompleted(sequence);
         }
     }
 }
