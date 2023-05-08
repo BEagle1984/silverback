@@ -56,7 +56,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
         AddEnrichers(builder);
         AddBrokerBehaviors(builder);
 
-        builder.Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbackInvoker>();
+        builder.Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>();
         builder.EnableStorage();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);

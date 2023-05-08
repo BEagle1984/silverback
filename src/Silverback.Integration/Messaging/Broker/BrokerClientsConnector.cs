@@ -58,6 +58,8 @@ internal class BrokerClientsConnector : IBrokerClientsConnector
             {
                 await _brokerClients.ConnectAllAsync().ConfigureAwait(false);
 
+                await _brokerClientsBootstrapper.InvokeClientsConnectedCallbacksAsync().ConfigureAwait(false);
+
                 break;
             }
             catch (Exception ex)

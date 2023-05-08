@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,11 +13,11 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Callbacks;
 
-internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoker
+internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvoker
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    private readonly ISilverbackLogger<BrokerClientCallbackInvoker> _logger;
+    private readonly ISilverbackLogger<BrokerClientCallbacksInvoker> _logger;
 
     private readonly ConcurrentDictionary<Type, bool> _hasCallbacks = new();
 
@@ -26,10 +25,10 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
 
     private bool _appStopping;
 
-    public BrokerClientCallbackInvoker(
+    public BrokerClientCallbacksInvoker(
         IServiceScopeFactory serviceScopeFactory,
         IHostApplicationLifetime applicationLifetime,
-        ISilverbackLogger<BrokerClientCallbackInvoker> logger)
+        ISilverbackLogger<BrokerClientCallbacksInvoker> logger)
     {
         _logger = logger;
         _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
@@ -38,7 +37,6 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
     }
 
     /// <inheritdoc cref="IBrokerClientCallbacksInvoker.Invoke{THandler}" />
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged but can't rethrow any exception")]
     public void Invoke<TCallback>(
         Action<TCallback> action,
         IServiceProvider? scopedServiceProvider = null,
@@ -51,11 +49,11 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
         catch (Exception ex)
         {
             _logger.LogCallbackError(ex);
+            throw;
         }
     }
 
     /// <inheritdoc cref="IBrokerClientCallbacksInvoker.InvokeAsync{THandler}" />
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged but can't rethrow any exception")]
     public async ValueTask InvokeAsync<TCallback>(
         Func<TCallback, Task> action,
         IServiceProvider? scopedServiceProvider = null,
@@ -68,6 +66,7 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
         catch (Exception ex)
         {
             _logger.LogCallbackError(ex);
+            throw;
         }
     }
 
@@ -113,13 +112,7 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
 
         try
         {
-            if (scopedServiceProvider == null)
-            {
-                scope = _serviceScopeFactory.CreateScope();
-                scopedServiceProvider = scope.ServiceProvider;
-            }
-
-            IEnumerable<TCallback> services = GetCallbacks<TCallback>(scopedServiceProvider);
+            (IEnumerable<TCallback> services, scope) = GetCallbacks<TCallback>(scopedServiceProvider, scope);
 
             foreach (TCallback service in services)
             {
@@ -155,13 +148,7 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
 
         try
         {
-            if (scopedServiceProvider == null)
-            {
-                scope = _serviceScopeFactory.CreateScope();
-                scopedServiceProvider = scope.ServiceProvider;
-            }
-
-            IEnumerable<TCallback> services = GetCallbacks<TCallback>(scopedServiceProvider);
+            (IEnumerable<TCallback> services, scope) = GetCallbacks<TCallback>(scopedServiceProvider, scope);
 
             foreach (TCallback service in services)
             {
@@ -182,6 +169,35 @@ internal sealed class BrokerClientCallbackInvoker : IBrokerClientCallbacksInvoke
         finally
         {
             scope?.Dispose();
+        }
+    }
+
+    private (IEnumerable<TCallback> Services, IServiceScope? Scope) GetCallbacks<TCallback>(IServiceProvider? scopedServiceProvider, IServiceScope? scope)
+    {
+        if (scopedServiceProvider == null)
+        {
+            scope = TryCreateServiceScope();
+
+            if (scope == null)
+                return (Enumerable.Empty<TCallback>(), null);
+
+            scopedServiceProvider = scope.ServiceProvider;
+        }
+
+        IEnumerable<TCallback> services = GetCallbacks<TCallback>(scopedServiceProvider);
+        return (services, scope);
+    }
+
+    private IServiceScope? TryCreateServiceScope()
+    {
+        try
+        {
+            return _serviceScopeFactory.CreateScope();
+        }
+        catch (ObjectDisposedException)
+        {
+            // The application is probably being shutdown. Ignore the error to avoid polluting the logs.
+            return null;
         }
     }
 

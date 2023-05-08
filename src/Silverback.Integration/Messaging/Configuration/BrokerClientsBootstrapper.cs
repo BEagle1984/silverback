@@ -35,7 +35,16 @@ internal sealed class BrokerClientsBootstrapper
 
         InvokeConfigurators(scope);
         InvokeClientsInitializers(scope);
-        await InvokeCallbacksAsync().ConfigureAwait(false);
+        await InvokeClientsConfiguredCallbacksAsync().ConfigureAwait(false);
+    }
+
+    public async ValueTask InvokeClientsConnectedCallbacksAsync()
+    {
+        using IServiceScope scope = _scopeFactory.CreateScope();
+        await _callbackInvoker.InvokeAsync<IBrokerClientsConnectedCallback>(
+                handler => handler.OnBrokerClientsConnectedAsync(),
+                scope.ServiceProvider)
+            .ConfigureAwait(false);
     }
 
     private static void InvokeClientsInitializers(IServiceScope scope)
@@ -71,7 +80,7 @@ internal sealed class BrokerClientsBootstrapper
         }
     }
 
-    private async ValueTask InvokeCallbacksAsync()
+    private async ValueTask InvokeClientsConfiguredCallbacksAsync()
     {
         using IServiceScope scope = _scopeFactory.CreateScope();
         await _callbackInvoker.InvokeAsync<IBrokerClientsConfiguredCallback>(
