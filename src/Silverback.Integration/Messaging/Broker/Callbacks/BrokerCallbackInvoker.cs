@@ -109,13 +109,8 @@ namespace Silverback.Messaging.Broker.Callbacks
 
             try
             {
-                if (scopedServiceProvider == null)
-                {
-                    scope = _serviceScopeFactory.CreateScope();
-                    scopedServiceProvider = scope.ServiceProvider;
-                }
-
-                var services = GetCallbacks<TCallback>(scopedServiceProvider);
+                IEnumerable<TCallback> services;
+                (services, scope) = GetCallbackHandlers<TCallback>(scopedServiceProvider, scope);
 
                 foreach (var service in services)
                 {
@@ -151,13 +146,8 @@ namespace Silverback.Messaging.Broker.Callbacks
 
             try
             {
-                if (scopedServiceProvider == null)
-                {
-                    scope = _serviceScopeFactory.CreateScope();
-                    scopedServiceProvider = scope.ServiceProvider;
-                }
-
-                var services = GetCallbacks<TCallback>(scopedServiceProvider);
+                IEnumerable<TCallback> services;
+                (services, scope) = GetCallbackHandlers<TCallback>(scopedServiceProvider, scope);
 
                 foreach (var service in services)
                 {
@@ -178,6 +168,35 @@ namespace Silverback.Messaging.Broker.Callbacks
             finally
             {
                 scope?.Dispose();
+            }
+        }
+
+        private (IEnumerable<TCallback> Services, IServiceScope? Scope) GetCallbackHandlers<TCallback>(IServiceProvider? scopedServiceProvider, IServiceScope? scope)
+        {
+            if (scopedServiceProvider == null)
+            {
+                scope = TryCreateServiceScope();
+
+                if (scope == null)
+                    return (Enumerable.Empty<TCallback>(), null);
+
+                scopedServiceProvider = scope.ServiceProvider;
+            }
+
+            var services = GetCallbacks<TCallback>(scopedServiceProvider);
+            return (services, scope);
+        }
+
+        private IServiceScope? TryCreateServiceScope()
+        {
+            try
+            {
+                return _serviceScopeFactory.CreateScope();
+            }
+            catch (ObjectDisposedException)
+            {
+                // The application is probably being shutdown. Ignore the error to avoid polluting the logs.
+                return null;
             }
         }
 

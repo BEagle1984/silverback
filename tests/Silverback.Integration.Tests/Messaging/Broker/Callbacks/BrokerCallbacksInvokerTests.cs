@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
@@ -344,6 +346,30 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
                 invokeDuringShutdown: false);
 
             callbackOneHandlerOne.CallCount.Should().Be(0);
+        }
+
+        [Fact]
+        public void Invoke_ObjectDisposedThrownCreatingScope_ExceptionIgnored()
+        {
+            var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+            serviceScopeFactory.CreateScope().ThrowsForAnyArgs(_ => new ObjectDisposedException("test"));
+            var invoker = new BrokerCallbackInvoker(serviceScopeFactory, new FakeHostApplicationLifetime(), new SilverbackLoggerSubstitute<BrokerCallbackInvoker>());
+
+            Action act = () => invoker.Invoke<ICallbackOneHandler>(callback => callback.Handle());
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task InvokeAsync_ObjectDisposedThrownCreatingScope_ExceptionIgnored()
+        {
+            var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+            serviceScopeFactory.CreateScope().ThrowsForAnyArgs(_ => new ObjectDisposedException("test"));
+            var invoker = new BrokerCallbackInvoker(serviceScopeFactory, new FakeHostApplicationLifetime(), new SilverbackLoggerSubstitute<BrokerCallbackInvoker>());
+
+            Func<Task> act = () => invoker.InvokeAsync<ICallbackOneHandlerAsync>(callback => callback.HandleAsync());
+
+            await act.Should().NotThrowAsync();
         }
 
         private sealed class CallbackOneHandlerOne : ICallbackOneHandler

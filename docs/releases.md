@@ -4,7 +4,15 @@ uid: releases
 
 # Releases
 
+## [4.2.1](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
+
+### Fixes
+
+* Prevent an `ObjectDisposedException` to be thrown by the `BrokerCallbackInvoker` during application shutdown
+
 ## [4.2.0](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
+
+### What's new
 
 * Upgrade to [Confluent.Kafka 2.1.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.0)
 
