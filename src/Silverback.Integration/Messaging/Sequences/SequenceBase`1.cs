@@ -284,14 +284,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     {
         await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
-        if (IsComplete || IsCompleting)
-            return AddToSequenceResult.Failed;
-
-        if (IsAborted)
-            throw new InvalidOperationException("The sequence has been aborted.");
-
         try
         {
+            if (!IsPending || IsCompleting)
+                return AddToSequenceResult.Failed;
+
             ResetTimeout();
 
             if (sequence != null && sequence != this)
@@ -457,8 +454,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _addingSemaphoreSlim.Wait();
         _addingSemaphoreSlim.Dispose();
 
-        Context.Dispose();
-
         // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
         if (!SequencerBehaviorsTask.IsCompleted)
             _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
@@ -520,6 +515,9 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         {
             // Ignore
         }
+
+        if (!IsPending)
+            return;
 
         _timeoutCancellationTokenSource = new CancellationTokenSource();
         CancellationToken cancellationToken = _timeoutCancellationTokenSource.Token;
@@ -614,7 +612,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             {
                 case SequenceAbortReason.Error:
                     if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
-                            .ConfigureAwait(false))
+                        .ConfigureAwait(false))
                     {
                         await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
@@ -630,8 +628,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 case SequenceAbortReason.IncompleteSequence:
                     await Context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
                     break;
-                case SequenceAbortReason.None:
-                    throw new InvalidOperationException("Reason shouldn't be None.");
                 case SequenceAbortReason.ConsumerAborted:
                 case SequenceAbortReason.Disposing:
                     done = await Context.TransactionManager.RollbackAsync(

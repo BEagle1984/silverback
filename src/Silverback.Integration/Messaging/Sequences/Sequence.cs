@@ -31,7 +31,6 @@ public abstract class Sequence : SequenceBase<IInboundEnvelope>
     ///     Specifies whether the message identifiers have to be collected, in order to be used for the commit
     ///     later on.
     /// </param>
-    /// protected Sequence(
     protected Sequence(
         string sequenceId,
         ConsumerPipelineContext context,

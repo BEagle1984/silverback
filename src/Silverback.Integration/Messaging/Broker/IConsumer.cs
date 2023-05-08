@@ -129,7 +129,7 @@ public interface IConsumer
     ///     </param>
     /// </summary>
     /// <param name="brokerMessageIdentifiers">
-    ///     The identifiers of to message be rolled back.
+    ///     The identifiers of to messages be rolled back.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
