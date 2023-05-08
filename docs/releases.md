@@ -96,6 +96,7 @@ The support for RabbitMQ has been deprecated? (...in case explain motivation etc
 ### Fixes
 
 * Prevent an `ObjectDisposedException` to be thrown by the `BrokerCallbackInvoker` during application shutdown
+* Fix possible deadlock in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
 
 ## [4.2.0](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
 
