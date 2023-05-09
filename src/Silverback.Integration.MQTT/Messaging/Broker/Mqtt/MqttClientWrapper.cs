@@ -268,7 +268,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         if (result.ReasonCode != MqttClientPublishReasonCode.Success)
         {
             throw new MqttProduceException(
-                "Error occurred producing the message to the MQTT broker. See the Result property for details.",
+                $"Error occurred producing the message to the MQTT broker ({result.ReasonCode}: '{result.ReasonString}'). See the Result property for details.",
                 result);
         }
     }
