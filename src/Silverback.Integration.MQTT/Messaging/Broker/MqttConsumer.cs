@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Broker
                 throw new InvalidOperationException("The message has been processed already.");
 
             await HandleMessageAsync(
-                    message.ApplicationMessage.Payload,
+                    message.ApplicationMessage.PayloadSegment.ToArray(),
                     headers,
                     message.ApplicationMessage.Topic,
                     new MqttMessageIdentifier(Endpoint.Configuration.ClientId, message.Id))

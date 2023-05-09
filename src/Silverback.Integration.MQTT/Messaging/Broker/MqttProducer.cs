@@ -254,7 +254,7 @@ namespace Silverback.Messaging.Broker
             var mqttApplicationMessage = new MqttApplicationMessage
             {
                 Topic = queuedMessage.ActualEndpointName,
-                Payload = queuedMessage.MessageBytes,
+                PayloadSegment = queuedMessage.MessageBytes,
                 QualityOfServiceLevel = Endpoint.QualityOfServiceLevel,
                 Retain = Endpoint.Retain,
                 MessageExpiryInterval = Endpoint.MessageExpiryInterval

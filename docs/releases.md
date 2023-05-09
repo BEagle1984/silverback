@@ -4,12 +4,14 @@ uid: releases
 
 # Releases
 
-## [4.2.2](https://github.com/BEagle1984/silverback/releases/tag/v4.2.2)
+## [4.3.0](https://github.com/BEagle1984/silverback/releases/tag/v4.3.0)
 
 ### What's new
 
+* Upgrade to [MQTTnet 4.2.0.706](https://github.com/chkr1011/MQTTnet/releases/tag/v4.2.0.706)
 * Upgrade to [Confluent.Kafka 2.1.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.1)
 * Upgrade to Newtonsoft.Json 13.0.3
+* Add `ReasonCode` and `ReasonString` to `MqttProduceException` message
 
 ## [4.2.1](https://github.com/BEagle1984/silverback/releases/tag/v4.2.1)
 

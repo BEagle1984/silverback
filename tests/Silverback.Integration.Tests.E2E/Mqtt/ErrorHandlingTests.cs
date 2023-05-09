@@ -532,7 +532,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
 
             var otherTopicMessages = Helper.GetMessages("e2e/other");
             otherTopicMessages.Count.Should().Be(1);
-            otherTopicMessages[0].Payload.Should()
+            otherTopicMessages[0].PayloadSegment.ToArray().Should()
                 .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
 
@@ -643,7 +643,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
 
             var otherTopicMessages = Helper.GetMessages("e2e/other");
             otherTopicMessages.Count.Should().Be(1);
-            otherTopicMessages[0].Payload.Should()
+            otherTopicMessages[0].PayloadSegment.ToArray().Should()
                 .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
     }
