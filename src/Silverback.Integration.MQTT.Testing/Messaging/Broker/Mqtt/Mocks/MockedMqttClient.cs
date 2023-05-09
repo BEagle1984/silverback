@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -177,6 +178,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             _disposed = true;
         }
 
+        [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "False positive: the task is being returned")]
         internal Task HandleMessageAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
             ApplicationMessageReceivedAsync?.Invoke(eventArgs) ?? Task.CompletedTask;
 
