@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.ConnectAsync" />
         public async Task<MqttClientConnectResult> ConnectAsync(
             MqttClientOptions options,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(options, nameof(options));
 
@@ -107,7 +107,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         }
 
         /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
-        public async Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken)
+        public async Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken = default)
         {
             EnsureNotDisposed();
 
@@ -132,7 +132,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.SubscribeAsync" />
         public Task<MqttClientSubscribeResult> SubscribeAsync(
             MqttClientSubscribeOptions options,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(options, nameof(options));
             EnsureNotDisposed();
@@ -150,7 +150,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.UnsubscribeAsync" />
         public Task<MqttClientUnsubscribeResult> UnsubscribeAsync(
             MqttClientUnsubscribeOptions options,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(options, nameof(options));
             EnsureNotDisposed();
@@ -168,7 +168,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.PublishAsync" />
         public async Task<MqttClientPublishResult> PublishAsync(
             MqttApplicationMessage applicationMessage,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(applicationMessage, nameof(applicationMessage));
             EnsureNotDisposed();
@@ -182,12 +182,12 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         }
 
         /// <inheritdoc cref="IMqttClient.PingAsync" />
-        public Task PingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task PingAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
         /// <inheritdoc cref="IMqttClient.SendExtendedAuthenticationExchangeDataAsync" />
         public Task SendExtendedAuthenticationExchangeDataAsync(
             MqttExtendedAuthenticationExchangeData data,
-            CancellationToken cancellationToken) => Task.CompletedTask;
+            CancellationToken cancellationToken = default) => Task.CompletedTask;
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
