@@ -287,7 +287,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="IMqttClientConfigBuilder.LimitUnacknowledgedPublications" />
         public IMqttClientConfigBuilder LimitUnacknowledgedPublications(ushort receiveMaximum)
         {
-            _builder.WithReceiveMaximum((ushort)receiveMaximum);
+            _builder.WithReceiveMaximum(receiveMaximum);
             return this;
         }
 
