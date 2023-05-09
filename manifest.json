@@ -191,7 +191,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html",
-          "hash": "vcByPVj+W48UmHItEFgVK2SA3pKpzfZ+u33npXtGVas="
+          "hash": "QUFjJ0zC/gtOBVsFqdhQY61HjEVXuxURjhBPW7z3JVA="
         }
       },
       "is_incremental": false,
@@ -2147,7 +2147,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html",
-          "hash": "StkfsJCt+wrZZcLa2qyJt/k7kdcolLlob2fTF81xd90="
+          "hash": "Lv9OG9as/6ziIkDD3QPDYzK1TDEfDMdnVeMDw9TNA08="
         }
       },
       "is_incremental": false,
@@ -2303,7 +2303,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html",
-          "hash": "VMs70Sdk+ZsUCeZ9Oyd5KY9qpeuyrtSieFOUebIzor8="
+          "hash": "BIq7y8w57ZrnSm55sKXJKX6r3uqVfmYZbGukUu0fZGI="
         }
       },
       "is_incremental": false,
@@ -2591,7 +2591,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html",
-          "hash": "0Z4eyNLpgvXG9zCJkWh4uEXGrJcRP7IxFA9GVdyUdkg="
+          "hash": "g42GI0ezhI/pmCpTyhYLAHSgs3ceFaqsWB/qhgoEYsM="
         }
       },
       "is_incremental": false,
@@ -2867,7 +2867,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html",
-          "hash": "72FtAOEZhOtNcOOBGVnhK326xjVchHvDiOevebhVVbA="
+          "hash": "/Uk2WlfUfRXb5eYMJd7AC2I9SIYN48+yiz2qg/Sk2bU="
         }
       },
       "is_incremental": false,
@@ -2987,7 +2987,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html",
-          "hash": "qt03j/h8Nwc9RpqGsMTF0SAPTxNkG/Me0JllT92FldY="
+          "hash": "SYDhpLmGU99qoAxwpnjujSzgqcY9VVEF+/yhGm8RaL0="
         }
       },
       "is_incremental": false,
@@ -2999,7 +2999,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ISilverbackBuilder.html",
-          "hash": "TPanUefI0xwvaZUhtg4IPoLrAoKBUzUoOwhAMEMCxIg="
+          "hash": "0r0IEW+rgo75XFbAubsptmCcku3edGHMJV4sYUsffe8="
         }
       },
       "is_incremental": false,
@@ -3035,7 +3035,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html",
-          "hash": "q6q7XdwIgHJxf/tDDJ4ftvYINFjDDQ1Zl11b63ec/wM="
+          "hash": "egAqdz/tRYw5PS9E+1rnSqQdcCA9r39iZ5gDxuTbw14="
         }
       },
       "is_incremental": false,
@@ -3047,7 +3047,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html",
-          "hash": "ecaQ1O0aCjOFk92XW/rZ406w6BXRABwCHbqjFJRwL8o="
+          "hash": "9noG/I1RTz7A4fSqzCB4oYZZm58Dvws9qIVJ5USFMHk="
         }
       },
       "is_incremental": false,
@@ -3059,7 +3059,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.html",
-          "hash": "KEeQmvOIvhIuovbUzDYEJChpmQG69RiUZJ8EizpWOCU="
+          "hash": "JedkIdSPAb+dqC8fK0qzIuQLClvand+U5A0Ym8EWFxY="
         }
       },
       "is_incremental": false,
@@ -3131,7 +3131,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html",
-          "hash": "5DLyIWOYq7KRPze44JodC1i9PtbGGbNmxm+uQRDN5nk="
+          "hash": "DCyRhF9FTQSbA3w3j95dULb81Km/ugIQGujnxJ9z3QM="
         }
       },
       "is_incremental": false,
@@ -3143,7 +3143,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html",
-          "hash": "NV1RHSCLMl66qBO3E9/2zx4UdfYvp+VEtDCExEWI0IM="
+          "hash": "fCKoaH0yZvE13bbca5AqFI4PRnpSNOiOzScohkMLGU0="
         }
       },
       "is_incremental": false,
@@ -3167,7 +3167,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html",
-          "hash": "5VFvwr/aai1i/DXv+PlaF2cXnAWgt+zGNnejsDvdInE="
+          "hash": "C2F1mcfyjwadCKiDV5AKy5nXBxUf3gu+9xEfEBuxprw="
         }
       },
       "is_incremental": false,
@@ -3395,7 +3395,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html",
-          "hash": "1orQ216RSLftA6vE6d4+e5Mavk8UF5bE+//++7cuLXA="
+          "hash": "fOXJq6rLCqqdIptWAb1Wj8tJqBbm2kprUlGfPCTIQ8g="
         }
       },
       "is_incremental": false,
@@ -6251,7 +6251,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Sequences.SequenceBase-1.html",
-          "hash": "ZCJTYeB+pNxdH8ZxJ/sLExB+x3XozV9kMLvg+vKF6q8="
+          "hash": "kl8GFO44johE624+UeGtNaFJxl7JshhG/Ho6GX1cFJw="
         }
       },
       "is_incremental": false,
@@ -8175,7 +8175,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "tW79Eg/mNNbV01pSdpfHeflqqbMdnR1Py81YcPxi53A="
+          "hash": "utC4dbRsOoZebQ+bNdawoCOnpV8yG2jDOq43nm1lD0c="
         }
       },
       "is_incremental": false,
@@ -8199,7 +8199,7 @@
       "output": {
         ".html": {
           "relative_path": "samples/kafka/basic.html",
-          "hash": "7/rKpLfcdtaheu4O1RBItWvW/biAD4LBjjqTz29Z8ag="
+          "hash": "dgndkCGdMlqupVQeo9p4mfejQoDqG6WmblBRjZEGVL8="
         }
       },
       "is_incremental": false,
@@ -8315,13 +8315,13 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 48,
-          "skipped_file_count": 48
+          "skipped_file_count": 46
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 606,
-          "skipped_file_count": 606
+          "skipped_file_count": 575
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

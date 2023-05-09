@@ -13803,12 +13803,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.Dispose
   nameWithType: MockedMqttClient.Dispose
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  name: InspectPackage
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_InspectPackage
-  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPackage
-  nameWithType: MockedMqttClient.InspectPackage
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPacketAsync
+  name: InspectPacketAsync
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_InspectPacketAsync
+  commentId: E:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPacketAsync
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.InspectPacketAsync
+  nameWithType: MockedMqttClient.InspectPacketAsync
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.IsConnected
   name: IsConnected
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient_IsConnected
@@ -18073,6 +18073,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.Acks
   nameWithType: ConfluentClientConfigProxy.Acks
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics
+  name: AllowAutoCreateTopics
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_AllowAutoCreateTopics
+  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics
+  nameWithType: ConfluentClientConfigProxy.AllowAutoCreateTopics
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics*
+  name: AllowAutoCreateTopics
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_AllowAutoCreateTopics_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.AllowAutoCreateTopics
+  nameWithType: ConfluentClientConfigProxy.AllowAutoCreateTopics
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ApiVersionFallbackMs
   name: ApiVersionFallbackMs
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_ApiVersionFallbackMs
@@ -18944,6 +18957,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslKeystorePassword
   nameWithType: ConfluentClientConfigProxy.SslKeystorePassword
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders
+  name: SslProviders
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslProviders
+  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders
+  nameWithType: ConfluentClientConfigProxy.SslProviders
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders*
+  name: SslProviders
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslProviders_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslProviders
+  nameWithType: ConfluentClientConfigProxy.SslProviders
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslSigalgsList
   name: SslSigalgsList
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslSigalgsList
@@ -19067,19 +19093,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.ConfluentConsumerConfigProxy
   nameWithType: ConfluentConsumerConfigProxy.ConfluentConsumerConfigProxy
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-  name: AllowAutoCreateTopics
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AllowAutoCreateTopics
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-  nameWithType: ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics*
-  name: AllowAutoCreateTopics
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AllowAutoCreateTopics_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AllowAutoCreateTopics
-  nameWithType: ConfluentConsumerConfigProxy.AllowAutoCreateTopics
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.AutoCommitIntervalMs
   name: AutoCommitIntervalMs
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AutoCommitIntervalMs
