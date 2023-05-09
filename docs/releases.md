@@ -9,6 +9,7 @@ uid: releases
 ### What's new
 
 * Upgrade to [Confluent.Kafka 2.1.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.1)
+* Upgrade to Newtonsoft.Json 13.0.3
 
 ## [4.2.1](https://github.com/BEagle1984/silverback/releases/tag/v4.2.1)
 
