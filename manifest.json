@@ -7583,7 +7583,7 @@
       "output": {
         ".html": {
           "relative_path": "concepts/broker/testing.html",
-          "hash": "jeQbXXk3qPgGizntDAUoTCIvGpcDL9rnhgdvf/X6X1M="
+          "hash": "LM7Km5hgWYXq/EltBH59/VxLc2W5eWrsvOGXMzxgIm0="
         }
       },
       "is_incremental": false,
@@ -8315,13 +8315,13 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 48,
-          "skipped_file_count": 46
+          "skipped_file_count": 47
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 606,
-          "skipped_file_count": 575
+          "skipped_file_count": 606
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

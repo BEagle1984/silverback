@@ -124,7 +124,7 @@
                     .ConsumeFrom(&quot;test-topic&quot;)
                     .Configure(config =&gt; 
                         {
-                            config.GroupId = &quot;my-test-consumer&quot;
+                            config.GroupId = &quot;my-test-consumer&quot;;
                         })))
             // Register the subscriber under test
             .AddScopedSubscriber&lt;MySubscriber&gt;();
@@ -173,7 +173,7 @@
                 // with the mocked version
                 services.UseMockedKafka();
             });
-        };
+        });
     }
 
     [Fact]
@@ -208,7 +208,7 @@
             {
                 services.UseMockedKafka();
             });
-        };
+        });
     }
 
     [Fact]
@@ -253,7 +253,7 @@
                     .UseMockedKafka()
                     .AddIntegrationSpy();
             });
-        };
+        });
     }
 
     [Fact]
@@ -300,7 +300,7 @@
                     .UseMockedKafka(options =&gt; options
                         .WithDefaultPartitionsCount(10));
             });
-        };
+        });
     }
 }
 </code></pre>
