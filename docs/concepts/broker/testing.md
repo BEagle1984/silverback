@@ -45,7 +45,7 @@ public class KafkaTests
                     .ConsumeFrom("test-topic")
                     .Configure(config => 
                         {
-                            config.GroupId = "my-test-consumer"
+                            config.GroupId = "my-test-consumer";
                         })))
             // Register the subscriber under test
             .AddScopedSubscriber<MySubscriber>();
@@ -99,7 +99,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
                 // with the mocked version
                 services.UseMockedKafka();
             });
-        };
+        });
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
             {
                 services.UseMockedKafka();
             });
-        };
+        });
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
                     .UseMockedKafka()
                     .AddIntegrationSpy();
             });
-        };
+        });
     }
 
     [Fact]
@@ -241,6 +241,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
                     .UseMockedKafka(options => options
                         .WithDefaultPartitionsCount(10));
             });
-        };
+        });
     }
 }
+```
