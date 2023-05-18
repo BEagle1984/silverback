@@ -4,9 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ductus.FluentDocker.Builders;
+using Ductus.FluentDocker.Services;
 using FluentAssertions;
-using Microsoft.Data.PostgreSql;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -21,18 +23,27 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : IDisposable
 {
     private readonly PostgreSqlKafkaOffsetStoreSettings _offsetStoreSettings;
 
-    private readonly PostgreSqlConnection _sqliteConnection;
+    private readonly IContainerService _postgresContainer;
 
     public PostgreSqlKafkaOffsetStoreFixture()
     {
-        _offsetStoreSettings = new PostgreSqlKafkaOffsetStoreSettings($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared", "TestOutbox");
-        _sqliteConnection = new PostgreSqlConnection(_offsetStoreSettings.ConnectionString);
-        _sqliteConnection.Open();
+        _postgresContainer = new Builder().UseContainer()
+            .UseImage("postgres")
+            .ExposePort(5432, 5432)
+            .WithEnvironment("POSTGRES_PASSWORD=silverback", "POSTGRES_DB=silverback-storage-tests")
+            .WaitForPort("5432/tcp", 30000, "127.0.0.1")
+            .Build()
+            .Start();
+
+        string connectionString = "User ID=postgres;Password=silverback;Host=localhost;Port=5432;Database=silverback-storage-tests;Pooling=true;Maximum Pool Size=100;Connection Lifetime=0;";
+        _offsetStoreSettings = new PostgreSqlKafkaOffsetStoreSettings(connectionString, "TestOutbox");
     }
 
     [Fact]
     public async Task GetStoredOffsets_ShouldReturnStoredOffsetsForGroup()
     {
+        await WaitForConnectionAsync();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -74,6 +85,8 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : IDisposable
     [Fact]
     public async Task StoreOffsetsAsync_ShouldStoreOffsets()
     {
+        await WaitForConnectionAsync();
+
         IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -99,5 +112,28 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : IDisposable
         storedOffsets.Should().BeEquivalentTo(offsets, options => options.WithStrictOrdering());
     }
 
-    public void Dispose() => _sqliteConnection.Dispose();
+    private async Task WaitForConnectionAsync()
+    {
+        bool connected = false;
+        int tryCount = 0;
+
+        while (!connected)
+        {
+            try
+            {
+                await using NpgsqlConnection connection = new(_offsetStoreSettings.ConnectionString);
+                await connection.OpenAsync();
+                connected = true;
+            }
+            catch (NpgsqlException)
+            {
+                if (++tryCount > 20)
+                    throw;
+
+                await Task.Delay(100);
+            }
+        }
+    }
+
+    public void Dispose() => _postgresContainer.Dispose();
 }

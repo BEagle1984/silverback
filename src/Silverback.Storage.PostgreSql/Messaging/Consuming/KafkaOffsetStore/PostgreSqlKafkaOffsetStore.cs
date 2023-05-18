@@ -30,11 +30,11 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
     {
         _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
 
-        _getQuerySql = $"SELECT Topic, Partition, Offset FROM \"{settings.TableName}\" WHERE GroupId = @GroupId";
+        _getQuerySql = $"SELECT \"Topic\", \"Partition\", \"Offset\" FROM \"{settings.TableName}\" WHERE \"GroupId\" = @GroupId";
 
-        _insertOrReplaceQuerySql = $"INSERT INTO \"{settings.TableName}\" (GroupId, Topic, Partition, Offset) " +
+        _insertOrReplaceQuerySql = $"INSERT INTO \"{settings.TableName}\" (\"GroupId\", \"Topic\", \"Partition\", \"Offset\") " +
                                    "VALUES(@GroupId, @Topic, @Partition, @Offset) " +
-                                   "ON CONFLICT (GroupId) DO UPDATE SET Topic = @Topic, Partition = @Partition, Offset = @Offset";
+                                   "ON CONFLICT (\"GroupId\", \"Topic\", \"Partition\") DO UPDATE SET \"Offset\" = @Offset";
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
