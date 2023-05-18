@@ -31,13 +31,13 @@ public class OutboxWorker : IOutboxWorker
 
     private readonly IProducerLogger<OutboxWorker> _logger;
 
-    private readonly ConcurrentBag<OutboxMessage> _failedMessages = new();
+    private readonly ConcurrentBag<OutboxMessage> _producedMessages = new();
 
     private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
 
-    private IReadOnlyCollection<OutboxMessage> _outboxMessages = Array.Empty<OutboxMessage>();
-
     private int _pendingProduceOperations;
+
+    private bool _failed;
 
     private IServiceScope? _serviceScope;
 
@@ -101,10 +101,11 @@ public class OutboxWorker : IOutboxWorker
     {
         _logger.LogReadingMessagesFromOutbox(_settings.BatchSize);
 
-        _failedMessages.Clear();
-        _outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
+        _producedMessages.Clear();
+        _failed = false;
+        IReadOnlyCollection<OutboxMessage> outboxMessages = await _outboxReader.GetAsync(_settings.BatchSize).ConfigureAwait(false);
 
-        if (_outboxMessages.Count == 0)
+        if (outboxMessages.Count == 0)
         {
             _logger.LogOutboxEmpty();
             return false;
@@ -113,13 +114,18 @@ public class OutboxWorker : IOutboxWorker
         try
         {
             int index = 0;
-            foreach (OutboxMessage outboxMessage in _outboxMessages)
+            foreach (OutboxMessage outboxMessage in outboxMessages)
             {
-                _logger.LogProcessingOutboxStoredMessage(++index, _outboxMessages.Count);
+                _logger.LogProcessingOutboxStoredMessage(++index, outboxMessages.Count);
+                Interlocked.Increment(ref _pendingProduceOperations);
 
                 await ProcessMessageAsync(outboxMessage).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
+                    break;
+
+                // Break on failure if message order has to be preserved
+                if (_failed && _settings.EnforceMessageOrder)
                     break;
             }
         }
@@ -139,17 +145,19 @@ public class OutboxWorker : IOutboxWorker
             IProducer producer = GetProducer(message);
             ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
 
-            Interlocked.Increment(ref _pendingProduceOperations);
-
             // TODO: Avoid closure allocations
             await producer.RawProduceAsync(
                     endpoint,
                     message.Content,
                     message.Headers,
-                    _onSuccess,
+                    identifier =>
+                    {
+                        _producedMessages.Add(message);
+                        _onSuccess.Invoke(identifier);
+                    },
                     exception =>
                     {
-                        _failedMessages.Add(message);
+                        _failed = true;
                         Interlocked.Decrement(ref _pendingProduceOperations);
 
                         _logger.LogErrorProducingOutboxStoredMessage(
@@ -160,7 +168,7 @@ public class OutboxWorker : IOutboxWorker
         }
         catch (Exception ex)
         {
-            _failedMessages.Add(message);
+            _failed = true;
             Interlocked.Decrement(ref _pendingProduceOperations);
 
             _logger.LogErrorProducingOutboxStoredMessage(ex);
@@ -220,7 +228,7 @@ public class OutboxWorker : IOutboxWorker
     }
 
     private Task AcknowledgeAllAsync() =>
-        _outboxReader.AcknowledgeAsync(_outboxMessages.Where(message => !_failedMessages.Contains(message)));
+        _outboxReader.AcknowledgeAsync(_producedMessages);
 
     private async Task WaitAllAsync()
     {

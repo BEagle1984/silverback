@@ -1,100 +1,103 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
+using Silverback.Diagnostics;
+using Silverback.Messaging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
+using Xunit;
+
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox;
 
 public class OutboxWorkerFixture
 {
-    // TODO: REIMPLEMENT
-    // private readonly TestProducerConfiguration _configuration1;
-    //
-    // private readonly TestProducerConfiguration _configuration2;
-    //
-    // private readonly OutboxMessageEndpoint _outboxEndpoint1;
-    //
-    // private readonly OutboxMessageEndpoint _outboxEndpoint2;
-    //
-    // public OutboxWorkerFixture()
-    // {
-    //     _configuration1 = new TestProducerConfiguration("topic1");
-    //     _configuration2 = new TestProducerConfiguration("topic2");
-    //
-    //     TestProducerEndpoint endpoint1 = _configuration1.GetDefaultEndpoint();
-    //     TestProducerEndpoint endpoint2 = _configuration2.GetDefaultEndpoint();
-    //
-    //     _outboxEndpoint1 = new OutboxMessageEndpoint(
-    //         endpoint1.RawName,
-    //         endpoint1.DisplayName,
-    //         JsonSerializer.SerializeToUtf8Bytes(endpoint1));
-    //     _outboxEndpoint2 = new OutboxMessageEndpoint(
-    //         endpoint2.RawName,
-    //         endpoint2.DisplayName,
-    //         JsonSerializer.SerializeToUtf8Bytes(endpoint2));
-    // }
-    //
-    // [Fact]
-    // public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages()
-    // {
-    //     InMemoryOutboxSettings outboxSettings = new();
-    //     IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
-    //         services => services
-    //             .AddFakeLogger()
-    //             .AddSilverback()
-    //             .WithConnectionToMessageBroker(
-    //                 options => options
-    //                     .AddBroker<TestBroker>()
-    //                     .AddInMemoryOutbox()
-    //                     .AddOutboxWorker(new OutboxWorkerSettings(outboxSettings)))
-    //             .AddEndpoints(
-    //                 endpoints => endpoints
-    //                     .AddOutbound<TestEventOne>(_configuration1)
-    //                     .AddOutbound<TestEventTwo>(_configuration2)));
-    //     IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-    //     IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
-    //     InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
-    //     InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
-    //     TestBroker broker = serviceProvider.GetRequiredService<TestBroker>();
-    //     IOutboxWorker outboxWorker = serviceProvider.GetServices<IHostedService>().OfType<OutboxWorkerService>().Single().OutboxWorker;
-    //
-    //     await broker.ConnectAsync();
-    //
-    //     await outboxWriter.AddAsync(
-    //         new OutboxMessage(
-    //             typeof(TestEventOne),
-    //             new byte[] { 0x01 },
-    //             new[] { new MessageHeader("#", 1) },
-    //             _outboxEndpoint1));
-    //     await outboxWriter.AddAsync(
-    //         new OutboxMessage(
-    //             typeof(TestEventTwo),
-    //             new byte[] { 0x02 },
-    //             new[] { new MessageHeader("#", 2) },
-    //             _outboxEndpoint2));
-    //     await outboxWriter.AddAsync(
-    //         new OutboxMessage(
-    //             typeof(TestEventOne),
-    //             new byte[] { 0x03 },
-    //             new[] { new MessageHeader("#", 3) },
-    //             _outboxEndpoint1));
-    //
-    //     storage.ItemsCount.Should().Be(3);
-    //
-    //     await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-    //
-    //     broker.ProducedMessages.Should().HaveCount(3);
-    //     broker.ProducedMessages[0].Endpoint.RawName.Should().Be("topic1");
-    //     broker.ProducedMessages[0].Message.Should().BeEquivalentTo(new byte[] { 0x01 });
-    //     broker.ProducedMessages[0].Headers.Should().ContainEquivalentOf(new MessageHeader("#", 1));
-    //     broker.ProducedMessages[1].Endpoint.RawName.Should().Be("topic2");
-    //     broker.ProducedMessages[1].Message.Should().BeEquivalentTo(new byte[] { 0x02 });
-    //     broker.ProducedMessages[1].Headers.Should().ContainEquivalentOf(new MessageHeader("#", 2));
-    //     broker.ProducedMessages[2].Endpoint.RawName.Should().Be("topic1");
-    //     broker.ProducedMessages[2].Message.Should().BeEquivalentTo(new byte[] { 0x03 });
-    //     broker.ProducedMessages[2].Headers.Should().ContainEquivalentOf(new MessageHeader("#", 3));
-    //
-    //     storage.ItemsCount.Should().Be(0);
-    // }
-    //
+    private readonly InMemoryOutbox _inMemoryOutbox = new();
+
+    private readonly OutboxWorkerSettings _inMemoryOutboxWorkerSettings = new(new InMemoryOutboxSettings());
+
+    private readonly IOutboxWriter _outboxWriter;
+
+    private readonly IProducerCollection _producerCollection = Substitute.For<IProducerCollection>();
+
+    private readonly IProducer _producer1 = Substitute.For<IProducer>();
+
+    private readonly IProducer _producer2 = Substitute.For<IProducer>();
+
+    private readonly IServiceScopeFactory _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+
+    private readonly IProducerLogger<OutboxWorker> _producerLogger = Substitute.For<IProducerLogger<OutboxWorker>>();
+
+    private readonly OutboxMessageEndpoint _outboxEndpoint1 = new("topic1", null, null);
+
+    private readonly OutboxMessageEndpoint _outboxEndpoint2 = new("topic2", null, null);
+
+    private readonly OutboxWorker _outboxWorker;
+
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public OutboxWorkerFixture()
+    {
+        _outboxWriter = new InMemoryOutboxWriter(_inMemoryOutbox);
+
+        _producerCollection.GetProducersForMessage(Arg.Any<Type>()).Returns(new[] { _producer1, _producer2 });
+
+        _producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
+        _producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+
+        _producer1.RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+            Arg.Any<Action<Exception>>()).Returns(
+            callInfo =>
+            {
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+                return ValueTask.CompletedTask;
+            });
+        _producer2.RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+            Arg.Any<Action<Exception>>()).Returns(
+            callInfo =>
+            {
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+                return ValueTask.CompletedTask;
+            });
+
+        _outboxWorker = new OutboxWorker(
+            _inMemoryOutboxWorkerSettings,
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _serviceScopeFactory,
+            _producerLogger);
+    }
+
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages()
+    {
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventTwo), new byte[] { 0x02 }, null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x03 }, null, _outboxEndpoint1));
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+
+        await AssertReceivedCallsAsync(_producer1, 2);
+        await AssertReceivedCallsAsync(_producer2, 1);
+    }
+
+    // TODO: Reimplement and add tests for headers, etc.
     // [Fact]
     // public async Task ProcessOutboxAsync_ShouldProcessSpecificOutbox_WhenMultipleOutboxesAreUsed()
     // {
@@ -284,4 +287,87 @@ public class OutboxWorkerFixture
     //
     //     broker.ProducedMessages.Should().HaveCount(5);
     // }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceFails()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+        }
+
+        int tries = 0;
+        _producer1.RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+            Arg.Any<Action<Exception>>()).Returns(
+            callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
+                {
+                    callInfo.ArgAt<Action<Exception>>(4).Invoke(new InvalidOperationException("Test"));
+                }
+                else
+                {
+                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+                }
+
+                return ValueTask.CompletedTask;
+            });
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 2);
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 5);
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 12); // 10 messages + 2 retries
+    }
+
+    [Fact]
+    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceThrows()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+        }
+
+        int tries = 0;
+        _producer1.RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+            Arg.Any<Action<Exception>>()).Returns(
+            callInfo =>
+            {
+                if (Interlocked.Increment(ref tries) is 2 or 5)
+                    throw new InvalidOperationException("Test");
+
+                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+                return ValueTask.CompletedTask;
+            });
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 2);
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 5);
+
+        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedCallsAsync(_producer1, 12); // 10 messages + 2 retries
+    }
+
+    private static async Task AssertReceivedCallsAsync(IProducer producer, int requiredNumberOfCalls) =>
+        await producer.Received(requiredNumberOfCalls).RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+            Arg.Any<Action<Exception>>());
 }
