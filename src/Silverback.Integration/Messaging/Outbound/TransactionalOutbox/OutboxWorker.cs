@@ -165,15 +165,28 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 {
                     _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
 
-                    await ProcessMessageAsync(
-                            outboxMessages[i],
-                            failedMessages,
-                            outboxReader,
-                            serviceProvider)
-                        .ConfigureAwait(false);
+                    try
+                    {
+                        await ProcessMessageAsync(
+                                outboxMessages[i],
+                                failedMessages,
+                                outboxReader,
+                                serviceProvider)
+                            .ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        // Subtract the produce operations that will never be initiated
+                        Interlocked.Add(ref _pendingProduceOperations, -(outboxMessages.Count - i - 1));
+                        throw;
+                    }
 
                     if (stoppingToken.IsCancellationRequested)
+                    {
+                        // Subtract the produce operations that will never be initiated
+                        Interlocked.Add(ref _pendingProduceOperations, -(outboxMessages.Count - i - 1));
                         break;
+                    }
                 }
             }
             finally
@@ -247,8 +260,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
             var targetEndpoint = outboundRoutes
                 .SelectMany(route => route.GetOutboundRouter(serviceProvider).Endpoints)
-                .FirstOrDefault(
-                    endpoint => endpoint.Name == endpointName || endpoint.DisplayName == endpointName);
+                .FirstOrDefault(endpoint => endpoint.Name == endpointName || endpoint.DisplayName == endpointName);
 
             if (targetEndpoint == null)
             {

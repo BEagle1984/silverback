@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [4.3.1](https://github.com/BEagle1984/silverback/releases/tag/v4.3.1)
+
+### Fixes
+
+* Fix deadlock in `OutboxWorker` when `enforceMessageOrder=true` (default)
+
 ## [4.3.0](https://github.com/BEagle1984/silverback/releases/tag/v4.3.0)
 
 ### What's new

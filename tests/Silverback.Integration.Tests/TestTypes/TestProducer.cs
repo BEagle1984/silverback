@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
@@ -17,6 +18,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestProducer : Producer<TestBroker, TestProducerEndpoint>
     {
+        private int _produceCount;
+
         public TestProducer(
             TestBroker broker,
             TestProducerEndpoint endpoint,
@@ -51,7 +54,7 @@ namespace Silverback.Tests.Integration.TestTypes
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            PerformMockProduce(messageBytes, headers);
             return null;
         }
 
@@ -80,7 +83,7 @@ namespace Silverback.Tests.Integration.TestTypes
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            PerformMockProduce(messageBytes, headers);
             onSuccess.Invoke(null);
         }
 
@@ -101,7 +104,7 @@ namespace Silverback.Tests.Integration.TestTypes
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            PerformMockProduce(messageBytes, headers);
             return Task.FromResult<IBrokerMessageIdentifier?>(null);
         }
 
@@ -128,9 +131,17 @@ namespace Silverback.Tests.Integration.TestTypes
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            PerformMockProduce(messageBytes, headers);
             onSuccess.Invoke(null);
             return Task.CompletedTask;
+        }
+
+        private void PerformMockProduce(byte[]? messageBytes, IReadOnlyCollection<MessageHeader>? headers)
+        {
+            if (Broker.FailProduceNumber != null && Broker.FailProduceNumber.Contains(++_produceCount))
+                throw new InvalidOperationException("Produce failed (mock).");
+
+            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
         }
     }
 }

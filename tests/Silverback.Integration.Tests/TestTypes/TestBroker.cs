@@ -22,6 +22,8 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public bool SimulateConnectIssues { get; set; }
 
+        public IReadOnlyCollection<int>? FailProduceNumber { get; set; }
+
         protected override Task ConnectAsync(
             IReadOnlyCollection<IProducer> producers,
             IReadOnlyCollection<IConsumer> consumers)

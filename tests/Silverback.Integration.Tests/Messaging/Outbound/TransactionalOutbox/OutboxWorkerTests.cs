@@ -167,5 +167,56 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             _broker.ProducedMessages.Should().HaveCount(3);
         }
+
+        [Fact]
+        public async Task ProcessQueue_ProduceError_Retried()
+        {
+            await _outboxWriter.WriteAsync(
+                new TestEventOne { Content = "Test" },
+                null,
+                null,
+                "topic1",
+                "topic1");
+            await _outboxWriter.WriteAsync(
+                new TestEventTwo { Content = "Test" },
+                null,
+                null,
+                "topic2",
+                "topic2");
+            await _outboxWriter.WriteAsync(
+                new TestEventOne { Content = "Test" },
+                null,
+                null,
+                "topic1",
+                "topic1");
+            await _outboxWriter.WriteAsync(
+                new TestEventOne { Content = "Test" },
+                null,
+                null,
+                "topic1",
+                "topic1");
+            await _outboxWriter.CommitAsync();
+
+            _broker.FailProduceNumber = new[] { 2, 3 }; // Note: counter is per producer / topic
+
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+
+            _broker.ProducedMessages.Should().HaveCount(2);
+            _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
+            _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
+
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+
+            _broker.ProducedMessages.Should().HaveCount(2);
+            _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
+            _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
+
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+
+            _broker.ProducedMessages.Should().HaveCount(3);
+            _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
+            _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
+            _broker.ProducedMessages[2].Endpoint.Name.Should().Be("topic1");
+        }
     }
 }
