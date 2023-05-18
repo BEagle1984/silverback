@@ -91,7 +91,22 @@ uid: releases
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
-## [4.2.1](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
+## [4.3.1](https://github.com/BEagle1984/silverback/releases/tag/v4.3.1)
+
+### Fixes
+
+* Fix deadlock in `OutboxWorker` when `enforceMessageOrder=true` (default)
+
+## [4.3.0](https://github.com/BEagle1984/silverback/releases/tag/v4.3.0)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.2.0.706](https://github.com/chkr1011/MQTTnet/releases/tag/v4.2.0.706)
+* Upgrade to [Confluent.Kafka 2.1.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.1)
+* Upgrade to Newtonsoft.Json 13.0.3
+* Add `ReasonCode` and `ReasonString` to `MqttProduceException` message
+
+## [4.2.1](https://github.com/BEagle1984/silverback/releases/tag/v4.2.1)
 
 ### Fixes
 
@@ -99,6 +114,8 @@ The support for RabbitMQ has been deprecated? (...in case explain motivation etc
 * Fix possible deadlock in [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence) with timeout
 
 ## [4.2.0](https://github.com/BEagle1984/silverback/releases/tag/v4.2.0)
+
+### What's new
 
 * Upgrade to [Confluent.Kafka 2.1.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.1.0)
 
