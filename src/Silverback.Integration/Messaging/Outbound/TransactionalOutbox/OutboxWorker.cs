@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         private static async Task AcknowledgeAllAsync(
             IOutboxReader outboxReader,
-            List<OutboxStoredMessage> messages,
+            IEnumerable<OutboxStoredMessage> messages,
             ConcurrentBag<OutboxStoredMessage> failedMessages)
         {
             await outboxReader.RetryAsync(failedMessages).ConfigureAwait(false);
@@ -157,6 +157,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 return;
             }
 
+            var lastProduced = -1;
+
             try
             {
                 Interlocked.Add(ref _pendingProduceOperations, outboxMessages.Count);
@@ -165,34 +167,28 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 {
                     _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
 
-                    try
-                    {
-                        await ProcessMessageAsync(
-                                outboxMessages[i],
-                                failedMessages,
-                                outboxReader,
-                                serviceProvider)
-                            .ConfigureAwait(false);
-                    }
-                    catch (Exception)
-                    {
-                        // Subtract the produce operations that will never be initiated
-                        Interlocked.Add(ref _pendingProduceOperations, -(outboxMessages.Count - i - 1));
-                        throw;
-                    }
+                    lastProduced = i;
+                    await ProcessMessageAsync(
+                            outboxMessages[i],
+                            failedMessages,
+                            outboxReader,
+                            serviceProvider)
+                        .ConfigureAwait(false);
 
                     if (stoppingToken.IsCancellationRequested)
-                    {
-                        // Subtract the produce operations that will never be initiated
-                        Interlocked.Add(ref _pendingProduceOperations, -(outboxMessages.Count - i - 1));
                         break;
-                    }
                 }
             }
             finally
             {
+                if (lastProduced < outboxMessages.Count - 1)
+                {
+                    // Subtract the produce operations that will never be initiated
+                    Interlocked.Add(ref _pendingProduceOperations, -(outboxMessages.Count - lastProduced - 1));
+                }
+
                 await WaitAllAsync().ConfigureAwait(false);
-                await AcknowledgeAllAsync(outboxReader, outboxMessages, failedMessages).ConfigureAwait(false);
+                await AcknowledgeAllAsync(outboxReader, outboxMessages.Take(lastProduced + 1), failedMessages).ConfigureAwait(false);
             }
         }
 

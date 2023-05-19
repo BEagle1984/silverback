@@ -213,10 +213,11 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            _broker.ProducedMessages.Should().HaveCount(3);
+            _broker.ProducedMessages.Should().HaveCount(4);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
             _broker.ProducedMessages[2].Endpoint.Name.Should().Be("topic1");
+            _broker.ProducedMessages[3].Endpoint.Name.Should().Be("topic1");
         }
     }
 }
