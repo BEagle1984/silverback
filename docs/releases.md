@@ -91,6 +91,12 @@ uid: releases
 
 The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
+## [4.3.2](https://github.com/BEagle1984/silverback/releases/tag/v4.3.2)
+
+### Fixes
+
+* Fix potential message loss in `OutboxWorker`
+
 ## [4.3.1](https://github.com/BEagle1984/silverback/releases/tag/v4.3.1)
 
 ### Fixes
