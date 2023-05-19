@@ -8,7 +8,7 @@
     <title>Chunking | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Chunking | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -93,16 +93,16 @@
 </figure>
 <h2 id="producer-configuration">Producer configuration</h2>
 <p>The producer endpoint can be configured to split the message into chunks by specifying their maximum size (in bytes).</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-producer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-producer-fluent" data-tab="kafka-producer-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q_kafka-producer-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-producer-fluent" data-tab="kafka-producer-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-producer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-producer-legacy" data-tab="kafka-producer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q_kafka-producer-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-producer-legacy" data-tab="kafka-producer-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_kafka-producer-fluent" role="tabpanel" data-tab="kafka-producer-fluent">
+<section id="tabpanel_CeZOj-G++Q_kafka-producer-fluent" role="tabpanel" data-tab="kafka-producer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -120,7 +120,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_kafka-producer-legacy" role="tabpanel" data-tab="kafka-producer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_kafka-producer-legacy" role="tabpanel" data-tab="kafka-producer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -159,7 +159,7 @@
 <p>Some chunks sequences may be incomplete because either the producer failed to publish all chunks or the consumer started consuming from the middle of a sequence. In both cases Silverback will silently ignore the incomplete sequences and log a warning.</p>
 <h3 id="limitations">Limitations</h3>
 <p>As mentioned already, the chunks have to be written to the same partition and have to be contiguous. This is by design.</p>
-<p>Another limitation is that the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.</p>
+<p>Another limitation is that the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.</p>
 <h2 id="headers">Headers</h2>
 <p>Some headers are used to describe the chunks sequence. See <a class="xref" href="headers.html">Message Headers</a> for details.</p>
 <h2 id="samples">Samples</h2>

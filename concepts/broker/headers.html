@@ -8,7 +8,7 @@
     <title>Message Headers | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Message Headers | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -89,25 +89,25 @@
 <h2 id="custom-headers">Custom headers</h2>
 <p>There are multiple ways to add custom headers to an outbound message:</p>
 <ul>
-<li>adding an enricher to the <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></li>
-<li>annotating some properties with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>, as shown in the next chapter.</li>
-<li>using a custom <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> can be implemented, as shown in the <a class="xref" href="../bus/behaviors.html">Behaviors</a> and <a class="xref" href="behaviors.html">Broker behaviors pipeline</a> sections.</li>
+<li>adding an enricher to the &lt;xref:Silverback.Messaging.IProducerEndpoint&gt;</li>
+<li>annotating some properties with the &lt;xref:Silverback.Messaging.Messages.HeaderAttribute&gt;, as shown in the next chapter.</li>
+<li>using a custom &lt;xref:Silverback.Messaging.Publishing.IBehavior&gt; or &lt;xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior&gt; can be implemented, as shown in the <a class="xref" href="../bus/behaviors.html">Behaviors</a> and <a class="xref" href="behaviors.html">Broker behaviors pipeline</a> sections.</li>
 </ul>
 <div class="WARNING">
 <h5>Warning</h5>
 <p>Some message broker implementations might not support headers and Silverback doesn't currently provide any workaround, thus the headers will simply be ignored.</p>
 </div>
 <h3 id="using-enrichers">Using enrichers</h3>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_enrichers-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_enrichers-fluent" data-tab="enrichers-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q_enrichers-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_enrichers-fluent" data-tab="enrichers-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_enrichers-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_enrichers-legacy" data-tab="enrichers-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q_enrichers-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_enrichers-legacy" data-tab="enrichers-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_enrichers-fluent" role="tabpanel" data-tab="enrichers-fluent">
+<section id="tabpanel_CeZOj-G++Q_enrichers-fluent" role="tabpanel" data-tab="enrichers-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -129,7 +129,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_enrichers-legacy" role="tabpanel" data-tab="enrichers-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_enrichers-legacy" role="tabpanel" data-tab="enrichers-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -157,7 +157,7 @@
 </section>
 </div>
 <h3 id="using-headerattribute">Using HeaderAttribute</h3>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> usage is very simple: you just have to decorate the properties you want to publish as headers and specify a name for the header.</p>
+<p>The &lt;xref:Silverback.Messaging.Messages.HeaderAttribute&gt; usage is very simple: you just have to decorate the properties you want to publish as headers and specify a name for the header.</p>
 <p>The headers value will also automatically be mapped back to the property upon consuming if the property declares a setter.</p>
 <pre><code class="lang-csharp">using Silverback.Messaging.Messages;
 
@@ -182,11 +182,11 @@ namespace Sample
 <div class="NOTE">
 <h5>Note</h5>
 <p>The <code>PublishDefaultValue</code> boolean property defines whether the header has to be published even if the property is set to the default value for its data type. The default is <code>false</code>.</p>
-<p>Note that the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.json.serialization.jsonignoreattribute">JsonIgnoreAttribute</a> can be used to prevent the same properties to be serialized in the JSON body, when using the <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
+<p>Note that the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.json.serialization.jsonignoreattribute">JsonIgnoreAttribute</a> can be used to prevent the same properties to be serialized in the JSON body, when using the &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt;.</p>
 </div>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>Only the message type will be scanned, therefore the properties decorated with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> must be in the root of the message object.</p>
+<p>Only the message type will be scanned, therefore the properties decorated with the &lt;xref:Silverback.Messaging.Messages.HeaderAttribute&gt; must be in the root of the message object.</p>
 </div>
 <h2 id="default-headers">Default headers</h2>
 <p>Silverback will add some headers to the produced messages. They may vary depending on the scenario.
@@ -205,7 +205,7 @@ Here is the list of the default headers that may be sent.</p>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-message-type</code></td>
-<td style="text-align: left;">The assembly qualified name of the message type. Used by the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</td>
+<td style="text-align: left;">The assembly qualified name of the message type. Used by the default &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt;.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-failed-attempts</code></td>
@@ -229,11 +229,11 @@ Here is the list of the default headers that may be sent.</p>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-first-chunk-offset</code></td>
-<td style="text-align: left;">The <a class="xref" href="../../api/Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a> value of the first chunk of the same message, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
+<td style="text-align: left;">The &lt;xref:Silverback.Messaging.Broker.IBrokerMessageOffset&gt; value of the first chunk of the same message, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>traceparent</code></td>
-<td style="text-align: left;">Used for distributed tracing. It is set by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> using the current <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.Id</a>. The <a class="xref" href="../../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> uses it's value to set the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.ParentId</a>. Note that an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> is automatically started by the default <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation. The header is implemented according to the <a href="https://www.w3.org/TR/trace-context-1/#traceparent-header">W3C Trace Context proposal</a>.</td>
+<td style="text-align: left;">Used for distributed tracing. It is set by the &lt;xref:Silverback.Messaging.Broker.IProducer&gt; using the current <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.Id</a>. The &lt;xref:Silverback.Messaging.Broker.IConsumer&gt; uses it's value to set the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.ParentId</a>. Note that an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> is automatically started by the default &lt;xref:Silverback.Messaging.Broker.IProducer&gt; implementation. The header is implemented according to the <a href="https://www.w3.org/TR/trace-context-1/#traceparent-header">W3C Trace Context proposal</a>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>tracestate</code></td>
@@ -245,11 +245,11 @@ Here is the list of the default headers that may be sent.</p>
 </tr>
 <tr>
 <td style="text-align: left;"><code>content-type</code></td>
-<td style="text-align: left;">The content type of the <a class="xref" href="binary-files.html">binary file</a>, used when producing or consuming an <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a>.</td>
+<td style="text-align: left;">The content type of the <a class="xref" href="binary-files.html">binary file</a>, used when producing or consuming an &lt;xref:Silverback.Messaging.Messages.IBinaryFileMessage&gt;.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-failure-reason</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the reason why the message failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the reason why the message failed to be processed.</td>
 </tr>
 </tbody>
 </table>
@@ -272,27 +272,27 @@ Here is the list of the default headers that may be sent.</p>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-source-consumer-group-id</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the GroupId the consumer that consumed the message that failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the GroupId the consumer that consumed the message that failed to be processed.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-source-topic</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the source topic of the message that failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the source topic of the message that failed to be processed.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-source-partition</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the source partition of the message that failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the source partition of the message that failed to be processed.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-source-offset</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the offset of the message that failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the offset of the message that failed to be processed.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>x-source-timestamp</code></td>
-<td style="text-align: left;">The header that will be set by the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> and will contain the timestamp of the message that failed to be processed.</td>
+<td style="text-align: left;">The header that will be set by the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; and will contain the timestamp of the message that failed to be processed.</td>
 </tr>
 </tbody>
 </table>
-<p>The static classes <a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.KafkaMessageHeaders.html">KafkaMessageHeaders</a> contain all default header names constants.</p>
+<p>The static classes &lt;xref:Silverback.Messaging.Messages.DefaultMessageHeaders&gt; and &lt;xref:Silverback.Messaging.Messages.KafkaMessageHeaders&gt; contain all default header names constants.</p>
 <h2 id="customizing-header-names">Customizing header names</h2>
 <p>The default header names can be overridden using the <code>WithCustomHeaderName</code> configuration method.</p>
 <pre><code class="lang-csharp">public class Startup

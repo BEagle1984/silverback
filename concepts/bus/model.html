@@ -8,7 +8,7 @@
     <title>Creating the Message model | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Creating the Message model | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -97,7 +97,7 @@
 <h2 id="silverbackcoremodel">Silverback.Core.Model</h2>
 <p>A hierarchy of interfaces is available in <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> to help specify the meaning of each message and produce in better, cleaner and more readable code.</p>
 <p>The <em>internal messages</em> are being sent through the internal in-memory bus and don't leave the service scope, while the <em>integration messages</em> are those messages exchanged between different microservices, through a message broker like Apache Kafka or RabbitMQ.</p>
-<p>Event though strongly suggested, it's not mandatory to use the proposed hierarchy from <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> and everything can be achieved using POCO classes as messages and using the generic <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to publish them.</p>
+<p>Event though strongly suggested, it's not mandatory to use the proposed hierarchy from <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> and everything can be achieved using POCO classes as messages and using the generic &lt;xref:Silverback.Messaging.Publishing.IPublisher&gt; to publish them.</p>
 <p>In the following chapters you will find an overview of the different message types and their meaning but first of all we need to reference the <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> package and register it with the dependency injection.</p>
 <pre><code class="lang-csharp">public class Startup
 {
@@ -108,23 +108,23 @@
 }
 </code></pre>
 <h3 id="internal-messages">Internal Messages</h3>
-<p>This messages can be used internally to the microservice bus but cannot be relayed to the message broker. See <a class="xref" href="../broker/translating-messages.html">Translating Messages</a> for a convenient way to map the internal message to an <a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a>.</p>
+<p>This messages can be used internally to the microservice bus but cannot be relayed to the message broker. See <a class="xref" href="../broker/translating-messages.html">Translating Messages</a> for a convenient way to map the internal message to an &lt;xref:Silverback.Messaging.Messages.IIntegrationMessage&gt;.</p>
 <h4 id="events">Events</h4>
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a> is to be used to notify thing that happened inside a service and may be of some interest for one or more other service. The events are a fire-and-forget message type and no response is expected.</p>
-<p>The <a class="xref" href="../../api/Silverback.Domain.IDomainEvent.html">IDomainEvent</a> and <a class="xref" href="../../api/Silverback.Domain.IDomainEvent-1.html">IDomainEvent&lt;TEntity&gt;</a> extend <a class="xref" href="../../api/Silverback.Messaging.Messages.IEvent.html">IEvent</a> and the types implementing this interface are usually published only from within the domain entities (actually adding them to the internal collection and letting them be published during the save changes transaction). See also <a class="xref" href="../domain-events.html">DDD and Domain Events</a>.</p>
+<p>&lt;xref:Silverback.Messaging.Messages.IEvent&gt; is to be used to notify thing that happened inside a service and may be of some interest for one or more other service. The events are a fire-and-forget message type and no response is expected.</p>
+<p>The &lt;xref:Silverback.Domain.IDomainEvent&gt; and &lt;xref:Silverback.Domain.IDomainEvent`1&gt; extend &lt;xref:Silverback.Messaging.Messages.IEvent&gt; and the types implementing this interface are usually published only from within the domain entities (actually adding them to the internal collection and letting them be published during the save changes transaction). See also <a class="xref" href="../domain-events.html">DDD and Domain Events</a>.</p>
 <h4 id="commands">Commands</h4>
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand.html">ICommand</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a> are used to trigger an action in another service or component and are therefore very specific and usually consumed by one single subscriber. This messages can return a value (of type TResult).</p>
+<p>&lt;xref:Silverback.Messaging.Messages.ICommand&gt; or &lt;xref:Silverback.Messaging.Messages.ICommand`1&gt; are used to trigger an action in another service or component and are therefore very specific and usually consumed by one single subscriber. This messages can return a value (of type TResult).</p>
 <h4 id="queries">Queries</h4>
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> works exactly like <a class="xref" href="../../api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>. This messages are obviously always returning something since they represent a request for data (query).</p>
+<p>&lt;xref:Silverback.Messaging.Messages.IQuery`1&gt; works exactly like &lt;xref:Silverback.Messaging.Messages.ICommand`1&gt;. This messages are obviously always returning something since they represent a request for data (query).</p>
 <h3 id="integration-messages">Integration messages</h3>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a> interface identifies those messages that are either published to the message broker or received through it.</p>
-<p>Note that <a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a> implements <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessage.html">IMessage</a>, obviously.</p>
+<p>The &lt;xref:Silverback.Messaging.Messages.IIntegrationMessage&gt; interface identifies those messages that are either published to the message broker or received through it.</p>
+<p>Note that &lt;xref:Silverback.Messaging.Messages.IIntegrationMessage&gt; implements &lt;xref:Silverback.Messaging.Messages.IMessage&gt;, obviously.</p>
 <h4 id="integration-event">Integration Event</h4>
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationEvent.html">IIntegrationEvent</a> can be used to export events to other microservices or, more generally, other applications.</p>
-<p><a class="xref" href="../../api/Silverback.Messaging.Publishing.IEventPublisher.html">IEventPublisher</a> can be used to publish these events and they will automatically be routed to the message broker if an outbound connector was properly configured. See <a class="xref" href="../broker/connecting.html">Connecting to a Message Broker</a> for details.</p>
+<p>&lt;xref:Silverback.Messaging.Messages.IIntegrationEvent&gt; can be used to export events to other microservices or, more generally, other applications.</p>
+<p>&lt;xref:Silverback.Messaging.Publishing.IEventPublisher&gt; can be used to publish these events and they will automatically be routed to the message broker if an outbound connector was properly configured. See <a class="xref" href="../broker/connecting.html">Connecting to a Message Broker</a> for details.</p>
 <h4 id="integration-command">Integration Command</h4>
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IIntegrationCommand.html">IIntegrationCommand</a> is used to trigger an action on another microservices (or application).</p>
-<p><a class="xref" href="../../api/Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a> can be used to publish these messages and they will automatically be routed to the message broker if an outbound connector was properly configured. See <a class="xref" href="../broker/connecting.html">Connecting to a Message Broker</a> for details.</p>
+<p>&lt;xref:Silverback.Messaging.Messages.IIntegrationCommand&gt; is used to trigger an action on another microservices (or application).</p>
+<p>&lt;xref:Silverback.Messaging.Publishing.ICommandPublisher&gt; can be used to publish these messages and they will automatically be routed to the message broker if an outbound connector was properly configured. See <a class="xref" href="../broker/connecting.html">Connecting to a Message Broker</a> for details.</p>
 </article>
           </div>
           

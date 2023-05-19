@@ -8,7 +8,7 @@
     <title>Encryption | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Encryption | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -93,16 +93,16 @@
 </figure>
 <h2 id="symmetric-encryption">Symmetric encryption</h2>
 <p>Enabling the end-to-end encryption using a symmetric algorithm just require an extra configuration in the endpoint.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
+<section id="tabpanel_CeZOj-G++Q_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -126,7 +126,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -164,7 +164,7 @@
 </section>
 </div>
 
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html">SymmetricEncryptionSettings</a> class encapsulates all common settings of a symmetric algorithm (block size, initialization vector, ...).</p>
+<p>The &lt;xref:Silverback.Messaging.Encryption.SymmetricEncryptionSettings&gt; class encapsulates all common settings of a symmetric algorithm (block size, initialization vector, ...).</p>
 <p>The <code>AlgorithmName</code> is used to load the algorithm implementation using the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm.create">SymmetricAlgorithm.Create(string)</a> method. Refer to the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm">SymmetricAlgorithm</a> class documentation to see which implementations are available in .net core are. Silverback uses <a href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes">Aes</a> by default.</p>
 <h3 id="random-initialization-vector">Random initialization vector</h3>
 <p>If no static initialization vector is provided, a random one is automatically generated per each message and prepended to the actual encrypted message. The consumer will automatically extract and use it.</p>
@@ -172,16 +172,16 @@
 <h3 id="ket-rotation">Ket rotation</h3>
 <p>You can smoothly rotate the key being used to encrypt the messages.</p>
 <p>In the outbound endpoint you can specify the current key identifier to be submitted as header, while in the inbound endpoint a custom function can be used to provide the correct key, depending on the value in the header. This simple mechanism allows to consume messages that were encrypted using different keys, enabling key rotation and supporting a rolling update of the producers.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q-1_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q-1_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
+<section id="tabpanel_CeZOj-G++Q-1_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -214,7 +214,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {

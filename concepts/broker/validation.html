@@ -8,7 +8,7 @@
     <title>Message Validation | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Message Validation | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.56.5.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -89,7 +89,7 @@
 <p>Both the consumed and produced messages are being validated using the same mechanism implemented in the asp.net controllers.</p>
 <p>You can either decorate the message model with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">System.ComponentModel.DataAnnotations.ValidationAttribute</a> standard implementations, create your own attributes (extending <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">ValidationAttribute</a>) or otherwise you can implement the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject">IValidatableObject</a> interface in your message model.</p>
 <h2 id="configuration">Configuration</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a> can be configured per endpoint and has 3 values:</p>
+<p>The &lt;xref:Silverback.Messaging.Validation.MessageValidationMode&gt; can be configured per endpoint and has 3 values:</p>
 <ul>
 <li><code>LogWarning</code> (default): a warning is logged if the message is not valid</li>
 <li><code>ThrowException</code>: an exception is thrown if the message is not valid</li>
@@ -97,7 +97,7 @@
 </ul>
 <div class="NOTE">
 <h5>Note</h5>
-<p>If an invalid message is produced, the <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationException.html">MessageValidationException</a> will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
+<p>If an invalid message is produced, the &lt;xref:Silverback.Messaging.Validation.MessageValidationException&gt; will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
 <p>In the consumer it will instead be handled like any other exception, according to the configured policies, or leading to the consumer being stopped.</p>
 </div>
 <div class="WARNING">
@@ -105,16 +105,16 @@
 <p>The validation might have a - relatively speaking - big impact on the performance, depending on the object size, the number of validations to be performed and their complexity.</p>
 <p>You might want to consider disabling the validation, if performance is a critical concern in your use case.</p>
 </div>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_fluent" data-tab="fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q_fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_fluent" data-tab="fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_legacy" data-tab="legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q_legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_legacy" data-tab="legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_fluent" role="tabpanel" data-tab="fluent">
+<section id="tabpanel_CeZOj-G++Q_fluent" role="tabpanel" data-tab="fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -138,7 +138,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_legacy" role="tabpanel" data-tab="legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q_legacy" role="tabpanel" data-tab="legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
