@@ -19,13 +19,11 @@ namespace Silverback.Messaging.Broker.Mqtt
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly MqttClientWrapper _mqttClientWrapper;
 
+        private readonly MqttConsumerEndpoint _endpoint;
+
         private readonly IInboundLogger<IConsumer> _logger;
 
-        // The parallelism is currently fixed to 1 but could be made configurable for QoS=0.
-        // QoS=1+ requires the acks to come in the right order so better not mess with it (in the normal case
-        // the broker doesn't even send the next message before the ack is received and increasing this value
-        // will only cause trouble in edge cases like ack timeouts).
-        private readonly SemaphoreSlim _parallelismLimiterSemaphoreSlim = new(1, 1);
+        private readonly SemaphoreSlim _parallelismLimiterSemaphoreSlim;
 
         private Channel<ConsumedApplicationMessage> _channel;
 
@@ -35,12 +33,15 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public ConsumerChannelManager(
             MqttClientWrapper mqttClientWrapper,
+            MqttConsumerEndpoint endpoint,
             IInboundLogger<IConsumer> logger)
         {
             _mqttClientWrapper = Check.NotNull(mqttClientWrapper, nameof(mqttClientWrapper));
+            _endpoint = Check.NotNull(endpoint, nameof(endpoint));
             _logger = Check.NotNull(logger, nameof(logger));
 
             _channel = CreateBoundedChannel();
+            _parallelismLimiterSemaphoreSlim = new SemaphoreSlim(endpoint.MaxDegreeOfParallelism, endpoint.MaxDegreeOfParallelism);
 
             _readCancellationTokenSource = new CancellationTokenSource();
             _readTaskCompletionSource = new TaskCompletionSource<bool>();
@@ -87,17 +88,12 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public async Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
-            var receivedMessage = new ConsumedApplicationMessage(eventArgs.ApplicationMessage);
+            var receivedMessage = new ConsumedApplicationMessage(eventArgs);
 
             _logger.LogConsuming(receivedMessage, Consumer!);
 
+            eventArgs.AutoAcknowledge = false;
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
-
-            // Wait until the processing is over, including retries
-            while (!await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
-            {
-                await Task.Delay(10).ConfigureAwait(false);
-            }
         }
 
         public void Dispose()
@@ -108,8 +104,8 @@ namespace Silverback.Messaging.Broker.Mqtt
             _parallelismLimiterSemaphoreSlim.Dispose();
         }
 
-        private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
-            Channel.CreateBounded<ConsumedApplicationMessage>(10);
+        private Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
+            Channel.CreateBounded<ConsumedApplicationMessage>(_endpoint.BackpressureLimit);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ReadChannelAsync()
@@ -150,6 +146,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             _logger.LogConsumerLowLevelTrace(Consumer, "Exited channel processing loop.");
         }
 
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ReadChannelOnceAsync()
         {
             _readCancellationTokenSource.Token.ThrowIfCancellationRequested();
@@ -162,14 +159,35 @@ namespace Silverback.Messaging.Broker.Mqtt
             await _parallelismLimiterSemaphoreSlim.WaitAsync(_readCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
-            try
-            {
-                await HandleMessageAsync(consumedMessage).ConfigureAwait(false);
-            }
-            finally
-            {
-                _parallelismLimiterSemaphoreSlim.Release();
-            }
+            Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        await HandleMessageAsync(consumedMessage).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Ignore
+                        _logger.LogConsumerLowLevelTrace(
+                            Consumer,
+                            "Exiting channel processing loop (operation canceled).");
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is not ConsumerPipelineFatalException)
+                            _logger.LogConsumerFatalError(Consumer, ex);
+
+                        IsReading = false;
+                        _readTaskCompletionSource.TrySetResult(false);
+
+                        await _mqttClientWrapper.Consumer!.DisconnectAsync().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        _parallelismLimiterSemaphoreSlim.Release();
+                    }
+                }).FireAndForget();
         }
 
         private async Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
@@ -180,7 +198,10 @@ namespace Silverback.Messaging.Broker.Mqtt
                 await _mqttClientWrapper.HandleMessageAsync(consumedMessage).ConfigureAwait(false);
 
                 if (await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
+                {
+                    await consumedMessage.EventArgs.AcknowledgeAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
                     break;
+                }
 
                 consumedMessage.TaskCompletionSource = new TaskCompletionSource<bool>();
             }

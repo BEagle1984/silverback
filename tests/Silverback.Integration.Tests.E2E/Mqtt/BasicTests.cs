@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -39,8 +40,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)))
@@ -83,8 +83,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker")
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)))
@@ -133,8 +132,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)))
@@ -148,10 +146,8 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header", "Hello header!"));
-            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header2", "False"));
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "Hello header!"));
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", "False"));
         }
 
         [Fact]
@@ -173,8 +169,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker")
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -217,6 +212,67 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
 
             client1MessagesCount.Should().Be(5);
             client2MessagesCount.Should().Be(5);
+        }
+
+        [Fact]
+        public async Task Inbound_WithLimitedParallelism_ConcurrencyLimited()
+        {
+            var receivedMessages = new List<TestEventOne>();
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .UseProtocolVersion(MqttProtocolVersion.V311))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(config => config.WithClientId("client1"))
+                                        .LimitParallelism(2)))
+                        .AddDelegateSubscriber(
+                            async (TestEventOne message) =>
+                            {
+                                lock (receivedMessages)
+                                {
+                                    receivedMessages.Add(message);
+                                }
+
+                                await taskCompletionSource.Task;
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 12; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne());
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
+            await Task.Delay(100);
+
+            try
+            {
+                receivedMessages.Should().HaveCount(2);
+            }
+            finally
+            {
+                taskCompletionSource.SetResult(true);
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedMessages.Should().HaveCount(12);
         }
     }
 }

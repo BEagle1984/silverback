@@ -63,25 +63,32 @@ namespace Silverback.Messaging.Broker
                 .GetRequiredService<IMqttClientsCache>()
                 .GetClient(this);
 
-            _channelManager = new ConsumerChannelManager(_clientWrapper, logger);
+            _channelManager = new ConsumerChannelManager(_clientWrapper, endpoint, logger);
         }
 
         internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
         {
             var headers = Endpoint.Configuration.AreHeadersSupported
-                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
+                ? new MessageHeaderCollection(message.EventArgs.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
                 : new MessageHeaderCollection();
 
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
-            // If another message is still pending, cancel it's task (might happen in case of timeout)
+            // If the same message is still pending, wait for the processing task to complete
+            // (avoid issues when retrying the same message by moving to the same topic)
             if (!_inProcessingMessages.TryAdd(message.Id, message))
-                throw new InvalidOperationException("The message has been processed already.");
+            {
+                if (_inProcessingMessages.TryGetValue(message.Id, out var inProcessingMessage))
+                    await inProcessingMessage.TaskCompletionSource.Task.ConfigureAwait(false);
+
+                if (!_inProcessingMessages.TryAdd(message.Id, message))
+                    throw new InvalidOperationException("The message has been processed already.");
+            }
 
             await HandleMessageAsync(
-                    message.ApplicationMessage.PayloadSegment.ToArray(),
+                    message.EventArgs.ApplicationMessage.PayloadSegment.ToArray(),
                     headers,
-                    message.ApplicationMessage.Topic,
+                    message.EventArgs.ApplicationMessage.Topic,
                     new MqttMessageIdentifier(Endpoint.Configuration.ClientId, message.Id))
                 .ConfigureAwait(false);
         }
@@ -140,13 +147,11 @@ namespace Silverback.Messaging.Broker
         protected override Task WaitUntilConsumingStoppedCoreAsync() => _channelManager.Stopping;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />
-        protected override Task CommitCoreAsync(
-            IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
+        protected override Task CommitCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
             SetProcessingCompletedAsync(brokerMessageIdentifiers, true);
 
         /// <inheritdoc cref="Consumer.RollbackCoreAsync" />
-        protected override Task RollbackCoreAsync(
-            IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
             SetProcessingCompletedAsync(brokerMessageIdentifiers, false);
 
         /// <inheritdoc cref="Consumer.Dispose(bool)" />

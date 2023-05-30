@@ -79,5 +79,29 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttConsumerEndpointBuilder WithExactlyOnceQoS();
+
+        /// <summary>
+        ///     Sets the maximum number of incoming message that can be processed concurrently.
+        ///     The default limit is 10.
+        /// </summary>
+        /// <param name="maxDegreeOfParallelism">
+        ///     The maximum number of incoming message that can be processed concurrently.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder LimitParallelism(int maxDegreeOfParallelism);
+
+        /// <summary>
+        ///     Sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+        ///     The default limit is 10.
+        /// </summary>
+        /// <param name="backpressureLimit">
+        ///     The maximum number of messages to be enqueued.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder LimitBackpressure(int backpressureLimit);
     }
 }

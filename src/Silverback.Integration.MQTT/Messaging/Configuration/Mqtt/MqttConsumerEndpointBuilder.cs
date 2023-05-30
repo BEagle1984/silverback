@@ -17,6 +17,10 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         private MqttQualityOfServiceLevel? _qualityOfServiceLevel;
 
+        private int? _maxDegreeOfParallelism;
+
+        private int? _backpressureLimit;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttConsumerEndpointBuilder" /> class.
         /// </summary>
@@ -105,6 +109,22 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.LimitParallelism" />
+        public IMqttConsumerEndpointBuilder LimitParallelism(int maxDegreeOfParallelism)
+        {
+            _maxDegreeOfParallelism = maxDegreeOfParallelism;
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.LimitBackpressure" />
+        public IMqttConsumerEndpointBuilder LimitBackpressure(int backpressureLimit)
+        {
+            _backpressureLimit = backpressureLimit;
+
+            return this;
+        }
+
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override MqttConsumerEndpoint CreateEndpoint()
         {
@@ -115,6 +135,12 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
             if (_qualityOfServiceLevel != null)
                 endpoint.QualityOfServiceLevel = _qualityOfServiceLevel.Value;
+
+            if (_maxDegreeOfParallelism != null)
+                endpoint.MaxDegreeOfParallelism = _maxDegreeOfParallelism.Value;
+
+            if (_backpressureLimit != null)
+                endpoint.BackpressureLimit = _backpressureLimit.Value;
 
             return endpoint;
         }

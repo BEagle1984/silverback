@@ -5,23 +5,24 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Client;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Mqtt
 {
     internal sealed class ConsumedApplicationMessage
     {
-        public ConsumedApplicationMessage(MqttApplicationMessage applicationMessage)
+        public ConsumedApplicationMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
-            ApplicationMessage = applicationMessage;
-            Id = applicationMessage.UserProperties
+            EventArgs = eventArgs;
+            Id = eventArgs.ApplicationMessage.UserProperties
                      ?.FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageId)?.Value
                  ?? Guid.NewGuid().ToString();
         }
 
         public string Id { get; }
 
-        public MqttApplicationMessage ApplicationMessage { get; }
+        public MqttApplicationMessageReceivedEventArgs EventArgs { get; }
 
         public TaskCompletionSource<bool> TaskCompletionSource { get; set; } = new();
     }

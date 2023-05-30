@@ -56,8 +56,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -79,8 +78,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -105,8 +103,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker")
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -146,8 +143,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -192,8 +188,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -237,8 +232,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -284,8 +278,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -386,8 +379,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -481,8 +473,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
                 .NotBeEquivalentTo(rawMessageStream.ReReadAll());
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -505,17 +496,13 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .OnError(
-                                            policy => policy.MoveToMqttTopic(
-                                                moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
+                                        .OnError(policy => policy.MoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
                         .AddIntegrationSpy()
-                        .AddDelegateSubscriber(
-                            (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
+                        .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -557,8 +544,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -580,11 +566,12 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
+            await Task.Delay(1000);
+
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -608,16 +595,14 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     config => config
                                         .WithClientId("e2e-test")
                                         .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(
                                             policy => policy
                                                 .Retry(1)
-                                                .ThenMoveToMqttTopic(
-                                                    moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
+                                                .ThenMoveToMqttTopic(moveEndpoint => moveEndpoint.ProduceTo("e2e/other")))))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>

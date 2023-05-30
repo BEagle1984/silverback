@@ -51,6 +51,18 @@ namespace Silverback.Messaging
         /// </summary>
         public MqttQualityOfServiceLevel QualityOfServiceLevel { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the maximum number of incoming message that can be processed concurrently.
+        ///     The default is 10.
+        /// </summary>
+        public int MaxDegreeOfParallelism { get; set; } = 10;
+
+        /// <summary>
+        ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+        ///     The default is 10.
+        /// </summary>
+        public int BackpressureLimit { get; set; } = 1;
+
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
@@ -81,6 +93,12 @@ namespace Silverback.Messaging
             }
 
             Configuration.Validate();
+
+            if (MaxDegreeOfParallelism < 1)
+                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
+
+            if (BackpressureLimit < 1)
+                throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
         }
 
         /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />

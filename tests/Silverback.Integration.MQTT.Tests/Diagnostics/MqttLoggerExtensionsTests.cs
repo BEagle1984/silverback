@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -69,14 +70,18 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
 
             _silverbackLogger.LogConsuming(
                 new ConsumedApplicationMessage(
-                    new MqttApplicationMessage
-                    {
-                        Topic = "actual",
-                        UserProperties = new List<MqttUserProperty>
+                    new MqttApplicationMessageReceivedEventArgs(
+                        "client1",
+                        new MqttApplicationMessage
                         {
-                            new(DefaultMessageHeaders.MessageId, "123")
-                        }
-                    }),
+                            Topic = "actual",
+                            UserProperties = new List<MqttUserProperty>
+                            {
+                                new(DefaultMessageHeaders.MessageId, "123")
+                            }
+                        },
+                        new MqttPublishPacket(),
+                        (_, _) => Task.CompletedTask)),
                 consumer);
 
             _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 4011);

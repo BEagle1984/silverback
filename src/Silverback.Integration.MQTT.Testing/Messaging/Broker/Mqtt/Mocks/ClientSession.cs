@@ -127,16 +127,18 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     ClientOptions.ClientId,
                     message,
                     new MqttPublishPacket(),
-                    (_, _) => Task.CompletedTask);
+                    (args, _) =>
+                    {
+                        if (!args.AutoAcknowledge)
+                            Interlocked.Decrement(ref _pendingMessagesCount);
 
-                Task messageHandlingTask =
-                    MockedMqttClient.HandleMessageAsync(eventArgs)
-                        .ContinueWith(
-                            _ => Interlocked.Decrement(ref _pendingMessagesCount),
-                            TaskScheduler.Default);
+                        return Task.CompletedTask;
+                    });
 
-                if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
-                    await messageHandlingTask.ConfigureAwait(false);
+                await MockedMqttClient.HandleMessageAsync(eventArgs).ConfigureAwait(false);
+
+                if (eventArgs.AutoAcknowledge)
+                    Interlocked.Decrement(ref _pendingMessagesCount);
             }
         }
 

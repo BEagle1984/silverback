@@ -52,9 +52,9 @@ namespace Silverback.Diagnostics
             ConsumingMessage(
                 logger.InnerLogger,
                 applicationMessage.Id,
-                applicationMessage.ApplicationMessage.Topic,
+                applicationMessage.EventArgs.ApplicationMessage.Topic,
                 consumer.Id,
-                applicationMessage.ApplicationMessage.Topic,
+                applicationMessage.EventArgs.ApplicationMessage.Topic,
                 null);
 
         public static void LogConnectError(
