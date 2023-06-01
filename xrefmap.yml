@@ -21403,6 +21403,32 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.ConsumeFrom
   nameWithType: IMqttConsumerEndpointBuilder.ConsumeFrom
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  name: LimitBackpressure(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder_LimitBackpressure_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  nameWithType: IMqttConsumerEndpointBuilder.LimitBackpressure(Int32)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure*
+  name: LimitBackpressure
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder_LimitBackpressure_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitBackpressure
+  nameWithType: IMqttConsumerEndpointBuilder.LimitBackpressure
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  name: LimitParallelism(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder_LimitParallelism_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  nameWithType: IMqttConsumerEndpointBuilder.LimitParallelism(Int32)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism*
+  name: LimitParallelism
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder_LimitParallelism_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.LimitParallelism
+  nameWithType: IMqttConsumerEndpointBuilder.LimitParallelism
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.WithAtLeastOnceQoS
   name: WithAtLeastOnceQoS()
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder_WithAtLeastOnceQoS
@@ -23040,6 +23066,32 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.CreateEndpoint
   nameWithType: MqttConsumerEndpointBuilder.CreateEndpoint
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  name: LimitBackpressure(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder_LimitBackpressure_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure(System.Int32)
+  nameWithType: MqttConsumerEndpointBuilder.LimitBackpressure(Int32)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure*
+  name: LimitBackpressure
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder_LimitBackpressure_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitBackpressure
+  nameWithType: MqttConsumerEndpointBuilder.LimitBackpressure
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  name: LimitParallelism(Int32)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder_LimitParallelism_System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism(System.Int32)
+  nameWithType: MqttConsumerEndpointBuilder.LimitParallelism(Int32)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism*
+  name: LimitParallelism
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder_LimitParallelism_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.LimitParallelism
+  nameWithType: MqttConsumerEndpointBuilder.LimitParallelism
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.This
   name: This
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder_This
@@ -29920,6 +29972,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.MqttConsumerEndpoint.MqttConsumerEndpoint
   nameWithType: MqttConsumerEndpoint.MqttConsumerEndpoint
+- uid: Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit
+  name: BackpressureLimit
+  href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_BackpressureLimit
+  commentId: P:Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit
+  fullName: Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit
+  nameWithType: MqttConsumerEndpoint.BackpressureLimit
+- uid: Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit*
+  name: BackpressureLimit
+  href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_BackpressureLimit_
+  commentId: Overload:Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit
+  isSpec: "True"
+  fullName: Silverback.Messaging.MqttConsumerEndpoint.BackpressureLimit
+  nameWithType: MqttConsumerEndpoint.BackpressureLimit
 - uid: Silverback.Messaging.MqttConsumerEndpoint.Configuration
   name: Configuration
   href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_Configuration
@@ -29978,6 +30043,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.MqttConsumerEndpoint.GetUniqueConsumerGroupName
   nameWithType: MqttConsumerEndpoint.GetUniqueConsumerGroupName
+- uid: Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism
+  name: MaxDegreeOfParallelism
+  href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_MaxDegreeOfParallelism
+  commentId: P:Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism
+  fullName: Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism
+  nameWithType: MqttConsumerEndpoint.MaxDegreeOfParallelism
+- uid: Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism*
+  name: MaxDegreeOfParallelism
+  href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_MaxDegreeOfParallelism_
+  commentId: Overload:Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism
+  isSpec: "True"
+  fullName: Silverback.Messaging.MqttConsumerEndpoint.MaxDegreeOfParallelism
+  nameWithType: MqttConsumerEndpoint.MaxDegreeOfParallelism
 - uid: Silverback.Messaging.MqttConsumerEndpoint.QualityOfServiceLevel
   name: QualityOfServiceLevel
   href: api/Silverback.Messaging.MqttConsumerEndpoint.html#Silverback_Messaging_MqttConsumerEndpoint_QualityOfServiceLevel
