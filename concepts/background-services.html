@@ -8,7 +8,7 @@
     <title>Distributed Background Services | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Distributed Background Services | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -86,9 +86,9 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="distributed-background-services">Distributed Background Services</h1>
 
-<p>To implement the &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService&gt; we had to create a database based locking mechanism, to ensure that only a single instance of our worker was running. You can take advantage of this implementation to build your <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a>.</p>
+<p>To implement the <a class="xref" href="../api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a> we had to create a database based locking mechanism, to ensure that only a single instance of our worker was running. You can take advantage of this implementation to build your <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a>.</p>
 <h2 id="distributedbackgroundservice">DistributedBackgroundService</h2>
-<p>Two base classes are available in <a href="https://www.nuget.org/packages/Silverback.Core">Silverback.Core</a>: &lt;xref:Silverback.Background.DistributedBackgroundService&gt; implements the basic locking mechanism, while &lt;xref:Silverback.Background.RecurringDistributedBackgroundService&gt; adds on top of it the ability to run a task as specified intervals.</p>
+<p>Two base classes are available in <a href="https://www.nuget.org/packages/Silverback.Core">Silverback.Core</a>: <a class="xref" href="../api/Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> implements the basic locking mechanism, while <a class="xref" href="../api/Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> adds on top of it the ability to run a task as specified intervals.</p>
 <pre><code class="lang-csharp">using Silverback.Background;
 
 namespace Sample
@@ -116,10 +116,10 @@ namespace Sample
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
-<p>A &lt;xref:Silverback.Background.DistributedLockSettings&gt; object can be passed to the constructor of the base class to customize lock timeout, heartbeat interval, etc.</p>
+<p>A <a class="xref" href="../api/Silverback.Background.DistributedLockSettings.html">DistributedLockSettings</a> object can be passed to the constructor of the base class to customize lock timeout, heartbeat interval, etc.</p>
 </div>
 <h2 id="lock-manager">Lock Manager</h2>
-<p>To enable the distributed locks an &lt;xref:Silverback.Background.IDistributedLockManager&gt; implementation (probably a &lt;xref:Silverback.Background.DbDistributedLockManager&gt;) must be registered for dependency injection as shown in the next code snippet.</p>
+<p>To enable the distributed locks an <a class="xref" href="../api/Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a> implementation (probably a <a class="xref" href="../api/Silverback.Background.DbDistributedLockManager.html">DbDistributedLockManager</a>) must be registered for dependency injection as shown in the next code snippet.</p>
 <div class="NOTE">
 <h5>Note</h5>
 <p>The <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package is also required and the <code>DbContext</code> must configure a <code>DbSet&lt;Lock&gt;</code>. See also the <a class="xref" href="dbcontext.html">Sample DbContext (EF Core)</a>.</p>

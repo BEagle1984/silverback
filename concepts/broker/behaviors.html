@@ -8,7 +8,7 @@
     <title>Broker behaviors pipeline | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Broker behaviors pipeline | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -87,10 +87,10 @@
 <h1 id="broker-behaviors-pipeline">Broker behaviors pipeline</h1>
 
 <p>Silverback is built to be modular and most of its feature are plugged into the consumers and producers via some so-called behaviors. The inbound and outbound messages flow through this pipeline and each behavior take care of a specific task such as serialization, encryption, chunking, logging, etc.</p>
-<p>The &lt;xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior&gt; and &lt;xref:Silverback.Messaging.Broker.Behaviors.IConsumerBehavior&gt; are the interfaces used to build such behaviors.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a> are the interfaces used to build such behaviors.</p>
 <div class="NOTE">
 <h5>Note</h5>
-<p>&lt;xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior&gt; and &lt;xref:Silverback.Messaging.Broker.Behaviors.IConsumerBehavior&gt; inherit the &lt;xref:Silverback.ISorted&gt; interface. It is therefore mandatory to specify the exact sort index of each behavior.</p>
+<p><a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a> inherit the <a class="xref" href="../../api/Silverback.ISorted.html">ISorted</a> interface. It is therefore mandatory to specify the exact sort index of each behavior.</p>
 </div>
 <h2 id="built-in-producer-behaviors">Built-in producer behaviors</h2>
 <p>This behaviors build the producer pipeline and contain the actual logic to properly serialize the messages according to the applied configuration.</p>
@@ -104,62 +104,62 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Diagnostics.ActivityProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html">ActivityProducerBehavior</a></td>
 <td style="text-align: right;">100</td>
 <td style="text-align: left;">Starts an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> and adds the tracing information to the message headers.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Headers.HeadersWriterProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Headers.HeadersWriterProducerBehavior.html">HeadersWriterProducerBehavior</a></td>
 <td style="text-align: right;">200</td>
-<td style="text-align: left;">Maps the properties decorated with the &lt;xref:Silverback.Messaging.Messages.HeaderAttribute&gt; to the message headers.</td>
+<td style="text-align: left;">Maps the properties decorated with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> to the message headers.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html">MessageEnricherProducerBehavior</a></td>
 <td style="text-align: right;">250</td>
-<td style="text-align: left;">Invokes all the &lt;xref:Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher&gt; configured for to the endpoint.</td>
+<td style="text-align: left;">Invokes all the <a class="xref" href="../../api/Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a> configured for to the endpoint.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Broker.Behaviors.MessageIdInitializerProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.MessageIdInitializerProducerBehavior.html">MessageIdInitializerProducerBehavior</a></td>
 <td style="text-align: right;">300</td>
 <td style="text-align: left;">It ensures that an <code>x-message-id</code> header is always produced.</td>
 </tr>
 <tr>
 <td style="text-align: left;">BrokerKeyHeaderInitializer</td>
 <td style="text-align: right;">400</td>
-<td style="text-align: left;">Provided by the message broker implementation (e.g. &lt;xref:Silverback.Messaging.Outbound.KafkaMessageKeyInitializerProducerBehavior&gt; or &lt;xref:Silverback.Messaging.Outbound.RabbitRoutingKeyInitializerProducerBehavior&gt;), sets the message key header that will be used by the &lt;xref:Silverback.Messaging.Broker.IProducer&gt; implementation to set the actual message key.</td>
+<td style="text-align: left;">Provided by the message broker implementation (e.g. <a class="xref" href="../../api/Silverback.Messaging.Outbound.KafkaMessageKeyInitializerProducerBehavior.html">KafkaMessageKeyInitializerProducerBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Outbound.RabbitRoutingKeyInitializerProducerBehavior.html">RabbitRoutingKeyInitializerProducerBehavior</a>), sets the message key header that will be used by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation to set the actual message key.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.html">BinaryFileHandlerProducerBehavior</a></td>
 <td style="text-align: right;">500</td>
-<td style="text-align: left;">Switches to the &lt;xref:Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer&gt; if the message being produced implements the &lt;xref:Silverback.Messaging.Messages.IBinaryFileMessage&gt; interface.</td>
+<td style="text-align: left;">Switches to the <a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> if the message being produced implements the <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Serialization.SerializerProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Serialization.SerializerProducerBehavior.html">SerializerProducerBehavior</a></td>
 <td style="text-align: right;">600</td>
-<td style="text-align: left;">Serializes the message being produced using the configured &lt;xref:Silverback.Messaging.Serialization.IMessageSerializer&gt;.</td>
+<td style="text-align: left;">Serializes the message being produced using the configured <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Encryption.EncryptorProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Encryption.EncryptorProducerBehavior.html">EncryptorProducerBehavior</a></td>
 <td style="text-align: right;">700</td>
-<td style="text-align: left;">Encrypts the message according to the &lt;xref:Silverback.Messaging.Encryption.EncryptionSettings&gt;.</td>
+<td style="text-align: left;">Encrypts the message according to the <a class="xref" href="../../api/Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Sequences.SequencerProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Sequences.SequencerProducerBehavior.html">SequencerProducerBehavior</a></td>
 <td style="text-align: right;">800</td>
-<td style="text-align: left;">Uses the available implementations of &lt;xref:Silverback.Messaging.Sequences.ISequenceWriter&gt; (e.g. &lt;xref:Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter&gt;) to set the proper headers and split the published message or messages set to create the sequences.</td>
+<td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../api/Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a> (e.g. <a class="xref" href="../../api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.html">ChunkSequenceWriter</a>) to set the proper headers and split the published message or messages set to create the sequences.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior.html">EndpointNameResolverProducerBehavior</a></td>
 <td style="text-align: right;">900</td>
 <td style="text-align: left;">Resolves the actual target endpoint name for the message being published.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior.html">KafkaPartitionResolverProducerBehavior</a></td>
 <td style="text-align: right;">901</td>
 <td style="text-align: left;">Resolves the actual target endpoint name for the message being published.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior.html">CustomHeadersMapperProducerBehavior</a></td>
 <td style="text-align: right;">1000</td>
 <td style="text-align: left;">Applies the custom header name mappings.</td>
 </tr>
@@ -177,62 +177,62 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Diagnostics.ActivityConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html">ActivityConsumerBehavior</a></td>
 <td style="text-align: right;">100</td>
 <td style="text-align: left;">Starts an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> with the tracing information from the message headers.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html">FatalExceptionLoggerConsumerBehavior</a></td>
 <td style="text-align: right;">200</td>
 <td style="text-align: left;">Logs the unhandled exceptions thrown while processing the message. These exceptions are fatal since they will usually cause the consumer to stop.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Headers.CustomHeadersMapperConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Headers.CustomHeadersMapperConsumerBehavior.html">CustomHeadersMapperConsumerBehavior</a></td>
 <td style="text-align: right;">300</td>
 <td style="text-align: left;">Applies the custom header name mappings.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Inbound.Transaction.TransactionHandlerConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Inbound.Transaction.TransactionHandlerConsumerBehavior.html">TransactionHandlerConsumerBehavior</a></td>
 <td style="text-align: right;">400</td>
 <td style="text-align: left;">Handles the consumer transaction and applies the error policies.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Sequences.RawSequencerConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Sequences.RawSequencerConsumerBehavior.html">RawSequencerConsumerBehavior</a></td>
 <td style="text-align: right;">500</td>
-<td style="text-align: left;">Uses the available implementations of &lt;xref:Silverback.Messaging.Sequences.ISequenceReader&gt; (e.g. &lt;xref:Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader&gt;) to assign the incoming message to the right sequence.</td>
+<td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../api/Silverback.Messaging.Sequences.ISequenceReader.html">ISequenceReader</a> (e.g. <a class="xref" href="../../api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html">ChunkSequenceReader</a>) to assign the incoming message to the right sequence.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Inbound.ExactlyOnce.ExactlyOnceGuardConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Inbound.ExactlyOnce.ExactlyOnceGuardConsumerBehavior.html">ExactlyOnceGuardConsumerBehavior</a></td>
 <td style="text-align: right;">600</td>
-<td style="text-align: left;">Uses the configured implementation of &lt;xref:Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy&gt; to ensure that the message is processed only once.</td>
+<td style="text-align: left;">Uses the configured implementation of <a class="xref" href="../../api/Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a> to ensure that the message is processed only once.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Encryption.DecryptorConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Encryption.DecryptorConsumerBehavior.html">DecryptorConsumerBehavior</a></td>
 <td style="text-align: right;">700</td>
-<td style="text-align: left;">Decrypts the message according to the &lt;xref:Silverback.Messaging.Encryption.EncryptionSettings&gt;.</td>
+<td style="text-align: left;">Decrypts the message according to the <a class="xref" href="../../api/Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.html">BinaryFileHandlerProducerBehavior</a></td>
 <td style="text-align: right;">800</td>
-<td style="text-align: left;">Switches to the &lt;xref:Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer&gt; if the message being consumed is a binary message (according to the <code>x-message-type</code> header.</td>
+<td style="text-align: left;">Switches to the <a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> if the message being consumed is a binary message (according to the <code>x-message-type</code> header.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Serialization.DeserializerConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html">DeserializerConsumerBehavior</a></td>
 <td style="text-align: right;">900</td>
-<td style="text-align: left;">Deserializes the messages being consumed using the configured &lt;xref:Silverback.Messaging.Serialization.IMessageSerializer&gt;.</td>
+<td style="text-align: left;">Deserializes the messages being consumed using the configured <a class="xref" href="../../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Headers.HeadersReaderConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Headers.HeadersReaderConsumerBehavior.html">HeadersReaderConsumerBehavior</a></td>
 <td style="text-align: right;">1000</td>
-<td style="text-align: left;">Maps the headers with the properties decorated with the &lt;xref:Silverback.Messaging.Messages.HeaderAttribute&gt;.</td>
+<td style="text-align: left;">Maps the headers with the properties decorated with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Sequences.SequencerConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Sequences.SequencerConsumerBehavior.html">SequencerConsumerBehavior</a></td>
 <td style="text-align: right;">1100</td>
-<td style="text-align: left;">Uses the available implementations of &lt;xref:Silverback.Messaging.Sequences.ISequenceReader&gt; (e.g. &lt;xref:Silverback.Messaging.Sequences.Batch.BatchSequenceReader&gt;) to assign the incoming message to the right sequence.</td>
+<td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../api/Silverback.Messaging.Sequences.ISequenceReader.html">ISequenceReader</a> (e.g. <a class="xref" href="../../api/Silverback.Messaging.Sequences.Batch.BatchSequenceReader.html">BatchSequenceReader</a>) to assign the incoming message to the right sequence.</td>
 </tr>
 <tr>
-<td style="text-align: left;">&lt;xref:Silverback.Messaging.Inbound.PublisherConsumerBehavior&gt;</td>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Inbound.PublisherConsumerBehavior.html">PublisherConsumerBehavior</a></td>
 <td style="text-align: right;">2000</td>
 <td style="text-align: left;">Publishes the consumed messages to the internal bus.</td>
 </tr>
@@ -244,23 +244,23 @@
 <p>The following example demonstrate how to set a custom message header on each outbound message.</p>
 <div class="NOTE">
 <h5>Note</h5>
-<p>The &lt;xref:Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext&gt; and &lt;xref:Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext&gt; hold a reference to the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider">IServiceProvider</a> and can be used to resolve the needed services.
-The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider">IServiceProvider</a> in the &lt;xref:Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext&gt; can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext.html">ProducerPipelineContext</a> and <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> hold a reference to the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider">IServiceProvider</a> and can be used to resolve the needed services.
+The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider">IServiceProvider</a> in the <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a> can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).</p>
 </div>
 <div class="NOTE">
 <h5>Note</h5>
 <p>The broker behaviors can be registered either as singleton or transient services. When registered as transient a new instance will be created per each producer or consumer.</p>
 </div>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producerbehavior" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producerbehavior" data-tab="producerbehavior" tabindex="0" aria-selected="true">ProducerBehavior</a>
+<a href="#tabpanel_bHGHmlrG6S_producerbehavior" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producerbehavior" data-tab="producerbehavior" tabindex="0" aria-selected="true">ProducerBehavior</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_producerbehavior-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producerbehavior-startup" data-tab="producerbehavior-startup" tabindex="-1">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S_producerbehavior-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producerbehavior-startup" data-tab="producerbehavior-startup" tabindex="-1">Startup</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_producerbehavior" role="tabpanel" data-tab="producerbehavior">
+<section id="tabpanel_bHGHmlrG6S_producerbehavior" role="tabpanel" data-tab="producerbehavior">
 
 <pre><code class="lang-csharp">public class CustomHeadersProducerBehavior : IProducerBehavior
 {
@@ -277,7 +277,7 @@ The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_producerbehavior-startup" role="tabpanel" data-tab="producerbehavior-startup" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_producerbehavior-startup" role="tabpanel" data-tab="producerbehavior-startup" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -295,16 +295,16 @@ The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider
 </div>
 <h3 id="custom-iconsumerbehavior-example">Custom IConsumerBehavior example</h3>
 <p>The following example demonstrate how to log the headers received with each inbound message.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumerbehavior" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumerbehavior" data-tab="consumerbehavior" tabindex="0" aria-selected="true">ConsumerBehavior</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumerbehavior" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumerbehavior" data-tab="consumerbehavior" tabindex="0" aria-selected="true">ConsumerBehavior</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_consumerbehavior-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumerbehavior-startup" data-tab="consumerbehavior-startup" tabindex="-1">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S-1_consumerbehavior-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumerbehavior-startup" data-tab="consumerbehavior-startup" tabindex="-1">Startup</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_consumerbehavior" role="tabpanel" data-tab="consumerbehavior">
+<section id="tabpanel_bHGHmlrG6S-1_consumerbehavior" role="tabpanel" data-tab="consumerbehavior">
 
 <pre><code class="lang-csharp">public class LogHeadersConsumerBehavior : IConsumerBehavior
 {
@@ -334,7 +334,7 @@ The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-1_consumerbehavior-startup" role="tabpanel" data-tab="consumerbehavior-startup" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_consumerbehavior-startup" role="tabpanel" data-tab="consumerbehavior-startup" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class Startup
 {

@@ -8,7 +8,7 @@
     <title>Streaming | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Streaming | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -86,8 +86,8 @@
             <article class="content wrap" id="_content" data-uid="streaming">
 <h1 id="streaming">Streaming</h1>
 
-<p>The &lt;xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1&gt; can be used to consume an endpoint in a streaming fashion and it is the only way to consume sequences (see for example <a class="xref" href="inbound.html#batch-processing">batch processing</a>). This stream will be forwarded to the subscribed method as soon as the first message is consumed and it is then asynchronously pushed with the next messages.</p>
-<p>&lt;xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1&gt; implements both <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> and the subscriber method can either declare an &lt;xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1&gt;, an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> or an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> as argument.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> can be used to consume an endpoint in a streaming fashion and it is the only way to consume sequences (see for example <a class="xref" href="inbound.html#batch-processing">batch processing</a>). This stream will be forwarded to the subscribed method as soon as the first message is consumed and it is then asynchronously pushed with the next messages.</p>
+<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> implements both <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> and the subscriber method can either declare an <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>, an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> or an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> as argument.</p>
 <p>Since the asynchronous and I/O bound nature of this stream it is recommended to take advantage of the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> capabilities to asynchronously loop through the messages.</p>
 <pre><code class="lang-csharp">public class StreamSubscriber
 {
@@ -101,19 +101,19 @@
     }
 }
 </code></pre>
-<p>A single instance of &lt;xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1&gt; is created and published per each queue/topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. <a class="xref" href="inbound.html#batch-processing">batch processing</a>) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.</p>
+<p>A single instance of <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is created and published per each queue/topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. <a class="xref" href="inbound.html#batch-processing">batch processing</a>) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.</p>
 <h1 id="rx-observable">Rx (Observable)</h1>
-<p>The <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a> package adds the &lt;xref:Silverback.Messaging.Messages.IMessageStreamObservable`1&gt; that works like the &lt;xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1&gt; but implements <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a> enabling the usage of <a href="https://github.com/dotnet/reactive">Rx.NET</a>.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<p>The <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a> package adds the <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamObservable-1.html">IMessageStreamObservable&lt;TMessage&gt;</a> that works like the <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> but implements <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a> enabling the usage of <a href="https://github.com/dotnet/reactive">Rx.NET</a>.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_rx-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q_rx-startup" data-tab="rx-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_bHGHmlrG6S_rx-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S_rx-startup" data-tab="rx-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_rx-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q_rx-subscriber" data-tab="rx-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_bHGHmlrG6S_rx-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S_rx-subscriber" data-tab="rx-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_rx-startup" role="tabpanel" data-tab="rx-startup">
+<section id="tabpanel_bHGHmlrG6S_rx-startup" role="tabpanel" data-tab="rx-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -124,7 +124,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_rx-subscriber" role="tabpanel" data-tab="rx-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_rx-subscriber" role="tabpanel" data-tab="rx-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class StreamSubscriber
 {
@@ -141,7 +141,7 @@
 <ul>
 <li>The stream will be pushed with messages as they are read from the message broker. Since the I/O bound nature of the operation you should obviously prefer to subscribe to an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> instead of an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and in any case loop asynchronously (<code>await foreach</code> or similar approach).</li>
 <li>If the sequence is interrupted because the application is disconnecting or an error occurred in another subscriber, the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator">IEnumerator</a> will throw an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.operationcanceledexception">OperationCancelledException</a>. Handle it if you need to gracefully abort or cleanup.</li>
-<li>Throwing an exception while enumerating a sequence (e.g. a <a href="xref:Silverback.Messaging.Sequences.Batch.BatchSequence">BatchSequence</a>) will cause it to be aborted and handled according to the defined <a class="xref" href="inbound.html#error-handling">error policies</a>. If you just break the iteration and the subscriber return, the operation will be considered successful instead and the sequence will be committed.</li>
+<li>Throwing an exception while enumerating a sequence (e.g. a <a class="xref" href="../../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>) will cause it to be aborted and handled according to the defined <a class="xref" href="inbound.html#error-handling">error policies</a>. If you just break the iteration and the subscriber return, the operation will be considered successful instead and the sequence will be committed.</li>
 </ul>
 </article>
           </div>

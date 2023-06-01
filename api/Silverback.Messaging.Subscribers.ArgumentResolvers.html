@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Namespace Silverback.Messaging.Subscribers.ArgumentResolvers
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Namespace Silverback.Messaging.Subscribers.ArgumentResolvers
+   | Silverback ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers">
+  
+  <h1 id="Silverback_Messaging_Subscribers_ArgumentResolvers" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers" class="text-break">Namespace Silverback.Messaging.Subscribers.ArgumentResolvers
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.DefaultAdditionalArgumentResolver.html">DefaultAdditionalArgumentResolver</a></h4>
+      <section><p>Simply tries to resolve the additional parameters of the subscribed methods using the
+<span class="xref">System.IServiceProvider</span>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ObservableStreamMessageArgumentResolver.html">ObservableStreamMessageArgumentResolver</a></h4>
+      <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamObservable-1.html">IMessageStreamObservable&lt;TMessage&gt;</a> where
+<code>TMessage</code> is compatible with the type of the message being published.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.SingleMessageArgumentResolver.html">SingleMessageArgumentResolver</a></h4>
+      <section><p>Resolves the parameters declared with a type that is compatible with the type of the message being
+published.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.StreamEnumerableMessageArgumentResolver.html">StreamEnumerableMessageArgumentResolver</a></h4>
+      <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> where
+<code>TMessage</code> is compatible with the type of the message being published.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IAdditionalArgumentResolver.html">IAdditionalArgumentResolver</a></h4>
+      <section><p>These resolvers are used to try to get a value for the additional parameters (other than the message
+itself) of the subscribed methods.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.html">IArgumentResolver</a></h4>
+      <section><p>Used as base for the more specialized <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html">IMessageArgumentResolver</a> and
+<a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IAdditionalArgumentResolver.html">IAdditionalArgumentResolver</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ILazyArgumentValue.html">ILazyArgumentValue</a></h4>
+      <section><p>Represent a value for an argument that will be available in the future.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html">IMessageArgumentResolver</a></h4>
+      <section><p>These resolvers are used to cast or transform the message parameter to be forwarded to the
+subscribed method.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.html">ISingleMessageArgumentResolver</a></h4>
+      <section><p>These resolvers are used to handle the single message parameter (the pure message, not wrapped in any
+enumerable or collection).</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IStreamEnumerableMessageArgumentResolver.html">IStreamEnumerableMessageArgumentResolver</a></h4>
+      <section><p>These resolvers are used to handle the message streams such as
+<a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. The streams are basically handled as a single
+message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
+from another thread, when published via <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_">PublishAsync(Object)</a>/
+<a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_">PublishAsync&lt;TResult&gt;(Object)</a>. This is done to avoid blocking the original
+thread waiting for the stream to complete.</p>
+</section>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
