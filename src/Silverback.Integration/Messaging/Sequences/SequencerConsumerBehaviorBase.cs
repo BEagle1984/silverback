@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -51,7 +52,10 @@ namespace Silverback.Messaging.Sequences
         public abstract int SortIndex { get; }
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public virtual async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public virtual async Task HandleAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -62,7 +66,7 @@ namespace Silverback.Messaging.Sequences
 
             if (sequenceReader == null)
             {
-                await next(context).ConfigureAwait(false);
+                await next(context, cancellationToken).ConfigureAwait(false);
                 return;
             }
 
@@ -78,7 +82,7 @@ namespace Silverback.Messaging.Sequences
             // GetSequenceAsync and AddAsync
             while (true)
             {
-                sequence = await GetSequenceAsync(context, next, sequenceReader).ConfigureAwait(false);
+                sequence = await GetSequenceAsync(context, next, sequenceReader, cancellationToken).ConfigureAwait(false);
 
                 if (sequence == null)
                     return;
@@ -124,12 +128,16 @@ namespace Silverback.Messaging.Sequences
         /// <param name="next">
         ///     The next behavior in the pipeline.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected abstract Task PublishSequenceAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next);
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken);
 
         /// <summary>
         ///     When overridden in a derived class awaits for the sequence to be processed by the other twin behavior.
@@ -221,7 +229,8 @@ namespace Silverback.Messaging.Sequences
         private async Task<ISequence?> GetSequenceAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next,
-            ISequenceReader sequenceReader)
+            ISequenceReader sequenceReader,
+            CancellationToken cancellationToken)
         {
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
@@ -240,7 +249,7 @@ namespace Silverback.Messaging.Sequences
             {
                 StartActivityIfNeeded(sequence);
 
-                await PublishSequenceAsync(context, next).ConfigureAwait(false);
+                await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
 
                 if (context.ProcessingTask != null)
                     MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);

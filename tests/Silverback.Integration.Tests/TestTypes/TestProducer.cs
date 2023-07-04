@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
@@ -91,18 +92,21 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
+            string actualEndpointName,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                 message,
-                await messageStream.ReadAllAsync().ConfigureAwait(false),
+                await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                 headers,
-                actualEndpointName);
+                actualEndpointName,
+                cancellationToken);
 
         protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
+            string actualEndpointName,
+            CancellationToken cancellationToken = default)
         {
             PerformMockProduce(messageBytes, headers);
             return Task.FromResult<IBrokerMessageIdentifier?>(null);
@@ -114,14 +118,16 @@ namespace Silverback.Tests.Integration.TestTypes
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                 message,
-                await messageStream.ReadAllAsync().ConfigureAwait(false),
+                await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                 headers,
                 actualEndpointName,
                 onSuccess,
-                onError);
+                onError,
+                cancellationToken);
 
         protected override Task ProduceCoreAsync(
             object? message,
@@ -129,7 +135,8 @@ namespace Silverback.Tests.Integration.TestTypes
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default)
         {
             PerformMockProduce(messageBytes, headers);
             onSuccess.Invoke(null);

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Silverback.Messaging.Messages;
@@ -96,45 +97,48 @@ namespace Silverback.EntityFrameworkCore
         /// <param name="saveChangesAsync">
         ///     The delegate to the original <c>SaveChangesAsync</c> method.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     number of entities saved to the database.
         /// </returns>
-        public Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChangesAsync)
+        public Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChangesAsync, CancellationToken cancellationToken = default)
         {
             Check.NotNull(saveChangesAsync, nameof(saveChangesAsync));
 
-            return ExecuteSaveTransactionAsync(saveChangesAsync, true);
+            return ExecuteSaveTransactionAsync(saveChangesAsync, true, cancellationToken);
         }
 
-        private async Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChanges, bool executeAsync)
+        private async Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChanges, bool executeAsync, CancellationToken cancellationToken = default)
         {
-            await PublishEventAsync<TransactionStartedEvent>(executeAsync).ConfigureAwait(false);
+            await PublishEventAsync<TransactionStartedEvent>(executeAsync, cancellationToken).ConfigureAwait(false);
 
             var saved = false;
             try
             {
-                await PublishDomainEventsAsync(executeAsync).ConfigureAwait(false);
+                await PublishDomainEventsAsync(executeAsync, cancellationToken).ConfigureAwait(false);
 
                 int result = await saveChanges().ConfigureAwait(false);
 
                 saved = true;
 
-                await PublishEventAsync<TransactionCompletedEvent>(executeAsync).ConfigureAwait(false);
+                await PublishEventAsync<TransactionCompletedEvent>(executeAsync, cancellationToken).ConfigureAwait(false);
 
                 return result;
             }
             catch
             {
                 if (!saved)
-                    await PublishEventAsync<TransactionAbortedEvent>(executeAsync).ConfigureAwait(false);
+                    await PublishEventAsync<TransactionAbortedEvent>(executeAsync, cancellationToken).ConfigureAwait(false);
 
                 throw;
             }
         }
 
         [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-        private async Task PublishDomainEventsAsync(bool executeAsync)
+        private async Task PublishDomainEventsAsync(bool executeAsync, CancellationToken cancellationToken)
         {
             var events = GetDomainEvents();
 
@@ -143,7 +147,7 @@ namespace Silverback.EntityFrameworkCore
             {
                 if (executeAsync)
                 {
-                    await events.ForEachAsync(message => _publisher.PublishAsync(message))
+                    await events.ForEachAsync(message => _publisher.PublishAsync(message, cancellationToken))
                         .ConfigureAwait(false);
                 }
                 else
@@ -168,11 +172,11 @@ namespace Silverback.EntityFrameworkCore
                 }).ToList();
 
         [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-        private async Task PublishEventAsync<TEvent>(bool executeAsync)
+        private async Task PublishEventAsync<TEvent>(bool executeAsync, CancellationToken cancellationToken)
             where TEvent : new()
         {
             if (executeAsync)
-                await _publisher.PublishAsync(new TEvent()).ConfigureAwait(false);
+                await _publisher.PublishAsync(new TEvent(), cancellationToken).ConfigureAwait(false);
             else
                 _publisher.Publish(new TEvent());
         }

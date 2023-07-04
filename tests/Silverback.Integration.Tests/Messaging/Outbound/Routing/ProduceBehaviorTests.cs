@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,13 +63,16 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);
@@ -89,13 +93,16 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 outboundEnvelope,
-                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+                (message, _) => Task.FromResult(new[] { message }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);

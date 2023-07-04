@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -27,12 +28,14 @@ namespace Silverback.Messaging.Serialization
         public abstract ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public abstract ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
     }
 }

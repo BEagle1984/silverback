@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -30,7 +31,8 @@ namespace Silverback.Messaging.BinaryFiles
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
@@ -62,7 +64,8 @@ namespace Silverback.Messaging.BinaryFiles
         public ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 

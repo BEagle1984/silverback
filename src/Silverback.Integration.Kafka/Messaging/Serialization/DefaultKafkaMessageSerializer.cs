@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -36,15 +37,17 @@ namespace Silverback.Messaging.Serialization
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            _serializer.SerializeAsync(message, messageHeaders, context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default) =>
+            _serializer.SerializeAsync(message, messageHeaders, context, cancellationToken);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         public ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            _serializer.DeserializeAsync(messageStream, messageHeaders, context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default) =>
+            _serializer.DeserializeAsync(messageStream, messageHeaders, context, cancellationToken);
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public byte[] SerializeKey(

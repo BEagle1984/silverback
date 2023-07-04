@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         }
 
         /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
-        public bool CanHandle(object returnValue) =>
+        public bool CanHandle(object? returnValue) =>
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
@@ -45,20 +46,20 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                              messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
         /// <inheritdoc cref="IReturnValueHandler.Handle" />
-        public void Handle(object returnValue)
+        public void Handle(object? returnValue)
         {
             Check.NotNull(returnValue, nameof(returnValue));
 
             AsyncHelper.RunSynchronously(
-                () => ((IAsyncEnumerable<object>)returnValue).ForEachAsync(_publisher.Publish));
+                () => ((IAsyncEnumerable<object>)returnValue!).ForEachAsync(_publisher.Publish));
         }
 
         /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-        public Task HandleAsync(object returnValue)
+        public Task HandleAsync(object? returnValue, CancellationToken cancellationToken = default)
         {
             Check.NotNull(returnValue, nameof(returnValue));
 
-            return ((IAsyncEnumerable<object>)returnValue).ForEachAsync(_publisher.PublishAsync);
+            return ((IAsyncEnumerable<object>)returnValue!).ForEachAsync(value => _publisher.PublishAsync(value, cancellationToken));
         }
     }
 }

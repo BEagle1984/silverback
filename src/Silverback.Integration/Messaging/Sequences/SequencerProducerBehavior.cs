@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -37,7 +38,10 @@ namespace Silverback.Messaging.Sequences
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Sequencer;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        public async Task HandleAsync(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -47,18 +51,21 @@ namespace Silverback.Messaging.Sequences
                 if (!sequenceWriter.CanHandle(context.Envelope))
                     continue;
 
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
                 var envelopesEnumerable = sequenceWriter.ProcessMessageAsync(context.Envelope);
 
                 await foreach (var envelope in envelopesEnumerable.ConfigureAwait(false))
                 {
                     var newContext = new ProducerPipelineContext(envelope, context.Producer, context.ServiceProvider);
-                    await next(newContext).ConfigureAwait(false);
+                    await next(newContext, cancellationToken).ConfigureAwait(false);
                 }
 
                 return;
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
     }
 }

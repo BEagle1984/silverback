@@ -581,14 +581,18 @@ namespace Silverback.Messaging.Broker
                 "Waiting until consumer stops...",
                 "Consumer stopped.");
 
-        private Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
+        private Task ExecutePipelineAsync(
+            ConsumerPipelineContext context,
+            int stepIndex = 0,
+            CancellationToken cancellationToken = default)
         {
             if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
                 return Task.CompletedTask;
 
             return _behaviors[stepIndex].HandleAsync(
                 context,
-                nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1));
+                (nextContext, ctx) => ExecutePipelineAsync(nextContext, stepIndex + 1, ctx),
+                cancellationToken);
         }
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -43,10 +44,13 @@ namespace Silverback.Messaging.Publishing
         /// <param name="eventMessage">
         ///     The event to be executed.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task PublishAsync(IEvent eventMessage);
+        Task PublishAsync(IEvent eventMessage, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified event to the internal bus. The message will be forwarded to its subscribers
@@ -60,9 +64,15 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled);
+        Task PublishAsync(
+            IEvent eventMessage,
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default);
     }
 }

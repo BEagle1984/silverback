@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -318,13 +319,17 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
         Task<IBrokerMessageIdentifier?> ProduceAsync(
             object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -332,11 +337,16 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
+        Task<IBrokerMessageIdentifier?> ProduceAsync(
+            IOutboundEnvelope envelope,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -357,6 +367,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -365,7 +378,8 @@ namespace Silverback.Messaging.Broker
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -383,6 +397,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -390,7 +407,8 @@ namespace Silverback.Messaging.Broker
         Task ProduceAsync(
             IOutboundEnvelope envelope,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -401,13 +419,17 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
         Task<IBrokerMessageIdentifier?> RawProduceAsync(
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -418,13 +440,17 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
         Task<IBrokerMessageIdentifier?> RawProduceAsync(
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -438,6 +464,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
@@ -445,7 +474,8 @@ namespace Silverback.Messaging.Broker
         Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -459,6 +489,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
@@ -466,7 +499,8 @@ namespace Silverback.Messaging.Broker
         Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -487,6 +521,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -495,7 +532,8 @@ namespace Silverback.Messaging.Broker
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -516,6 +554,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -524,7 +565,8 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -548,6 +590,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -557,7 +602,8 @@ namespace Silverback.Messaging.Broker
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -581,6 +627,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -590,6 +639,7 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
     }
 }

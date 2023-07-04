@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
@@ -18,12 +19,13 @@ namespace Silverback.Messaging.Subscribers
             SubscribedMethod subscribedMethod,
             object message,
             IServiceProvider serviceProvider,
-            bool executeAsync)
+            bool executeAsync,
+            CancellationToken cancellationToken = default)
         {
             if (IsFiltered(subscribedMethod.Options.Filters, message))
                 return MethodInvocationResult.NotInvoked;
 
-            var arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider);
+            var parameters = GetParameterTypeValuesArray(subscribedMethod, serviceProvider);
 
             object? returnValue;
 
@@ -33,18 +35,20 @@ namespace Silverback.Messaging.Subscribers
                     returnValue = await InvokeWithSingleMessageAsync(
                         message,
                         subscribedMethod,
-                        arguments,
+                        parameters,
                         singleResolver,
                         serviceProvider,
-                        executeAsync).ConfigureAwait(false);
+                        executeAsync,
+                        cancellationToken).ConfigureAwait(false);
                     break;
                 case IStreamEnumerableMessageArgumentResolver streamEnumerableResolver:
                     returnValue = InvokeWithStreamEnumerable(
                         (IMessageStreamProvider)message,
                         subscribedMethod,
-                        arguments,
+                        parameters,
                         streamEnumerableResolver,
-                        serviceProvider);
+                        serviceProvider,
+                        cancellationToken);
 
                     break;
                 default:
@@ -60,7 +64,7 @@ namespace Silverback.Messaging.Subscribers
             bool returnValueWasHandled =
                 await serviceProvider
                     .GetRequiredService<ReturnValueHandlerService>()
-                    .HandleReturnValuesAsync(returnValue, executeAsync)
+                    .HandleReturnValuesAsync(returnValue, executeAsync, cancellationToken)
                     .ConfigureAwait(false);
 
             if (returnValueWasHandled)
@@ -72,18 +76,22 @@ namespace Silverback.Messaging.Subscribers
         private static bool IsFiltered(IReadOnlyCollection<IMessageFilter> filters, object message) =>
             filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-        private static object?[] GetArgumentValuesArray(
+        private static ParameterTypeValue[] GetParameterTypeValuesArray(
             SubscribedMethod method,
             IServiceProvider serviceProvider)
         {
-            var values = new object?[method.Parameters.Count];
+            var values = new ParameterTypeValue[method.Parameters.Count];
 
             for (int i = 1; i < method.Parameters.Count; i++)
             {
                 var parameterType = method.Parameters[i].ParameterType;
 
-                values[i] = method.AdditionalArgumentsResolvers[i - 1]
-                    .GetValue(parameterType, serviceProvider);
+                values[i] = new ParameterTypeValue
+                {
+                    Type = parameterType,
+                    Value = method.AdditionalArgumentsResolvers[i - 1]
+                        .GetValue(parameterType, serviceProvider)
+                };
             }
 
             return values;
@@ -92,24 +100,48 @@ namespace Silverback.Messaging.Subscribers
         private static Task<object?> InvokeWithSingleMessageAsync(
             object message,
             SubscribedMethod subscribedMethod,
-            object?[] arguments,
+            ParameterTypeValue[] parameters,
             ISingleMessageArgumentResolver singleResolver,
             IServiceProvider serviceProvider,
-            bool executeAsync)
+            bool executeAsync,
+            CancellationToken cancellationToken)
         {
             message = UnwrapEnvelopeIfNeeded(message, subscribedMethod);
 
             var target = subscribedMethod.ResolveTargetType(serviceProvider);
-            arguments[0] = singleResolver.GetValue(message);
-            return subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, arguments, executeAsync);
+
+            return subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, GetArgumentValuesArray(singleResolver.GetValue(message), parameters, cancellationToken), executeAsync);
+        }
+
+        private static object?[] GetArgumentValuesArray(
+            object? messageValue,
+            ParameterTypeValue[] parameters,
+            CancellationToken cancellationToken)
+        {
+            var arguments = new object?[parameters.Length];
+            arguments[0] = messageValue;
+            for (int i = 1; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                if (parameter.Type == typeof(CancellationToken))
+                {
+                    arguments[i] = cancellationToken;
+                    continue;
+                }
+
+                arguments[i] = parameter.Value;
+            }
+
+            return arguments;
         }
 
         private static object InvokeWithStreamEnumerable(
             IMessageStreamProvider messageStreamProvider,
             SubscribedMethod subscribedMethod,
-            object?[] arguments,
+            ParameterTypeValue[] parameters,
             IStreamEnumerableMessageArgumentResolver streamEnumerableResolver,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            CancellationToken cancellationToken)
         {
             var target = subscribedMethod.ResolveTargetType(serviceProvider);
 
@@ -121,11 +153,12 @@ namespace Silverback.Messaging.Subscribers
             return Task.Run(
                 async () =>
                 {
+                    object?[] arguments;
                     try
                     {
                         await lazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
 
-                        arguments[0] = lazyStream.Value;
+                        arguments = GetArgumentValuesArray(lazyStream.Value, parameters, cancellationToken);
                     }
                     catch (OperationCanceledException)
                     {
@@ -136,7 +169,8 @@ namespace Silverback.Messaging.Subscribers
                             target,
                             arguments)
                         .ConfigureAwait(false);
-                });
+                },
+                cancellationToken);
         }
 
         private static object UnwrapEnvelopeIfNeeded(object message, SubscribedMethod subscribedMethod) =>
@@ -145,5 +179,12 @@ namespace Silverback.Messaging.Subscribers
             subscribedMethod.MessageType.IsInstanceOfType(envelope.Message)
                 ? envelope.Message ?? throw new InvalidOperationException("The envelope message is null.")
                 : message;
+
+        private sealed class ParameterTypeValue
+        {
+            public Type Type { get; init; } = null!;
+
+            public object? Value { get; init; }
+        }
     }
 }

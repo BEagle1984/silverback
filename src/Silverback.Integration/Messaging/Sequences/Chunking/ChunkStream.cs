@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             {
                 if (await _asyncEnumerator.MoveNextAsync().ConfigureAwait(false))
                 {
-                    _currentChunk = await _asyncEnumerator.Current.RawMessage.ReadAllAsync().ConfigureAwait(false);
+                    _currentChunk = await _asyncEnumerator.Current.RawMessage.ReadAllAsync(cancellationToken).ConfigureAwait(false);
                     _position = 0;
                 }
                 else

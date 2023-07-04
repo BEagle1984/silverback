@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -69,7 +69,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;

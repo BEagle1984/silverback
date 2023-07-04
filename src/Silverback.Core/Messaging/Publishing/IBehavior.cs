@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Publishing
@@ -21,10 +22,13 @@ namespace Silverback.Messaging.Publishing
         /// <param name="next">
         ///     The next behavior in the pipeline.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     result values (if any).
         /// </returns>
-        Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next);
+        Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken = default);
     }
 }

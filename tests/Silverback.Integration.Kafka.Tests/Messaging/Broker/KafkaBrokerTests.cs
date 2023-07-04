@@ -201,6 +201,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             consumer2.Should().NotBeSameAs(consumer);
         }
 
-        public void Dispose() => _broker?.Dispose();
+        public void Dispose() => _broker.Dispose();
     }
 }

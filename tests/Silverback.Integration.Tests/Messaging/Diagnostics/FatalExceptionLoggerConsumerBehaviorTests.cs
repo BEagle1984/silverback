@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                         Substitute.For<IConsumer>(),
                         Substitute.For<ISequenceStore>(),
                         Substitute.For<IServiceProvider>()),
-                    _ => throw new InvalidCastException());
+                    (_, _) => throw new InvalidCastException());
             }
             catch
             {
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
-                _ => throw new InvalidCastException());
+                (_, _) => throw new InvalidCastException());
 
             await act.Should().ThrowExactlyAsync<ConsumerPipelineFatalException>()
                 .WithInnerExceptionExactly<ConsumerPipelineFatalException, InvalidCastException>();

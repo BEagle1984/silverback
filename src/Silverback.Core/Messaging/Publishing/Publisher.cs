@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -63,60 +64,63 @@ namespace Silverback.Messaging.Publishing
         public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
             CastResults<TResult>(PublishAsync(message, throwIfUnhandled, false).Result).ToList();
 
-        /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
-        public Task PublishAsync(object message) =>
-            PublishAsync(message, false);
+        /// <inheritdoc cref="IPublisher.PublishAsync(object, CancellationToken)" />
+        public Task PublishAsync(object message, CancellationToken cancellationToken = default) =>
+            PublishAsync(message, false, cancellationToken);
 
-        /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
-        public Task PublishAsync(object message, bool throwIfUnhandled) =>
-            PublishAsync(message, throwIfUnhandled, true);
+        /// <inheritdoc cref="IPublisher.PublishAsync(object, bool, CancellationToken)" />
+        public Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default) =>
+            PublishAsync(message, throwIfUnhandled, true, cancellationToken);
 
-        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
-        public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
-            PublishAsync<TResult>(message, false);
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, CancellationToken)" />
+        public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default) =>
+            PublishAsync<TResult>(message, false, cancellationToken);
 
-        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
-        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
-            object message,
-            bool throwIfUnhandled) =>
+        /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool, CancellationToken)" />
+        public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default) =>
             CastResults<TResult>(
-                    await PublishAsync(message, throwIfUnhandled, true)
+                    await PublishAsync(message, throwIfUnhandled, true, cancellationToken)
                         .ConfigureAwait(false))
                 .ToList();
 
         private static Task<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
             Stack<IBehavior> behaviors,
             object message,
-            Func<object, Task<IReadOnlyCollection<object?>>> finalAction)
+            Func<object, Task<IReadOnlyCollection<object?>>> finalAction,
+            CancellationToken cancellationToken)
         {
             if (!behaviors.TryPop(out var nextBehavior))
                 return finalAction(message);
 
             return nextBehavior.HandleAsync(
                 message,
-                nextMessage =>
-                    ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, finalAction));
+                (nextMessage, ctx) =>
+                    ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, finalAction, ctx),
+                cancellationToken);
         }
 
         private Task<IReadOnlyCollection<object?>> PublishAsync(
             object message,
             bool throwIfUnhandled,
-            bool executeAsync)
+            bool executeAsync,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(message, nameof(message));
 
             return ExecuteBehaviorsPipelineAsync(
                 _behaviorsProvider.CreateStack(),
                 message,
-                finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executeAsync));
+                finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executeAsync, cancellationToken),
+                cancellationToken);
         }
 
         private async Task<IReadOnlyCollection<object?>> PublishCoreAsync(
             object message,
             bool throwIfUnhandled,
-            bool executeAsync)
+            bool executeAsync,
+            CancellationToken cancellationToken)
         {
-            var resultsCollection = await InvokeSubscribedMethodsAsync(message, executeAsync)
+            var resultsCollection = await InvokeSubscribedMethodsAsync(message, executeAsync, cancellationToken)
                 .ConfigureAwait(false);
 
             bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
@@ -146,14 +150,16 @@ namespace Silverback.Messaging.Publishing
 
         private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
             object message,
-            bool executeAsync) =>
-            (await InvokeExclusiveMethodsAsync(message, executeAsync).ConfigureAwait(false))
-            .Union(await InvokeNonExclusiveMethodsAsync(message, executeAsync).ConfigureAwait(false))
+            bool executeAsync,
+            CancellationToken cancellationToken) =>
+            (await InvokeExclusiveMethodsAsync(message, executeAsync, cancellationToken).ConfigureAwait(false))
+            .Union(await InvokeNonExclusiveMethodsAsync(message, executeAsync, cancellationToken).ConfigureAwait(false))
             .ToList();
 
         private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
             object message,
-            bool executeAsync) =>
+            bool executeAsync,
+            CancellationToken cancellationToken) =>
             (await _subscribedMethodsCache.GetExclusiveMethods(message)
                 .SelectAsync(
                     method =>
@@ -161,13 +167,15 @@ namespace Silverback.Messaging.Publishing
                             method,
                             message,
                             _serviceProvider,
-                            executeAsync))
+                            executeAsync,
+                            cancellationToken))
                 .ConfigureAwait(false))
             .ToList();
 
         private async Task<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
             object message,
-            bool executeAsync) =>
+            bool executeAsync,
+            CancellationToken cancellationToken) =>
             (await _subscribedMethodsCache.GetNonExclusiveMethods(message)
                 .ParallelSelectAsync(
                     method =>
@@ -175,7 +183,8 @@ namespace Silverback.Messaging.Publishing
                             method,
                             message,
                             _serviceProvider,
-                            executeAsync))
+                            executeAsync,
+                            cancellationToken))
                 .ConfigureAwait(false))
             .ToList();
     }

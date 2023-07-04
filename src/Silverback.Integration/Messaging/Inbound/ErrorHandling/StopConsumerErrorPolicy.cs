@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -52,7 +53,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             protected override Task<bool> ApplyPolicyAsync(
                 ConsumerPipelineContext context,
-                Exception exception) =>
+                Exception exception,
+                CancellationToken cancellationToken = default) =>
                 Task.FromResult(false);
         }
     }

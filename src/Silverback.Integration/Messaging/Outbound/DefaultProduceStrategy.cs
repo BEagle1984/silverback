@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -27,11 +28,13 @@ namespace Silverback.Messaging.Outbound
                 _brokerCollection = brokerCollection;
             }
 
-            public Task ProduceAsync(IOutboundEnvelope envelope)
+            public Task ProduceAsync(
+                IOutboundEnvelope envelope,
+                CancellationToken cancellationToken = default)
             {
                 Check.NotNull(envelope, nameof(envelope));
 
-                return _brokerCollection.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
+                return _brokerCollection.GetProducer(envelope.Endpoint).ProduceAsync(envelope, cancellationToken);
             }
         }
     }

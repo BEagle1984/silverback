@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -31,7 +32,8 @@ namespace Silverback.Messaging.Headers
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         public async Task HandleAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -41,7 +43,7 @@ namespace Silverback.Messaging.Headers
                 _mappings.Revert(context.Envelope.Headers);
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
     }
 }

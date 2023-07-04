@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.SchemaRegistry.Serdes;
@@ -25,9 +26,10 @@ namespace Silverback.Messaging.Serialization
         public override async ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
-            var buffer = await SerializeAsync<TMessage>(message, MessageComponentType.Value, context)
+            var buffer = await SerializeAsync<TMessage>(message, MessageComponentType.Value, context, cancellationToken)
                 .ConfigureAwait(false);
 
             return buffer == null ? null : new MemoryStream(buffer);
@@ -37,9 +39,10 @@ namespace Silverback.Messaging.Serialization
         public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
-            var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
+            var buffer = await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false);
             var deserialized = await DeserializeAsync<TMessage>(buffer, MessageComponentType.Value, context)
                 .ConfigureAwait(false);
 
@@ -80,13 +83,14 @@ namespace Silverback.Messaging.Serialization
         private async ValueTask<byte[]?> SerializeAsync<TValue>(
             object? message,
             MessageComponentType componentType,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             if (message == null)
                 return null;
 
             if (message is Stream inputStream)
-                return await inputStream.ReadAllAsync().ConfigureAwait(false);
+                return await inputStream.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
             if (message is byte[] inputBytes)
                 return inputBytes;

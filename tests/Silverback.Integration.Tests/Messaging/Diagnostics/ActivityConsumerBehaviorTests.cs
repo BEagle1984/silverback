@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                         Substitute.For<IConsumer>(),
                         Substitute.For<ISequenceStore>(),
                         Substitute.For<IServiceProvider>()),
-                    _ =>
+                    (_, _) =>
                     {
                         Activity.Current.Should().NotBeNull();
                         Activity.Current!.ParentId.Should()
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                         Substitute.For<IConsumer>(),
                         Substitute.For<ISequenceStore>(),
                         Substitute.For<IServiceProvider>()),
-                    _ =>
+                    (_, _) =>
                     {
                         Activity.Current.Should().NotBeNull();
                         Activity.Current!.Id.Should().NotBeNullOrEmpty();

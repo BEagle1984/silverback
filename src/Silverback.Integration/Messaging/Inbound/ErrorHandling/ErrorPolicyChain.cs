@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -90,7 +91,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             public bool CanHandle(ConsumerPipelineContext context, Exception exception) => true;
 
-            public Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
+            public Task<bool> HandleErrorAsync(
+                ConsumerPipelineContext context,
+                Exception exception,
+                CancellationToken cancellationToken = default)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
@@ -98,7 +102,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 var nextPolicy = _policies.FirstOrDefault(policy => policy.CanHandle(context, exception));
 
                 if (nextPolicy != null)
-                    return nextPolicy.HandleErrorAsync(context, exception);
+                    return nextPolicy.HandleErrorAsync(context, exception, cancellationToken);
 
                 _logger.LogInboundTrace(IntegrationLogEvents.PolicyChainCompleted, context.Envelope);
 

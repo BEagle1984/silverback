@@ -186,7 +186,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                     envelope,
                     Substitute.For<IProducer>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -215,7 +215,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                     envelope,
                     Substitute.For<IProducer>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -243,7 +243,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                     envelope,
                     Substitute.For<IProducer>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;
@@ -271,7 +271,7 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                     envelope,
                     Substitute.For<IProducer>(),
                     Substitute.For<IServiceProvider>()),
-                context =>
+                (context, _) =>
                 {
                     result = context.Envelope;
                     return Task.CompletedTask;

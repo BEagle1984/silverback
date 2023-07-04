@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Publishing;
 
@@ -20,13 +21,16 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
         public int ExitCount { get; private set; }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public Task<IReadOnlyCollection<object?>> HandleAsync(
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken = default)
         {
             _calls?.Add("unsorted");
 
             EnterCount++;
 
-            var result = next(message);
+            var result = next(message, cancellationToken);
 
             ExitCount++;
 

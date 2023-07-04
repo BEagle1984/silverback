@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -158,10 +159,16 @@ namespace Silverback.Messaging.Sequences
         /// <param name="exception">
         ///     The exception that caused the abort, if an exception was thrown.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AbortAsync(SequenceAbortReason reason, Exception? exception = null);
+        Task AbortAsync(
+            SequenceAbortReason reason,
+            Exception? exception = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Gets the identifiers of the messages belonging to the sequence.

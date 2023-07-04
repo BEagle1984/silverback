@@ -42,7 +42,10 @@ namespace Silverback.Messaging.Inbound
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public async Task HandleAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -78,7 +81,7 @@ namespace Silverback.Messaging.Inbound
                 await PublishEnvelopeAsync(context, throwIfUnhandled).ConfigureAwait(false);
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
 
         private static async Task PublishEnvelopeAsync(

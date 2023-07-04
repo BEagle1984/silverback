@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +25,15 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .UseModel()
-                    .AddDelegateSubscriber((TestQuery _) => new[] { 1, 2, 3 }));
+                    .AddDelegateSubscriber((TestQuery _, CancellationToken ct) =>
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            throw new OperationCanceledException();
+                        }
+
+                        return new[] { 1, 2, 3 };
+                    }));
 
             _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IQueryPublisher>();
         }
@@ -34,6 +44,14 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
             var result = await _publisher.ExecuteAsync(new TestQuery());
 
             result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_CanceledToken_ExceptionThrown()
+        {
+            Func<Task> act = () => _publisher.ExecuteAsync(new TestQuery(), new CancellationToken(true));
+
+            await act.Should().ThrowAsync<TargetInvocationException>().WithInnerException(typeof(OperationCanceledException));
         }
 
         [Fact]

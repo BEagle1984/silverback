@@ -14,12 +14,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         /// <summary>
         ///     Processes the outbox.
         /// </summary>
-        /// <param name="stoppingToken">
+        /// <param name="cancellationToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that represents the long running operations.
         /// </returns>
-        Task ProcessQueueAsync(CancellationToken stoppingToken);
+        Task ProcessQueueAsync(CancellationToken cancellationToken = default);
     }
 }

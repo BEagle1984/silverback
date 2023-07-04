@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -30,7 +31,8 @@ namespace Silverback.Messaging.Serialization
         public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             if (message == null)
                 return ValueTaskFactory.FromResult<Stream?>(null);
@@ -49,7 +51,8 @@ namespace Silverback.Messaging.Serialization
         public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             if (messageStream == null)
                 return (null, _type);
@@ -57,7 +60,7 @@ namespace Silverback.Messaging.Serialization
             if (messageStream.CanSeek && messageStream.Length == 0)
                 return (null, _type);
 
-            var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, _type, Options)
+            var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, _type, Options, cancellationToken)
                                          .ConfigureAwait(false) ??
                                      throw new MessageSerializerException("The deserialization returned null.");
 

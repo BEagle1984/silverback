@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         }
 
         /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
-        public bool CanHandle(object returnValue) =>
+        public bool CanHandle(object? returnValue) =>
             returnValue != null &&
             returnValue.GetType().GetInterfaces().Any(
                 i => i.IsGenericType &&
@@ -45,11 +46,11 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                              messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
         /// <inheritdoc cref="IReturnValueHandler.Handle" />
-        public void Handle(object returnValue) =>
-            _publisher.Publish<object>(((IObservable<object>)returnValue).ToEnumerable());
+        public void Handle(object? returnValue) =>
+            _publisher.Publish<object?>(((IObservable<object?>)returnValue!).ToEnumerable());
 
         /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-        public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(((IObservable<object>)returnValue).ToEnumerable());
+        public Task HandleAsync(object? returnValue, CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync<object>(((IObservable<object?>)returnValue!).ToEnumerable(), cancellationToken);
     }
 }

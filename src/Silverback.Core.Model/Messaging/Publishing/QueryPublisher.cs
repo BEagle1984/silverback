@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -31,17 +32,20 @@ namespace Silverback.Messaging.Publishing
         public TResult Execute<TResult>(IQuery<TResult> queryMessage, bool throwIfUnhandled) =>
             _publisher.Publish<TResult>(queryMessage, throwIfUnhandled).SingleOrDefault();
 
-        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult})" />
-        public async Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage) =>
-            (await _publisher.PublishAsync<TResult>(queryMessage)
+        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult}, CancellationToken)" />
+        public async Task<TResult> ExecuteAsync<TResult>(
+            IQuery<TResult> queryMessage,
+            CancellationToken cancellationToken = default) =>
+            (await _publisher.PublishAsync<TResult>(queryMessage, cancellationToken)
                 .ConfigureAwait(false))
             .SingleOrDefault();
 
-        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult}, bool)" />
+        /// <inheritdoc cref="IQueryPublisher.ExecuteAsync{TResult}(IQuery{TResult}, bool, CancellationToken)" />
         public async Task<TResult> ExecuteAsync<TResult>(
             IQuery<TResult> queryMessage,
-            bool throwIfUnhandled) =>
-            (await _publisher.PublishAsync<TResult>(queryMessage, throwIfUnhandled)
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default) =>
+            (await _publisher.PublishAsync<TResult>(queryMessage, throwIfUnhandled, cancellationToken)
                 .ConfigureAwait(false))
             .SingleOrDefault();
     }

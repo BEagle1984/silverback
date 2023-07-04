@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         {
             var endpoint = new MqttConsumerEndpoint(_topicNames ?? Array.Empty<string>())
             {
-                Configuration = _clientConfig,
+                Configuration = _clientConfig
             };
 
             if (_qualityOfServiceLevel != null)

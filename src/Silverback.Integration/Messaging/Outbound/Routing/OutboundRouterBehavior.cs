@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
@@ -57,11 +58,14 @@ namespace Silverback.Messaging.Outbound.Routing
         public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundRouter;
 
         /// <inheritdoc cref="IBehavior.HandleAsync" />
-        public async Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public async Task<IReadOnlyCollection<object?>> HandleAsync(
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(next, nameof(next));
 
-            var wasRouted = await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false);
+            var wasRouted = await WrapAndRepublishRoutedMessageAsync(message, cancellationToken).ConfigureAwait(false);
 
             // The routed message is discarded because it has been republished
             // as OutboundEnvelope and will be normally subscribable
@@ -69,10 +73,12 @@ namespace Silverback.Messaging.Outbound.Routing
             if (wasRouted)
                 return Array.Empty<object?>();
 
-            return await next(message).ConfigureAwait(false);
+            return await next(message, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<bool> WrapAndRepublishRoutedMessageAsync(object message)
+        private async Task<bool> WrapAndRepublishRoutedMessageAsync(
+            object message,
+            CancellationToken cancellationToken)
         {
             if (message is IOutboundEnvelope)
                 return false;
@@ -84,7 +90,7 @@ namespace Silverback.Messaging.Outbound.Routing
 
             await routesCollection
                 .SelectMany(route => CreateOutboundEnvelopes(message, route))
-                .ForEachAsync(envelope => _publisher.PublishAsync(envelope))
+                .ForEachAsync(envelope => _publisher.PublishAsync(envelope, cancellationToken))
                 .ConfigureAwait(false);
 
             return true;

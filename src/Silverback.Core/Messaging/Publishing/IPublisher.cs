@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Publishing
@@ -86,10 +87,13 @@ namespace Silverback.Messaging.Publishing
         /// <param name="message">
         ///     The message to be published.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task PublishAsync(object message);
+        Task PublishAsync(object message, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -103,10 +107,13 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task PublishAsync(object message, bool throwIfUnhandled);
+        Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -118,6 +125,9 @@ namespace Silverback.Messaging.Publishing
         /// </typeparam>
         /// <param name="message">
         ///     The message to be published.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
@@ -125,7 +135,7 @@ namespace Silverback.Messaging.Publishing
         ///     return a
         ///     value.
         /// </returns>
-        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message);
+        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -142,12 +152,15 @@ namespace Silverback.Messaging.Publishing
         ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
         ///     message.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     collection  of <typeparamref name="TResult" />, since multiple subscribers could handle the message
         ///     and return a
         ///     value.
         /// </returns>
-        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled);
+        Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
     }
 }

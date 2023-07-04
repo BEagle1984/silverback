@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Publishing;
 
@@ -20,11 +21,14 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
         public int SortIndex { get; }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public Task<IReadOnlyCollection<object?>> HandleAsync(
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken = default)
         {
             _calls.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 
-            return next(message);
+            return next(message, cancellationToken);
         }
     }
 }

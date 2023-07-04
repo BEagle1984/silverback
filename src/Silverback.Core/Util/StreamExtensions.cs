@@ -3,13 +3,14 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
     internal static class StreamExtensions
     {
-        public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
+        public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream, CancellationToken cancellationToken = default)
         {
             if (stream == null)
                 return null;
@@ -17,11 +18,9 @@ namespace Silverback.Util
             if (stream is MemoryStream memoryStream)
                 return memoryStream.ToArray();
 
-            await using (var tempMemoryStream = new MemoryStream())
-            {
-                await stream.CopyToAsync(tempMemoryStream).ConfigureAwait(false);
-                return tempMemoryStream.ToArray();
-            }
+            await using var tempMemoryStream = new MemoryStream();
+            await stream.CopyToAsync(tempMemoryStream, cancellationToken).ConfigureAwait(false);
+            return tempMemoryStream.ToArray();
         }
 
         public static byte[]? ReadAll(this Stream? stream)
@@ -32,21 +31,19 @@ namespace Silverback.Util
             if (stream is MemoryStream memoryStream)
                 return memoryStream.ToArray();
 
-            using (var tempMemoryStream = new MemoryStream())
-            {
-                stream.CopyTo(tempMemoryStream);
-                return tempMemoryStream.ToArray();
-            }
+            using var tempMemoryStream = new MemoryStream();
+            stream.CopyTo(tempMemoryStream);
+            return tempMemoryStream.ToArray();
         }
 
-        public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count)
+        public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count, CancellationToken cancellationToken = default)
         {
             if (stream == null)
                 return null;
 
             var buffer = new byte[count];
 
-            await stream.ReadAsync(buffer.AsMemory()).ConfigureAwait(false);
+            await stream.ReadAsync(buffer.AsMemory(), cancellationToken).ConfigureAwait(false);
 
             return buffer;
         }

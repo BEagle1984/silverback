@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker.Behaviors
@@ -11,5 +12,10 @@ namespace Silverback.Messaging.Broker.Behaviors
     /// <param name="context">
     ///     The context that is passed along the consumer behaviors pipeline.
     /// </param>
-    public delegate Task ConsumerBehaviorHandler(ConsumerPipelineContext context);
+    /// <param name="cancellationToken">
+    ///     A <see cref="CancellationToken" /> used to cancel the operation.
+    /// </param>
+    public delegate Task ConsumerBehaviorHandler(
+        ConsumerPipelineContext context,
+        CancellationToken cancellationToken = default);
 }

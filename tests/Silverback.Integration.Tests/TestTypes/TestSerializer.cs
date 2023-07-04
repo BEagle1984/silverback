@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -20,7 +21,8 @@ namespace Silverback.Tests.Integration.TestTypes
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
@@ -28,7 +30,8 @@ namespace Silverback.Tests.Integration.TestTypes
         public ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context)
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default)
         {
             if (MustFailCount > FailCount)
             {
@@ -36,7 +39,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 throw new InvalidOperationException("Test failure");
             }
 
-            return new JsonMessageSerializer().DeserializeAsync(messageStream, messageHeaders, context);
+            return new JsonMessageSerializer().DeserializeAsync(messageStream, messageHeaders, context, cancellationToken);
         }
     }
 }

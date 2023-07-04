@@ -77,12 +77,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         /// <inheritdoc cref="IOutboxWorker.ProcessQueueAsync" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        public async Task ProcessQueueAsync(CancellationToken stoppingToken)
+        public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
         {
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueueAsync(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
+                await ProcessQueueAsync(scope.ServiceProvider, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -111,6 +111,9 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -120,13 +123,15 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             IProducerEndpoint endpoint,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             _brokerCollection.GetProducer(endpoint).RawProduceAsync(
                 actualEndpointName,
                 content,
                 headers,
                 onSuccess,
-                onError);
+                onError,
+                cancellationToken);
 
         private static async Task AcknowledgeAllAsync(
             IOutboxReader outboxReader,
@@ -141,7 +146,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         private async Task ProcessQueueAsync(
             IServiceProvider serviceProvider,
-            CancellationToken stoppingToken)
+            CancellationToken cancellationToken)
         {
             _logger.LogReadingMessagesFromOutbox(_batchSize);
 
@@ -172,10 +177,11 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                             outboxMessages[i],
                             failedMessages,
                             outboxReader,
-                            serviceProvider)
+                            serviceProvider,
+                            cancellationToken)
                         .ConfigureAwait(false);
 
-                    if (stoppingToken.IsCancellationRequested)
+                    if (cancellationToken.IsCancellationRequested)
                         break;
                 }
             }
@@ -196,7 +202,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             OutboxStoredMessage message,
             ConcurrentBag<OutboxStoredMessage> failedMessages,
             IOutboxReader outboxReader,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -222,7 +229,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                                     message.Headers,
                                     new LoggingEndpoint(message.EndpointName)),
                                 exception);
-                        })
+                        },
+                        cancellationToken)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)

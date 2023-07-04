@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Diagnostics;
@@ -57,7 +58,8 @@ namespace Silverback.Tests.Integration.TestTypes
 
             protected override Task<bool> ApplyPolicyAsync(
                 ConsumerPipelineContext context,
-                Exception exception)
+                Exception exception,
+                CancellationToken cancellationToken = default)
             {
                 Applied = true;
                 return Task.FromResult(false);

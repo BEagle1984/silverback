@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -146,12 +147,15 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         }
 
         /// <inheritdoc cref="IErrorPolicyImplementation.HandleErrorAsync" />
-        public async Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
+        public async Task<bool> HandleErrorAsync(
+            ConsumerPipelineContext context,
+            Exception exception,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(exception, nameof(exception));
 
-            var result = await ApplyPolicyAsync(context, exception).ConfigureAwait(false);
+            var result = await ApplyPolicyAsync(context, exception, cancellationToken).ConfigureAwait(false);
 
             if (_messageToPublishFactory == null)
                 return result;
@@ -162,7 +166,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             using var scope = _serviceProvider.CreateScope();
             await scope.ServiceProvider.GetRequiredService<IPublisher>()
-                .PublishAsync(message)
+                .PublishAsync(message, cancellationToken)
                 .ConfigureAwait(false);
 
             return result;
@@ -177,10 +181,16 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     action that the consumer should perform (e.g. skip the message or stop consuming).
         /// </returns>
-        protected abstract Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception);
+        protected abstract Task<bool> ApplyPolicyAsync(
+            ConsumerPipelineContext context,
+            Exception exception,
+            CancellationToken cancellationToken = default);
     }
 }
