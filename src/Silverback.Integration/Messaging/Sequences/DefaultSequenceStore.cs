@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly Guid _id = Guid.NewGuid();
 
-        private readonly Dictionary<string, ISequence> _store = new();
+        private readonly ConcurrentDictionary<string, ISequence> _store = new();
 
         private readonly ISilverbackLogger<DefaultSequenceStore> _logger;
 
@@ -34,8 +35,9 @@ namespace Silverback.Messaging.Sequences
 
             if (matchPrefix)
             {
-                sequence = _store.FirstOrDefault(
-                    keyValuePair => keyValuePair.Key.StartsWith(sequenceId, StringComparison.Ordinal)).Value;
+                sequence = _store.Values.FirstOrDefault(
+                    storedSequence =>
+                        storedSequence.SequenceId.StartsWith(sequenceId, StringComparison.Ordinal));
             }
             else
             {
@@ -80,7 +82,7 @@ namespace Silverback.Messaging.Sequences
                     _id
                 });
 
-            _store.Remove(sequenceId);
+            _store.TryRemove(sequenceId, out _);
             return Task.CompletedTask;
         }
 
