@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet.Client;
+using MQTTnet.Protocol;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
@@ -199,11 +200,27 @@ namespace Silverback.Messaging.Broker.Mqtt
 
                 if (await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
                 {
-                    await consumedMessage.EventArgs.AcknowledgeAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
+                    await AcknowledgeAsync(consumedMessage).ConfigureAwait(false);
                     break;
                 }
 
                 consumedMessage.TaskCompletionSource = new TaskCompletionSource<bool>();
+            }
+        }
+
+        private async Task AcknowledgeAsync(ConsumedApplicationMessage consumedMessage)
+        {
+            try
+            {
+                await consumedMessage.EventArgs.AcknowledgeAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                // Rethrow if the QoS level is exactly once, the consumer will be stopped
+                if (consumedMessage.EventArgs.ApplicationMessage.QualityOfServiceLevel == MqttQualityOfServiceLevel.ExactlyOnce)
+                    throw;
+
+                _logger.LogAcknowledgeFailed(consumedMessage, Consumer!, ex);
             }
         }
     }

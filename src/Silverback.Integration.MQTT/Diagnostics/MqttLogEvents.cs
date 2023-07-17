@@ -24,6 +24,14 @@ namespace Silverback.Diagnostics
             "Consuming message '{messageId}' from topic '{topic}'.");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be acknowledged.
+        /// </summary>
+        public static LogEvent AcknowledgeFailed { get; } = new(
+            LogLevel.Warning,
+            GetEventId(12, nameof(AcknowledgeFailed)),
+            "Failed to acknowledge message '{messageId}' from topic '{topic}'.");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while
         ///     connecting to the MQTT broker.
         /// </summary>

@@ -13,8 +13,10 @@ namespace Silverback.Diagnostics
     internal static class MqttLoggerExtensions
     {
         private static readonly Action<ILogger, string, string, string, string, Exception?> ConsumingMessage =
-            SilverbackLoggerMessage.Define<string, string, string, string>(
-                IntegrationLoggerExtensions.EnrichConsumerLogEvent(MqttLogEvents.ConsumingMessage));
+            SilverbackLoggerMessage.Define<string, string, string, string>(IntegrationLoggerExtensions.EnrichConsumerLogEvent(MqttLogEvents.ConsumingMessage));
+
+        private static readonly Action<ILogger, string, string, string, string, Exception?> AcknowledgeFailed =
+            SilverbackLoggerMessage.Define<string, string, string, string>(IntegrationLoggerExtensions.EnrichConsumerLogEvent(MqttLogEvents.AcknowledgeFailed));
 
         private static readonly Action<ILogger, string, string, Exception?> ConnectError =
             SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.ConnectError);
@@ -29,9 +31,7 @@ namespace Silverback.Diagnostics
             SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.Reconnected);
 
         private static readonly Action<ILogger, string, string, Exception?> ProducerQueueProcessingCanceled =
-            SilverbackLoggerMessage.Define<string, string>(
-                IntegrationLoggerExtensions.EnrichProducerLogEvent(
-                    MqttLogEvents.ProducerQueueProcessingCanceled));
+            SilverbackLoggerMessage.Define<string, string>(IntegrationLoggerExtensions.EnrichProducerLogEvent(MqttLogEvents.ProducerQueueProcessingCanceled));
 
         private static readonly Action<ILogger, string, string, Exception?> MqttClientLogError =
             SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogError);
@@ -56,6 +56,19 @@ namespace Silverback.Diagnostics
                 consumer.Id,
                 applicationMessage.EventArgs.ApplicationMessage.Topic,
                 null);
+
+        public static void LogAcknowledgeFailed(
+            this ISilverbackLogger logger,
+            ConsumedApplicationMessage applicationMessage,
+            MqttConsumer consumer,
+            Exception exception) =>
+            AcknowledgeFailed(
+                logger.InnerLogger,
+                applicationMessage.Id,
+                applicationMessage.EventArgs.ApplicationMessage.Topic,
+                consumer.Id,
+                applicationMessage.EventArgs.ApplicationMessage.Topic,
+                exception);
 
         public static void LogConnectError(
             this ISilverbackLogger logger,
