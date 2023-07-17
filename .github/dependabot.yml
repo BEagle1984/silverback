@@ -5,7 +5,8 @@ updates:
     schedule:
       interval: "daily"
     allow:
-      - dependency-name: "Confluent.*"
+      - dependency-name: "Confluent.Kafka"
+      - dependency-name: "Confluent.SchemaRegistry.Serdes.Avro"
       - dependency-name: "MQTTnet"
     commit-message:
       prefix: "chore"

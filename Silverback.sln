@@ -107,6 +107,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tools.KafkaConfi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.HealthChecks.Tests", "tests\Silverback.Integration.HealthChecks.Tests\Silverback.Integration.HealthChecks.Tests.csproj", "{7FD94CD1-2A5B-4F26-8926-F893FFA31713}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CF1B6ECD-01C4-472F-8538-D87A89EA6A30}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -271,6 +276,7 @@ Global
 		{FA851A59-335E-43C7-9F99-23ADD44A99B0} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{7FD94CD1-2A5B-4F26-8926-F893FFA31713} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{CF1B6ECD-01C4-472F-8538-D87A89EA6A30} = {C177137F-A084-4178-805F-890F0A175A56}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}
