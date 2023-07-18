@@ -109,10 +109,18 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
-        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.LimitParallelism" />
-        public IMqttConsumerEndpointBuilder LimitParallelism(int maxDegreeOfParallelism)
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.EnableParallelProcessing" />
+        public IMqttConsumerEndpointBuilder EnableParallelProcessing(int maxDegreeOfParallelism)
         {
             _maxDegreeOfParallelism = maxDegreeOfParallelism;
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.DisableParallelProcessing" />
+        public IMqttConsumerEndpointBuilder DisableParallelProcessing()
+        {
+            _maxDegreeOfParallelism = 1;
 
             return this;
         }

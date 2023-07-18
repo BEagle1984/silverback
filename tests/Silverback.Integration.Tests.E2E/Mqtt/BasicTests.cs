@@ -215,7 +215,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [Fact]
-        public async Task Inbound_WithLimitedParallelism_ConcurrencyLimited()
+        public async Task Inbound_WithParallelism_ProcessedInParallel()
         {
             var receivedMessages = new List<TestEventOne>();
             var taskCompletionSource = new TaskCompletionSource<bool>();
@@ -238,7 +238,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .Configure(config => config.WithClientId("client1"))
-                                        .LimitParallelism(2)))
+                                        .EnableParallelProcessing(2)))
                         .AddDelegateSubscriber(
                             async (TestEventOne message) =>
                             {

@@ -15,6 +15,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Rabbit;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -41,6 +42,8 @@ namespace Silverback.Messaging.Broker
         private int _pendingOffsetsCount;
 
         private RabbitDeliveryTag? _pendingDeliveryTag;
+
+        private ISequenceStore? _sequenceStore;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitConsumer" /> class.
@@ -74,11 +77,16 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
         }
 
+        /// <inheritdoc cref="Consumer.GetCurrentSequenceStores" />
+        public override IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() => _sequenceStore != null ? new[] { _sequenceStore } : Array.Empty<ISequenceStore>();
+
         /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
         protected override Task ConnectCoreAsync()
         {
             if (_consumer != null)
                 return Task.CompletedTask;
+
+            _sequenceStore = ServiceProvider.GetRequiredService<ISequenceStore>();
 
             (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
 
@@ -89,10 +97,10 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
-        protected override Task DisconnectCoreAsync()
+        protected override async Task DisconnectCoreAsync()
         {
             if (_consumer == null)
-                return Task.CompletedTask;
+                return;
 
             CommitPendingOffset();
 
@@ -101,7 +109,11 @@ namespace Silverback.Messaging.Broker
             _queueName = null;
             _consumer = null;
 
-            return Task.CompletedTask;
+            if (_sequenceStore != null)
+            {
+                await _sequenceStore.DisposeAsync().ConfigureAwait(false);
+                _sequenceStore = null;
+            }
         }
 
         /// <inheritdoc cref="Consumer.StopCoreAsync" />
@@ -142,17 +154,14 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task CommitCoreAsync(
-            IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
-            CommitOrStoreDeliveryTag(
-                brokerMessageIdentifiers.OrderBy(deliveryTag => deliveryTag.DeliveryTag).Last());
+            CommitOrStoreDeliveryTag(brokerMessageIdentifiers.OrderBy(deliveryTag => deliveryTag.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task RollbackCoreAsync(
-            IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
             BasicNack(brokerMessageIdentifiers.Max(deliveryTag => deliveryTag.DeliveryTag));
             return Task.CompletedTask;
@@ -166,8 +175,7 @@ namespace Silverback.Messaging.Broker
                 var deliveryTag = new RabbitDeliveryTag(
                     deliverEventArgs.ConsumerTag,
                     deliverEventArgs.DeliveryTag);
-                var headers = new MessageHeaderCollection(
-                    deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders());
+                var headers = new MessageHeaderCollection(deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders());
 
                 headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deliveryTag.Value);
 
@@ -181,7 +189,8 @@ namespace Silverback.Messaging.Broker
                         deliverEventArgs.Body.ToArray(),
                         headers,
                         Endpoint.Name,
-                        deliveryTag)
+                        deliveryTag,
+                        _sequenceStore ?? throw new InvalidOperationException("Sequence store not initialized"))
                     .ConfigureAwait(false);
             }
             catch (Exception ex)

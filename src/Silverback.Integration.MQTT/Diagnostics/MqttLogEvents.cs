@@ -68,6 +68,15 @@ namespace Silverback.Diagnostics
             "Connection with the MQTT broker reestablished. | clientId: {clientId}, broker: {broker}");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while
+        ///     disconnecting to the MQTT broker.
+        /// </summary>
+        public static LogEvent DisconnectError { get; } = new(
+            LogLevel.Warning,
+            GetEventId(25, nameof(DisconnectError)),
+            "Error occurred disconnecting from the MQTT broker. | clientId: {clientId}, broker: {broker}");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer
         ///     queue is being stopped (usually because the application is exiting).
         /// </summary>

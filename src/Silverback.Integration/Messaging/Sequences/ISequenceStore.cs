@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Sequences
     /// <summary>
     ///     The temporary store for the sequences being consumed.
     /// </summary>
-    public interface ISequenceStore : IReadOnlyCollection<ISequence>, IDisposable
+    public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposable, IDisposable
     {
         /// <summary>
         ///     Gets the sequence with the specified id.

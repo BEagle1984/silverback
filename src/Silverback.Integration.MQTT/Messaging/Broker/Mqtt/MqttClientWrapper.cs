@@ -137,17 +137,6 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public void Dispose() => MqttClient.Dispose();
 
-        public Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
-        {
-            if (_consumer == null)
-                throw new InvalidOperationException("No consumer was bound.");
-
-            // Clear the current activity to ensure we don't propagate the previous traceId
-            Activity.Current = null;
-
-            return _consumer.HandleMessageAsync(consumedMessage);
-        }
-
         private void ConnectAndMonitorConnection()
         {
             _connectCancellationTokenSource ??= new CancellationTokenSource();

@@ -30,6 +30,9 @@ namespace Silverback.Diagnostics
         private static readonly Action<ILogger, string, string, Exception?> Reconnected =
             SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.Reconnected);
 
+        private static readonly Action<ILogger, string, string, Exception?> DisconnectError =
+            SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.DisconnectError);
+
         private static readonly Action<ILogger, string, string, Exception?> ProducerQueueProcessingCanceled =
             SilverbackLoggerMessage.Define<string, string>(IntegrationLoggerExtensions.EnrichProducerLogEvent(MqttLogEvents.ProducerQueueProcessingCanceled));
 
@@ -107,6 +110,16 @@ namespace Silverback.Diagnostics
                 client.ClientConfig.ClientId,
                 client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 null);
+
+        public static void LogDisconnectError(
+            this ISilverbackLogger logger,
+            MqttClientWrapper client,
+            Exception exception) =>
+            DisconnectError(
+                logger.InnerLogger,
+                client.ClientConfig.ClientId,
+                client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
+                exception);
 
         public static void LogProducerQueueProcessingCanceled(
             this ISilverbackLogger logger,

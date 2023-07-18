@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -18,7 +17,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
 {
-    internal sealed class ConsumerChannelsManager : IDisposable
+    internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<ConsumeResult<byte[]?, byte[]?>>
     {
         private readonly IList<TopicPartition> _partitions;
 
@@ -27,11 +26,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private readonly IBrokerCallbacksInvoker _callbacksInvoker;
 
-        private readonly IList<ISequenceStore> _sequenceStores;
-
         private readonly ISilverbackLogger _logger;
-
-        private readonly Channel<ConsumeResult<byte[]?, byte[]?>>[] _channels;
 
         private readonly CancellationTokenSource[] _readCancellationTokenSource;
 
@@ -39,50 +34,41 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private readonly SemaphoreSlim? _messagesLimiterSemaphoreSlim;
 
-        private readonly object _isReadingLock = new();
+        private readonly SemaphoreSlim _readingSemaphoreSlim = new(1, 1);
 
         public ConsumerChannelsManager(
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
             IBrokerCallbacksInvoker callbacksInvoker,
-            IList<ISequenceStore> sequenceStores,
+            Func<ISequenceStore> sequenceStoreFactory,
             ISilverbackLogger logger)
+            : base(
+                consumer.Endpoint.ProcessPartitionsIndependently ? partitions.Count : 1,
+                consumer.Endpoint.BackpressureLimit,
+                sequenceStoreFactory)
         {
             // Copy the partitions array to avoid concurrency issues if a rebalance occurs while initializing
             _partitions = Check.NotNull(partitions, nameof(partitions)).ToList();
             _consumer = Check.NotNull(consumer, nameof(consumer));
             _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
-            _sequenceStores = Check.NotNull(sequenceStores, nameof(sequenceStores));
             _logger = Check.NotNull(logger, nameof(logger));
 
-            _channels = consumer.Endpoint.ProcessPartitionsIndependently
-                ? new Channel<ConsumeResult<byte[]?, byte[]?>>[partitions.Count]
-                : new Channel<ConsumeResult<byte[]?, byte[]?>>[1];
-
-            if (consumer.Endpoint.MaxDegreeOfParallelism < _channels.Length)
+            if (consumer.Endpoint.MaxDegreeOfParallelism < Channels.Length)
             {
                 _messagesLimiterSemaphoreSlim = new SemaphoreSlim(
                     consumer.Endpoint.MaxDegreeOfParallelism,
                     consumer.Endpoint.MaxDegreeOfParallelism);
             }
 
-            _readCancellationTokenSource = new CancellationTokenSource[_channels.Length];
-            _readTaskCompletionSources = new TaskCompletionSource<bool>[_channels.Length];
-            IsReading = new bool[_channels.Length];
-
-            consumer.CreateSequenceStores(_channels.Length);
-
-            for (int i = 0; i < _channels.Length; i++)
-            {
-                _channels[i] = CreateBoundedChannel();
-                _readCancellationTokenSource[i] = new CancellationTokenSource();
-                _readTaskCompletionSources[i] = new TaskCompletionSource<bool>();
-            }
+            _readCancellationTokenSource = Enumerable.Range(0, Channels.Length)
+                .Select(_ => new CancellationTokenSource()).ToArray();
+            _readTaskCompletionSources = Enumerable.Range(0, Channels.Length)
+                .Select(_ => new TaskCompletionSource<bool>()).ToArray();
+            IsReading = new bool[Channels.Length];
         }
 
         public Task Stopping =>
-            Task.WhenAll(
-                _readTaskCompletionSources.Select(taskCompletionSource => taskCompletionSource.Task));
+            Task.WhenAll(_readTaskCompletionSources.Select(taskCompletionSource => taskCompletionSource.Task));
 
         public bool[] IsReading { get; }
 
@@ -94,40 +80,47 @@ namespace Silverback.Messaging.Broker.Kafka
                 StartReading(0);
         }
 
-        public void StartReading(TopicPartition topicPartition) =>
-            StartReading(GetChannelIndex(topicPartition));
+        public void StartReading(TopicPartition topicPartition) => StartReading(GetChannelIndex(topicPartition));
 
         public Task StopReadingAsync() => Task.WhenAll(_partitions.Select(StopReadingAsync));
 
-        public Task StopReadingAsync(TopicPartition topicPartition)
+        public async Task StopReadingAsync(TopicPartition topicPartition)
         {
             int channelIndex = GetChannelIndex(topicPartition);
 
-            if (!_readCancellationTokenSource[channelIndex].IsCancellationRequested)
-            {
-                _logger.LogConsumerLowLevelTrace(
-                    _consumer,
-                    "Stopping channel {channelIndex} processing loop.",
-                    () => new object[] { channelIndex });
-
-                _readCancellationTokenSource[channelIndex].Cancel();
-            }
-
+            // Needed because aborting the sequence causes a rollback that calls this method
+            // again
             if (!IsReading[channelIndex])
-                _readTaskCompletionSources[channelIndex].TrySetResult(true);
+                return;
 
-            return _readTaskCompletionSources[channelIndex].Task;
+            await _readingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                if (!_readCancellationTokenSource[channelIndex].IsCancellationRequested)
+                {
+                    _logger.LogConsumerLowLevelTrace(
+                        _consumer,
+                        "Stopping channel {channelIndex} processing loop.",
+                        () => new object[] { channelIndex });
+
+                    _readCancellationTokenSource[channelIndex].Cancel();
+                }
+
+                if (!IsReading[channelIndex])
+                    _readTaskCompletionSources[channelIndex].TrySetResult(true);
+
+                await SequenceStores[channelIndex].AbortAllAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
+
+                await _readTaskCompletionSources[channelIndex].Task.ConfigureAwait(false);
+            }
+            finally
+            {
+                _readingSemaphoreSlim.Release();
+            }
         }
 
-        public void Reset(TopicPartition topicPartition)
-        {
-            int channelIndex = GetChannelIndex(topicPartition);
-            _channels[channelIndex].Writer.Complete();
-            _channels[channelIndex] = CreateBoundedChannel();
-        }
-
-        public ISequenceStore GetSequenceStore(TopicPartition topicPartition) =>
-            _sequenceStores[GetChannelIndex(topicPartition)];
+        public void ResetChannel(TopicPartition topicPartition) => ResetChannel(GetChannelIndex(topicPartition));
 
         // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
         // synchronously to stay within a single long-running thread with the Consume loop.
@@ -147,81 +140,80 @@ namespace Silverback.Messaging.Broker.Kafka
                 });
 
             AsyncHelper.RunValueTaskSynchronously(
-                () => _channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
+                () =>
+                    Channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            AsyncHelper.RunSynchronously(StopReadingAsync);
-            _readCancellationTokenSource.ForEach(
-                cancellationTokenSource => cancellationTokenSource.Dispose());
+            base.Dispose(disposing);
+
+            if (!disposing)
+                return;
+
+            // AsyncHelper.RunSynchronously(StopReadingAsync);
+            _readCancellationTokenSource.ForEach(cancellationTokenSource => cancellationTokenSource.Dispose());
 
             _logger.LogConsumerLowLevelTrace(_consumer, "All channels reader cancellation tokens disposed.");
 
             _messagesLimiterSemaphoreSlim?.Dispose();
+            _readingSemaphoreSlim.Dispose();
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void StartReading(int channelIndex)
         {
-            // Clear the current activity to ensure we don't propagate the previous traceId (e.g. when restarting because of a rollback)
-            Activity.Current = null;
+            _readingSemaphoreSlim.Wait();
 
-            if (_readCancellationTokenSource[channelIndex].IsCancellationRequested &&
-                !_readTaskCompletionSources[channelIndex].Task.IsCompleted)
+            try
             {
-                _logger.LogConsumerLowLevelTrace(
-                    _consumer,
-                    "Deferring channel {channelIndex} processing loop startup...",
-                    () => new object[] { channelIndex });
+                // Clear the current activity to ensure we don't propagate the previous traceId (e.g. when restarting because of a rollback)
+                Activity.Current = null;
 
-                // If the cancellation is still pending await it and restart after successful stop
-                Task.Run(
-                    async () =>
-                    {
-                        await _readTaskCompletionSources[channelIndex].Task.ConfigureAwait(false);
-                        StartReading(channelIndex);
-                    });
+                if (_readCancellationTokenSource[channelIndex].IsCancellationRequested &&
+                    !_readTaskCompletionSources[channelIndex].Task.IsCompleted)
+                {
+                    _logger.LogConsumerLowLevelTrace(
+                        _consumer,
+                        "Deferring channel {channelIndex} processing loop startup...",
+                        () => new object[] { channelIndex });
 
-                return;
-            }
+                    // If the cancellation is still pending await it and restart after successful stop
+                    Task.Run(
+                        async () =>
+                        {
+                            await _readTaskCompletionSources[channelIndex].Task.ConfigureAwait(false);
+                            StartReading(channelIndex);
+                        });
 
-            lock (_isReadingLock)
-            {
+                    return;
+                }
+
                 if (IsReading[channelIndex])
                     return;
 
                 IsReading[channelIndex] = true;
-            }
 
-            if (_readCancellationTokenSource[channelIndex].IsCancellationRequested)
+                if (_readCancellationTokenSource[channelIndex].IsCancellationRequested)
+                {
+                    _readCancellationTokenSource[channelIndex].Dispose();
+                    _readCancellationTokenSource[channelIndex] = new CancellationTokenSource();
+                }
+
+                if (_readTaskCompletionSources[channelIndex].Task.IsCompleted)
+                    _readTaskCompletionSources[channelIndex] = new TaskCompletionSource<bool>();
+
+                Task.Run(() => ReadChannelAsync(channelIndex, _readCancellationTokenSource[channelIndex].Token));
+            }
+            finally
             {
-                _readCancellationTokenSource[channelIndex].Dispose();
-                _readCancellationTokenSource[channelIndex] = new CancellationTokenSource();
+                _readingSemaphoreSlim.Release();
             }
-
-            if (_readTaskCompletionSources[channelIndex].Task.IsCompleted)
-                _readTaskCompletionSources[channelIndex] = new TaskCompletionSource<bool>();
-
-            var channelReader = _channels[channelIndex].Reader;
-
-            Task.Run(
-                () => ReadChannelAsync(
-                    channelIndex,
-                    channelReader,
-                    _readCancellationTokenSource[channelIndex].Token));
         }
 
-        // TODO: Can test setting for backpressure limit?
-        private Channel<ConsumeResult<byte[]?, byte[]?>> CreateBoundedChannel() =>
-            Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(_consumer.Endpoint.BackpressureLimit);
-
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ReadChannelAsync(
-            int channelIndex,
-            ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader,
-            CancellationToken cancellationToken)
+        private async Task ReadChannelAsync(int channelIndex, CancellationToken cancellationToken)
         {
             try
             {
@@ -232,8 +224,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await ReadChannelOnceAsync(channelReader, channelIndex, cancellationToken)
-                        .ConfigureAwait(false);
+                    await ReadChannelOnceAsync(channelIndex, cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException)
@@ -264,10 +255,7 @@ namespace Silverback.Messaging.Broker.Kafka
                 () => new object[] { channelIndex });
         }
 
-        private async Task ReadChannelOnceAsync(
-            ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader,
-            int channelIndex,
-            CancellationToken cancellationToken)
+        private async Task ReadChannelOnceAsync(int channelIndex, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -276,7 +264,7 @@ namespace Silverback.Messaging.Broker.Kafka
                 "Reading channel {channelIndex}...",
                 () => new object[] { channelIndex });
 
-            var consumeResult = await channelReader.ReadAsync(cancellationToken).ConfigureAwait(false);
+            var consumeResult = await Channels[channelIndex].Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -295,7 +283,10 @@ namespace Silverback.Messaging.Broker.Kafka
 
             try
             {
-                await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset)
+                await _consumer.HandleMessageAsync(
+                        consumeResult.Message,
+                        consumeResult.TopicPartitionOffset,
+                        SequenceStores[channelIndex])
                     .ConfigureAwait(false);
             }
             finally

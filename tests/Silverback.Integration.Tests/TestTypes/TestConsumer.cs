@@ -5,10 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
+using NuGet.Frameworks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
 using Silverback.Util;
@@ -17,6 +21,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestConsumer : Consumer<TestBroker, TestConsumerEndpoint, TestOffset>
     {
+        private DefaultSequenceStore _sequenceStore = new(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
+
         public TestConsumer(
             TestBroker broker,
             TestConsumerEndpoint endpoint,
@@ -74,12 +80,16 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
+            _sequenceStore = new DefaultSequenceStore(Substitute.For<ISilverbackLogger<DefaultSequenceStore>>());
             await HandleMessageAsync(
                 rawMessage,
                 headers,
                 "test-topic",
-                offset ?? new TestOffset());
+                offset ?? new TestOffset(),
+                _sequenceStore);
         }
+
+        public override IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() => new[] { _sequenceStore };
 
         protected override Task ConnectCoreAsync() => Task.CompletedTask;
 

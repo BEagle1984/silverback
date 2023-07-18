@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,9 +16,11 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly Guid _id = Guid.NewGuid();
 
-        private readonly ConcurrentDictionary<string, ISequence> _store = new();
+        private readonly Dictionary<string, ISequence> _store = new();
 
         private readonly ISilverbackLogger<DefaultSequenceStore> _logger;
+
+        private bool _disposed;
 
         public DefaultSequenceStore(ISilverbackLogger<DefaultSequenceStore> logger)
         {
@@ -53,6 +54,9 @@ namespace Silverback.Messaging.Sequences
         public async Task<TSequence> AddAsync<TSequence>(TSequence sequence)
             where TSequence : class, ISequence
         {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().FullName);
+
             Check.NotNull(sequence, nameof(sequence));
 
             _logger.LogLowLevelTrace(
@@ -82,7 +86,7 @@ namespace Silverback.Messaging.Sequences
                     _id
                 });
 
-            _store.TryRemove(sequenceId, out _);
+            _store.Remove(sequenceId);
             return Task.CompletedTask;
         }
 
@@ -94,19 +98,18 @@ namespace Silverback.Messaging.Sequences
 
         public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
 
-        public void Dispose()
-        {
-            _logger.LogLowLevelTrace(
-                "Disposing sequence store {sequenceStoreId}",
-                () => new object[]
-                {
-                    _id
-                });
+        public void Dispose() => AsyncHelper.RunValueTaskSynchronously(DisposeAsync);
 
-            AsyncHelper.RunSynchronously(
-                () => _store.Values
-                    .Where(sequence => sequence.IsPending)
-                    .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.Disposing)));
+        public async ValueTask DisposeAsync()
+        {
+            if (_disposed)
+                return;
+
+            _logger.LogLowLevelTrace("Disposing sequence store {sequenceStoreId}", () => new object[] { _id });
+
+            await _store.Values.AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
+
+            _disposed = true;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -5,10 +5,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -101,12 +99,6 @@ namespace Silverback.Messaging.Broker
         ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </summary>
         protected IServiceProvider ServiceProvider { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require
-        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
-        /// </summary>
-        protected IList<ISequenceStore> SequenceStores { get; } = new List<ISequenceStore>();
 
         /// <summary>
         ///     Gets a value indicating whether the consumer is being disconnected.
@@ -304,7 +296,10 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     The list of <see cref="ISequenceStore" />.
         /// </returns>
-        public IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() => SequenceStores.AsReadOnlyList();
+        /// <remarks>
+        ///     Used only for testing and maintained to preserve backward compatibility.
+        /// </remarks>
+        public abstract IReadOnlyList<ISequenceStore> GetCurrentSequenceStores();
 
         /// <summary>
         ///     Connects to the message broker.
@@ -347,8 +342,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task CommitCoreAsync(
-            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+        protected abstract Task CommitCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     If necessary notifies the message broker that the specified messages couldn't be processed
@@ -360,8 +354,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task RollbackCoreAsync(
-            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     Waits until the consuming is stopped.
@@ -370,30 +363,6 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected abstract Task WaitUntilConsumingStoppedCoreAsync();
-
-        /// <summary>
-        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
-        /// </summary>
-        /// <param name="brokerMessageIdentifier">
-        ///     The message identifier (the offset in Kafka) may determine which store is being used. For example a
-        ///     dedicated sequence store is used per each Kafka partition, since they may be processed concurrently.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ISequenceStore" />.
-        /// </returns>
-        protected virtual ISequenceStore GetSequenceStore(IBrokerMessageIdentifier brokerMessageIdentifier)
-        {
-            if (SequenceStores.Count == 0)
-            {
-                lock (SequenceStores)
-                {
-                    SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
-                }
-            }
-
-            return SequenceStores.FirstOrDefault() ??
-                   throw new InvalidOperationException("The sequence store is not initialized.");
-        }
 
         /// <summary>
         ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.
@@ -410,6 +379,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="brokerMessageIdentifier">
         ///     The identifier of the consumed message.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore" /> to be used.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -418,7 +390,8 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IBrokerMessageIdentifier brokerMessageIdentifier)
+            IBrokerMessageIdentifier brokerMessageIdentifier,
+            ISequenceStore sequenceStore)
         {
             var envelope = new RawInboundEnvelope(
                 message,
@@ -432,7 +405,7 @@ namespace Silverback.Messaging.Broker
             var consumerPipelineContext = new ConsumerPipelineContext(
                 envelope,
                 this,
-                GetSequenceStore(brokerMessageIdentifier),
+                sequenceStore,
                 ServiceProvider);
 
             await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
@@ -545,18 +518,8 @@ namespace Silverback.Messaging.Broker
                 else
                     await StopCoreAsync().ConfigureAwait(false);
 
-                if (SequenceStores.Count > 0)
-                {
-                    await SequenceStores
-                        .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
-                        .ConfigureAwait(false);
-                }
-
                 await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
                 await DisconnectCoreAsync().ConfigureAwait(false);
-
-                SequenceStores.ForEach(store => store.Dispose());
-                SequenceStores.Clear();
 
                 IsConnected = false;
 
@@ -579,7 +542,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 WaitUntilConsumingStoppedCoreAsync,
                 "Waiting until consumer stops...",
-                "Consumer stopped.");
+                "Finished waiting consumer stop.");
 
         private Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
         {

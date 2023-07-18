@@ -100,8 +100,11 @@ namespace Silverback.Messaging.Broker
         internal IConsumer<byte[]?, byte[]?> ConfluentConsumer =>
             _confluentConsumer ?? throw new InvalidOperationException("ConfluentConsumer not set.");
 
-        private ConsumerChannelsManager ChannelsManager =>
-            _channelsManager ?? throw new InvalidOperationException("ChannelsManager not set.");
+        private bool IsRebalancing { get; set; }
+
+        /// <inheritdoc cref="Consumer.GetCurrentSequenceStores" />
+        public override IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() =>
+            _channelsManager?.SequenceStores ?? Array.Empty<ISequenceStore>();
 
         internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
         {
@@ -116,11 +119,15 @@ namespace Silverback.Messaging.Broker
 
                 SetReadyStatus();
             }
+
+            IsRebalancing = false;
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         internal void OnPartitionsRevoked()
         {
+            IsRebalancing = true;
+
             RevertReadyStatus();
 
             StopConsumeLoopHandlerAndChannelsManager();
@@ -128,9 +135,6 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
 
             CommitOffsets();
-
-            AsyncHelper.RunSynchronously(() => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
-            SequenceStores.Clear();
 
             // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
             // reassigned only if Consume is called again.
@@ -159,7 +163,8 @@ namespace Silverback.Messaging.Broker
 
         internal async Task HandleMessageAsync(
             Message<byte[]?, byte[]?> message,
-            TopicPartitionOffset topicPartitionOffset)
+            TopicPartitionOffset topicPartitionOffset,
+            ISequenceStore sequenceStore)
         {
             var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
 
@@ -182,17 +187,9 @@ namespace Silverback.Messaging.Broker
                     message.Value,
                     headers,
                     topicPartitionOffset.Topic,
-                    new KafkaOffset(topicPartitionOffset))
+                    new KafkaOffset(topicPartitionOffset),
+                    sequenceStore)
                 .ConfigureAwait(false);
-        }
-
-        internal void CreateSequenceStores(int count)
-        {
-            for (var i = 0; i < count; i++)
-            {
-                if (SequenceStores.Count <= i)
-                    SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
-            }
         }
 
         /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
@@ -243,14 +240,6 @@ namespace Silverback.Messaging.Broker
             StopConsumeLoopHandlerAndChannelsManager();
 
             return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.GetSequenceStore(IBrokerMessageIdentifier)" />
-        protected override ISequenceStore GetSequenceStore(KafkaOffset brokerMessageIdentifier)
-        {
-            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
-
-            return ChannelsManager.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
@@ -335,18 +324,23 @@ namespace Silverback.Messaging.Broker
 
                 var topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
 
-                foreach (var topicPartition in topicPartitions)
+                lock (_channelsLock)
                 {
-                    _channelsManager?.Reset(topicPartition);
-
-                    if (IsConsuming)
+                    foreach (var topicPartition in topicPartitions)
                     {
-                        _channelsManager?.StartReading(topicPartition);
-                        _confluentConsumer?.Resume(new[] { topicPartition });
+                        _channelsManager?.ResetChannel(topicPartition);
+
+                        if (IsConsuming)
+                        {
+                            if (!IsStopping && !IsRebalancing)
+                                _channelsManager?.StartReading(topicPartition);
+
+                            _confluentConsumer?.Resume(new[] { topicPartition });
+                        }
                     }
                 }
 
-                if (IsConsuming)
+                if (IsConsuming && !IsStopping && !IsRebalancing)
                     _consumeLoopHandler?.Start();
             }
             catch (Exception ex)
@@ -418,7 +412,12 @@ namespace Silverback.Messaging.Broker
 
         private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)
         {
-            _channelsManager ??= new ConsumerChannelsManager(partitions, this, _callbacksInvoker, SequenceStores, _logger);
+            _channelsManager ??= new ConsumerChannelsManager(
+                partitions,
+                this,
+                _callbacksInvoker,
+                () => ServiceProvider.GetRequiredService<ISequenceStore>(),
+                _logger);
 
             _consumeLoopHandler?.SetChannelsManager(_channelsManager);
 

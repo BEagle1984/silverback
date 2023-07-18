@@ -951,6 +951,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequences.Should().HaveCount(batchesCount);
             sequences.ForEach(sequence => sequence.IsAborted.Should().BeTrue());
 
+            await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
+
             abortedCount.Should().Be(batchesCount);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
         }

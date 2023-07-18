@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         ///     Gets a value indicating whether the client is connected and a message handler is bound to it.
         /// </summary>
         public bool IsConsumerConnected =>
-            ApplicationMessageReceivedAsync?.Target is ConsumerChannelManager consumerChannelManager &&
+            ApplicationMessageReceivedAsync?.Target is ConsumerChannelsManager consumerChannelManager &&
             (consumerChannelManager.Consumer?.IsConnected ?? false);
 
         /// <inheritdoc cref="IMqttClient.IsConnected" />

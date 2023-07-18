@@ -53,13 +53,13 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets or sets the maximum number of incoming message that can be processed concurrently.
-        ///     The default is 10.
+        ///     The default is 1.
         /// </summary>
-        public int MaxDegreeOfParallelism { get; set; } = 10;
+        public int MaxDegreeOfParallelism { get; set; } = 1;
 
         /// <summary>
         ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
-        ///     The default is 10.
+        ///     The default is 1.
         /// </summary>
         public int BackpressureLimit { get; set; } = 1;
 
