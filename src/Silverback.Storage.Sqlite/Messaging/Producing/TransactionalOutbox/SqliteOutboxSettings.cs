@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Lock;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
@@ -43,7 +44,7 @@ public record SqliteOutboxSettings : OutboxSettings
     ///     The <see cref="InMemoryLockSettings" />.
     /// </returns>
     public override DistributedLockSettings GetCompatibleLockSettings() =>
-        new InMemoryLockSettings($"outbox.{ConnectionString}.{TableName}");
+        new InMemoryLockSettings($"outbox.{ConnectionString.GetSha256Hash()}.{TableName}");
 
     /// <inheritdoc cref="OutboxSettings.Validate" />
     public override void Validate()

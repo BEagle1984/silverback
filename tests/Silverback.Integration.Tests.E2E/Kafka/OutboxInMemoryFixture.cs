@@ -13,13 +13,21 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage.Relational;
+using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class OutboxFixture
+public class OutboxInMemoryFixture : KafkaFixture
 {
+    public OutboxInMemoryFixture(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Outbox_ShouldProduceMessages_WhenUsingInMemoryStorage()
     {
@@ -68,8 +76,10 @@ public partial class OutboxFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldIgnoreTransaction_WhenUsingInMemoryStorage()
+    public async Task Outbox_ShouldIgnoreTransaction()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
@@ -100,7 +110,7 @@ public partial class OutboxFixture
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-        await using SqliteConnection connection = new(Host.SqliteConnectionString);
+        await using SqliteConnection connection = new(database.ConnectionString);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
 

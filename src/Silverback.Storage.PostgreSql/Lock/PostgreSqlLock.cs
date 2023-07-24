@@ -1,12 +1,9 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Medallion.Threading.Postgres;
-using Silverback.Util;
 
 namespace Silverback.Lock;
 
@@ -32,7 +29,7 @@ public sealed class PostgreSqlLock : DistributedLock
     /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />
     protected override async ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken)
     {
-        PostgresDistributedLock distributedLock = new(new PostgresAdvisoryLockKey(_settings.LockName, allowHashing: true), _settings.ConnectionString);
+        PostgresDistributedLock distributedLock = new(new PostgresAdvisoryLockKey(_settings.LockName, true), _settings.ConnectionString);
 
         return new PostgreSqlLockHandle(await distributedLock.AcquireAsync(cancellationToken: cancellationToken).ConfigureAwait(false));
     }
@@ -52,7 +49,7 @@ public sealed class PostgreSqlLock : DistributedLock
 
         protected override void Dispose(bool disposing)
         {
-            if (_isDisposed)
+            if (_isDisposed || !disposing)
                 return;
 
             _isDisposed = true;

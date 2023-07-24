@@ -24,6 +24,7 @@ uid: releases
     * Client side offset storage (w/ transaction)
     * Fluent API for connection options
     * JsonSerializer typename handling none by default (Security)
+    * Storage.SQLite, Storage.Postgres, ...
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

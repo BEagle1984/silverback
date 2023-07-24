@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -12,19 +13,31 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
+using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class OutboxFixture
+[SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
+public class OutboxRoutingFixture : KafkaFixture
 {
+    public OutboxRoutingFixture(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Outbox_ShouldProduceToCorrectTopic()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -33,7 +46,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -43,19 +56,16 @@ public partial class OutboxFixture
                                 .Produce<TestEventOne>(
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventTwo>(
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne());
@@ -74,9 +84,12 @@ public partial class OutboxFixture
     [Fact]
     public async Task Outbox_ShouldProduceToCorrectTopic_WhenUsingEndpointNameFunction()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -85,7 +98,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -102,15 +115,12 @@ public partial class OutboxFixture
                                                 "3" => "topic3",
                                                 _ => throw new InvalidOperationException()
                                             })
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
@@ -129,9 +139,12 @@ public partial class OutboxFixture
     [Fact]
     public async Task Outbox_ShouldProduceToCorrectTopic_WhenUsingDynamicNamedEndpoints()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -140,7 +153,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -151,20 +164,17 @@ public partial class OutboxFixture
                                     "my-topic",
                                     endpoint => endpoint
                                         .ProduceTo(_ => "topic1")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString)))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventOne>(
                                     "other-topic",
                                     endpoint => endpoint
                                         .ProduceTo(_ => "topic2")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -186,9 +196,23 @@ public partial class OutboxFixture
     [Fact]
     public async Task Outbox_ShouldProduce_WhenUsingMultipleOutboxes()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(
+                    async storageInitializer =>
+                    {
+                        await storageInitializer.CreateSqliteOutboxAsync(
+                            new SqliteOutboxSettings(
+                                database.ConnectionString,
+                                "outbox1"));
+                        await storageInitializer.CreateSqliteOutboxAsync(
+                            new SqliteOutboxSettings(
+                                database.ConnectionString,
+                                "outbox2"));
+                    })
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -197,11 +221,11 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox1"))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).WithTableName("outbox1"))
                                 .WithInterval(TimeSpan.FromMilliseconds(50)))
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString).WithTableName("outbox2"))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString).WithTableName("outbox2"))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -213,24 +237,20 @@ public partial class OutboxFixture
                                         .ProduceTo("topic1")
                                         .ProduceToOutbox(
                                             outbox => outbox
-                                                .UseSqlite(Host.SqliteConnectionString)
+                                                .UseSqlite(database.ConnectionString)
                                                 .WithTableName("outbox1")))
                                 .Produce<TestEventTwo>(
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
                                         .ProduceToOutbox(
                                             outbox => outbox
-                                                .UseSqlite(Host.SqliteConnectionString)
+                                                .UseSqlite(database.ConnectionString)
                                                 .WithTableName("outbox2"))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
                 .AddIntegrationSpyAndSubscriber());
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox1"));
-        await storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(Host.SqliteConnectionString, "outbox2"));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 

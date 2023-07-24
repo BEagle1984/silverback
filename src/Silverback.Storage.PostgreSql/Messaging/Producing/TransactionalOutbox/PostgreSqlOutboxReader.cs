@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -59,7 +58,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
     public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) =>
-        _dataAccess.ExecuteQueryAsync(MapOutboxMessage, _getQuerySql,  _dataAccess.CreateParameter("@Limit", count));
+        _dataAccess.ExecuteQueryAsync(MapOutboxMessage, _getQuerySql, _dataAccess.CreateParameter("@Limit", count));
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
     public async Task<int> GetLengthAsync() => (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql).ConfigureAwait(false);
@@ -67,13 +66,12 @@ public class PostgreSqlOutboxReader : IOutboxReader
     /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
     public async Task<TimeSpan> GetMaxAgeAsync()
     {
-        string? oldestCreated = await _dataAccess.ExecuteScalarAsync<string>(_minCreatedQuerySql).ConfigureAwait(false);
+        DateTime oldestCreated = await _dataAccess.ExecuteScalarAsync<DateTime>(_minCreatedQuerySql).ConfigureAwait(false);
 
-        if (string.IsNullOrEmpty(oldestCreated))
+        if (oldestCreated == default)
             return TimeSpan.Zero;
 
-        DateTime dateTime = DateTime.Parse(oldestCreated, CultureInfo.InvariantCulture);
-        return DateTime.UtcNow - dateTime;
+        return DateTime.UtcNow - oldestCreated;
     }
 
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
@@ -84,7 +82,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
             _deleteSql,
             new[]
             {
-               _dataAccess.CreateParameter("@Id", 0L)
+                _dataAccess.CreateParameter("@Id", 0L)
             },
             (outboxMessage, parameters) =>
             {

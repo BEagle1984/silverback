@@ -3,6 +3,7 @@
 
 using System;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -14,19 +15,31 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
 using Silverback.Storage.Relational;
+using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class OutboxFixture
+[SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
+public class OutboxSqliteFixture : KafkaFixture
 {
+    public OutboxSqliteFixture(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public async Task Outbox_ShouldProduceMessages_WhenUsingSqlite()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -35,7 +48,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -45,15 +58,12 @@ public partial class OutboxFixture
                                 .Produce<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
-
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(Host.SqliteConnectionString);
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
@@ -74,9 +84,12 @@ public partial class OutboxFixture
     [Fact]
     public async Task Outbox_ShouldUseTransaction_WhenUsingSqlite()
     {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
         await Host.ConfigureServicesAndRunAsync(
             services => services
                 .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
                 .AddSilverback()
                 .UseModel()
                 .WithConnectionToMessageBroker(
@@ -85,7 +98,7 @@ public partial class OutboxFixture
                         .AddSqliteOutbox()
                         .AddOutboxWorker(
                             worker => worker
-                                .ProcessOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
                                 .WithInterval(TimeSpan.FromMilliseconds(50))))
                 .AddKafkaClients(
                     clients => clients
@@ -95,17 +108,14 @@ public partial class OutboxFixture
                                 .Produce<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(Host.SqliteConnectionString))))
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        SilverbackStorageInitializer storageInitializer = Host.ScopedServiceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreateSqliteOutboxAsync(Host.SqliteConnectionString);
-
-        await using SqliteConnection connection = new(Host.SqliteConnectionString);
+        await using SqliteConnection connection = new(database.ConnectionString);
         await connection.OpenAsync();
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())

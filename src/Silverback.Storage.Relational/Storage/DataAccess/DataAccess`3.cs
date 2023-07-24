@@ -90,12 +90,16 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
             await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
             if (isNewTransaction)
+            {
                 await command.Transaction!.CommitAsync().ConfigureAwait(false);
+            }
         }
         catch (Exception)
         {
             if (isNewTransaction)
+            {
                 await command.Transaction!.RollbackAndDisposeAsync().ConfigureAwait(false);
+            }
 
             throw;
         }
@@ -186,7 +190,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
     private ConnectionAndTransaction GetConnectionAndTransaction(SilverbackContext? context, bool beginTransaction)
     {
-        DbTransaction? transaction = GetExistingTransaction(context);
+        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
 
         if (transaction != null)
             return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
@@ -203,7 +207,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
     private async Task<ConnectionAndTransaction> GetConnectionAndTransactionAsync(SilverbackContext? context, bool beginTransaction)
     {
-        DbTransaction? transaction = GetExistingTransaction(context);
+        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
 
         if (transaction != null)
             return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
@@ -215,17 +219,6 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
             transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
 
         return new ConnectionAndTransaction(connection, transaction, transaction != null);
-    }
-
-    private DbTransaction? GetExistingTransaction(SilverbackContext? context)
-    {
-        if (context == null || !context.TryGetActiveDbTransaction(out TTransaction? sqliteTransaction))
-            return null;
-
-        if (sqliteTransaction.Connection?.ConnectionString != _connectionString)
-            throw new InvalidOperationException("The connection string of the active transaction does not match the configured connection string.");
-
-        return sqliteTransaction;
     }
 
     private sealed record ConnectionAndTransaction(DbConnection Connection, DbTransaction? Transaction, bool IsNewTransaction);

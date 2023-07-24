@@ -14,6 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Ductus.FluentDocker" Version="2.10.59" />
     <PackageReference Include="FluentAssertions" Version="6.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.1" Condition="'$(TargetFramework)'=='$(CurrentLatestFramework)'" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.17" Condition="'$(TargetFramework)'!='$(CurrentLatestFramework)'" />
@@ -34,7 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Silverback.Core.Rx\Silverback.Core.Rx.csproj" />
-    <ProjectReference Include="..\..\src\Silverback.Storage.Sqlite\Silverback.Storage.Sqlite.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Core.Model\Silverback.Core.Model.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
@@ -44,6 +44,8 @@
     <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Storage.Memory\Silverback.Storage.Memory.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Storage.Sqlite\Silverback.Storage.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Storage.PostgreSql\Silverback.Storage.PostgreSql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

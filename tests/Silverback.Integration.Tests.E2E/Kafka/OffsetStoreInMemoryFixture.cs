@@ -10,15 +10,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class OffsetStoreFixture
+public class OffsetStoreInMemoryFixture : KafkaFixture
 {
+    public OffsetStoreInMemoryFixture(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
+    {
+    }
+
     [Fact]
-    public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets_WhenUsingInMemoryStorage()
+    public async Task OffsetStore_ShouldStoreSubscribedTopicsOffsets()
     {
         int received = 0;
 
@@ -72,7 +79,7 @@ public partial class OffsetStoreFixture
     }
 
     [Fact]
-    public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets_WhenUsingInMemoryStorage()
+    public async Task OffsetStore_ShouldStoreManuallyAssignedPartitionsOffsets()
     {
         int received = 0;
 

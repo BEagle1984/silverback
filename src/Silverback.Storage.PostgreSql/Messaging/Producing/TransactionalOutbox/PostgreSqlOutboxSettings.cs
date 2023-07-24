@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Lock;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
@@ -42,7 +43,7 @@ public record PostgreSqlOutboxSettings : OutboxSettings
     ///     The <see cref="PostgreSqlLockSettings" />.
     /// </returns>
     public override DistributedLockSettings GetCompatibleLockSettings() =>
-        new PostgreSqlLockSettings($"outbox.{TableName}", ConnectionString);
+        new PostgreSqlLockSettings($"outbox.{ConnectionString.GetSha256Hash()}.{TableName}", ConnectionString);
 
     /// <inheritdoc cref="OutboxSettings.Validate" />
     public override void Validate()

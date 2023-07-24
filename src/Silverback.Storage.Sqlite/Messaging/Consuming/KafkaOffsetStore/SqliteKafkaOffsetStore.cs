@@ -1,10 +1,8 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
 using Silverback.Messaging.Broker;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
@@ -20,8 +18,6 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
 
     private readonly string _getQuerySql;
 
-    private readonly string _tableExistsSql;
-
     private readonly string _insertOrReplaceQuerySql;
 
     /// <summary>
@@ -36,31 +32,16 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
 
         _getQuerySql = $"SELECT Topic, Partition, Offset FROM {settings.TableName} WHERE GroupId = @GroupId";
 
-        _tableExistsSql = $"SELECT count(*) FROM sqlite_master WHERE type='table' AND name = '{settings.TableName}';";
-
         _insertOrReplaceQuerySql = $"INSERT OR REPLACE INTO {settings.TableName} (GroupId, Topic, Partition, Offset) " +
                                    "VALUES(@GroupId, @Topic, @Partition, @Offset)";
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
-    public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId)
-    {
-        // try
-        // {
-        return _dataAccess.ExecuteQuery(
+    public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) =>
+        _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
             _dataAccess.CreateParameter("@GroupId", groupId));
-        // }
-        // catch (SqliteException ex) when (ex.SqliteErrorCode == 1)
-        // {
-        //     if (_dataAccess.ExecuteScalar<long>(_tableExistsSql) == 0)
-        //         return Array.Empty<KafkaOffset>();
-        //
-        //     throw;
-        // }
-        // TODO: Neede???
-    }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>

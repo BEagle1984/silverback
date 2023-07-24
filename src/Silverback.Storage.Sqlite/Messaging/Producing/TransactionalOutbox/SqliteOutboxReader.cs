@@ -4,12 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
 using Silverback.Messaging.Messages;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
@@ -61,7 +59,7 @@ public class SqliteOutboxReader : IOutboxReader
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
     public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) =>
-        _dataAccess.ExecuteQueryAsync(MapOutboxMessage, _getQuerySql,  _dataAccess.CreateParameter("@Limit", count));
+        _dataAccess.ExecuteQueryAsync(MapOutboxMessage, _getQuerySql, _dataAccess.CreateParameter("@Limit", count));
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
     public async Task<int> GetLengthAsync() => (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql).ConfigureAwait(false);

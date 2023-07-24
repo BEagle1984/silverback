@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Storage.Sqlite.Messaging.Producing.TransactionalOutbox;
@@ -37,7 +38,7 @@ public class SqliteOutboxSettingsFixture
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
         lockSettings.Should().BeOfType<InMemoryLockSettings>();
-        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be("outbox.connection-string.my-outbox");
+        lockSettings.As<InMemoryLockSettings>().LockName.Should().Be($"outbox.{"connection-string".GetSha256Hash()}.my-outbox");
     }
 
     [Fact]
