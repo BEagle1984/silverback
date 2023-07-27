@@ -42,6 +42,12 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, int, long, string, Exception?> PartitionRevoked =
         SilverbackLoggerMessage.Define<string, int, long, string>(KafkaLogEvents.PartitionRevoked);
 
+    private static readonly Action<ILogger, string, int, long, string, Exception?> PartitionPaused =
+        SilverbackLoggerMessage.Define<string, int, long, string>(KafkaLogEvents.PartitionPaused);
+
+    private static readonly Action<ILogger, string, int, string, Exception?> PartitionResumed =
+        SilverbackLoggerMessage.Define<string, int, string>(KafkaLogEvents.PartitionResumed);
+
     private static readonly Action<ILogger, string, int, long, string, Exception?> OffsetCommitted =
         SilverbackLoggerMessage.Define<string, int, long, string>(KafkaLogEvents.OffsetCommitted);
 
@@ -144,6 +150,23 @@ internal static class KafkaLoggerExtensions
             topicPartitionOffset.Topic,
             topicPartitionOffset.Partition,
             topicPartitionOffset.Offset,
+            consumer.DisplayName,
+            null);
+
+    public static void LogPartitionPaused(this ISilverbackLogger logger, TopicPartitionOffset topicPartitionOffset, KafkaConsumer consumer) =>
+        PartitionPaused(
+            logger.InnerLogger,
+            topicPartitionOffset.Topic,
+            topicPartitionOffset.Partition,
+            topicPartitionOffset.Offset,
+            consumer.DisplayName,
+            null);
+
+    public static void LogPartitionResumed(this ISilverbackLogger logger, TopicPartition topicPartition, KafkaConsumer consumer) =>
+        PartitionResumed(
+            logger.InnerLogger,
+            topicPartition.Topic,
+            topicPartition.Partition,
             consumer.DisplayName,
             null);
 

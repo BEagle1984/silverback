@@ -207,6 +207,30 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     }
 
     [Fact]
+    public void LogPartitionPaused_ShouldLog()
+    {
+        _silverbackLogger.LogPartitionPaused(new TopicPartitionOffset("test", 2, 42), _consumer);
+
+        _loggerSubstitute.Received(
+            LogLevel.Debug,
+            null,
+            "Partition test[2] paused at offset 42. | consumerName: consumer1",
+            2035);
+    }
+
+    [Fact]
+    public void LogPartitionResumed_ShouldLog()
+    {
+        _silverbackLogger.LogPartitionResumed(new TopicPartition("test", 2), _consumer);
+
+        _loggerSubstitute.Received(
+            LogLevel.Debug,
+            null,
+            "Partition test[2] resumed. | consumerName: consumer1",
+            2036);
+    }
+
+    [Fact]
     public void LogOffsetCommitted_ShouldLog()
     {
         _silverbackLogger.LogOffsetCommitted(new TopicPartitionOffset("test", 2, 42), _consumer);
@@ -215,7 +239,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Debug,
             null,
             "Successfully committed offset test[2]@42. | consumerName: consumer1",
-            2035);
+            2037);
     }
 
     [Fact]
@@ -229,7 +253,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Error,
             null,
             "Error occurred committing the offset test[2]@42: 'Broker: Request timed out' (7). | consumerName: consumer1",
-            2036);
+            2038);
     }
 
     [Fact]
@@ -241,7 +265,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Warning,
             null,
             "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22). | consumerName: consumer1",
-            2036);
+            2039);
     }
 
     [Fact]
@@ -253,7 +277,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Error,
             null,
             "Fatal error in Kafka consumer: 'Broker: Request timed out' (7). | consumerName: consumer1",
-            2037);
+            2040);
     }
 
     [Fact]
@@ -265,7 +289,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Debug,
             null,
             "Kafka consumer statistics received: { json } | consumerName: consumer1",
-            2038);
+            2041);
     }
 
     [Fact]
@@ -277,7 +301,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Debug,
             null,
             "Kafka producer statistics received: { json } | producerName: producer1",
-            2039);
+            2042);
     }
 
     [Fact]
@@ -289,7 +313,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             LogLevel.Error,
             typeof(JsonException),
             "The received statistics JSON couldn't be deserialized.",
-            2040);
+            2043);
     }
 
     [Fact]

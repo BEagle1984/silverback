@@ -268,14 +268,17 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        if (IsStarted)
-            Client.Pause(brokerMessageIdentifiers.Select(offset => offset.TopicPartition));
-
-        List<Task?> channelsManagerStoppingTasks = new(brokerMessageIdentifiers.Count);
-
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
             .AsReadOnlyList();
+
+        if (IsStarted)
+        {
+            Client.Pause(brokerMessageIdentifiers.Select(offset => offset.TopicPartition));
+            topicPartitionOffsets.ForEach(topicPartitionOffset => _logger.LogPartitionPaused(topicPartitionOffset, this));
+        }
+
+        List<Task?> channelsManagerStoppingTasks = new(brokerMessageIdentifiers.Count);
 
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {
@@ -329,6 +332,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
                 _channelsManager?.StartReading(topicPartition);
                 Client.Resume(new[] { topicPartition });
+                _logger.LogPartitionResumed(topicPartition, this);
             }
         }
         catch (Exception ex)

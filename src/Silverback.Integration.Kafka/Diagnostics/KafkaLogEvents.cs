@@ -117,11 +117,27 @@ public static class KafkaLogEvents
         "Revoked partition {topic}[{partition}] (offset was {offset}). | consumerName: {consumerName}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is paused.
+    /// </summary>
+    public static LogEvent PartitionPaused { get; } = new(
+        LogLevel.Debug,
+        GetEventId(35, nameof(PartitionPaused)),
+        "Partition {topic}[{partition}] paused at offset {offset}. | consumerName: {consumerName}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is resumed.
+    /// </summary>
+    public static LogEvent PartitionResumed { get; } = new(
+        LogLevel.Debug,
+        GetEventId(36, nameof(PartitionResumed)),
+        "Partition {topic}[{partition}] resumed. | consumerName: {consumerName}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an offset is successfully committed.
     /// </summary>
     public static LogEvent OffsetCommitted { get; } = new(
         LogLevel.Debug,
-        GetEventId(35, nameof(OffsetCommitted)),
+        GetEventId(37, nameof(OffsetCommitted)),
         "Successfully committed offset {topic}[{partition}]@{offset}. | consumerName: {consumerName}");
 
     /// <summary>
@@ -129,7 +145,7 @@ public static class KafkaLogEvents
     /// </summary>
     public static LogEvent OffsetCommitError { get; } = new(
         LogLevel.Error,
-        GetEventId(36, nameof(OffsetCommitError)),
+        GetEventId(38, nameof(OffsetCommitError)),
         "Error occurred committing the offset {topic}[{partition}]@{offset}: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
 
     /// <summary>
@@ -141,7 +157,7 @@ public static class KafkaLogEvents
     /// </remarks>
     public static LogEvent ConfluentConsumerError { get; } = new(
         LogLevel.Warning,
-        GetEventId(36, nameof(ConfluentConsumerError)),
+        GetEventId(39, nameof(ConfluentConsumerError)),
         "Error in Kafka consumer: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
 
     /// <summary>
@@ -153,7 +169,7 @@ public static class KafkaLogEvents
     /// </remarks>
     public static LogEvent ConfluentConsumerFatalError { get; } = new(
         LogLevel.Error,
-        GetEventId(37, nameof(ConfluentConsumerFatalError)),
+        GetEventId(40, nameof(ConfluentConsumerFatalError)),
         "Fatal error in Kafka consumer: '{errorReason}' ({errorCode}). | consumerName: {consumerName}");
 
     /// <summary>
@@ -162,7 +178,7 @@ public static class KafkaLogEvents
     /// </summary>
     public static LogEvent ConsumerStatisticsReceived { get; } = new(
         LogLevel.Debug,
-        GetEventId(38, nameof(ConsumerStatisticsReceived)),
+        GetEventId(41, nameof(ConsumerStatisticsReceived)),
         "Kafka consumer statistics received: {statistics} | consumerName: {consumerName}");
 
     /// <summary>
@@ -171,7 +187,7 @@ public static class KafkaLogEvents
     /// </summary>
     public static LogEvent ProducerStatisticsReceived { get; } = new(
         LogLevel.Debug,
-        GetEventId(39, nameof(ProducerStatisticsReceived)),
+        GetEventId(42, nameof(ProducerStatisticsReceived)),
         "Kafka producer statistics received: {statistics} | producerName: {producerName}");
 
     /// <summary>
@@ -180,7 +196,7 @@ public static class KafkaLogEvents
     /// </summary>
     public static LogEvent StatisticsDeserializationError { get; } = new(
         LogLevel.Error,
-        GetEventId(40, nameof(StatisticsDeserializationError)),
+        GetEventId(43, nameof(StatisticsDeserializationError)),
         "The received statistics JSON couldn't be deserialized.");
 
     /// <summary>
