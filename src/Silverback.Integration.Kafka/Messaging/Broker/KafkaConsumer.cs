@@ -115,12 +115,12 @@ namespace Silverback.Messaging.Broker
             {
                 IsConsuming = true;
 
+                IsRebalancing = false;
+
                 InitAndStartChannelsManager(partitions);
 
                 SetReadyStatus();
             }
-
-            IsRebalancing = false;
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
@@ -279,6 +279,12 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "VSTHRD110", Justification = "stopping tasks awaited in Restart method")]
         protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
+            // During a rebalance the rollback might be triggered aborting the pending sequences but
+            // we don't need to do anything
+            // TODO: review for incremental rebalance
+            if (IsRebalancing || IsStopping)
+                return Task.CompletedTask;
+
             var latestTopicPartitionOffsets =
                 brokerMessageIdentifiers
                     .GroupBy(offset => offset.Key)
