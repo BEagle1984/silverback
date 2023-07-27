@@ -32,7 +32,7 @@ This package adds the support for Apache Avro and the schema registry on top of 
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="2.1.1" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.1.1" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
