@@ -79,6 +79,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             Dictionary<ConfigResource, List<ConfigEntry>> configs,
             AlterConfigsOptions? options = null) => throw new NotSupportedException();
 
+        public Task<List<IncrementalAlterConfigsResult>> IncrementalAlterConfigsAsync(
+            Dictionary<ConfigResource, List<ConfigEntry>> configs,
+            IncrementalAlterConfigsOptions? options = null) => throw new NotSupportedException();
+
         public Task<List<DescribeConfigsResult>> DescribeConfigsAsync(
             IEnumerable<ConfigResource> resources,
             DescribeConfigsOptions? options = null) => throw new NotSupportedException();
@@ -96,20 +100,37 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public Task<List<DeleteAclsResult>> DeleteAclsAsync(IEnumerable<AclBindingFilter> aclBindingFilters, DeleteAclsOptions? options = null) =>
             throw new NotSupportedException();
 
-        public Task<DeleteConsumerGroupOffsetsResult> DeleteConsumerGroupOffsetsAsync(string group, IEnumerable<TopicPartition> partitions, DeleteConsumerGroupOffsetsOptions? options = null) =>
+        public Task<DeleteConsumerGroupOffsetsResult> DeleteConsumerGroupOffsetsAsync(
+            string group,
+            IEnumerable<TopicPartition> partitions,
+            DeleteConsumerGroupOffsetsOptions? options = null) =>
             throw new NotSupportedException();
 
-        public Task<List<AlterConsumerGroupOffsetsResult>> AlterConsumerGroupOffsetsAsync(IEnumerable<ConsumerGroupTopicPartitionOffsets> groupPartitions, AlterConsumerGroupOffsetsOptions? options = null) =>
+        public Task<List<AlterConsumerGroupOffsetsResult>> AlterConsumerGroupOffsetsAsync(
+            IEnumerable<ConsumerGroupTopicPartitionOffsets> groupPartitions,
+            AlterConsumerGroupOffsetsOptions? options = null) =>
             throw new NotSupportedException();
 
-        public Task<List<ListConsumerGroupOffsetsResult>> ListConsumerGroupOffsetsAsync(IEnumerable<ConsumerGroupTopicPartitions> groupPartitions, ListConsumerGroupOffsetsOptions? options = null) =>
+        public Task<List<ListConsumerGroupOffsetsResult>> ListConsumerGroupOffsetsAsync(
+            IEnumerable<ConsumerGroupTopicPartitions> groupPartitions,
+            ListConsumerGroupOffsetsOptions? options = null) =>
             throw new NotSupportedException();
 
         public Task<ListConsumerGroupsResult> ListConsumerGroupsAsync(ListConsumerGroupsOptions? options = null) =>
             throw new NotSupportedException();
 
-        public Task<DescribeConsumerGroupsResult> DescribeConsumerGroupsAsync(IEnumerable<string> groups, DescribeConsumerGroupsOptions? options = null) =>
+        public Task<DescribeConsumerGroupsResult> DescribeConsumerGroupsAsync(
+            IEnumerable<string> groups,
+            DescribeConsumerGroupsOptions? options = null) =>
             throw new NotSupportedException();
+
+        public Task<DescribeUserScramCredentialsResult> DescribeUserScramCredentialsAsync(
+            IEnumerable<string> users,
+            DescribeUserScramCredentialsOptions? options = null) => throw new NotSupportedException();
+
+        public Task AlterUserScramCredentialsAsync(
+            IEnumerable<UserScramCredentialAlteration> alterations,
+            AlterUserScramCredentialsOptions? options = null) => throw new NotSupportedException();
 
         public void Dispose()
         {
