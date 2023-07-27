@@ -292,6 +292,7 @@ namespace Silverback.Messaging.Broker
             if (IsConsuming)
             {
                 _confluentConsumer?.Pause(latestTopicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
+                latestTopicPartitionOffsets.ForEach(topicPartitionOffset => _logger.LogPartitionPaused(topicPartitionOffset, this));
             }
 
             var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
@@ -336,6 +337,7 @@ namespace Silverback.Messaging.Broker
                                 _channelsManager?.StartReading(topicPartition);
 
                             _confluentConsumer?.Resume(new[] { topicPartition });
+                            _logger.LogPartitionResumed(topicPartition, this);
                         }
                     }
                 }

@@ -228,6 +228,22 @@ namespace Silverback.Diagnostics
             "Error in Kafka log handler.");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is paused.
+        /// </summary>
+        public static LogEvent PartitionPaused { get; } = new(
+            LogLevel.Debug,
+            GetEventId(44, nameof(PartitionPaused)),
+            "Partition {topic}[{partition}] paused at offset {offset}.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a partition is resumed.
+        /// </summary>
+        public static LogEvent PartitionResumed { get; } = new(
+            LogLevel.Debug,
+            GetEventId(45, nameof(PartitionResumed)),
+            "Partition {topic}[{partition}] resumed.");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
         ///     disconnecting the underlying Confluent.Kafka consumer.
         /// </summary>
