@@ -34,12 +34,15 @@ namespace Silverback.Messaging.Broker
 
         public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
         {
-            if (Status is ConsumerStatus.Connected or ConsumerStatus.Ready)
-                ChangeStatus(ConsumerStatus.Consuming);
+            lock (_history)
+            {
+                if (Status is ConsumerStatus.Connected or ConsumerStatus.Ready)
+                    ChangeStatus(ConsumerStatus.Consuming);
 
-            ConsumedMessagesCount++;
-            LatestConsumedMessageTimestamp = DateTime.Now;
-            LatestConsumedMessageIdentifier = brokerMessageIdentifier;
+                ConsumedMessagesCount++;
+                LatestConsumedMessageTimestamp = DateTime.Now;
+                LatestConsumedMessageIdentifier = brokerMessageIdentifier;
+            }
         }
 
         private void ChangeStatus(ConsumerStatus status)
