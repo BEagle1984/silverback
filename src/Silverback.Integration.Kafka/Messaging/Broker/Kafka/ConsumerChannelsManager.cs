@@ -152,7 +152,7 @@ namespace Silverback.Messaging.Broker.Kafka
             if (!disposing)
                 return;
 
-            // AsyncHelper.RunSynchronously(StopReadingAsync);
+            AsyncHelper.RunSynchronously(StopReadingAsync);
             _readCancellationTokenSource.ForEach(cancellationTokenSource => cancellationTokenSource.Dispose());
 
             _logger.LogConsumerLowLevelTrace(_consumer, "All channels reader cancellation tokens disposed.");
