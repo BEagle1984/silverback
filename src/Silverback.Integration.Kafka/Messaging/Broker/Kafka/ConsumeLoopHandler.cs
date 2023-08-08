@@ -176,7 +176,9 @@ namespace Silverback.Messaging.Broker.Kafka
             }
             catch (Exception ex)
             {
-                AutoRecoveryIfEnabled(ex);
+                if (_consumer is { IsConnected: true, IsDisconnecting: false })
+                    AutoRecoveryIfEnabled(ex);
+
                 return false;
             }
 

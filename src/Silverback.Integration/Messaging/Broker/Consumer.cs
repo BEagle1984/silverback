@@ -96,14 +96,14 @@ namespace Silverback.Messaging.Broker
         public bool IsConsuming { get; protected set; }
 
         /// <summary>
+        ///     Gets a value indicating whether the consumer is being disconnected.
+        /// </summary>
+        public bool IsDisconnecting { get; private set; }
+
+        /// <summary>
         ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </summary>
         protected IServiceProvider ServiceProvider { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether the consumer is being disconnected.
-        /// </summary>
-        protected bool IsDisconnecting { get; private set; }
 
         /// <summary>
         ///     Gets a value indicating whether the consumer is being stopped.
