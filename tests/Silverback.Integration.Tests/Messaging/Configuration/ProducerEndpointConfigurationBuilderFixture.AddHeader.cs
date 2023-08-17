@@ -22,7 +22,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
             .Build();
 
         endpoint.MessageEnrichers.Should().HaveCount(1);
-        endpoint.MessageEnrichers.Single().Should().BeOfType<GenericOutboundHeadersEnricher>();
+        endpoint.MessageEnrichers.Single().Should().BeOfType<StaticOutboundHeadersEnricher>();
     }
 
     [Fact]

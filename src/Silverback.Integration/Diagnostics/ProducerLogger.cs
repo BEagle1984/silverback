@@ -19,6 +19,8 @@ internal sealed class ProducerLogger
 
     private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _errorProducingMessage;
 
+    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _messageFiltered;
+
     private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _storingIntoOutbox;
 
     private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _errorProducingOutboxStoredMessage;
@@ -31,6 +33,7 @@ internal sealed class ProducerLogger
 
         _messageProduced = _logEnricher.Define(IntegrationLogEvents.MessageProduced);
         _errorProducingMessage = _logEnricher.Define(IntegrationLogEvents.ErrorProducingMessage);
+        _messageFiltered = _logEnricher.Define(IntegrationLogEvents.OutboundMessageFiltered);
         _storingIntoOutbox = _logEnricher.Define(IntegrationLogEvents.StoringIntoOutbox);
         _errorProducingOutboxStoredMessage = _logEnricher.Define(IntegrationLogEvents.ErrorProducingOutboxStoredMessage);
         _invalidMessageProduced = _logEnricher.Define<string>(IntegrationLogEvents.InvalidMessageProduced);
@@ -110,6 +113,23 @@ internal sealed class ProducerLogger
             value1,
             value2,
             exception);
+    }
+
+    public void LogFiltered(ISilverbackLogger logger, IOutboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.OutboundMessageFiltered))
+            return;
+
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Endpoint, envelope.Headers, envelope.BrokerMessageIdentifier);
+
+        _messageFiltered.Invoke(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            null);
     }
 
     public void LogStoringIntoOutbox(ISilverbackLogger logger, IOutboundEnvelope envelope)

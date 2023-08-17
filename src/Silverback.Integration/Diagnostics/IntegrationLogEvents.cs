@@ -75,6 +75,14 @@ public static class IntegrationLogEvents
         "Error occurred producing the message.");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an outbound message is filtered out.
+    /// </summary>
+    public static LogEvent OutboundMessageFiltered { get; } = new(
+        LogLevel.Debug,
+        GetEventId(7, nameof(OutboundMessageFiltered)),
+        "Message filtered.");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an inbound message is added to
     ///     a sequence (e.g. <see cref="ChunkSequence" /> or a <see cref="BatchSequence" />).
     /// </summary>
@@ -83,7 +91,7 @@ public static class IntegrationLogEvents
         GetEventId(11, nameof(MessageAddedToSequence)),
         "Message '{messageId}' added to {sequenceType} '{sequenceId}'. | length: {sequenceLength}");
 
-    /// <summary>
+    /// <summary>`
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the first message of a new
     ///     sequence is consumed.
     /// </summary>

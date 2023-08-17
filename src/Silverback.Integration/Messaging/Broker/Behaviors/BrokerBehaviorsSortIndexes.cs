@@ -9,6 +9,7 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.Filter;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
@@ -52,6 +53,11 @@ public static class BrokerBehaviorsSortIndexes
         ///     <c>RabbitRoutingKeyInitializerProducerBehavior</c> or similar sort index.
         /// </summary>
         public const int BrokerKeyHeaderInitializer = 400;
+
+        /// <summary>
+        ///     The <see cref="FilterProducerBehavior" /> sort index.
+        /// </summary>
+        public const int Filter = 450;
 
         /// <summary>
         ///     The <see cref="BinaryMessageHandlerProducerBehavior" /> sort index.

@@ -28,7 +28,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder AddHeader(string name, object? value)
     {
         Check.NotNullOrEmpty(name, nameof(name));
-        return AddMessageEnricher(new GenericOutboundHeadersEnricher(name, value));
+        return AddMessageEnricher(new StaticOutboundHeadersEnricher(name, value));
     }
 
     /// <summary>

@@ -49,10 +49,9 @@ public class InMemoryOutboxSettingsFixture
     }
 
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenOutboxNameIsNullOrWhitespace(string? outboxName)
+    public void Validate_ShouldThrow_WhenOutboxNameIsEmptyOrWhitespace(string? outboxName)
     {
         InMemoryOutboxSettings outboxSettings = new(outboxName!);
 

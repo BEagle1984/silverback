@@ -48,6 +48,10 @@ internal sealed class ProducerLogger<TCategoryName> : SilverbackLogger<TCategory
                 headers,
                 exception);
 
+    public void LogFiltered(IOutboundEnvelope envelope) =>
+        _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
+            .LogFiltered(this, envelope);
+
     public void LogStoringIntoOutbox(IOutboundEnvelope envelope) =>
         _loggerFactory.GetProducerLogger(envelope.Endpoint.Configuration)
             .LogStoringIntoOutbox(this, envelope);
