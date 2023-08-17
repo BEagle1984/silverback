@@ -69,6 +69,14 @@ public interface IProducerLogger<out TCategoryName> : ISilverbackLogger<TCategor
     void LogProduceError(ProducerEndpoint endpoint, IReadOnlyCollection<MessageHeader>? headers, Exception exception);
 
     /// <summary>
+    ///     Logs the <see cref="IntegrationLogEvents.OutboundMessageFiltered" /> event.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The <see cref="IOutboundEnvelope" />.
+    /// </param>
+    void LogFiltered(IOutboundEnvelope envelope);
+
+    /// <summary>
     ///     Logs the <see cref="IntegrationLogEvents.StoringIntoOutbox" /> event.
     /// </summary>
     /// <param name="envelope">

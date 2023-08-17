@@ -7,6 +7,7 @@ using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.Filter;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 
@@ -64,6 +65,11 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     ///     being sent in clear-text.
     /// </summary>
     public IEncryptionSettings? Encryption { get; init; }
+
+    /// <summary>
+    ///     Gets the <see cref="IOutboundMessageFilter" /> to be used to filter out messages that should not be produced.
+    /// </summary>
+    public IOutboundMessageFilter? Filter { get; init; }
 
     /// <summary>
     ///     Gets the (base) type of the messages being routed via this producer.

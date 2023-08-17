@@ -10,6 +10,7 @@ using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.Filter;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
@@ -50,6 +51,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     private bool? _alwaysAddChunkHeaders;
 
     private IEncryptionSettings? _encryptionSettings;
+
+    private IOutboundMessageFilter? _filter;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" /> class.
@@ -189,7 +192,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
                     AlwaysAddHeaders = _alwaysAddChunkHeaders ?? true
                 },
             MessageEnrichers = _messageEnrichers.Union(configuration.MessageEnrichers).AsValueReadOnlyCollection(),
-            Encryption = _encryptionSettings ?? configuration.Encryption
+            Encryption = _encryptionSettings ?? configuration.Encryption,
+            Filter = _filter ?? configuration.Filter
         };
 
         configuration.Validate();

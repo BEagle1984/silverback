@@ -137,6 +137,33 @@ public class ProducerLoggerFixture
     }
 
     [Fact]
+    public void LogFiltered_ShouldLog()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageType, "Message.Type" },
+                { DefaultMessageHeaders.MessageId, "1234" }
+            },
+            new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
+            Substitute.For<IProducer>(),
+            true,
+            new TestOffset("a", "42"));
+
+        _producerLogger.LogFiltered(envelope);
+
+        string expectedMessage =
+            "Message filtered. | " +
+            "endpointName: test1, " +
+            "messageType: Message.Type, " +
+            "messageId: 1234, " +
+            "unused1: (null), " +
+            "unused2: (null)";
+        _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 1007);
+    }
+
+    [Fact]
     public void LogStoringIntoOutbox_ShouldLog()
     {
         OutboundEnvelope envelope = new(

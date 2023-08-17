@@ -25,6 +25,7 @@ uid: releases
     * Fluent API for connection options
     * JsonSerializer typename handling none by default (Security)
     * Storage.SQLite, Storage.Postgres, ...
+    * Outbound message filter
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

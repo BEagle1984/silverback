@@ -15,6 +15,7 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Producing.Enrichers;
+using Silverback.Messaging.Producing.Filter;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences;
@@ -109,7 +110,8 @@ public static partial class SilverbackBuilderIntegrationExtensions
         // Producer basic logic
         builder
             .AddSingletonBrokerBehavior<MessageEnricherProducerBehavior>()
-            .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>();
+            .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
+            .AddSingletonBrokerBehavior<FilterProducerBehavior>();
 
         // Consumer basic logic
         builder
