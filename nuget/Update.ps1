@@ -63,7 +63,9 @@ function Check-Args([string[]]$argsArray)
 function Get-SourceProjectNames()
 {
     $directories =
-        (Get-ChildItem -Path ../src -Directory -Exclude *.Testing) +
+        (Get-ChildItem -Path ../src -Directory -Exclude *.Testing, Silverback.Storage.*) +
+        (Get-ChildItem -Path ../src -Directory -Filter Silverback.Storage.Relational) +
+        (Get-ChildItem -Path ../src -Directory -Filter Silverback.Storage.* | Where-Object { $_.FullName -notlike "*\Silverback.Storage.Relational" }) +
         (Get-ChildItem -Path ../src -Directory -Filter Silverback.Integration.Testing) +
         (Get-ChildItem -Path ../src -Directory -Filter *.Integration.*.Testing)
 
