@@ -1,0 +1,173 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+tab_width = 4
+end_of_line = crlf
+insert_final_newline = true
+max_line_length = 140
+file_header_template = Copyright (c) 2023 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)
+
+# Set all analyzers rules to warnings by default
+dotnet_analyzer_diagnostic.severity = warning
+
+# Compiler warnings
+# CS0067: The event 'event' is never used
+dotnet_diagnostic.CS0067.severity = none
+
+# Style
+# IDE0010: Add missing cases to switch statement
+dotnet_diagnostic.IDE0010.severity = none
+# IDE0046: Use conditional expression for assignments 
+dotnet_diagnostic.IDE0045.severity = suggestion
+# IDE0046: Use conditional expression for return 
+dotnet_diagnostic.IDE0046.severity = suggestion
+# IDE0058: Computed value is never used 
+dotnet_diagnostic.IDE0058.severity = none
+# IDE0072: Add missing cases to switch expression
+dotnet_diagnostic.IDE0072.severity = none
+
+# StyleCop.Analyzers
+# SA1101: A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code file
+dotnet_diagnostic.SA1101.severity = none
+# SA1309: A field name in C# begins with an underscore
+dotnet_diagnostic.SA1309.severity = none
+# SA1408: A C# statement contains a complex conditional expression which omits parenthesis around operators
+dotnet_diagnostic.SA1408.severity = none
+# SA1413: The last statement in a multi-line C# initializer or list is missing a trailing comma
+dotnet_diagnostic.SA1413.severity = none
+# SA1503: The opening and closing curly brackets for a C# statement have been omitted
+dotnet_diagnostic.SA1503.severity = none
+# SA1600: A C# code element is missing a documentation header
+dotnet_diagnostic.SA1600.severity = none
+# SA1601: A C# partial element is missing a documentation header.
+dotnet_diagnostic.SA1601.severity = none
+
+# Microsoft.CodeAnalysis.NetAnalyzers
+# CA1062: Validate arguments of public methods
+dotnet_diagnostic.CA1062.severity = none
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = none
+# CA1716: Identifiers should not match keywords
+dotnet_diagnostic.CA1716.severity = none
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none
+# CA1852: Seal internal types
+dotnet_diagnostic.CA1852.severity = none
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+# CA5394: Do not use insecure randomness
+dotnet_diagnostic.CA5394.severity = none
+
+# Threading
+# VSTHRD002: Avoid problematic synchronous waits
+dotnet_diagnostic.vsthrd002.severity = none
+# VSTHRD003: Avoid awaiting foreign Tasks
+dotnet_diagnostic.VSTHRD003.severity = none
+# VSTHRD111: Use .ConfigureAwait(bool)
+dotnet_diagnostic.VSTHRD111.severity = none
+
+# C#/.NET style rules
+csharp_new_line_before_members_in_object_initializers = false
+csharp_preferred_modifier_order = public, private, protected, internal, static, new, abstract, virtual, sealed, override, readonly, extern, unsafe, volatile, async
+csharp_space_after_cast = false
+csharp_style_var_when_type_is_apparent = false
+csharp_style_var_for_built_in_types = false
+csharp_style_var_elsewhere = false
+csharp_style_implicit_object_creation_when_type_is_apparent = true
+csharp_style_namespace_declarations = file_scoped
+csharp_style_expression_bodied_methods = true
+csharp_style_expression_bodied_operators = true
+csharp_style_expression_bodied_local_functions = true
+csharp_prefer_braces = when_multiline
+dotnet_naming_rule.method_rule.severity = warning
+dotnet_naming_rule.method_rule.style = upper_camel_case_style
+dotnet_naming_rule.method_rule.symbols = method_symbols
+dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
+dotnet_naming_symbols.method_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.method_symbols.applicable_kinds = method
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary
+dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary
+dotnet_style_predefined_type_for_locals_parameters_members = true
+dotnet_style_predefined_type_for_member_access = true
+dotnet_style_qualification_for_event = false
+dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_property = false
+dotnet_style_require_accessibility_modifiers = for_non_interface_members
+
+# ReSharper properties
+resharper_blank_lines_around_single_line_auto_property = 1
+resharper_blank_lines_around_single_line_property = 1
+resharper_braces_for_for = required
+resharper_braces_for_foreach = required
+resharper_braces_for_ifelse = required_for_multiline
+resharper_braces_for_while = required
+resharper_braces_redundant = false
+resharper_csharp_blank_lines_around_single_line_field = 1
+resharper_csharp_blank_lines_around_single_line_invocable = 1
+resharper_csharp_naming_rule.method = AaBb, AaBb_AaBb
+resharper_csharp_stick_comment = false
+resharper_csharp_wrap_after_declaration_lpar = true
+resharper_csharp_wrap_after_invocation_lpar = true
+resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_enforce_line_ending_style = true
+resharper_for_built_in_types = use_explicit_type
+resharper_indent_nested_foreach_stmt = true
+resharper_indent_nested_for_stmt = true
+resharper_indent_nested_while_stmt = true
+resharper_keep_existing_declaration_parens_arrangement = false
+resharper_keep_existing_embedded_arrangement = false
+resharper_keep_existing_invocation_parens_arrangement = false
+resharper_new_line_before_while = true
+resharper_place_attribute_on_same_line = false
+resharper_place_constructor_initializer_on_same_line = false
+resharper_place_simple_embedded_statement_on_same_line = false
+resharper_show_autodetect_configure_formatting_tip = false
+resharper_space_after_cast = false
+resharper_space_within_single_line_array_initializer_braces = true
+resharper_use_indent_from_vs = false
+resharper_wrap_before_extends_colon = true
+resharper_wrap_lines = false
+resharper_xmldoc_linebreaks_inside_tags_for_elements_longer_than = 100
+resharper_xmldoc_linebreak_before_multiline_elements = false
+resharper_xmldoc_wrap_tags_and_pi = false
+resharper_use_roslyn_logic_for_evident_types = false
+resharper_csharp_keep_existing_linebreaks = true
+
+# ReSharper inspection severities
+resharper_arrange_redundant_parentheses_highlighting = hint
+resharper_arrange_this_qualifier_highlighting = hint
+resharper_arrange_type_member_modifiers_highlighting = hint
+resharper_arrange_type_modifiers_highlighting = hint
+resharper_built_in_type_reference_style_for_member_access_highlighting = hint
+resharper_built_in_type_reference_style_highlighting = hint
+resharper_condition_is_always_true_or_false_highlighting = warning
+resharper_constant_conditional_access_qualifier_highlighting = suggestion
+resharper_local_function_can_be_made_static_highlighting = warning
+resharper_member_can_be_made_static_global_highlighting = warning
+resharper_member_can_be_made_static_local_highlighting = warning
+resharper_redundant_base_qualifier_highlighting = warning
+resharper_redundant_case_label_highlighting = hint
+resharper_suggest_var_or_type_built_in_types_highlighting = warning
+resharper_suggest_var_or_type_elsewhere_highlighting = warning
+resharper_suggest_var_or_type_simple_types_highlighting = warning
+resharper_unnecessary_whitespace_highlighting = warning
+resharper_unused_auto_property_accessor_global_highlighting = suggestion
+resharper_unused_auto_property_accessor_local_highlighting = suggestion
+resharper_web_config_module_not_resolved_highlighting = warning
+resharper_web_config_type_not_resolved_highlighting = warning
+resharper_web_config_wrong_module_highlighting = warning
+resharper_lambda_expression_must_be_static_highlighting = warning
+resharper_arrange_missing_parentheses_highlighting = warning
+resharper_arrange_object_creation_when_type_evident_highlighting = warning
+resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
+resharper_use_negated_pattern_in_is_expression_highlighting = warning
+resharper_condition_is_always_true_or_false_according_to_nullable_api_contract_highlighting = suggestion
+resharper_replace_conditional_expression_with_null_coalescing_highlighting = warning
+
+[*.{csproj,props,yml,yaml,json,xml,config}]
+indent_size = 2
