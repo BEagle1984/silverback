@@ -3,8 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Confluent.Kafka;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
@@ -48,6 +51,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     LastOffset = FirstOffset = new Offset(0);
                 else
                     LastOffset++;
+
+                SetTimestamp(message);
 
                 if (transactionalUniqueId == Guid.Empty)
                 {
@@ -156,6 +161,16 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 _transactions.Remove(transaction);
                 TotalMessagesCount -= transaction.Messages.Count;
             }
+        }
+
+        private static void SetTimestamp(Message<byte[]?, byte[]?> message)
+        {
+            IHeader? timestampHeader = message.Headers?.FirstOrDefault(header => header.Key == KafkaMessageHeaders.Timestamp);
+
+            if (timestampHeader != null)
+                message.Timestamp = new Timestamp(DateTime.Parse(Encoding.UTF8.GetString(timestampHeader.GetValueBytes()), CultureInfo.InvariantCulture));
+            else if (message.Timestamp == Timestamp.Default)
+                message.Timestamp = new Timestamp(DateTime.UtcNow);
         }
 
         private sealed class StoredMessage

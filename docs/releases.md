@@ -4,13 +4,17 @@ uid: releases
 
 # Releases
 
-## [4.4.0-beta.4](https://github.com/BEagle1984/silverback/releases/tag/v4.4.0)
+## [4.4.0-beta.6](https://github.com/BEagle1984/silverback/releases/tag/v4.4.0)
 
 ### What's new
 
 * Allow parallel processing of MQTT messages
 * Upgrade to [MQTTnet 4.2.1.781](https://github.com/chkr1011/MQTTnet/releases/tag/v4.2.1.781)
 * Upgrade to [Confluent.Kafka 2.2.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.2.0)
+
+### Fixes
+
+* Correctly set message timestamp in mocked Kafka
 
 ## [4.3.2](https://github.com/BEagle1984/silverback/releases/tag/v4.3.2)
 

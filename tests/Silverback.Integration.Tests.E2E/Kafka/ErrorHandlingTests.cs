@@ -1350,7 +1350,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Count(header => header.Name == KafkaMessageHeaders.SourceTimestamp)
                 .Should().Be(1);
             Helper.Spy.OutboundEnvelopes[5].Headers
-                .Any(header => header.Name == KafkaMessageHeaders.TimestampKey)
+                .Any(header => header.Name == KafkaMessageHeaders.Timestamp)
                 .Should().BeTrue();
             Helper.Spy.OutboundEnvelopes[5].Headers
                 .Should().ContainEquivalentOf(

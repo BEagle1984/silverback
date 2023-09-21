@@ -1663,7 +1663,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should()
+                envelope.Headers.Contains(KafkaMessageHeaders.Timestamp).Should()
                     .BeTrue();
             }
         }

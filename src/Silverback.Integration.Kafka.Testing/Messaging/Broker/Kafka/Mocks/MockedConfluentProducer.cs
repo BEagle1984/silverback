@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     Topic = topicPartition.Topic,
                     Partition = new Partition(partitionIndex),
                     Offset = offset,
-                    Timestamp = new Timestamp(DateTime.Now),
+                    Timestamp = message.Timestamp,
                     Status = PersistenceStatus.Persisted
                 });
         }

@@ -180,7 +180,7 @@ namespace Silverback.Messaging.Broker
             }
 
             headers.AddOrReplace(
-                KafkaMessageHeaders.TimestampKey,
+                KafkaMessageHeaders.Timestamp,
                 message.Timestamp.UtcDateTime.ToString("O"));
 
             await HandleMessageAsync(

@@ -37,11 +37,11 @@ namespace Silverback.Messaging.Outbound.Enrichers
                 KafkaMessageHeaders.SourceOffset,
                 ((KafkaOffset)inboundEnvelope.BrokerMessageIdentifier).Offset);
 
-            if (inboundEnvelope.Headers.Contains(KafkaMessageHeaders.TimestampKey))
+            if (inboundEnvelope.Headers.Contains(KafkaMessageHeaders.Timestamp))
             {
                 outboundEnvelope.Headers.AddOrReplace(
                     KafkaMessageHeaders.SourceTimestamp,
-                    inboundEnvelope.Headers[KafkaMessageHeaders.TimestampKey]);
+                    inboundEnvelope.Headers[KafkaMessageHeaders.Timestamp]);
             }
         }
     }

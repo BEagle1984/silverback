@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Inbound.ErrorHandling;
 
 namespace Silverback.Messaging.Messages
@@ -24,7 +25,13 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     The header that will be filled with the timestamp of the message consumed from Kafka.
         /// </summary>
-        public const string TimestampKey = "x-kafka-message-timestamp";
+        [Obsolete("Use Timestamp instead.")]
+        public const string TimestampKey = Timestamp;
+
+        /// <summary>
+        ///     The header that will be filled with the timestamp of the message consumed from Kafka.
+        /// </summary>
+        public const string Timestamp = "x-kafka-message-timestamp";
 
         /// <summary>
         ///     This will be set by the <see cref="MoveMessageErrorPolicy" /> and will contain the GroupId of
