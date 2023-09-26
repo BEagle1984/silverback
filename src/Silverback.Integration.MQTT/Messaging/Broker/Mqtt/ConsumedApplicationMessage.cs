@@ -15,9 +15,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         public ConsumedApplicationMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
         {
             EventArgs = eventArgs;
-            Id = eventArgs.ApplicationMessage.UserProperties
-                     ?.FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageId)?.Value
-                 ?? Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
         }
 
         public string Id { get; }
