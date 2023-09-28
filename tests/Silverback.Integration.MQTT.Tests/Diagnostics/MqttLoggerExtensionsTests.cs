@@ -64,25 +64,24 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
             var consumer = (MqttConsumer)_serviceProvider.GetRequiredService<MqttBroker>()
                 .AddConsumer(_consumerEndpoint);
 
+            var applicationMessage = new ConsumedApplicationMessage(
+                new MqttApplicationMessageReceivedEventArgs(
+                    "client1",
+                    new MqttApplicationMessage
+                    {
+                        Topic = "actual",
+                        UserProperties = new List<MqttUserProperty>
+                        {
+                            new(DefaultMessageHeaders.MessageId, "123")
+                        }
+                    },
+                    new MqttPublishPacket(),
+                    (_, _) => Task.CompletedTask));
             var expectedMessage =
-                "Consuming message '123' from topic 'actual'. | " +
+                $"Consuming message '{applicationMessage.Id}' from topic 'actual'. | " +
                 $"consumerId: {consumer.Id}, endpointName: actual";
 
-            _silverbackLogger.LogConsuming(
-                new ConsumedApplicationMessage(
-                    new MqttApplicationMessageReceivedEventArgs(
-                        "client1",
-                        new MqttApplicationMessage
-                        {
-                            Topic = "actual",
-                            UserProperties = new List<MqttUserProperty>
-                            {
-                                new(DefaultMessageHeaders.MessageId, "123")
-                            }
-                        },
-                        new MqttPublishPacket(),
-                        (_, _) => Task.CompletedTask)),
-                consumer);
+            _silverbackLogger.LogConsuming(applicationMessage, consumer);
 
             _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 4011);
         }

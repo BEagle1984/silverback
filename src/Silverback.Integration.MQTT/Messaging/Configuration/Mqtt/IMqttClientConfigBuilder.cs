@@ -64,6 +64,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Use ConnectViaTcp or ConnectViaWebsocket.")]
         IMqttClientConfigBuilder ConnectTo(Uri uri);
 
         /// <summary>
@@ -75,6 +76,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Use ConnectViaTcp or ConnectViaWebsocket.")]
         IMqttClientConfigBuilder ConnectTo(string uri);
 
         /// <summary>
@@ -219,6 +221,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Configure proxy in ConnectViaWebSocket(...).")]
         IMqttClientConfigBuilder UseProxy(
             string address,
             string? username = null,
@@ -237,6 +240,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Configure proxy in ConnectViaWebSocket(...).")]
         IMqttClientConfigBuilder UseProxy(Action<MqttClientWebSocketProxyOptions> optionsAction);
 
         /// <summary>
@@ -363,6 +367,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Use the overload with the new builder or model as parameter.")]
         IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters);
 
         /// <summary>
@@ -375,7 +380,32 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Use the overload with the new builder or model as parameter.")]
         IMqttClientConfigBuilder EnableTls(Action<MqttClientOptionsBuilderTlsParameters> parametersAction);
+
+        /// <summary>
+        ///     Specifies that TLS has to be used to encrypt the network traffic.
+        /// </summary>
+        /// <param name="options">
+        ///     The <see cref="MqttClientTlsOptionsBuilder" />.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        [Obsolete("Use the overload with the new builder or model as parameter.")]
+        IMqttClientConfigBuilder EnableTls(MqttClientTlsOptions options);
+
+        /// <summary>
+        ///     Specifies that TLS has to be used to encrypt the network traffic.
+        /// </summary>
+        /// <param name="optionsAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientTlsOptionsBuilder" /> and
+        ///     configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttClientConfigBuilder EnableTls(Action<MqttClientTlsOptionsBuilder> optionsAction);
 
         /// <summary>
         ///     Sets the maximum number of topic aliases the server can send in the <i>PUBLISH</i> packet. The
@@ -438,6 +468,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
         [SuppressMessage("", "CA1054", Justification = "Uri declared as string in underlying lib")]
+        [Obsolete("Use the overload with the builder as parameter.")]
         IMqttClientConfigBuilder ConnectViaWebSocket(
             string uri,
             Action<MqttClientOptionsBuilderWebSocketParameters> parametersAction);
@@ -455,9 +486,23 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
         [SuppressMessage("", "CA1054", Justification = "Uri declared as string in underlying lib")]
+        [Obsolete("Use the overload with the builder as parameter.")]
         IMqttClientConfigBuilder ConnectViaWebSocket(
             string uri,
             MqttClientOptionsBuilderWebSocketParameters? parameters = null);
+
+        /// <summary>
+        ///     Specifies the WebSocket connection settings.
+        /// </summary>
+        /// <param name="optionsAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientWebSocketOptionsBuilder" />
+        ///     and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        [SuppressMessage("", "CA1054", Justification = "Uri declared as string in underlying lib")]
+        IMqttClientConfigBuilder ConnectViaWebSocket(Action<MqttClientWebSocketOptionsBuilder> optionsAction);
 
         /// <summary>
         ///     Specifies the WebSocket connection settings.
@@ -469,6 +514,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [Obsolete("Use the overload with the builder as parameter.")]
         IMqttClientConfigBuilder ConnectViaWebSocket(Action<MqttClientWebSocketOptions> optionsAction);
 
         /// <summary>

@@ -65,21 +65,23 @@ namespace Silverback.Messaging.Configuration.Mqtt
                         options.BufferSize = tcpOptions.BufferSize;
                         options.DualMode = tcpOptions.DualMode;
                         options.NoDelay = tcpOptions.NoDelay;
-                        options.TlsOptions = tcpOptions.TlsOptions;
                     });
+
+                if (tcpOptions.TlsOptions != null)
+                    EnableTls(tcpOptions.TlsOptions);
             }
             else if (baseConfig.ChannelOptions is MqttClientWebSocketOptions webSocketOptions)
             {
                 ConnectViaWebSocket(
-                    options =>
-                    {
-                        options.Uri = webSocketOptions.Uri;
-                        options.CookieContainer = webSocketOptions.CookieContainer;
-                        options.ProxyOptions = webSocketOptions.ProxyOptions;
-                        options.RequestHeaders = webSocketOptions.RequestHeaders;
-                        options.SubProtocols = webSocketOptions.SubProtocols;
-                        options.TlsOptions = webSocketOptions.TlsOptions;
-                    });
+                    builder => builder
+                        .WithUri(webSocketOptions.Uri)
+                        .WithCookieContainer(webSocketOptions.CookieContainer)
+                        .WithProxyOptions(webSocketOptions.ProxyOptions)
+                        .WithRequestHeaders(webSocketOptions.RequestHeaders)
+                        .WithSubProtocols(webSocketOptions.SubProtocols));
+
+                if (webSocketOptions.TlsOptions != null)
+                    EnableTls(webSocketOptions.TlsOptions);
             }
 
             if (baseConfig.Credentials != null)
@@ -161,6 +163,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectTo(Uri)" />
+        [Obsolete("Use ConnectViaTcp or ConnectViaWebsocket.")]
         public IMqttClientConfigBuilder ConnectTo(Uri uri)
         {
             Check.NotNull(uri, nameof(uri));
@@ -171,6 +174,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectTo(string)" />
         [SuppressMessage("Usage", "CA2234:Pass system uri objects instead of strings", Justification = "Reviewed")]
+        [Obsolete("Use ConnectViaTcp or ConnectViaWebsocket.")]
         public IMqttClientConfigBuilder ConnectTo(string uri)
         {
             Check.NotEmpty(uri, nameof(uri));
@@ -261,6 +265,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.UseProxy(string,string?,string?,string?,bool,string[])" />
+        [Obsolete("Configure proxy in ConnectViaWebSocket(...).")]
         public IMqttClientConfigBuilder UseProxy(
             string address,
             string? username = null,
@@ -276,6 +281,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.UseProxy(Action{MqttClientWebSocketProxyOptions})" />
+        [Obsolete("Configure proxy in ConnectViaWebSocket(...).")]
         public IMqttClientConfigBuilder UseProxy(Action<MqttClientWebSocketProxyOptions> optionsAction)
         {
             Check.NotNull(optionsAction, nameof(optionsAction));
@@ -362,22 +368,19 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="IMqttClientConfigBuilder.DisableTls" />
         public IMqttClientConfigBuilder DisableTls()
         {
-            _builder.WithTls(
-                parameters =>
-                {
-                    parameters.UseTls = false;
-                });
+            _builder.WithTlsOptions(new MqttClientTlsOptions { UseTls = false });
             return this;
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls()" />
         public IMqttClientConfigBuilder EnableTls()
         {
-            _builder.WithTls();
+            _builder.WithTlsOptions(new MqttClientTlsOptions { UseTls = true });
             return this;
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls(MqttClientOptionsBuilderTlsParameters)" />
+        [Obsolete("Use the overload with the new builder or model as parameter.")]
         public IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)
         {
             Check.NotNull(parameters, nameof(parameters));
@@ -387,6 +390,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls(Action{MqttClientOptionsBuilderTlsParameters})" />
+        [Obsolete("Use the overload with the new builder or model as parameter.")]
         public IMqttClientConfigBuilder EnableTls(Action<MqttClientOptionsBuilderTlsParameters> parametersAction)
         {
             Check.NotNull(parametersAction, nameof(parametersAction));
@@ -399,6 +403,24 @@ namespace Silverback.Messaging.Configuration.Mqtt
             parametersAction.Invoke(parameters);
 
             _builder.WithTls(parameters);
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls(MqttClientTlsOptions)" />
+        public IMqttClientConfigBuilder EnableTls(MqttClientTlsOptions options)
+        {
+            Check.NotNull(options, nameof(options));
+
+            _builder.WithTlsOptions(options);
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls(Action{MqttClientTlsOptionsBuilder})" />
+        public IMqttClientConfigBuilder EnableTls(Action<MqttClientTlsOptionsBuilder> optionsAction)
+        {
+            Check.NotNull(optionsAction, nameof(optionsAction));
+
+            _builder.WithTlsOptions(optionsAction);
             return this;
         }
 
@@ -436,6 +458,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaWebSocket(string,Action{MqttClientOptionsBuilderWebSocketParameters})" />
         [SuppressMessage("", "CA1054", Justification = "Uri declared as string in underlying lib")]
+        [Obsolete("Use the overload with the builder as parameter.")]
         public IMqttClientConfigBuilder ConnectViaWebSocket(
             string uri,
             Action<MqttClientOptionsBuilderWebSocketParameters> parametersAction)
@@ -452,6 +475,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaWebSocket(string,Action{MqttClientOptionsBuilderWebSocketParameters})" />
         [SuppressMessage("", "CA1054", Justification = "Uri declared as string in underlying lib")]
+        [Obsolete("Use the overload with the builder as parameter.")]
         public IMqttClientConfigBuilder ConnectViaWebSocket(
             string uri,
             MqttClientOptionsBuilderWebSocketParameters? parameters = null)
@@ -462,7 +486,17 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
+        /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaWebSocket(Action{MqttClientWebSocketOptionsBuilder})" />
+        public IMqttClientConfigBuilder ConnectViaWebSocket(Action<MqttClientWebSocketOptionsBuilder> optionsAction)
+        {
+            Check.NotNull(optionsAction, nameof(optionsAction));
+
+            _builder.WithWebSocketServer(optionsAction);
+            return this;
+        }
+
         /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaWebSocket(Action{MqttClientWebSocketOptions})" />
+        [Obsolete("Use the overload with the builder as parameter.")]
         public IMqttClientConfigBuilder ConnectViaWebSocket(Action<MqttClientWebSocketOptions> optionsAction)
         {
             Check.NotNull(optionsAction, nameof(optionsAction));

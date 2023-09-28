@@ -15,6 +15,8 @@ using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 {
     public class MqttClientConfigBuilderTests

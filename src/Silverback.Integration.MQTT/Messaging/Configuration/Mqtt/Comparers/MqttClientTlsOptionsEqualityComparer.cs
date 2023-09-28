@@ -3,16 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using MQTTnet.Client;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
     internal sealed class MqttClientTlsOptionsEqualityComparer : IEqualityComparer<MqttClientTlsOptions>
     {
-        private static readonly CollectionEqualityComparer<X509Certificate> CertificatesComparer = new();
-
         public static MqttClientTlsOptionsEqualityComparer Instance { get; } = new();
 
         public bool Equals(MqttClientTlsOptions? x, MqttClientTlsOptions? y)
@@ -26,12 +22,23 @@ namespace Silverback.Messaging.Configuration.Mqtt.Comparers
             if (x.GetType() != y.GetType())
                 return false;
 
-            return x.UseTls == y.UseTls &&
-                   x.IgnoreCertificateRevocationErrors == y.IgnoreCertificateRevocationErrors &&
-                   x.IgnoreCertificateChainErrors == y.IgnoreCertificateChainErrors &&
-                   x.AllowUntrustedCertificates == y.AllowUntrustedCertificates &&
-                   CertificatesComparer.Equals(x.Certificates, y.Certificates) &&
-                   x.SslProtocol == y.SslProtocol;
+            bool result = x.CertificateValidationHandler == y.CertificateValidationHandler &&
+                          x.UseTls == y.UseTls &&
+                          x.IgnoreCertificateRevocationErrors == y.IgnoreCertificateRevocationErrors &&
+                          x.IgnoreCertificateChainErrors == y.IgnoreCertificateChainErrors &&
+                          x.AllowUntrustedCertificates == y.AllowUntrustedCertificates &&
+                          x.RevocationMode == y.RevocationMode &&
+                          x.ClientCertificatesProvider == y.ClientCertificatesProvider &&
+                          x.SslProtocol == y.SslProtocol;
+
+#if NETCOREAPP3_1_OR_GREATER
+            result = result && x.ApplicationProtocols.SequenceEqual(y.ApplicationProtocols) &&
+                              x.CipherSuitesPolicy == y.CipherSuitesPolicy &&
+                              x.EncryptionPolicy == y.EncryptionPolicy &&
+                              x.AllowRenegotiation == y.AllowRenegotiation;
+#endif
+
+            return result;
         }
 
         public int GetHashCode(MqttClientTlsOptions obj) => HashCode.Combine(
@@ -39,7 +46,7 @@ namespace Silverback.Messaging.Configuration.Mqtt.Comparers
             obj.IgnoreCertificateRevocationErrors,
             obj.IgnoreCertificateChainErrors,
             obj.AllowUntrustedCertificates,
-            obj.Certificates,
+            obj.RevocationMode,
             (int)obj.SslProtocol);
     }
 }

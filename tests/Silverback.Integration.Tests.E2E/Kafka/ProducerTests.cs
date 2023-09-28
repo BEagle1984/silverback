@@ -1596,7 +1596,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RawProduce_ByDefault_TimestampKeySet()
+        public async Task RawProduce_ByDefault_TimestampSet()
         {
             var produced = 0;
             var errors = 0;
