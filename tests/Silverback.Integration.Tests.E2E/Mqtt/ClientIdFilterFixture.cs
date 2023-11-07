@@ -81,7 +81,7 @@ public class ClientIdFilterFixture : MqttFixture
                             new MqttClientIdFilterAttribute("client1")
                         }
                     })
-                .AddIntegrationSpy());
+                .AddIntegrationSpyAndSubscriber());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 

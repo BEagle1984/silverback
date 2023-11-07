@@ -10,10 +10,14 @@ using Silverback.Messaging.Broker.Mqtt;
 
 namespace Silverback.Diagnostics;
 
+// TODO: Move something to ConsumerLogger or ProducerLogger (enriched)?
 internal static class MqttLoggerExtensions
 {
     private static readonly Action<ILogger, string, string, string, Exception?> ConsumingMessage =
         SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConsumingMessage);
+
+    private static readonly Action<ILogger, string, string, string, Exception?> AcknowledgeFailed =
+        SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.AcknowledgeFailed);
 
     private static readonly Action<ILogger, string, string, string, Exception?> ConnectError =
         SilverbackLoggerMessage.Define<string, string, string>(MqttLogEvents.ConnectError);
@@ -45,13 +49,28 @@ internal static class MqttLoggerExtensions
     private static readonly Action<ILogger, string, string, Exception?> MqttClientLogVerbose =
         SilverbackLoggerMessage.Define<string, string>(MqttLogEvents.MqttClientLogVerbose);
 
-    public static void LogConsuming(this ISilverbackLogger logger, ConsumedApplicationMessage applicationMessage, MqttConsumer consumer) =>
+    public static void LogConsuming(
+        this ISilverbackLogger logger,
+        ConsumedApplicationMessage applicationMessage,
+        MqttConsumer consumer) =>
         ConsumingMessage(
             logger.InnerLogger,
             applicationMessage.Id,
             applicationMessage.ApplicationMessage.Topic,
             consumer.DisplayName,
             null);
+
+    public static void LogAcknowledgeFailed(
+        this ISilverbackLogger logger,
+        ConsumedApplicationMessage applicationMessage,
+        MqttConsumer consumer,
+        Exception exception) =>
+        AcknowledgeFailed(
+            logger.InnerLogger,
+            applicationMessage.Id,
+            applicationMessage.ApplicationMessage.Topic,
+            consumer.DisplayName,
+            exception);
 
     public static void LogConnectError(
         this ISilverbackLogger logger,

@@ -81,7 +81,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>
             client,
             Check.NotNull(configuration, nameof(configuration)).Endpoints,
             behaviorsProvider,
-            new KafkaSequenceStoreCollection(serviceProvider, configuration.ProcessPartitionsIndependently),
             serviceProvider,
             logger)
     {
@@ -160,17 +159,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
         _consumeLoopHandler.StopAsync().FireAndForget();
 
-        AsyncHelper.RunSynchronously(
-            () => topicPartitions.ParallelForEachAsync(
-                async topicPartition =>
-                {
-                    await _channelsManager.StopReadingAsync(topicPartition).ConfigureAwait(false);
-
-                    await ((KafkaSequenceStoreCollection)SequenceStores)
-                        .GetSequenceStore(topicPartition)
-                        .AbortAllAsync(SequenceAbortReason.ConsumerAborted)
-                        .ConfigureAwait(false);
-                }));
+        AsyncHelper.RunSynchronously(() => Task.WhenAll(topicPartitions.Select(_channelsManager.StopReadingAsync)));
 
         if (!Configuration.EnableAutoCommit)
             Client.Commit();
@@ -202,7 +191,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     internal async Task HandleMessageAsync(
         Message<byte[]?, byte[]?> message,
-        TopicPartitionOffset topicPartitionOffset)
+        TopicPartitionOffset topicPartitionOffset,
+        ISequenceStore sequenceStore)
     {
         MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
 
@@ -221,7 +211,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>
                 message.Value,
                 headers,
                 endpoint,
-                new KafkaOffset(topicPartitionOffset))
+                new KafkaOffset(topicPartitionOffset),
+                sequenceStore)
             .ConfigureAwait(false);
     }
 

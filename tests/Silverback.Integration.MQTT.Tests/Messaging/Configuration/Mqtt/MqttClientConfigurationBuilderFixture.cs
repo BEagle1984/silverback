@@ -794,10 +794,18 @@ public class MqttClientConfigurationBuilderFixture
 
         builder
             .ConnectViaWebSocket("tests-server")
-            .EnableTls();
+            .EnableTls(
+                new MqttClientTlsConfiguration
+                {
+                    UseTls = true,
+                    SslProtocol = SslProtocols.Tls12,
+                    AllowUntrustedCertificates = true
+                });
 
         MqttClientConfiguration config = builder.Build();
         config.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeTrue();
+        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.SslProtocol.Should().Be(SslProtocols.Tls12);
+        config.Channel.As<MqttClientWebSocketConfiguration>().Tls.AllowUntrustedCertificates.Should().BeTrue();
     }
 
     [Fact]
@@ -845,6 +853,39 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration config = builder.Build();
         config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
+    }
+
+    [Fact]
+    public void EnableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.EnableParallelProcessing(42);
+
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.MaxDegreeOfParallelism.Should().Be(42);
+    }
+
+    [Fact]
+    public void DisableParallelProcessing_ShouldSetMaxDegreeOfParallelism()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint().EnableParallelProcessing(42);
+
+        builder.DisableParallelProcessing();
+
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.MaxDegreeOfParallelism.Should().Be(1);
+    }
+
+    [Fact]
+    public void LimitBackpressure_ShouldSetBackpressureLimit()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.LimitBackpressure(42);
+
+        MqttClientConfiguration configuration = builder.Build();
+        configuration.BackpressureLimit.Should().Be(42);
     }
 
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>

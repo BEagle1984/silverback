@@ -287,7 +287,6 @@ public class OutboxWorkerFixture
     //
     //     broker.ProducedMessages.Should().HaveCount(5);
     // }
-
     [Fact]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceFails()

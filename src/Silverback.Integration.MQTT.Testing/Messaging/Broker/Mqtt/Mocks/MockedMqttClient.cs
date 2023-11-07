@@ -140,18 +140,18 @@ public sealed class MockedMqttClient : IMqttClient
     }
 
     /// <inheritdoc cref="IMqttClient.PingAsync" />
-    public Task PingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task PingAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     /// <inheritdoc cref="IMqttClient.SendExtendedAuthenticationExchangeDataAsync" />
     public Task SendExtendedAuthenticationExchangeDataAsync(
         MqttExtendedAuthenticationExchangeData data,
-        CancellationToken cancellationToken) => Task.CompletedTask;
+        CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose() => _isDisposed = true;
 
     [SuppressMessage("Usage", "VSTHRD110", MessageId = "Observe result of async calls", Justification = "False positive")]
-    internal Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
+    internal Task HandleMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
         ApplicationMessageReceivedAsync?.Invoke(eventArgs) ?? Task.CompletedTask;
 
     private void EnsureNotDisposed()

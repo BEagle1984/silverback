@@ -61,55 +61,11 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <param name="logger">
     ///     The <see cref="ISilverbackLogger" />.
     /// </param>
-    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed in Dispose() method.")]
     protected Consumer(
         string name,
         IBrokerClient client,
         IReadOnlyCollection<ConsumerEndpointConfiguration> endpointsConfiguration,
         IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-        IServiceProvider serviceProvider,
-        ISilverbackLogger<IConsumer> logger)
-        : this(
-            name,
-            client,
-            endpointsConfiguration,
-            behaviorsProvider,
-            new DefaultSequenceStoreCollection(serviceProvider),
-            serviceProvider,
-            logger)
-    {
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Consumer{TIdentifier}" /> class.
-    /// </summary>
-    /// <param name="name">
-    ///     The consumer name.
-    /// </param>
-    /// <param name="client">
-    ///     The <see cref="IBrokerClient" />.
-    /// </param>
-    /// <param name="endpointsConfiguration">
-    ///     The endpoints configuration.
-    /// </param>
-    /// <param name="behaviorsProvider">
-    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-    /// </param>
-    /// <param name="sequenceStores">
-    ///     The <see cref="ISequenceStoreCollection" />.
-    /// </param>
-    /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
-    /// </param>
-    /// <param name="logger">
-    ///     The <see cref="ISilverbackLogger" />.
-    /// </param>
-    protected Consumer(
-        string name,
-        IBrokerClient client,
-        IReadOnlyCollection<ConsumerEndpointConfiguration> endpointsConfiguration,
-        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-        ISequenceStoreCollection sequenceStores,
         IServiceProvider serviceProvider,
         ISilverbackLogger<IConsumer> logger)
     {
@@ -117,7 +73,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         Client = Check.NotNull(client, nameof(client));
         EndpointsConfiguration = Check.NotNull(endpointsConfiguration, nameof(endpointsConfiguration));
         _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
-        SequenceStores = Check.NotNull(sequenceStores, nameof(sequenceStores));
         ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
 
@@ -147,11 +102,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </summary>
     protected IServiceProvider ServiceProvider { get; }
-
-    /// <summary>
-    ///     Gets the <see cref="ISequenceStoreCollection" /> to be used to store the pending sequences.
-    /// </summary>
-    protected ISequenceStoreCollection SequenceStores { get; }
 
     /// <summary>
     ///     Gets a value indicating whether the consumer is starting (or connecting to start).
@@ -413,6 +363,9 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     /// <param name="brokerMessageIdentifier">
     ///     The identifier of the consumed message.
     /// </param>
+    /// <param name="sequenceStore">
+    ///     The <see cref="ISequenceStore" /> to be used.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
@@ -421,24 +374,15 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         byte[]? message,
         IReadOnlyCollection<MessageHeader> headers,
         ConsumerEndpoint endpoint,
-        IBrokerMessageIdentifier brokerMessageIdentifier)
+        IBrokerMessageIdentifier brokerMessageIdentifier,
+        ISequenceStore sequenceStore)
     {
-        RawInboundEnvelope envelope = new(
-            message,
-            headers,
-            endpoint,
-            this,
-            brokerMessageIdentifier);
+        RawInboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
+        ConsumerPipelineContext context = new(envelope, this, sequenceStore, ServiceProvider);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
-        ConsumerPipelineContext consumerPipelineContext = new(
-            envelope,
-            this,
-            SequenceStores.GetSequenceStore(brokerMessageIdentifier),
-            ServiceProvider);
-
-        await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
+        await ExecutePipelineAsync(context).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -468,7 +412,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             return;
 
         AsyncHelper.RunSynchronously(StopAsync);
-        SequenceStores.Dispose();
 
         Client.Initialized.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
@@ -499,8 +442,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             await StopAsync().ConfigureAwait(false);
         else
             await StopCoreAsync().ConfigureAwait(false);
-
-        await SequenceStores.AbortAllSequencesAsync(SequenceAbortReason.ConsumerAborted).ConfigureAwait(false);
 
         await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
 

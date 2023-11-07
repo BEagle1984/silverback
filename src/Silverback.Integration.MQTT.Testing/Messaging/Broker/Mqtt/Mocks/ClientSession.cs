@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Packets;
-using MQTTnet.Protocol;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -98,8 +97,8 @@ internal sealed class ClientSession : IDisposable, IClientSession
         lock (_subscriptions)
         {
             if (_subscriptions.All(
-                    subscription => !subscription.IsMatch(message, clientOptions) ||
-                                    !_sharedSubscriptionsManager.IsActive(subscription)))
+                subscription => !subscription.IsMatch(message, clientOptions) ||
+                                !_sharedSubscriptionsManager.IsActive(subscription)))
             {
                 return;
             }
@@ -127,14 +126,18 @@ internal sealed class ClientSession : IDisposable, IClientSession
                 Client.Options?.ClientId,
                 message,
                 new MqttPublishPacket(),
-                (_, _) => Task.CompletedTask);
+                (args, _) =>
+                {
+                    if (!args.AutoAcknowledge)
+                        Interlocked.Decrement(ref _pendingMessagesCount);
 
-            Task messageHandlingTask = Client
-                .OnMessageReceivedAsync(eventArgs)
-                    .ContinueWith(_ => Interlocked.Decrement(ref _pendingMessagesCount), TaskScheduler.Default);
+                    return Task.CompletedTask;
+                });
 
-            if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
-                await messageHandlingTask.ConfigureAwait(false);
+            await Client.HandleMessageReceivedAsync(eventArgs).ConfigureAwait(false);
+
+            if (eventArgs.AutoAcknowledge)
+                Interlocked.Decrement(ref _pendingMessagesCount);
         }
     }
 }

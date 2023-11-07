@@ -91,7 +91,7 @@ public static class IntegrationLogEvents
         GetEventId(11, nameof(MessageAddedToSequence)),
         "Message '{messageId}' added to {sequenceType} '{sequenceId}'. | length: {sequenceLength}");
 
-    /// <summary>`
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the first message of a new
     ///     sequence is consumed.
     /// </summary>
