@@ -32,6 +32,10 @@ public partial class MqttClientConfigurationBuilder
 
     private MqttClientTlsConfiguration _tlsConfiguration = new();
 
+    private int? _maxDegreeOfParallelism;
+
+    private int? _backpressureLimit;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
     /// </summary>
@@ -894,6 +898,50 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
+    ///     Enables parallel processing and sets the maximum number of incoming message that can be processed concurrently.
+    /// </summary>
+    /// <param name="maxDegreeOfParallelism">
+    ///     The maximum number of incoming message that can be processed concurrently.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder EnableParallelProcessing(int maxDegreeOfParallelism)
+    {
+        _maxDegreeOfParallelism = maxDegreeOfParallelism;
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables parallel messages processing, setting the max degree of parallelism to 1 (default).
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder DisableParallelProcessing()
+    {
+        _maxDegreeOfParallelism = 1;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+    ///     The limit will be applied per partition when processing the partitions independently (default).
+    ///     The default limit is 2.
+    /// </summary>
+    /// <param name="backpressureLimit">
+    ///     The maximum number of messages to be enqueued.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder LimitBackpressure(int backpressureLimit)
+    {
+        _backpressureLimit = backpressureLimit;
+        return this;
+    }
+
+    /// <summary>
     ///     Builds the <see cref="MqttClientConfiguration" /> instance.
     /// </summary>
     /// <returns>
@@ -930,6 +978,12 @@ public partial class MqttClientConfigurationBuilder
                 };
                 break;
         }
+
+        _configuration = _configuration with
+        {
+            MaxDegreeOfParallelism = _maxDegreeOfParallelism ?? _configuration.MaxDegreeOfParallelism,
+            BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit,
+        };
 
         _configuration.Validate();
 

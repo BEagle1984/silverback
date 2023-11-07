@@ -2,25 +2,28 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
-using Silverback.Messaging.Messages;
+using MQTTnet.Client;
 
 namespace Silverback.Messaging.Broker.Mqtt;
 
 internal sealed class ConsumedApplicationMessage
 {
-    public ConsumedApplicationMessage(MqttApplicationMessage applicationMessage)
+    private readonly MqttApplicationMessageReceivedEventArgs _eventArgs;
+
+    public ConsumedApplicationMessage(MqttApplicationMessageReceivedEventArgs eventArgs)
     {
-        ApplicationMessage = applicationMessage;
-        Id = applicationMessage.UserProperties?
-            .FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageId)?.Value ?? Guid.NewGuid().ToString();
+        _eventArgs = eventArgs;
+        Id = Guid.NewGuid().ToString();
     }
 
     public string Id { get; }
 
-    public MqttApplicationMessage ApplicationMessage { get; }
+    public MqttApplicationMessage ApplicationMessage => _eventArgs.ApplicationMessage;
 
     public TaskCompletionSource<bool> TaskCompletionSource { get; set; } = new();
+
+    public Task AcknowledgeAsync(CancellationToken cancellationToken) => _eventArgs.AcknowledgeAsync(cancellationToken);
 }

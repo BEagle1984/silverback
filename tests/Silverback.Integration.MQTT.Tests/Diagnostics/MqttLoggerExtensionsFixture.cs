@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Exceptions;
+using MQTTnet.Packets;
 using NSubstitute;
 using Silverback.Collections;
 using Silverback.Diagnostics;
@@ -92,8 +94,9 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
     [Fact]
     public void LogConsuming_ShouldLog()
     {
-        _silverbackLogger.LogConsuming(
-            new ConsumedApplicationMessage(
+        ConsumedApplicationMessage applicationMessage = new(
+            new MqttApplicationMessageReceivedEventArgs(
+                "client1",
                 new MqttApplicationMessage
                 {
                     Topic = "some-topic",
@@ -101,14 +104,43 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                     {
                         new(DefaultMessageHeaders.MessageId, "123")
                     }
-                }),
-            _consumer);
+                },
+                new MqttPublishPacket(),
+                (_, _) => Task.CompletedTask));
+
+        _silverbackLogger.LogConsuming(applicationMessage, _consumer);
 
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Consuming message 123 from topic some-topic. | consumerName: consumer1",
+            $"Consuming message {applicationMessage.Id} from topic some-topic. | consumerName: consumer1",
             4011);
+    }
+
+    [Fact]
+    public void LogAcknowledgeFailed_ShouldLog()
+    {
+        ConsumedApplicationMessage applicationMessage = new(
+            new MqttApplicationMessageReceivedEventArgs(
+                "client1",
+                new MqttApplicationMessage
+                {
+                    Topic = "some-topic",
+                    UserProperties = new List<MqttUserProperty>
+                    {
+                        new(DefaultMessageHeaders.MessageId, "123")
+                    }
+                },
+                new MqttPublishPacket(),
+                (_, _) => Task.CompletedTask));
+
+        _silverbackLogger.LogAcknowledgeFailed(applicationMessage, _consumer, new TimeoutException());
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            typeof(TimeoutException),
+            $"Failed to acknowledge message {applicationMessage.Id} from topic some-topic. | consumerName: consumer1",
+            4012);
     }
 
     [Fact]

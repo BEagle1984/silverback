@@ -158,9 +158,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddSingletonSequenceWriter<ChunkSequenceWriter>()
             .AddSingletonSequenceReader<ChunkSequenceReader>()
             .AddTransientSequenceReader<BatchSequenceReader>()
-            .AddTypeBasedExtensibleFactory<IChunkEnricherFactory, ChunkEnricherFactory>()
-            .Services
-            .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore));
+            .AddTypeBasedExtensibleFactory<IChunkEnricherFactory, ChunkEnricherFactory>();
 
         // Binary message
         builder

@@ -431,9 +431,17 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
+        {
             act.Should().NotThrow();
+        }
         else
-            act.Should().ThrowExactly<BrokerConfigurationException>();
+        {
+            act.Should().ThrowExactly<BrokerConfigurationException>()
+                .WithMessage(
+                    value < 1
+                        ? "The maximum degree of parallelism must be greater or equal to 1."
+                        : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
+        }
     }
 
     [Theory]
@@ -451,9 +459,14 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
+        {
             act.Should().NotThrow();
+        }
         else
-            act.Should().ThrowExactly<BrokerConfigurationException>();
+        {
+            act.Should().ThrowExactly<BrokerConfigurationException>()
+                .WithMessage("The backpressure limit must be greater or equal to 1.");
+        }
     }
 
     [Fact]

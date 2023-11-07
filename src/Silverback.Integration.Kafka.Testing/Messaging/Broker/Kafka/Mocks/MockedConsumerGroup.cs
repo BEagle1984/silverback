@@ -145,6 +145,8 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             if (_subscribedConsumers.Any(subscribedConsumer => subscribedConsumer.Consumer == consumer))
                 UnsubscribeCore(consumer);
+
+            // TODO: IMPORTANT: Invoke OnPartitionsRevoked
         }
         finally
         {
@@ -288,15 +290,15 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
     private PartitionAssignmentStrategy GetAssignmentStrategy()
     {
         if (_subscriptions.All(
-                subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
-                                subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky)))
+            subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
+                            subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky)))
         {
             return PartitionAssignmentStrategy.CooperativeSticky;
         }
 
         if (_subscriptions.All(
-                subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
-                                subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.RoundRobin)))
+            subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
+                            subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.RoundRobin)))
         {
             return PartitionAssignmentStrategy.RoundRobin;
         }

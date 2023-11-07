@@ -185,7 +185,7 @@ public class MqttClientConfigurationFixture
     }
 
     [Fact]
-    public void Validate_ShouldThrow_WhenPropertyIsNotValid()
+    public void Validate_ShouldThrow_WhenUserPropertyIsNotValid()
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
@@ -336,6 +336,38 @@ public class MqttClientConfigurationFixture
         Action act = configuration.Validate;
 
         act.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenMaxDegreeOfParallelismIsLessThanOne(int value)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            MaxDegreeOfParallelism = value
+        };
+
+        Action act = configuration.Validate;
+
+        act.Should().ThrowExactly<BrokerConfigurationException>()
+            .WithMessage("The maximum degree of parallelism must be greater or equal to 1.");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Validate_ShouldThrow_WhenBackpressureLimitIsLessThanOne(int value)
+    {
+        MqttClientConfiguration configuration = GetValidConfiguration() with
+        {
+            BackpressureLimit = value
+        };
+
+        Action act = configuration.Validate;
+
+        act.Should().ThrowExactly<BrokerConfigurationException>()
+            .WithMessage("The backpressure limit must be greater or equal to 1.");
     }
 
     [Fact]

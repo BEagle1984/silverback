@@ -12,15 +12,15 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences;
 
-internal sealed class DefaultSequenceStore : ISequenceStore
+internal sealed class SequenceStore : ISequenceStore
 {
     private readonly Guid _id = Guid.NewGuid();
 
     private readonly Dictionary<string, ISequence> _store = new();
 
-    private readonly ISilverbackLogger<DefaultSequenceStore> _logger;
+    private readonly ISilverbackLogger _logger;
 
-    public DefaultSequenceStore(ISilverbackLogger<DefaultSequenceStore> logger)
+    public SequenceStore(ISilverbackLogger logger)
     {
         _logger = logger;
     }

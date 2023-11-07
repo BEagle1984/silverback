@@ -57,7 +57,7 @@ public class GenericOutboundMessageFilterFixture
     [Fact]
     public void ShouldProduce_ShouldReturnFalse_WhenMessageTypeMismatch()
     {
-        OutboundEnvelope<TestEventOne> envelope = new(
+        OutboundEnvelope<TestEventOne> testEnvelope = new(
             new TestEventOne { Content = "yes" },
             null,
             TestProducerEndpoint.GetDefault(),
@@ -65,6 +65,6 @@ public class GenericOutboundMessageFilterFixture
 
         GenericOutboundMessageFilter<TestEventTwo> filter = new(envelope => envelope.Message?.Content == "yes");
 
-        filter.ShouldProduce(envelope).Should().BeFalse();
+        filter.ShouldProduce(testEnvelope).Should().BeFalse();
     }
 }

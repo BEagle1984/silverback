@@ -15,8 +15,7 @@ namespace Silverback.Diagnostics;
 public static class MqttLogEvents
 {
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message is consumed from a
-    ///     MQTT topic.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message is consumed from a MQTT topic.
     /// </summary>
     public static LogEvent ConsumingMessage { get; } = new(
         LogLevel.Debug,
@@ -24,8 +23,15 @@ public static class MqttLogEvents
         "Consuming message {messageId} from topic {topic}. | consumerName: {consumerName}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while
-    ///     connecting to the MQTT broker.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a message couldn't be acknowledged.
+    /// </summary>
+    public static LogEvent AcknowledgeFailed { get; } = new(
+        LogLevel.Warning,
+        GetEventId(12, nameof(AcknowledgeFailed)),
+        "Failed to acknowledge message {messageId} from topic {topic}. | consumerName: {consumerName}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.
     /// </summary>
     public static LogEvent ConnectError { get; } = new(
         LogLevel.Warning,
@@ -33,8 +39,8 @@ public static class MqttLogEvents
         "Error occurred connecting to the MQTT broker. | clientName: {clientName}, clientId: {clientId}, broker: {broker}");
 
     /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying
-    ///     to connect to the MQTT broker.
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying to connect to the
+    ///     MQTT broker.
     /// </summary>
     public static LogEvent ConnectRetryError { get; } = new(
         LogLevel.Debug,

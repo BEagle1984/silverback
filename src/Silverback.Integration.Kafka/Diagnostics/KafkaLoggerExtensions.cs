@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker.Kafka;
 
 namespace Silverback.Diagnostics;
 
+// TODO: Move something to ConsumerLogger or ProducerLogger (enriched)?
 internal static class KafkaLoggerExtensions
 {
     private static readonly Action<ILogger, string, int, long, string, Exception?> ConsumingMessage =

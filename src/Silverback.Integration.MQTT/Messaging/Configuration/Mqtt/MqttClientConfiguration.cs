@@ -56,6 +56,18 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public MqttLastWillMessageConfiguration? WillMessage { get; init; }
 
     /// <summary>
+    ///     Gets the maximum number of incoming message that can be processed concurrently.
+    ///     The default is 1.
+    /// </summary>
+    public int MaxDegreeOfParallelism { get; init; } = 1;
+
+    /// <summary>
+    ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+    ///     The default is 2.
+    /// </summary>
+    public int BackpressureLimit { get; set; } = 2;
+
+    /// <summary>
     ///     Gets a value indicating whether the headers (user properties) are supported according to the configured protocol version.
     /// </summary>
     internal bool AreHeadersSupported => ProtocolVersion >= MqttProtocolVersion.V500;
@@ -100,6 +112,12 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
 
             ConsumerEndpoints.ForEach(endpoint => CheckErrorPolicyHeadersRequirement(endpoint.ErrorPolicy));
         }
+
+        if (MaxDegreeOfParallelism < 1)
+            throw new BrokerConfigurationException("The maximum degree of parallelism must be greater or equal to 1.");
+
+        if (BackpressureLimit < 1)
+            throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
     }
 
     internal MqttClientOptions GetMqttClientOptions()

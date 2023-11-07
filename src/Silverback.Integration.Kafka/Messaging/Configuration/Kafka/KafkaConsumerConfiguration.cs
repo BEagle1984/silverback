@@ -163,7 +163,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         ValidateCommitStrategy();
 
         if (MaxDegreeOfParallelism < 1)
-            throw new BrokerConfigurationException("The specified degree of parallelism must be greater or equal to 1.");
+            throw new BrokerConfigurationException("The maximum degree of parallelism must be greater or equal to 1.");
 
         if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
             throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.");

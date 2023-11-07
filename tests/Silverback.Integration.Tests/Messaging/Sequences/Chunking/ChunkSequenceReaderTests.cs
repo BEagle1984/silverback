@@ -19,8 +19,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking;
 
 public sealed class ChunkSequenceReaderTests : IDisposable
 {
-    private readonly ISequenceStore _defaultSequenceStore =
-        new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
+    private readonly ISequenceStore _sequenceStore =
+        new SequenceStore(new SilverbackLoggerSubstitute<SequenceStore>());
 
     [Fact]
     public async Task CanHandle_Chunk_TrueReturned()
@@ -39,7 +39,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         bool result = await new ChunkSequenceReader().CanHandleAsync(context);
 
@@ -61,7 +61,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         bool result = await new ChunkSequenceReader().CanHandleAsync(context);
 
@@ -85,7 +85,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
@@ -124,7 +124,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context1 = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope1,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         ISequence sequence1 = await reader.GetSequenceAsync(context1);
 
@@ -135,7 +135,7 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context2 = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope2,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         ISequence sequence2 = await reader.GetSequenceAsync(context2);
 
@@ -161,12 +161,12 @@ public sealed class ChunkSequenceReaderTests : IDisposable
 
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(
             envelope,
-            sequenceStore: _defaultSequenceStore);
+            sequenceStore: _sequenceStore);
 
         ISequence sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
         sequence.Should().BeOfType<IncompleteSequence>();
     }
 
-    public void Dispose() => AsyncHelper.RunSynchronously(() => _defaultSequenceStore.DisposeAsync().AsTask());
+    public void Dispose() => AsyncHelper.RunSynchronously(() => _sequenceStore.DisposeAsync().AsTask());
 }
