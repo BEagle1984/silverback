@@ -299,6 +299,16 @@ namespace Silverback.Messaging.Sequences
 
                 _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
+                int pushedStreamsCount = await _streamProvider.PushAsync(
+                        envelope,
+                        throwIfUnhandled,
+                        _abortCancellationTokenSource.Token)
+                    .ConfigureAwait(false);
+
+                // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
+                if (pushedStreamsCount == 0)
+                    return AddToSequenceResult.Success(0);
+
                 Length++;
 
                 if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
@@ -315,12 +325,6 @@ namespace Silverback.Messaging.Sequences
                             TotalLength
                         });
                 }
-
-                int pushedStreamsCount = await _streamProvider.PushAsync(
-                        envelope,
-                        throwIfUnhandled,
-                        _abortCancellationTokenSource.Token)
-                    .ConfigureAwait(false);
 
                 if (IsCompleting)
                     await CompleteAsync().ConfigureAwait(false);
