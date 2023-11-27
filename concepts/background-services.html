@@ -86,7 +86,7 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="distributed-background-services">Distributed Background Services</h1>
 
-<p>To implement the <a class="xref" href="../api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a> we had to create a database based locking mechanism, to ensure that only a single instance of our worker was running. You can take advantage of this implementation to build your <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a>.</p>
+<p>To implement the &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService&gt; we had to create a database based locking mechanism, to ensure that only a single instance of our worker was running. You can take advantage of this implementation to build your <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice">IHostedService</a>.</p>
 <h2 id="distributedbackgroundservice">DistributedBackgroundService</h2>
 <p>Two base classes are available in <a href="https://www.nuget.org/packages/Silverback.Core">Silverback.Core</a>: <a class="xref" href="../api/Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> implements the basic locking mechanism, while <a class="xref" href="../api/Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> adds on top of it the ability to run a task as specified intervals.</p>
 <pre><code class="lang-csharp">using Silverback.Background;

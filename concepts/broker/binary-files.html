@@ -86,11 +86,11 @@
             <article class="content wrap" id="_content" data-uid="binary-files">
 <h1 id="binary-files">Binary Files</h1>
 
-<p>Serializing a binary file (a stream or a byte array) using the regular <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> would mean to encode it in base64 and convert it to a UTF-8 encoded byte array. Beside not being very elegant this approach may cause you some trouble when integrating with other systems expecting the raw file content. This procedure would also result in the transferred byte array to be approximately a 30% bigger than the file itself.</p>
-<p>In this page it's shown how to use an <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> to more efficiently transfer raw binary files.</p>
+<p>Serializing a binary file (a stream or a byte array) using the regular &lt;xref:Silverback.Messaging.Serialization.JsonMessageSerializer&gt; would mean to encode it in base64 and convert it to a UTF-8 encoded byte array. Beside not being very elegant this approach may cause you some trouble when integrating with other systems expecting the raw file content. This procedure would also result in the transferred byte array to be approximately a 30% bigger than the file itself.</p>
+<p>In this page it's shown how to use an &lt;xref:Silverback.Messaging.Messages.IBinaryFileMessage&gt; to more efficiently transfer raw binary files.</p>
 <h2 id="producer-configuration">Producer configuration</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface is meant to transfer files over the message broker and is natively supported by Silverback. This means that the raw file content will be transferred in its original form.</p>
-<p>For convenience the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> class already implements the <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface. This class exposes a <code>ContentType</code> property as well, resulting in the <code>content-type</code> <a class="xref" href="headers.html">header</a> to be produced.</p>
+<p>The &lt;xref:Silverback.Messaging.Messages.IBinaryFileMessage&gt; interface is meant to transfer files over the message broker and is natively supported by Silverback. This means that the raw file content will be transferred in its original form.</p>
+<p>For convenience the &lt;xref:Silverback.Messaging.Messages.BinaryFileMessage&gt; class already implements the &lt;xref:Silverback.Messaging.Messages.IBinaryFileMessage&gt; interface. This class exposes a <code>ContentType</code> property as well, resulting in the <code>content-type</code> <a class="xref" href="headers.html">header</a> to be produced.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -157,7 +157,7 @@
 </section>
 </div>
 
-<p>Otherwise you can implement the interface yourself or extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (e.g. to add some additional headers, as explained in the <a class="xref" href="headers.html">Message Headers</a> section).</p>
+<p>Otherwise you can implement the interface yourself or extend the &lt;xref:Silverback.Messaging.Messages.BinaryFileMessage&gt; (e.g. to add some additional headers, as explained in the <a class="xref" href="headers.html">Message Headers</a> section).</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
@@ -244,7 +244,7 @@
 </section>
 </div>
 <h2 id="consumer-configuration">Consumer configuration</h2>
-<p>You don't need to do anything special to consume a binary file, if all necessary headers are in place (ensured by Silverback, if it was used to produce the message). The message will be wrapped again in a <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> that can be subscribed like any other message.</p>
+<p>You don't need to do anything special to consume a binary file, if all necessary headers are in place (ensured by Silverback, if it was used to produce the message). The message will be wrapped again in a &lt;xref:Silverback.Messaging.Messages.BinaryFileMessage&gt; that can be subscribed like any other message.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
@@ -307,7 +307,7 @@
 </section>
 </div>
 
-<p>If the message wasn't produced by Silverback chances are that the message type header is not there. In that case you need to explicitly configure the <a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> in the inbound endpoint.</p>
+<p>If the message wasn't produced by Silverback chances are that the message type header is not there. In that case you need to explicitly configure the &lt;xref:Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer&gt; in the inbound endpoint.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
@@ -372,7 +372,7 @@
 </section>
 </div>
 
-<p>If you need to read additional headers you can either extend the <a class="xref" href="../../api/Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a> (suggested approach) or subscribe to an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> .</p>
+<p>If you need to read additional headers you can either extend the &lt;xref:Silverback.Messaging.Messages.BinaryFileMessage&gt; (suggested approach) or subscribe to an &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; .</p>
 <p>The following snippet assumes that the files aren't being streamed by a Silverback producer, otherwise it wouldn't be necessary to explicitly set the serializer and the type would be inferred from the <code>x-message-type</code> header.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-4">
 <ul role="tablist">

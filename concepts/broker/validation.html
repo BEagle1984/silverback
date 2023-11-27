@@ -89,7 +89,7 @@
 <p>Both the consumed and produced messages are being validated using the same mechanism implemented in the asp.net controllers.</p>
 <p>You can either decorate the message model with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">System.ComponentModel.DataAnnotations.ValidationAttribute</a> standard implementations, create your own attributes (extending <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">ValidationAttribute</a>) or otherwise you can implement the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject">IValidatableObject</a> interface in your message model.</p>
 <h2 id="configuration">Configuration</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a> can be configured per endpoint and has 3 values:</p>
+<p>The &lt;xref:Silverback.Messaging.Validation.MessageValidationMode&gt; can be configured per endpoint and has 3 values:</p>
 <ul>
 <li><code>LogWarning</code> (default): a warning is logged if the message is not valid</li>
 <li><code>ThrowException</code>: an exception is thrown if the message is not valid</li>
@@ -97,7 +97,7 @@
 </ul>
 <div class="NOTE">
 <h5>Note</h5>
-<p>If an invalid message is produced, the <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationException.html">MessageValidationException</a> will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
+<p>If an invalid message is produced, the &lt;xref:Silverback.Messaging.Validation.MessageValidationException&gt; will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
 <p>In the consumer it will instead be handled like any other exception, according to the configured policies, or leading to the consumer being stopped.</p>
 </div>
 <div class="WARNING">

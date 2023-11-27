@@ -2,3925 +2,1567 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://silverback-messaging.net/about.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddBrokerExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddInboundLogExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddKafkaExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMqttExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxWorkerExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddRabbitExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAllowDuplicateEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderWithConnectionOptionsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.ServiceCollectionUseMockedKafkaExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.ServiceCollectionUseMockedMqttExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBehaviorExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerCallbackHandlerExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDbDistributedLockManagerExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsConfiguratorExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddIntegrationSpyExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddKafkaEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceReaderExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderAsObservableExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseDbContextExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseModelExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithLogLevelsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Microsoft.Extensions.DependencyInjection.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.DbDistributedLockManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.DistributedBackgroundService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.DistributedLock.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.DistributedLockSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.DistributedLockStatus.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.IDistributedLockManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.NullLockManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.NullLockSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.RecurringDistributedBackgroundService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Background.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.DatabaseTableNotFoundException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.EfCoreDbContext-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.EfCoreDbSet-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.IDbContext.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.IDbSet-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Database.Model.InboundLogEntry.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.Model.Lock.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Database.Model.OutboxMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Database.Model.StoredOffset.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.Model.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Database.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.CoreLogEvents.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.IBrokerLogEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.IBrokerLogEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.IInboundLogger-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.ILogLevelDictionary.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.IntegrationLogEvents.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.IOutboundLogger-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.ISilverbackLogger.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.ISilverbackLogger-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.KafkaActivityEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.KafkaLogEvents.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.LogEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.MqttLogEvents.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.RabbitLogEvents.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Diagnostics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.DomainEntity.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.DomainEvent-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.EntityEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.EventSourcingDomainEntity-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.EventSourcingDomainEntity-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.EventSourcingException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.IAggregateRoot.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.IDomainEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.IDomainEvent-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.IEntityEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Domain.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EntityFrameworkCore.DbContextEventsPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EntityFrameworkCore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.DbEventStoreRepository-4.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventEntity.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventStoreConcurrencyException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventStoreEntity-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventStoreException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventStoreNotFoundException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.EventStoreRepository-3.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.IEventEntity.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.IEventSourcingDomainEntity.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.IEventSourcingDomainEntity-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.IEventStoreEntity-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.EventStore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Infrastructure.RepositoryBase-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Infrastructure.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.InstanceIdentifier.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.ISorted.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.BinaryFiles.BinaryFileHandlerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.BinaryFiles.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsProvider-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Consumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.ConsumerBehaviorHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.MessageIdInitializerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Behaviors.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Broker-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.BrokerCollection.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.BrokerConnectorService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.BrokerCallbackInvocationException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IBrokerCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IMqttClientConnectedCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.IMqttClientDisconnectingCallback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.BrokerStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.ConsumerGroupStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.ExactlyOnceSemanticsStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.KafkaStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.PartitionStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.TopicPartitions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.TopicStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.WindowStatistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.Statistics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Callbacks.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Consumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Consumer-3.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.ConsumerStatus.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IBrokerCollection.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IBrokerMessageIdentifier.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IBrokerMessageOffset.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IConsumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IConsumerStatusChange.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IConsumerStatusInfo.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.IProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.ConfluentConsumerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.ConfluentProducerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryPartition.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.Mocks.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Kafka.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaConsumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaOffset.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.KafkaTransactionalProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.IMqttNetClientFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.Mocks.IClientSession.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.Mocks.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.MqttNetClientFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.MqttProduceException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Mqtt.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.MqttBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.MqttConsumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.MqttMessageIdentifier.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.MqttProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.ProduceException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Producer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Producer-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Rabbit.RabbitConnectionFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.Rabbit.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.RabbitBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.RabbitConsumer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.RabbitDeliveryTag.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.RabbitProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Broker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.AvroMessageDeserializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.AvroMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.BinaryFileMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.BrokerConnectionMode.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.BrokerConnectionOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeAvroExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.EndpointBuilder-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddInboundExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToKafkaTopicExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToMqttTopicExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToKafkaTopicExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToMqttTopicExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ExactlyOnceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IAvroMessageDeserializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IAvroMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IBusOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IEndpointBuilder-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IErrorPolicyBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ILogLevelConfigurator.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ISilverbackBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.IValidatableEndpointSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Kafka.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.KafkaBrokerOptionsConfigurator.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttBrokerOptionsConfigurator.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttLastWillMessageBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Mqtt.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilderProduceBinaryFilesExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilderSerializeAsAvroExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilderSerializeAsJsonExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.ProducerEndpointBuilderSerializeAsJsonUsingNewtonsoftExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.RabbitConnectionConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.RabbitEndpointConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.RabbitExchangeConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.RabbitQueueConfig.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.RabbitSslOption.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.Rabbit.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.RabbitBrokerOptionsConfigurator.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.SilverbackBuilderHandleMessageOfTypeExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.SilverbackBuilderPublishOutboundMessagesToInternalBusExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.SilverbackBuilderWithCustomHeaderNameExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Configuration.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.ConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.ActivityTagNames.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.ConsumerPipelineFatalException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.IActivityEnricherFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.IBrokerActivityEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Diagnostics.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.DecryptorConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.EncryptionSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.EncryptorProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SilverbackCryptoStream.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SymmetricDecryptStream.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.SymmetricEncryptStream.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Encryption.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Endpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.EndpointConfigurationException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.CustomHeadersMapperConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.HeadersReaderConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.HeadersWriterProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.ICustomHeadersMappings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Headers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.EndpointCheckResult.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.IOutboundEndpointsHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.IOutboundQueueHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.OutboundEndpointsHealthCheck.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.OutboundEndpointsHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.OutboundQueueHealthCheckService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.OutboxQueueHealthCheck.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.PingMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.HealthChecks.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.IConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.IEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyChain.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyImplementation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicyImplementation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.RetryableErrorPolicyBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ErrorHandling.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.ExactlyOnceGuardConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategyImplementation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbInboundLog.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IInboundLog.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryOffsetStore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.Repositories.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.ExactlyOnce.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.PublisherConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.Transaction.IConsumerTransactionManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.Transaction.ITransactional.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.Transaction.TransactionHandlerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.Transaction.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Inbound.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.IProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.IRawMessageTransformer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.KafkaConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.KafkaProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.BinaryFileMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.DefaultMessageHeaders.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.EnvelopeFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.HeaderAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IBinaryFileMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IBrokerEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.ICommand.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.ICommand-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IInboundEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IInboundEnvelope-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IIntegrationCommand.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IIntegrationEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IIntegrationMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.ILazyMessageStreamEnumerable-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessagesSource.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessageStreamObservable-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessageStreamProvider.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IMessageWithSource.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IOutboundEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IOutboundEnvelope-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IQuery-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IRawBrokerEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IRawInboundEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.IRawOutboundEnvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.ISilverbackEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.KafkaMessageHeaders.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.MessageHeader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.MessageHeaderCollection.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.MessageHeaderEnumerableExtensions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.MessagesSource-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.RabbitMessageHeaders.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.RabbitRoutingKeyAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.Tombstone.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.Tombstone-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.TransactionAbortedEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.TransactionCompletedEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.TransactionStartedEvent.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Messages.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.MqttConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.MqttProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.IBrokerOutboundMessageEnrichersFactory.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.IMovePolicyMessageEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.IMovePolicyMessageEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Enrichers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.IntegrationBehaviorsSortIndexes.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.IProduceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.IProduceStrategyImplementation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.KafkaMessageKeyInitializerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.RabbitRoutingKeyInitializerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IKafkaProducerEndpointNameResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IOutboundRoute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IOutboundRouter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IOutboundRoutingConfiguration.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.IProducerEndpointNameResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.KafkaOutboundEndpointRouter-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.KafkaProducerEndpointNameResolver-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.MqttOutboundEndpointRouter-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.OutboundRoute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.OutboundRouter-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.ProduceBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.ProducerEndpointNameResolver-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.SimpleOutboundRouter-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.Routing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxTransactionManager.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.DbOutboxReader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.DbOutboxWriter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.InMemoryOutbox.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.DbOutboxStoredMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.TransactionalOutbox.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Outbound.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.ProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.BehaviorsProvider.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.CommandPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.EventPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.IBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.IBehaviorsProvider.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.ICommandPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.IEventPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.IPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.IQueryPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.MessageHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.Publisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.QueryPublisher.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.UnhandledMessageException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Publishing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitExchangeConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitExchangeProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitQueueConsumerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.RabbitQueueProducerEndpoint.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.AddToSequenceResult.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Batch.BatchSequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Batch.BatchSequenceReader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Batch.BatchSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Batch.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.ChunkSequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.ChunkSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.ChunkStream.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Chunking.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.IncompleteSequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.ISequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.ISequenceReader.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.ISequenceStore.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.ISequenceWriter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.RawSequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.RawSequencerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.Sequence.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequenceAbortReason.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequenceBase-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequenceException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequencerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequencerConsumerBehaviorBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequenceReaderBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequencerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.SequenceSettings.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Sequences.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.AvroMessageDeserializerBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.AvroMessageSerializer-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.AvroMessageSerializerBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.DefaultKafkaMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.IKafkaMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.IMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.JsonMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.JsonMessageSerializer-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.JsonMessageSerializerBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.MessageEncoding.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.MessageSerializationContext.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.MessageSerializerException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.SerializerProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Serialization.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.DefaultAdditionalArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.IAdditionalArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.ILazyArgumentValue.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.ISingleMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.IStreamEnumerableMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.ObservableStreamMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.SingleMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.StreamEnumerableMessageArgumentResolver.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ArgumentResolvers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.IMessageFilter.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ISubscribedMethodsCache.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.MessageFilterAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.AsyncEnumerableMessagesReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.EnumerableMessagesReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.IReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.ObservableMessagesReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.ReadOnlyCollectionMessagesReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.SingleMessageReturnValueHandler.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.ReturnValueHandlers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.SubscribeAttribute.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.SubscribedMethod.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.SubscribedMethodInvocationException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.SubscribedMethodsLoaderService.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.Subscriptions.ISubscription.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.Subscriptions.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.Subscribers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Validation.MessageValidationException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Validation.MessageValidationMode.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Validation.ValidatorConsumerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Validation.ValidatorProducerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Messaging.Validation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Messaging.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.SilverbackException.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.IIntegrationSpy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.IKafkaTestingHelper.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.IMqttTestingHelper.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.InboundSpyBrokerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.InboundSpySubscriber.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.IntegrationSpy.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.ITestingHelper-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.KafkaTestingHelper.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.MqttTestingHelper.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.OutboundSpyBrokerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.RawInboundSpyBrokerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.RawOutboundSpyBrokerBehavior.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.TestingHelper-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.Testing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.TransactionalDictionary-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.TransactionalDictionarySharedItems-2.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.TransactionalList-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.TransactionalListItem-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.TransactionalListSharedItems-1.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://silverback-messaging.net/api/Silverback.Util.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/api/Silverback.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/background-services.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/behaviors.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/binary-files.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/callbacks.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/chunking.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/connecting.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/encryption.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/headers.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/inbound.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/inboundenvelope.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/kafka/kafka-events.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/kafka/kafka-partitioning.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/kafka/multiple-consumer-groups.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/message-id.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/mqtt/mqtt-events.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/mqtt/multiple-clients.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/outbound.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/outbound-routing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/producer.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/rabbit/routing-key.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/serialization.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/streaming.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/testing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/tombstone.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/translating-messages.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/broker/validation.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/bus/behaviors.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/bus/enabling.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/bus/model.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/bus/publish.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/bus/subscribe.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/dbcontext.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/domain-events.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/event-sourcing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/introduction.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/concepts/logging.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/contributing.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/index.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/releases.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/kafka/avro.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/kafka/basic.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/kafka/batch.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/kafka/binaryfile-streaming.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/mqtt/basic.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/mqtt/basic-v3.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/mqtt/binaryfile-streaming.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://silverback-messaging.net/samples/samples.html</loc>
-    <lastmod>2023-06-01T05:03:03+02:00</lastmod>
+    <lastmod>2023-11-27T01:58:32+01:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

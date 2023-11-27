@@ -419,6 +419,7 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -494,6 +495,7 @@ the subscriber to.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -571,6 +573,7 @@ specified in <code data-dev-comment-type="paramref" class="paramref">implementat
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -652,6 +655,7 @@ specified in <code data-dev-comment-type="paramref" class="paramref">implementat
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1154,6 +1158,7 @@ instance specified in <code data-dev-comment-type="paramref" class="paramref">im
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TSubscriber implementationInstance, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1236,6 +1241,7 @@ instance specified in <code data-dev-comment-type="paramref" class="paramref">im
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TSubscriber implementationInstance, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1319,6 +1325,7 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1394,6 +1401,7 @@ the subscriber to.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1472,6 +1480,7 @@ factory specified in <code data-dev-comment-type="paramref" class="paramref">imp
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1554,6 +1563,7 @@ factory specified in <code data-dev-comment-type="paramref" class="paramref">imp
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1637,6 +1647,7 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSubscribers&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1716,6 +1727,7 @@ the subscriber to.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSubscribers&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -2069,6 +2081,7 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -2144,6 +2157,7 @@ the subscriber to.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -2221,6 +2235,7 @@ specified in <code data-dev-comment-type="paramref" class="paramref">implementat
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, TypeSubscriptionOptions options)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -2302,6 +2317,7 @@ specified in <code data-dev-comment-type="paramref" class="paramref">implementat
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
+
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

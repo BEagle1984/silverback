@@ -86,9 +86,9 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="iinboundenvelope">IInboundEnvelope</h1>
 
-<p>When a message is consumed Silverback wraps it into an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and pushes it to the message bus. Both the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> or the contained message in its pure form can be subscribed.</p>
-<p>You can take advantage of this mechanism to gain access to the transport information of the message, since the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> holds all the information like endpoint, offset and headers data.</p>
-<p>Subscribing to the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> works exactly the same as subscribing to any other message.</p>
+<p>When a message is consumed Silverback wraps it into an &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; and pushes it to the message bus. Both the &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; or the contained message in its pure form can be subscribed.</p>
+<p>You can take advantage of this mechanism to gain access to the transport information of the message, since the &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; holds all the information like endpoint, offset and headers data.</p>
+<p>Subscribing to the &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; works exactly the same as subscribing to any other message.</p>
 <pre><code class="lang-csharp">public class SubscribingService
 {
     public async Task OnWrappedMessageReceived(IInboundEnvelope&lt;SampleMessage&gt; envelope)
@@ -104,7 +104,7 @@
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
-<p>Subscribing to the non-generic <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> it is possible to subscribe even the messages with an empty body.</p>
+<p>Subscribing to the non-generic &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope&gt; or &lt;xref:Silverback.Messaging.Messages.IRawInboundEnvelope&gt; it is possible to subscribe even the messages with an empty body.</p>
 </div>
 </article>
           </div>

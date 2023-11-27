@@ -91,7 +91,7 @@
   <h1 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions" class="text-break">Class ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions
   </h1>
   <div class="markdown level0 summary"><p>Adds the <code>DeserializeJsonUsingNewtonsoft</code> method to the
-<a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html">ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</a>.</p>
+<span class="xref">Silverback.Messaging.Configuration.ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</span>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -154,6 +154,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static TBuilder DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt; serializerBuilderAction = null)
+
     where TBuilder : IConsumerEndpointBuilder&lt;TBuilder&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -167,7 +168,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html">IConsumerEndpointBuilder</a>&lt;TBuilder&gt;</td>
+        <td><span class="xref">Silverback.Messaging.Configuration.IConsumerEndpointBuilder</span>&lt;TBuilder&gt;</td>
         <td><span class="parametername">endpointBuilder</span></td>
         <td><p>The endpoint builder.</p>
 </td>
