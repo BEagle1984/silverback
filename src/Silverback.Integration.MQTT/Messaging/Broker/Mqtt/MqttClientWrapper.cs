@@ -11,7 +11,6 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Exceptions;
 using MQTTnet.Packets;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
@@ -144,6 +143,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         }
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
     {
         if (_mqttClientWasConnected)
@@ -170,7 +170,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             await Connected.InvokeAsync(this).ConfigureAwait(false);
             await _brokerClientCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(callback => callback.OnClientConnectedAsync(Configuration)).ConfigureAwait(false);
         }
-        catch (MqttCommunicationException ex)
+        catch (Exception ex)
         {
             // This might happen if the client briefly connects and then immediately disconnects
             _logger.LogConnectError(this, ex);
@@ -198,7 +198,10 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
             if (_mqttClient is MqttClient)
                 await Task.Delay(ConnectionCheckDelayMilliseconds, cancellationToken).ConfigureAwait(false);
 
-            return _mqttClient.IsConnected;
+            if (!_mqttClient.IsConnected)
+                throw new MqttConnectException("The call to ConnectAsync returned but the client is not connected.");
+
+            return true;
         }
         catch (Exception ex)
         {
