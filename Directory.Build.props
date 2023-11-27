@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Label="Package information">
-    <BaseVersionSuffix>-beta.8</BaseVersionSuffix>
+    <BaseVersionSuffix></BaseVersionSuffix>
     <BaseVersion>4.4.0$(BaseVersionSuffix)</BaseVersion>
     <DatabasePackagesRevision>1</DatabasePackagesRevision>
     <DatabasePackagesVersionSuffix>$(BaseVersionSuffix)</DatabasePackagesVersionSuffix>
