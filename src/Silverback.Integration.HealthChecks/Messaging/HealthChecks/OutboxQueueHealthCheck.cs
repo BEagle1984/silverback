@@ -42,20 +42,28 @@ namespace Silverback.Messaging.HealthChecks
         public static int? MaxQueueLength { get; set; }
 
         /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = Justifications.CatchAllExceptions)]
         public async Task<HealthCheckResult> CheckHealthAsync(
             HealthCheckContext context,
             CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
 
-            if (await _service.CheckIsHealthyAsync(MaxMessageAge).ConfigureAwait(false))
-                return new HealthCheckResult(HealthStatus.Healthy);
+            try
+            {
+                if (await _service.CheckIsHealthyAsync(MaxMessageAge).ConfigureAwait(false))
+                    return new HealthCheckResult(HealthStatus.Healthy);
 
-            string errorMessage = "The outbound queue exceeded the configured limits " +
-                                  $"(max message age: {MaxMessageAge.ToString()}, " +
-                                  $"max queue length: {MaxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
+                string errorMessage = "The outbound queue exceeded the configured limits " +
+                                      $"(max message age: {MaxMessageAge.ToString()}, " +
+                                      $"max queue length: {MaxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
 
-            return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
+                return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
+            }
+            catch (Exception ex)
+            {
+                return new HealthCheckResult(context.Registration.FailureStatus, exception: ex);
+            }
         }
     }
 }
