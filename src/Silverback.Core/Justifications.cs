@@ -37,5 +37,8 @@ namespace Silverback
 
         public const string ExecutesSyncOrAsync =
             "The method executes either synchronously or asynchronously";
+
+        public const string CatchAllExceptions =
+            "All exception types require catching";
     }
 }
