@@ -20,7 +20,7 @@ public class OutboxHealthCheckServiceFixture
         outboxReader.GetLengthAsync().Returns(100);
         OutboxHealthCheckService service = new(outboxReader);
 
-        bool result = await service.CheckIsHealthyAsync();
+        bool result = await service.CheckIsHealthyAsync(TimeSpan.FromSeconds(30));
 
         result.Should().BeTrue();
     }
@@ -34,22 +34,7 @@ public class OutboxHealthCheckServiceFixture
         outboxReader.GetLengthAsync().Returns(currentLength);
         OutboxHealthCheckService service = new(outboxReader);
 
-        bool result = await service.CheckIsHealthyAsync(maxQueueLength: 100);
-
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData(30, true)]
-    [InlineData(31, false)]
-    public async Task CheckIsHealthy_ShouldCheckDefaultMaxAge_WhenMaxAgeIsNotSet(int currentMaxAgeInSeconds, bool expected)
-    {
-        IOutboxReader outboxReader = Substitute.For<IOutboxReader>();
-        outboxReader.GetLengthAsync().Returns(10);
-        outboxReader.GetMaxAgeAsync().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
-        OutboxHealthCheckService service = new(outboxReader);
-
-        bool result = await service.CheckIsHealthyAsync();
+        bool result = await service.CheckIsHealthyAsync(TimeSpan.FromSeconds(30), 100);
 
         result.Should().Be(expected);
     }

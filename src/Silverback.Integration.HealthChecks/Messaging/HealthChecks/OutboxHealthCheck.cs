@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,41 +18,49 @@ public class OutboxHealthCheck : IHealthCheck
 {
     private readonly IOutboxHealthCheckService _service;
 
+    private readonly TimeSpan _maxAge;
+
+    private readonly int? _maxQueueLength;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxHealthCheck" /> class.
     /// </summary>
     /// <param name="service">
     ///     The <see cref="IOutboxHealthCheckService" /> implementation to be used to monitor the outbox.
     /// </param>
-    public OutboxHealthCheck(IOutboxHealthCheckService service)
+    /// <param name="maxAge">
+    ///     The maximum message age, the check will fail when a message exceeds this age.
+    /// </param>
+    /// <param name="maxQueueLength">
+    ///     The maximum amount of messages in the queue. The default is null, meaning unrestricted.
+    /// </param>
+    public OutboxHealthCheck(IOutboxHealthCheckService service, TimeSpan maxAge, int? maxQueueLength = null)
     {
         _service = service;
+        _maxAge = maxAge;
+        _maxQueueLength = maxQueueLength;
     }
 
-    /// <summary>
-    ///     Gets or sets the maximum message age, the check will fail when a message exceeds this age (default is 30 seconds).
-    /// </summary>
-    public static TimeSpan MaxMessageAge { get; set; } = TimeSpan.FromSeconds(30);
-
-    /// <summary>
-    ///     Gets or sets the maximum amount of messages in the queue. The default is <c>null</c>, meaning unrestricted.
-    /// </summary>
-    public static int? MaxQueueLength { get; set; }
-
     /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
-    public async Task<HealthCheckResult> CheckHealthAsync(
-        HealthCheckContext context,
-        CancellationToken cancellationToken = default)
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception returned in the result")]
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         Check.NotNull(context, nameof(context));
 
-        if (await _service.CheckIsHealthyAsync(MaxMessageAge).ConfigureAwait(false))
-            return new HealthCheckResult(HealthStatus.Healthy);
+        try
+        {
+            if (await _service.CheckIsHealthyAsync(_maxAge, _maxQueueLength).ConfigureAwait(false))
+                return new HealthCheckResult(HealthStatus.Healthy);
 
-        string errorMessage = "The outbox exceeded the configured limits " +
-                              $"(max message age: {MaxMessageAge}, " +
-                              $"max queue length: {MaxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
+            string errorMessage = "The outbox exceeded the configured limits " +
+                                  $"(max message age: {_maxAge}, " +
+                                  $"max queue length: {_maxQueueLength?.ToString(CultureInfo.InvariantCulture) ?? "-"}).";
 
-        return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
+            return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
+        }
+        catch (Exception ex)
+        {
+            return new HealthCheckResult(context.Registration.FailureStatus, exception: ex);
+        }
     }
 }

@@ -20,41 +20,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class HealthCheckBuilderExtensions
 {
     /// <summary>
-    ///     Adds a health check that monitors the outbox, verifying that the messages are being processed.
-    /// </summary>
-    /// <param name="builder">
-    ///     The <see cref="IHealthChecksBuilder" />.
-    /// </param>
-    /// <param name="name">
-    ///     The health check name. The default is "OutboundQueue".
-    /// </param>
-    /// <param name="failureStatus">
-    ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
-    ///     default is <see cref="HealthStatus.Unhealthy" />.
-    /// </param>
-    /// <param name="tags">
-    ///     An optional list of tags that can be used for filtering health checks.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public static IHealthChecksBuilder AddOutboxCheck(
-        this IHealthChecksBuilder builder,
-        string name = "Outbox",
-        HealthStatus? failureStatus = default,
-        IEnumerable<string>? tags = default)
-    {
-        Check.NotNull(builder, nameof(builder));
-
-        builder.Services.AddScoped<IOutboxHealthCheckService, OutboxHealthCheckService>();
-
-        return builder.Add(new HealthCheckRegistration(name, CreateService, failureStatus, tags));
-
-        static IHealthCheck CreateService(IServiceProvider serviceProvider) =>
-            new OutboxHealthCheck(serviceProvider.GetRequiredService<IOutboxHealthCheckService>());
-    }
-
-    /// <summary>
     ///     Adds a health check that verifies that all consumers are connected.
     /// </summary>
     /// <param name="builder">
@@ -91,12 +56,58 @@ public static class HealthCheckBuilderExtensions
 
         builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
 
-        return builder.Add(new HealthCheckRegistration(name, CreateService, failureStatus, tags));
+        return builder.Add(new HealthCheckRegistration(name, CreateHealthCheck, failureStatus, tags));
 
-        IHealthCheck CreateService(IServiceProvider serviceProvider) =>
+        IHealthCheck CreateHealthCheck(IServiceProvider serviceProvider) =>
             new ConsumersHealthCheck(
                 serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
                 minHealthyStatus,
                 gracePeriod ?? TimeSpan.FromSeconds(30));
+    }
+
+    /// <summary>
+    ///     Adds a health check that monitors the outbox, verifying that the messages are being processed.
+    /// </summary>
+    /// <param name="builder">
+    ///     The <see cref="IHealthChecksBuilder" />.
+    /// </param>
+    /// <param name="maxAge">
+    ///     The maximum message age, the check will fail when a message exceeds this age. The default is 30 seconds.
+    /// </param>
+    /// <param name="maxQueueLength">
+    ///     The maximum amount of messages in the queue. The default is null, meaning unrestricted.
+    /// </param>
+    /// <param name="name">
+    ///     The health check name. The default is "OutboundQueue".
+    /// </param>
+    /// <param name="failureStatus">
+    ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
+    ///     default is <see cref="HealthStatus.Unhealthy" />.
+    /// </param>
+    /// <param name="tags">
+    ///     An optional list of tags that can be used for filtering health checks.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static IHealthChecksBuilder AddOutboxCheck(
+        this IHealthChecksBuilder builder,
+        TimeSpan? maxAge = null,
+        int? maxQueueLength = null,
+        string name = "Outbox",
+        HealthStatus? failureStatus = null,
+        IEnumerable<string>? tags = null)
+    {
+        Check.NotNull(builder, nameof(builder));
+
+        builder.Services.AddScoped<IOutboxHealthCheckService, OutboxHealthCheckService>();
+
+        return builder.Add(new HealthCheckRegistration(name, CreateHealthCheck, failureStatus, tags));
+
+        IHealthCheck CreateHealthCheck(IServiceProvider serviceProvider) =>
+            new OutboxHealthCheck(
+                serviceProvider.GetRequiredService<IOutboxHealthCheckService>(),
+                maxAge ?? TimeSpan.FromSeconds(30),
+                maxQueueLength);
     }
 }

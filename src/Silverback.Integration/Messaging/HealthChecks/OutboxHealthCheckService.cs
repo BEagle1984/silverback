@@ -10,8 +10,6 @@ namespace Silverback.Messaging.HealthChecks;
 /// <inheritdoc cref="IOutboxHealthCheckService" />
 public class OutboxHealthCheckService : IOutboxHealthCheckService
 {
-    private static readonly TimeSpan DefaultMaxAge = TimeSpan.FromSeconds(30);
-
     private readonly IOutboxReader _queueReader;
 
     /// <summary>
@@ -26,11 +24,11 @@ public class OutboxHealthCheckService : IOutboxHealthCheckService
     }
 
     /// <inheritdoc cref="IOutboxHealthCheckService.CheckIsHealthyAsync" />
-    public async Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null)
+    public async Task<bool> CheckIsHealthyAsync(TimeSpan maxAge, int? maxQueueLength = null)
     {
         if (maxQueueLength != null && await _queueReader.GetLengthAsync().ConfigureAwait(false) > maxQueueLength)
             return false;
 
-        return await _queueReader.GetMaxAgeAsync().ConfigureAwait(false) <= (maxAge ?? DefaultMaxAge);
+        return await _queueReader.GetMaxAgeAsync().ConfigureAwait(false) <= maxAge;
     }
 }

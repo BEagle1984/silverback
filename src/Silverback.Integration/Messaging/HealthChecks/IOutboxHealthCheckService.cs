@@ -15,8 +15,7 @@ public interface IOutboxHealthCheckService
     ///     Checks the age of the messages stored in the transactional outbox and optionally the queue length.
     /// </summary>
     /// <param name="maxAge">
-    ///     The maximum message age, the check will fail when a message exceeds this age. The default is 30
-    ///     seconds.
+    ///     The maximum message age, the check will fail when a message exceeds this age.
     /// </param>
     /// <param name="maxQueueLength">
     ///     The maximum amount of messages in the queue. The default is null, meaning unrestricted.
@@ -25,5 +24,5 @@ public interface IOutboxHealthCheckService
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
     ///     boolean value indicating whether the check is successful.
     /// </returns>
-    Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null);
+    Task<bool> CheckIsHealthyAsync(TimeSpan maxAge, int? maxQueueLength = null);
 }
