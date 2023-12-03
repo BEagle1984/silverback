@@ -31,7 +31,7 @@ This package contains an implementation of Silverback.Integration for MQTT.</Des
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MQTTnet" Version="4.3.1.873" />
+        <PackageReference Include="MQTTnet" Version="4.3.2.930" />
     </ItemGroup>
 
     <ItemGroup>
