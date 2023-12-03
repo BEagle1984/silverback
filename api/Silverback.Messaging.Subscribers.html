@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Subscribers
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -94,8 +94,18 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a></h4>
+      <section><p>Can be placed on a subscribed method to filter the messages to be processed according to the group
+id that consumed them. This is used when having multiple consumer groups for the same topic running
+in the same process.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.MessageFilterAttribute.html">MessageFilterAttribute</a></h4>
       <section><p>Can be placed on a subscribed method to filter the messages to be processed.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a></h4>
+      <section><p>Can be placed on a subscribed method to filter the messages to be processed according to the client
+id that consumed them. This is used when having multiple clients for the same topic running
+in the same process.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a></h4>
       <section><p>Used to identify the methods that have to be subscribed to the messages stream. The first parameter

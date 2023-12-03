@@ -8,7 +8,7 @@
     <title>Behaviors | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Behaviors | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -87,7 +87,7 @@
 <h1 id="behaviors">Behaviors</h1>
 
 <p>The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting concerns such as logging, validation, etc.</p>
-<p>The behaviors are implementations of the <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> interface and will be invoked by the <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> every time a message is published to the internal bus (this includes the inbound/outbound messages, but they will be wrapped into an &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; or &lt;xref:Silverback.Messaging.Messages.IOutboundEnvelope`1&gt;).</p>
+<p>The behaviors are implementations of the <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> interface and will be invoked by the <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> every time a message is published to the internal bus (this includes the inbound/outbound messages, but they will be wrapped into an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a>).</p>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html#Silverback_Messaging_Publishing_IBehavior_HandleAsync_System_Object_Silverback_Messaging_Publishing_MessageHandler_">HandleAsync</a> method of each registered behavior is called every time a message (or a batch of messages) is published to the internal bus, passing in the collection of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the <code>next</code> step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.</p>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> implementation have simply to be registered for DI.</p>
 <h2 id="ibehavior-example">IBehavior example</h2>
@@ -142,7 +142,7 @@
 
 <div class="NOTE">
 <h5>Note</h5>
-<p>&lt;xref:Silverback.Messaging.Messages.IInboundEnvelope&gt; and &lt;xref:Silverback.Messaging.Messages.IOutboundEnvelope&gt; are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the &lt;xref:Silverback.Messaging.Broker.IBroker&gt;. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.</p>
+<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a>. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.</p>
 </div>
 <h3 id="sorting">Sorting</h3>
 <p>The order in which the behaviors are executed might matter and it is possible to precisely define it implementing the <a class="xref" href="../../api/Silverback.ISorted.html">ISorted</a> interface.</p>

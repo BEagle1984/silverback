@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class IntegrationSpy
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,8 @@
   
   <h1 id="Silverback_Testing_IntegrationSpy" data-uid="Silverback.Testing.IntegrationSpy" class="text-break">Class IntegrationSpy
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Monitors and collects all outbound and inbound messages.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -142,7 +143,10 @@
   </span>
   <a id="Silverback_Testing_IntegrationSpy_InboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.InboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_InboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.InboundEnvelopes">InboundEnvelopes</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> corresponding to all the inbound messages that have been
+processed by the consumer pipeline (except the ones that couldn't be deserialized, e.g. the ones with an
+empty body).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -158,7 +162,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">Silverback.Messaging.Messages.IInboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -172,7 +176,8 @@
   </span>
   <a id="Silverback_Testing_IntegrationSpy_OutboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.OutboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_OutboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.OutboundEnvelopes">OutboundEnvelopes</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> corresponding to all the outbound messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -188,11 +193,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">Silverback.Messaging.Messages.IOutboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_IntegrationSpy_OutboundEnvelopes_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The messages produces via <code>RawProduce</code> or <code>RawProduceAsync</code> will not go through the Silverback
+pipeline and will therefore not show up in this collection.</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_RawInboundEnvelopes.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.RawInboundEnvelopes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
@@ -202,7 +211,9 @@
   </span>
   <a id="Silverback_Testing_IntegrationSpy_RawInboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.RawInboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_RawInboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.RawInboundEnvelopes">RawInboundEnvelopes</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> corresponding to all the inbound messages, before
+they are even processed by the consumer pipeline.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -218,7 +229,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">Silverback.Messaging.Messages.IRawInboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -232,7 +243,9 @@
   </span>
   <a id="Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.RawOutboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.RawOutboundEnvelopes">RawOutboundEnvelopes</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a> corresponding to all the actual outbound messages
+being produced (these may differ from the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html#Silverback_Testing_IIntegrationSpy_OutboundEnvelopes">OutboundEnvelopes</a>, e.g. if chunking is applied).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -248,11 +261,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">Silverback.Messaging.Messages.IRawOutboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The messages produces via <code>RawProduce</code> or <code>RawProduceAsync</code> will not go through the Silverback
+pipeline and will therefore not show up in this collection.</p>
+</div>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
@@ -282,9 +299,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Messages.IInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Messages.IInboundEnvelope</span> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
@@ -316,9 +333,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Messages.IOutboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Messages.IOutboundEnvelope</span> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
@@ -350,9 +367,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Messages.IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Messages.IRawInboundEnvelope</span> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
@@ -384,9 +401,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Messages.IRawOutboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Messages.IRawOutboundEnvelope</span> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>

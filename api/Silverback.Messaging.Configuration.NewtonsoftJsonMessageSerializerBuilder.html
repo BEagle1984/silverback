@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NewtonsoftJsonMessageSerializerBuilder
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,8 @@
   
   <h1 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder" class="text-break">Class NewtonsoftJsonMessageSerializerBuilder
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> or <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -142,7 +143,7 @@
   </span>
   <a id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_Build_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_Build" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.Build">Build()</h4>
-  <div class="markdown level1 summary"><p>Builds the <span class="xref">Silverback.Messaging.Serialization.IMessageSerializer</span> instance.</p>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> instance.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -159,8 +160,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Serialization.IMessageSerializer</span></td>
-        <td><p>The <span class="xref">Silverback.Messaging.Serialization.IMessageSerializer</span>.</p>
+        <td><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -174,7 +175,8 @@
   </span>
   <a id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_Configure_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.Configure*"></a>
   <h4 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_Configure_System_Action_Newtonsoft_Json_JsonSerializerSettings__" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.Configure(System.Action{Newtonsoft.Json.JsonSerializerSettings})">Configure(Action&lt;JsonSerializerSettings&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Configures the <span class="xref">Newtonsoft.Json.JsonSerializerSettings</span>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -193,7 +195,8 @@
       <tr>
         <td><span class="xref">System.Action</span>&lt;<span class="xref">Newtonsoft.Json.JsonSerializerSettings</span>&gt;</td>
         <td><span class="parametername">configureAction</span></td>
-        <td></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <span class="xref">Newtonsoft.Json.JsonSerializerSettings</span> and configures it.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -208,7 +211,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -221,7 +225,9 @@
   </span>
   <a id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType*"></a>
   <h4 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType_System_Type_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)">UseFixedType(Type)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies a fixed message type. This will prevent the message type header to be written when
+serializing and the header will be ignored when deserializing.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -240,7 +246,8 @@
       <tr>
         <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">messageType</span></td>
-        <td></td>
+        <td><p>The type of the message to serialize or deserialize.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -255,7 +262,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -268,7 +276,9 @@
   </span>
   <a id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType*"></a>
   <h4 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType__1" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType``1">UseFixedType&lt;TMessage&gt;()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies a fixed message type. This will prevent the message type header to be written when
+serializing and the header will be ignored when deserializing.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -285,7 +295,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -300,7 +311,8 @@
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td></td>
+        <td><p>The type of the message to serialize or deserialize.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -313,7 +325,8 @@
   </span>
   <a id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_WithEncoding_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.WithEncoding*"></a>
   <h4 id="Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_WithEncoding_Silverback_Messaging_Serialization_MessageEncoding_" data-uid="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.WithEncoding(Silverback.Messaging.Serialization.MessageEncoding)">WithEncoding(MessageEncoding)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the encoding to be used.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -330,9 +343,10 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Silverback.Messaging.Serialization.MessageEncoding</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a></td>
         <td><span class="parametername">encoding</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -347,7 +361,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a> so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>

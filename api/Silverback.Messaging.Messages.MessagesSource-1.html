@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class MessagesSource&lt;TBaseEvent&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -220,7 +220,6 @@ methods to add the internal events to a temporary collection exposed via the
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected TEvent AddEvent&lt;TEvent&gt;(bool allowMultiple = true)
-
     where TEvent : TBaseEvent, new()</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -282,7 +281,9 @@ methods to add the internal events to a temporary collection exposed via the
   </span>
   <a id="Silverback_Messaging_Messages_MessagesSource_1_ClearMessages_" data-uid="Silverback.Messaging.Messages.MessagesSource`1.ClearMessages*"></a>
   <h4 id="Silverback_Messaging_Messages_MessagesSource_1_ClearMessages" data-uid="Silverback.Messaging.Messages.MessagesSource`1.ClearMessages">ClearMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Called after the messages have been successfully published (and processed) to clear the messages
+collection.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -297,7 +298,8 @@ methods to add the internal events to a temporary collection exposed via the
   </span>
   <a id="Silverback_Messaging_Messages_MessagesSource_1_GetMessages_" data-uid="Silverback.Messaging.Messages.MessagesSource`1.GetMessages*"></a>
   <h4 id="Silverback_Messaging_Messages_MessagesSource_1_GetMessages" data-uid="Silverback.Messaging.Messages.MessagesSource`1.GetMessages">GetMessages()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the messages to be published.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -314,7 +316,8 @@ methods to add the internal events to a temporary collection exposed via the
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Object</span>&gt;</td>
-        <td></td>
+        <td><p>The message objects.</p>
+</td>
       </tr>
     </tbody>
   </table>

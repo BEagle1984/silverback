@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IMqttClientConfigBuilder
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -106,7 +106,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_AddUserProperty_System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.AddUserProperty(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L425">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L455">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_AddUserProperty_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.AddUserProperty*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_AddUserProperty_System_String_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.AddUserProperty(System.String,System.String)">AddUserProperty(String, String)</h4>
@@ -163,7 +163,7 @@ related properties from the client to the server.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L78">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L79">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectTo_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectTo(System.String)">ConnectTo(String)</h4>
@@ -172,7 +172,8 @@ related properties from the client to the server.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectTo(string uri)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ConnectViaTcp or ConnectViaWebsocket.&quot;)]
+IMqttClientConfigBuilder ConnectTo(string uri)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -222,7 +223,8 @@ related properties from the client to the server.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectTo(Uri uri)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ConnectViaTcp or ConnectViaWebsocket.&quot;)]
+IMqttClientConfigBuilder ConnectTo(Uri uri)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -263,7 +265,7 @@ related properties from the client to the server.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_MqttClientTcpOptions__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action%7BMQTTnet.Client.MqttClientTcpOptions%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L327">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L331">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_Action_MQTTnet_Client_MqttClientTcpOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.Action{MQTTnet.Client.MqttClientTcpOptions})">ConnectViaTcp(Action&lt;MqttClientTcpOptions&gt;)</h4>
@@ -313,7 +315,7 @@ related properties from the client to the server.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_String_System_Nullable_System_Int32__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.String%2CSystem.Nullable%7BSystem.Int32%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L316">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L320">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaTcp_System_String_System_Nullable_System_Int32__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaTcp(System.String,System.Nullable{System.Int32})">ConnectViaTcp(String, Nullable&lt;Int32&gt;)</h4>
@@ -369,7 +371,7 @@ related properties from the client to the server.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptions__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action%7BMQTTnet.Client.MqttClientWebSocketOptions%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L472">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L517">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptions})">ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptions&gt;)</h4>
@@ -378,7 +380,8 @@ related properties from the client to the server.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptions&gt; optionsAction)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the builder as parameter.&quot;)]
+IMqttClientConfigBuilder ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptions&gt; optionsAction)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -417,10 +420,61 @@ it.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptionsBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action%7BMQTTnet.Client.MqttClientWebSocketOptionsBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L504">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MQTTnet_Client_MqttClientWebSocketOptionsBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MQTTnet.Client.MqttClientWebSocketOptionsBuilder})">ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptionsBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the WebSocket connection settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptionsBuilder&gt; optionsAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MQTTnet.Client.MqttClientWebSocketOptionsBuilder</span>&gt;</td>
+        <td><span class="parametername">optionsAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <span class="xref">MQTTnet.Client.MqttClientWebSocketOptionsBuilder</span>
+and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String%2CMQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L457">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L488">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters)">ConnectViaWebSocket(String, MqttClientOptionsBuilderWebSocketParameters)</h4>
@@ -429,7 +483,8 @@ it.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectViaWebSocket(string uri, MqttClientOptionsBuilderWebSocketParameters parameters = null)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the builder as parameter.&quot;)]
+IMqttClientConfigBuilder ConnectViaWebSocket(string uri, MqttClientOptionsBuilderWebSocketParameters parameters = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -476,7 +531,7 @@ it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String%2CSystem.Action%7BMQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L440">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L470">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MQTTnet_Client_MqttClientOptionsBuilderWebSocketParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MQTTnet.Client.MqttClientOptionsBuilderWebSocketParameters})">ConnectViaWebSocket(String, Action&lt;MqttClientOptionsBuilderWebSocketParameters&gt;)</h4>
@@ -485,7 +540,8 @@ it.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder ConnectViaWebSocket(string uri, Action&lt;MqttClientOptionsBuilderWebSocketParameters&gt; parametersAction)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the builder as parameter.&quot;)]
+IMqttClientConfigBuilder ConnectViaWebSocket(string uri, Action&lt;MqttClientOptionsBuilderWebSocketParameters&gt; parametersAction)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -533,7 +589,7 @@ and configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableKeepAlive.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableKeepAlive%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L174">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L176">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableKeepAlive_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableKeepAlive*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableKeepAlive" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableKeepAlive">DisableKeepAlive()</h4>
@@ -565,7 +621,7 @@ and configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableProblemInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableProblemInformation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L273">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L277">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableProblemInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableProblemInformation*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableProblemInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableProblemInformation">DisableProblemInformation()</h4>
@@ -598,7 +654,7 @@ and configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableResponseInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableResponseInformation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L290">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L294">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableResponseInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableResponseInformation*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableResponseInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableResponseInformation">DisableResponseInformation()</h4>
@@ -631,7 +687,7 @@ packet. This is usually the default.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableTls.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableTls%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L347">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L351">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableTls*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_DisableTls" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.DisableTls">DisableTls()</h4>
@@ -663,7 +719,7 @@ packet. This is usually the default.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L355">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L359">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls">EnableTls()</h4>
@@ -695,7 +751,7 @@ packet. This is usually the default.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L366">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L370">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientOptionsBuilderTlsParameters)">EnableTls(MqttClientOptionsBuilderTlsParameters)</h4>
@@ -704,7 +760,8 @@ packet. This is usually the default.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the new builder or model as parameter.&quot;)]
+IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -742,10 +799,61 @@ packet. This is usually the default.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientTlsOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientTlsOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L395">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_MQTTnet_Client_MqttClientTlsOptions_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(MQTTnet.Client.MqttClientTlsOptions)">EnableTls(MqttClientTlsOptions)</h4>
+  <div class="markdown level1 summary"><p>Specifies that TLS has to be used to encrypt the network traffic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the new builder or model as parameter.&quot;)]
+IMqttClientConfigBuilder EnableTls(MqttClientTlsOptions options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">MQTTnet.Client.MqttClientTlsOptions</span></td>
+        <td><span class="parametername">options</span></td>
+        <td><p>The <span class="xref">MQTTnet.Client.MqttClientTlsOptionsBuilder</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action%7BMQTTnet.Client.MqttClientOptionsBuilderTlsParameters%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L378">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L383">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientOptionsBuilderTlsParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientOptionsBuilderTlsParameters})">EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt;)</h4>
@@ -754,7 +862,8 @@ packet. This is usually the default.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt; parametersAction)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use the overload with the new builder or model as parameter.&quot;)]
+IMqttClientConfigBuilder EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt; parametersAction)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -793,10 +902,61 @@ configures it.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientTlsOptionsBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action%7BMQTTnet.Client.MqttClientTlsOptionsBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L408">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_EnableTls_System_Action_MQTTnet_Client_MqttClientTlsOptionsBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.EnableTls(System.Action{MQTTnet.Client.MqttClientTlsOptionsBuilder})">EnableTls(Action&lt;MqttClientTlsOptionsBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies that TLS has to be used to encrypt the network traffic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder EnableTls(Action&lt;MqttClientTlsOptionsBuilder&gt; optionsAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MQTTnet.Client.MqttClientTlsOptionsBuilder</span>&gt;</td>
+        <td><span class="parametername">optionsAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <span class="xref">MQTTnet.Client.MqttClientTlsOptionsBuilder</span> and
+configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html">IMqttClientConfigBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_System_UInt32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.UInt32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L185">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L187">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitPacketSize_System_UInt32_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitPacketSize(System.UInt32)">LimitPacketSize(UInt32)</h4>
@@ -846,7 +1006,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitTopicAlias_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitTopicAlias(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L390">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L420">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitTopicAlias_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitTopicAlias*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitTopicAlias_System_Int32_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitTopicAlias(System.Int32)">LimitTopicAlias(Int32)</h4>
@@ -897,7 +1057,7 @@ default is 0, meaning that no alias can be sent.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_System_UInt16_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L255">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L259">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_LimitUnacknowledgedPublications_System_UInt16_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.LimitUnacknowledgedPublications(System.UInt16)">LimitUnacknowledgedPublications(UInt16)</h4>
@@ -1016,7 +1176,7 @@ use <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttClientCon
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestProblemInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestProblemInformation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L264">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L268">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestProblemInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestProblemInformation*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestProblemInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestProblemInformation">RequestProblemInformation()</h4>
@@ -1049,7 +1209,7 @@ default.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestResponseInformation.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestResponseInformation%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L281">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L285">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestResponseInformation_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestResponseInformation*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_RequestResponseInformation" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.RequestResponseInformation">RequestResponseInformation()</h4>
@@ -1081,7 +1241,7 @@ default.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendKeepAlive_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendKeepAlive(System.TimeSpan)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L166">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L168">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendKeepAlive_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendKeepAlive*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendKeepAlive_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendKeepAlive(System.TimeSpan)">SendKeepAlive(TimeSpan)</h4>
@@ -1133,7 +1293,7 @@ seconds.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendLastWillMessage_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendLastWillMessage(System.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L485">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L531">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendLastWillMessage_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendLastWillMessage*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_SendLastWillMessage_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.SendLastWillMessage(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder})">SendLastWillMessage(Action&lt;IMqttLastWillMessageBuilder&gt;)</h4>
@@ -1185,7 +1345,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_IMqttExtendedAuthenticationExchangeHandler_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L128">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L130">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_MQTTnet_Client_IMqttExtendedAuthenticationExchangeHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(MQTTnet.Client.IMqttExtendedAuthenticationExchangeHandler)">UseExtendedAuthenticationExchangeHandler(IMqttExtendedAuthenticationExchangeHandler)</h4>
@@ -1235,7 +1395,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L153">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L155">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_System_Type_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(System.Type)">UseExtendedAuthenticationExchangeHandler(Type)</h4>
@@ -1286,7 +1446,7 @@ will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler__1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L140">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L142">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler__1" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler``1">UseExtendedAuthenticationExchangeHandler&lt;THandler&gt;()</h4>
@@ -1336,7 +1496,7 @@ will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProtocolVersion_MQTTnet_Formatter_MqttProtocolVersion_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L196">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L198">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProtocolVersion_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProtocolVersion*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProtocolVersion_MQTTnet_Formatter_MqttProtocolVersion_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProtocolVersion(MQTTnet.Formatter.MqttProtocolVersion)">UseProtocolVersion(MqttProtocolVersion)</h4>
@@ -1386,7 +1546,7 @@ will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_MqttClientWebSocketProxyOptions__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action%7BMQTTnet.Client.MqttClientWebSocketProxyOptions%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L240">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L243">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_Action_MQTTnet_Client_MqttClientWebSocketProxyOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.Action{MQTTnet.Client.MqttClientWebSocketProxyOptions})">UseProxy(Action&lt;MqttClientWebSocketProxyOptions&gt;)</h4>
@@ -1395,7 +1555,8 @@ will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder UseProxy(Action&lt;MqttClientWebSocketProxyOptions&gt; optionsAction)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Configure proxy in ConnectViaWebSocket(...).&quot;)]
+IMqttClientConfigBuilder UseProxy(Action&lt;MqttClientWebSocketProxyOptions&gt; optionsAction)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1437,7 +1598,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_String_System_String_System_String_System_String_System_Boolean_System_String___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.String%2CSystem.String%2CSystem.String%2CSystem.String%2CSystem.Boolean%2CSystem.String%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L222">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L224">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_UseProxy_System_String_System_String_System_String_System_String_System_Boolean_System_String___" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.UseProxy(System.String,System.String,System.String,System.String,System.Boolean,System.String[])">UseProxy(String, String, String, String, Boolean, String[])</h4>
@@ -1446,7 +1607,8 @@ configures it.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IMqttClientConfigBuilder UseProxy(string address, string username = null, string password = null, string domain = null, bool bypassOnLocal = false, string[] bypassList = null)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Configure proxy in ConnectViaWebSocket(...).&quot;)]
+IMqttClientConfigBuilder UseProxy(string address, string username = null, string password = null, string domain = null, bool bypassOnLocal = false, string[] bypassList = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1623,7 +1785,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_MQTTnet_Client_IMqttClientCredentialsProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L117">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L119">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_MQTTnet_Client_IMqttClientCredentialsProvider_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(MQTTnet.Client.IMqttClientCredentialsProvider)">WithCredentials(IMqttClientCredentialsProvider)</h4>
@@ -1673,7 +1835,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_System_String_System_Byte___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(System.String%2CSystem.Byte%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L106">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L108">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_System_String_System_Byte___" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(System.String,System.Byte[])">WithCredentials(String, Byte[])</h4>
@@ -1729,7 +1891,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L92">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L94">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithCredentials_System_String_System_String_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithCredentials(System.String,System.String)">WithCredentials(String, String)</h4>
@@ -1785,7 +1947,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithoutTryPrivate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L410">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L440">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithoutTryPrivate_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithoutTryPrivate" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithoutTryPrivate">WithoutTryPrivate()</h4>
@@ -1817,7 +1979,7 @@ configures it.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithSessionExpiration_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithSessionExpiration(System.TimeSpan)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L302">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L306">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithSessionExpiration_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithSessionExpiration*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithSessionExpiration_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithSessionExpiration(System.TimeSpan)">WithSessionExpiration(TimeSpan)</h4>
@@ -1868,7 +2030,7 @@ while <span class="xref">System.TimeSpan.MaxValue</span> indicates that the sess
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout(System.TimeSpan)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L339">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L343">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTimeout_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTimeout(System.TimeSpan)">WithTimeout(TimeSpan)</h4>
@@ -1919,7 +2081,7 @@ The default value is the same as for sockets in .NET in general.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTryPrivate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L402">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttClientConfigBuilder.cs/#L432">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTryPrivate_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder_WithTryPrivate" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.WithTryPrivate">WithTryPrivate()</h4>

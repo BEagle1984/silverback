@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -125,13 +125,10 @@
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsConsuming">Consumer.IsConsuming</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ServiceProvider">Consumer.ServiceProvider</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SequenceStores">Consumer.SequenceStores</a>
-    </div>
-    <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsDisconnecting">Consumer.IsDisconnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ServiceProvider">Consumer.ServiceProvider</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsStopping">Consumer.IsStopping</a>
@@ -188,7 +185,7 @@
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_WaitUntilConsumingStoppedCoreAsync">Consumer.WaitUntilConsumingStoppedCoreAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_HandleMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.HandleMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, IBrokerMessageIdentifier)</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_HandleMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_Silverback_Messaging_Broker_IBrokerMessageIdentifier_Silverback_Messaging_Sequences_ISequenceStore_">Consumer.HandleMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, IBrokerMessageIdentifier, ISequenceStore)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus">Consumer.SetReadyStatus()</a>
@@ -480,108 +477,6 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_GetSequenceStore__2_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.GetSequenceStore(%602)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L114">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
-  <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore__2_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(`2)">GetSequenceStore(TIdentifier)</h4>
-  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> to be used to store the pending sequences.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual ISequenceStore GetSequenceStore(TIdentifier brokerMessageIdentifier)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TIdentifier</span></td>
-        <td><span class="parametername">brokerMessageIdentifier</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.GetSequenceStore(Silverback.Messaging.Broker.IBrokerMessageIdentifier)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L109">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
-  <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">GetSequenceStore(IBrokerMessageIdentifier)</h4>
-  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a> to be used to store the pending sequences.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override ISequenceStore GetSequenceStore(IBrokerMessageIdentifier brokerMessageIdentifier)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></td>
-        <td><span class="parametername">brokerMessageIdentifier</span></td>
-        <td><p>The message identifier (the offset in Kafka) may determine which store is being used. For example a
-dedicated sequence store is used per each Kafka partition, since they may be processed concurrently.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceStore.html">ISequenceStore</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.GetSequenceStore(IBrokerMessageIdentifier)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7B%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>

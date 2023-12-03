@@ -8,7 +8,7 @@
     <title>Tombstone Message | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Tombstone Message | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -88,8 +88,8 @@
 
 <p>A tombstone message is a message with a <code>null</code> body, used to indicate that the record has been deleted. This technique is for example used with Kafka topics compaction, to get rid of obsolete records.</p>
 <h2 id="consumer">Consumer</h2>
-<p>Silverback maps by default the messages with a <code>null</code> body to a &lt;xref:Silverback.Messaging.Messages.Tombstone&gt; or &lt;xref:Silverback.Messaging.Messages.Tombstone`1&gt;. This behavior can be changed using the <a href="xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder%601#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_SkipNullMessages">SkipNullMessages</a> or <a href="xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder%601#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_UseLegacyNullMessageHandling">UseLegacyNullMessageHandling</a> of the &lt;xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1&gt;, or setting the <a href="xref:Silverback.Messaging.ConsumerEndpoint#Silverback_Messaging_ConsumerEndpoint_NullMessageHandlingStrategy">NullMessageHandlingStrategy</a> property of the &lt;xref:Silverback.Messaging.ConsumerEndpoint&gt;).</p>
-<p>The &lt;xref:Silverback.Messaging.Messages.Tombstone&gt;/&lt;xref:Silverback.Messaging.Messages.Tombstone`1&gt; message exposes a single property containing the <a class="xref" href="message-id.html">message identifier</a>.</p>
+<p>Silverback maps by default the messages with a <code>null</code> body to a <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a>. This behavior can be changed using the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_SkipNullMessages">SkipNullMessages</a> or <a class="xref" href="../../api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_UseLegacyNullMessageHandling">UseLegacyNullMessageHandling</a> of the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html">IConsumerEndpointBuilder&lt;TBuilder&gt;</a>, or setting the <a class="xref" href="../../api/Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_NullMessageHandlingStrategy">NullMessageHandlingStrategy</a> property of the <a class="xref" href="../../api/Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a>).</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>/<a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> message exposes a single property containing the <a class="xref" href="message-id.html">message identifier</a>.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
@@ -137,10 +137,10 @@
 
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>In order to create a typed &lt;xref:Silverback.Messaging.Messages.Tombstone`1&gt; it is required that either the consumed message declares the <code>x-message-type</code> <a class="xref" href="headers.html">header</a> or a fixed type deserializer is used (as shown in the example above). Otherwise the <code>null</code> message will be mapped to a simple &lt;xref:Silverback.Messaging.Messages.Tombstone&gt;.</p>
+<p>In order to create a typed <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> it is required that either the consumed message declares the <code>x-message-type</code> <a class="xref" href="headers.html">header</a> or a fixed type deserializer is used (as shown in the example above). Otherwise the <code>null</code> message will be mapped to a simple <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>.</p>
 </div>
 <h2 id="producer">Producer</h2>
-<p>A &lt;xref:Silverback.Messaging.Messages.Tombstone`1&gt; (or &lt;xref:Silverback.Messaging.Messages.Tombstone&gt;) can also be used to produce a <code>null</code> message.</p>
+<p>A <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> (or <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>) can also be used to produce a <code>null</code> message.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
@@ -190,7 +190,7 @@
 
 <div class="NOTE">
 <h5>Note</h5>
-<p>The &lt;xref:Silverback.Messaging.Messages.Tombstone`1&gt; messages are routed according to the type parameter <code>TMessage</code>. This means that they will be published to the outbound endpoints papped to the same <code>TMessage</code> (<code>Product</code> in the above example), as well as to the outbound endpoints explicitly mapping &lt;xref:Silverback.Messaging.Messages.Tombstone&gt;.</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone-1.html">Tombstone&lt;TMessage&gt;</a> messages are routed according to the type parameter <code>TMessage</code>. This means that they will be published to the outbound endpoints papped to the same <code>TMessage</code> (<code>Product</code> in the above example), as well as to the outbound endpoints explicitly mapping <a class="xref" href="../../api/Silverback.Messaging.Messages.Tombstone.html">Tombstone</a>.</p>
 </div>
 </article>
           </div>

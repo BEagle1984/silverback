@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Testing
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -96,32 +96,36 @@
   </h3>
       <h4><a class="xref" href="Silverback.Testing.InboundSpyBrokerBehavior.html">InboundSpyBrokerBehavior</a></h4>
       <section><p>Added at the end of the consumer pipeline, forwards the processed
-<span class="xref">Silverback.Messaging.Messages.IInboundEnvelope</span> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+<a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Testing.InboundSpySubscriber.html">InboundSpySubscriber</a></h4>
-      <section><p>Subscribes to all the <span class="xref">Silverback.Messaging.Messages.IOutboundEnvelope</span> transiting through the internal bus and forwards
+      <section><p>Subscribes to all the <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> transiting through the internal bus and forwards
 them to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> to be collected.</p>
 </section>
       <h4><a class="xref" href="Silverback.Testing.IntegrationSpy.html">IntegrationSpy</a></h4>
-      <section></section>
+      <section><p>Monitors and collects all outbound and inbound messages.</p>
+</section>
       <h4><a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a></h4>
-      <section></section>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</section>
       <h4><a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a></h4>
-      <section></section>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</section>
       <h4><a class="xref" href="Silverback.Testing.OutboundSpyBrokerBehavior.html">OutboundSpyBrokerBehavior</a></h4>
       <section><p>Added at the very beginning of the producer pipeline, forwards the published
-<span class="xref">Silverback.Messaging.Messages.IOutboundEnvelope</span> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Testing.RawInboundSpyBrokerBehavior.html">RawInboundSpyBrokerBehavior</a></h4>
       <section><p>Added at the very beginning of the consumer pipeline, forwards the untouched
-<span class="xref">Silverback.Messaging.Messages.IRawInboundEnvelope</span> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Testing.RawOutboundSpyBrokerBehavior.html">RawOutboundSpyBrokerBehavior</a></h4>
-      <section><p>Added at the very end of the producer pipeline, forwards the produced <span class="xref">Silverback.Messaging.Messages.IRawOutboundEnvelope</span>
+      <section><p>Added at the very end of the producer pipeline, forwards the produced <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a>
 to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper&lt;TBroker&gt;</a></h4>
-      <section></section>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</section>
     <h3 id="interfaces">Interfaces
   </h3>
       <h4><a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a></h4>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RecurringDistributedBackgroundService
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -100,6 +100,7 @@ intervals. The distributed lock mechanism prevents concurrent executions.</p>
     <div class="level1"><span class="xref">Microsoft.Extensions.Hosting.BackgroundService</span></div>
     <div class="level2"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
     <div class="level3"><span class="xref">RecurringDistributedBackgroundService</span></div>
+      <div class="level4"><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -263,7 +264,10 @@ the default settings for the lock mechanism.</p>
   </span>
   <a id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync*"></a>
   <h4 id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync(System.Threading.CancellationToken)">ExecuteLockedAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>This method is called when the <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> starts and the lock is acquired. The
+implementation should return a task that represents the lifetime of the long running operation(s)
+being performed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -282,7 +286,8 @@ the default settings for the lock mechanism.</p>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -297,7 +302,8 @@ the default settings for the lock mechanism.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
+</td>
       </tr>
     </tbody>
   </table>

@@ -8,7 +8,7 @@
     <title>Introduction | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Introduction | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -146,7 +146,7 @@
 <p>Contains the extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> to monitor the connection to the message broker.</p>
 <p><a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks"><img src="https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true" alt="NuGet"></a></p>
 <h4 id="silverbackintegrationnewtonsoft">Silverback.Integration.Newtonsoft</h4>
-<p>Contains the legacy implementations of &lt;xref:Silverback.Messaging.Serialization.IMessageSerializer&gt;, based on Newtonsoft.Json.</p>
+<p>Contains the legacy implementations of <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>, based on Newtonsoft.Json.</p>
 <p><a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft"><img src="https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true" alt="NuGet"></a></p>
 <h3 id="event-sourcing">Event Sourcing</h3>
 <h4 id="silverbackeventsourcing">Silverback.EventSourcing</h4>
@@ -159,17 +159,17 @@
 <h3 id="subscriber">Subscriber</h3>
 <p>A method (or delegate) that is subscribed to the bus and will process some (or all) of the messages that will be published or consumed from a message broker (since those messages are automatically pushed to the internal bus).</p>
 <h3 id="broker">Broker</h3>
-<p>A message broker, like Apache Kafka or RabbitMQ. It is represented by the &lt;xref:Silverback.Messaging.Broker.IBroker&gt; interface and is used internally by Silverback to bind the internal bus with a message broker. It can be resolved and used directly but that shouldn't be necessary for most of the use cases.</p>
+<p>A message broker, like Apache Kafka or RabbitMQ. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a> interface and is used internally by Silverback to bind the internal bus with a message broker. It can be resolved and used directly but that shouldn't be necessary for most of the use cases.</p>
 <h3 id="producer">Producer</h3>
-<p>An object used to publish messages to the broker. It is represented by the &lt;xref:Silverback.Messaging.Broker.IProducer&gt; interface.</p>
+<p>An object used to publish messages to the broker. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> interface.</p>
 <h3 id="consumer">Consumer</h3>
-<p>An object used to receive messages from the broker. It is represented by the &lt;xref:Silverback.Messaging.Broker.IConsumer&gt; interface.</p>
+<p>An object used to receive messages from the broker. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> interface.</p>
 <h3 id="endpoint">Endpoint</h3>
-<p>Identifies a specific topic or queue. It also contains all the settings to bind to that endpoint and is therefore specific to the message broker implementation. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IEndpoint&gt; interface.</p>
+<p>Identifies a specific topic or queue. It also contains all the settings to bind to that endpoint and is therefore specific to the message broker implementation. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IEndpoint.html">IEndpoint</a> interface.</p>
 <h4 id="inbound-endpoint--consumer-endpoint">Inbound Endpoint / Consumer Endpoint</h4>
-<p>An endpoint that is consumed and whose messages are relayed into the internal bus, where they can be consumed by one or more subscribers. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IConsumerEndpoint&gt; interface such as the &lt;xref:Silverback.Messaging.KafkaConsumerEndpoint&gt;.</p>
+<p>An endpoint that is consumed and whose messages are relayed into the internal bus, where they can be consumed by one or more subscribers. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a> interface such as the <a class="xref" href="../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a>.</p>
 <h4 id="outbound-endpoint--producer-endpoint">Outbound Endpoint / Producer Endpoint</h4>
-<p>Silverback can be configured to automatically publish some messages to the message broker, observing the internal bus and relaying the messages matching with the configure type. The outbound/producer endpoint specifies the topic or queue where those message have to be produced. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IProducerEndpoint&gt; interface such as the &lt;xref:Silverback.Messaging.KafkaProducerEndpoint&gt;.</p>
+<p>Silverback can be configured to automatically publish some messages to the message broker, observing the internal bus and relaying the messages matching with the configure type. The outbound/producer endpoint specifies the topic or queue where those message have to be produced. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> interface such as the <a class="xref" href="../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>.</p>
 <h3 id="behavior">Behavior</h3>
 <p>Multiple behaviors are chained to build a sort of pipeline to process the messages transiting across the internal bus, the consumer or the producer. They are used to implement cross-cutting concerns, isolate responsibilities and allow for greater flexibility. Some built-in behaviors are responsible for serialization, error policies enforcement, batching, chunking, encryption, etc.</p>
 </article>

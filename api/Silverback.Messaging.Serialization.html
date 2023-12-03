@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Serialization
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -94,6 +94,47 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializer-1.html">AvroMessageDeserializer&lt;TMessage&gt;</a></h4>
+      <section><p>Connects to the specified schema registry and serializes the messages in Apache Avro format.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageDeserializerBase.html">AvroMessageDeserializerBase</a></h4>
+      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a></h4>
+      <section><p>Connects to the specified schema registry and serializes the messages in Apache Avro format.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html">AvroMessageSerializerBase</a></h4>
+      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.DefaultKafkaMessageSerializer.html">DefaultKafkaMessageSerializer</a></h4>
+      <section><p>The default implementation of a <a class="xref" href="Silverback.Messaging.Serialization.IKafkaMessageSerializer.html">IKafkaMessageSerializer</a> simply uses the provided
+<a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> for the value and treats the key as a UTF-8 encoded string.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.DeserializerConsumerBehavior.html">DeserializerConsumerBehavior</a></h4>
+      <section><p>Deserializes the messages being consumed using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a></h4>
+      <section><p>Serializes the messages in JSON format and relies on some added headers to determine the message
+type upon deserialization. This default serializer is ideal when the producer and the consumer are
+both using Silverback.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a></h4>
+      <section><p>Serializes and deserializes the messages of type <code data-dev-comment-type="typeparamref" class="typeparamref">TMessage</code> in JSON format.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializerBase.html">JsonMessageSerializerBase</a></h4>
+      <section><p>The base class for <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> and
+<a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializationContext.html">MessageSerializationContext</a></h4>
+      <section><p>The context that is passed from the producer or consumer to the serializer. It can be used to
+customize the serialization behavior according to the endpoint.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializerException.html">MessageSerializerException</a></h4>
+      <section><p>The exception that is thrown by the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> implementations when the
+message cannot be serialized or deserialized. This exception is thrown only when a Silverback
+specific error occurs, other exceptions related to reflection or the underlying serializer are not
+wrapped.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a></h4>
       <section><p>Serializes the messages in JSON format and relies on some added headers to determine the message
 type upon deserialization. This default serializer is ideal when the producer and the consumer are
@@ -105,6 +146,25 @@ both using Silverback.</p>
       <h4><a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.html">NewtonsoftJsonMessageSerializerBase</a></h4>
       <section><p>The base class for <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> and
 <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.SerializerProducerBehavior.html">SerializerProducerBehavior</a></h4>
+      <section><p>Serializes the message being produced using the configured <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.IKafkaMessageSerializer.html">IKafkaMessageSerializer</a></h4>
+      <section><p>Serializes and deserializes the messages sent through Kafka.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></h4>
+      <section><p>Serializes and deserializes the messages sent through the broker.</p>
+</section>
+    <h3 id="enums">Enums
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a></h4>
+      <section><p>Specifies the message encoding used by some <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> implementations.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Serialization.NullMessageHandlingStrategy.html">NullMessageHandlingStrategy</a></h4>
+      <section><p>The null message handling strategies.</p>
 </section>
 </article>
           </div>

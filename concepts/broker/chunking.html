@@ -8,7 +8,7 @@
     <title>Chunking | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Chunking | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -159,7 +159,7 @@
 <p>Some chunks sequences may be incomplete because either the producer failed to publish all chunks or the consumer started consuming from the middle of a sequence. In both cases Silverback will silently ignore the incomplete sequences and log a warning.</p>
 <h3 id="limitations">Limitations</h3>
 <p>As mentioned already, the chunks have to be written to the same partition and have to be contiguous. This is by design.</p>
-<p>Another limitation is that the &lt;xref:Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy&gt; is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.</p>
+<p>Another limitation is that the <a class="xref" href="../../api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> is currently unable to move a sequence and is therefore unusable with chunked messages. This may be fixed in a future release. Please open an issue on GitHub if this is important for your use case.</p>
 <h2 id="headers">Headers</h2>
 <p>Some headers are used to describe the chunks sequence. See <a class="xref" href="headers.html">Message Headers</a> for details.</p>
 <h2 id="samples">Samples</h2>

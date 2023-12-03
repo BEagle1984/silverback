@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class MqttTestingHelper
    | Silverback ">
-    <meta name="generator" content="docfx 2.58.9.0">
+    <meta name="generator" content="docfx 2.59.4.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,18 +90,19 @@
   
   <h1 id="Silverback_Testing_MqttTestingHelper" data-uid="Silverback.Testing.MqttTestingHelper" class="text-break">Class MqttTestingHelper
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper</a>&lt;<span class="xref">Silverback.Messaging.Broker.MqttBroker</span>&gt;</div>
+    <div class="level1"><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a>&gt;</div>
     <div class="level2"><span class="xref">MqttTestingHelper</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a></div>
-    <div><a class="xref" href="Silverback.Testing.ITestingHelper-1.html">ITestingHelper</a>&lt;<span class="xref">Silverback.Messaging.Broker.MqttBroker</span>&gt;</div>
+    <div><a class="xref" href="Silverback.Testing.ITestingHelper-1.html">ITestingHelper</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a>&gt;</div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -207,7 +208,8 @@
   </span>
   <a id="Silverback_Testing_MqttTestingHelper_GetClientSession_" data-uid="Silverback.Testing.MqttTestingHelper.GetClientSession*"></a>
   <h4 id="Silverback_Testing_MqttTestingHelper_GetClientSession_System_String_" data-uid="Silverback.Testing.MqttTestingHelper.GetClientSession(System.String)">GetClientSession(String)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Broker.Mqtt.Mocks.IClientSession.html">IClientSession</a> of the specified client.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -226,7 +228,8 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">clientId</span></td>
-        <td></td>
+        <td><p>The client id.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -241,10 +244,16 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.Mqtt.Mocks.IClientSession.html">IClientSession</a></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Mqtt.Mocks.IClientSession.html">IClientSession</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_MqttTestingHelper_GetClientSession_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked MQTT broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedMqttExtensions_UseMockedMqtt_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__">UseMockedMqtt(ISilverbackBuilder, Action&lt;IMockedMqttOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedMqttExtensions_AddMockedMqtt_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__">AddMockedMqtt(IBrokerOptionsBuilder, Action&lt;IMockedMqttOptionsBuilder&gt;)</a>.</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_MqttTestingHelper_GetMessages_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Testing.MqttTestingHelper.GetMessages(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
@@ -254,7 +263,8 @@
   </span>
   <a id="Silverback_Testing_MqttTestingHelper_GetMessages_" data-uid="Silverback.Testing.MqttTestingHelper.GetMessages*"></a>
   <h4 id="Silverback_Testing_MqttTestingHelper_GetMessages_System_String_" data-uid="Silverback.Testing.MqttTestingHelper.GetMessages(System.String)">GetMessages(String)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the messages that have been published to the specified topic.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -273,7 +283,8 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">topic</span></td>
-        <td></td>
+        <td><p>The name of the topic.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -288,10 +299,16 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<span class="xref">MQTTnet.MqttApplicationMessage</span>&gt;</td>
-        <td></td>
+        <td><p>The messages published to the topic.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Testing_MqttTestingHelper_GetMessages_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked MQTT broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedMqttExtensions_UseMockedMqtt_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__">UseMockedMqtt(ISilverbackBuilder, Action&lt;IMockedMqttOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedMqttExtensions_AddMockedMqtt_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__">AddMockedMqtt(IBrokerOptionsBuilder, Action&lt;IMockedMqttOptionsBuilder&gt;)</a>.</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
@@ -301,7 +318,9 @@
   </span>
   <a id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Boolean,System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Boolean, Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages routed to the consumers have been
+processed and committed.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -320,12 +339,15 @@
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwTimeoutException</span></td>
-        <td></td>
+        <td><p>A value specifying whether a <span class="xref">System.TimeoutException</span> has to be thrown when the messages
+aren't consumed before the timeout expires.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
-        <td></td>
+        <td><p>The time to wait for the messages to be consumed and processed. The default is 30 seconds.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -340,12 +362,16 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages have been processed.</p>
+</td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">Silverback.Testing.TestingHelper&lt;Silverback.Messaging.Broker.MqttBroker&gt;.WaitUntilAllMessagesAreConsumedAsync(System.Boolean, System.Nullable&lt;System.TimeSpan&gt;)</span></div>
+  <h5 id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Boolean_System_Nullable_System_TimeSpan___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked brokers only.</p>
+</div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a>
