@@ -161,6 +161,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
         }
 
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
         {
             if (_isConnected)
@@ -193,7 +194,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                 await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(handler => handler.OnClientConnectedAsync(ClientConfig))
                     .ConfigureAwait(false);
             }
-            catch (MqttCommunicationException ex)
+            catch (Exception ex)
             {
                 // This might happen if the client briefly connects and then immediately disconnects
                 _logger.LogConnectError(this, ex);
@@ -217,7 +218,10 @@ namespace Silverback.Messaging.Broker.Mqtt
                 if (MqttClient is MqttClient)
                     await Task.Delay(ConnectionCheckDelayMilliseconds, cancellationToken).ConfigureAwait(false);
 
-                return MqttClient.IsConnected;
+                if (!MqttClient.IsConnected)
+                    throw new MqttConnectException("The call to ConnectAsync returned but the client is not connected.");
+
+                return true;
             }
             catch (Exception ex)
             {

@@ -4,7 +4,14 @@ uid: releases
 
 # Releases
 
-## [4.4.0-beta.7](https://github.com/BEagle1984/silverback/releases/tag/v4.4.0)
+## [4.4.1](https://github.com/BEagle1984/silverback/releases/tag/v4.4.1)
+
+### What's new
+
+* Upgrade to [Confluent.Kafka 2.3.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.3.0)
+* Upgrade to [MQTTnet 4.3.2.930](https://github.com/chkr1011/MQTTnet/releases/tag/v4.3.2.930)
+
+## [4.4.0](https://github.com/BEagle1984/silverback/releases/tag/v4.4.0)
 
 ### What's new
 
@@ -15,6 +22,8 @@ uid: releases
 ### Fixes
 
 * Correctly set message timestamp in mocked Kafka
+* Properly handle Kafka partitions revoked event when no partitions were assigned [[#214](https://github.com/BEagle1984/silverback/issues/214)]
+* Respect `IgnoreUnhandledException` when batch processing [[#216](https://github.com/BEagle1984/silverback/issues/216)]
 
 ## [4.3.2](https://github.com/BEagle1984/silverback/releases/tag/v4.3.2)
 

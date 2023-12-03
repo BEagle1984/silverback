@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Broker.Kafka
             Func<ISequenceStore> sequenceStoreFactory,
             ISilverbackLogger logger)
             : base(
-                consumer.Endpoint.ProcessPartitionsIndependently ? partitions.Count : 1,
+                GetChannelsCount(partitions, consumer),
                 consumer.Endpoint.BackpressureLimit,
                 sequenceStoreFactory)
         {
@@ -76,7 +76,7 @@ namespace Silverback.Messaging.Broker.Kafka
         {
             if (_consumer.Endpoint.ProcessPartitionsIndependently)
                 _partitions.ForEach(StartReading);
-            else
+            else if (_partitions.Count > 0)
                 StartReading(0);
         }
 
@@ -160,6 +160,11 @@ namespace Silverback.Messaging.Broker.Kafka
             _messagesLimiterSemaphoreSlim?.Dispose();
             _readingSemaphoreSlim.Dispose();
         }
+
+        private static int GetChannelsCount(IReadOnlyList<TopicPartition> partitions, KafkaConsumer consumer) =>
+            consumer.Endpoint.ProcessPartitionsIndependently
+                ? partitions.Count
+                : Math.Min(partitions.Count, 1);
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void StartReading(int channelIndex)

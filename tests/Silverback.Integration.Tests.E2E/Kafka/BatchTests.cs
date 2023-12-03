@@ -1819,5 +1819,73 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedBatches.Should().HaveCount(1);
             receivedBatches.Sum(batch => batch.Count).Should().Be(15);
         }
+
+        [Fact]
+        public async Task Batch_IgnoreUnhandledMessages_UnhandledMessageIgnored()
+        {
+            var receivedBatches = new List<List<TestEventOne>>();
+            var completedBatches = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions =>
+                                    mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })
+                                        .EnableBatchProcessing(2)
+                                        .IgnoreUnhandledMessages()))
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                var list = new List<TestEventOne>();
+
+                                receivedBatches.ThreadSafeAdd(list);
+
+                                await foreach (var message in eventsStream)
+                                {
+                                    list.Add(message);
+                                }
+
+                                Interlocked.Increment(ref completedBatches);
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "Handled message" });
+            await publisher.PublishAsync(new TestEventTwo { Content = "Unhandled message" });
+            await publisher.PublishAsync(new TestEventOne { Content = "Handled message" });
+            await publisher.PublishAsync(new TestEventTwo { Content = "Unhandled message" });
+            await publisher.PublishAsync(new TestEventOne { Content = "Handled message" });
+            await publisher.PublishAsync(new TestEventOne { Content = "Handled message" });
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches[0].Should().HaveCount(2);
+            receivedBatches[1].Should().HaveCount(2);
+            completedBatches.Should().Be(2);
+        }
     }
 }

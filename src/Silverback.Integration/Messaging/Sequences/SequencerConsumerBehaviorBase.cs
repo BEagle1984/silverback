@@ -98,8 +98,10 @@ namespace Silverback.Messaging.Sequences
                     continue;
                 }
 
-                AddToSequenceResult addResult =
-                    await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+                AddToSequenceResult addResult = await sequence.AddAsync(
+                    originalEnvelope,
+                    previousSequence,
+                    context.Envelope.Endpoint.ThrowIfUnhandled).ConfigureAwait(false);
 
                 if (!addResult.IsSuccess)
                     continue;
