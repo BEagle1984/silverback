@@ -148,8 +148,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     When a topic loses its leader a new metadata request will be enqueued with this initial interval, exponentially increasing until the topic metadata has been refreshed. This is used to recover quickly from transitioning leader brokers.
-        ///     <br /><br />default: 250
+        ///     When a topic loses its leader a new metadata request will be enqueued immediately and then with this initial interval, exponentially increasing upto `retry.backoff.max.ms`, until the topic metadata has been refreshed. If not set explicitly, it will be defaulted to `retry.backoff.ms`. This is used to recover quickly from transitioning leader brokers.
+        ///     <br /><br />default: 100
         ///     <br />importance: low
         /// </summary>
         public int? TopicMetadataRefreshFastIntervalMs
@@ -379,7 +379,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an aggressive `connection.max.idle.ms` value.
+        ///     Log broker disconnects. It might be useful to turn this off when interacting with 0.9 brokers with an aggressive `connections.max.idle.ms` value.
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -445,7 +445,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also be configured with `auto.create.topics.enable=true` for this configuraiton to take effect. Note: The default value (false) is different from the Java consumer (true). Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
+        ///     Allow automatic topic creation on the broker when subscribing to or assigning non-existent topics. The broker must also be configured with `auto.create.topics.enable=true` for this configuration to take effect. Note: the default value (true) for the producer is different from the default value (false) for the consumer. Further, the consumer default value is different from the Java consumer (true), and this property is not supported by the Java producer. Requires broker version &gt;= 0.11.0.0, for older broker versions only the broker configuration applies.
         ///     <br /><br />default: false
         ///     <br />importance: low
         /// </summary>
@@ -621,7 +621,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Gets the comma-separated list of OpenSSL 3.0.x implementation providers.
+        ///     Comma-separated list of OpenSSL 3.0.x implementation providers. E.g., "default,legacy".
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
         /// </summary>
         public string SslProviders
         {
@@ -630,7 +632,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Path to OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
+        ///     **DEPRECATED** Path to OpenSSL engine library. OpenSSL &gt;= 1.1.x required. DEPRECATED: OpenSSL engine support is deprecated and should be replaced by OpenSSL 3 providers.
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -664,7 +666,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <summary>
         ///     Endpoint identification algorithm to validate broker hostname using broker certificate. https - Server (broker) hostname verification as specified in RFC2818. none - No endpoint verification. OpenSSL &gt;= 1.0.2 required.
-        ///     <br /><br />default: none
+        ///     <br /><br />default: https
         ///     <br />importance: low
         /// </summary>
         public SslEndpointIdentificationAlgorithm? SslEndpointIdentificationAlgorithm
@@ -832,7 +834,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
-        [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Same as Confluent.Kafka")]
+        [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "proxied")]
         public string SaslOauthbearerTokenEndpointUrl
         {
             get => ConfluentConfig.SaslOauthbearerTokenEndpointUrl;
@@ -859,6 +861,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.ClientRack;
             set => ConfluentConfig.ClientRack = value;
+        }
+
+        /// <summary>
+        ///     Controls how the client uses DNS lookups. By default, when the lookup returns multiple IP addresses for a hostname, they will all be attempted for connection before the connection is considered failed. This applies to both bootstrap and advertised servers. If the value is set to `resolve_canonical_bootstrap_servers_only`, each entry will be resolved and expanded into a list of canonical names. NOTE: Default here is different from the Java client's default behavior, which connects only to the first IP address returned for a hostname.
+        ///     <br /><br />default: use_all_dns_ips
+        ///     <br />importance: low
+        /// </summary>
+        public ClientDnsLookup? ClientDnsLookup
+        {
+            get => ConfluentConfig.ClientDnsLookup;
+            set => ConfluentConfig.ClientDnsLookup = value;
         }
 
         /// <summary>
@@ -1084,6 +1097,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
+        ///     How long to postpone the next fetch request for a topic+partition in case the current fetch queue thresholds (queued.min.messages or queued.max.messages.kbytes) have been exceded. This property may need to be decreased if the queue thresholds are set low and the application is experiencing long (~1s) delays between messages. Low values may increase CPU utilization.
+        ///     <br /><br />default: 1000
+        ///     <br />importance: medium
+        /// </summary>
+        public int? FetchQueueBackoffMs
+        {
+            get => ConfluentConfig.FetchQueueBackoffMs;
+            set => ConfluentConfig.FetchQueueBackoffMs = value;
+        }
+
+        /// <summary>
         ///     Initial maximum number of bytes per topic+partition to request when fetching messages from the broker. If the client encounters a message larger than this value it will gradually try to increase it until the entire message can be fetched.
         ///     <br /><br />default: 1048576
         ///     <br />importance: medium
@@ -1232,11 +1256,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         public string DeliveryReportFields
         {
             get => ConfluentConfig.DeliveryReportFields;
-            set
-            {
-                if (value != null)
-                    ConfluentConfig.DeliveryReportFields = value;
-            }
+            set => ConfluentConfig.DeliveryReportFields = value;
         }
 
         /// <summary>
@@ -1328,7 +1348,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.
+        ///     Maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions. A value of 0 disables this limit.
         ///     <br /><br />default: 100000
         ///     <br />importance: high
         /// </summary>
@@ -1372,7 +1392,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     The backoff time in milliseconds before retrying a protocol request.
+        ///     The backoff time in milliseconds before retrying a protocol request, this is the first backoff time, and will be backed off exponentially until number of retries is exhausted, and it's capped by retry.backoff.max.ms.
         ///     <br /><br />default: 100
         ///     <br />importance: medium
         /// </summary>
@@ -1380,6 +1400,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.RetryBackoffMs;
             set => ConfluentConfig.RetryBackoffMs = value;
+        }
+
+        /// <summary>
+        ///     The max backoff time in milliseconds before retrying a protocol request, this is the atmost backoff allowed for exponentially backed off requests.
+        ///     <br /><br />default: 1000
+        ///     <br />importance: medium
+        /// </summary>
+        public int? RetryBackoffMaxMs
+        {
+            get => ConfluentConfig.RetryBackoffMaxMs;
+            set => ConfluentConfig.RetryBackoffMaxMs = value;
         }
 
         /// <summary>
