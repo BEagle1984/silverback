@@ -61,10 +61,12 @@ public class MessageStreamProviderTests
             async () =>
             {
                 await Task.Delay(50);
-                stream.GetEnumerator().MoveNext();
+                using IEnumerator<IEvent> enumerator = stream.GetEnumerator();
+                enumerator.MoveNext();
                 await Task.Delay(50);
                 processed = true;
-                stream.GetEnumerator().MoveNext();
+                using IEnumerator<IEvent> enumerator2 = stream.GetEnumerator();
+                enumerator2.MoveNext();
             }).FireAndForget();
 
         await provider.PushAsync(new TestEventOne());
@@ -201,7 +203,7 @@ public class MessageStreamProviderTests
     {
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream = provider.CreateStream<int>();
-        IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
 
         Task<int> pushTask1 = provider.PushAsync(1);
         Task<int> pushTask2 = provider.PushAsync(2);
@@ -277,8 +279,8 @@ public class MessageStreamProviderTests
         MessageStreamProvider<int> provider = new();
         IMessageStreamEnumerable<int> stream1 = provider.CreateStream<int>();
         IMessageStreamEnumerable<int> stream2 = provider.CreateStream<int>();
-        IAsyncEnumerator<int> enumerator1 = stream1.GetAsyncEnumerator();
-        IAsyncEnumerator<int> enumerator2 = stream2.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator1 = stream1.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator2 = stream2.GetAsyncEnumerator();
 
         Task<int> pushTask1 = provider.PushAsync(1);
         Task<int> pushTask2 = provider.PushAsync(2);

@@ -55,7 +55,7 @@ public class MessageStreamEnumerableTests
         Task enumerationTask = Task.Run(
             async () =>
             {
-                IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+                await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
                 (await enumerator.MoveNextAsync()).Should().BeTrue();
                 enumerator.Current.Should().Be(1);
                 (await enumerator.MoveNextAsync()).Should().BeTrue();
@@ -112,7 +112,7 @@ public class MessageStreamEnumerableTests
     public async Task PushAsync_WhileAsyncEnumerating_BackpressureIsHandled()
     {
         MessageStreamEnumerable<int> stream = new();
-        IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
 
         Task pushTask1 = stream.PushAsync(new PushedMessage(1, 1));
         Task pushTask2 = stream.PushAsync(new PushedMessage(2, 2));
@@ -166,11 +166,12 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
     public async Task CompleteAsync_WhileAsyncEnumerating_EnumerationCompleted()
     {
         bool completed = false;
         MessageStreamEnumerable<int> stream = new();
-        IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
 
         // The next MoveNext reaches the end of the enumerable
         Task.Run(
@@ -218,11 +219,12 @@ public class MessageStreamEnumerableTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The method waits for the async task to complete.")]
     public async Task Abort_WhileAsyncEnumerating_EnumerationAborted()
     {
         bool completed = false;
         MessageStreamEnumerable<int> stream = new();
-        IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
+        await using IAsyncEnumerator<int> enumerator = stream.GetAsyncEnumerator();
 
         Task enumerationTask = Task.Run(
             async () =>
