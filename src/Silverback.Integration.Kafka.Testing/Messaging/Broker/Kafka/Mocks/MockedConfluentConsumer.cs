@@ -218,6 +218,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "False positive")]
     public void Resume(IEnumerable<TopicPartition> partitions)
     {
         lock (_pausedPartitions)
