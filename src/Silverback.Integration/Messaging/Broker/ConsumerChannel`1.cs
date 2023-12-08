@@ -25,6 +25,8 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
     private CancellationTokenSource _readCancellationTokenSource = new();
 
+    private bool _isReading;
+
     private bool _isDisposed;
 
     public ConsumerChannel(int capacity, string id, ISilverbackLogger logger)
@@ -44,8 +46,6 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     public CancellationToken ReadCancellationToken => _readCancellationTokenSource.Token;
 
     public Task ReadTask => _readTaskCompletionSource.Task;
-
-    public bool IsReading { get; private set; }
 
     public bool IsCompleted => _channel.Reader.Completion.IsCompleted;
 
@@ -67,10 +67,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     {
         lock (_readingLock)
         {
-            if (IsReading)
+            if (_isReading)
                 return false;
 
-            IsReading = true;
+            _isReading = true;
         }
 
         if (_readCancellationTokenSource.IsCancellationRequested)
@@ -92,7 +92,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 
         lock (_readingLock)
         {
-            if (!IsReading)
+            if (!_isReading)
                 _readTaskCompletionSource.TrySetResult(true);
         }
 
@@ -103,10 +103,10 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
     {
         lock (_readingLock)
         {
-            if (!IsReading)
+            if (!_isReading)
                 return;
 
-            IsReading = false;
+            _isReading = false;
 
             _readTaskCompletionSource.TrySetResult(!hasThrown);
         }
