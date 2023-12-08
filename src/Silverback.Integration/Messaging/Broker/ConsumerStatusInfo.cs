@@ -34,12 +34,15 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
     {
-        if (Status is ConsumerStatus.Started or ConsumerStatus.Connected)
-            ChangeStatus(ConsumerStatus.Consuming);
+        lock (_history)
+        {
+            if (Status is ConsumerStatus.Started or ConsumerStatus.Connected)
+                ChangeStatus(ConsumerStatus.Consuming);
 
-        ConsumedMessagesCount++;
-        LatestConsumedMessageTimestamp = DateTime.Now;
-        LatestConsumedMessageIdentifier = brokerMessageIdentifier;
+            ConsumedMessagesCount++;
+            LatestConsumedMessageTimestamp = DateTime.Now;
+            LatestConsumedMessageIdentifier = brokerMessageIdentifier;
+        }
     }
 
     private void ChangeStatus(ConsumerStatus status)
