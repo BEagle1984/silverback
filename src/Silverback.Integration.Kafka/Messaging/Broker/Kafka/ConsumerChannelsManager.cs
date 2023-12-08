@@ -92,6 +92,9 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
         AsyncHelper.RunSynchronously(() => channel.WriteAsync(consumeResult, cancellationToken));
     }
 
+    public bool IsReading(TopicPartition topicPartition) =>
+        GetChannel(topicPartition)?.ReadCancellationToken.IsCancellationRequested != true;
+
     protected override IEnumerable<PartitionChannel> GetChannels() => _channels.Values;
 
     protected override async Task StopReadingAsync(PartitionChannel channel)

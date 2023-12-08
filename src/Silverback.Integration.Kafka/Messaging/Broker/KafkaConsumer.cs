@@ -268,13 +268,20 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     {
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
+        // If the consumer is disconnecting the rollback is not needed
+        if (Client.Status == ClientStatus.Disconnecting)
+            return default;
+
+        // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the
+        // pending sequences but we don't want to pause/resume the partitions we aren't processing)
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
+            .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition))
             .AsReadOnlyList();
 
         if (IsStarted)
         {
-            Client.Pause(brokerMessageIdentifiers.Select(offset => offset.TopicPartition));
+            Client.Pause(topicPartitionOffsets.Select(offset => offset.TopicPartition));
             topicPartitionOffsets.ForEach(topicPartitionOffset => _logger.LogPartitionPaused(topicPartitionOffset, this));
         }
 

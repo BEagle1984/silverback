@@ -27,11 +27,6 @@ internal interface IConsumerChannel
     Task ReadTask { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether the channel is currently being read.
-    /// </summary>
-    bool IsReading { get; }
-
-    /// <summary>
     ///     Completes the channel, preventing any further writing (until reset).
     /// </summary>
     void Complete();
