@@ -63,7 +63,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
                 Topic = topicPartition.Topic,
                 Partition = new Partition(partitionIndex),
                 Offset = offset,
-                Timestamp = new Timestamp(DateTime.Now),
+                Timestamp = message.Timestamp,
                 Status = PersistenceStatus.Persisted
             });
     }
@@ -100,7 +100,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
                                 Topic = topicPartition.Topic,
                                 Partition = new Partition(partitionIndex),
                                 Offset = offset,
-                                Timestamp = new Timestamp(DateTime.Now),
+                                Timestamp = message.Timestamp,
                                 Status = PersistenceStatus.Persisted
                             });
                     })
