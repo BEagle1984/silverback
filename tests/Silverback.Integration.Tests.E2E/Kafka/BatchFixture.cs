@@ -749,4 +749,118 @@ public partial class BatchFixture : KafkaFixture
 
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
     }
+
+    [Fact]
+    public async Task Batch_ShouldStopConsumer_WhenMessageUnhandledMessages()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(10))))
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+
+        void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.Add(list);
+
+            foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.Should().HaveCount(1);
+        receivedBatches[0].Should().HaveCount(1);
+
+        IConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().Single();
+        consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+    }
+
+    [Fact]
+    public async Task Batch_ShouldIgnoreUnhandledMessages()
+    {
+        TestingCollection<List<TestEventOne>> receivedBatches = new();
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .CommitOffsetEach(1)
+                                .Consume<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(2)
+                                        .IgnoreUnhandledMessages())))
+                .AddDelegateSubscriber<IMessageStreamEnumerable<TestEventOne>>(HandleBatch));
+
+        void HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
+        {
+            List<TestEventOne> list = new();
+            receivedBatches.Add(list);
+
+            foreach (TestEventOne message in batch)
+            {
+                list.Add(message);
+            }
+
+            Interlocked.Increment(ref completedBatches);
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        receivedBatches.Should().HaveCount(2);
+        receivedBatches[0].Should().HaveCount(2);
+        receivedBatches[1].Should().HaveCount(2);
+        completedBatches.Should().Be(2);
+    }
 }
