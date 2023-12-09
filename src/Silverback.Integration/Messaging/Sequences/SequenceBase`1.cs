@@ -198,7 +198,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public ValueTask<AddToSequenceResult> AddAsync(
         IRawInboundEnvelope envelope,
         ISequence? sequence,
-        bool throwIfUnhandled = true)
+        bool throwIfUnhandled)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -304,6 +304,16 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
+            int pushedStreamsCount = await _streamProvider.PushAsync(
+                    envelope,
+                    throwIfUnhandled,
+                    _abortCancellationTokenSource.Token)
+                .ConfigureAwait(false);
+
+            // If no stream was pushed, the message was ignored (throwIfUnhandled must be false)
+            if (pushedStreamsCount == 0)
+                return AddToSequenceResult.Success(0);
+
             Length++;
 
             if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
@@ -320,12 +330,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                         TotalLength
                     });
             }
-
-            int pushedStreamsCount = await _streamProvider.PushAsync(
-                    envelope,
-                    throwIfUnhandled,
-                    _abortCancellationTokenSource.Token)
-                .ConfigureAwait(false);
 
             if (IsCompleting)
                 await CompleteAsync().ConfigureAwait(false);

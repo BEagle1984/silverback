@@ -198,7 +198,11 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
             await PublishSequenceIfNewAsync(context, next, sequence).ConfigureAwait(false);
 
-            addToSequenceResult = await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+            addToSequenceResult = await sequence.AddAsync(
+                    originalEnvelope,
+                    previousSequence,
+                    context.Envelope.Endpoint.Configuration.ThrowIfUnhandled)
+                .ConfigureAwait(false);
 
             // If the sequence was new, it means it was never handed over to the transaction handler
             // (no message was added to the sequence so far, the timeout elapsed before the sequence
