@@ -4,7 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Text;
 using Confluent.Kafka;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -40,6 +44,8 @@ internal sealed class InMemoryPartition : IInMemoryPartition
             else
                 LastOffset++;
 
+            SetTimestamp(message);
+
             _messages.Add(message);
 
             TotalMessagesCount++;
@@ -69,5 +75,15 @@ internal sealed class InMemoryPartition : IInMemoryPartition
         }
 
         return true;
+    }
+
+    private static void SetTimestamp(Message<byte[]?, byte[]?> message)
+    {
+        IHeader? timestampHeader = message.Headers?.FirstOrDefault(header => header.Key == KafkaMessageHeaders.Timestamp);
+
+        if (timestampHeader != null)
+            message.Timestamp = new Timestamp(DateTime.Parse(Encoding.UTF8.GetString(timestampHeader.GetValueBytes()), CultureInfo.InvariantCulture));
+        else if (message.Timestamp == Timestamp.Default)
+            message.Timestamp = new Timestamp(DateTime.UtcNow);
     }
 }
