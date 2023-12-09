@@ -103,7 +103,7 @@ public partial class BatchFixture
             {
                 await foreach (TestEventWithKafkaKey dummy in eventsStream)
                 {
-                    if (++messagesCount == 2 && batchIndex == 2)
+                    if (batchIndex == 2 && ++messagesCount == 2)
                         throw new InvalidOperationException("Test");
                 }
             }
@@ -128,7 +128,6 @@ public partial class BatchFixture
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
     }
 
-    // TODO: Check this flaky test
     [Fact]
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWithIncompatibleSubscriber()
     {
@@ -153,7 +152,7 @@ public partial class BatchFixture
                                 .Consume<TestEventWithKafkaKey>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .EnableBatchProcessing(10, TimeSpan.FromSeconds(1))))) // TODO: Check that it doesn't hang even without the timeout
+                                        .EnableBatchProcessing(10))))
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventWithKafkaKey>>(HandleBatch)
                 .AddDelegateSubscriber<IAsyncEnumerable<TestEventTwo>>(HandleIncompatibleBatch));
 
@@ -167,7 +166,7 @@ public partial class BatchFixture
             {
                 await foreach (TestEventWithKafkaKey dummy in eventsStream)
                 {
-                    if (++messagesCount == 2 && batchIndex == 2)
+                    if (batchIndex == 2 && ++messagesCount == 2)
                         throw new InvalidOperationException("Test");
                 }
             }
