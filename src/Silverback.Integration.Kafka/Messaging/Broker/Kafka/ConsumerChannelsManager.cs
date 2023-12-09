@@ -44,7 +44,8 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             consumer.Configuration.MaxDegreeOfParallelism);
     }
 
-    public void StartReading(IEnumerable<TopicPartition> topicPartitions) => StartReading(topicPartitions.Select(GetOrCreateChannel));
+    public void StartReading(IEnumerable<TopicPartition> topicPartitions) =>
+        StartReading(topicPartitions.Select(GetOrCreateChannel).Distinct());
 
     public void StartReading(TopicPartition topicPartition) => StartReading(GetOrCreateChannel(topicPartition));
 

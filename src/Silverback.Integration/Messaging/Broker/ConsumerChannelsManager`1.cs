@@ -56,6 +56,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         // Clear the current activity to ensure we don't propagate the previous traceId (e.g. when restarting because of a rollback)
         Activity.Current = null;
+
         if (channel.ReadCancellationToken.IsCancellationRequested && !channel.ReadTask.IsCompleted)
         {
             _logger.LogConsumerLowLevelTrace(
