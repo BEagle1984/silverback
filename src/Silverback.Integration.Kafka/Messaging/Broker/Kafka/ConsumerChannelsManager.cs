@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -17,7 +16,7 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<PartitionChannel>
 {
-    private static readonly TopicPartition AnyTopicPartition = new(string.Empty, Partition.Any);
+    private static readonly TopicPartition AnyTopicPartition = new("single", Partition.Any);
 
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly KafkaConsumer _consumer;
@@ -44,9 +43,6 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             consumer.Configuration.MaxDegreeOfParallelism);
     }
 
-    public void StartReading(IEnumerable<TopicPartition> topicPartitions) =>
-        StartReading(topicPartitions.Select(GetOrCreateChannel).Distinct());
-
     public void StartReading(TopicPartition topicPartition) => StartReading(GetOrCreateChannel(topicPartition));
 
     public Task StopReadingAsync(TopicPartition topicPartition)
@@ -68,6 +64,14 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
             throw new ObjectDisposedException(GetType().FullName);
 
         GetChannel(topicPartition)?.Reset();
+    }
+
+    public void ResetAll()
+    {
+        if (_isDisposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        _channels.Values.ForEach(channel => channel.Reset());
     }
 
     public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
@@ -120,8 +124,6 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
     protected override async Task ReadChannelOnceAsync(PartitionChannel channel)
     {
         channel.ReadCancellationToken.ThrowIfCancellationRequested();
-
-        _logger.LogConsumerLowLevelTrace(_consumer, "Reading channel {channel}...", () => new object[] { channel.Id });
 
         ConsumeResult<byte[]?, byte[]?> consumeResult = await channel.ReadAsync().ConfigureAwait(false);
 

@@ -122,24 +122,22 @@ public sealed class ConsumerPipelineContext : IDisposable
     public Task? ProcessingTask { get; internal set; }
 
     /// <summary>
-    ///     Gets the identifiers of the messages being handled in this context (either the single message or the first message in the
-    ///     sequence per each topic or partition).
+    ///     Gets the identifiers to be used to commit after successful processing.
     /// </summary>
     /// <returns>
-    ///     The list of identifiers.
+    ///     The identifiers to be used to commit.
     /// </returns>
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetFirstBrokerMessageIdentifiers() =>
-        Sequence?.GetBeginningBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers() =>
+        Sequence?.GetCommitIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
 
     /// <summary>
-    ///     Gets the identifiers of the messages being handled in this context (either the single message or the last message in the
-    ///     sequence per each topic or partition).
+    ///     Gets the identifiers to be used to rollback in case of error.
     /// </summary>
     /// <returns>
-    ///     The list of identifiers.
+    ///     The identifiers to be used to rollback.
     /// </returns>
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetLastBrokerMessageIdentifiers() =>
-        Sequence?.GetEndBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers() =>
+        Sequence?.GetRollbackIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
 
     /// <summary>
     ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.

@@ -158,20 +158,18 @@ public interface ISequence : IDisposable
     ValueTask AbortAsync(SequenceAbortReason reason, Exception? exception = null);
 
     /// <summary>
-    ///     Gets the identifier(s) of the message(s) at the beginning of the sequence. A single identifier is returned unless the sequence
-    ///     spans multiple topics or partitions.
+    ///     Gets the identifiers to be used to commit after successful processing.
     /// </summary>
     /// <returns>
-    ///     The list of identifiers.
+    ///     The identifiers to be used to commit.
     /// </returns>
-    IReadOnlyList<IBrokerMessageIdentifier> GetBeginningBrokerMessageIdentifiers();
+    IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers();
 
     /// <summary>
-    ///     Gets the identifier(s) of the message(s) at the end of the sequence. A single identifier is returned unless the sequence
-    ///     spans multiple topics or partitions.
+    ///     Gets the identifiers to be used to rollback in case of error.
     /// </summary>
     /// <returns>
-    ///     The list of identifiers.
+    ///     The identifiers to be used to rollback.
     /// </returns>
-    IReadOnlyList<IBrokerMessageIdentifier> GetEndBrokerMessageIdentifiers();
+    IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers();
 }

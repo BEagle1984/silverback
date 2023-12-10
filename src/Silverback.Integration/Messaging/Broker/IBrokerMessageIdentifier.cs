@@ -14,16 +14,6 @@ namespace Silverback.Messaging.Broker;
 public interface IBrokerMessageIdentifier : IEquatable<IBrokerMessageIdentifier>
 {
     /// <summary>
-    ///     Gets a key to be used to determine the identifiers that must grouped together when persisted, for example to optimize the
-    ///     identifiers persisted and committed. If the key is null, all identifiers will be stored, otherwise only the first and latest
-    ///     identifier per each group will be saved.
-    /// </summary>
-    /// <remarks>
-    ///     For example with Kafka you want to store the latest offset for each partition, so the topic and partition would be the group key.
-    /// </remarks>
-    string? GroupKey { get; }
-
-    /// <summary>
     ///     Gets a string that can be used to log the identifier/offset value.
     /// </summary>
     /// <remarks>

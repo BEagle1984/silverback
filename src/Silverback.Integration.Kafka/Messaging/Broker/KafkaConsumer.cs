@@ -35,6 +35,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     private readonly KafkaConsumerEndpointsCache _endpointsCache;
 
+    private readonly OffsetsTracker? _offsets; // tracked only when processing partitions together
+
     private int _messagesSinceCommit;
 
     private bool _isDisposed;
@@ -90,8 +92,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _logger = Check.NotNull(logger, nameof(logger));
 
+        if (!Configuration.ProcessPartitionsIndependently)
+            _offsets = new OffsetsTracker();
+
         _channelsManager = new ConsumerChannelsManager(this, callbacksInvoker, logger);
-        _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _logger);
+        _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _offsets, _logger);
 
         _endpointsCache = new KafkaConsumerEndpointsCache(configuration);
 
@@ -144,7 +149,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
         topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration).ApplyStoredOffsets(topicPartitionOffsets);
 
-        _channelsManager.StartReading(topicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
+        foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
+        {
+            _offsets?.TrackOffset(topicPartitionOffset);
+            _channelsManager.StartReading(topicPartitionOffset.TopicPartition);
+        }
 
         SetConnectedStatus();
 
@@ -153,16 +162,19 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
     internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
     {
-        IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
-
         RevertConnectedStatus();
 
         _consumeLoopHandler.StopAsync().FireAndForget();
 
-        AsyncHelper.RunSynchronously(() => Task.WhenAll(topicPartitions.Select(_channelsManager.StopReadingAsync)));
+        AsyncHelper.RunSynchronously(
+            () =>
+                Task.WhenAll(topicPartitionOffsets.Select(offset => _channelsManager.StopReadingAsync(offset.TopicPartition))));
 
         if (!Configuration.EnableAutoCommit)
             Client.Commit();
+
+        if (_offsets != null)
+            topicPartitionOffsets.ForEach(topicPartitionOffset => _offsets.UntrackPartition(topicPartitionOffset.TopicPartition));
 
         // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
         // reassigned only if Consume is called again.
@@ -223,7 +235,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         // the consumer is restarting and the partition assignment is set already
         if (Configuration.IsStaticAssignment || Client.Assignment.Count > 0)
         {
-            _channelsManager.StartReading(Client.Assignment);
+            foreach (TopicPartition topicPartition in Client.Assignment)
+            {
+                _offsets?.TrackOffset(new KafkaOffset(topicPartition, Offset.Unset));
+                _channelsManager.StartReading(topicPartition);
+            }
+
             SetConnectedStatus();
         }
 
@@ -250,13 +267,13 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync(IReadOnlyCollection{TIdentifier})" />
     protected override ValueTask CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
     {
-        StoreOffset(
-            brokerMessageIdentifiers
-                .Select(
-                    topicPartitionOffset => new TopicPartitionOffset(
-                        topicPartitionOffset.TopicPartition,
-                        topicPartitionOffset.Offset + 1)) // Commit next offset (+1)
-                .ToArray());
+        Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+        foreach (KafkaOffset offset in brokerMessageIdentifiers)
+        {
+            _offsets?.Commit(offset);
+            StoreOffset(new TopicPartitionOffset(offset.TopicPartition, offset.Offset + 1)); // Commit next offset (+1)
+        }
 
         CommitOffsetsIfNeeded();
 
@@ -272,12 +289,16 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         if (Client.Status == ClientStatus.Disconnecting)
             return default;
 
+        // If the partitions are being processed together we must rollback them all
+        if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
+            brokerMessageIdentifiers = _offsets.GetRollbackOffSets().Cast<KafkaOffset>().AsReadOnlyCollection();
+
         // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the
         // pending sequences but we don't want to pause/resume the partitions we aren't processing)
         IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets = brokerMessageIdentifiers
             .Select(offset => offset.AsTopicPartitionOffset())
             .Where(topicPartitionOffset => _channelsManager.IsReading(topicPartitionOffset.TopicPartition))
-            .AsReadOnlyList();
+            .AsReadOnlyCollection();
 
         if (IsStarted)
         {
@@ -290,6 +311,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {
             channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
+
+            if (topicPartitionOffset.Offset == Offset.Unset)
+                continue;
+
             Client.Seek(topicPartitionOffset);
             _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
         }
@@ -330,14 +355,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
             IEnumerable<TopicPartition> topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
 
+            if (!Configuration.ProcessPartitionsIndependently)
+                _channelsManager.ResetAll();
+
             foreach (TopicPartition? topicPartition in topicPartitions)
             {
-                _channelsManager?.Reset(topicPartition);
+                if (Configuration.ProcessPartitionsIndependently)
+                    _channelsManager.Reset(topicPartition);
 
                 if (!IsStarted)
                     continue;
 
-                _channelsManager?.StartReading(topicPartition);
+                _channelsManager.StartReading(topicPartition);
                 Client.Resume(new[] { topicPartition });
                 _logger.LogPartitionResumed(topicPartition, this);
             }
@@ -386,12 +415,6 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
     private async Task WaitUntilConsumeLoopHandlerStopsAsync()
     {
-        if (_consumeLoopHandler == null)
-        {
-            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler is null.");
-            return;
-        }
-
         _logger.LogConsumerLowLevelTrace(
             this,
             "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
@@ -418,21 +441,18 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
     }
 
-    private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
+    private void StoreOffset(TopicPartitionOffset offset)
     {
-        foreach (TopicPartitionOffset? offset in offsets)
-        {
-            _logger.LogConsumerLowLevelTrace(
-                this,
-                "Storing offset {topic}[{partition}]@{offset}.",
-                () => new object[]
-                {
-                    offset.Topic,
-                    offset.Partition.Value,
-                    offset.Offset.Value
-                });
-            Client.StoreOffset(offset);
-        }
+        _logger.LogConsumerLowLevelTrace(
+            this,
+            "Storing offset {topic}[{partition}]@{offset}.",
+            () => new object[]
+            {
+                offset.Topic,
+                offset.Partition.Value,
+                offset.Offset.Value
+            });
+        Client.StoreOffset(offset);
     }
 
     private void CommitOffsetsIfNeeded()

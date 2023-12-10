@@ -11,6 +11,7 @@ namespace Silverback.Messaging.Broker;
 /// <summary>
 ///     Represents the position of the message in a partition.
 /// </summary>
+/// TODO: Convert to struct? (benchmark)
 public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOffset>, IComparable
 {
     /// <summary>
@@ -67,9 +68,6 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     ///     Gets the offset in the partition.
     /// </summary>
     public Offset Offset { get; }
-
-    /// <inheritdoc cref="IBrokerMessageIdentifier.GroupKey" />
-    public string GroupKey => TopicPartition.ToString() ?? string.Empty;
 
     /// <summary>
     ///     Less than operator.
