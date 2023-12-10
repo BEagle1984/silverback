@@ -129,6 +129,7 @@ public partial class BatchFixture
     }
 
     [Fact]
+    // TODO: Check flaky test
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWithIncompatibleSubscriber()
     {
         int batchesCount = 0;

@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
@@ -96,7 +98,7 @@ public partial class ErrorPoliciesFixture
 
         void HandleMessage(TestEventOne message)
         {
-            if (message.ContentEventOne != "1")
+            if (message.ContentEventOne is not "3" and not "17")
             {
                 Interlocked.Increment(ref consumedCount);
                 return;
@@ -110,23 +112,27 @@ public partial class ErrorPoliciesFixture
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        for (int i = 1; i <= 10; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
+        }
 
         await AsyncTestingUtil.WaitAsync(() => tryCount == 1);
-
         semaphore.Release();
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+
+        for (int i = 11; i <= 20; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
+        }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        tryCount.Should().Be(3);
-        consumedCount.Should().Be(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(20);
+        tryCount.Should().Be(6);
+        consumedCount.Should().Be(18);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(18 + 6);
     }
 
-    // TODO: Check this flaky test
     [Fact]
     public async Task RetryPolicy_ShouldRetryProcessingMultipleTimes_WhenProcessingMultiplePartitionsAllTogether()
     {
@@ -158,7 +164,7 @@ public partial class ErrorPoliciesFixture
 
         void HandleMessage(TestEventOne message)
         {
-            if (message.ContentEventOne != "1")
+            if (message.ContentEventOne is not "3" and not "17")
             {
                 Interlocked.Increment(ref consumedCount);
                 return;
@@ -172,20 +178,25 @@ public partial class ErrorPoliciesFixture
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "2" });
+        for (int i = 1; i <= 10; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
+        }
 
         await AsyncTestingUtil.WaitAsync(() => tryCount == 1);
-
         semaphore.Release();
-        await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
+
+        for (int i = 11; i <= 20; i++)
+        {
+            await producer.ProduceAsync(new TestEventOne { ContentEventOne = i.ToString(CultureInfo.InvariantCulture) });
+        }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        tryCount.Should().Be(3);
-        consumedCount.Should().Be(2);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(20);
+        tryCount.Should().Be(6);
+        consumedCount.Should().Be(18);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(18 + 6);
     }
 
     [Fact]
@@ -309,10 +320,12 @@ public partial class ErrorPoliciesFixture
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message one" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message two" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message three" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message four" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(8);
+        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(16);
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>
             {
@@ -320,14 +333,71 @@ public partial class ErrorPoliciesFixture
                 envelope.RawMessage.Length.Should().BeLessOrEqualTo(10);
             });
 
-        tryCount.Should().Be(4);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+        tryCount.Should().Be(8);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(8);
         Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message one");
         Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message one");
         Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message two");
         Helper.Spy.InboundEnvelopes[3].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message two");
+        Helper.Spy.InboundEnvelopes[4].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message three");
+        Helper.Spy.InboundEnvelopes[5].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message three");
+        Helper.Spy.InboundEnvelopes[6].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message four");
+        Helper.Spy.InboundEnvelopes[7].Message.As<TestEventOne>().ContentEventOne.Should().Be("Long message four");
 
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(8);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(16);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryChunkedJsonMultipleTimes_WhenProcessingPartitionIndependently()
+    {
+        int tryCount = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(10)))))
+                .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
+                .AddIntegrationSpy());
+
+        void HandleMessage(IIntegrationEvent message)
+        {
+            Interlocked.Increment(ref tryCount);
+            if (tryCount % 2 != 0)
+                throw new InvalidOperationException("Retry!");
+        }
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message one" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message two" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message three" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message four" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(16);
+        tryCount.Should().Be(8);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(8);
+        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(16);
     }
 
     [SuppressMessage("ReSharper", "MustUseReturnValue", Justification = "Test code")]
@@ -565,6 +635,116 @@ public partial class ErrorPoliciesFixture
         }
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+        completedBatches.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenProcessingPartitionsTogetherAndThrowingWhileEnumerating()
+    {
+        int tryMessageCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .ProcessAllPartitionsTogether()
+                                .Consume(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(2)
+                                        .OnError(policy => policy.Retry(10)))))
+                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+                tryMessageCount++;
+                if (tryMessageCount is not 2 and not 4 and not 5)
+                    throw new InvalidOperationException($"Retry {tryMessageCount}!");
+            }
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+        await producer.ProduceAsync(new TestEventOne());
+        await producer.ProduceAsync(new TestEventOne());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+        completedBatches.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RetryPolicy_ShouldRetryBatchMultipleTimes_WhenStaticAssignmentAndProcessingPartitionsTogetherAndThrowingWhileEnumerating()
+    {
+        int tryMessageCount = 0;
+        int completedBatches = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .ProcessAllPartitionsTogether()
+                                .Consume(
+                                    "endpoint1",
+                                    endpoint => endpoint
+                                        .ConsumeFrom(
+                                            new TopicPartition(DefaultTopicName, 0),
+                                            new TopicPartition(DefaultTopicName, 1),
+                                            new TopicPartition(DefaultTopicName, 2))
+                                        .EnableBatchProcessing(2)
+                                        .OnError(policy => policy.Retry(10)))))
+                .AddDelegateSubscriber<IAsyncEnumerable<IIntegrationEvent>>(HandleBatch)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleBatch(IAsyncEnumerable<IIntegrationEvent> batch)
+        {
+            await foreach (IIntegrationEvent dummy in batch)
+            {
+                tryMessageCount++;
+                if (tryMessageCount is not 2 and not 4 and not 5)
+                    throw new InvalidOperationException($"Retry {tryMessageCount}!");
+            }
+
+            completedBatches++;
+        }
+
+        IProducer producer = Helper.GetProducerForEndpoint("endpoint1");
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 

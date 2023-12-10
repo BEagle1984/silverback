@@ -7,6 +7,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming;
@@ -56,8 +57,10 @@ public static partial class SilverbackBuilderIntegrationExtensions
         AddEnrichers(builder);
         AddBrokerBehaviors(builder);
 
-        builder.Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>();
-        builder.EnableStorage();
+        builder
+            .AddTypeBasedExtensibleFactory<IBrokerMessageIdentifiersTrackerFactory, BrokerMessageIdentifiersTrackerFactory>()
+            .EnableStorage()
+            .Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);
         optionsAction?.Invoke(optionsBuilder);

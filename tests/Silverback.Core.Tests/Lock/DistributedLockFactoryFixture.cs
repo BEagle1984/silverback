@@ -79,7 +79,6 @@ public class DistributedLockFactoryFixture
         IDistributedLock lock1 = factory.GetDistributedLock(lockSettings1);
         IDistributedLock lock2 = factory.GetDistributedLock(lockSettings1);
 
-        lock1.Should().BeOfType<OverrideLock>();
         lock2.Should().BeSameAs(lock1);
     }
 

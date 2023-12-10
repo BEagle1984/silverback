@@ -41,7 +41,7 @@ public class KafkaOffsetStoreScopeFixture
         TestOffsetStore store = new();
 
         ISequence sequence = Substitute.For<ISequence>();
-        sequence.GetEndBrokerMessageIdentifiers().Returns(
+        sequence.GetCommitIdentifiers().Returns(
             new[]
             {
                 new KafkaOffset("topic1", 3, 42),

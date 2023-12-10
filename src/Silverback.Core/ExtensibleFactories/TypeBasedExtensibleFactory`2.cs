@@ -38,9 +38,22 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
 {
     private readonly Dictionary<Type, Func<TService>> _factories = new();
 
-    private readonly ConcurrentDictionary<Type, TService?> _cache = new();
+    private readonly ConcurrentDictionary<Type, TService?>? _cache;
 
     private Func<TService>? _overrideFactory;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TypeBasedExtensibleFactory{TService, TDiscriminatorBase}"/> class.
+    /// </summary>
+    /// <param name="cacheInstances">
+    ///    A value indicating whether the instances should be cached. If <c>true</c> the same instance will be returned for the same
+    ///    discriminator type.
+    /// </param>
+    protected TypeBasedExtensibleFactory(bool cacheInstances = true)
+    {
+        if (cacheInstances)
+            _cache = new ConcurrentDictionary<Type, TService?>();
+    }
 
     /// <summary>
     ///     Registers the factory for the specified discriminator implementation type.
@@ -103,17 +116,25 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     ///     discriminator type.
     /// </returns>
     protected TService? GetService(Type discriminatorType) =>
-        _cache.GetOrAdd(
-            discriminatorType,
-            static (_, args) =>
-            {
-                if (args.OverrideFactory != null)
-                    return args.OverrideFactory.Invoke();
+        _cache == null
+            ? CreateServiceInstance(discriminatorType, _factories, _overrideFactory)
+            : _cache.GetOrAdd(
+                discriminatorType,
+                static (_, args) =>
+                    CreateServiceInstance(args.DiscriminatorType, args.Factories, args.OverrideFactory),
+                (DiscriminatorType: discriminatorType, Factories: _factories, OverrideFactory: _overrideFactory));
 
-                if (args.Factories.TryGetValue(args.DiscriminatorType, out Func<TService>? factory))
-                    return factory.Invoke();
+    private static TService? CreateServiceInstance(
+        Type discriminatorType,
+        Dictionary<Type, Func<TService>> factories,
+        Func<TService>? overrideFactory)
+    {
+        if (overrideFactory != null)
+            return overrideFactory.Invoke();
 
-                return default;
-            },
-            (DiscriminatorType: discriminatorType, OverrideFactory: _overrideFactory, Factories: _factories));
+        if (factories.TryGetValue(discriminatorType, out Func<TService>? factory))
+            return factory.Invoke();
+
+        return default;
+    }
 }

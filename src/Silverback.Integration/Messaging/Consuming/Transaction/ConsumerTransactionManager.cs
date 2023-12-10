@@ -66,7 +66,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         _logger.LogConsumerLowLevelTrace("Committing consumer transaction...", _context.Envelope);
 
         await Committing.InvokeAsync(_context).ConfigureAwait(false);
-        await _context.Consumer.CommitAsync(_context.GetLastBrokerMessageIdentifiers()).ConfigureAwait(false);
+        await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
         await Committed.InvokeAsync(_context).ConfigureAwait(false);
 
         _logger.LogConsumerLowLevelTrace("Consumer transaction committed.", _context.Envelope);
@@ -102,14 +102,14 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
         if (commitConsumer)
         {
-            await _context.Consumer.CommitAsync(_context.GetLastBrokerMessageIdentifiers()).ConfigureAwait(false);
+            await _context.Consumer.CommitAsync(_context.GetCommitIdentifiers()).ConfigureAwait(false);
         }
         else
         {
             if (stopConsuming)
                 await _context.Consumer.StopAsync().ConfigureAwait(false);
 
-            await _context.Consumer.RollbackAsync(_context.GetFirstBrokerMessageIdentifiers()).ConfigureAwait(false);
+            await _context.Consumer.RollbackAsync(_context.GetRollbackIdentifiers()).ConfigureAwait(false);
         }
 
         await Aborted.InvokeAsync(_context).ConfigureAwait(false);

@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -27,7 +28,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private readonly bool _enforceTimeout;
 
-    private readonly bool _trackIdentifiers;
+    private readonly IBrokerMessageIdentifiersTracker? _identifiersTracker;
 
     private readonly TimeSpan _timeout;
 
@@ -46,10 +47,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
     private CancellationTokenSource? _timeoutCancellationTokenSource;
-
-    private Dictionary<string, IBrokerMessageIdentifier>? _beginningMessageIdentifiers;
-
-    private Dictionary<string, IBrokerMessageIdentifier>? _endMessageIdentifiers;
 
     private ICollection<ISequence>? _sequences;
 
@@ -93,13 +90,15 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _streamProvider = streamProvider as MessageStreamProvider<TEnvelope> ??
                           new MessageStreamProvider<TEnvelope>();
 
-        _logger = context.ServiceProvider
-            .GetRequiredService<ISilverbackLogger<SequenceBase<TEnvelope>>>();
+        _logger = context.ServiceProvider.GetRequiredService<ISilverbackLogger<SequenceBase<TEnvelope>>>();
 
         _enforceTimeout = enforceTimeout;
         _timeout = timeout ?? Context.Envelope.Endpoint.Configuration.Sequence.Timeout;
         ResetTimeout();
-        _trackIdentifiers = trackIdentifiers;
+        _identifiersTracker = trackIdentifiers
+            ? context.ServiceProvider.GetRequiredService<IBrokerMessageIdentifiersTrackerFactory>()
+                .GetTracker(context.Envelope.Endpoint.Configuration)
+            : null;
     }
 
     /// <inheritdoc cref="ISequence.SequenceId" />
@@ -224,33 +223,33 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         return AbortCoreAsync(reason, exception);
     }
 
-    /// <inheritdoc cref="ISequence.GetBeginningBrokerMessageIdentifiers" />
-    public IReadOnlyList<IBrokerMessageIdentifier> GetBeginningBrokerMessageIdentifiers()
+    /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers()
     {
-        IReadOnlyList<IBrokerMessageIdentifier> identifiers = _beginningMessageIdentifiers?.Values.AsReadOnlyList() ??
-                                                              Array.Empty<IBrokerMessageIdentifier>();
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetCommitIdentifiers()
+                                                                    ?? Array.Empty<IBrokerMessageIdentifier>();
 
         if (_sequences != null)
         {
             identifiers = identifiers
-                .Union(_sequences.SelectMany(sequence => sequence.GetBeginningBrokerMessageIdentifiers()))
-                .AsReadOnlyList();
+                .Union(_sequences.SelectMany(sequence => sequence.GetCommitIdentifiers()))
+                .AsReadOnlyCollection();
         }
 
         return identifiers;
     }
 
-    /// <inheritdoc cref="ISequence.GetEndBrokerMessageIdentifiers" />
-    public IReadOnlyList<IBrokerMessageIdentifier> GetEndBrokerMessageIdentifiers()
+    /// <inheritdoc cref="ISequence.GetRollbackIdentifiers" />
+    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
-        IReadOnlyList<IBrokerMessageIdentifier> identifiers = _endMessageIdentifiers?.Values.AsReadOnlyList() ??
-                                                              Array.Empty<IBrokerMessageIdentifier>();
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetRollbackIdentifiers() ??
+                                                                    Array.Empty<IBrokerMessageIdentifier>();
 
         if (_sequences != null)
         {
             identifiers = identifiers
-                .Union(_sequences.SelectMany(sequence => sequence.GetEndBrokerMessageIdentifiers()))
-                .AsReadOnlyList();
+                .Union(_sequences.SelectMany(sequence => sequence.GetRollbackIdentifiers()))
+                .AsReadOnlyCollection();
         }
 
         return identifiers;
@@ -297,10 +296,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 _sequences.Add(sequence);
                 (sequence as ISequenceImplementation)?.SetParentSequence(this);
             }
-            else if (_trackIdentifiers)
-            {
-                TrackIdentifiers(envelope);
-            }
+
+            _identifiersTracker?.TrackIdentifier(envelope.BrokerMessageIdentifier);
 
             _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -482,23 +479,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </returns>
     protected virtual ValueTask OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
-    private void TrackIdentifiers(TEnvelope envelope)
-    {
-        _beginningMessageIdentifiers ??= new Dictionary<string, IBrokerMessageIdentifier>();
-        _endMessageIdentifiers ??= new Dictionary<string, IBrokerMessageIdentifier>();
-
-        string groupKey = envelope.BrokerMessageIdentifier.GroupKey ?? string.Empty;
-
-        _beginningMessageIdentifiers.TryAdd(groupKey, envelope.BrokerMessageIdentifier);
-
-        _endMessageIdentifiers[groupKey] = envelope.BrokerMessageIdentifier;
-    }
-
     private void CompleteLinkedSequence(ISequenceImplementation sequence)
     {
         sequence.NotifyProcessingCompleted();
 
-        if (!_trackIdentifiers)
+        if (_identifiersTracker == null)
         {
             _sequences?.Remove(sequence);
             sequence.Dispose();

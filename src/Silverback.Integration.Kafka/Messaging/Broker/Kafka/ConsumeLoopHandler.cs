@@ -23,16 +23,23 @@ internal sealed class ConsumeLoopHandler : IDisposable
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private readonly ConsumerChannelsManager _channelsManager;
 
+    private readonly OffsetsTracker? _offsetsTracker;
+
     private CancellationTokenSource _cancellationTokenSource = new();
 
     private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
 
     private bool _isDisposed;
 
-    public ConsumeLoopHandler(KafkaConsumer consumer, ConsumerChannelsManager channelsManager, ISilverbackLogger logger)
+    public ConsumeLoopHandler(
+        KafkaConsumer consumer,
+        ConsumerChannelsManager channelsManager,
+        OffsetsTracker? offsetsTracker,
+        ISilverbackLogger logger)
     {
         _consumer = Check.NotNull(consumer, nameof(consumer));
-        _channelsManager = channelsManager;
+        _channelsManager = Check.NotNull(channelsManager, nameof(channelsManager));
+        _offsetsTracker = offsetsTracker;
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -162,6 +169,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
             _logger.LogConsuming(consumeResult, _consumer);
 
+            _offsetsTracker?.TrackOffset(consumeResult.TopicPartitionOffset);
             _channelsManager.Write(consumeResult, cancellationToken);
         }
         catch (OperationCanceledException ex)

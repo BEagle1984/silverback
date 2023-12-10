@@ -56,7 +56,7 @@ public sealed class KafkaOffsetStoreScope
     /// </returns>
     public async Task StoreOffsetsAsync()
     {
-        IReadOnlyCollection<KafkaOffset> offsets = _pipelineContext.GetLastBrokerMessageIdentifiers().Cast<KafkaOffset>().AsReadOnlyCollection();
+        IReadOnlyCollection<KafkaOffset> offsets = _pipelineContext.GetCommitIdentifiers().Cast<KafkaOffset>().AsReadOnlyCollection();
 
         if (offsets.Count == 0 || AreAllStoredAlready(offsets))
             return;

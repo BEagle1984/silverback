@@ -13,12 +13,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-// TODO:
-// * Move sequence store handling logic in channels manager
-// * (!) Probably cannot create channels and sequence stores upfront because of incremental partition assignment
-// * Pass the sequence store to the message handler
-// * Ensure sequences are aborted when stopping reading
-// * (!) Read cancellation token must be shared among all channels in MQTT
 internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     where TChannel : IConsumerChannel
 {
@@ -45,9 +39,6 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
     }
 
     protected abstract IEnumerable<TChannel> GetChannels();
-
-    protected void StartReading(IEnumerable<TChannel> channels) =>
-        channels.ForEach(StartReading);
 
     protected void StartReading(TChannel channel)
     {
@@ -81,8 +72,6 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
 
         Task.Run(() => ReadChannelAsync(channel)).FireAndForget();
     }
-
-    protected Task StopReadingAsync(IEnumerable<TChannel> channels) => Task.WhenAll(channels.Select(StopReadingAsync));
 
     protected virtual async Task StopReadingAsync(TChannel channel)
     {

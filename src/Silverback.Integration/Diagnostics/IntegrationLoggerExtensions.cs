@@ -127,7 +127,7 @@ internal static class IntegrationLoggerExtensions
 
         MessageAddedToSequence(
             logger.InnerLogger,
-            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            envelope.BrokerMessageIdentifier.ToLogString(),
             sequence.GetType().Name,
             sequence.SequenceId,
             sequence.Length,
