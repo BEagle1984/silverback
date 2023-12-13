@@ -34,8 +34,7 @@ public enum SequenceAbortReason
     Disposing = 4,
 
     /// <summary>
-    ///     The sequence was aborted because of an exception thrown either by the consumer pipeline or the
-    ///     subscriber.
+    ///     The sequence was aborted because of an exception thrown either by the consumer pipeline or the subscriber.
     /// </summary>
     Error = 5
 }

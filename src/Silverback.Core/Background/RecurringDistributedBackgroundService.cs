@@ -59,7 +59,9 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
         while (!stoppingToken.IsCancellationRequested)
         {
             DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
-            using CancellationTokenSource linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, lockHandle.LockLostToken);
+            using CancellationTokenSource linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+                stoppingToken,
+                lockHandle.LockLostToken);
 
             await using (lockHandle)
             {

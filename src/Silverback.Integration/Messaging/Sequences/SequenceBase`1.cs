@@ -333,10 +333,18 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             return AddToSequenceResult.Success(pushedStreamsCount);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            // Ignore and consider successful, it just means that the sequence was aborted.
-            return AddToSequenceResult.Success(0);
+            _logger.LogLowLevelTrace(
+                ex,
+                "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+                () => new object[]
+                {
+                    GetType().Name,
+                    SequenceId
+                });
+
+            return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
         }
         catch (Exception ex)
         {
