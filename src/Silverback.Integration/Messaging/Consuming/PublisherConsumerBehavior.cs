@@ -122,6 +122,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is synchronous")]
     private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
     {
         _logger.LogConsumerLowLevelTrace(
@@ -148,10 +149,8 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                     sequence.SequenceId
                 });
 
-            return context.ProcessingTask = Task.CompletedTask;
+            return Task.CompletedTask;
         }
-
-        context.ProcessingTask = Task.WhenAll(processingTasks);
 
         return Task.Run(
             async () =>
@@ -169,33 +168,42 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                         .Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
                         .ToList();
 
-                    await Task.WhenAny(tasks).ConfigureAwait(false);
-
-                    if (!sequence.IsComplete)
+                    // Even though we use the CancelOnExceptionAsync trick, it's not guaranteed that once one of the subscribers
+                    // completes, the next ones will not throw.
+                    // On the other hand, if the sequence is complete, we let every subscriber naturally complete.
+                    while (!sequence.IsComplete && tasks.Exists(task => !task.IsCompleted))
                     {
-                        if (tasks.Any(task => task.IsFaulted))
+                        await Task.WhenAny(tasks).ConfigureAwait(false);
+
+                        if (!sequence.IsComplete && tasks.Exists(task => task.IsFaulted))
                         {
                             // Call AbortIfPending to abort the uncompleted sequence, including the lazy streams
                             // which haven't been created yet. This is necessary for the Task.WhenAll to complete.
                             // The actual exception is handled in the catch block and in there the sequence is
                             // properly aborted, triggering the error policies and everything else.
                             (sequence.StreamProvider as MessageStreamProvider)?.AbortIfPending();
-                        }
-                        else
-                        {
-                            // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
-                            // The reason behind this call here may be counterintuitive but with
-                            // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                            break;
                         }
                     }
 
                     await Task.WhenAll(processingTasks).ConfigureAwait(false);
+
+                    _logger.LogLowLevelTrace(
+                        "All {sequenceType} '{sequenceId}' subscribers completed. (sequence.IsCompleted={completed}, faultedTasks={faultedCount}/{tasksCount}).",
+                        () => new object[]
+                        {
+                            sequence.GetType().Name,
+                            sequence.SequenceId,
+                            sequence.IsComplete,
+                            processingTasks.Count(task => task.IsFaulted),
+                            processingTasks.Count
+                        });
                 }
                 catch (Exception exception)
                 {
                     await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
                     sequence.Dispose();
+                    throw;
                 }
                 finally
                 {

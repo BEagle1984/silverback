@@ -75,14 +75,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     ///     when the message has actually been pulled and processed and its result contains the number of
     ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
     /// </returns>
-    [SuppressMessage(
-        "ReSharper",
-        "ParameterOnlyUsedForPreconditionCheck.Global",
-        Justification = "False positive")]
-    public async Task<int> PushAsync(
-        TMessage message,
-        bool throwIfUnhandled,
-        CancellationToken cancellationToken = default)
+    [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Global", Justification = "False positive")]
+    public async Task<int> PushAsync(TMessage message, bool throwIfUnhandled, CancellationToken cancellationToken = default)
     {
         Check.NotNull<object>(message, nameof(message));
 
@@ -222,18 +216,15 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         if (lazyStream.MessageType.IsInstanceOfType(message))
         {
             PushedMessage pushedMessage = new(messageId, message, message);
-            messageProcessingTask =
-                lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
             return true;
         }
 
-        IEnvelope? envelope = message as IEnvelope;
-        if (envelope?.Message != null && envelope.AutoUnwrap &&
+        if (message is IEnvelope { Message: not null, AutoUnwrap: true } envelope &&
             lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
             PushedMessage pushedMessage = new(messageId, envelope.Message, message);
-            messageProcessingTask =
-                lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
             return true;
         }
 
@@ -252,11 +243,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
         {
             if (PushIfCompatibleType(
-                    lazyStream,
-                    messageId,
-                    message,
-                    cancellationToken,
-                    out Task processingTask))
+                lazyStream,
+                messageId,
+                message,
+                cancellationToken,
+                out Task processingTask))
             {
                 yield return processingTask;
             }

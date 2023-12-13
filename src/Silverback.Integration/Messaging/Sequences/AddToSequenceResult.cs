@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
+
 namespace Silverback.Messaging.Sequences;
 
 /// <summary>
@@ -12,12 +14,29 @@ namespace Silverback.Messaging.Sequences;
 /// <param name="PushedStreamsCount">
 ///     The number of streams that have been actually pushed.
 /// </param>
-public readonly record struct AddToSequenceResult(bool IsSuccess, int PushedStreamsCount)
+/// <param name="IsAborted">
+///     A value indicating whether the sequence was aborted.
+/// </param>
+/// <param name="AbortTask">
+///    The <see cref="Task" /> representing the abort operation.
+/// </param>
+public readonly record struct AddToSequenceResult(bool IsSuccess, int PushedStreamsCount = -1, bool IsAborted = false, Task? AbortTask = null)
 {
     /// <summary>
     ///     Gets a static instance representing a failed call to <see cref="ISequence.AddAsync" />.
     /// </summary>
-    public static AddToSequenceResult Failed { get; } = new(false, -1);
+    public static AddToSequenceResult Failed { get; } = new(false);
+
+    /// <summary>
+    ///     Returns a new instance representing an aborted call to <see cref="ISequence.AddAsync" />. (The sequence was probably aborted.
+    /// </summary>
+    /// <param name="abortTask">
+    ///     The <see cref="Task" /> representing the abort operation.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="AddToSequenceResult" />.
+    /// </returns>
+    public static AddToSequenceResult Aborted(Task? abortTask) => new(true, IsAborted: true, AbortTask: abortTask);
 
     /// <summary>
     ///     Returns a new instance representing a successful call to <see cref="ISequence.AddAsync" />.

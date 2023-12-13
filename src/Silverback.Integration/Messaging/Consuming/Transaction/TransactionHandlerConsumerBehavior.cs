@@ -107,13 +107,18 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 "Sequence ended or aborted: awaiting processing task.",
                 context.Envelope);
 
-            await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
+            try
+            {
+                await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
+            }
+            finally
+            {
+                _logger.LogConsumerLowLevelTrace(
+                    "Sequence ended or aborted: processing task completed.",
+                    context.Envelope);
 
-            _logger.LogConsumerLowLevelTrace(
-                "Sequence ended or aborted: processing task completed.",
-                context.Envelope);
-
-            context.Dispose();
+                context.Dispose();
+            }
         }
     }
 
@@ -158,8 +163,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
         }
         catch (Exception exception)
         {
-            await sequence.AbortAsync(SequenceAbortReason.Error, exception)
-                .ConfigureAwait(false);
+            await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
         }
         finally
         {
@@ -189,13 +193,21 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             await processingTask.ConfigureAwait(false);
 
+            _logger.LogConsumerLowLevelTrace(
+                "Successfully awaited {sequenceType} '{sequenceId}' processing task.",
+                context.Envelope,
+                () => new object[]
+                {
+                    sequence.GetType().Name,
+                    sequence.SequenceId
+                });
+
             // Break if this isn't the beginning of the outer sequence
             // (e.g. when combining batching and chunking)
             if (!context.IsSequenceStart)
                 return (context, sequence);
 
-            sequence = context.Sequence ??
-                       throw new InvalidOperationException("Sequence is null.");
+            sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
             context = sequence.Context;
 
             processingTask = context.ProcessingTask != processingTask

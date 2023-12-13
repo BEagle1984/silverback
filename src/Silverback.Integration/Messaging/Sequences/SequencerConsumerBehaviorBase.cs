@@ -158,11 +158,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                     }
                     finally
                     {
-                        if (sequence is ISequenceImplementation sequenceImplementation &&
-                            sequenceImplementation.ShouldCreateNewActivity)
-                        {
+                        if (sequence is ISequenceImplementation { ShouldCreateNewActivity: true } sequenceImplementation)
                             sequenceImplementation.Activity?.Stop();
-                        }
                     }
                 })
             .FireAndForget();
@@ -213,10 +210,21 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 sequence.Dispose();
             }
         }
-        while (!addToSequenceResult.IsSuccess);
+        while (addToSequenceResult is { IsSuccess: false, IsAborted: false });
 
         AddSequenceTagToActivity(sequence);
-        _logger.LogMessageAddedToSequence(context.Envelope, sequence);
+
+        if (addToSequenceResult.IsAborted)
+        {
+            // Ensure that the sequence is really aborted before returning,otherwise the TransactionHandlerConsumerBehavior could
+            // continue before the abort and miss the exception
+            if (addToSequenceResult.AbortTask != null)
+                await addToSequenceResult.AbortTask.ConfigureAwait(false);
+        }
+        else
+        {
+            _logger.LogMessageAddedToSequence(context.Envelope, sequence);
+        }
 
         return sequence;
     }
