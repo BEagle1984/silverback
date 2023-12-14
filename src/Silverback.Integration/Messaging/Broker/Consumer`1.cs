@@ -133,7 +133,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         _logger.LogConsumerLowLevelTrace(this, "Triggering reconnect.");
 
         // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
-        await StopAsync().ConfigureAwait(false);
+        await StopAsync(false).ConfigureAwait(false);
 
         Task.Run(
                 async () =>
@@ -192,7 +192,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     }
 
     /// <inheritdoc cref="IConsumer.StopAsync" />
-    public async ValueTask StopAsync()
+    public async ValueTask StopAsync(bool waitUntilStopped = true)
     {
         await _startStopSemaphore.WaitAsync().ConfigureAwait(false);
 
@@ -209,6 +209,9 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         try
         {
             await StopCoreAsync().ConfigureAwait(false);
+
+            if (waitUntilStopped)
+                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
 
             IsStarted = false;
 
@@ -411,7 +414,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         if (!disposing || _isDisposed)
             return;
 
-        AsyncHelper.RunSynchronously(StopAsync);
+        AsyncHelper.RunSynchronously(() => StopAsync(false));
 
         Client.Initialized.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
@@ -439,7 +442,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     private async ValueTask OnClientDisconnectingAsync(BrokerClient client)
     {
         if (IsStarted && !IsStopping)
-            await StopAsync().ConfigureAwait(false);
+            await StopAsync(false).ConfigureAwait(false);
         else
             await StopCoreAsync().ConfigureAwait(false);
 

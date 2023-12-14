@@ -107,7 +107,7 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         else
         {
             if (stopConsuming)
-                await _context.Consumer.StopAsync().ConfigureAwait(false);
+                await _context.Consumer.StopAsync(false).ConfigureAwait(false);
 
             await _context.Consumer.RollbackAsync(_context.GetRollbackIdentifiers()).ConfigureAwait(false);
         }

@@ -535,7 +535,7 @@ public class IntegrationLoggerExtensionsFixture
 
         public ValueTask StartAsync() => throw new NotSupportedException();
 
-        public ValueTask StopAsync() => throw new NotSupportedException();
+        public ValueTask StopAsync(bool waitUntilStopped = true) => throw new NotSupportedException();
 
         public ValueTask CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier) => throw new NotSupportedException();
 
