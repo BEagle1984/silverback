@@ -178,10 +178,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
-
         RevertConnectedStatus();
-
-        await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
     }
 
     private ConsumedApplicationMessage? PullPendingConsumedMessage(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)

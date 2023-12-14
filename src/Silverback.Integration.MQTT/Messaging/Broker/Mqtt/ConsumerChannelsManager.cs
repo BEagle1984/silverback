@@ -45,8 +45,6 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
     {
         channel.ReadCancellationToken.ThrowIfCancellationRequested();
 
-        _logger.LogConsumerLowLevelTrace(_consumer, "Reading channel...");
-
         ConsumedApplicationMessage consumedMessage = await channel.ReadAsync().ConfigureAwait(false);
 
         channel.ReadCancellationToken.ThrowIfCancellationRequested();

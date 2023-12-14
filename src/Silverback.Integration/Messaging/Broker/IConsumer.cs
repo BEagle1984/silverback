@@ -62,11 +62,14 @@ public interface IConsumer
     /// <summary>
     ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
     /// </summary>
+    /// <param name="waitUntilStopped">
+    ///     A value indicating whether the method should wait until the consumer has been effectively stopped.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
     ///     soon as the stopping signal has been sent.
     /// </returns>
-    ValueTask StopAsync();
+    ValueTask StopAsync(bool waitUntilStopped = true);
 
     /// <summary>
     ///     <param>
