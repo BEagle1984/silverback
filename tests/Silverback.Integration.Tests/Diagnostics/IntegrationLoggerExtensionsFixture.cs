@@ -62,20 +62,17 @@ public class IntegrationLoggerExtensionsFixture
     {
         RawInboundEnvelope envelope = new(
             Stream.Null,
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.MessageId, "1234" }
-            },
+            null,
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
-            new TestOffset());
+            new TestOffset("a", "42"));
 
         _silverbackLogger.LogMessageAddedToSequence(envelope, new FakeSequence());
 
         _loggerSubstitute.Received(
             LogLevel.Debug,
             null,
-            "Message '1234' added to FakeSequence 'fake1'. | length: 3",
+            "Message '42' added to FakeSequence 'fake1'. | length: 3",
             1011);
     }
 
