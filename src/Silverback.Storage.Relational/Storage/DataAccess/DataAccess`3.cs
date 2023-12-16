@@ -7,7 +7,6 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Silverback.Storage.Relational;
 using Silverback.Util;
@@ -34,8 +33,8 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         string sql,
         params TParameter[] parameters)
     {
-        using DbCommand command = GetCommand(sql, parameters).DbCommand;
-        using DbDataReader reader = command.ExecuteReader();
+        using DbCommandWrapper wrapper = GetCommand(sql, parameters);
+        using DbDataReader reader = wrapper.Command.ExecuteReader();
 
         return Map(reader, projection).ToList();
     }
@@ -45,32 +44,26 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         string sql,
         params TParameter[] parameters)
     {
-        DbCommand command = (await GetCommandAsync(sql, parameters).ConfigureAwait(false)).DbCommand;
-        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
-        DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
-        await using ConfiguredAsyncDisposable disposableReader = reader.ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters).ConfigureAwait(false);
+        using DbDataReader reader = await wrapper.Command.ExecuteReaderAsync().ConfigureAwait(false);
 
         return await MapAsync(reader, projection).ToListAsync().ConfigureAwait(false);
     }
 
     public T? ExecuteScalar<T>(string sql, params TParameter[] parameters)
     {
-        DbCommand command = GetCommand(sql, parameters).DbCommand;
+        using DbCommandWrapper wrapper = GetCommand(sql, parameters);
 
-        object? result = command.ExecuteScalar();
+        object? result = wrapper.Command.ExecuteScalar();
 
-        if (result == DBNull.Value)
-            return default;
-
-        return (T?)result;
+        return result == DBNull.Value ? default : (T?)result;
     }
 
     public async Task<T?> ExecuteScalarAsync<T>(string sql, params TParameter[] parameters)
     {
-        DbCommand command = (await GetCommandAsync(sql, parameters).ConfigureAwait(false)).DbCommand;
-        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters).ConfigureAwait(false);
 
-        object? result = await command.ExecuteScalarAsync().ConfigureAwait(false);
+        object? result = await wrapper.Command.ExecuteScalarAsync().ConfigureAwait(false);
 
         if (result == DBNull.Value)
             return default;
@@ -82,25 +75,16 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
     public async Task ExecuteNonQueryAsync(SilverbackContext? context, string sql, params TParameter[] parameters)
     {
-        (DbCommand command, bool isNewTransaction) = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
-        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
 
         try
         {
-            await command.ExecuteNonQueryAsync().ConfigureAwait(false);
-
-            if (isNewTransaction)
-            {
-                await command.Transaction!.CommitAsync().ConfigureAwait(false);
-            }
+            await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
         }
         catch (Exception)
         {
-            if (isNewTransaction)
-            {
-                await command.Transaction!.RollbackAndDisposeAsync().ConfigureAwait(false);
-            }
-
+            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
             throw;
         }
     }
@@ -112,25 +96,21 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         Action<T, TParameter[]> parameterValuesProvider,
         SilverbackContext? context = null)
     {
-        (DbCommand command, bool isNewTransaction) = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
-        await using ConfiguredAsyncDisposable disposableCommand = command.ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
 
         try
         {
             foreach (T item in items)
             {
                 parameterValuesProvider.Invoke(item, parameters);
-                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
 
-            if (isNewTransaction)
-                await command.Transaction!.CommitAsync().ConfigureAwait(false);
+            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
         }
         catch (Exception)
         {
-            if (isNewTransaction)
-                await command.Transaction!.RollbackAndDisposeAsync().ConfigureAwait(false);
-
+            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
             throw;
         }
     }
@@ -156,70 +136,140 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     }
 
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
-    private (DbCommand DbCommand, bool IsNewTransaction) GetCommand(
+    private DbCommandWrapper GetCommand(
         string sql,
         TParameter[] parameters,
         bool beginTransaction = false,
         SilverbackContext? context = null)
     {
-        ConnectionAndTransaction connectionAndTransaction = GetConnectionAndTransaction(context, beginTransaction);
-        DbCommand command = connectionAndTransaction.Connection.CreateCommand();
-        command.Transaction = connectionAndTransaction.Transaction;
+        bool isNewConnection = false;
+        bool isNewTransaction = false;
+        DbConnection connection;
+
+        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
+
+        if (transaction != null)
+        {
+            connection = transaction.Connection ?? throw new InvalidOperationException("Transaction.Connection is null");
+        }
+        else
+        {
+            connection = CreateConnection(_connectionString);
+            isNewConnection = true;
+
+            try
+            {
+                connection.Open();
+
+                if (beginTransaction)
+                {
+                    transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+                    isNewTransaction = true;
+                }
+            }
+            catch (Exception)
+            {
+                connection.Dispose();
+                throw;
+            }
+        }
+
+        DbCommand command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = sql;
         command.Parameters.AddRange(parameters);
 
-        return (command, connectionAndTransaction.IsNewTransaction);
+        return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
     }
 
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
-    private async Task<(DbCommand DbCommand, bool IsNewTransaction)> GetCommandAsync(
+    private async Task<DbCommandWrapper> GetCommandAsync(
         string sql,
         TParameter[] parameters,
         bool beginTransaction = false,
         SilverbackContext? context = null)
     {
-        ConnectionAndTransaction connectionAndTransaction = await GetConnectionAndTransactionAsync(context, beginTransaction).ConfigureAwait(false);
-        DbCommand command = connectionAndTransaction.Connection.CreateCommand();
-        command.Transaction = connectionAndTransaction.Transaction;
+        bool isNewConnection = false;
+        bool isNewTransaction = false;
+        DbConnection connection;
+
+        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
+
+        if (transaction != null)
+        {
+            connection = transaction.Connection ?? throw new InvalidOperationException("Transaction.Connection is null");
+        }
+        else
+        {
+            connection = CreateConnection(_connectionString);
+            isNewConnection = true;
+
+            try
+            {
+                await connection.OpenAsync().ConfigureAwait(false);
+
+                if (beginTransaction)
+                {
+                    transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
+                    isNewTransaction = true;
+                }
+            }
+            catch (Exception)
+            {
+                await connection.DisposeAsync().ConfigureAwait(false);
+                throw;
+            }
+        }
+
+        DbCommand command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = sql;
         command.Parameters.AddRange(parameters);
 
-        return (command, connectionAndTransaction.IsNewTransaction);
+        return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
     }
 
-    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
-    private ConnectionAndTransaction GetConnectionAndTransaction(SilverbackContext? context, bool beginTransaction)
+    private sealed class DbCommandWrapper : IDisposable
     {
-        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
+        private readonly DbConnection _connection;
 
-        if (transaction != null)
-            return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
+        private readonly bool _isConnectionOwner;
 
-        TConnection connection = CreateConnection(_connectionString);
-        connection.Open();
+        private readonly DbTransaction? _transaction;
 
-        if (beginTransaction)
-            transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
+        private readonly bool _isTransactionOwner;
 
-        return new ConnectionAndTransaction(connection, transaction, transaction != null);
+        public DbCommandWrapper(
+            DbCommand command,
+            DbConnection connection,
+            bool isConnectionOwner,
+            DbTransaction? transaction,
+            bool isTransactionOwner)
+        {
+            Command = command;
+            _connection = connection;
+            _isConnectionOwner = isConnectionOwner;
+            _transaction = transaction;
+            _isTransactionOwner = isTransactionOwner;
+        }
+
+        public DbCommand Command { get; }
+
+        public void Dispose()
+        {
+            Command.Dispose();
+
+            if (_isTransactionOwner && _transaction != null)
+                _transaction.Dispose();
+
+            if (_isConnectionOwner)
+                _connection.Dispose();
+        }
+
+        public ValueTask CommitOwnedTransactionAsync() =>
+            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.CommitAsync()) : default;
+
+        public ValueTask RollbackOwnedTransactionAsync() =>
+            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync()) : default;
     }
-
-    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Connection disposed by caller")]
-    private async Task<ConnectionAndTransaction> GetConnectionAndTransactionAsync(SilverbackContext? context, bool beginTransaction)
-    {
-        DbTransaction? transaction = context.GetActiveDbTransaction<TTransaction>();
-
-        if (transaction != null)
-            return new ConnectionAndTransaction(transaction.Connection!, transaction, false);
-
-        TConnection connection = CreateConnection(_connectionString);
-        await connection.OpenAsync().ConfigureAwait(false);
-
-        if (beginTransaction)
-            transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
-
-        return new ConnectionAndTransaction(connection, transaction, transaction != null);
-    }
-
-    private sealed record ConnectionAndTransaction(DbConnection Connection, DbTransaction? Transaction, bool IsNewTransaction);
 }

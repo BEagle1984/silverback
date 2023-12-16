@@ -5,7 +5,6 @@ using System.Data.Common;
 
 namespace Silverback.Storage.DataAccess;
 
-// TODO: Move to Silverback.Storage.RelationalDatabase
 internal static class DbDataReaderExtensions
 {
     public static T? GetNullableFieldValue<T>(this DbDataReader reader, int ordinal)
