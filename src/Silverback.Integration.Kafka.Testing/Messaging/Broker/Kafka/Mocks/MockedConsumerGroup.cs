@@ -33,14 +33,11 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
     private readonly SemaphoreSlim _subscriptionsChangeSemaphore = new(1, 1);
 
-    public MockedConsumerGroup(
-        string groupId,
-        string bootstrapServers,
-        IInMemoryTopicCollection topicCollection)
+    public MockedConsumerGroup(string groupId, string bootstrapServers, IInMemoryTopicCollection topicCollection)
     {
-        GroupId = groupId;
-        BootstrapServers = bootstrapServers;
-        _topicCollection = topicCollection;
+        GroupId = Check.NotNull(groupId, nameof(groupId));
+        BootstrapServers = Check.NotNull(bootstrapServers, nameof(bootstrapServers));
+        _topicCollection = Check.NotNull(topicCollection, nameof(topicCollection));
     }
 
     public string GroupId { get; }

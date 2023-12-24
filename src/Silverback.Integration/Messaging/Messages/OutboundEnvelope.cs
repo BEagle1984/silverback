@@ -14,9 +14,10 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
+        SilverbackContext? context = null,
         bool autoUnwrap = false,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-        : base(headers, endpoint, producer, brokerMessageIdentifier)
+        : base(headers, endpoint, producer, context, brokerMessageIdentifier)
     {
         Message = message;
 

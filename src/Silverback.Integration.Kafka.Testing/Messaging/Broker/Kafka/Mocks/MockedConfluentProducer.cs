@@ -18,16 +18,24 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
     private readonly IInMemoryTopicCollection _topics;
 
+    private readonly IInMemoryTransactionManager _transactionManager;
+
     private readonly object _roundRobinLockObject = new();
 
     private int _lastPushedPartition = -1;
 
+    private Guid _transactionalUniqueId = Guid.Empty;
+
     private bool _isDisposed;
 
-    public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
+    public MockedConfluentProducer(
+        ProducerConfig config,
+        IInMemoryTopicCollection topics,
+        IInMemoryTransactionManager transactionManager)
     {
         _config = Check.NotNull(config, nameof(config));
         _topics = Check.NotNull(topics, nameof(topics));
+        _transactionManager = Check.NotNull(transactionManager, nameof(transactionManager));
 
         Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
     }
@@ -128,22 +136,28 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         // Nothing to flush
     }
 
-    public void InitTransactions(TimeSpan timeout) => throw new NotSupportedException();
+    public void InitTransactions(TimeSpan timeout)
+    {
+        if (string.IsNullOrEmpty(_config.TransactionalId))
+            throw new InvalidOperationException("Cannot initialize transactions without a transactional id.");
 
-    public void BeginTransaction() => throw new NotSupportedException();
+        if (_transactionalUniqueId != Guid.Empty)
+            throw new InvalidOperationException("Transactions have been already initialized.");
 
-    public void CommitTransaction(TimeSpan timeout) => throw new NotSupportedException();
+        _transactionalUniqueId = _transactionManager.InitTransaction(_config.TransactionalId);
+    }
 
-    public void CommitTransaction() => throw new NotSupportedException();
+    public void BeginTransaction() => _transactionManager.BeginTransaction(_transactionalUniqueId);
 
-    public void AbortTransaction(TimeSpan timeout) => throw new NotSupportedException();
+    public void CommitTransaction(TimeSpan timeout) => CommitTransaction();
 
-    public void AbortTransaction() => throw new NotSupportedException();
+    public void CommitTransaction() => _transactionManager.CommitTransaction(_transactionalUniqueId);
 
-    public void SendOffsetsToTransaction(
-        IEnumerable<TopicPartitionOffset> offsets,
-        IConsumerGroupMetadata groupMetadata,
-        TimeSpan timeout) =>
+    public void AbortTransaction(TimeSpan timeout) => AbortTransaction();
+
+    public void AbortTransaction() => _transactionManager.AbortTransaction(_transactionalUniqueId);
+
+    public void SendOffsetsToTransaction(IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata, TimeSpan timeout) =>
         throw new NotSupportedException();
 
     public void Dispose() => _isDisposed = true;
@@ -156,19 +170,17 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         return messageKey.Last() % topic.Partitions.Count;
     }
 
-    private int PushToTopic(
-        TopicPartition topicPartition,
-        Message<byte[]?, byte[]?> message,
-        out Offset offset)
+    private int PushToTopic(TopicPartition topicPartition, Message<byte[]?, byte[]?> message, out Offset offset)
     {
         IInMemoryTopic inMemoryTopic = _topics.Get(topicPartition.Topic, _config);
 
-        int partitionIndex =
-            topicPartition.Partition == Partition.Any
-                ? GetPartitionIndex(inMemoryTopic, message.Key)
-                : topicPartition.Partition.Value;
+        int partitionIndex = topicPartition.Partition == Partition.Any
+            ? GetPartitionIndex(inMemoryTopic, message.Key)
+            : topicPartition.Partition.Value;
 
-        offset = inMemoryTopic.Push(partitionIndex, message);
+        Guid transactionalUniqueId = _transactionManager.IsTransactionPending(_transactionalUniqueId) ? _transactionalUniqueId : Guid.Empty;
+
+        offset = inMemoryTopic.Push(partitionIndex, message, transactionalUniqueId);
         return partitionIndex;
     }
 

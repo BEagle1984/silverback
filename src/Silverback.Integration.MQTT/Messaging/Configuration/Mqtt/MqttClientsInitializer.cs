@@ -8,7 +8,6 @@ using Silverback.Collections;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
@@ -19,11 +18,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
 {
     private readonly MqttClientsConfigurationActions _configurationActions;
 
-    private readonly IMqttNetClientFactory _clientFactory;
-
-    private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
-
-    private readonly ISilverbackLoggerFactory _silverbackLoggerFactory;
+    private readonly IMqttClientWrapperFactory _clientWrapperFactory;
 
     private readonly IProducerLogger<MqttProducer> _producerLogger;
 
@@ -37,9 +32,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
 
     public MqttClientsInitializer(
         MqttClientsConfigurationActions configurationActions,
-        IMqttNetClientFactory clientFactory,
-        IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
-        ISilverbackLoggerFactory silverbackLoggerFactory,
+        IMqttClientWrapperFactory clientWrapperFactory,
         IProducerLogger<MqttProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> producerBehaviorsProvider,
         IOutboundEnvelopeFactory envelopeFactory,
@@ -50,9 +43,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         : base(serviceProvider, logger)
     {
         _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
-        _clientFactory = Check.NotNull(clientFactory, nameof(clientFactory));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
+        _clientWrapperFactory = Check.NotNull(clientWrapperFactory, nameof(clientWrapperFactory));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _producerBehaviorsProvider = Check.NotNull(producerBehaviorsProvider, nameof(producerBehaviorsProvider));
         _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
@@ -63,12 +54,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ProducerCollection")]
     internal IReadOnlyCollection<MqttProducer> InitializeProducers(string name, MqttClientConfiguration configuration, bool routing = true)
     {
-        MqttClientWrapper mqttClientWrapper = new(
-            name,
-            _clientFactory.CreateClient(),
-            configuration,
-            _brokerClientCallbacksInvoker,
-            _silverbackLoggerFactory.CreateLogger<MqttClientWrapper>());
+        IMqttClientWrapper mqttClientWrapper = _clientWrapperFactory.Create(name, configuration);
 
         AddClient(mqttClientWrapper);
 
@@ -80,16 +66,11 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
     {
         foreach (MergedAction<MqttClientConfigurationBuilder> mergedAction in _configurationActions.ConfigurationActions)
         {
-            MqttClientConfigurationBuilder builder = new(ServiceProvider);
-            mergedAction.Action.Invoke(builder);
-            MqttClientConfiguration configuration = builder.Build();
+            MqttClientConfigurationBuilder configurationBuilder = new(ServiceProvider);
+            mergedAction.Action.Invoke(configurationBuilder);
+            MqttClientConfiguration configuration = configurationBuilder.Build();
 
-            MqttClientWrapper mqttClientWrapper = new(
-                mergedAction.Key,
-                _clientFactory.CreateClient(),
-                configuration,
-                _brokerClientCallbacksInvoker,
-                _silverbackLoggerFactory.CreateLogger<MqttClientWrapper>());
+            IMqttClientWrapper mqttClientWrapper = _clientWrapperFactory.Create(mergedAction.Key, configurationBuilder.Build());
 
             AddClient(mqttClientWrapper);
 
@@ -99,7 +80,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ConsumerCollection")]
-    private void InitializeConsumer(string id, MqttClientConfiguration configuration, MqttClientWrapper mqttClientWrapper)
+    private void InitializeConsumer(string id, MqttClientConfiguration configuration, IMqttClientWrapper mqttClientWrapper)
     {
         if (configuration.ConsumerEndpoints.Count < 1)
             return;
@@ -123,7 +104,7 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
     private IReadOnlyCollection<MqttProducer> InitializeProducers(
         string name,
         MqttClientConfiguration configuration,
-        MqttClientWrapper mqttClientWrapper,
+        IMqttClientWrapper mqttClientWrapper,
         bool routing = true)
     {
         int i = 0;

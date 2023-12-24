@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Storage;
+using Silverback.Storage.Relational;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -70,12 +71,23 @@ public sealed class KafkaOffsetStoreScope
     }
 
     /// <summary>
-    ///     Specifies an existing <see cref="DbTransaction" /> to be used for database operations.
+    ///     Specifies the transaction to be used for storage operations.
+    /// </summary>
+    /// <param name="transaction">
+    ///     The transaction to be used.
+    /// </param>
+    public void EnlistTransaction(IStorageTransaction transaction) => _silverbackContext.EnlistTransaction(transaction);
+
+    /// <summary>
+    ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
     /// </summary>
     /// <param name="dbTransaction">
     ///     The transaction to be used.
     /// </param>
-    public void EnlistTransaction(DbTransaction dbTransaction) => _silverbackContext.EnlistTransaction(dbTransaction);
+    /// <returns>
+    ///    The <see cref="IStorageTransaction" />.
+    /// </returns>
+    public IStorageTransaction EnlistTransaction(DbTransaction dbTransaction) => _silverbackContext.EnlistDbTransaction(dbTransaction);
 
     private bool AreAllStoredAlready(IReadOnlyCollection<KafkaOffset> offsets) =>
         offsets.All(

@@ -4,6 +4,7 @@
 using System;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Kafka.Mocks;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
 
@@ -13,6 +14,8 @@ namespace Silverback.Messaging.Broker.Kafka;
 public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
 {
     private readonly IInMemoryTopicCollection _topics;
+
+    private readonly IInMemoryTransactionManager _transactionManager;
 
     private ProducerConfig? _config;
 
@@ -24,9 +27,13 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
     /// <param name="topics">
     ///     The <see cref="IInMemoryTopicCollection" />.
     /// </param>
-    public MockedConfluentProducerBuilder(IInMemoryTopicCollection topics)
+    /// <param name="transactionManager">
+    ///     The <see cref="IInMemoryTransactionManager" />.
+    /// </param>
+    public MockedConfluentProducerBuilder(IInMemoryTopicCollection topics, IInMemoryTransactionManager transactionManager)
     {
-        _topics = topics;
+        _topics = Check.NotNull(topics, nameof(topics));
+        _transactionManager = Check.NotNull(transactionManager, nameof(transactionManager));
     }
 
     /// <inheritdoc cref="IConfluentProducerBuilder.SetConfiguration" />
@@ -53,7 +60,7 @@ public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
         if (_config == null)
             throw new InvalidOperationException("SetConfig must be called to provide the producer configuration.");
 
-        return new MockedConfluentProducer(_config, _topics)
+        return new MockedConfluentProducer(_config, _topics, _transactionManager)
         {
             StatisticsHandler = _statisticsHandler
         };

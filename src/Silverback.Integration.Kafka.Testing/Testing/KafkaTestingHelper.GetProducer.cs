@@ -27,11 +27,12 @@ public partial class KafkaTestingHelper
         configurationBuilderAction.Invoke(builder);
         KafkaProducerConfiguration producerConfiguration = builder.Build();
 
-        KafkaProducer newProducer = producersInitializer
+        IProducer newProducer = producersInitializer
             .InitializeProducers($"test-{Guid.NewGuid():N}", producerConfiguration, false)
             .Single();
 
-        AsyncHelper.RunSynchronously(newProducer.Client.ConnectAsync);
+        if (newProducer is KafkaProducer kafkaProducer)
+            AsyncHelper.RunSynchronously(kafkaProducer.Client.ConnectAsync);
 
         return newProducer;
     }

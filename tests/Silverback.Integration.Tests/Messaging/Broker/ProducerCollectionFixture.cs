@@ -21,7 +21,10 @@ public class ProducerCollectionFixture
     {
         ProducerCollection producerCollection = new();
         IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
+
         IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
 
         producerCollection.Add(producer1);
         producerCollection.Add(producer2);

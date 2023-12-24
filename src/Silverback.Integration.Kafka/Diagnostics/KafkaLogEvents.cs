@@ -220,6 +220,38 @@ public static class KafkaLogEvents
         "configuration). | consumerName: {consumerName}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when the transactional producer has been initialized.
+    /// </summary>
+    public static LogEvent TransactionsInitialized { get; } = new(
+        LogLevel.Trace,
+        GetEventId(70, nameof(TransactionsInitialized)),
+        "Transactions initialized. | producerName: {producerName}, transactionalId: {transactionalId}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a new transaction is started.
+    /// </summary>
+    public static LogEvent TransactionBegan { get; } = new(
+        LogLevel.Trace,
+        GetEventId(71, nameof(TransactionBegan)),
+        "Transaction began. | producerName: {producerName}, transactionalId: {transactionalId}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a transaction is committed.
+    /// </summary>
+    public static LogEvent TransactionCommitted { get; } = new(
+        LogLevel.Information,
+        GetEventId(72, nameof(TransactionCommitted)),
+        "Transaction committed. | producerName: {producerName}, transactionalId: {transactionalId}");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a transaction is aborted.
+    /// </summary>
+    public static LogEvent TransactionAborted { get; } = new(
+        LogLevel.Information,
+        GetEventId(73, nameof(TransactionAborted)),
+        "Transaction aborted. | producerName: {producerName}, transactionalId: {transactionalId}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
     ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
     /// </summary>

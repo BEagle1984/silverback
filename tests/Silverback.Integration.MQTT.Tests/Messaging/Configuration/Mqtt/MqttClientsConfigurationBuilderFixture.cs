@@ -785,7 +785,7 @@ public class MqttClientsConfigurationBuilderFixture
 
         await serviceProvider.GetRequiredService<BrokerClientsBootstrapper>().InitializeAllAsync();
 
-        ProducerCollection producers = serviceProvider.GetRequiredService<ProducerCollection>();
+        MqttProducer[] producers = serviceProvider.GetRequiredService<ProducerCollection>().Cast<MqttProducer>().ToArray();
         producers.Should().HaveCount(2);
         producers[0].EndpointConfiguration.MessageType.Should().Be<TestEventOne>();
         producers[0].EndpointConfiguration.As<MqttProducerEndpointConfiguration>().Endpoint.RawName.Should().Be("topic2");

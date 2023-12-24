@@ -46,6 +46,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 
@@ -96,6 +97,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 
@@ -148,6 +150,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 
@@ -175,6 +178,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 
@@ -202,6 +206,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 
@@ -233,6 +238,7 @@ public class ProducerLoggerFixture
             },
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            null,
             true,
             new TestOffset("a", "42"));
 

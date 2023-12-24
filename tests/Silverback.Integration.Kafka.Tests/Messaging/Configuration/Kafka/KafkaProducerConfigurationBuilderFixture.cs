@@ -205,6 +205,42 @@ public class KafkaProducerConfigurationBuilderFixture
     }
 
     [Fact]
+    public void WithTransactionsInitTimeout_ShouldSetTransactionsInitTimeout()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.WithTransactionsInitTimeout(TimeSpan.FromHours(42));
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.TransactionsInitTimeout.Should().Be(TimeSpan.FromHours(42));
+    }
+
+    [Fact]
+    public void WithTransactionCommitTimeout_ShouldSetTransactionCommitTimeout()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.WithTransactionCommitTimeout(TimeSpan.FromHours(42));
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.TransactionCommitTimeout.Should().Be(TimeSpan.FromHours(42));
+    }
+
+    [Fact]
+    public void WithTransactionAbortTimeout_ShouldSetTransactionAbortTimeout()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.WithTransactionAbortTimeout(TimeSpan.FromHours(42));
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.TransactionAbortTimeout.Should().Be(TimeSpan.FromHours(42));
+    }
+
+    [Fact]
     public void EnableDeliveryReports_ShouldSetEnableDeliveryReports()
     {
         KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
@@ -251,6 +287,55 @@ public class KafkaProducerConfigurationBuilderFixture
 
         configuration.Should().NotBeNull();
         configuration.EnableIdempotence.Should().BeFalse();
+    }
+
+    [Fact]
+    public void EnableGaplessGuarantee_ShouldSetEnableGaplessGuarantee()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableGaplessGuarantee();
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.EnableGaplessGuarantee.Should().BeTrue();
+    }
+
+    [Fact]
+    public void DisableGaplessGuarantee_ShouldSetEnableGaplessGuarantee()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.DisableGaplessGuarantee();
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.EnableGaplessGuarantee.Should().BeFalse();
+    }
+
+    [Fact]
+    public void EnableTransactions_ShouldSetTransactionalId()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableTransactions("transactional-id");
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.TransactionalId.Should().Be("transactional-id");
+    }
+
+    [Fact]
+    public void DisableTransactions_ShouldSetTransactionalId()
+    {
+        KafkaProducerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.EnableTransactions("transactional-id");
+        builder.DisableTransactions();
+
+        KafkaProducerConfiguration configuration = builder.Build();
+
+        configuration.Should().NotBeNull();
+        configuration.TransactionalId.Should().BeNull();
     }
 
     private static KafkaProducerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>

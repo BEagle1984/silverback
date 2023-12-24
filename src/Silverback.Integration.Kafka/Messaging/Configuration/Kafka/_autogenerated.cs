@@ -2466,7 +2466,7 @@ public partial class KafkaProducerConfigurationBuilder
         return This;
     }
 
-    public partial KafkaProducerConfigurationBuilder WithTransactionalId(string? transactionalId)
+    internal KafkaProducerConfigurationBuilder WithTransactionalId(string? transactionalId)
     {
         ClientConfig.TransactionalId = transactionalId;
         return This;

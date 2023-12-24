@@ -48,6 +48,21 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     public TimeSpan FlushTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
+    ///     Gets the transactions init operation timeout. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan TransactionsInitTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    ///     Gets the transaction commit operation timeout. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan TransactionCommitTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    ///     Gets the transaction abort operation timeout. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan TransactionAbortTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
     ///     Gets the configured endpoints.
     /// </summary>
     public IValueReadOnlyCollection<KafkaProducerEndpointConfiguration> Endpoints { get; init; } = ValueReadOnlyCollection.Empty<KafkaProducerEndpointConfiguration>();
@@ -58,9 +73,16 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     /// </summary>
     internal bool ArePersistenceStatusReportsEnabled => AreDeliveryReportsEnabled;
 
+    /// <summary>
+    ///     Gets a value indicating whether a <see cref="TransactionalId" /> has been specified.
+    /// </summary>
+    internal bool IsTransactional => !string.IsNullOrEmpty(TransactionalId);
+
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
+        /* TODO: IMPORTANT: Must ensure unique TransactionalID? */
+
         if (Endpoints == null || Endpoints.Count == 0)
             throw new BrokerConfigurationException("At least one endpoint must be configured.");
 

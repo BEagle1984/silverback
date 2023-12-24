@@ -67,7 +67,8 @@ internal sealed class BuilderGenerator
             or "EnableSslCertificateVerification"
             or "EnableSaslOauthbearerUnsecureJwt"
             or "CheckCrcs"
-            or "EnableGaplessGuarantee";
+            or "EnableGaplessGuarantee"
+            or "TransactionalId";
 
     private void GenerateClassHeading()
     {

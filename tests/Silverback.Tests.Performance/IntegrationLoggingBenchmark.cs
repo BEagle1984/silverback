@@ -95,6 +95,7 @@ public class IntegrationLoggingBenchmark
                 },
                 producerEndpoint,
                 new TestProducer(),
+                new SilverbackContext(),
                 false,
                 new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
     }
@@ -169,8 +170,6 @@ public class IntegrationLoggingBenchmark
         public string Name => "producer1-name";
 
         public string DisplayName => "producer1";
-
-        public IBrokerClient Client { get; } = new TestClient();
 
         public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
 

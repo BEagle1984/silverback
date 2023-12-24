@@ -4,12 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Collections;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
@@ -20,45 +18,57 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 {
     private readonly KafkaClientsConfigurationActions _configurationActions;
 
-    private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
-
-    private readonly ISilverbackLoggerFactory _silverbackLoggerFactory;
-
     private readonly IProducerLogger<KafkaProducer> _producerLogger;
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
 
     private readonly IOutboundEnvelopeFactory _envelopeFactory;
 
+    private readonly IConfluentProducerWrapperFactory _confluentProducerWrapperFactory;
+
+    private readonly IKafkaTransactionalProducerCollection _transactionalProducers;
+
     public KafkaProducersInitializer(
         KafkaClientsConfigurationActions configurationActions,
-        IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
-        ISilverbackLoggerFactory silverbackLoggerFactory,
         IProducerLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
         IOutboundEnvelopeFactory envelopeFactory,
+        IConfluentProducerWrapperFactory confluentProducerWrapperFactory,
+        IKafkaTransactionalProducerCollection transactionalProducers,
         IServiceProvider serviceProvider,
         ISilverbackLogger<KafkaProducersInitializer> logger)
         : base(serviceProvider, logger)
     {
         _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
-        _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
-        _silverbackLoggerFactory = Check.NotNull(silverbackLoggerFactory, nameof(silverbackLoggerFactory));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
         _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
+        _confluentProducerWrapperFactory = Check.NotNull(confluentProducerWrapperFactory, nameof(confluentProducerWrapperFactory));
+        _transactionalProducers = Check.NotNull(transactionalProducers, nameof(transactionalProducers));
     }
 
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Lifecycle handled by the ProducerCollection")]
-    internal IReadOnlyCollection<KafkaProducer> InitializeProducers(string name, KafkaProducerConfiguration configuration, bool routing = true)
-    {
-        ConfluentProducerWrapper confluentProducerWrapper = new(
-            name, // TODO: Add suffix?
-            ServiceProvider.GetRequiredService<IConfluentProducerBuilder>(),
-            configuration,
-            _brokerClientCallbacksInvoker,
-            _silverbackLoggerFactory.CreateLogger<ConfluentProducerWrapper>());
+    internal IReadOnlyCollection<IProducer> InitializeProducers(string name, KafkaProducerConfiguration configuration, bool routing = true) =>
+        configuration.IsTransactional
+            ? InitializeTransactionalProducers(name, configuration, routing)
+            : InitializeNormalProducers(name, configuration, routing);
 
+    protected override void InitializeCore()
+    {
+        foreach (MergedAction<KafkaProducerConfigurationBuilder>? mergedAction in _configurationActions.ProducerConfigurationActions)
+        {
+            KafkaProducerConfigurationBuilder builder = new();
+            mergedAction.Action.Invoke(builder);
+            KafkaProducerConfiguration configuration = builder.Build();
+
+            InitializeProducers(mergedAction.Key, configuration);
+        }
+    }
+
+    private IReadOnlyCollection<IProducer> InitializeNormalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
+    {
+        // TODO: Append suffix to name?
+        IConfluentProducerWrapper confluentProducerWrapper = _confluentProducerWrapperFactory.Create(name, configuration);
         AddClient(confluentProducerWrapper);
 
         int i = 0;
@@ -81,22 +91,33 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
                 _producerLogger);
 
             AddProducer(producer, routing);
-
             producers.Add(producer);
         }
 
         return producers;
     }
 
-    protected override void InitializeCore()
+    private IReadOnlyCollection<IProducer> InitializeTransactionalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
     {
-        foreach (MergedAction<KafkaProducerConfigurationBuilder>? mergedAction in _configurationActions.ProducerConfigurationActions)
-        {
-            KafkaProducerConfigurationBuilder builder = new();
-            mergedAction.Action.Invoke(builder);
-            KafkaProducerConfiguration configuration = builder.Build();
+        int i = 0;
+        List<KafkaTransactionalProducer> producers = new();
 
-            InitializeProducers(mergedAction.Key, configuration);
+        foreach (KafkaProducerEndpointConfiguration endpointConfiguration in configuration.Endpoints)
+        {
+            KafkaProducerConfiguration trimmedConfiguration = configuration with
+            {
+                Endpoints = new[] { endpointConfiguration }.AsValueReadOnlyCollection()
+            };
+
+            KafkaTransactionalProducer producer = new(
+                configuration.Endpoints.Count > 0 ? $"{name}-{++i}" : name,
+                trimmedConfiguration,
+                _transactionalProducers);
+
+            AddProducer(producer, routing);
+            producers.Add(producer);
         }
+
+        return producers;
     }
 }

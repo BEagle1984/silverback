@@ -6,8 +6,7 @@ using Confluent.Kafka;
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
 /// <summary>
-///     A mocked implementation of <see cref="IConsumer{TKey,TValue}" /> from Confluent.Kafka that consumes
-///     from an <see cref="IInMemoryTopic" />.
+///     A mocked implementation of <see cref="IConsumer{TKey,TValue}" /> from Confluent.Kafka that consumes from an <see cref="IInMemoryTopic" />.
 /// </summary>
 public interface IMockedConfluentConsumer : IConsumer<byte[]?, byte[]?>
 {

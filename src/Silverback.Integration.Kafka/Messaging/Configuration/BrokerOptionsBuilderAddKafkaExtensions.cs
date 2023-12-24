@@ -52,16 +52,11 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddTransient<IBrokerClientsInitializer, KafkaProducersInitializer>()
             .AddTransient<IBrokerClientsInitializer, KafkaConsumersInitializer>()
             .AddTransient<KafkaProducersInitializer>()
+            .AddSingleton<IConfluentProducerWrapperFactory, ConfluentProducerWrapperFactory>()
+            .AddSingleton<IKafkaTransactionalProducerCollection, KafkaTransactionalProducerCollection>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaProducerEndpoint>, KafkaMovePolicyMessageEnricher>()
             .AddSingleton<IMovePolicyMessageEnricher<KafkaConsumerEndpoint>, KafkaMovePolicyMessageEnricher>()
-            .AddTransient<KafkaOffsetStoreScope>(
-                services =>
-                {
-                    if (!services.GetRequiredService<SilverbackContext>().TryGetKafkaOffsetStoreScope(out KafkaOffsetStoreScope? scope))
-                        throw new InvalidOperationException("No kafka offset store scope."); // TODO: review message
-
-                    return scope;
-                });
+            .AddTransient<KafkaOffsetStoreScope>(services => services.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope());
 
         AddChunkEnricher(brokerOptionsBuilder);
         AddBrokerLogEnrichers(brokerOptionsBuilder);

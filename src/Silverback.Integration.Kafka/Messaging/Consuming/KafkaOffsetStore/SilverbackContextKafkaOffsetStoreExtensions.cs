@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -10,12 +10,12 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 ///     Adds the Kafka offset store specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
 // TODO: Test?
-public static class SilverbackContextKafkaOffsetSToreExtensions
+public static class SilverbackContextKafkaOffsetStoreExtensions
 {
-    private const int OffsetStoreObjectTypeId = 1000;
+    private static readonly Guid OffsetStoreObjectTypeId = new("9d9795c6-4b91-43ee-b370-fa0f539a20f8");
 
     /// <summary>
-    ///     Stores the specified storage transaction.
+    ///     Sets the <see cref="KafkaOffsetStoreScope" /> to be used to store the offsets.
     /// </summary>
     /// <param name="context">
     ///     The <see cref="SilverbackContext" />.
@@ -24,31 +24,17 @@ public static class SilverbackContextKafkaOffsetSToreExtensions
     ///     The scope.
     /// </param>
     public static void SetKafkaOffsetStoreScope(this SilverbackContext context, KafkaOffsetStoreScope scope) =>
-        Check.NotNull(context, nameof(context)).SetObject(OffsetStoreObjectTypeId, scope);
+        Check.NotNull(context, nameof(context)).AddObject(OffsetStoreObjectTypeId, scope);
 
     /// <summary>
-    ///     Checks whether a storage transaction is set and returns it.
+    ///     Returns the <see cref="KafkaOffsetStoreScope" /> to be used to store the offsets.
     /// </summary>
     /// <param name="context">
     ///     The <see cref="SilverbackContext" />.
     /// </param>
-    /// <param name="scope">
-    ///     The scope.
-    /// </param>
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
-    public static bool TryGetKafkaOffsetStoreScope(
-        this SilverbackContext context,
-        [NotNullWhen(true)] out KafkaOffsetStoreScope? scope)
-    {
-        if (Check.NotNull(context, nameof(context)).TryGetObject(OffsetStoreObjectTypeId, out object? scopeObject))
-        {
-            scope = (KafkaOffsetStoreScope)scopeObject;
-            return true;
-        }
-
-        scope = null;
-        return false;
-    }
+    public static KafkaOffsetStoreScope GetKafkaOffsetStoreScope(this SilverbackContext context) =>
+        Check.NotNull(context, nameof(context)).GetObject<KafkaOffsetStoreScope>(OffsetStoreObjectTypeId);
 }

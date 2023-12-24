@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Confluent.Kafka;
 
@@ -50,10 +51,29 @@ public interface IInMemoryTopic
     /// <param name="message">
     ///     The message to be written.
     /// </param>
+    /// <param name="transactionalUniqueId">
+    ///     The transactional unique identifier.
+    /// </param>
     /// <returns>
     ///     The <see cref="Offset" /> at which the message was written.
     /// </returns>
-    Offset Push(int partition, Message<byte[]?, byte[]?> message);
+    Offset Push(int partition, Message<byte[]?, byte[]?> message, Guid transactionalUniqueId);
+
+    /// <summary>
+    ///     Commits the transaction.
+    /// </summary>
+    /// <param name="transactionalUniqueId">
+    ///     The transactional unique identifier.
+    /// </param>
+    void CommitTransaction(Guid transactionalUniqueId);
+
+    /// <summary>
+    ///     Aborts the transaction.
+    /// </summary>
+    /// <param name="transactionalUniqueId">
+    ///     The transactional unique identifier.
+    /// </param>
+    void AbortTransaction(Guid transactionalUniqueId);
 
     /// <summary>
     ///     Gets the <see cref="Offset" /> of the first message in the specified partition.

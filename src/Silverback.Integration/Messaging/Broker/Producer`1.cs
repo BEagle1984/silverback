@@ -80,7 +80,9 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.DisplayName" />
     public string DisplayName => Name;
 
-    /// <inheritdoc cref="IProducer.Client" />
+    /// <summary>
+    ///     Gets the related <see cref="IBrokerClient" />.
+    /// </summary>
     public IBrokerClient Client { get; }
 
     /// <inheritdoc cref="IProducer.EndpointConfiguration" />
@@ -316,16 +318,15 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
             });
 
     /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
-    public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
+    public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null) =>
-        await ProduceAsync(
-                _envelopeFactory.CreateEnvelope(
-                    message,
-                    headers,
-                    EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-                    this))
-            .ConfigureAwait(false);
+        ProduceAsync(
+            _envelopeFactory.CreateEnvelope(
+                message,
+                headers,
+                EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
+                this));
 
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
     public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope)
@@ -375,6 +376,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
             onError);
 
     /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    // TODO: Get rid of closure allocations when possible
     public async ValueTask ProduceAsync(
         IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
@@ -750,7 +752,6 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
     protected virtual void Dispose(bool disposing)
     {
         if (!disposing || _isDisposed)
@@ -764,9 +765,10 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
         ProducerBehaviorHandler finalAction,
         int stepIndex = 0)
     {
-        if (_behaviors.Count <= 0 || stepIndex >= _behaviors.Count)
+        if (stepIndex >= _behaviors.Count)
             return finalAction(context);
 
+        // TODO: Can get rid of this delegate allocation?
         return _behaviors[stepIndex].HandleAsync(
             context,
             nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1));

@@ -14,6 +14,11 @@ namespace Silverback.Messaging.Broker.Kafka;
 public interface IConfluentConsumerWrapper : IBrokerClient
 {
     /// <summary>
+    ///     Gets the consumer configuration.
+    /// </summary>
+    KafkaConsumerConfiguration Configuration { get; }
+
+    /// <summary>
     ///     Gets the list of partitions currently assigned to this consumer.
     /// </summary>
     IReadOnlyList<TopicPartition> Assignment { get; }

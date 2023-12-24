@@ -12,6 +12,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Storage;
 using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
@@ -114,7 +115,8 @@ public class OutboxInMemoryFixture : KafkaFixture
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
 
-        publisher.EnlistTransaction(transaction);
+        await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
+
         await publisher.PublishAsync(new TestEventOne());
         await transaction.RollbackAsync();
         await connection.CloseAsync();

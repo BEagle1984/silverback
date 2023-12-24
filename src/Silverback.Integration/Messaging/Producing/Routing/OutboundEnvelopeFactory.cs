@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.Routing;
 
@@ -21,19 +22,22 @@ internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
-        IProducer producer) =>
+        IProducer producer,
+        SilverbackContext? context = null) =>
         message == null
             ? new OutboundEnvelope(
                 message,
                 headers,
-                endpoint,
-                producer,
+                Check.NotNull(endpoint, nameof(endpoint)),
+                Check.NotNull(producer, nameof(producer)),
+                context,
                 _routingConfiguration.PublishOutboundMessagesToInternalBus)
             : (IOutboundEnvelope)Activator.CreateInstance(
                 typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                 message,
                 headers,
-                endpoint,
-                producer,
+                Check.NotNull(endpoint, nameof(endpoint)),
+                Check.NotNull(producer, nameof(producer)),
+                context,
                 _routingConfiguration.PublishOutboundMessagesToInternalBus)!;
 }

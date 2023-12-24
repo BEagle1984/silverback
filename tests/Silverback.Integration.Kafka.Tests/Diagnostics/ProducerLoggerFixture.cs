@@ -49,6 +49,7 @@ public class ProducerLoggerFixture
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
+            null,
             true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 

@@ -14,7 +14,19 @@ namespace Silverback.Storage.Relational;
 public static class PublisherStorageExtensions
 {
     /// <summary>
-    ///     Specifies an existing <see cref="DbTransaction" /> to be used for database operations.
+    ///     Specifies the transaction to be used for storage operations.
+    /// </summary>
+    /// <param name="publisher">
+    ///     The publisher.
+    /// </param>
+    /// <param name="transaction">
+    ///     The transaction to be used.
+    /// </param>
+    public static void EnlistTransaction(this IPublisherBase publisher, IStorageTransaction transaction) =>
+        Check.NotNull(publisher, nameof(publisher)).Context.EnlistTransaction(transaction);
+
+    /// <summary>
+    ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
     /// </summary>
     /// <param name="publisher">
     ///     The publisher.
@@ -22,6 +34,9 @@ public static class PublisherStorageExtensions
     /// <param name="dbTransaction">
     ///     The transaction to be used.
     /// </param>
-    public static void EnlistTransaction(this IPublisherBase publisher, DbTransaction dbTransaction) =>
-        Check.NotNull(publisher, nameof(publisher)).Context.EnlistTransaction(dbTransaction);
+    /// <returns>
+    ///     The <see cref="IStorageTransaction" />.
+    /// </returns>
+    public static IStorageTransaction EnlistDbTransaction(this IPublisherBase publisher, DbTransaction dbTransaction) =>
+        Check.NotNull(publisher, nameof(publisher)).Context.EnlistDbTransaction(dbTransaction);
 }
