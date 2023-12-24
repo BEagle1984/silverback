@@ -45,7 +45,8 @@ public class ProduceBehaviorFixture
             {
                 Strategy = testProduceStrategy
             }.GetDefaultEndpoint(),
-            Substitute.For<IProducer>());
+            Substitute.For<IProducer>(),
+            new SilverbackContext());
 
         await behavior.HandleAsync(
             outboundEnvelope,

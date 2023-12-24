@@ -551,8 +551,6 @@ public class IntegrationLoggerExtensionsFixture
 
         public string DisplayName => "producer1";
 
-        public IBrokerClient Client { get; } = new TestClient();
-
         public ProducerEndpointConfiguration EndpointConfiguration { get; } = TestProducerEndpointConfiguration.GetDefault();
 
         public IBrokerMessageIdentifier Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();

@@ -6,9 +6,8 @@ using Confluent.Kafka;
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
 /// <summary>
-///     A mocked implementation of <see cref="IProducer{TKey,TValue}" /> from Confluent.Kafka that produces
-///     to an <see cref="IInMemoryTopic" />.
+///     A mocked implementation of <see cref="IProducer{TKey,TValue}" /> from Confluent.Kafka that produces to an <see cref="IInMemoryTopic" />.
 /// </summary>
-internal interface IMockedConfluentProducer : IProducer<byte[]?, byte[]?>
+public interface IMockedConfluentProducer : IProducer<byte[]?, byte[]?>
 {
 }

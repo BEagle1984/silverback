@@ -31,6 +31,8 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
 
     private readonly KafkaProducer _producer;
 
+    private readonly IConfluentProducerWrapper _transactionalProducerWrapper;
+
     public KafkaLoggerExtensionsFixture()
     {
         _loggerSubstitute = new LoggerSubstitute<KafkaLoggerExtensionsFixture>(LogLevel.Trace);
@@ -70,6 +72,14 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             Substitute.For<IOutboundEnvelopeFactory>(),
             Substitute.For<IServiceProvider>(),
             Substitute.For<IProducerLogger<KafkaProducer>>());
+
+        _transactionalProducerWrapper = Substitute.For<IConfluentProducerWrapper>();
+        _transactionalProducerWrapper.DisplayName.Returns("producer1");
+        _transactionalProducerWrapper.Configuration.Returns(
+            new KafkaProducerConfiguration()
+            {
+                TransactionalId = "transactional1"
+            });
     }
 
     [Fact]
@@ -341,6 +351,42 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             "-> Enable auto recovery to allow Silverback to automatically try to recover " +
             "(EnableAutoRecovery=true in the consumer configuration). | consumerName: consumer1";
         _loggerSubstitute.Received(LogLevel.Error, null, expectedMessage, 2061);
+    }
+
+    [Fact]
+    public void LogTransactionsInitialized_ShouldLog()
+    {
+        _silverbackLogger.LogTransactionsInitialized(_transactionalProducerWrapper);
+
+        string expectedMessage = "Transactions initialized. | producerName: producer1, transactionalId: transactional1";
+        _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 2070);
+    }
+
+    [Fact]
+    public void LogTransactionBegan_ShouldLog()
+    {
+        _silverbackLogger.LogTransactionBegan(_transactionalProducerWrapper);
+
+        string expectedMessage = "Transaction began. | producerName: producer1, transactionalId: transactional1";
+        _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 2071);
+    }
+
+    [Fact]
+    public void LogTransactionCommitted_ShouldLog()
+    {
+        _silverbackLogger.LogTransactionCommitted(_transactionalProducerWrapper);
+
+        string expectedMessage = "Transaction committed. | producerName: producer1, transactionalId: transactional1";
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 2072);
+    }
+
+    [Fact]
+    public void LogTransactionAborted_ShouldLog()
+    {
+        _silverbackLogger.LogTransactionAborted(_transactionalProducerWrapper);
+
+        string expectedMessage = "Transaction aborted. | producerName: producer1, transactionalId: transactional1";
+        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 2073);
     }
 
     [Fact]

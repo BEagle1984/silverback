@@ -26,11 +26,6 @@ public interface IProducer
     string DisplayName { get; }
 
     /// <summary>
-    ///     Gets the related <see cref="IBrokerClient" />.
-    /// </summary>
-    IBrokerClient Client { get; }
-
-    /// <summary>
     ///     Gets the endpoint configuration.
     /// </summary>
     ProducerEndpointConfiguration EndpointConfiguration { get; }

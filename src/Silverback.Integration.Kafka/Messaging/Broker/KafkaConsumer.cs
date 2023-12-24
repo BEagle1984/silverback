@@ -121,7 +121,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <param name="partitions">
     ///     The list of <see cref="TopicPartition" /> to be paused.
     /// </param>
-    // TODO: Test
+    /* TODO: Test */
     public void Pause(IEnumerable<TopicPartition> partitions) => Client.Pause(partitions);
 
     /// <summary>
@@ -130,7 +130,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <param name="partitions">
     ///     The list of <see cref="TopicPartition" /> to be paused.
     /// </param>
-    // TODO: Test
+    /* TODO: Test */
     public void Resume(IEnumerable<TopicPartition> partitions) => Client.Resume(partitions);
 
     /// <summary>
@@ -139,7 +139,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     /// <param name="topicPartitionOffset">
     ///     The offset.
     /// </param>
-    // TODO: Test
+    /* TODO: Test */
     public void Seek(TopicPartitionOffset topicPartitionOffset) => Client.Seek(topicPartitionOffset);
 
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)

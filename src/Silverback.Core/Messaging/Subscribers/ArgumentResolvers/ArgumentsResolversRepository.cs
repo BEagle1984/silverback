@@ -30,14 +30,10 @@ internal sealed class ArgumentsResolversRepository
     public IEnumerable<IAdditionalArgumentResolver> GetAdditionalArgumentsResolvers(SubscribedMethod method) =>
         method.Parameters.Skip(1).Select(parameterInfo => GetAdditionalArgumentResolver(parameterInfo, method.MethodInfo));
 
-    private IMessageArgumentResolver GetMessageArgumentResolver(
-        ParameterInfo parameterInfo,
-        MethodInfo methodInfo) =>
+    private IMessageArgumentResolver GetMessageArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
         GetArgumentResolver<IMessageArgumentResolver>(parameterInfo, methodInfo);
 
-    private IAdditionalArgumentResolver GetAdditionalArgumentResolver(
-        ParameterInfo parameterInfo,
-        MethodInfo methodInfo) =>
+    private IAdditionalArgumentResolver GetAdditionalArgumentResolver(ParameterInfo parameterInfo, MethodInfo methodInfo) =>
         GetArgumentResolver<IAdditionalArgumentResolver>(parameterInfo, methodInfo);
 
     private TResolver GetArgumentResolver<TResolver>(ParameterInfo parameterInfo, MethodInfo methodInfo)

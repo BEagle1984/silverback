@@ -46,6 +46,7 @@ public static class SilverbackBuilderKafkaTestingExtensions
             .AddTransient<IConfluentAdminClientBuilder, MockedConfluentAdminClientBuilder>()
             .AddSingleton<IMockedConsumerGroupsCollection, MockedConsumerGroupsCollection>()
             .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
+            .AddSingleton<IInMemoryTransactionManager, InMemoryTransactionManager>()
             .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 
         MockedKafkaOptionsBuilder optionsBuilder = new(builder.Services);

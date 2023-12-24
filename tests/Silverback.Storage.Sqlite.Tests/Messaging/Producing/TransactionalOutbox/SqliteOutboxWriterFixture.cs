@@ -12,6 +12,7 @@ using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
+using Silverback.Storage.Relational;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -82,15 +83,17 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
 
         SqliteConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
-        DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
-        SilverbackContext context = new();
-        context.EnlistTransaction(transaction);
 
-        // Add and rollback
-        await outboxWriter.AddAsync(
-            new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint),
-            context);
-        await transaction.RollbackAsync();
+        SilverbackContext context = new();
+
+        await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
+        {
+            await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction);
+
+            // Add and rollback
+            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint), context);
+            await transaction.RollbackAsync();
+        }
 
         (await _outboxReader.GetAsync(10)).Should().HaveCount(3);
 
@@ -102,19 +105,15 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
 
         // Begin new transaction, add and commit
-        transaction = await connection.BeginTransactionAsync();
-        context.EnlistTransaction(transaction);
+        await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
+        {
+            await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction);
 
-        await outboxWriter.AddAsync(
-            new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint),
-            context);
-        await outboxWriter.AddAsync(
-            new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint),
-            context);
-        await outboxWriter.AddAsync(
-            new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint),
-            context);
-        await transaction.CommitAsync();
+            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x99 }, null, Endpoint), context);
+            await transaction.CommitAsync();
+        }
 
         (await _outboxReader.GetAsync(10)).Should().HaveCount(7);
     }

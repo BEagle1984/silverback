@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
+using Silverback.Storage;
 using Silverback.Storage.Relational;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Database;
@@ -50,7 +51,8 @@ public class TestDbContext : DbContext
             mustCommit = true;
         }
 
-        _publisher.EnlistTransaction(transaction);
+        using IStorageTransaction storageTransaction = _publisher.EnlistDbTransaction(transaction);
+
         _eventsPublisher.PublishDomainEvents();
         int result = base.SaveChanges(acceptAllChangesOnSuccess);
 
@@ -73,7 +75,8 @@ public class TestDbContext : DbContext
             mustCommit = true;
         }
 
-        _publisher.EnlistTransaction(transaction);
+        await using IStorageTransaction storageTransaction = _publisher.EnlistDbTransaction(transaction);
+
         await _eventsPublisher.PublishDomainEventsAsync();
         int result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 

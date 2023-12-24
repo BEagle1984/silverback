@@ -16,7 +16,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 {
     private readonly IConfluentProducerBuilder _producerBuilder;
 
-    private readonly KafkaProducerConfiguration _configuration;
+    private readonly ISilverbackLogger<ConfluentProducerWrapper> _logger;
 
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IProducer<byte[]?, byte[]?>? _confluentProducer;
@@ -29,29 +29,28 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         ISilverbackLogger<ConfluentProducerWrapper> logger)
         : base(name, logger)
     {
-        _configuration = Check.NotNull(configuration, nameof(configuration));
+        Configuration = Check.NotNull(configuration, nameof(configuration));
         Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
+        _logger = Check.NotNull(logger, nameof(logger));
 
         _producerBuilder = Check.NotNull(producerBuilder, nameof(producerBuilder))
             .SetConfiguration(configuration.GetConfluentClientConfig())
             .SetEventsHandlers(this, brokerClientCallbacksInvoker, Check.NotNull(logger, nameof(logger)));
     }
 
+    public KafkaProducerConfiguration Configuration { get; }
+
     public void Produce(TopicPartition topicPartition, Message<byte[]?, byte[]?> message, Action<DeliveryReport<byte[]?, byte[]?>> deliveryHandler)
     {
-        if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The producer is not connected.");
-
-        if (_confluentProducer == null)
-            throw new InvalidOperationException("The underlying producer is not initialized.");
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
 
         try
         {
-            _confluentProducer.Produce(topicPartition, message, deliveryHandler);
+            confluentProducer.Produce(topicPartition, message, deliveryHandler);
         }
         catch (KafkaException)
         {
-            if (_configuration.DisposeOnException)
+            if (Configuration.DisposeOnException)
                 DisposeConfluentProducer();
 
             throw;
@@ -60,19 +59,87 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
 
     public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(TopicPartition topicPartition, Message<byte[]?, byte[]?> message)
     {
-        if (Status != ClientStatus.Initialized)
-            throw new InvalidOperationException("The producer is not connected.");
-
-        if (_confluentProducer == null)
-            throw new InvalidOperationException("The underlying producer is not initialized.");
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
 
         try
         {
-            return _confluentProducer.ProduceAsync(topicPartition, message);
+            return confluentProducer.ProduceAsync(topicPartition, message);
         }
         catch (KafkaException)
         {
-            if (_configuration.DisposeOnException)
+            if (Configuration.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
+    }
+
+    public void InitTransactions()
+    {
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
+
+        try
+        {
+            confluentProducer.InitTransactions(Configuration.TransactionsInitTimeout);
+            _logger.LogTransactionsInitialized(this);
+        }
+        catch (KafkaException)
+        {
+            if (Configuration.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
+    }
+
+    public void BeginTransaction()
+    {
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
+
+        try
+        {
+            confluentProducer.BeginTransaction();
+            _logger.LogTransactionBegan(this);
+        }
+        catch (KafkaException)
+        {
+            if (Configuration.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
+    }
+
+    public void CommitTransaction()
+    {
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
+
+        try
+        {
+            confluentProducer.CommitTransaction(Configuration.TransactionCommitTimeout);
+            _logger.LogTransactionCommitted(this);
+        }
+        catch (KafkaException)
+        {
+            if (Configuration.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
+    }
+
+    public void AbortTransaction()
+    {
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
+
+        try
+        {
+            confluentProducer.AbortTransaction(Configuration.TransactionAbortTimeout);
+            _logger.LogTransactionAborted(this);
+        }
+        catch (KafkaException)
+        {
+            if (Configuration.DisposeOnException)
                 DisposeConfluentProducer();
 
             throw;
@@ -91,6 +158,17 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         DisposeConfluentProducer();
 
         return default;
+    }
+
+    private IProducer<byte[]?, byte[]?> EnsureConnected()
+    {
+        if (Status != ClientStatus.Initialized)
+            throw new InvalidOperationException("The producer is not connected.");
+
+        if (_confluentProducer == null)
+            throw new InvalidOperationException("The underlying producer is not initialized.");
+
+        return _confluentProducer;
     }
 
     private void DisposeConfluentProducer()

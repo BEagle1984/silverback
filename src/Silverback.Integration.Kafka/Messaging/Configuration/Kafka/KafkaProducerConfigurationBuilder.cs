@@ -22,6 +22,12 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
 
     private TimeSpan? _flushTimeout;
 
+    private TimeSpan? _transactionsInitTimeout;
+
+    private TimeSpan? _transactionCommitTimeout;
+
+    private TimeSpan? _transactionAbortTimeout;
+
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaProducerConfigurationBuilder This => this;
 
@@ -173,6 +179,51 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Specifies the transactions init operation timeout. The default is 30 seconds.
+    /// </summary>
+    /// <param name="timeout">
+    ///     The transactions init operation timeout.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder WithTransactionsInitTimeout(TimeSpan timeout)
+    {
+        _transactionsInitTimeout = timeout;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the transaction commit operation timeout. The default is 30 seconds.
+    /// </summary>
+    /// <param name="timeout">
+    ///     The transaction commit operation timeout.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder WithTransactionCommitTimeout(TimeSpan timeout)
+    {
+        _transactionCommitTimeout = timeout;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the transaction abort operation timeout. The default is 30 seconds.
+    /// </summary>
+    /// <param name="timeout">
+    ///     The transaction abort operation timeout.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder WithTransactionAbortTimeout(TimeSpan timeout)
+    {
+        _transactionAbortTimeout = timeout;
+        return this;
+    }
+
+    /// <summary>
     ///     Enable notification of delivery reports.
     /// </summary>
     /// <returns>
@@ -224,6 +275,56 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Specifies that an error that could result in a gap in the produced message series when a batch of messages fails, must raise a
+    ///     fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref="KafkaProducerConfiguration.MessageTimeoutMs" />
+    ///     are not covered by this guarantee. Requires <see cref="EnableIdempotence" />=true.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder EnableGaplessGuarantee()
+    {
+        WithEnableGaplessGuarantee(true);
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the gapless guarantee.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder DisableGaplessGuarantee()
+    {
+        WithEnableGaplessGuarantee(false);
+        return this;
+    }
+
+    /// <summary>
+    ///     Enables the Kafka transactions and sets the identifier to be used to identify the same transactional producer instance across
+    ///     process restarts. This allows the producer to guarantee that transactions corresponding to earlier instances of the same producer
+    ///     have been finalized prior to starting any new transaction, and that any zombie instances are fenced off.
+    ///     Requires broker version &gt;= 0.11.0.
+    /// </summary>
+    /// <param name="transactionalId">
+    ///     The identifier to be used to identify the same transactional producer instance across process restarts.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder EnableTransactions(string transactionalId) =>
+        WithTransactionalId(Check.NotNullOrEmpty(transactionalId, nameof(transactionalId)));
+
+    /// <summary>
+    ///     Disables the Kafka transactions. The producer is limited to idempotent delivery (see <see cref="EnableIdempotence" />).
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaProducerConfigurationBuilder DisableTransactions() =>
+        WithTransactionalId(null);
+
+    /// <summary>
     ///     Builds the <see cref="KafkaProducerConfiguration" /> instance.
     /// </summary>
     /// <returns>
@@ -238,6 +339,9 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
             ThrowIfNotAcknowledged = _throwIfNotAcknowledged ?? configuration.ThrowIfNotAcknowledged,
             DisposeOnException = _disposeOnException ?? configuration.DisposeOnException,
             FlushTimeout = _flushTimeout ?? configuration.FlushTimeout,
+            TransactionsInitTimeout = _transactionsInitTimeout ?? configuration.TransactionsInitTimeout,
+            TransactionCommitTimeout = _transactionCommitTimeout ?? configuration.TransactionCommitTimeout,
+            TransactionAbortTimeout = _transactionAbortTimeout ?? configuration.TransactionAbortTimeout,
             Endpoints = _endpoints.Values.AsValueReadOnlyCollection()
         };
 
@@ -305,21 +409,6 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     public partial KafkaProducerConfigurationBuilder WithCompressionLevel(int? compressionLevel);
 
     /// <summary>
-    ///     Sets the identifier to be used to identify the same transactional producer instance across process restarts. This is required to
-    ///     enable the transactional producer and it allows the producer to guarantee that transactions corresponding to earlier instances of
-    ///     the same producer have been finalized prior to starting any new transaction, and that any zombie instances are fenced off. If no
-    ///     <see cref="KafkaProducerConfiguration.TransactionalId" /> is provided, then the producer is limited to idempotent delivery (see
-    ///     <see cref="EnableIdempotence" />). Requires broker version &gt;= 0.11.0.
-    /// </summary>
-    /// <param name="transactionalId">
-    ///     The identifier to be used to identify the same transactional producer instance across process restarts.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public partial KafkaProducerConfigurationBuilder WithTransactionalId(string? transactionalId);
-
-    /// <summary>
     ///     Sets the maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction status update from
     ///     the producer before proactively aborting the ongoing transaction. If this value is larger than the <c>transaction.max.timeout.ms</c>
     ///     setting in the broker, the init transaction call will fail with ERR_INVALID_TRANSACTION_TIMEOUT. The transaction timeout automatically
@@ -335,32 +424,6 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public partial KafkaProducerConfigurationBuilder WithTransactionTimeoutMs(int? transactionTimeoutMs);
-
-    /// <summary>
-    ///     Specifies that an error that could result in a gap in the produced message series when a batch of messages fails, must raise a
-    ///     fatal error (ERR_GAPLESS_GUARANTEE) and stop the producer. Messages failing due to <see cref="KafkaProducerConfiguration.MessageTimeoutMs" />
-    ///     are not covered by this guarantee. Requires <see cref="EnableIdempotence" />=true.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaProducerConfigurationBuilder EnableGaplessGuarantee()
-    {
-        WithEnableGaplessGuarantee(true);
-        return this;
-    }
-
-    /// <summary>
-    ///     Disables the gapless guarantee.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaProducerConfigurationBuilder DisableGaplessGuarantee()
-    {
-        WithEnableGaplessGuarantee(false);
-        return this;
-    }
 
     /// <summary>
     ///     Sets the maximum number of messages allowed on the producer queue. This queue is shared by all topics and partitions.

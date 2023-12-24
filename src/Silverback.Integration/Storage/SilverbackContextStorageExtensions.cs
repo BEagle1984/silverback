@@ -1,7 +1,8 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Data.Common;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Util;
 
 namespace Silverback.Storage;
@@ -12,10 +13,10 @@ namespace Silverback.Storage;
 // TODO: Test?
 public static class SilverbackContextStorageExtensions
 {
-    private const int StorageTransactionObjectTypeId = 1;
+    private static readonly Guid StorageTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");
 
     /// <summary>
-    ///     Specifies an existing <see cref="DbTransaction" /> to be used for database operations.
+    ///     Specifies the transaction to be used for storage operations.
     /// </summary>
     /// <param name="context">
     ///     The <see cref="SilverbackContext" />.
@@ -23,8 +24,8 @@ public static class SilverbackContextStorageExtensions
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
-    public static void EnlistTransaction(this SilverbackContext context, object transaction) =>
-        Check.NotNull(context, nameof(context)).SetObject(StorageTransactionObjectTypeId, transaction);
+    public static void EnlistTransaction(this SilverbackContext context, IStorageTransaction transaction) =>
+        Check.NotNull(context, nameof(context)).AddObject(StorageTransactionObjectTypeId, transaction);
 
     /// <summary>
     ///     Checks whether a storage transaction is set and returns it.
@@ -38,6 +39,9 @@ public static class SilverbackContextStorageExtensions
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
-    public static bool TryGetStorageTransaction(this SilverbackContext context, out object? transaction) =>
+    public static bool TryGetStorageTransaction(this SilverbackContext context, [NotNullWhen(true)] out IStorageTransaction? transaction) =>
         Check.NotNull(context, nameof(context)).TryGetObject(StorageTransactionObjectTypeId, out transaction);
+
+    internal static void RemoveTransaction(this SilverbackContext context) =>
+        Check.NotNull(context, nameof(context)).RemoveObject(StorageTransactionObjectTypeId);
 }

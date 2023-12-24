@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>$(CurrentLatestFramework)</TargetFramework>
+    <RootNamespace>Silverback.Samples.Kafka.TransactionalProducer.Consumer</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionalProducer.Common\TransactionalProducer.Common.csproj" />
+  </ItemGroup>
+
+</Project>

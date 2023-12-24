@@ -103,6 +103,7 @@ public class ChunkSequenceWriterTests
                 }
             }.GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
+            new SilverbackContext(),
             true);
 
         ChunkSequenceWriter writer = new(enricherFactory);

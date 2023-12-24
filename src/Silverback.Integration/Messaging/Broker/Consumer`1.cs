@@ -467,9 +467,10 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
     {
-        if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
+        if (stepIndex >= _behaviors.Count)
             return ValueTaskFactory.CompletedTask;
 
+        // TODO: Can get rid of this delegate allocation?
         return _behaviors[stepIndex].HandleAsync(
             context,
             nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1));

@@ -80,6 +80,7 @@ public class OutboundRouterBehaviorFixture
             publisher,
             producers,
             new OutboundEnvelopeFactory(outboundRoutingConfiguration),
+            new SilverbackContext(),
             Substitute.For<IServiceProvider>());
 
         int nextBehaviorCalls = 0;

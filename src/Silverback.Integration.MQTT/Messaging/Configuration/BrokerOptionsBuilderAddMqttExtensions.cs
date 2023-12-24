@@ -34,6 +34,7 @@ public static class BrokerOptionsBuilderAddMqttExtensions
             .Services
             .AddScoped<MqttClientsConfigurationActions>()
             .AddTransient<IMqttNetClientFactory, MqttNetClientFactory>()
+            .AddTransient<IMqttClientWrapperFactory, MqttClientWrapperFactory>()
             .AddTransient<IBrokerClientsInitializer, MqttClientsInitializer>()
             .AddTransient<MqttClientsInitializer>()
             .AddSingleton<IMqttNetLogger, DefaultMqttNetLogger>();

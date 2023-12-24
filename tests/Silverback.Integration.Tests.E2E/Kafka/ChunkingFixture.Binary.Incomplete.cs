@@ -86,8 +86,8 @@ public partial class ChunkingFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
     }
 
-    [Fact]
     // TODO: Check flaky test
+    [Fact]
     public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
@@ -224,6 +224,7 @@ public partial class ChunkingFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
     }
 
+    // TODO: Check flaky test (CI)
     [Fact]
     public async Task Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage()
     {

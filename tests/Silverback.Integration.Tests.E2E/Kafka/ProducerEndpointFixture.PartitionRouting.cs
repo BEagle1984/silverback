@@ -42,11 +42,11 @@ public partial class ProducerEndpointFixture
             await publisher.PublishAsync(new TestEventOne());
         }
 
-        DefaultTopic.Partitions[0].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[1].Messages.Count.Should().Be(5);
-        DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[3].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[4].Messages.Count.Should().Be(0);
+        DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(5);
+        DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
 
         for (int i = 1; i <= 3; i++)
         {
@@ -54,11 +54,11 @@ public partial class ProducerEndpointFixture
             await publisher.PublishAsync(new TestEventTwo());
         }
 
-        DefaultTopic.Partitions[0].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[1].Messages.Count.Should().Be(8);
-        DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[3].Messages.Count.Should().Be(3);
-        DefaultTopic.Partitions[4].Messages.Count.Should().Be(0);
+        DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(8);
+        DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(3);
+        DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
     }
 
     [Fact]
@@ -86,11 +86,11 @@ public partial class ProducerEndpointFixture
         await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
         await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
-        DefaultTopic.Partitions[0].Messages.Count.Should().Be(2);
-        DefaultTopic.Partitions[1].Messages.Count.Should().Be(1);
-        DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[3].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[4].Messages.Count.Should().Be(2);
+        DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(2);
+        DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(1);
+        DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(2);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public partial class ProducerEndpointFixture
         await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "4" });
         await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "5" });
 
-        DefaultTopic.Partitions.Where(partition => partition.Messages.Count >= 1).Should().HaveCountGreaterThan(1);
+        DefaultTopic.Partitions.Where(partition => partition.TotalMessagesCount >= 1).Should().HaveCountGreaterThan(1);
     }
 
     [Fact]
@@ -148,10 +148,10 @@ public partial class ProducerEndpointFixture
         await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
         await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
-        DefaultTopic.Partitions[0].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[1].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
-        DefaultTopic.Partitions[3].Messages.Count.Should().Be(5);
-        DefaultTopic.Partitions[4].Messages.Count.Should().Be(0);
+        DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+        DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(5);
+        DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
     }
 }

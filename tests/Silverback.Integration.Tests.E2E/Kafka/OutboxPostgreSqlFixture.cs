@@ -122,7 +122,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
             IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            publisher.EnlistTransaction(transaction);
+            await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {
@@ -140,7 +140,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
             IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            publisher.EnlistTransaction(transaction);
+            await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {

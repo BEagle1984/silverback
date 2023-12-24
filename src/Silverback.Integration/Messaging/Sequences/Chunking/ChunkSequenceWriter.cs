@@ -113,6 +113,7 @@ public class ChunkSequenceWriter : ISequenceWriter
             originalEnvelope.Headers,
             originalEnvelope.Endpoint,
             originalEnvelope.Producer,
+            originalEnvelope.Context,
             originalEnvelope.AutoUnwrap)
         {
             RawMessage = new MemoryStream(rawContent)

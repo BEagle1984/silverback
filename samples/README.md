@@ -51,6 +51,15 @@ Produce and consume messages serialized as Avro using the schema registry.
     1. `dotnet run --project ./samples/Kafka/Avro.Consumer/.`
 1. Observe the console output while the messages are produced and consumed
 
+### Transactional producer
+
+Produce messages leveraging Kafka transactions
+
+1. Run the two applications
+    1. `dotnet run --project ./samples/Kafka/TransactionalProducer.Producer/.`
+    1. `dotnet run --project ./samples/Kafka/TransactionalProducer.Consumer/.`
+1. Observe the console output while the messages are produced and consumed
+
 ## MQTT
 
 ### Basic

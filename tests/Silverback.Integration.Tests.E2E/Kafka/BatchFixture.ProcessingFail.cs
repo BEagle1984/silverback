@@ -128,6 +128,7 @@ public partial class BatchFixture
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
     }
 
+    // TODO: Check flaky test (CI)
     [Fact]
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWithIncompatibleSubscriber()
     {

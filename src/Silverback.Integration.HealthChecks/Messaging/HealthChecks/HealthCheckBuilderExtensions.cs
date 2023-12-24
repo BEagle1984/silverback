@@ -14,46 +14,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 #pragma warning restore IDE0130
 
 /// <summary>
-///     Adds methods such as <see cref="AddProducersCheck" />, <see cref="AddConsumersCheck" /> and <see cref="AddOutboxCheck" /> to the
+///     Adds methods such as <see cref="AddConsumersCheck" /> and <see cref="AddOutboxCheck" /> to the
 ///     <see cref="IHealthChecksBuilder" />.
 /// </summary>
 public static class HealthCheckBuilderExtensions
 {
-    /// <summary>
-    ///     Adds a health check that sends a ping message through all the configured producers.
-    /// </summary>
-    /// <param name="builder">
-    ///     The <see cref="IHealthChecksBuilder" />.
-    /// </param>
-    /// <param name="name">
-    ///     The health check name. The default is "Producers".
-    /// </param>
-    /// <param name="failureStatus">
-    ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
-    ///     default is <see cref="HealthStatus.Unhealthy" />.
-    /// </param>
-    /// <param name="tags">
-    ///     An optional list of tags that can be used for filtering health checks.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public static IHealthChecksBuilder AddProducersCheck(
-        this IHealthChecksBuilder builder,
-        string name = "Producers",
-        HealthStatus? failureStatus = default,
-        IEnumerable<string>? tags = default)
-    {
-        Check.NotNull(builder, nameof(builder));
-
-        builder.Services.AddScoped<IProducersHealthCheckService, ProducersHealthCheckService>();
-
-        return builder.Add(new HealthCheckRegistration(name, CreateService, failureStatus, tags));
-
-        static IHealthCheck CreateService(IServiceProvider serviceProvider) =>
-            new ProducersHealthCheck(serviceProvider.GetRequiredService<IProducersHealthCheckService>());
-    }
-
     /// <summary>
     ///     Adds a health check that monitors the outbox, verifying that the messages are being processed.
     /// </summary>

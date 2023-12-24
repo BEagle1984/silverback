@@ -27,6 +27,9 @@ public interface IOutboundEnvelopeFactory
     /// <param name="producer">
     ///     The producer to be used to produce this message.
     /// </param>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" />.
+    /// </param>
     /// <returns>
     ///     The <see cref="IOutboundEnvelope" /> instance.
     /// </returns>
@@ -34,5 +37,6 @@ public interface IOutboundEnvelopeFactory
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
-        IProducer producer);
+        IProducer producer,
+        SilverbackContext? context = null);
 }

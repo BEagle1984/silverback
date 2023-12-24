@@ -28,11 +28,9 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
 
     private Action<IConsumer<byte[]?, byte[]?>, Error>? _errorHandler;
 
-    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
-        _partitionsAssignedHandler;
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>? _partitionsAssignedHandler;
 
-    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
-        _partitionsRevokedHandler;
+    private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>? _partitionsRevokedHandler;
 
     private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
 

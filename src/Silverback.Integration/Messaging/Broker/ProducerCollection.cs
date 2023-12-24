@@ -14,9 +14,11 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
+    private readonly List<ProducerItem> _producers = new();
+
     private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
 
-    private readonly List<ProducerItem> _producers = new();
+    private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointName = new();
 
     public int Count => _producers.Count;
 
@@ -27,13 +29,16 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
         Check.NotNull(producer, nameof(producer));
 
         _producers.Add(new ProducerItem(producer, routing));
+        _producersByEndpointName.TryAdd(producer.EndpointConfiguration.RawName, producer);
+
+        if (producer.EndpointConfiguration.FriendlyName != null)
+            _producersByEndpointName.TryAdd(producer.EndpointConfiguration.FriendlyName, producer);
     }
 
     public IProducer GetProducerForEndpoint(string endpointName) =>
-        _producers.Select(item => item.Producer).FirstOrDefault(
-            producer => producer.EndpointConfiguration.RawName == endpointName ||
-                        producer.EndpointConfiguration.FriendlyName == endpointName) ??
-        throw new InvalidOperationException($"No producer has been configured for endpoint '{endpointName}'.");
+        _producersByEndpointName.TryGetValue(endpointName, out IProducer? producer)
+            ? producer
+            : throw new InvalidOperationException($"No producer has been configured for endpoint '{endpointName}'.");
 
     public IReadOnlyCollection<IProducer> GetProducersForMessage(object message) =>
         GetProducersForMessage(message.GetType());

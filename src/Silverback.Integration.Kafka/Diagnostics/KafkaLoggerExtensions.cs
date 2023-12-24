@@ -75,6 +75,18 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, string, string, Exception?> PollTimeoutNoAutoRecovery =
         SilverbackLoggerMessage.Define<string, string, string>(KafkaLogEvents.PollTimeoutNoAutoRecovery);
 
+    private static readonly Action<ILogger, string, string?, Exception?> TransactionsInitialized =
+        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionsInitialized);
+
+    private static readonly Action<ILogger, string, string?, Exception?> TransactionBegan =
+        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionBegan);
+
+    private static readonly Action<ILogger, string, string?, Exception?> TransactionCommitted =
+        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionCommitted);
+
+    private static readonly Action<ILogger, string, string?, Exception?> TransactionAborted =
+        SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionAborted);
+
     private static readonly Action<ILogger, string, string, string, Exception?> ConfluentProducerLogCritical =
         SilverbackLoggerMessage.Define<string, string, string>(KafkaLogEvents.ConfluentProducerLogCritical);
 
@@ -245,6 +257,18 @@ internal static class KafkaLoggerExtensions
 
         PollTimeoutNoAutoRecovery(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, consumer.DisplayName, null);
     }
+
+    public static void LogTransactionsInitialized(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
+        TransactionsInitialized(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
+
+    public static void LogTransactionBegan(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
+        TransactionBegan(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
+
+    public static void LogTransactionCommitted(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
+        TransactionCommitted(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
+
+    public static void LogTransactionAborted(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
+        TransactionAborted(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
 
     public static void LogConfluentProducerLogCritical(this ISilverbackLogger logger, LogMessage logMessage, IConfluentProducerWrapper producerWrapper)
     {

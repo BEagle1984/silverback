@@ -115,8 +115,8 @@ public partial class ProducerEndpointFixture
         topic1.MessagesCount.Should().Be(1);
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(1);
-        partition1.Messages.Count.Should().Be(1);
-        partition2.Messages.Count.Should().Be(1);
+        partition1.TotalMessagesCount.Should().Be(1);
+        partition2.TotalMessagesCount.Should().Be(1);
 
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
@@ -124,8 +124,8 @@ public partial class ProducerEndpointFixture
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(2);
-        partition1.Messages.Count.Should().Be(2);
-        partition2.Messages.Count.Should().Be(1);
+        partition1.TotalMessagesCount.Should().Be(2);
+        partition2.TotalMessagesCount.Should().Be(1);
     }
 
     [Fact]
@@ -212,8 +212,8 @@ public partial class ProducerEndpointFixture
         topic1.MessagesCount.Should().Be(1);
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(1);
-        partition1.Messages.Count.Should().Be(1);
-        partition2.Messages.Count.Should().Be(1);
+        partition1.TotalMessagesCount.Should().Be(1);
+        partition2.TotalMessagesCount.Should().Be(1);
 
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
@@ -221,8 +221,8 @@ public partial class ProducerEndpointFixture
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(2);
-        partition1.Messages.Count.Should().Be(2);
-        partition2.Messages.Count.Should().Be(1);
+        partition1.TotalMessagesCount.Should().Be(2);
+        partition2.TotalMessagesCount.Should().Be(1);
     }
 
     private sealed class TestEndpointResolver : IKafkaProducerEndpointResolver<TestEventOne>

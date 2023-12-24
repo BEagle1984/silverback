@@ -19,13 +19,14 @@ uid: releases
     * BinarySerializer now selected automatically from message type (no need to call Produce-/ConsumeBinaryMessages)
     * Builders for client config?
     * New Storage packages (see...)
+    * Storage.SQLite, Storage.Postgres, ...
     * New Outbox with Enlist for transaction
     * StorageInitializer to create tables
     * Client side offset storage (w/ transaction)
     * Fluent API for connection options
     * JsonSerializer typename handling none by default (Security)
-    * Storage.SQLite, Storage.Postgres, ...
     * Outbound message filter
+    * Kafka transactions (see...)
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies
@@ -71,6 +72,7 @@ uid: releases
     * Removed `EndpointBuilder.WithName()` -> replaced by name parameter
     * Renamed Inbound namespace to Consuming and Outbound to Producing
     * Split IMessageSerializer / IMessageDeserializer and rename UseFixedType to UseModel
+    * Removed Ping health check
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,6 +13,21 @@ namespace Silverback.Storage.Relational;
 // TODO: Test
 public static class SilverbackContextStorageRelationalExtensions
 {
+    /// <summary>
+    ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
+    /// </summary>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" />.
+    /// </param>
+    /// <param name="transaction">
+    ///     The transaction.
+    /// </param>
+    /// <returns>
+    ///    The <see cref="IStorageTransaction" />.
+    /// </returns>
+    public static IStorageTransaction EnlistDbTransaction(this SilverbackContext context, DbTransaction transaction) =>
+        new DbTransactionWrapper(transaction, context);
+
     /// <summary>
     ///     Checks whether an active <see cref="DbTransaction" /> is set and returns it.
     /// </summary>
@@ -49,33 +63,20 @@ public static class SilverbackContextStorageRelationalExtensions
     public static bool TryGetActiveDbTransaction<T>(this SilverbackContext context, [NotNullWhen(true)] out T? transaction)
         where T : DbTransaction
     {
-        if (!context.TryGetStorageTransaction(out object? storageTransaction))
+        if (!context.TryGetStorageTransaction(out IStorageTransaction? storageTransaction))
         {
             transaction = null;
             return false;
         }
 
-        if (storageTransaction is not DbTransaction dbTransaction)
+        if (storageTransaction.UnderlyingTransaction is not T dbTransaction)
         {
             throw new InvalidOperationException(
-                $"The current transaction ({storageTransaction?.GetType().Name}) is not a DbTransaction. " +
+                $"The current transaction ({storageTransaction.UnderlyingTransaction.GetType().Name}) is not a {typeof(T).Name}. " +
                 "Silverback must be configured to use the same storage as the one used by the application.");
         }
 
-        if (dbTransaction.Connection == null || !dbTransaction.Connection.State.HasFlag(ConnectionState.Open))
-        {
-            transaction = null;
-            return false;
-        }
-
-        if (dbTransaction is not T typedDbTransaction)
-        {
-            throw new InvalidOperationException(
-                $"The connection associated with the current transaction ({dbTransaction.Connection.GetType().Name}) is not " +
-                $"a {typeof(T).Name}. Silverback must be configured to use the same storage as the one used by the application.");
-        }
-
-        transaction = typedDbTransaction;
+        transaction = dbTransaction;
         return true;
     }
 }

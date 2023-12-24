@@ -19,16 +19,9 @@ internal sealed class InMemoryTopic : IInMemoryTopic
         BootstrapServers = Check.NotNullOrEmpty(bootstrapServers, nameof(bootstrapServers));
 
         if (partitions < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(partitions),
-                partitions,
-                "The number of partition must be a positive number greater or equal to 1.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(partitions), partitions, "The number of partition must be a positive number greater or equal to 1.");
 
-        _partitions = new List<InMemoryPartition>(
-            Enumerable.Range(0, partitions)
-                .Select(i => new InMemoryPartition(i, this)));
+        _partitions = new List<InMemoryPartition>(Enumerable.Range(0, partitions).Select(i => new InMemoryPartition(i, this)));
     }
 
     public string Name { get; }
@@ -37,18 +30,21 @@ internal sealed class InMemoryTopic : IInMemoryTopic
 
     public IReadOnlyList<IInMemoryPartition> Partitions => _partitions;
 
-    public int MessagesCount =>
-        _partitions.Sum(partition => partition.Messages.Count);
+    public int MessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
 
     public IReadOnlyList<Message<byte[]?, byte[]?>> GetAllMessages() =>
-        _partitions.SelectMany(partition => partition.Messages).ToList();
+        _partitions.SelectMany(partition => partition.GetAllMessages()).ToList();
 
-    public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
-        _partitions[partition].Add(message);
+    public Offset Push(int partition, Message<byte[]?, byte[]?> message, Guid transactionalUniqueId) =>
+        _partitions[partition].Add(message, transactionalUniqueId);
 
-    public Offset GetFirstOffset(Partition partition)
-        => _partitions[partition].FirstOffset;
+    public void CommitTransaction(Guid transactionalUniqueId) =>
+        _partitions.ForEach(partition => partition.CommitTransaction(transactionalUniqueId));
 
-    public Offset GetLastOffset(Partition partition)
-        => _partitions[partition].LastOffset;
+    public void AbortTransaction(Guid transactionalUniqueId) =>
+        _partitions.ForEach(partition => partition.AbortTransaction(transactionalUniqueId));
+
+    public Offset GetFirstOffset(Partition partition) => _partitions[partition].FirstOffset;
+
+    public Offset GetLastOffset(Partition partition) => _partitions[partition].LastOffset;
 }

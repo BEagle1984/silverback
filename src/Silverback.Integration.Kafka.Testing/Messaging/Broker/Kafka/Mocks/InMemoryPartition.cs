@@ -3,18 +3,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using Confluent.Kafka;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
 internal sealed class InMemoryPartition : IInMemoryPartition
 {
-    private readonly List<Message<byte[]?, byte[]?>> _messages = new();
+    private readonly List<StoredMessage> _messages = new();
+
+    private readonly List<Transaction> _transactions = new();
+
+    private Offset _nextOffset = new(0);
 
     public InMemoryPartition(in int index, InMemoryTopic topic)
     {
@@ -22,35 +26,54 @@ internal sealed class InMemoryPartition : IInMemoryPartition
         Topic = topic;
     }
 
+    private enum StoredMessageStatus
+    {
+        Pending,
+
+        Committed,
+
+        Deleted
+    }
+
     public Partition Partition { get; }
 
     public InMemoryTopic Topic { get; }
 
-    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-    public IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages => _messages;
-
-    public Offset FirstOffset { get; private set; } = Offset.Unset;
+    public Offset FirstOffset { get; private set; } = new(0);
 
     public Offset LastOffset { get; private set; } = Offset.Unset;
 
     public int TotalMessagesCount { get; private set; }
 
-    public Offset Add(Message<byte[]?, byte[]?> message)
+    public Offset Add(Message<byte[]?, byte[]?> message, Guid transactionalUniqueId)
     {
         lock (_messages)
         {
-            if (_messages.Count == 0)
-                LastOffset = FirstOffset = new Offset(0);
-            else
-                LastOffset++;
-
+            Offset offset = _nextOffset++;
             SetTimestamp(message);
 
-            _messages.Add(message);
+            if (transactionalUniqueId == Guid.Empty)
+            {
+                _messages.Add(new StoredMessage(message, offset, StoredMessageStatus.Committed));
+                TotalMessagesCount++;
+                LastOffset = offset;
+            }
+            else
+            {
+                Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionalUniqueId);
 
-            TotalMessagesCount++;
+                if (transaction == null)
+                {
+                    transaction = new Transaction(transactionalUniqueId);
+                    _transactions.Add(transaction);
+                }
 
-            return new Offset(LastOffset);
+                StoredMessage storedMessage = new(message, offset, StoredMessageStatus.Pending);
+                _messages.Add(storedMessage);
+                transaction.Messages.Add(storedMessage);
+            }
+
+            return offset;
         }
     }
 
@@ -58,23 +81,80 @@ internal sealed class InMemoryPartition : IInMemoryPartition
     {
         lock (_messages)
         {
-            if (offset.Value > LastOffset || _messages.Count == 0)
+            while (offset.Value <= LastOffset && _messages.Count != 0)
             {
-                result = null;
-                return false;
-            }
+                StoredMessage storedMessage = _messages[(int)(offset.Value - FirstOffset.Value)];
 
-            result = new ConsumeResult<byte[]?, byte[]?>
-            {
-                IsPartitionEOF = false,
-                Message = _messages[(int)(offset.Value - Math.Max(0, FirstOffset.Value))],
-                Offset = offset,
-                Partition = Partition,
-                Topic = Topic.Name
-            };
+                switch (storedMessage.Status)
+                {
+                    case StoredMessageStatus.Pending:
+                        result = null;
+                        return false;
+                    case StoredMessageStatus.Deleted:
+                        offset++;
+                        continue;
+                    case StoredMessageStatus.Committed:
+                        result = new ConsumeResult<byte[]?, byte[]?>
+                        {
+                            IsPartitionEOF = false,
+                            Message = storedMessage.Message,
+                            Offset = offset,
+                            Partition = Partition,
+                            Topic = Topic.Name
+                        };
+                        return true;
+                }
+            }
         }
 
-        return true;
+        result = null;
+        return false;
+    }
+
+    public IReadOnlyCollection<Message<byte[]?, byte[]?>> GetAllMessages() =>
+        _messages
+            .Where(message => message.Status == StoredMessageStatus.Committed)
+            .Select(message => message.Message)
+            .AsReadOnlyCollection();
+
+    public void CommitTransaction(Guid transactionUniqueId)
+    {
+        lock (_messages)
+        {
+            Transaction? transaction =
+                _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+
+            if (transaction == null)
+                return;
+
+            foreach (StoredMessage message in transaction.Messages)
+            {
+                message.Status = StoredMessageStatus.Committed;
+            }
+
+            _transactions.Remove(transaction);
+            TotalMessagesCount += transaction.Messages.Count;
+            LastOffset = Math.Max(LastOffset.Value, transaction.Messages.Max(message => message.Offset.Value));
+        }
+    }
+
+    public void AbortTransaction(Guid transactionUniqueId)
+    {
+        lock (_messages)
+        {
+            Transaction? transaction =
+                _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+
+            if (transaction == null)
+                return;
+
+            foreach (StoredMessage message in transaction.Messages)
+            {
+                message.Status = StoredMessageStatus.Deleted;
+            }
+
+            _transactions.Remove(transaction);
+        }
     }
 
     private static void SetTimestamp(Message<byte[]?, byte[]?> message)
@@ -85,5 +165,26 @@ internal sealed class InMemoryPartition : IInMemoryPartition
             message.Timestamp = new Timestamp(DateTime.Parse(Encoding.UTF8.GetString(timestampHeader.GetValueBytes()), CultureInfo.InvariantCulture));
         else if (message.Timestamp == Timestamp.Default)
             message.Timestamp = new Timestamp(DateTime.UtcNow);
+    }
+
+    private class StoredMessage
+    {
+        public StoredMessage(Message<byte[]?, byte[]?> message, Offset offset, StoredMessageStatus status)
+        {
+            Message = message;
+            Offset = offset;
+            Status = status;
+        }
+
+        public Message<byte[]?, byte[]?> Message { get; }
+
+        public Offset Offset { get; }
+
+        public StoredMessageStatus Status { get; set; }
+    }
+
+    private record Transaction(Guid Id)
+    {
+        public List<StoredMessage> Messages { get; } = new();
     }
 }
