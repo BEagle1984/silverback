@@ -23,7 +23,7 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --filter "CI!=false&Category!~E2E" \
+        --filter "Category!=E2E&Dependency!=Docker" \
         --framework net7.0
     displayName: 'Run unit tests (net7.0)'
   - script: |
@@ -32,7 +32,7 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --filter "CI!=false&Category~E2E" \
+        --filter "Category!=E2E&Dependency!=Docker" \
         --framework net7.0
     displayName: 'Run E2E integration tests (net7.0)'
   # Publish results

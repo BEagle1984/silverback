@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 
-[Trait("Category", "E2E:MQTT")]
+[Trait("Broker", "MQTT")]
 public abstract class MqttFixture : E2EFixture
 {
     protected const string DefaultTopicName = "e2e/default";

@@ -24,7 +24,8 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-[Trait("Category", "DB:PostgreSql")]
+[Trait("Dependency", "Docker")]
+[Trait("Database", "PostgreSql")]
 public class OutboxPostgreSqlFixture : KafkaFixture
 {
     public OutboxPostgreSqlFixture(ITestOutputHelper testOutputHelper)

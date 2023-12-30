@@ -11,6 +11,8 @@ using Xunit;
 
 namespace Silverback.Tests.Storage.PostgreSql;
 
+[Trait("Dependency", "Docker")]
+[Trait("Database", "PostgreSql")]
 public abstract class PostgresContainerFixture : IAsyncLifetime
 {
     private readonly IContainerService _postgresContainer;

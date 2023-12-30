@@ -16,6 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.KafkaAndMqtt;
 
+[Trait("Broker", "Kafka+MQTT")]
 public class MqttToKafkaFixture : KafkaFixture
 {
     public MqttToKafkaFixture(ITestOutputHelper testOutputHelper)
