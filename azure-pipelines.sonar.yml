@@ -41,6 +41,7 @@ steps:
         --no-build \
         --verbosity Normal \
         --logger trx \
+        --filter "Dependency!=Docker" \
         --collect "Code coverage" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
