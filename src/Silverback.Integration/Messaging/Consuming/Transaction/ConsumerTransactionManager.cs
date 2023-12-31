@@ -15,9 +15,9 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private readonly IConsumerLogger<ConsumerTransactionManager> _logger;
 
-    private bool _isAborted;
+    private Task? _commitTask;
 
-    private bool _isCommitted;
+    private Task<bool>? _abortTask;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
@@ -49,20 +49,46 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     public AsyncEvent<ConsumerPipelineContext> Aborted { get; } = new();
 
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
-    public async Task CommitAsync()
+    public Task CommitAsync()
     {
-        if (_isCommitted)
+        if (_commitTask != null)
         {
             _logger.LogConsumerLowLevelTrace("Not committing consumer transaction because it was already committed.", _context.Envelope);
-
-            return;
+            return _commitTask;
         }
 
-        if (_isAborted)
+        if (_abortTask != null)
             throw new InvalidOperationException("The transaction already aborted.");
 
-        _isCommitted = true;
+        return _commitTask = CommitCoreAsync();
+    }
 
+    /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
+    public Task<bool> RollbackAsync(
+        Exception? exception,
+        bool commitConsumer = false,
+        bool throwIfAlreadyCommitted = true,
+        bool stopConsuming = true)
+    {
+        if (_abortTask != null)
+        {
+            _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
+            return _abortTask;
+        }
+
+        if (_commitTask != null)
+        {
+            if (throwIfAlreadyCommitted)
+                throw new InvalidOperationException("The transaction already completed.");
+
+            return Task.FromResult(false);
+        }
+
+        return _abortTask = RollbackCoreAsync(exception, commitConsumer, stopConsuming);
+    }
+
+    private async Task CommitCoreAsync()
+    {
         _logger.LogConsumerLowLevelTrace("Committing consumer transaction...", _context.Envelope);
 
         await Committing.InvokeAsync(_context).ConfigureAwait(false);
@@ -72,30 +98,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         _logger.LogConsumerLowLevelTrace("Consumer transaction committed.", _context.Envelope);
     }
 
-    /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
-    public async Task<bool> RollbackAsync(
-        Exception? exception,
-        bool commitConsumer = false,
-        bool throwIfAlreadyCommitted = true,
-        bool stopConsuming = true)
+    private async Task<bool> RollbackCoreAsync(Exception? exception, bool commitConsumer, bool stopConsuming)
     {
-        if (_isAborted)
-        {
-            _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
-
-            return false;
-        }
-
-        if (_isCommitted)
-        {
-            if (throwIfAlreadyCommitted)
-                throw new InvalidOperationException("The transaction already completed.");
-
-            return false;
-        }
-
-        _isAborted = true;
-
         _logger.LogConsumerLowLevelTrace("Aborting consumer transaction...", _context.Envelope, exception);
 
         await Aborting.InvokeAsync(_context).ConfigureAwait(false);
