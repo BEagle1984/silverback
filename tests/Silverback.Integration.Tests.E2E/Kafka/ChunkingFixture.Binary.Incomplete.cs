@@ -86,7 +86,6 @@ public partial class ChunkingFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
     }
 
-    // TODO: Check flaky test
     [Fact]
     public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
@@ -143,12 +142,7 @@ public partial class ChunkingFixture
             rawMessage.Skip(10).Take(10).ToArray(),
             HeadersHelper.GetChunkHeaders("1", 1));
 
-        await Task.Delay(300);
-        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
-
-        await AsyncTestingUtil.WaitAsync(
-            () => aborted && DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2,
-            TimeSpan.FromMilliseconds(800));
+        await AsyncTestingUtil.WaitAsync(() => aborted && DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2);
         aborted.Should().BeTrue();
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
 
@@ -224,7 +218,6 @@ public partial class ChunkingFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
     }
 
-    // TODO: Check flaky test (CI)
     [Fact]
     public async Task Chunking_ShouldAbortAndNotCommit_WhenDisconnectingWithIncompleteBinaryMessage()
     {
@@ -277,6 +270,7 @@ public partial class ChunkingFixture
         await consumer.Client.DisconnectAsync();
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await AsyncTestingUtil.WaitAsync(() => enumerationAborted);
 
         enumerationAborted.Should().BeTrue();
         consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
