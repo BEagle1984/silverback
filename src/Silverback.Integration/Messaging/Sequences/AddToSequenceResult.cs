@@ -28,7 +28,7 @@ public readonly record struct AddToSequenceResult(bool IsSuccess, int PushedStre
     public static AddToSequenceResult Failed { get; } = new(false);
 
     /// <summary>
-    ///     Returns a new instance representing an aborted call to <see cref="ISequence.AddAsync" />. (The sequence was probably aborted.
+    ///     Returns a new instance representing an aborted call to <see cref="ISequence.AddAsync" />. (The sequence was probably aborted.)
     /// </summary>
     /// <param name="abortTask">
     ///     The <see cref="Task" /> representing the abort operation.

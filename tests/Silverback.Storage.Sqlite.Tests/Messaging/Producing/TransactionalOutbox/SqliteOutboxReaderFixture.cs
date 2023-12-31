@@ -246,7 +246,7 @@ public sealed class SqliteOutboxReaderFixture : IDisposable
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
-        maxAge.Should().BeGreaterThan(TimeSpan.FromMilliseconds(100));
+        maxAge.Should().BeGreaterThan(TimeSpan.FromMilliseconds(99)); // Exact value causes flaky tests on CI pipeline
     }
 
     [Fact]

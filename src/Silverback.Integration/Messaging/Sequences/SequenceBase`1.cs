@@ -46,7 +46,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
-    private CancellationTokenSource? _timeoutCancellationTokenSource;
+    private DateTime _timeoutExpiration = DateTime.MaxValue;
 
     private ICollection<ISequence>? _sequences;
 
@@ -93,8 +93,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _logger = context.ServiceProvider.GetRequiredService<ISilverbackLogger<SequenceBase<TEnvelope>>>();
 
         _enforceTimeout = enforceTimeout;
+
         _timeout = timeout ?? Context.Envelope.Endpoint.Configuration.Sequence.Timeout;
-        ResetTimeout();
+        InitTimeoutTimer();
+
         _identifiersTracker = trackIdentifiers
             ? context.ServiceProvider.GetRequiredService<IBrokerMessageIdentifiersTrackerFactory>()
                 .GetTracker(context.Envelope.Endpoint.Configuration)
@@ -288,7 +290,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             if (!IsPending || IsCompleting)
                 return AddToSequenceResult.Failed;
 
-            ResetTimeout();
+            if (await EnforceTimeoutAsync().ConfigureAwait(false))
+                return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
 
             if (sequence != null && sequence != this)
             {
@@ -403,8 +406,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         IsComplete = true;
         IsCompleting = false;
 
-        _timeoutCancellationTokenSource?.Cancel();
-
         await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -435,20 +436,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _streamProvider.Dispose();
         _abortCancellationTokenSource.Dispose();
-
-        try
-        {
-            _timeoutCancellationTokenSource?.Cancel();
-            _timeoutCancellationTokenSource?.Dispose();
-        }
-        catch (OperationCanceledException)
-        {
-            // Ignore
-        }
-        finally
-        {
-            _timeoutCancellationTokenSource = null;
-        }
 
         _sequences?.ForEach(sequence => sequence.Dispose());
 
@@ -499,42 +486,55 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged")]
+    private async ValueTask<bool> EnforceTimeoutAsync()
+    {
+        if (!_enforceTimeout)
+            return false;
+
+        if (DateTime.UtcNow > _timeoutExpiration)
+        {
+            try
+            {
+                await OnTimeoutElapsedAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogSequenceTimeoutError(this, ex);
+            }
+
+            return true;
+        }
+
+        ResetTimeout();
+        return false;
+    }
+
     private void ResetTimeout()
+    {
+        if (!_enforceTimeout || !IsPending)
+            return;
+
+        _timeoutExpiration = DateTime.UtcNow.Add(_timeout);
+    }
+
+    private void InitTimeoutTimer()
     {
         if (!_enforceTimeout)
             return;
 
-        try
-        {
-            _timeoutCancellationTokenSource?.Cancel();
-        }
-        catch (OperationCanceledException)
-        {
-            // Ignore
-        }
-
-        if (!IsPending)
-            return;
-
-        _timeoutCancellationTokenSource = new CancellationTokenSource();
-        CancellationToken cancellationToken = _timeoutCancellationTokenSource.Token;
+        ResetTimeout();
 
         Task.Run(
                 async () =>
                 {
-                    try
-                    {
-                        await Task.Delay(_timeout, cancellationToken).ConfigureAwait(false);
+                    int interval = (int)Math.Min(_timeout.TotalMilliseconds, 1000);
 
-                        await OnTimeoutElapsedAsync().ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException)
+                    while (IsPending && !IsCompleting)
                     {
-                        // Ignore
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogSequenceTimeoutError(this, ex);
+                        await Task.Delay(interval).ConfigureAwait(false);
+
+                        if (IsPending && !IsCompleting)
+                            await EnforceTimeoutAsync().ConfigureAwait(false);
                     }
                 })
             .FireAndForget();
@@ -578,15 +578,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 SequenceId,
                 AbortReason
             });
-
-        try
-        {
-            _timeoutCancellationTokenSource?.Cancel();
-        }
-        catch (OperationCanceledException)
-        {
-            // Ignore
-        }
 
         await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
         if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
