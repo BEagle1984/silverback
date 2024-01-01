@@ -56,4 +56,40 @@ public class OutboundMessageFilterFixture : KafkaFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
     }
+
+    [Fact]
+    public async Task Filter_ShouldFilterOutboundEnvelopes()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .Filter(envelope => envelope.Message?.ContentEventOne != "discard")))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        await publisher.PublishAsync(new TestEventOne());
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "discard" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "something" });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+    }
 }
