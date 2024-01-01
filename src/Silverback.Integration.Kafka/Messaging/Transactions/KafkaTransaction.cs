@@ -3,7 +3,6 @@
 
 using System;
 using Silverback.Messaging.Broker.Kafka;
-using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Transactions;
@@ -52,7 +51,7 @@ internal sealed class KafkaTransaction : IKafkaTransaction
         if (_isPending)
             Abort();
 
-        _context.RemoveTransaction();
+        _context.RemoveKafkaTransaction();
     }
 
     internal void EnsureBegin()

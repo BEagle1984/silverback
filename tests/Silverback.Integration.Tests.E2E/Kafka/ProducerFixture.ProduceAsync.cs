@@ -243,44 +243,6 @@ public partial class ProducerFixture
     }
 
     [Fact]
-    public async Task ProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
-    {
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "1001" } });
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "2002" } });
-        await producer.ProduceAsync(
-            new TestEventOne(),
-            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "3003" } });
-
-        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("1001"));
-        messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("2002"));
-        messages[2].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("3003"));
-    }
-
-    [Fact]
     public async Task ProduceAsync_ShouldSetKafkaKeyFromKafkaKeyHeader()
     {
         await Host.ConfigureServicesAndRunAsync(

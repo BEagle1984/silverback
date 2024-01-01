@@ -220,13 +220,10 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
         if (headers == null)
             return null;
 
-        if (!headers.TryGetValue(KafkaMessageHeaders.KafkaMessageKey, out string? kafkaKeyValueFromHeader))
-            kafkaKeyValueFromHeader = headers.GetValue(DefaultMessageHeaders.MessageId);
-
-        if (kafkaKeyValueFromHeader == null)
+        if (!headers.TryGetValue(KafkaMessageHeaders.KafkaMessageKey, out string? kafkaKey) || kafkaKey == null)
             return null;
 
-        return _serializer.SerializeKey(kafkaKeyValueFromHeader, headers, endpoint);
+        return _serializer.SerializeKey(kafkaKey, headers, endpoint);
     }
 
     private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)

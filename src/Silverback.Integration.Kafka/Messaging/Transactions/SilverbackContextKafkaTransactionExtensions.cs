@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Consuming.ContextEnrichment;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Transactions;
@@ -26,8 +27,15 @@ public static class SilverbackContextKafkaTransactionExtensions
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.
     /// </returns>
-    public static IKafkaTransaction InitKafkaTransaction(this SilverbackContext context, string? transactionalIdSuffix = null) =>
-        new KafkaTransaction(context, transactionalIdSuffix);
+    public static IKafkaTransaction InitKafkaTransaction(this SilverbackContext context, string? transactionalIdSuffix = null)
+    {
+        Check.NotNull(context, nameof(context));
+
+        if (context.TryGetConsumedPartition(out ConsumedTopicPartition? consumedPartition) && consumedPartition.ProcessedIndependently)
+            transactionalIdSuffix = $"{transactionalIdSuffix}|{consumedPartition.TopicPartition.Topic}[{consumedPartition.TopicPartition.Partition.Value}]";
+
+        return new KafkaTransaction(context, transactionalIdSuffix);
+    }
 
     internal static void AddKafkaTransaction(this SilverbackContext context, KafkaTransaction kafkaTransaction) =>
         Check.NotNull(context, nameof(context)).AddObject(KafkaTransactionObjectTypeId, kafkaTransaction);
@@ -35,20 +43,6 @@ public static class SilverbackContextKafkaTransactionExtensions
     internal static void RemoveKafkaTransaction(this SilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(KafkaTransactionObjectTypeId);
 
-    internal static KafkaTransaction? GetKafkaTransaction(this SilverbackContext context) =>
-        (KafkaTransaction?)Check.NotNull(context, nameof(context)).GetObject(KafkaTransactionObjectTypeId);
-
-    // internal static bool TryGetKafkaTransaction(this SilverbackContext context, [NotNullWhen(true)] out IKafkaTransaction? transaction)
-    // {
-    //     Check.NotNull(context, nameof(context));
-    //
-    //     if (context.TryGetObject(KafkaTransactionObjectTypeId, out object? transactionObject))
-    //     {
-    //         transaction = (IKafkaTransaction)transactionObject;
-    //         return true;
-    //     }
-    //
-    //     transaction = null;
-    //     return false;
-    // }
+    internal static KafkaTransaction GetKafkaTransaction(this SilverbackContext context) =>
+        Check.NotNull(context, nameof(context)).GetObject<KafkaTransaction>(KafkaTransactionObjectTypeId);
 }

@@ -51,7 +51,7 @@ public partial class ErrorPoliciesFixture
                 .AddDelegateSubscriber<IIntegrationEvent>(HandleMessage)
                 .AddIntegrationSpy());
 
-        void HandleMessage(IIntegrationEvent unused)
+        void HandleMessage(IIntegrationEvent dummy)
         {
             tryCount++;
             throw new InvalidOperationException("Retry!");
