@@ -60,17 +60,13 @@ public static class HeadersHelper
         string? contentType = null) =>
         GetChunkHeadersCore(messageId, null, chunkIndex, null, null, messageType, contentType).ToArray();
 
-    private static IEnumerable<MessageHeader> GetHeadersCore(
-        string? messageId,
-        string? kafkaKey,
-        Type? messageType,
-        string? contentType)
+    private static IEnumerable<MessageHeader> GetHeadersCore(string? messageId, string? kafkaKey, Type? messageType, string? contentType)
     {
         if (!string.IsNullOrEmpty(messageId))
             yield return new MessageHeader(DefaultMessageHeaders.MessageId, messageId);
 
         if (!string.IsNullOrEmpty(kafkaKey))
-            yield return new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, kafkaKey);
+            yield return new MessageHeader(DefaultMessageHeaders.MessageId, kafkaKey);
 
         if (messageType != null)
             yield return new MessageHeader(DefaultMessageHeaders.MessageType, messageType.AssemblyQualifiedName);

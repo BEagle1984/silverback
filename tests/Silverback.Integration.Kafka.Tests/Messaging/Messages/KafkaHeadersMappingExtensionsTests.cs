@@ -30,12 +30,12 @@ public class KafkaHeadersMappingExtensionsTests
     }
 
     [Fact]
-    public void ToConfluentHeaders_MessageKeyHeaderIgnored()
+    public void ToConfluentHeaders_MessageIdHeaderIgnored()
     {
         MessageHeaderCollection headers = new()
         {
             { "one", "1" },
-            { KafkaMessageHeaders.KafkaMessageKey, "1234" },
+            { DefaultMessageHeaders.MessageId, "1234" },
             { "two", "2" }
         };
 

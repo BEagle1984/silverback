@@ -44,8 +44,7 @@ public class ProducerLoggerFixture
             new MessageHeaderCollection
             {
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
-                { DefaultMessageHeaders.MessageId, "1234" },
-                { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
+                { DefaultMessageHeaders.MessageId, "1234" }
             },
             new KafkaProducerEndpoint("test1", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
@@ -61,7 +60,7 @@ public class ProducerLoggerFixture
             "messageType: Message.Type, " +
             "messageId: 1234, " +
             "offset: [2]@42, " +
-            "kafkaKey: key1234";
+            "kafkaKey: 1234";
         _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1005);
     }
 

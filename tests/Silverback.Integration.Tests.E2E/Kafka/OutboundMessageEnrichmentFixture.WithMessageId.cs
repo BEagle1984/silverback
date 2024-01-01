@@ -1,8 +1,9 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
@@ -17,7 +18,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 public partial class OutboundMessageEnrichmentFixture
 {
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderFromMessage()
+    public async Task WithMessageId_ShouldSetMessageKeyFromMessage()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -31,27 +32,25 @@ public partial class OutboundMessageEnrichmentFixture
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
+                            producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId<TestEventOne>(message => message?.ContentEventOne))))
-                .AddIntegrationSpy());
+                                    .WithMessageId(message => message?.ContentEventOne)))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value != "four");
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Should().HaveCount(3);
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderFromEnvelope()
+    public async Task WithMessageId_ShouldSetMessageKeyFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -65,27 +64,25 @@ public partial class OutboundMessageEnrichmentFixture
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(
-                            producer => producer.Produce<IIntegrationEvent>(
+                            producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId<TestEventOne>(envelope => envelope.Message?.ContentEventOne))))
-                .AddIntegrationSpy());
+                                    .WithMessageId(envelope => envelope.Message?.ContentEventOne)))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "four" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "three");
-        Helper.Spy.OutboundEnvelopes[3].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value != "four");
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Should().HaveCount(3);
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderByMessageType()
+    public async Task WithMessageId_ShouldSetMessageKeyByMessageType()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -103,17 +100,49 @@ public partial class OutboundMessageEnrichmentFixture
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
                                     .WithMessageId<TestEventOne>(message => message?.ContentEventOne)
-                                    .WithMessageId((TestEventTwo? _) => "two"))))
-                .AddIntegrationSpy());
+                                    .WithMessageId<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
         IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
         await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
         await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "two" });
         await publisher.PublishAsync(new TestEventThree { ContentEventThree = "three" });
 
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
-        Helper.Spy.OutboundEnvelopes[1].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "two");
-        Helper.Spy.OutboundEnvelopes[2].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && Guid.Parse(header.Value!) != Guid.Empty);
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Should().HaveCount(3);
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task WithMessageId_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer.Produce<IIntegrationEvent>(
+                                endpoint => endpoint
+                                    .ProduceTo(DefaultTopicName)
+                                    .WithMessageId((TestEventOne? _) => null)))));
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
+
+        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
+        messages.Should().HaveCount(3);
+        messages[0].Key.Should().BeNull();
+        messages[1].Key.Should().BeNull();
+        messages[2].Key.Should().BeNull();
     }
 }

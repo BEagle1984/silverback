@@ -113,7 +113,6 @@ public static partial class SilverbackBuilderIntegrationExtensions
         // Producer basic logic
         builder
             .AddSingletonBrokerBehavior<MessageEnricherProducerBehavior>()
-            .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
             .AddSingletonBrokerBehavior<FilterProducerBehavior>();
 
         // Consumer basic logic

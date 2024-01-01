@@ -15,6 +15,9 @@ public static class DefaultMessageHeaders
     /// <summary>
     ///     The message identifier.
     /// </summary>
+    /// <remarks>
+    ///     This header is used as Kafka key when producing the message and filled with the value of the Kafka key when consuming.
+    /// </remarks>
     public const string MessageId = "x-message-id";
 
     /// <summary>

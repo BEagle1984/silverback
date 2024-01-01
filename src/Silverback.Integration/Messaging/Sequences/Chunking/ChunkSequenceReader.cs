@@ -32,11 +32,7 @@ public class ChunkSequenceReader : SequenceReaderBase
         bool? isLastChunk = context.Envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk);
 
         // Skip chunking if the message is not chunked or it consists of a single chunk
-        bool canHandle = chunkIndex != null &&
-                         chunksCount is null or > 1 &&
-                         (isLastChunk != true || chunkIndex > 0);
-
-        return ValueTaskFactory.FromResult(canHandle);
+        return ValueTaskFactory.FromResult(chunkIndex != null && chunksCount is null or > 1 && (isLastChunk != true || chunkIndex > 0));
     }
 
     /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />

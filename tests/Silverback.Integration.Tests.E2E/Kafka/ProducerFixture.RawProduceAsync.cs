@@ -218,7 +218,7 @@ public partial class ProducerFixture
     }
 
     [Fact]
-    public async Task RawProduceAsync_ShouldSetKafkaKeyFromKafkaKeyHeader()
+    public async Task RawProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -240,13 +240,13 @@ public partial class ProducerFixture
 
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "1001" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "1001" } });
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "2002" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "2002" } });
         await producer.RawProduceAsync(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "3003" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "3003" } });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);

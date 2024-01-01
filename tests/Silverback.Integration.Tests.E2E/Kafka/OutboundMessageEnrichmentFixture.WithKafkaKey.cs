@@ -82,7 +82,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithKafka_ShouldSetMessageKeyByMessageType()
+    public async Task WithKafkaKey_ShouldSetMessageKeyByMessageType()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services

@@ -94,8 +94,7 @@ public class ChunkSequenceWriter : ISequenceWriter
             // Read and store the offset of the first chunk, after it has been produced (after yield return)
             if (chunkIndex == 0)
             {
-                firstChunkMessageHeader =
-                    _chunkEnricherFactory.GetEnricher(chunkEnvelope.Endpoint).GetFirstChunkMessageHeader(chunkEnvelope);
+                firstChunkMessageHeader = _chunkEnricherFactory.GetEnricher(chunkEnvelope.Endpoint).GetFirstChunkMessageHeader(chunkEnvelope);
             }
 
             chunkIndex++;

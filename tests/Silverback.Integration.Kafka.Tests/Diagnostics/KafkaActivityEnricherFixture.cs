@@ -27,7 +27,7 @@ public class KafkaActivityEnricherFixture
 
         KafkaOffset offset = new(new TopicPartitionOffset("topic", 3, 42));
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(identifier: offset);
-        context.Envelope.Headers[KafkaMessageHeaders.KafkaMessageKey] = "MessageKey";
+        context.Envelope.Headers[DefaultMessageHeaders.MessageId] = "MessageKey";
 
         Activity activity = new("Test Activity");
 
@@ -51,7 +51,7 @@ public class KafkaActivityEnricherFixture
 
         OutboundEnvelope<SingleKeyMemberMessage> envelope = new(
             new SingleKeyMemberMessage(),
-            new[] { new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "MyKey") },
+            new[] { new MessageHeader(DefaultMessageHeaders.MessageId, "MyKey") },
             new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>());
 
