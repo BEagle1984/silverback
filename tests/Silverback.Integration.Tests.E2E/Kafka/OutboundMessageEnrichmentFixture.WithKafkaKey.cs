@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -45,9 +44,9 @@ public partial class OutboundMessageEnrichmentFixture
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("one"));
-        messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("two"));
-        messages[2].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("three"));
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
     }
 
     [Fact]
@@ -77,9 +76,9 @@ public partial class OutboundMessageEnrichmentFixture
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("one"));
-        messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("two"));
-        messages[2].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("three"));
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeEquivalentTo("three"u8.ToArray());
     }
 
     [Fact]
@@ -110,10 +109,9 @@ public partial class OutboundMessageEnrichmentFixture
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("one"));
-        messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("two"));
-        messages[2].Key.Should().NotBeEmpty();
-        messages[2].Key.Should().NotBeEquivalentTo(Encoding.UTF8.GetBytes("three"));
+        messages[0].Key.Should().BeEquivalentTo("one"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("two"u8.ToArray());
+        messages[2].Key.Should().BeNull();
     }
 
     [Fact]

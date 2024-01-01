@@ -54,7 +54,7 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
     {
         IRawInboundEnvelope envelope = context.Envelope;
 
-        if (envelope is IInboundEnvelope { Message: { } } inboundEnvelope)
+        if (envelope is IInboundEnvelope { Message: not null } inboundEnvelope)
             return inboundEnvelope;
 
         (object? deserializedObject, Type deserializedType) =

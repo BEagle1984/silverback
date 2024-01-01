@@ -24,7 +24,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Consumer is KafkaConsumer { Configuration.ClientSideOffsetStore: { } } kafkaConsumer)
+        if (context.Consumer is KafkaConsumer { Configuration.ClientSideOffsetStore: not null } kafkaConsumer)
         {
             context.ServiceProvider
                 .GetRequiredService<SilverbackContext>()

@@ -168,7 +168,7 @@ public sealed class KafkaTransactionalProducer : IProducer
         KafkaTransaction transaction = envelope.Context?.GetKafkaTransaction()
                                        ?? throw new InvalidOperationException("The transaction is not available."); // TODO: Improve message and exception type
 
-        KafkaProducer producer = await _transactionalProducers.GetOrCreateAsync(Name, Configuration, transaction).ConfigureAwait(false);
+        KafkaProducer producer = await _transactionalProducers.GetOrCreateAsync(Name, Configuration, envelope, transaction).ConfigureAwait(false);
 
         transaction.BindConfluentProducer(producer.Client);
         transaction.EnsureBegin();

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Transactions;
 
 namespace Silverback.Messaging.Broker;
@@ -23,11 +24,18 @@ public interface IKafkaTransactionalProducerCollection : IReadOnlyCollection<Kaf
     /// <param name="configuration">
     ///     The <see cref="KafkaProducerConfiguration" /> containing the endpoint configuration.
     /// </param>
+    /// <param name="envelope">
+    ///     The <see cref="IOutboundEnvelope" /> containing the message to be produced.
+    /// </param>
     /// <param name="transaction">
     ///     The <see cref="IKafkaTransaction" /> to be used to produce the messages.
     /// </param>
     /// <returns>
-    ///    The <see cref="KafkaProducer" />.
+    ///     The <see cref="KafkaProducer" />.
     /// </returns>
-    ValueTask<KafkaProducer> GetOrCreateAsync(string name, KafkaProducerConfiguration configuration, IKafkaTransaction transaction);
+    ValueTask<KafkaProducer> GetOrCreateAsync(
+        string name,
+        KafkaProducerConfiguration configuration,
+        IOutboundEnvelope envelope,
+        IKafkaTransaction transaction);
 }

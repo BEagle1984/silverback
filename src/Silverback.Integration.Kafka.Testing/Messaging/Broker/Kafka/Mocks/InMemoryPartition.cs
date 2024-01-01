@@ -121,8 +121,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
     {
         lock (_messages)
         {
-            Transaction? transaction =
-                _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+            Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 
             if (transaction == null)
                 return;
@@ -142,8 +141,7 @@ internal sealed class InMemoryPartition : IInMemoryPartition
     {
         lock (_messages)
         {
-            Transaction? transaction =
-                _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
+            Transaction? transaction = _transactions.FirstOrDefault(transaction => transaction.Id == transactionUniqueId);
 
             if (transaction == null)
                 return;

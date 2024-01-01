@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -25,25 +26,25 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (!context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
+        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
         {
-            string key = GetKafkaKey(context);
-            context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
+            string? key = GetKafkaKey(context);
+
+            if (key != null)
+                context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
         }
 
         return next(context);
     }
 
-    private static string GetKafkaKey(ProducerPipelineContext context)
+    private static string? GetKafkaKey(ProducerPipelineContext context)
     {
         string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
-        if (keyFromMessage != null)
-            return keyFromMessage;
 
-        string? messageIdHeaderValue = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-        if (messageIdHeaderValue != null)
-            return messageIdHeaderValue;
+        // Ensure a key is set if the message is chunked to make sure all chunks are produced to the same partition
+        if (keyFromMessage == null && context.Envelope.Endpoint.Configuration.Chunk != null)
+            return Guid.NewGuid().ToString();
 
-        return Guid.NewGuid().ToString();
+        return keyFromMessage;
     }
 }

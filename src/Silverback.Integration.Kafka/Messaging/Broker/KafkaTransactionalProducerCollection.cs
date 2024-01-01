@@ -10,6 +10,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Transactions;
 using Silverback.Util;
@@ -56,7 +57,11 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
 
     public int Count => _producersByName.Count;
 
-    public async ValueTask<KafkaProducer> GetOrCreateAsync(string name, KafkaProducerConfiguration configuration, IKafkaTransaction transaction)
+    public async ValueTask<KafkaProducer> GetOrCreateAsync(
+        string name,
+        KafkaProducerConfiguration configuration,
+        IOutboundEnvelope envelope,
+        IKafkaTransaction transaction)
     {
         if (!string.IsNullOrEmpty(transaction.TransactionalIdSuffix))
             name = $"{name}|{transaction.TransactionalIdSuffix}";

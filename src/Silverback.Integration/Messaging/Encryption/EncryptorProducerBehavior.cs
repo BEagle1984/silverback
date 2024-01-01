@@ -47,7 +47,7 @@ public class EncryptorProducerBehavior : IProducerBehavior
 
         envelope.RawMessage = _streamFactory.GetEncryptStream(envelope.RawMessage, envelope.Endpoint.Configuration.Encryption);
 
-        if (envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings { KeyIdentifier: { } } settings)
+        if (envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings { KeyIdentifier: not null } settings)
             envelope.Headers.AddOrReplace(DefaultMessageHeaders.EncryptionKeyId, settings.KeyIdentifier);
     }
 }

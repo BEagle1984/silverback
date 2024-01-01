@@ -38,7 +38,7 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
-            context.Envelope is IInboundEnvelope { Message: { } } deserializedEnvelope &&
+            context.Envelope is IInboundEnvelope { Message: not null } deserializedEnvelope &&
             !MessageValidator.IsValid(
                 deserializedEnvelope.Message,
                 context.Envelope.Endpoint.Configuration.MessageValidationMode,

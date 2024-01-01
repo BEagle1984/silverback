@@ -27,8 +27,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
         lock (_producersInfo)
         {
-            TransactionalProducerInfo? producerInfo =
-                _producersInfo.FirstOrDefault(info => info.TransactionalId == transactionalId);
+            TransactionalProducerInfo? producerInfo = _producersInfo.FirstOrDefault(info => info.TransactionalId == transactionalId);
 
             if (producerInfo == null)
             {
