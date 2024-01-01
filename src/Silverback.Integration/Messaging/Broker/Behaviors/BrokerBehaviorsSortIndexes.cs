@@ -44,20 +44,17 @@ public static class BrokerBehaviorsSortIndexes
         public const int MessageEnricher = 250;
 
         /// <summary>
-        ///     The <see cref="MessageIdInitializerProducerBehavior" /> sort index.
+        ///     The (broker specific) behavior ensuring that initializes the message identifier.
         /// </summary>
+        /// <remarks>
+        ///     The message identifier is for example used as key for the Kafka messages being produced.
+        /// </remarks>
         public const int MessageIdInitializer = 300;
-
-        /// <summary>
-        ///     The <c>KafkaMessageKeyInitializerProducerBehavior</c>,
-        ///     <c>RabbitRoutingKeyInitializerProducerBehavior</c> or similar sort index.
-        /// </summary>
-        public const int BrokerKeyHeaderInitializer = 400;
 
         /// <summary>
         ///     The <see cref="FilterProducerBehavior" /> sort index.
         /// </summary>
-        public const int Filter = 450;
+        public const int Filter = 400;
 
         /// <summary>
         ///     The <see cref="BinaryMessageHandlerProducerBehavior" /> sort index.

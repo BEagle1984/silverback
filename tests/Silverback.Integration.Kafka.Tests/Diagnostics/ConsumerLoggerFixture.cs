@@ -45,8 +45,7 @@ public class ConsumerLoggerFixture
             new MessageHeaderCollection
             {
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
-                { DefaultMessageHeaders.MessageId, "1234" },
-                { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
+                { DefaultMessageHeaders.MessageId, "1234" }
             },
             new KafkaConsumerEndpoint("topic2", 1, new KafkaConsumerEndpointConfiguration()),
             Substitute.For<IConsumer>(),
@@ -60,7 +59,7 @@ public class ConsumerLoggerFixture
             "messageType: Message.Type, " +
             "messageId: 1234, " +
             "offset: [2]@42, " +
-            "kafkaKey: key1234";
+            "kafkaKey: 1234";
         _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
     }
 

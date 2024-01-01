@@ -74,8 +74,7 @@ public class IntegrationLoggingBenchmark
                 new("Test", "Test"),
                 new(DefaultMessageHeaders.FailedAttempts, "1"),
                 new(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                new(DefaultMessageHeaders.MessageId, "1234"),
-                new(KafkaMessageHeaders.KafkaMessageKey, "key1234")
+                new(DefaultMessageHeaders.MessageId, "1234")
             },
             consumerEndpoint,
             new TestConsumer(),

@@ -67,7 +67,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey).Should().BeNull();
+        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().BeNull();
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "1"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "One=1,Two=2"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             },
             new MessageHeaderCollection
             {
-                { KafkaMessageHeaders.KafkaMessageKey, "Heidi!" }
+                { DefaultMessageHeaders.MessageId, "Heidi!" }
             },
             new KafkaProducerEndpoint("test-endpoint", 1, new KafkaProducerEndpointConfiguration()),
             _kafkaProducer);
@@ -136,7 +136,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "Heidi!"));
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey).Should().NotBeNullOrEmpty();
+        envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().NotBeNullOrEmpty();
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
             _ => default);
 
-        envelope.Headers.Should().NotContain(header => header.Name == KafkaMessageHeaders.KafkaMessageKey);
+        envelope.Headers.Should().NotContain(header => header.Name == DefaultMessageHeaders.MessageId);
     }
 
     public void Dispose() => _kafkaProducer.Dispose();

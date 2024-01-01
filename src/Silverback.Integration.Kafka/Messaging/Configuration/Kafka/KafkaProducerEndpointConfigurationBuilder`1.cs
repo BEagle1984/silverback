@@ -6,7 +6,6 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
-using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -207,11 +206,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<TMessage?, object?> valueProvider)
-    {
-        Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageKafkaKeyEnricher<TMessage>(valueProvider));
-    }
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<TMessage?, object?> valueProvider) =>
+        WithMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -226,11 +222,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
-        where TMessageChildType : TMessage
-    {
-        Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageKafkaKeyEnricher<TMessageChildType>(valueProvider));
-    }
+        where TMessageChildType : TMessage => WithMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -241,11 +233,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
-    {
-        Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageKafkaKeyEnricher<TMessage>(valueProvider));
-    }
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> valueProvider) =>
+        WithMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -260,10 +249,7 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
-    {
-        Check.NotNull(valueProvider, nameof(valueProvider));
-        return AddMessageEnricher(new OutboundMessageKafkaKeyEnricher<TMessageChildType>(valueProvider));
-    }
+        where TMessageChildType : TMessage => WithMessageId(valueProvider);
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>

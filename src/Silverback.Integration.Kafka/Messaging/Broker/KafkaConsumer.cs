@@ -213,8 +213,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         if (message.Key != null)
         {
             string deserializedKafkaKey = deserializer.DeserializeKey(message.Key, headers, endpoint);
-            headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
-            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
+            headers.AddOrReplace(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
         }
 
         headers.AddOrReplace(KafkaMessageHeaders.Timestamp, message.Timestamp.UtcDateTime.ToString("O"));

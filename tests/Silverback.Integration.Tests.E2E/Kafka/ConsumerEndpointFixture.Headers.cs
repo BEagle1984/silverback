@@ -93,11 +93,11 @@ public partial class ConsumerEndpointFixture
 
         Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.InboundEnvelopes[0].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "100"));
+            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "100"));
         Helper.Spy.InboundEnvelopes[1].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "200"));
+            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "200"));
         Helper.Spy.InboundEnvelopes[2].Headers.Should()
-            .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "300"));
+            .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "300"));
     }
 
     [Fact]

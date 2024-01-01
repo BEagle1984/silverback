@@ -14,7 +14,8 @@ namespace Silverback.Messaging.Configuration;
 public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
     /// <summary>
-    ///     Uses the specified value provider function to set the message id header for each produced message.
+    ///     Uses the specified value provider function to set the message id for each produced message.
+    ///     Depending on the broker the provided value might be forwarded as header or similar (or used as Kafka key for the produced message).
     /// </summary>
     /// <param name="valueProvider">
     ///     The value provider function.
@@ -29,7 +30,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Uses the specified value provider function to set the message id header for each produced message of the specified child type.
+    ///     Uses the specified value provider function to set the message id for each produced message of the specified child type.
+    ///     Depending on the broker the provided value might be forwarded as header or similar (or used as Kafka key for the produced message).
     /// </summary>
     /// <typeparam name="TMessageChildType">
     ///     The type of the messages to be enriched with this header.
@@ -48,7 +50,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Uses the specified value provider function to set the message id header for each produced message.
+    ///     Uses the specified value provider function to set the message id for each produced message.
+    ///     Depending on the broker the provided value might be forwarded as header or similar (or used as Kafka key for the produced message).
     /// </summary>
     /// <param name="valueProvider">
     ///     The value provider function.
@@ -63,7 +66,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     }
 
     /// <summary>
-    ///     Uses the specified value provider function to set the message id header for each produced message of the specified child type.
+    ///     Uses the specified value provider function to set the message id for each produced message of the specified child type.
+    ///     Depending on the broker the provided value might be forwarded as header or similar (or used as Kafka key for the produced message).
     /// </summary>
     /// <typeparam name="TMessageChildType">
     ///     The type of the messages to be enriched with this header.

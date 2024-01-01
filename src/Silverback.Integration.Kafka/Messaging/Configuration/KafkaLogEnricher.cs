@@ -20,5 +20,5 @@ internal sealed class KafkaLogEnricher
         Endpoint endpoint,
         IReadOnlyCollection<MessageHeader>? headers,
         IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-        (brokerMessageIdentifier?.ToLogString(), headers?.GetValue(KafkaMessageHeaders.KafkaMessageKey));
+        (brokerMessageIdentifier?.ToLogString(), headers?.GetValue(DefaultMessageHeaders.MessageId));
 }

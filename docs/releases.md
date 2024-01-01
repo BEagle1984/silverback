@@ -74,6 +74,7 @@ uid: releases
     * Split IMessageSerializer / IMessageDeserializer and rename UseFixedType to UseModel
     * Removed Ping health check
     * Kafka key not set to random Guid anymore (will be null if not explicitly set)
+    * Merged MessageId and KafkaKey headers -> MessageId will not be initialized with random Guid anymore
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

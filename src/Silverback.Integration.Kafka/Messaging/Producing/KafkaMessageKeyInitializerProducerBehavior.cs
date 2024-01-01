@@ -11,14 +11,13 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing;
 
 /// <summary>
-///     Sets the message key header with the value from the properties decorated with the
-///     <see cref="KafkaKeyMemberAttribute" />. The header will be used by the
-///     <see cref="Messaging.Broker.KafkaProducer" /> to set the actual message key.
+///     Sets the message id header with the value from the properties decorated with the <see cref="KafkaKeyMemberAttribute" />. The header
+///     will be used by the <see cref="Messaging.Broker.KafkaProducer" /> to set the message key.
 /// </summary>
 public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
 {
     /// <inheritdoc cref="ISorted.SortIndex" />
-    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
     public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
@@ -26,12 +25,12 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
+        if (context.Producer is KafkaProducer && !context.Envelope.Headers.Contains(DefaultMessageHeaders.MessageId))
         {
             string? key = GetKafkaKey(context);
 
             if (key != null)
-                context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
+                context.Envelope.Headers.Add(DefaultMessageHeaders.MessageId, key);
         }
 
         return next(context);

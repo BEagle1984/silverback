@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -218,7 +217,7 @@ public partial class ProducerFixture
     }
 
     [Fact]
-    public async Task RawProduce_ShouldSetKafkaKeyFromKafkaKeyHeader()
+    public async Task RawProduce_ShouldSetKafkaKeyFromMessageIdHeader()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -240,18 +239,18 @@ public partial class ProducerFixture
 
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "1001" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "1001" } });
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "2002" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "2002" } });
         producer.RawProduce(
             BytesUtil.GetRandomBytes(),
-            new MessageHeaderCollection { { KafkaMessageHeaders.KafkaMessageKey, "3003" } });
+            new MessageHeaderCollection { { DefaultMessageHeaders.MessageId, "3003" } });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
-        messages[0].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("1001"));
-        messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("2002"));
-        messages[2].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("3003"));
+        messages[0].Key.Should().BeEquivalentTo("1001"u8.ToArray());
+        messages[1].Key.Should().BeEquivalentTo("2002"u8.ToArray());
+        messages[2].Key.Should().BeEquivalentTo("3003"u8.ToArray());
     }
 }
