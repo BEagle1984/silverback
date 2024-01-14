@@ -360,45 +360,6 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    public ValueTask ProduceAsync(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceAsync(
-            _envelopeFactory.CreateEnvelope(
-                message,
-                headers,
-                EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-                this),
-            onSuccess,
-            onError);
-
-    /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    // TODO: Get rid of closure allocations when possible
-    public async ValueTask ProduceAsync(
-        IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        await ExecutePipelineAsync(
-            new ProducerPipelineContext(envelope, this, _serviceProvider),
-            finalContext => ProduceCoreAsync(
-                finalContext.Envelope.RawMessage,
-                finalContext.Envelope.Headers,
-                (TEndpoint)finalContext.Envelope.Endpoint,
-                identifier =>
-                {
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
-                    _logger.LogProduced(envelope);
-                    onSuccess.Invoke(identifier);
-                },
-                exception =>
-                {
-                    _logger.LogProduceError(envelope, exception);
-                    onError.Invoke(exception);
-                })).ConfigureAwait(false);
-
     /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
     public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
         RawProduceAsync(
@@ -462,76 +423,6 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
             throw;
         }
     }
-
-    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask RawProduceAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        RawProduceAsync(
-            EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-            message,
-            headers,
-            onSuccess,
-            onError);
-
-    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask RawProduceAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        RawProduceAsync(
-            EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-            message,
-            headers,
-            onSuccess,
-            onError);
-
-    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint,byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask RawProduceAsync(
-        ProducerEndpoint endpoint,
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceCoreAsync(
-            message,
-            headers,
-            (TEndpoint)endpoint,
-            identifier =>
-            {
-                _logger.LogProduced(endpoint, headers, identifier);
-                onSuccess.Invoke(identifier);
-            },
-            exception =>
-            {
-                _logger.LogProduceError(endpoint, headers, exception);
-                onError.Invoke(exception);
-            });
-
-    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint,Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask RawProduceAsync(
-        ProducerEndpoint endpoint,
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceCoreAsync(
-            message,
-            headers,
-            (TEndpoint)endpoint,
-            identifier =>
-            {
-                _logger.LogProduced(endpoint, headers, identifier);
-                onSuccess.Invoke(identifier);
-            },
-            exception =>
-            {
-                _logger.LogProduceError(endpoint, headers, exception);
-                onError.Invoke(exception);
-            });
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()

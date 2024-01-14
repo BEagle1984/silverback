@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -18,52 +19,6 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing;
 
 public class OutboundRouterBehaviorFixture
 {
-    // private readonly OutboundRouterBehavior _behavior;
-    //
-    // private readonly IOutboundRoutingConfiguration _routingConfiguration;
-    //
-    // private readonly TestOtherBroker _otherBroker;
-    //
-    // private readonly TestSubscriber _testSubscriber;
-    //
-    // public OutboundRouterBehaviorTests()
-    // {
-    //     ServiceCollection services = new();
-    //
-    //     _testSubscriber = new TestSubscriber();
-    //
-    //     services.AddSilverback()
-    //         .WithConnectionToMessageBroker(
-    //             options => options
-    //                 .AddBroker<TestBroker>()
-    //                 .AddBroker<TestOtherBroker>())
-    //         .AddSingletonSubscriber(_testSubscriber);
-    //
-    //     services
-    //         .AddSingleton(Substitute.For<IHostApplicationLifetime>())
-    //         .AddFakeLogger();
-    //
-    //     IServiceProvider serviceProvider = services.BuildServiceProvider();
-    //
-    //     _behavior = (OutboundRouterBehavior)serviceProvider.GetServices<IBehavior>()
-    //         .First(s => s is OutboundRouterBehavior);
-    //     _routingConfiguration =
-    //         (OutboundRoutingConfiguration)serviceProvider
-    //             .GetRequiredService<IOutboundRoutingConfiguration>();
-    //     _broker = serviceProvider.GetRequiredService<TestBroker>();
-    //     _otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
-    // }
-
-    // [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-    // public static IEnumerable<object[]> HandleAsync_Message_CorrectlyRoutedToEndpoints_TestData =>
-    //     new[]
-    //     {
-    //         new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
-    //         new object[] { new TestEventTwo(), new[] { "allMessages", "allEvents", "eventTwo" } }
-    //     };
-
-    // [Theory]
-    // [MemberData(nameof(HandleAsync_Message_CorrectlyRoutedToEndpoints_TestData))]
     [Fact]
     public async Task HandleAsync_ShouldRouteToSingleEndpoint()
     {
@@ -110,6 +65,110 @@ public class OutboundRouterBehaviorFixture
         await publisher.Received(1).PublishAsync(
             Arg.Is<OutboundEnvelope>(
                 envelope => envelope.Message is TestEventTwo &&
+                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRouteEnumerable()
+    {
+        IPublisher publisher = Substitute.For<IPublisher>();
+        ProducerCollection producers = new();
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
+        producers.Add(producer1);
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
+        producers.Add(producer2);
+        OutboundRoutingConfiguration outboundRoutingConfiguration = new();
+        OutboundRouterBehavior behavior = new(
+            publisher,
+            producers,
+            new OutboundEnvelopeFactory(outboundRoutingConfiguration),
+            new SilverbackContext(),
+            Substitute.For<IServiceProvider>());
+
+        int nextBehaviorCalls = 0;
+
+        IEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() };
+        IEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() };
+
+        await behavior.HandleAsync(
+            events1,
+            _ =>
+            {
+                nextBehaviorCalls++;
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+            });
+        await behavior.HandleAsync(
+            events2,
+            _ =>
+            {
+                nextBehaviorCalls++;
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+            });
+
+        nextBehaviorCalls.Should().Be(0);
+
+        await publisher.Received(2).PublishAsync(Arg.Any<OutboundEnvelope>());
+        await publisher.Received(1).PublishAsync(
+            Arg.Is<OutboundEnvelope>(
+                envelope => envelope.Message is IEnumerable<TestEventOne> &&
+                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic1"));
+        await publisher.Received(1).PublishAsync(
+            Arg.Is<OutboundEnvelope>(
+                envelope => envelope.Message is IEnumerable<TestEventTwo> &&
+                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldRouteAsyncEnumerable()
+    {
+        IPublisher publisher = Substitute.For<IPublisher>();
+        ProducerCollection producers = new();
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
+        producers.Add(producer1);
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
+        producers.Add(producer2);
+        OutboundRoutingConfiguration outboundRoutingConfiguration = new();
+        OutboundRouterBehavior behavior = new(
+            publisher,
+            producers,
+            new OutboundEnvelopeFactory(outboundRoutingConfiguration),
+            new SilverbackContext(),
+            Substitute.For<IServiceProvider>());
+
+        int nextBehaviorCalls = 0;
+
+        IAsyncEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() }.ToAsyncEnumerable();
+        IAsyncEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() }.ToAsyncEnumerable();
+
+        await behavior.HandleAsync(
+            events1,
+            _ =>
+            {
+                nextBehaviorCalls++;
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+            });
+        await behavior.HandleAsync(
+            events2,
+            _ =>
+            {
+                nextBehaviorCalls++;
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+            });
+
+        nextBehaviorCalls.Should().Be(0);
+
+        await publisher.Received(2).PublishAsync(Arg.Any<OutboundEnvelope>());
+        await publisher.Received(1).PublishAsync(
+            Arg.Is<OutboundEnvelope>(
+                envelope => envelope.Message is IAsyncEnumerable<TestEventOne> &&
+                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic1"));
+        await publisher.Received(1).PublishAsync(
+            Arg.Is<OutboundEnvelope>(
+                envelope => envelope.Message is IAsyncEnumerable<TestEventTwo> &&
                             ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
     }
 

@@ -6,7 +6,7 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     A tombstone message (a message with null body).
 /// </summary>
-public class Tombstone
+public class Tombstone : ITombstone
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="Tombstone" /> class.

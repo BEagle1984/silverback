@@ -14,6 +14,8 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
+    private static readonly Type[] CompatibleGenericInterfaces = { typeof(ITombstone<>), typeof(IEnumerable<>), typeof(IAsyncEnumerable<>) };
+
     private readonly List<ProducerItem> _producers = new();
 
     private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
@@ -60,18 +62,24 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
             .Where(
                 item =>
                     item.IsRouting &&
-                    IsCompatibleMessageType(item.Producer.EndpointConfiguration.MessageType, messageType) ||
-                    IsCompatibleTombstone(item.Producer.EndpointConfiguration.MessageType, messageType))
+                    (IsCompatibleMessage(item.Producer.EndpointConfiguration.MessageType, messageType) ||
+                    IsCompatibleGeneric(item.Producer.EndpointConfiguration.MessageType, messageType)))
             .Select(item => item.Producer)
             .ToList();
 
-    private static bool IsCompatibleMessageType(Type producerType, Type messageType) =>
+    private static bool IsCompatibleMessage(Type producerType, Type messageType) =>
         producerType.IsAssignableFrom(messageType);
 
-    private static bool IsCompatibleTombstone(Type producerType, Type messageType) =>
-        typeof(Tombstone).IsAssignableFrom(messageType) &&
-        messageType.GenericTypeArguments.Length == 1 &&
-        producerType.IsAssignableFrom(messageType.GenericTypeArguments[0]);
+    private static bool IsCompatibleGeneric(Type producerType, Type messageType) =>
+        messageType.GetInterfaces()
+            .Where(
+                interfaceType =>
+                    interfaceType.IsGenericType &&
+                    CompatibleGenericInterfaces.Contains(interfaceType.GetGenericTypeDefinition()))
+            .Any(
+                genericInterfaceType =>
+                    genericInterfaceType.GenericTypeArguments.Length == 1 &&
+                    producerType.IsAssignableFrom(genericInterfaceType.GenericTypeArguments[0]));
 
     private sealed record ProducerItem(IProducer Producer, bool IsRouting);
 }

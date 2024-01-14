@@ -124,6 +124,68 @@ public class ProducerCollectionFixture
     }
 
     [Fact]
+    public void GetProducersForMessage_ShouldReturnProducerForEnumerable()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventTwo)
+            });
+        producerCollection.Add(producer2);
+
+        IEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() };
+        IEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() };
+
+        IProducer eventOneProducer = producerCollection.GetProducersForMessage(events1).Single();
+        IProducer eventTwoProducer = producerCollection.GetProducersForMessage(events2).Single();
+
+        eventOneProducer.Should().Be(producer1);
+        eventTwoProducer.Should().Be(producer2);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnProducerForAsyncEnumerable()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventTwo)
+            });
+        producerCollection.Add(producer2);
+
+        IAsyncEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() }.ToAsyncEnumerable();
+        IAsyncEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() }.ToAsyncEnumerable();
+
+        IProducer eventOneProducer = producerCollection.GetProducersForMessage(events1).Single();
+        IProducer eventTwoProducer = producerCollection.GetProducersForMessage(events2).Single();
+
+        eventOneProducer.Should().Be(producer1);
+        eventTwoProducer.Should().Be(producer2);
+    }
+
+    [Fact]
     public void GetProducersForMessage_ShouldReturnAllProducersForMessage()
     {
         ProducerCollection producerCollection = new();
@@ -149,33 +211,6 @@ public class ProducerCollectionFixture
 
         eventOneProducers.Should().HaveCount(2);
         eventTwoProducers.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void GetProducersForMessage_ShouldIgnoreNonRoutingProducers()
-    {
-        ProducerCollection producerCollection = new();
-
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic1")
-            {
-                MessageType = typeof(TestEventOne)
-            });
-        producerCollection.Add(producer1);
-
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic2")
-            {
-                MessageType = typeof(TestEventOne)
-            });
-        producerCollection.Add(producer2, false);
-
-        IReadOnlyCollection<IProducer> eventOneProducers = producerCollection.GetProducersForMessage(new TestEventOne());
-
-        eventOneProducers.Should().HaveCount(1);
-        eventOneProducers.Single().Should().Be(producer1);
     }
 
     [Fact]
@@ -207,6 +242,87 @@ public class ProducerCollectionFixture
     }
 
     [Fact]
+    public void GetProducersForMessage_ShouldIgnoreNonRoutingProducers()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer2, false);
+
+        IReadOnlyCollection<IProducer> eventOneProducers = producerCollection.GetProducersForMessage(new TestEventOne());
+
+        eventOneProducers.Should().HaveCount(1);
+        eventOneProducers.Single().Should().Be(producer1);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldIgnoreNonRoutingProducersForTombstone()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer2, false);
+
+        IReadOnlyCollection<IProducer> eventOneProducers = producerCollection.GetProducersForMessage(new Tombstone<TestEventOne>("42"));
+
+        eventOneProducers.Should().HaveCount(1);
+        eventOneProducers.Single().Should().Be(producer1);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldIgnoreNonRoutingProducersForEnumerable()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer2, false);
+
+        IReadOnlyCollection<IProducer> eventOneProducers = producerCollection.GetProducersForMessage(new[] { new TestEventOne() });
+
+        eventOneProducers.Should().HaveCount(1);
+        eventOneProducers.Single().Should().Be(producer1);
+    }
+
+    [Fact]
     public void GetProducersForMessage_ShouldReturnEmptyCollection_WhenNoProducerIsCompatibleWithMessage()
     {
         ProducerCollection producerCollection = new();
@@ -220,6 +336,46 @@ public class ProducerCollectionFixture
         producerCollection.Add(producer1);
 
         IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(new TestEventTwo());
+
+        eventTwoProducers.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnEmptyCollection_WhenNoProducerIsCompatibleWithEnumerable()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() };
+
+        IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(events2);
+
+        eventTwoProducers.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnEmptyCollection_WhenNoProducerIsCompatibleWithAsyncEnumerable()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IAsyncEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() }.ToAsyncEnumerable();
+
+        IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(events2);
 
         eventTwoProducers.Should().BeEmpty();
     }

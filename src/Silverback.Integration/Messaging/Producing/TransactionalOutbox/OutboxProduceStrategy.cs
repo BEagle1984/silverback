@@ -99,6 +99,10 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
             _logger.LogStoringIntoOutbox(envelope);
         }
 
+        public Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes) => throw new NotImplementedException();
+
+        public Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes) => throw new NotImplementedException();
+
         public void Dispose() => _producer.Dispose();
 
         private async Task WriteToOutboxAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers, ProducerEndpoint endpoint)

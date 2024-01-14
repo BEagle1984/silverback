@@ -294,9 +294,7 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message.
@@ -311,58 +309,19 @@ public interface IProducer
     ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
 
     /// <summary>
-    ///     Publishes the specified message.
+    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
     /// <param name="message">
     ///     The message.
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
+    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
+    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask ProduceAsync(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="envelope">
-    ///     The envelope containing the message to be delivered.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    ValueTask ProduceAsync(
-        IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -377,26 +336,7 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers = null);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
-    ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
-    /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -439,128 +379,4 @@ public interface IProducer
         ProducerEndpoint endpoint,
         Stream? message,
         IReadOnlyCollection<MessageHeader>? headers = null);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    ValueTask RawProduceAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    ValueTask RawProduceAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    ValueTask RawProduceAsync(
-        ProducerEndpoint endpoint,
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="endpoint">
-    ///     The target endpoint.
-    /// </param>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The optional message headers.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    ValueTask RawProduceAsync(
-        ProducerEndpoint endpoint,
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
 }

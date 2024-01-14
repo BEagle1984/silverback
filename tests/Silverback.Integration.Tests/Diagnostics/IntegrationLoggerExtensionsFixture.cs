@@ -581,10 +581,6 @@ public class IntegrationLoggerExtensionsFixture
 
         public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope) => throw new NotSupportedException();
 
-        public ValueTask ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public ValueTask ProduceAsync(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
         public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 
         public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
@@ -592,13 +588,5 @@ public class IntegrationLoggerExtensionsFixture
         public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(ProducerEndpoint endpoint, byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
 
         public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(ProducerEndpoint endpoint, Stream? message, IReadOnlyCollection<MessageHeader>? headers = null) => throw new NotSupportedException();
-
-        public ValueTask RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public ValueTask RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public ValueTask RawProduceAsync(ProducerEndpoint endpoint, byte[]? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-
-        public ValueTask RawProduceAsync(ProducerEndpoint endpoint, Stream? message, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) => throw new NotSupportedException();
-    }
+}
 }

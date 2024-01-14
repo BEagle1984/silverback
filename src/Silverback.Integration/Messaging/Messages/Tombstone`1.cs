@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages;
 ///     The type of the message that was expected.
 /// </typeparam>
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for routing")]
-public class Tombstone<TMessage> : Tombstone
+public class Tombstone<TMessage> : Tombstone, ITombstone<TMessage>
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="Tombstone{TMessage}" /> class.

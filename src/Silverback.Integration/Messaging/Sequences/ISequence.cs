@@ -15,8 +15,7 @@ using Silverback.Messaging.Subscribers;
 namespace Silverback.Messaging.Sequences;
 
 /// <summary>
-///     A set of logically related messages, like the chunks belonging to the same message or the
-///     messages in a dataset.
+///     A set of logically related messages, like the chunks belonging to the same message or the messages in a dataset.
 /// </summary>
 public interface ISequence : IDisposable
 {
