@@ -107,16 +107,7 @@ public class ChunkSequenceWriter : ISequenceWriter
         byte[] rawContent,
         IOutboundEnvelope originalEnvelope)
     {
-        OutboundEnvelope envelope = new(
-            originalEnvelope.Message,
-            originalEnvelope.Headers,
-            originalEnvelope.Endpoint,
-            originalEnvelope.Producer,
-            originalEnvelope.Context,
-            originalEnvelope.AutoUnwrap)
-        {
-            RawMessage = new MemoryStream(rawContent)
-        };
+        IOutboundEnvelope envelope = originalEnvelope.CloneReplacingRawMessage(new MemoryStream(rawContent));
 
         envelope.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
 

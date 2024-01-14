@@ -78,7 +78,6 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         return await next(message).ConfigureAwait(false);
     }
 
-    // TODO: Optimize calling the producer directly?
     private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(object message)
     {
         if (message is IOutboundEnvelope)

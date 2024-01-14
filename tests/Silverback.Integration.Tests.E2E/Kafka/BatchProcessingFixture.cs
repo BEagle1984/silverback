@@ -20,9 +20,9 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 // TODO: Test with multiple endpoints for the same consumer
-public partial class BatchFixture : KafkaFixture
+public partial class BatchProcessingFixture : KafkaFixture
 {
-    public BatchFixture(ITestOutputHelper testOutputHelper)
+    public BatchProcessingFixture(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }

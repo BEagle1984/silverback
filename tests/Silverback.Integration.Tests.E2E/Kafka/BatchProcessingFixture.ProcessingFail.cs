@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
-public partial class BatchFixture
+public partial class BatchProcessingFixture
 {
     [Fact]
     public async Task Batch_ShouldStopConsumer_WhenProcessingFails()

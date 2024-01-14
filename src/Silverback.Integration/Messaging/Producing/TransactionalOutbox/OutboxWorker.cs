@@ -138,6 +138,8 @@ public class OutboxWorker : IOutboxWorker
         return true;
     }
 
+    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
+    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     private async Task ProcessMessageAsync(OutboxMessage message)
     {
         try
@@ -146,25 +148,24 @@ public class OutboxWorker : IOutboxWorker
             ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
 
             // TODO: Avoid closure allocations
-            await producer.RawProduceAsync(
-                    endpoint,
-                    message.Content,
-                    message.Headers,
-                    identifier =>
-                    {
-                        _producedMessages.Add(message);
-                        _onSuccess.Invoke(identifier);
-                    },
-                    exception =>
-                    {
-                        _failed = true;
-                        Interlocked.Decrement(ref _pendingProduceOperations);
+            producer.RawProduce(
+                endpoint,
+                message.Content,
+                message.Headers,
+                identifier =>
+                {
+                    _producedMessages.Add(message);
+                    _onSuccess.Invoke(identifier);
+                },
+                exception =>
+                {
+                    _failed = true;
+                    Interlocked.Decrement(ref _pendingProduceOperations);
 
-                        _logger.LogErrorProducingOutboxStoredMessage(
-                            new OutboundEnvelope(message.Content, message.Headers, endpoint, producer),
-                            exception);
-                    })
-                .ConfigureAwait(false);
+                    _logger.LogErrorProducingOutboxStoredMessage(
+                        new OutboundEnvelope(message.Content, message.Headers, endpoint, producer),
+                        exception);
+                });
         }
         catch (Exception ex)
         {

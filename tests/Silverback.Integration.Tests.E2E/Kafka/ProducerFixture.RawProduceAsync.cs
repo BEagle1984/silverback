@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -92,120 +91,6 @@ public partial class ProducerFixture
         await producer.RawProduceAsync(
             new MemoryStream(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 }),
             new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } });
-
-        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Value.Should().BeEquivalentTo(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 });
-        messages[0].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 1"));
-        messages[1].Value.Should().BeEquivalentTo(new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 });
-        messages[1].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 2"));
-        messages[2].Value.Should().BeEquivalentTo(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 });
-        messages[2].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 3"));
-    }
-
-    [Fact]
-    public async Task RawProduceAsync_ShouldProduceByteArrayUsingCallbacks()
-    {
-        int produced = 0;
-        int errors = 0;
-
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
-
-        await producer.RawProduceAsync(
-            new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 },
-            new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-        await producer.RawProduceAsync(
-            new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 },
-            new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-        await producer.RawProduceAsync(
-            new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 },
-            new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-
-        produced.Should().BeLessThan(3);
-
-        await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-        produced.Should().Be(3);
-        errors.Should().Be(0);
-
-        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].Value.Should().BeEquivalentTo(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 });
-        messages[0].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 1"));
-        messages[1].Value.Should().BeEquivalentTo(new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 });
-        messages[1].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 2"));
-        messages[2].Value.Should().BeEquivalentTo(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 });
-        messages[2].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 3"));
-    }
-
-    [Fact]
-    public async Task RawProduceAsync_ShouldProduceStreamUsingCallbacks()
-    {
-        int produced = 0;
-        int errors = 0;
-
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
-
-        await producer.RawProduceAsync(
-            new MemoryStream(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 }),
-            new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-        await producer.RawProduceAsync(
-            new MemoryStream(new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 }),
-            new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-        await producer.RawProduceAsync(
-            new MemoryStream(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 }),
-            new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } },
-            _ => Interlocked.Increment(ref produced),
-            _ => Interlocked.Increment(ref errors));
-
-        produced.Should().BeLessThan(3);
-
-        await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-        produced.Should().Be(3);
-        errors.Should().Be(0);
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);

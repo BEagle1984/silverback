@@ -53,28 +53,24 @@ public class OutboxWorkerFixture
         _producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
         _producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
 
-        _producer1.RawProduceAsync(
-            Arg.Any<ProducerEndpoint>(),
-            Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-            Arg.Any<Action<Exception>>()).Returns(
-            callInfo =>
-            {
-                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-                return ValueTask.CompletedTask;
-            });
-        _producer2.RawProduceAsync(
-            Arg.Any<ProducerEndpoint>(),
-            Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-            Arg.Any<Action<Exception>>()).Returns(
-            callInfo =>
-            {
-                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-                return ValueTask.CompletedTask;
-            });
+        _producer1
+            .When(
+                producer => producer.RawProduce(
+                    Arg.Any<ProducerEndpoint>(),
+                    Arg.Any<byte[]>(),
+                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+                    Arg.Any<Action<Exception>>()))
+            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null));
+        _producer2
+            .When(
+                producer => producer.RawProduce(
+                    Arg.Any<ProducerEndpoint>(),
+                    Arg.Any<byte[]>(),
+                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+                    Arg.Any<Action<Exception>>()))
+            .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null));
 
         _outboxWorker = new OutboxWorker(
             _inMemoryOutboxWorkerSettings,
@@ -93,8 +89,8 @@ public class OutboxWorkerFixture
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
 
-        await AssertReceivedCallsAsync(_producer1, 2);
-        await AssertReceivedCallsAsync(_producer2, 1);
+        AssertReceivedCalls(_producer1, 2);
+        AssertReceivedCalls(_producer2, 1);
     }
 
     // TODO: Reimplement and add tests for headers, etc.
@@ -297,34 +293,31 @@ public class OutboxWorkerFixture
         }
 
         int tries = 0;
-        _producer1.RawProduceAsync(
-            Arg.Any<ProducerEndpoint>(),
-            Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-            Arg.Any<Action<Exception>>()).Returns(
-            callInfo =>
-            {
-                if (Interlocked.Increment(ref tries) is 2 or 5)
+        _producer1
+            .When(
+                producer => producer.RawProduce(
+                    Arg.Any<ProducerEndpoint>(),
+                    Arg.Any<byte[]>(),
+                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+                    Arg.Any<Action<Exception>>()))
+            .Do(
+                callInfo =>
                 {
-                    callInfo.ArgAt<Action<Exception>>(4).Invoke(new InvalidOperationException("Test"));
-                }
-                else
-                {
-                    callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-                }
-
-                return ValueTask.CompletedTask;
-            });
+                    if (Interlocked.Increment(ref tries) is 2 or 5)
+                        callInfo.ArgAt<Action<Exception>>(4).Invoke(new InvalidOperationException("Test"));
+                    else
+                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+                });
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 2);
+        AssertReceivedCalls(_producer1, 2);
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 5);
+        AssertReceivedCalls(_producer1, 5);
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 12); // 10 messages + 2 retries
+        AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
     }
 
     [Fact]
@@ -337,33 +330,34 @@ public class OutboxWorkerFixture
         }
 
         int tries = 0;
-        _producer1.RawProduceAsync(
-            Arg.Any<ProducerEndpoint>(),
-            Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-            Arg.Any<Action<Exception>>()).Returns(
-            callInfo =>
+        _producer1
+            .When(
+                producer => producer.RawProduce(
+                    Arg.Any<ProducerEndpoint>(),
+                    Arg.Any<byte[]>(),
+                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
+                    Arg.Any<Action<Exception>>()))
+            .Do(callInfo =>
             {
                 if (Interlocked.Increment(ref tries) is 2 or 5)
                     throw new InvalidOperationException("Test");
 
                 callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-                return ValueTask.CompletedTask;
             });
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 2);
+        AssertReceivedCalls(_producer1, 2);
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 5);
+        AssertReceivedCalls(_producer1, 5);
 
         await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        await AssertReceivedCallsAsync(_producer1, 12); // 10 messages + 2 retries
+        AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
     }
 
-    private static async Task AssertReceivedCallsAsync(IProducer producer, int requiredNumberOfCalls) =>
-        await producer.Received(requiredNumberOfCalls).RawProduceAsync(
+    private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
+        producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<ProducerEndpoint>(),
             Arg.Any<byte[]>(),
             Arg.Any<IReadOnlyCollection<MessageHeader>>(),

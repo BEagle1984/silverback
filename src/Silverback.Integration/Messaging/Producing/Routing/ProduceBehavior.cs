@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -22,8 +23,7 @@ public class ProduceBehavior : IBehavior, ISorted
     ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to build the
-    ///     <see cref="IProduceStrategyImplementation" />.
+    ///     The <see cref="IServiceProvider" /> to be used to build the <see cref="IProduceStrategyImplementation" />.
     /// </param>
     public ProduceBehavior(IServiceProvider serviceProvider)
     {
@@ -40,9 +40,21 @@ public class ProduceBehavior : IBehavior, ISorted
 
         if (message is IOutboundEnvelope envelope)
         {
-            await envelope.Endpoint.Configuration.Strategy
-                .Build(_serviceProvider, envelope.Endpoint.Configuration)
-                .ProduceAsync(envelope).ConfigureAwait(false);
+            IProduceStrategyImplementation produceStrategy =
+                envelope.Endpoint.Configuration.Strategy.Build(_serviceProvider, envelope.Endpoint.Configuration);
+
+            switch (message)
+            {
+                case IOutboundEnvelope { Message: IAsyncEnumerable<object> messages }:
+                    await produceStrategy.ProduceAsync(messages.Select(envelope.CloneReplacingMessage)).ConfigureAwait(false);
+                    break;
+                case IOutboundEnvelope { Message: IEnumerable<object> messages }:
+                    await produceStrategy.ProduceAsync(messages.Select(envelope.CloneReplacingMessage)).ConfigureAwait(false);
+                    break;
+                default:
+                    await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);
+                    break;
+            }
         }
 
         return await next(message).ConfigureAwait(false);

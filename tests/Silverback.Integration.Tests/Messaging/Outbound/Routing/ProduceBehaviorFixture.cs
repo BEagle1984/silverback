@@ -63,6 +63,84 @@ public class ProduceBehaviorFixture
             .Should().AllBeOfType<TestEventOne>();
     }
 
+    [Fact]
+    public async Task HandleAsync_ShouldProduceEnumerable()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker());
+
+        ProduceBehavior behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
+            .First(behavior => behavior is ProduceBehavior);
+
+        IEnumerable<TestEventOne> messages = new[]
+        {
+            new TestEventOne(),
+            new TestEventOne(),
+            new TestEventOne()
+        };
+
+        TestProduceStrategy testProduceStrategy = new();
+        OutboundEnvelope<IEnumerable<TestEventOne>> outboundEnvelope = new(
+            messages,
+            Array.Empty<MessageHeader>(),
+            new TestProducerEndpointConfiguration("test")
+            {
+                Strategy = testProduceStrategy
+            }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext());
+
+        await behavior.HandleAsync(
+            outboundEnvelope,
+            message => ValueTask.FromResult(new[] { message }.AsReadOnlyCollection())!);
+
+        testProduceStrategy.ProducedEnvelopes.Should().HaveCount(3);
+        testProduceStrategy.ProducedEnvelopes.Select(envelope => envelope.Message)
+            .Should().AllBeOfType<TestEventOne>();
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceAsyncEnumerable()
+    {
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker());
+
+        ProduceBehavior behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
+            .First(behavior => behavior is ProduceBehavior);
+
+        IAsyncEnumerable<TestEventOne> messages = new[]
+        {
+            new TestEventOne(),
+            new TestEventOne(),
+            new TestEventOne()
+        }.ToAsyncEnumerable();
+
+        TestProduceStrategy testProduceStrategy = new();
+        OutboundEnvelope<IAsyncEnumerable<TestEventOne>> outboundEnvelope = new(
+            messages,
+            Array.Empty<MessageHeader>(),
+            new TestProducerEndpointConfiguration("test")
+            {
+                Strategy = testProduceStrategy
+            }.GetDefaultEndpoint(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext());
+
+        await behavior.HandleAsync(
+            outboundEnvelope,
+            message => ValueTask.FromResult(new[] { message }.AsReadOnlyCollection())!);
+
+        testProduceStrategy.ProducedEnvelopes.Should().HaveCount(3);
+        testProduceStrategy.ProducedEnvelopes.Select(envelope => envelope.Message)
+            .Should().AllBeOfType<TestEventOne>();
+    }
+
     private class TestProduceStrategy : IProduceStrategy
     {
         public List<IOutboundEnvelope> ProducedEnvelopes { get; } = new();
@@ -86,6 +164,14 @@ public class ProduceBehaviorFixture
                 _action.Invoke(envelope);
                 return Task.CompletedTask;
             }
+
+            public Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes)
+            {
+                envelopes.ForEach(_action.Invoke);
+                return Task.CompletedTask;
+            }
+
+            public Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes) => envelopes.ForEachAsync(_action.Invoke);
         }
     }
 }

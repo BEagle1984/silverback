@@ -188,60 +188,6 @@ public partial class ProducerFixture
     }
 
     [Fact]
-    public async Task ProduceAsync_ShouldProduceEnvelopeUsingCallbacks()
-    {
-        int produced = 0;
-        int errors = 0;
-
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
-        KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
-
-        for (int i = 1; i <= 3; i++)
-        {
-            await producer.ProduceAsync(
-                envelopeFactory.CreateEnvelope(
-                    new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
-                    new MessageHeaderCollection { { "x-custom", $"test {i}" } },
-                    new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.EndpointConfiguration),
-                    producer),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-        }
-
-        produced.Should().BeLessThan(3);
-
-        await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-        produced.Should().Be(3);
-        errors.Should().Be(0);
-
-        IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
-        messages.Should().HaveCount(3);
-        messages[0].GetContentAsString().Should().BeEquivalentTo("{\"ContentEventOne\":\"Hello E2E 1!\"}");
-        messages[0].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 1"));
-        messages[1].GetContentAsString().Should().BeEquivalentTo("{\"ContentEventOne\":\"Hello E2E 2!\"}");
-        messages[1].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 2"));
-        messages[2].GetContentAsString().Should().BeEquivalentTo("{\"ContentEventOne\":\"Hello E2E 3!\"}");
-        messages[2].Headers.Select(header => (header.Key, header.GetValueAsString())).Should().ContainEquivalentOf(("x-custom", "test 3"));
-    }
-
-    [Fact]
     public async Task ProduceAsync_ShouldSetKafkaKeyFromMessageIdHeader()
     {
         await Host.ConfigureServicesAndRunAsync(

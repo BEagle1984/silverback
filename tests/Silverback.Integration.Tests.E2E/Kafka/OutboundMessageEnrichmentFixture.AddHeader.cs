@@ -197,7 +197,7 @@ public partial class OutboundMessageEnrichmentFixture
                 .AddIntegrationSpy());
 
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
-        await producer.ProduceAsync(
+        producer.Produce(
             new TestEventOne { ContentEventOne = "one" },
             null,
             _ =>
@@ -206,7 +206,7 @@ public partial class OutboundMessageEnrichmentFixture
             _ =>
             {
             });
-        await producer.ProduceAsync(
+        producer.Produce(
             new TestEventOne { ContentEventOne = "two" },
             null,
             _ =>
@@ -215,7 +215,7 @@ public partial class OutboundMessageEnrichmentFixture
             _ =>
             {
             });
-        await producer.ProduceAsync(
+        producer.Produce(
             new TestEventOne { ContentEventOne = "three" },
             null,
             _ =>
