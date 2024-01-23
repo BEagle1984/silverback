@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages;
 /// </summary>
 public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
 {
-    private List<MessageHeader> _list;
+    private readonly List<MessageHeader> _list;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MessageHeaderCollection" /> class.
@@ -90,12 +90,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="value">
     ///     The header value.
     /// </param>
-    public void Add(string name, string? value)
-    {
-        Check.NotNull(name, nameof(name));
-
-        Add(new MessageHeader(name, value));
-    }
+    public void Add(string name, string? value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
 
     /// <summary>
     ///     Adds a new header.
@@ -103,15 +98,15 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="header">
     ///     The header to be added.
     /// </param>
-    public void Add(MessageHeader header)
-    {
-        Check.NotNull(header, nameof(header));
+    public void Add(MessageHeader header) => _list.Add(Check.NotNull(header, nameof(header)));
 
-        List<MessageHeader> newList = new(_list.Capacity + 1);
-        newList.AddRange(_list);
-        newList.Add(header);
-        _list = newList;
-    }
+    /// <summary>
+    ///     Adds the new headers.
+    /// </summary>
+    /// <param name="headers">
+    ///     The headers to be added.
+    /// </param>
+    public void AddRange(IEnumerable<MessageHeader> headers) => _list.AddRange(Check.NotNull(headers, nameof(headers)));
 
     /// <summary>
     ///     Removes all headers with the specified name.

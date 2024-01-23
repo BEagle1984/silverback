@@ -15,7 +15,7 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Routing;
+namespace Silverback.Tests.Integration.Messaging.Producing.Routing;
 
 public class OutboundRouterBehaviorFixture
 {

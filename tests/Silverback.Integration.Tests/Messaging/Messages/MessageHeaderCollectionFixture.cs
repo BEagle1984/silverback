@@ -169,6 +169,40 @@ public class MessageHeaderCollectionFixture
     }
 
     [Fact]
+    public void Add_ShouldAddMessageHeader()
+    {
+        MessageHeaderCollection collection = new();
+
+        collection.Add(new MessageHeader("one", "1"));
+        collection.Add(new MessageHeader("two", "2"));
+        collection.Add(new MessageHeader("three", "3"));
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"),
+                new MessageHeader("three", "3")
+            });
+    }
+
+    [Fact]
+    public void AddRange_ShouldAddMessageHeader()
+    {
+        MessageHeaderCollection collection = new();
+
+        collection.AddRange(new MessageHeaderCollection { { "one", "1" }, { "two", "2" }, { "three", "3" } });
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"),
+                new MessageHeader("three", "3")
+            });
+    }
+
+    [Fact]
     public void Replace_ShouldReplaceIntValue_WhenHeaderAlreadyExists()
     {
         MessageHeaderCollection collection = new()

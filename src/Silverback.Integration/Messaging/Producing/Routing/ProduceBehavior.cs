@@ -46,10 +46,16 @@ public class ProduceBehavior : IBehavior, ISorted
             switch (message)
             {
                 case IOutboundEnvelope { Message: IAsyncEnumerable<object> messages }:
-                    await produceStrategy.ProduceAsync(messages.Select(envelope.CloneReplacingMessage)).ConfigureAwait(false);
+                    await produceStrategy.ProduceAsync(
+                        messages.Select(
+                            enumeratedMessage =>
+                                OutboundEnvelopeFactory.CreateSimilarEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
                     break;
                 case IOutboundEnvelope { Message: IEnumerable<object> messages }:
-                    await produceStrategy.ProduceAsync(messages.Select(envelope.CloneReplacingMessage)).ConfigureAwait(false);
+                    await produceStrategy.ProduceAsync(
+                        messages.Select(
+                            enumeratedMessage =>
+                                OutboundEnvelopeFactory.CreateSimilarEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
                     break;
                 default:
                     await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);

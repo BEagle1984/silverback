@@ -8,13 +8,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
-    private static readonly Type[] CompatibleGenericInterfaces = { typeof(ITombstone<>), typeof(IEnumerable<>), typeof(IAsyncEnumerable<>) };
+    private static readonly Type[] CompatibleGenericInterfaces =
+    {
+        typeof(ITombstone<>),
+        typeof(IEnumerable<>),
+        typeof(IAsyncEnumerable<>),
+        typeof(IMessageWithHeaders<>)
+    };
 
     private readonly List<ProducerItem> _producers = new();
 
@@ -62,24 +69,26 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
             .Where(
                 item =>
                     item.IsRouting &&
-                    (IsCompatibleMessage(item.Producer.EndpointConfiguration.MessageType, messageType) ||
-                    IsCompatibleGeneric(item.Producer.EndpointConfiguration.MessageType, messageType)))
+                    item.Producer.EndpointConfiguration.MessageType.IsAssignableFrom(GetActualMessageType(messageType)))
             .Select(item => item.Producer)
             .ToList();
 
-    private static bool IsCompatibleMessage(Type producerType, Type messageType) =>
-        producerType.IsAssignableFrom(messageType);
+    private static Type GetActualMessageType(Type messageType) =>
+        ExtractTypeFromSupportedInterface(messageType) ?? messageType;
 
-    private static bool IsCompatibleGeneric(Type producerType, Type messageType) =>
-        messageType.GetInterfaces()
-            .Where(
-                interfaceType =>
-                    interfaceType.IsGenericType &&
-                    CompatibleGenericInterfaces.Contains(interfaceType.GetGenericTypeDefinition()))
-            .Any(
-                genericInterfaceType =>
-                    genericInterfaceType.GenericTypeArguments.Length == 1 &&
-                    producerType.IsAssignableFrom(genericInterfaceType.GenericTypeArguments[0]));
+    private static Type? ExtractTypeFromSupportedInterface(Type messageType)
+    {
+        Type? supportedInterfaceType = Array.Find(
+            messageType.GetInterfaces(),
+            interfaceType => interfaceType.IsGenericType && CompatibleGenericInterfaces.Contains(interfaceType.GetGenericTypeDefinition()));
+
+        if (supportedInterfaceType == null)
+            return null;
+
+        Type innerMessageType = supportedInterfaceType.GenericTypeArguments[0];
+
+        return ExtractTypeFromSupportedInterface(innerMessageType) ?? innerMessageType;
+    }
 
     private sealed record ProducerItem(IProducer Producer, bool IsRouting);
 }

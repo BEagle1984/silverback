@@ -9,17 +9,6 @@ namespace Silverback.Messaging.Messages;
 public interface IOutboundEnvelope : IBrokerEnvelope, IRawOutboundEnvelope
 {
     /// <summary>
-    ///     Clones the envelope and replaces the message with the specified one.
-    /// </summary>
-    /// <param name="newMessage">
-    ///     The new message to be set.
-    /// </param>
-    /// <returns>
-    ///     The new envelope.
-    /// </returns>
-    public IOutboundEnvelope CloneReplacingMessage(object? newMessage);
-
-    /// <summary>
     ///     Clones the envelope and replaces the raw message with the specified one.
     /// </summary>
     /// <param name="newRawMessage">
