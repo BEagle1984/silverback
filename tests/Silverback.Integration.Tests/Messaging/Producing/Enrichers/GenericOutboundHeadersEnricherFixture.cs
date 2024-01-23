@@ -10,7 +10,7 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers;
+namespace Silverback.Tests.Integration.Messaging.Producing.Enrichers;
 
 public class GenericOutboundHeadersEnricherFixture
 {

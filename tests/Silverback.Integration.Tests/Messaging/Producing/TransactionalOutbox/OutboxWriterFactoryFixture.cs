@@ -9,7 +9,7 @@ using Silverback.Lock;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
 
 public class OutboxWriterFactoryFixture
 {

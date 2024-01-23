@@ -6,7 +6,7 @@ using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound;
+namespace Silverback.Tests.Integration.Messaging.Producing;
 
 public class DefaultProduceStrategyTests
 {

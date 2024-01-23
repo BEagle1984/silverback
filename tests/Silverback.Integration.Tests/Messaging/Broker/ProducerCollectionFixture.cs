@@ -8,6 +8,7 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -462,6 +463,62 @@ public class ProducerCollectionFixture
 
         tombstoneProducer1.Should().Be(producer1);
         tombstoneProducer2.Should().Be(producer2);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnProducerForMessageWithHeadersType()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventTwo)
+            });
+        producerCollection.Add(producer2);
+
+        IProducer resolvedProducer1 = producerCollection.GetProducersForMessage(typeof(MessageWithHeaders<TestEventOne>)).Single();
+        IProducer resolvedProducer2 = producerCollection.GetProducersForMessage(typeof(MessageWithHeaders<TestEventTwo>)).Single();
+
+        resolvedProducer1.Should().Be(producer1);
+        resolvedProducer2.Should().Be(producer2);
+    }
+
+    [Fact]
+    public void GetProducersForMessage_ShouldReturnProducerForMessageWithHeadersEnumerableType()
+    {
+        ProducerCollection producerCollection = new();
+
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                MessageType = typeof(TestEventOne)
+            });
+        producerCollection.Add(producer1);
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                MessageType = typeof(TestEventTwo)
+            });
+        producerCollection.Add(producer2);
+
+        IProducer resolvedProducer1 = producerCollection.GetProducersForMessage(typeof(List<MessageWithHeaders<TestEventOne>>)).Single();
+        IProducer resolvedProducer2 = producerCollection.GetProducersForMessage(typeof(List<MessageWithHeaders<TestEventTwo>>)).Single();
+
+        resolvedProducer1.Should().Be(producer1);
+        resolvedProducer2.Should().Be(producer2);
     }
 
     [Fact]

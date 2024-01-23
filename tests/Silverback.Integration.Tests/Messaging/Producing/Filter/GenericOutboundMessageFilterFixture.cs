@@ -10,7 +10,7 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Filter;
+namespace Silverback.Tests.Integration.Messaging.Producing.Filter;
 
 public class GenericOutboundMessageFilterFixture
 {

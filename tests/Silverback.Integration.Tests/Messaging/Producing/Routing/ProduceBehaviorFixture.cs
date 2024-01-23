@@ -21,7 +21,7 @@ using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.Routing;
+namespace Silverback.Tests.Integration.Messaging.Producing.Routing;
 
 public class ProduceBehaviorFixture
 {

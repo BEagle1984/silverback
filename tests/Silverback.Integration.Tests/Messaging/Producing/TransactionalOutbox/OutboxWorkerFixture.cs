@@ -17,7 +17,7 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox;
+namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
 
 public class OutboxWorkerFixture
 {
@@ -360,7 +360,7 @@ public class OutboxWorkerFixture
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<ProducerEndpoint>(),
             Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>?>(),
             Arg.Any<Action<IBrokerMessageIdentifier?>>(),
             Arg.Any<Action<Exception>>());
 }
