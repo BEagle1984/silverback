@@ -198,8 +198,10 @@ public class KafkaTransactionsFixture : KafkaFixture
             await publisher.PublishAsync(new TestEventOne { ContentEventOne = partition.ToString(CultureInfo.InvariantCulture) });
         }
 
+        int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        committedOutputMessages.Should().Be(batchSize * partitionsPerTopic * 2);
+        committedOutputMessages.Should().Be(expectedOutputMessages);
     }
 
     [Fact]
@@ -282,8 +284,10 @@ public class KafkaTransactionsFixture : KafkaFixture
             await publisher.PublishAsync(new TestEventOne());
         }
 
+        int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync(false);
-        committedOutputMessages.Should().Be(batchSize * partitionsPerTopic * 2);
+        committedOutputMessages.Should().Be(expectedOutputMessages);
     }
 
     [Fact]
@@ -354,7 +358,9 @@ public class KafkaTransactionsFixture : KafkaFixture
         // Publish 1 extra message to complete the batch
         await publisher.PublishAsync(new TestEventOne());
 
+        int expectedOutputMessages = batchSize;
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        committedOutputMessages.Should().Be(batchSize);
+        committedOutputMessages.Should().Be(expectedOutputMessages);
     }
 }
