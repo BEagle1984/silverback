@@ -33,8 +33,6 @@ public class OutboxWorker : IOutboxWorker
 
     private readonly ConcurrentBag<OutboxMessage> _producedMessages = new();
 
-    private readonly Action<IBrokerMessageIdentifier?> _onSuccess;
-
     private int _pendingProduceOperations;
 
     private bool _failed;
@@ -71,8 +69,6 @@ public class OutboxWorker : IOutboxWorker
         _producers = Check.NotNull(producers, nameof(producers));
         _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
         _logger = Check.NotNull(logger, nameof(logger));
-
-        _onSuccess = _ => Interlocked.Decrement(ref _pendingProduceOperations);
     }
 
     /// <inheritdoc cref="IOutboxWorker.ProcessOutboxAsync" />
@@ -117,9 +113,11 @@ public class OutboxWorker : IOutboxWorker
             foreach (OutboxMessage outboxMessage in outboxMessages)
             {
                 _logger.LogProcessingOutboxStoredMessage(++index, outboxMessages.Count);
-                Interlocked.Increment(ref _pendingProduceOperations);
 
-                await ProcessMessageAsync(outboxMessage).ConfigureAwait(false);
+                if (_settings.EnforceMessageOrder)
+                    await BlockingProcessMessageAsync(outboxMessage).ConfigureAwait(false);
+                else
+                    await ProcessMessageAsync(outboxMessage).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -140,12 +138,20 @@ public class OutboxWorker : IOutboxWorker
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
-    private async Task ProcessMessageAsync(OutboxMessage message)
+    private async ValueTask ProcessMessageAsync(OutboxMessage message)
     {
         try
         {
             IProducer producer = GetProducer(message);
             ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
+
+            Interlocked.Increment(ref _pendingProduceOperations);
+
+            if (_failed && _settings.EnforceMessageOrder)
+            {
+                Interlocked.Decrement(ref _pendingProduceOperations);
+                return;
+            }
 
             // TODO: Avoid closure allocations
             producer.RawProduce(
@@ -155,7 +161,7 @@ public class OutboxWorker : IOutboxWorker
                 identifier =>
                 {
                     _producedMessages.Add(message);
-                    _onSuccess.Invoke(identifier);
+                    Interlocked.Decrement(ref _pendingProduceOperations);
                 },
                 exception =>
                 {
@@ -171,6 +177,28 @@ public class OutboxWorker : IOutboxWorker
         {
             _failed = true;
             Interlocked.Decrement(ref _pendingProduceOperations);
+
+            _logger.LogErrorProducingOutboxStoredMessage(ex);
+
+            // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
+            if (_settings.EnforceMessageOrder)
+                throw;
+        }
+    }
+
+    private async ValueTask BlockingProcessMessageAsync(OutboxMessage message)
+    {
+        try
+        {
+            IProducer producer = GetProducer(message);
+            ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
+
+            await producer.RawProduceAsync(endpoint, message.Content, message.Headers).ConfigureAwait(false);
+            _producedMessages.Add(message);
+        }
+        catch (Exception ex)
+        {
+            _failed = true;
 
             _logger.LogErrorProducingOutboxStoredMessage(ex);
 

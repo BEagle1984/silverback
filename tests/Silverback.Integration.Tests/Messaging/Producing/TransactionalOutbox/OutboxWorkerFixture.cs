@@ -23,8 +23,6 @@ public class OutboxWorkerFixture
 {
     private readonly InMemoryOutbox _inMemoryOutbox = new();
 
-    private readonly OutboxWorkerSettings _inMemoryOutboxWorkerSettings = new(new InMemoryOutboxSettings());
-
     private readonly IOutboxWriter _outboxWriter;
 
     private readonly IProducerCollection _producerCollection = Substitute.For<IProducerCollection>();
@@ -40,8 +38,6 @@ public class OutboxWorkerFixture
     private readonly OutboxMessageEndpoint _outboxEndpoint1 = new("topic1", null, null);
 
     private readonly OutboxMessageEndpoint _outboxEndpoint2 = new("topic2", null, null);
-
-    private readonly OutboxWorker _outboxWorker;
 
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public OutboxWorkerFixture()
@@ -71,26 +67,46 @@ public class OutboxWorkerFixture
                     Arg.Any<Action<IBrokerMessageIdentifier?>>(),
                     Arg.Any<Action<Exception>>()))
             .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null));
-
-        _outboxWorker = new OutboxWorker(
-            _inMemoryOutboxWorkerSettings,
-            new InMemoryOutboxReader(_inMemoryOutbox),
-            _producerCollection,
-            _serviceScopeFactory,
-            _producerLogger);
     }
 
     [Fact]
-    public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages()
+    public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenNotEnforcingOrder()
     {
         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventTwo), new byte[] { 0x02 }, null, _outboxEndpoint2));
         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x03 }, null, _outboxEndpoint1));
 
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _serviceScopeFactory,
+            _producerLogger);
+
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
 
         AssertReceivedCalls(_producer1, 2);
         AssertReceivedCalls(_producer2, 1);
+    }
+
+    [Fact]
+    public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenEnforcingOrder()
+    {
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventTwo), new byte[] { 0x02 }, null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x03 }, null, _outboxEndpoint1));
+
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _serviceScopeFactory,
+            _producerLogger);
+
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+
+        await AssertReceivedBlockingCallsAsync(_producer1, 2);
+        await AssertReceivedBlockingCallsAsync(_producer2, 1);
     }
 
     // TODO: Reimplement and add tests for headers, etc.
@@ -283,45 +299,43 @@ public class OutboxWorkerFixture
     //
     //     broker.ProducedMessages.Should().HaveCount(5);
     // }
+    // [Fact]
+    // [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
+    // public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceFails()
+    // {
+    //     for (int i = 0; i < 10; i++)
+    //     {
+    //         await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+    //     }
+    //
+    //     int tries = 0;
+    //     _producer1
+    //         .When(
+    //             producer => producer.RawProduceAsync(
+    //                 Arg.Any<ProducerEndpoint>(),
+    //                 Arg.Any<byte[]>(),
+    //                 Arg.Any<IReadOnlyCollection<MessageHeader>>()))
+    //         .Do(
+    //             callInfo =>
+    //             {
+    //                 if (Interlocked.Increment(ref tries) is 2 or 5)
+    //                     callInfo.ArgAt<Action<Exception>>(4).Invoke(new InvalidOperationException("Test"));
+    //                 else
+    //                     callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
+    //             });
+    //
+    //     await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+    //     await AssertReceivedBlockingCallsAsync(_producer1, 2);
+    //
+    //     await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+    //     await AssertReceivedBlockingCallsAsync(_producer1, 5);
+    //
+    //     await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+    //     await AssertReceivedBlockingCallsAsync(_producer1, 12); // 10 messages + 2 retries
+    //
+    //     AssertReceivedCalls(_producer1, 0);
+    // }
     [Fact]
-    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
-    public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceFails()
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
-        }
-
-        int tries = 0;
-        _producer1
-            .When(
-                producer => producer.RawProduce(
-                    Arg.Any<ProducerEndpoint>(),
-                    Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-                    Arg.Any<Action<Exception>>()))
-            .Do(
-                callInfo =>
-                {
-                    if (Interlocked.Increment(ref tries) is 2 or 5)
-                        callInfo.ArgAt<Action<Exception>>(4).Invoke(new InvalidOperationException("Test"));
-                    else
-                        callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-                });
-
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 2);
-
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 5);
-
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
-    }
-
-    [Fact]
-    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public async Task ProcessQueue_ShouldRetryAndEnforceOrder_WhenProduceThrows()
     {
         for (int i = 0; i < 10; i++)
@@ -332,28 +346,34 @@ public class OutboxWorkerFixture
         int tries = 0;
         _producer1
             .When(
-                producer => producer.RawProduce(
+                producer => producer.RawProduceAsync(
                     Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
-                    Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-                    Arg.Any<Action<Exception>>()))
-            .Do(callInfo =>
-            {
-                if (Interlocked.Increment(ref tries) is 2 or 5)
-                    throw new InvalidOperationException("Test");
+                    Arg.Any<IReadOnlyCollection<MessageHeader>>()))
+            .Do(
+                _ =>
+                {
+                    if (Interlocked.Increment(ref tries) is 2 or 5)
+                        throw new InvalidOperationException("Test");
+                });
 
-                callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null);
-            });
+        OutboxWorker outboxWorker = new(
+            new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
+            new InMemoryOutboxReader(_inMemoryOutbox),
+            _producerCollection,
+            _serviceScopeFactory,
+            _producerLogger);
 
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 2);
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedBlockingCallsAsync(_producer1, 2);
 
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 5);
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedBlockingCallsAsync(_producer1, 5);
 
-        await _outboxWorker.ProcessOutboxAsync(CancellationToken.None);
-        AssertReceivedCalls(_producer1, 12); // 10 messages + 2 retries
+        await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
+        await AssertReceivedBlockingCallsAsync(_producer1, 12); // 10 messages + 2 retries
+
+        AssertReceivedCalls(_producer1, 0);
     }
 
     private static void AssertReceivedCalls(IProducer producer, int requiredNumberOfCalls) =>
@@ -363,4 +383,10 @@ public class OutboxWorkerFixture
             Arg.Any<IReadOnlyCollection<MessageHeader>?>(),
             Arg.Any<Action<IBrokerMessageIdentifier?>>(),
             Arg.Any<Action<Exception>>());
+
+    private static ValueTask<IBrokerMessageIdentifier?> AssertReceivedBlockingCallsAsync(IProducer producer, int requiredNumberOfCalls) =>
+        producer.Received(requiredNumberOfCalls).RawProduceAsync(
+            Arg.Any<ProducerEndpoint>(),
+            Arg.Any<byte[]>(),
+            Arg.Any<IReadOnlyCollection<MessageHeader>?>());
 }
