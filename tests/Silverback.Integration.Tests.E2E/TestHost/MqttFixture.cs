@@ -11,6 +11,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 
+[Trait("Type", "E2E")] // Specified here because traits are not inherited from E2EFixture
 [Trait("Broker", "MQTT")]
 public abstract class MqttFixture : E2EFixture
 {

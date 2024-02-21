@@ -3,12 +3,10 @@
 
 using System;
 using System.Threading;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 
-[Trait("Category", "E2E")]
 public abstract class E2EFixture : IDisposable
 {
     // Use a semaphore to prevent parallel execution, instead of relying on the XUnit mechanism

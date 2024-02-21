@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost;
 
+[Trait("Type", "E2E")] // Specified here because traits are not inherited from E2EFixture
 [Trait("Broker", "Kafka")]
 public abstract class KafkaFixture : E2EFixture
 {
