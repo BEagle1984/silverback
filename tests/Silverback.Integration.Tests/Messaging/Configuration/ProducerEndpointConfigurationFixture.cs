@@ -6,6 +6,7 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.EndpointResolvers;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -65,6 +66,22 @@ public class ProducerEndpointConfigurationFixture
         Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Validate_ShouldThrow_WhenUsingOutboxWithoutFriendlyName(string? friendlyName)
+    {
+        TestProducerEndpointConfiguration configuration = GetValidConfiguration() with
+        {
+            Strategy = new OutboxProduceStrategy(new InMemoryOutboxSettings()),
+            FriendlyName = friendlyName
+        };
+
+        Action act = configuration.Validate;
+
+        act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("A friendly unique name for the endpoint is required when using the outbox produce strategy.");
     }
 
     private static TestProducerEndpointConfiguration GetValidConfiguration() => new("test");

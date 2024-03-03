@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
@@ -16,9 +15,6 @@ public class DbOutboxMessage : OutboxMessage
     /// <param name="id">
     ///     The primary key of the database record.
     /// </param>
-    /// <param name="messageType">
-    ///     The type of the message.
-    /// </param>
     /// <param name="content">
     ///     The message raw binary content (body).
     /// </param>
@@ -30,11 +26,10 @@ public class DbOutboxMessage : OutboxMessage
     /// </param>
     public DbOutboxMessage(
         long id,
-        Type? messageType,
         byte[]? content,
         IEnumerable<MessageHeader>? headers,
         OutboxMessageEndpoint endpoint)
-        : base(messageType, content, headers, endpoint)
+        : base(content, headers, endpoint)
     {
         Id = id;
     }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -188,17 +189,35 @@ public class OutboxWriterFactoryFixture
     {
         public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
             throw new NotSupportedException();
+
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
         public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
             throw new NotSupportedException();
+
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OverrideOutboxWriter : IOutboxWriter
     {
         public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 }

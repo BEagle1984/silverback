@@ -7,6 +7,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Npgsql;
+using NpgsqlTypes;
 using Silverback.Messaging.Messages;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
@@ -40,12 +42,10 @@ public class PostgreSqlOutboxReader : IOutboxReader
 
         _getQuerySql = "SELECT " +
                        "Id," +
-                       "MessageType," +
                        "Content," +
                        "Headers," +
-                       "EndpointRawName," +
-                       "EndpointFriendlyName," +
-                       "SerializedEndpoint " +
+                       "EndpointName," +
+                       "DynamicEndpoint " +
                        $"FROM \"{settings.TableName}\" " +
                        "ORDER BY Created LIMIT @Limit";
 
@@ -58,7 +58,13 @@ public class PostgreSqlOutboxReader : IOutboxReader
 
     /// <inheritdoc cref="IOutboxReader.GetAsync" />
     public Task<IReadOnlyCollection<OutboxMessage>> GetAsync(int count) =>
-        _dataAccess.ExecuteQueryAsync(MapOutboxMessage, _getQuerySql, _dataAccess.CreateParameter("@Limit", count));
+        _dataAccess.ExecuteQueryAsync(
+            MapOutboxMessage,
+            _getQuerySql,
+            new NpgsqlParameter("@Limit", NpgsqlDbType.Integer)
+            {
+                Value = count
+            });
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
     public async Task<int> GetLengthAsync() => (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql).ConfigureAwait(false);
@@ -82,7 +88,7 @@ public class PostgreSqlOutboxReader : IOutboxReader
             _deleteSql,
             new[]
             {
-                _dataAccess.CreateParameter("@Id", 0L)
+                new NpgsqlParameter("@Id", NpgsqlDbType.Bigint)
             },
             (outboxMessage, parameters) =>
             {
@@ -92,18 +98,15 @@ public class PostgreSqlOutboxReader : IOutboxReader
     private static OutboxMessage MapOutboxMessage(DbDataReader reader)
     {
         long id = reader.GetFieldValue<long>(0);
-        string? messageType = reader.GetNullableFieldValue<string>(1);
-        byte[]? content = reader.GetNullableFieldValue<byte[]>(2);
-        string? headers = reader.GetNullableFieldValue<string>(3);
-        string endpointRawName = reader.GetFieldValue<string>(4);
-        string? endpointFriendlyName = reader.GetNullableFieldValue<string>(5);
-        byte[]? serializedEndpoint = reader.GetNullableFieldValue<byte[]>(6);
+        byte[]? content = reader.GetNullableFieldValue<byte[]>(1);
+        string? headers = reader.GetNullableFieldValue<string>(2);
+        string endpointName = reader.GetFieldValue<string>(3);
+        string? dynamicEndpoint = reader.GetNullableFieldValue<string>(4);
 
         return new DbOutboxMessage(
             id,
-            TypesCache.GetType(messageType),
             content,
             headers == null ? null : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(headers),
-            new OutboxMessageEndpoint(endpointRawName, endpointFriendlyName, serializedEndpoint));
+            new OutboxMessageEndpoint(endpointName, dynamicEndpoint));
     }
 }

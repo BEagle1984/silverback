@@ -26,6 +26,16 @@ internal static class Check
     }
 
     [ContractAnnotation("value:null => halt")]
+    public static void NotNull<T>([NoEnumeration, ValidatedNotNull] IAsyncEnumerable<T>? value, [InvokerParameterName] string parameterName)
+    {
+        if (value is null)
+        {
+            NotNullOrEmpty(parameterName, nameof(parameterName));
+            throw new ArgumentNullException(parameterName);
+        }
+    }
+
+    [ContractAnnotation("value:null => halt")]
     public static IReadOnlyCollection<T> NotEmpty<T>([ValidatedNotNull] IReadOnlyCollection<T>? value, [InvokerParameterName] string parameterName)
     {
         value = NotNull(value, parameterName);

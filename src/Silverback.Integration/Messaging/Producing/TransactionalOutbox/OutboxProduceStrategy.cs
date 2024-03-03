@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -73,11 +75,13 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
 
         private readonly ProducerEndpointConfiguration _configuration;
 
+        private readonly IServiceProvider _serviceProvider;
+
         private readonly IProducerLogger<OutboxProduceStrategy> _logger;
 
-        private readonly DelegatedProducer _producer;
-
         private readonly SilverbackContext _context;
+
+        private DelegatedProducer? _producer;
 
         public OutboxProduceStrategyImplementation(
             IOutboxWriter outboxWriter,
@@ -87,46 +91,76 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
         {
             _outboxWriter = outboxWriter;
             _configuration = configuration;
+            _serviceProvider = serviceProvider;
             _logger = logger;
 
-            _producer = new DelegatedProducer(WriteToOutboxAsync, _configuration, serviceProvider);
             _context = serviceProvider.GetRequiredService<SilverbackContext>();
         }
 
         public async Task ProduceAsync(IOutboundEnvelope envelope)
         {
+            _producer ??= new DelegatedProducer(
+                finalEnvelope => _outboxWriter.AddAsync(MapToOutboxMessage(finalEnvelope), _context),
+                _configuration,
+                _serviceProvider);
+
             await _producer.ProduceAsync(envelope).ConfigureAwait(false);
             _logger.LogStoringIntoOutbox(envelope);
         }
 
-        public Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes) => throw new NotImplementedException();
-
-        public Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes) => throw new NotImplementedException();
-
-        public void Dispose() => _producer.Dispose();
-
-        private async Task WriteToOutboxAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers, ProducerEndpoint endpoint)
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
+        public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes)
         {
-            // TODO: Move this on read side or get completely rid of it, in favor of endpoint name matching only
-            string? messageTypeName = headers?.GetValue(DefaultMessageHeaders.MessageType);
-            Type? messageType = TypesCache.GetType(messageTypeName);
+            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
+            using DelegatedProducer producer = new(envelope => stream.PushAsync(envelope), _configuration, _serviceProvider);
 
-            await _outboxWriter.AddAsync(
-                    new OutboxMessage(
-                        messageType,
-                        message,
-                        headers,
-                        new OutboxMessageEndpoint(
-                            _configuration.RawName,
-                            _configuration.FriendlyName,
-                            await GetSerializedEndpointAsync(endpoint).ConfigureAwait(false))),
-                    _context)
-                .ConfigureAwait(false);
+            Task.Run(
+                async () =>
+                {
+                    foreach (IOutboundEnvelope envelope in envelopes)
+                    {
+                        await producer.ProduceAsync(envelope).ConfigureAwait(false);
+                    }
+
+                    await stream.CompleteAsync().ConfigureAwait(false);
+                }).FireAndForget();
+
+            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context).ConfigureAwait(false);
         }
 
-        private async ValueTask<byte[]?> GetSerializedEndpointAsync(ProducerEndpoint endpoint) =>
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Awaited")]
+        public async Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes)
+        {
+            using MessageStreamEnumerable<IOutboundEnvelope> stream = new();
+            using DelegatedProducer producer = new(envelope => stream.PushAsync(envelope), _configuration, _serviceProvider);
+
+            Task.Run(
+                async () =>
+                {
+                    await foreach (IOutboundEnvelope envelope in envelopes)
+                    {
+                        await producer.ProduceAsync(envelope).ConfigureAwait(false);
+                    }
+
+                    await stream.CompleteAsync().ConfigureAwait(false);
+                }).FireAndForget();
+
+            await _outboxWriter.AddAsync(stream.AsEnumerable().Select(MapToOutboxMessage), _context).ConfigureAwait(false);
+        }
+
+        public void Dispose() => _producer?.Dispose();
+
+        private OutboxMessage MapToOutboxMessage(IOutboundEnvelope envelope) =>
+            new(
+                envelope.RawMessage.ReadAll(),
+                envelope.Headers,
+                new OutboxMessageEndpoint(
+                    _configuration.FriendlyName ?? string.Empty,
+                    GetSerializedEndpoint(envelope.Endpoint)));
+
+        private string? GetSerializedEndpoint(ProducerEndpoint endpoint) =>
             _configuration.Endpoint is IDynamicProducerEndpointResolver dynamicEndpointProvider
-                ? await dynamicEndpointProvider.SerializeAsync(endpoint).ConfigureAwait(false)
+                ? dynamicEndpointProvider.Serialize(endpoint)
                 : null;
     }
 }

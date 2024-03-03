@@ -24,8 +24,6 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 {
     private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new();
 
-    private int _messagesCount;
-
     private MethodInfo? _genericCreateStreamMethodInfo;
 
     private bool _completed;
@@ -78,14 +76,12 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Global", Justification = "False positive")]
     public async Task<int> PushAsync(TMessage message, bool throwIfUnhandled, CancellationToken cancellationToken = default)
     {
-        Check.NotNull<object>(message, nameof(message));
+        Check.NotNull(message, nameof(message));
 
         if (_completed || _aborted)
             throw new InvalidOperationException("The streams are already completed or aborted.");
 
-        int messageId = Interlocked.Increment(ref _messagesCount);
-
-        List<Task> processingTasks = PushToCompatibleStreams(messageId, message, cancellationToken).ToList();
+        List<Task> processingTasks = PushToCompatibleStreams(message, cancellationToken).ToList();
 
         if (processingTasks.Count > 0)
             await Task.WhenAll(processingTasks).ConfigureAwait(false);
@@ -202,7 +198,6 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
     private static bool PushIfCompatibleType(
         ILazyMessageStreamEnumerable lazyStream,
-        int messageId,
         TMessage message,
         CancellationToken cancellationToken,
         out Task messageProcessingTask)
@@ -215,16 +210,14 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 
         if (lazyStream.MessageType.IsInstanceOfType(message))
         {
-            PushedMessage pushedMessage = new(messageId, message, message);
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(message, cancellationToken);
             return true;
         }
 
         if (message is IEnvelope { Message: not null, AutoUnwrap: true } envelope &&
             lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
-            PushedMessage pushedMessage = new(messageId, envelope.Message, message);
-            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+            messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, cancellationToken);
             return true;
         }
 
@@ -235,19 +228,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
         filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private IEnumerable<Task> PushToCompatibleStreams(
-        int messageId,
-        TMessage message,
-        CancellationToken cancellationToken)
+    private IEnumerable<Task> PushToCompatibleStreams(TMessage message, CancellationToken cancellationToken)
     {
         foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
         {
-            if (PushIfCompatibleType(
-                lazyStream,
-                messageId,
-                message,
-                cancellationToken,
-                out Task processingTask))
+            if (PushIfCompatibleType(lazyStream, message, cancellationToken, out Task processingTask))
             {
                 yield return processingTask;
             }

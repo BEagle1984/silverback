@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging;
@@ -18,15 +17,15 @@ public interface IProducerEndpointSerializer
     ///     The endpoint to be serialized.
     /// </param>
     /// <returns>
-    ///     An array of bytes representing the serialized endpoint.
+    ///     The serialized endpoint.
     /// </returns>
-    ValueTask<byte[]> SerializeAsync(ProducerEndpoint endpoint);
+    string Serialize(ProducerEndpoint endpoint);
 
     /// <summary>
     ///     Deserializes the <see cref="ProducerEndpoint" />.
     /// </summary>
     /// <param name="serializedEndpoint">
-    ///     An array of bytes representing the serialized endpoint.
+    ///     The serialized endpoint.
     /// </param>
     /// <param name="configuration">
     ///     The endpoint configuration.
@@ -34,5 +33,5 @@ public interface IProducerEndpointSerializer
     /// <returns>
     ///     The <see cref="ProducerEndpoint" />.
     /// </returns>
-    ValueTask<ProducerEndpoint> DeserializeAsync(byte[] serializedEndpoint, ProducerEndpointConfiguration configuration);
+    ProducerEndpoint Deserialize(string serializedEndpoint, ProducerEndpointConfiguration configuration);
 }

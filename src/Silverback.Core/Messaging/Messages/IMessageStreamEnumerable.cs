@@ -14,10 +14,10 @@ namespace Silverback.Messaging.Messages;
 internal interface IMessageStreamEnumerable
 {
     /// <summary>
-    ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
+    ///     Adds the specified message to the stream. The returned <see cref="ValueTask" /> will complete only when the
     ///     message has actually been pulled and processed.
     /// </summary>
-    /// <param name="pushedMessage">
+    /// <param name="message">
     ///     The message to be added.
     /// </param>
     /// <param name="cancellationToken">
@@ -27,7 +27,7 @@ internal interface IMessageStreamEnumerable
     ///     A <see cref="Task" /> representing the asynchronous operation. The  <see cref="Task" /> will complete
     ///     only when the message has actually been pulled and processed.
     /// </returns>
-    Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default);
+    Task PushAsync(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Aborts the ongoing enumeration and the pending calls to <see cref="PushAsync" />, then marks the

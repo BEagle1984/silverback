@@ -48,7 +48,7 @@ public interface IProducer
     ///     Publishes the specified message.
     /// </summary>
     /// <param name="envelope">
-    ///     The envelope containing the message to be delivered.
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
@@ -88,7 +88,7 @@ public interface IProducer
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
     /// <param name="envelope">
-    ///     The envelope containing the message to be delivered.
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <param name="onSuccess">
     ///     The callback to be invoked when the message is successfully produced.
@@ -300,7 +300,7 @@ public interface IProducer
     ///     Publishes the specified message.
     /// </summary>
     /// <param name="envelope">
-    ///     The envelope containing the message to be delivered.
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
@@ -311,7 +311,7 @@ public interface IProducer
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <param name="message">
+    /// <param name="messageContent">
     ///     The message.
     /// </param>
     /// <param name="headers">
@@ -321,12 +321,12 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
     /// </summary>
-    /// <param name="message">
+    /// <param name="messageStream">
     ///     The message.
     /// </param>
     /// <param name="headers">
@@ -336,7 +336,7 @@ public interface IProducer
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -344,7 +344,7 @@ public interface IProducer
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
-    /// <param name="message">
+    /// <param name="messageContent">
     ///     The message.
     /// </param>
     /// <param name="headers">
@@ -356,7 +356,7 @@ public interface IProducer
     /// </returns>
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
-        byte[]? message,
+        byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null);
 
     /// <summary>
@@ -365,7 +365,7 @@ public interface IProducer
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
-    /// <param name="message">
+    /// <param name="messageStream">
     ///     The message.
     /// </param>
     /// <param name="headers">
@@ -377,6 +377,6 @@ public interface IProducer
     /// </returns>
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
-        Stream? message,
+        Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null);
 }

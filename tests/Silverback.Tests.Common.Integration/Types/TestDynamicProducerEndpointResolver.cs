@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Util;
 
@@ -18,12 +17,9 @@ public sealed record TestDynamicProducerEndpointResolver : DynamicProducerEndpoi
         _topicName = Check.NotNullOrEmpty(topic, nameof(topic));
     }
 
-    public override ValueTask<TestProducerEndpoint> DeserializeAsync(
-        byte[] serializedEndpoint,
-        TestProducerEndpointConfiguration configuration) =>
-        throw new NotSupportedException();
+    public override string Serialize(TestProducerEndpoint endpoint) => throw new NotSupportedException();
 
-    public override ValueTask<byte[]> SerializeAsync(TestProducerEndpoint endpoint) =>
+    public override TestProducerEndpoint Deserialize(string serializedEndpoint, TestProducerEndpointConfiguration configuration) =>
         throw new NotSupportedException();
 
     protected override TestProducerEndpoint GetEndpointCore(

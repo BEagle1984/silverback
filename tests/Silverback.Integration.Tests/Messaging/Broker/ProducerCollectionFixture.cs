@@ -35,6 +35,39 @@ public class ProducerCollectionFixture
     }
 
     [Fact]
+    public void Add_ShouldThrow_WhenFriendlyNameNotUnique()
+    {
+        ProducerCollection producerCollection = new();
+        IProducer producer1 = Substitute.For<IProducer>();
+        producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "one"
+            });
+
+        IProducer producer2 = Substitute.For<IProducer>();
+        producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "two"
+            });
+
+        IProducer producer2Bis = Substitute.For<IProducer>();
+        producer2Bis.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "two"
+            });
+
+        producerCollection.Add(producer1);
+        producerCollection.Add(producer2);
+
+        Action act = () => producerCollection.Add(producer2Bis);
+
+        act.Should().Throw<InvalidOperationException>().WithMessage("A producer endpoint with the name 'two' has already been added.");
+    }
+
+    [Fact]
     public void GetProducerForEndpoint_ShouldReturnProducerByEndpointName()
     {
         ProducerCollection producerCollection = new();

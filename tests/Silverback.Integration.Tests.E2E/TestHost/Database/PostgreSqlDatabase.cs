@@ -15,7 +15,7 @@ public sealed class PostgreSqlDatabase : IDisposable
 {
     private readonly IContainerService _postgresContainer;
 
-    public PostgreSqlDatabase()
+    private PostgreSqlDatabase()
     {
         _postgresContainer = new Builder().UseContainer()
             .UseImage("postgres")

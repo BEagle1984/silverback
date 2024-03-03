@@ -58,6 +58,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
@@ -81,6 +82,114 @@ public class OutboxPostgreSqlFixture : KafkaFixture
         Helper.Spy.InboundEnvelopes
             .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
             .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceBatch_WhenUsingPostgreSql()
+    {
+        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddPostgreSqlOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(
+            new TestEventOne[]
+            {
+                new() { ContentEventOne = "1" },
+                new() { ContentEventOne = "2" },
+                new() { ContentEventOne = "3" },
+            });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceAsyncBatch_WhenUsingPostgreSql()
+    {
+        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddPostgreSqlOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(
+            new TestEventOne[]
+            {
+                new() { ContentEventOne = "1" },
+                new() { ContentEventOne = "2" },
+                new() { ContentEventOne = "3" },
+            }.ToAsyncEnumerable());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
     }
 
     [Fact]
@@ -108,6 +217,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))

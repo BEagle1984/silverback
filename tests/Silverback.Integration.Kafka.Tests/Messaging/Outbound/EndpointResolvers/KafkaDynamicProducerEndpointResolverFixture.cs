@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Text;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -148,25 +146,25 @@ public class KafkaDynamicProducerEndpointResolverFixture
     [Theory]
     [InlineData("topic", 42)]
     [InlineData("topic", -1)]
-    public async Task SerializeAsync_ShouldSerializeTargetTopicAndPartition(string topic, int partition)
+    public void Serialize_ShouldSerializeTargetTopicAndPartition(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver endpointResolver = new(_ => "abc");
         KafkaProducerEndpoint endpoint = new(topic, partition, new KafkaProducerEndpointConfiguration());
 
-        byte[] result = await endpointResolver.SerializeAsync(endpoint);
+        string result = endpointResolver.Serialize(endpoint);
 
-        Encoding.UTF8.GetString(result).Should().Be($"{topic}|{partition}");
+        result.Should().Be($"{topic}|{partition}");
     }
 
     [Theory]
     [InlineData("topic", 42)]
     [InlineData("topic", -1)]
-    public async Task DeserializeAsync_ShouldDeserializeEndpoint(string topic, int partition)
+    public void Deserialize_ShouldDeserializeEndpoint(string topic, int partition)
     {
         KafkaDynamicProducerEndpointResolver endpointResolver = new(_ => "abc");
-        byte[] serialized = Encoding.UTF8.GetBytes($"{topic}|{partition}");
+        string serialized = $"{topic}|{partition}";
 
-        KafkaProducerEndpoint result = await endpointResolver.DeserializeAsync(serialized, new KafkaProducerEndpointConfiguration());
+        KafkaProducerEndpoint result = endpointResolver.Deserialize(serialized, new KafkaProducerEndpointConfiguration());
         result.Should().NotBeNull();
         result.TopicPartition.Should().BeEquivalentTo(new TopicPartition(topic, partition));
     }

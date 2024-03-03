@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -16,8 +14,8 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Producer{TEndpoint}" />
-public sealed class MqttProducer : Producer<MqttProducerEndpoint>
+/// <inheritdoc cref="Producer" />
+public sealed class MqttProducer : Producer
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttProducer" /> class.
@@ -66,7 +64,7 @@ public sealed class MqttProducer : Producer<MqttProducerEndpoint>
         EndpointConfiguration = Configuration.ProducerEndpoints.Single();
     }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.Client" />
+    /// <inheritdoc cref="Producer.Client" />
     public new IMqttClientWrapper Client { get; }
 
     /// <summary>
@@ -74,81 +72,43 @@ public sealed class MqttProducer : Producer<MqttProducerEndpoint>
     /// </summary>
     public MqttClientConfiguration Configuration { get; }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.EndpointConfiguration" />
+    /// <inheritdoc cref="Producer.EndpointConfiguration" />
     public new MqttProducerEndpointConfiguration EndpointConfiguration { get; }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override IBrokerMessageIdentifier? ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint));
+    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
+    protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
+        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override IBrokerMessageIdentifier? ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint));
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint,
+        IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceCore(message.ReadAll(), headers, endpoint, onSuccess, onError);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override void ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        AsyncHelper.RunSynchronously(() => Client.ProduceAsync(message, headers, endpoint, onSuccess, onError));
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint) =>
-        await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint)
+        Action<Exception> onError)
     {
+        Check.NotNull(envelope, nameof(envelope));
+
+        Client.Produce(
+            envelope.RawMessage.ReadAll(),
+            envelope.Headers,
+            (MqttProducerEndpoint)envelope.Endpoint,
+            onSuccess,
+            onError);
+    }
+
+    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
 
-        await Client.ProduceAsync(message, headers, endpoint, taskCompletionSource.SetResult, taskCompletionSource.SetException).ConfigureAwait(false);
+        Client.Produce(
+            await envelope.RawMessage.ReadAllAsync().ConfigureAwait(true),
+            envelope.Headers,
+            (MqttProducerEndpoint)envelope.Endpoint,
+            taskCompletionSource.SetResult,
+            taskCompletionSource.SetException);
 
         return await taskCompletionSource.Task.ConfigureAwait(false);
     }
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override async ValueTask ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        await ProduceCoreAsync(
-            await message.ReadAllAsync().ConfigureAwait(false),
-            headers,
-            endpoint,
-            onSuccess,
-            onError).ConfigureAwait(false);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override ValueTask ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        MqttProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        Client.ProduceAsync(message, headers, endpoint, onSuccess, onError);
 }

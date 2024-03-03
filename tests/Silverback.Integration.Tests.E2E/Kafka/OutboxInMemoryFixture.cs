@@ -51,6 +51,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UseMemory())))
@@ -100,6 +101,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UseMemory())))

@@ -29,6 +29,8 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointName = new();
 
+    private readonly ConcurrentDictionary<string, IProducer> _producersByEndpointFriendlyName = new();
+
     public int Count => _producers.Count;
 
     public IProducer this[int index] => _producers[index].Producer;
@@ -40,14 +42,23 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
         _producers.Add(new ProducerItem(producer, routing));
         _producersByEndpointName.TryAdd(producer.EndpointConfiguration.RawName, producer);
 
-        if (producer.EndpointConfiguration.FriendlyName != null)
-            _producersByEndpointName.TryAdd(producer.EndpointConfiguration.FriendlyName, producer);
+        if (!string.IsNullOrEmpty(producer.EndpointConfiguration.FriendlyName) &&
+            !_producersByEndpointFriendlyName.TryAdd(producer.EndpointConfiguration.FriendlyName, producer))
+        {
+            throw new InvalidOperationException($"A producer endpoint with the name '{producer.EndpointConfiguration.FriendlyName}' has already been added.");
+        }
     }
 
-    public IProducer GetProducerForEndpoint(string endpointName) =>
-        _producersByEndpointName.TryGetValue(endpointName, out IProducer? producer)
-            ? producer
-            : throw new InvalidOperationException($"No producer has been configured for endpoint '{endpointName}'.");
+    public IProducer GetProducerForEndpoint(string endpointName)
+    {
+        if (_producersByEndpointFriendlyName.TryGetValue(endpointName, out IProducer? producer))
+            return producer;
+
+        if (_producersByEndpointName.TryGetValue(endpointName, out producer))
+            return producer;
+
+        throw new InvalidOperationException($"No producer has been configured for endpoint '{endpointName}'.");
+    }
 
     public IReadOnlyCollection<IProducer> GetProducersForMessage(object message) =>
         GetProducersForMessage(message.GetType());

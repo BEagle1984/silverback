@@ -21,10 +21,10 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
     {
         Message = message;
 
-        if (Message is byte[] rawMessage)
+        if (message is byte[] rawMessage)
             RawMessage = new MemoryStream(rawMessage);
 
-        if (Message is Stream stream)
+        if (message is Stream stream)
             RawMessage = stream;
 
         AutoUnwrap = autoUnwrap;
