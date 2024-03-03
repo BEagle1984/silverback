@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
 
@@ -30,24 +32,20 @@ public class SqliteOutboxWriter : IOutboxWriter
         _dataAccess = new SqliteDataAccess(settings.ConnectionString);
 
         _insertSql = $"INSERT INTO {settings.TableName} (" +
-                     "MessageType," +
                      "Content," +
                      "Headers," +
-                     "EndpointRawName," +
-                     "EndpointFriendlyName," +
-                     "SerializedEndpoint," +
+                     "EndpointName," +
+                     "DynamicEndpoint," +
                      "Created" +
                      ") VALUES (" +
-                     "@MessageType," +
                      "@Content," +
                      "@Headers," +
-                     "@EndpointRawName," +
-                     "@EndpointFriendlyName," +
-                     "@SerializedEndpoint," +
+                     "@EndpointName," +
+                     "@DynamicEndpoint," +
                      "@Created)";
     }
 
-    /// <inheritdoc cref="AddAsync" />
+    /// <inheritdoc cref="AddAsync(OutboxMessage, SilverbackContext)" />
     public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null)
     {
         Check.NotNull(outboxMessage, nameof(outboxMessage));
@@ -55,12 +53,83 @@ public class SqliteOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             context,
             _insertSql,
-            _dataAccess.CreateParameter("@MessageType", outboxMessage.MessageType?.AssemblyQualifiedName),
-            _dataAccess.CreateParameter("@Content", outboxMessage.Content),
-            _dataAccess.CreateParameter("@Headers", outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)),
-            _dataAccess.CreateParameter("@EndpointRawName", outboxMessage.Endpoint.RawName),
-            _dataAccess.CreateParameter("@EndpointFriendlyName", outboxMessage.Endpoint.FriendlyName),
-            _dataAccess.CreateParameter("@SerializedEndpoint", outboxMessage.Endpoint.SerializedEndpoint),
-            _dataAccess.CreateParameter("@Created", DateTime.UtcNow));
+            new SqliteParameter("@Content", SqliteType.Blob)
+            {
+                Value = outboxMessage.Content
+            },
+            new SqliteParameter("@Headers", SqliteType.Text)
+            {
+                Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
+            },
+            new SqliteParameter("@EndpointName", SqliteType.Text)
+            {
+                Value = outboxMessage.Endpoint.FriendlyName
+            },
+            new SqliteParameter("@DynamicEndpoint", SqliteType.Text)
+            {
+                Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
+            },
+            new SqliteParameter("@Created", SqliteType.Integer)
+            {
+                Value = DateTime.UtcNow
+            });
+    }
+
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
+    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    {
+        Check.NotNull(outboxMessages, nameof(outboxMessages));
+
+        return _dataAccess.ExecuteNonQueryAsync(
+            outboxMessages,
+            _insertSql,
+            new[]
+            {
+                new SqliteParameter("@Content", SqliteType.Blob),
+                new SqliteParameter("@Headers", SqliteType.Text),
+                new SqliteParameter("@EndpointName", SqliteType.Text),
+                new SqliteParameter("@DynamicEndpoint", SqliteType.Text),
+                new SqliteParameter("@Created", SqliteType.Integer)
+                {
+                    Value = DateTime.UtcNow
+                }
+            },
+            (outboxMessage, parameters) =>
+            {
+                parameters[0].Value = outboxMessage.Content;
+                parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
+                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
+                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+            },
+            context);
+    }
+
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
+    public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    {
+        Check.NotNull(outboxMessages, nameof(outboxMessages));
+
+        return _dataAccess.ExecuteNonQueryAsync(
+            outboxMessages,
+            _insertSql,
+            new[]
+            {
+                new SqliteParameter("@Content", SqliteType.Blob),
+                new SqliteParameter("@Headers", SqliteType.Text),
+                new SqliteParameter("@EndpointName", SqliteType.Text),
+                new SqliteParameter("@DynamicEndpoint", SqliteType.Text),
+                new SqliteParameter("@Created", SqliteType.Integer)
+                {
+                    Value = DateTime.UtcNow
+                }
+            },
+            (outboxMessage, parameters) =>
+            {
+                parameters[0].Value = outboxMessage.Content;
+                parameters[1].Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers);
+                parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
+                parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
+            },
+            context);
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -26,4 +27,32 @@ public interface IOutboxWriter
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null);
+
+    /// <summary>
+    ///     Adds the message contained in the specified envelope to the outbox.
+    /// </summary>
+    /// <param name="outboxMessages">
+    ///     The messages to be stored in the outbox.
+    /// </param>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" /> in the current scope.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null);
+
+    /// <summary>
+    ///     Adds the message contained in the specified envelope to the outbox.
+    /// </summary>
+    /// <param name="outboxMessages">
+    ///     The messages to be stored in the outbox.
+    /// </param>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" /> in the current scope.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null);
 }

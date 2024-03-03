@@ -13,6 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Storage.DataAccess;
 
+// TODO: Test directly (all implementations)
 internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     where TConnection : DbConnection
     where TTransaction : DbTransaction
@@ -24,9 +25,6 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     {
         _connectionString = Check.NotNullOrEmpty(connectionString, nameof(connectionString));
     }
-
-    public TParameter CreateParameter(string name, object? value) =>
-        CreateParameterCore(name, value ?? DBNull.Value);
 
     public IReadOnlyCollection<T> ExecuteQuery<T>(
         Func<DbDataReader, T> projection,
@@ -115,9 +113,33 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         }
     }
 
-    protected abstract TConnection CreateConnection(string connectionString);
+    public async Task ExecuteNonQueryAsync<T>(
+        IAsyncEnumerable<T> items,
+        string sql,
+        TParameter[] parameters,
+        Action<T, TParameter[]> parameterValuesProvider,
+        SilverbackContext? context = null)
+    {
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
 
-    protected abstract TParameter CreateParameterCore(string name, object value);
+        try
+        {
+            await foreach (T item in items)
+            {
+                parameterValuesProvider.Invoke(item, parameters);
+                await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
+            }
+
+            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
+            throw;
+        }
+    }
+
+    protected abstract TConnection CreateConnection(string connectionString);
 
     private static IEnumerable<T> Map<T>(DbDataReader reader, Func<DbDataReader, T> projection)
     {

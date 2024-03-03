@@ -16,11 +16,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker;
 
 /// <inheritdoc cref="IProducer" />
-/// <typeparam name="TEndpoint">
-///     The type of the <see cref="ProducerEndpoint" /> used by the producer implementation.
-/// </typeparam>
-public abstract class Producer<TEndpoint> : IProducer, IDisposable
-    where TEndpoint : ProducerEndpoint
+public abstract class Producer : IProducer, IDisposable
 {
     private readonly IReadOnlyList<IProducerBehavior> _behaviors;
 
@@ -33,7 +29,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     private bool _isDisposed;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Producer{TEndpoint}" /> class.
+    ///     Initializes a new instance of the <see cref="Producer" /> class.
     /// </summary>
     /// <param name="name">
     ///     The producer name.
@@ -114,15 +110,12 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
                         new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
-                            brokerMessageIdentifier = ProduceCore(
-                                finalContext.Envelope.RawMessage,
-                                finalContext.Envelope.Headers,
-                                (TEndpoint)finalContext.Envelope.Endpoint);
+                            brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
 
                             ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                                 brokerMessageIdentifier;
 
-                            _logger.LogProduced(envelope);
+                            _logger.LogProduced(finalContext.Envelope);
 
                             return ValueTaskFactory.CompletedTask;
                         }));
@@ -164,22 +157,20 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
                     finalContext =>
                     {
                         ProduceCore(
-                            finalContext.Envelope.RawMessage,
-                            finalContext.Envelope.Headers,
-                            (TEndpoint)finalContext.Envelope.Endpoint,
+                            finalContext.Envelope,
                             identifier =>
                             {
                                 ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                                     identifier;
-                                _logger.LogProduced(envelope);
+                                _logger.LogProduced(finalContext.Envelope);
                                 onSuccess.Invoke(identifier);
                             },
                             exception =>
                             {
-                                _logger.LogProduceError(envelope, exception);
+                                _logger.LogProduceError(finalContext.Envelope, exception);
                                 onError.Invoke(exception);
                             });
-                        _logger.LogProduced(envelope);
+                        _logger.LogProduced(finalContext.Envelope);
 
                         return ValueTaskFactory.CompletedTask;
                     }));
@@ -213,7 +204,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(messageContent, headers, (TEndpoint)endpoint);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(new OutboundEnvelope(messageContent, headers, endpoint, this));
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -234,7 +225,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(messageStream, headers, (TEndpoint)endpoint);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = ProduceCore(new OutboundEnvelope(messageStream, headers, endpoint, this));
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -281,9 +272,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
         ProduceCore(
-            messageContent,
-            headers,
-            (TEndpoint)endpoint,
+            new OutboundEnvelope(messageContent, headers, endpoint, this),
             identifier =>
             {
                 _logger.LogProduced(endpoint, headers, identifier);
@@ -303,9 +292,7 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
         ProduceCore(
-            messageStream,
-            headers,
-            (TEndpoint)endpoint,
+            new OutboundEnvelope(messageStream, headers, endpoint, this),
             identifier =>
             {
                 _logger.LogProduced(endpoint, headers, identifier);
@@ -339,16 +326,11 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
-                    brokerMessageIdentifier = await ProduceCoreAsync(
-                            finalContext.Envelope.RawMessage,
-                            finalContext.Envelope.Headers,
-                            (TEndpoint)finalContext.Envelope.Endpoint)
-                        .ConfigureAwait(false);
+                    brokerMessageIdentifier = await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
 
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                        brokerMessageIdentifier;
+                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = brokerMessageIdentifier;
 
-                    _logger.LogProduced(envelope);
+                    _logger.LogProduced(finalContext.Envelope);
                 }).ConfigureAwait(false);
 
             return brokerMessageIdentifier;
@@ -361,32 +343,28 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     }
 
     /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) =>
         RawProduceAsync(
-            EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-            message,
+            EndpointConfiguration.Endpoint.GetEndpoint(messageContent, EndpointConfiguration, _serviceProvider),
+            messageContent,
             headers);
 
     /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) =>
         RawProduceAsync(
-            EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-            message,
+            EndpointConfiguration.Endpoint.GetEndpoint(messageStream, EndpointConfiguration, _serviceProvider),
+            messageStream,
             headers);
 
     /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, byte[],IReadOnlyCollection{MessageHeader}?)" />
     public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
-        byte[]? message,
+        byte[]? messageContent,
         IReadOnlyCollection<MessageHeader>? headers = null)
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                    message,
-                    headers,
-                    (TEndpoint)endpoint)
-                .ConfigureAwait(false);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(new OutboundEnvelope(messageContent, headers, endpoint, this)).ConfigureAwait(false);
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -402,16 +380,12 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, Stream?,IReadOnlyCollection{MessageHeader}?)" />
     public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
-        Stream? message,
+        Stream? messageStream,
         IReadOnlyCollection<MessageHeader>? headers = null)
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
-                    message,
-                    headers,
-                    (TEndpoint)endpoint)
-                .ConfigureAwait(false);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(new OutboundEnvelope(messageStream, headers, endpoint, this)).ConfigureAwait(false);
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -434,42 +408,13 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <summary>
     ///     Publishes the specified message and returns its identifier.
     /// </summary>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     The message identifier assigned by the broker (the Kafka offset or similar).
     /// </returns>
-    protected abstract IBrokerMessageIdentifier? ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint);
-
-    /// <summary>
-    ///     Publishes the specified message and returns its identifier.
-    /// </summary>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
-    /// </param>
-    /// <returns>
-    ///     The message identifier assigned by the broker (the Kafka offset or similar).
-    /// </returns>
-    protected abstract IBrokerMessageIdentifier? ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint);
+    protected abstract IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope);
 
     /// <summary>
     ///     Publishes the specified message and returns its identifier.
@@ -478,14 +423,8 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <param name="onSuccess">
     ///     The callback to be invoked when the message is successfully produced.
@@ -493,149 +432,19 @@ public abstract class Producer<TEndpoint> : IProducer, IDisposable
     /// <param name="onError">
     ///     The callback to be invoked when the produce fails.
     /// </param>
-    protected abstract void ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
+    protected abstract void ProduceCore(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError);
 
     /// <summary>
     ///     Publishes the specified message and returns its identifier.
     /// </summary>
-    /// <remarks>
-    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    protected abstract void ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message and returns its identifier.
-    /// </summary>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
+    /// <param name="envelope">
+    ///     The envelope containing the message to be produced.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     message identifier assigned by the broker (the Kafka offset or similar).
     /// </returns>
-    protected abstract ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint);
-
-    /// <summary>
-    ///     Publishes the specified message and returns its identifier.
-    /// </summary>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
-    ///     message identifier assigned by the broker (the Kafka offset or similar).
-    /// </returns>
-    protected abstract ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint);
-
-    /// <summary>
-    ///     Publishes the specified message and returns its identifier.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    protected abstract ValueTask ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
-
-    /// <summary>
-    ///     Publishes the specified message and returns its identifier.
-    /// </summary>
-    /// <remarks>
-    ///     The returned <see cref="ValueTask" /> completes when the message is enqueued while the callbacks
-    ///     are called when the message is actually produced (or the produce failed).
-    /// </remarks>
-    /// <param name="message">
-    ///     The message.
-    /// </param>
-    /// <param name="headers">
-    ///     The message headers.
-    /// </param>
-    /// <param name="endpoint">
-    ///     The endpoint to produce to.
-    /// </param>
-    /// <param name="onSuccess">
-    ///     The callback to be invoked when the message is successfully produced.
-    /// </param>
-    /// <param name="onError">
-    ///     The callback to be invoked when the produce fails.
-    /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation. The <see cref="ValueTask" /> will complete as
-    ///     soon as the message is enqueued.
-    /// </returns>
-    protected abstract ValueTask ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        TEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError);
+    protected abstract ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope);
 
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.

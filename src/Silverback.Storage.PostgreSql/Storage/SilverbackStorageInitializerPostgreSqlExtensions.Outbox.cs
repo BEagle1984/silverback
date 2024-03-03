@@ -79,12 +79,10 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         return dataAccess.ExecuteNonQueryAsync(
             $"CREATE TABLE IF NOT EXISTS \"{tableName}\" (" +
             "Id SERIAL PRIMARY KEY," +
-            "MessageType TEXT," +
             "Content BYTEA," +
             "Headers TEXT," +
-            "EndpointRawName TEXT NOT NULL," +
-            "EndpointFriendlyName TEXT," +
-            "SerializedEndpoint TEXT," +
+            "EndpointName TEXT NOT NULL," +
+            "DynamicEndpoint TEXT," +
             "Created TIMESTAMP WITH TIME ZONE NOT NULL);");
     }
 }

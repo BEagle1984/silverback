@@ -102,11 +102,23 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
     {
         public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
             throw new NotSupportedException();
+
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
         public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+            throw new NotSupportedException();
+
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 }

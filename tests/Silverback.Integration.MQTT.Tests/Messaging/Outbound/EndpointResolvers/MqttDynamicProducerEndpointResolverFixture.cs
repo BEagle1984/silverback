@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -86,23 +84,23 @@ public class MqttDynamicProducerEndpointResolverFixture
     }
 
     [Fact]
-    public async Task SerializeAsync_ShouldSerializeTargetTopic()
+    public void Serialize_ShouldSerializeTargetTopic()
     {
         MqttDynamicProducerEndpointResolver endpointResolver = new(_ => "abc");
         MqttProducerEndpoint endpoint = new("topic", new MqttProducerEndpointConfiguration());
 
-        byte[] result = await endpointResolver.SerializeAsync(endpoint);
+        string result = endpointResolver.Serialize(endpoint);
 
-        Encoding.UTF8.GetString(result).Should().Be("topic");
+        result.Should().Be("topic");
     }
 
     [Fact]
-    public async Task DeserializeAsync_ShouldDeserializeEndpoint()
+    public void Deserialize_ShouldDeserializeEndpoint()
     {
         MqttDynamicProducerEndpointResolver endpointResolver = new(_ => "abc");
-        byte[] serialized = Encoding.UTF8.GetBytes("topic");
+        string serialized = "topic";
 
-        MqttProducerEndpoint result = await endpointResolver.DeserializeAsync(serialized, new MqttProducerEndpointConfiguration());
+        MqttProducerEndpoint result = endpointResolver.Deserialize(serialized, new MqttProducerEndpointConfiguration());
         result.Should().NotBeNull();
         result.Topic.Should().Be("topic");
     }

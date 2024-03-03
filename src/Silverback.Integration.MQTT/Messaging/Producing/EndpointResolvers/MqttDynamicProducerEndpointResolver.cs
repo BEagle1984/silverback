@@ -4,8 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
-using System.Threading.Tasks;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -62,26 +60,23 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
         _topicFunction = topicFunction;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.SerializeAsync(TEndpoint)" />
-    public override ValueTask<byte[]> SerializeAsync(MqttProducerEndpoint endpoint)
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
+    public override string Serialize(MqttProducerEndpoint endpoint)
     {
         Check.NotNull(endpoint, nameof(endpoint));
 
-        return ValueTaskFactory.FromResult(Encoding.UTF8.GetBytes(endpoint.Topic));
+        return endpoint.Topic;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.DeserializeAsync(byte[],TConfiguration)" />
-    public override ValueTask<MqttProducerEndpoint> DeserializeAsync(
-        byte[] serializedEndpoint,
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
+    public override MqttProducerEndpoint Deserialize(
+        string serializedEndpoint,
         MqttProducerEndpointConfiguration configuration)
     {
         Check.NotNull(serializedEndpoint, nameof(serializedEndpoint));
         Check.NotNull(configuration, nameof(configuration));
 
-        string topic = Encoding.UTF8.GetString(serializedEndpoint);
-        MqttProducerEndpoint endpoint = new(topic, configuration);
-
-        return ValueTaskFactory.FromResult(endpoint);
+        return new MqttProducerEndpoint(serializedEndpoint, configuration);
     }
 
     /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore" />

@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using Silverback.Messaging.Broker;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
@@ -41,7 +42,10 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            _dataAccess.CreateParameter("@GroupId", groupId));
+            new SqliteParameter("@GroupId", SqliteType.Text)
+            {
+                Value = groupId
+            });
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
@@ -50,10 +54,13 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
             _insertOrReplaceQuerySql,
             new[]
             {
-                _dataAccess.CreateParameter("@GroupId", groupId),
-                _dataAccess.CreateParameter("@Topic", string.Empty),
-                _dataAccess.CreateParameter("@Partition", 0),
-                _dataAccess.CreateParameter("@Offset", 0L)
+                new SqliteParameter("@GroupId", SqliteType.Text)
+                {
+                    Value = groupId
+                },
+                new SqliteParameter("@Topic", SqliteType.Text),
+                new SqliteParameter("@Partition", SqliteType.Integer),
+                new SqliteParameter("@Offset", SqliteType.Integer)
             },
             (offset, parameters) =>
             {

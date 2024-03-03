@@ -16,8 +16,7 @@ namespace Silverback.Messaging.Messages;
 /// <remarks>
 ///     This implementation is not thread-safe.
 /// </remarks>
-internal sealed class MessageStreamEnumerable<TMessage>
-    : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
+internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
 {
     private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
@@ -29,17 +28,22 @@ internal sealed class MessageStreamEnumerable<TMessage>
 
     private readonly object _completeLock = new();
 
-    private PushedMessage? _current;
+    private TMessage? _current;
+
+    private bool _hasCurrent;
 
     private bool _isFirstMessage = true;
 
     private bool _isComplete;
 
-    /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
+    Task IMessageStreamEnumerable.PushAsync(object message, CancellationToken cancellationToken) =>
+        PushAsync((TMessage)message, cancellationToken);
+
+    /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(object,System.Threading.CancellationToken)" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
-    public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
+    public async Task PushAsync(TMessage message, CancellationToken cancellationToken = default)
     {
-        Check.NotNull(pushedMessage, nameof(pushedMessage));
+        Check.NotNull(message, nameof(message));
 
         using CancellationTokenSource linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
 
@@ -48,11 +52,13 @@ internal sealed class MessageStreamEnumerable<TMessage>
         if (_isComplete)
             throw new InvalidOperationException("The stream has been marked as complete.");
 
-        _current = pushedMessage;
+        _current = message;
+        _hasCurrent = true;
         SafelyRelease(_readSemaphore);
 
         await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
-        _current = null;
+        _current = default;
+        _hasCurrent = false;
         _writeSemaphore.Release();
     }
 
@@ -126,25 +132,22 @@ internal sealed class MessageStreamEnumerable<TMessage>
     {
         while (AsyncHelper.RunSynchronously(() => WaitForNextAsync(CancellationToken.None)))
         {
-            if (_current == null)
+            if (!_hasCurrent || _current == null)
                 continue;
 
-            TMessage currentMessage = (TMessage)_current.Message;
-            yield return currentMessage;
+            yield return _current;
         }
     }
 
     [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Reviewed")]
-
     private async IAsyncEnumerable<TMessage> GetAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))
         {
-            if (_current == null)
+            if (!_hasCurrent || _current == null)
                 continue;
 
-            TMessage currentMessage = (TMessage)_current.Message;
-            yield return currentMessage;
+            yield return _current;
         }
     }
 
@@ -152,7 +155,8 @@ internal sealed class MessageStreamEnumerable<TMessage>
     {
         if (!_isFirstMessage)
         {
-            _current = null;
+            _current = default;
+            _hasCurrent = false;
             SafelyRelease(_processedSemaphore);
         }
 
@@ -162,7 +166,7 @@ internal sealed class MessageStreamEnumerable<TMessage>
 
         _isFirstMessage = false;
 
-        return _current != null;
+        return _hasCurrent;
     }
 
     private CancellationTokenSource LinkWithAbortCancellationTokenSource(CancellationToken cancellationToken) =>

@@ -13,6 +13,4 @@ internal class PostgreSqlDataAccess : DataAccess<NpgsqlConnection, NpgsqlTransac
     }
 
     protected override NpgsqlConnection CreateConnection(string connectionString) => new(connectionString);
-
-    protected override NpgsqlParameter CreateParameterCore(string name, object value) => new(name, value);
 }

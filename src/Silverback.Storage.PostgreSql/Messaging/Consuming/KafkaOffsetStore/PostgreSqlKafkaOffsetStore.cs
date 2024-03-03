@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Npgsql;
+using NpgsqlTypes;
 using Silverback.Messaging.Broker;
 using Silverback.Storage.DataAccess;
 using Silverback.Util;
@@ -42,7 +44,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            _dataAccess.CreateParameter("@GroupId", groupId));
+            new NpgsqlParameter("@GroupId", NpgsqlDbType.Text) { Value = groupId });
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
@@ -51,10 +53,13 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
             _insertOrReplaceQuerySql,
             new[]
             {
-                _dataAccess.CreateParameter("@GroupId", groupId),
-                _dataAccess.CreateParameter("@Topic", string.Empty),
-                _dataAccess.CreateParameter("@Partition", 0),
-                _dataAccess.CreateParameter("@Offset", 0L)
+                new NpgsqlParameter("@GroupId", NpgsqlDbType.Text)
+                {
+                    Value = groupId
+                },
+                new NpgsqlParameter("@Topic", NpgsqlDbType.Text),
+                new NpgsqlParameter("@Partition", NpgsqlDbType.Integer),
+                new NpgsqlParameter("@Offset", NpgsqlDbType.Integer)
             },
             (offset, parameters) =>
             {

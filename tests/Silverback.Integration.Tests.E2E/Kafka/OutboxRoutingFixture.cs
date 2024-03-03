@@ -54,10 +54,12 @@ public class OutboxRoutingFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<TestEventOne>(
+                                    "my-endpoint-1",
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
                                         .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventTwo>(
+                                    "my-endpoint-2",
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
                                         .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
@@ -106,6 +108,7 @@ public class OutboxRoutingFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<TestEventOne>(
+                                    "my-dynamic-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(
                                             message => message?.ContentEventOne switch
@@ -137,7 +140,7 @@ public class OutboxRoutingFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceToCorrectTopic_WhenUsingDynamicNamedEndpoints()
+    public async Task Outbox_ShouldProduceToCorrectTopic_WhenUsingMultipleNamedEndpoints()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
@@ -182,8 +185,6 @@ public class OutboxRoutingFixture : KafkaFixture
         {
             await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
-
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -233,6 +234,7 @@ public class OutboxRoutingFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<TestEventOne>(
+                                    "my-endpoint-1",
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
                                         .ProduceToOutbox(
@@ -240,6 +242,7 @@ public class OutboxRoutingFixture : KafkaFixture
                                                 .UseSqlite(database.ConnectionString)
                                                 .WithTableName("outbox1")))
                                 .Produce<TestEventTwo>(
+                                    "my-endpoint-2",
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
                                         .ProduceToOutbox(

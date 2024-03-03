@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
@@ -14,7 +13,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Tests.Types;
-using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Producing.TransactionalOutbox;
@@ -31,23 +29,30 @@ public class OutboxWorkerFixture
 
     private readonly IProducer _producer2 = Substitute.For<IProducer>();
 
-    private readonly IServiceScopeFactory _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
-
     private readonly IProducerLogger<OutboxWorker> _producerLogger = Substitute.For<IProducerLogger<OutboxWorker>>();
 
-    private readonly OutboxMessageEndpoint _outboxEndpoint1 = new("topic1", null, null);
+    private readonly OutboxMessageEndpoint _outboxEndpoint1 = new("one", null);
 
-    private readonly OutboxMessageEndpoint _outboxEndpoint2 = new("topic2", null, null);
+    private readonly OutboxMessageEndpoint _outboxEndpoint2 = new("two", null);
 
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public OutboxWorkerFixture()
     {
         _outboxWriter = new InMemoryOutboxWriter(_inMemoryOutbox);
 
-        _producerCollection.GetProducersForMessage(Arg.Any<Type>()).Returns(new[] { _producer1, _producer2 });
+        _producerCollection.GetProducerForEndpoint("one").Returns(_producer1);
+        _producerCollection.GetProducerForEndpoint("two").Returns(_producer2);
 
-        _producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1"));
-        _producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
+        _producer1.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic1")
+            {
+                FriendlyName = "one"
+            });
+        _producer2.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration("topic2")
+            {
+                FriendlyName = "two"
+            });
 
         _producer1
             .When(
@@ -72,15 +77,14 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenNotEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventTwo), new byte[] { 0x02 }, null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x03 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, _outboxEndpoint1));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _serviceScopeFactory,
             _producerLogger);
 
         await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -92,15 +96,14 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventTwo), new byte[] { 0x02 }, null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x03 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, _outboxEndpoint1));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _serviceScopeFactory,
             _producerLogger);
 
         await outboxWorker.ProcessOutboxAsync(CancellationToken.None);
@@ -340,7 +343,7 @@ public class OutboxWorkerFixture
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestEventOne), new byte[] { 0x01 }, null, _outboxEndpoint1));
+            await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
         }
 
         int tries = 0;
@@ -361,7 +364,6 @@ public class OutboxWorkerFixture
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
             new InMemoryOutboxReader(_inMemoryOutbox),
             _producerCollection,
-            _serviceScopeFactory,
             _producerLogger);
 
         await outboxWorker.ProcessOutboxAsync(CancellationToken.None);

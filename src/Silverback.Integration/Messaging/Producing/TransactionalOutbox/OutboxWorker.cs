@@ -5,10 +5,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -21,8 +19,6 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// <inheritdoc cref="IOutboxWorker" />
 public class OutboxWorker : IOutboxWorker
 {
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-
     private readonly OutboxWorkerSettings _settings;
 
     private readonly IOutboxReader _outboxReader;
@@ -37,8 +33,6 @@ public class OutboxWorker : IOutboxWorker
 
     private bool _failed;
 
-    private IServiceScope? _serviceScope;
-
     /// <summary>
     ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
     /// </summary>
@@ -51,9 +45,6 @@ public class OutboxWorker : IOutboxWorker
     /// <param name="producers">
     ///     The <see cref="IProducerCollection" />.
     /// </param>
-    /// <param name="serviceScopeFactory">
-    ///     The <see cref="IServiceScopeFactory" />.
-    /// </param>
     /// <param name="logger">
     ///     The <see cref="IProducerLogger{TCategoryName}" />.
     /// </param>
@@ -61,13 +52,11 @@ public class OutboxWorker : IOutboxWorker
         OutboxWorkerSettings settings,
         IOutboxReader outboxReader,
         IProducerCollection producers,
-        IServiceScopeFactory serviceScopeFactory,
         IProducerLogger<OutboxWorker> logger)
     {
         _settings = Check.NotNull(settings, nameof(settings));
         _outboxReader = Check.NotNull(outboxReader, nameof(outboxReader));
         _producers = Check.NotNull(producers, nameof(producers));
-        _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
@@ -84,14 +73,20 @@ public class OutboxWorker : IOutboxWorker
             _logger.LogErrorProcessingOutbox(ex);
             return false;
         }
-        finally
-        {
-            _serviceScope?.Dispose();
-        }
     }
 
     /// <inheritdoc cref="IOutboxWorker.GetLengthAsync" />
     public Task<int> GetLengthAsync() => _outboxReader.GetLengthAsync();
+
+    private static ProducerEndpoint GetEndpoint(OutboxMessage outboxMessage, ProducerEndpointConfiguration configuration) =>
+        configuration.Endpoint switch
+        {
+            IStaticProducerEndpointResolver staticEndpointProvider => staticEndpointProvider.GetEndpoint(configuration),
+            IDynamicProducerEndpointResolver dynamicEndpointProvider => dynamicEndpointProvider.Deserialize(
+                outboxMessage.Endpoint.DynamicEndpoint ?? throw new InvalidOperationException("SerializedEndpoint is null"),
+                configuration),
+            _ => throw new InvalidOperationException("The IEndpointProvider is neither an IStaticEndpointProvider nor an IDynamicEndpointProvider.")
+        };
 
     private async Task<bool> TryProcessOutboxAsync(CancellationToken stoppingToken)
     {
@@ -117,7 +112,7 @@ public class OutboxWorker : IOutboxWorker
                 if (_settings.EnforceMessageOrder)
                     await BlockingProcessMessageAsync(outboxMessage).ConfigureAwait(false);
                 else
-                    await ProcessMessageAsync(outboxMessage).ConfigureAwait(false);
+                    ProcessMessage(outboxMessage);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -138,12 +133,12 @@ public class OutboxWorker : IOutboxWorker
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
     [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Produce with callbacks is potentially faster")]
-    private async ValueTask ProcessMessageAsync(OutboxMessage message)
+    private void ProcessMessage(OutboxMessage message)
     {
         try
         {
             IProducer producer = GetProducer(message);
-            ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
+            ProducerEndpoint endpoint = GetEndpoint(message, producer.EndpointConfiguration);
 
             Interlocked.Increment(ref _pendingProduceOperations);
 
@@ -158,7 +153,7 @@ public class OutboxWorker : IOutboxWorker
                 endpoint,
                 message.Content,
                 message.Headers,
-                identifier =>
+                _ =>
                 {
                     _producedMessages.Add(message);
                     Interlocked.Decrement(ref _pendingProduceOperations);
@@ -191,7 +186,7 @@ public class OutboxWorker : IOutboxWorker
         try
         {
             IProducer producer = GetProducer(message);
-            ProducerEndpoint endpoint = await GetEndpointAsync(message, producer.EndpointConfiguration).ConfigureAwait(false);
+            ProducerEndpoint endpoint = GetEndpoint(message, producer.EndpointConfiguration);
 
             await producer.RawProduceAsync(endpoint, message.Content, message.Headers).ConfigureAwait(false);
             _producedMessages.Add(message);
@@ -208,62 +203,15 @@ public class OutboxWorker : IOutboxWorker
         }
     }
 
-    // TODO: Test all cases
-    private IProducer GetProducer(OutboxMessage outboxMessage)
-    {
-        IReadOnlyCollection<IProducer> producers = outboxMessage.MessageType != null
-            ? _producers.GetProducersForMessage(outboxMessage.MessageType)
-            : _producers;
+    private IProducer GetProducer(OutboxMessage outboxMessage) => _producers.GetProducerForEndpoint(outboxMessage.Endpoint.FriendlyName);
 
-        List<IProducer> matchingProducers = producers
-            .Where(producer => producer.EndpointConfiguration.RawName == outboxMessage.Endpoint.RawName)
-            .ToList();
-
-        if (matchingProducers.Count == 0)
-        {
-            throw new InvalidOperationException(
-                $"No endpoint with name '{outboxMessage.Endpoint.RawName}' could be found for a message " +
-                $"of type '{outboxMessage.MessageType?.FullName}'.");
-        }
-
-        if (matchingProducers.Count > 1)
-        {
-            IProducer? matchingProducer = matchingProducers.FirstOrDefault(
-                producer =>
-                    producer.EndpointConfiguration.FriendlyName == outboxMessage.Endpoint.FriendlyName);
-
-            if (matchingProducer != null)
-                return matchingProducer;
-        }
-
-        return matchingProducers[0];
-    }
-
-    // TODO: Test all cases
-    private async ValueTask<ProducerEndpoint> GetEndpointAsync(OutboxMessage outboxMessage, ProducerEndpointConfiguration configuration)
-    {
-        switch (configuration.Endpoint)
-        {
-            case IStaticProducerEndpointResolver staticEndpointProvider:
-                return staticEndpointProvider.GetEndpoint(configuration);
-            case IDynamicProducerEndpointResolver dynamicEndpointProvider when outboxMessage.Endpoint.SerializedEndpoint == null:
-                _serviceScope ??= _serviceScopeFactory.CreateScope();
-                return dynamicEndpointProvider.GetEndpoint(outboxMessage.Content, configuration, _serviceScope.ServiceProvider);
-            case IDynamicProducerEndpointResolver dynamicEndpointProvider:
-                return await dynamicEndpointProvider.DeserializeAsync(outboxMessage.Endpoint.SerializedEndpoint, configuration).ConfigureAwait(false);
-        }
-
-        throw new InvalidOperationException("The IEndpointProvider is neither an IStaticEndpointProvider nor an IDynamicEndpointProvider.");
-    }
-
-    private Task AcknowledgeAllAsync() =>
-        _outboxReader.AcknowledgeAsync(_producedMessages);
+    private Task AcknowledgeAllAsync() => _outboxReader.AcknowledgeAsync(_producedMessages);
 
     private async Task WaitAllAsync()
     {
         while (_pendingProduceOperations > 0)
         {
-            await Task.Delay(10).ConfigureAwait(false);
+            await Task.Delay(50).ConfigureAwait(false);
         }
     }
 }

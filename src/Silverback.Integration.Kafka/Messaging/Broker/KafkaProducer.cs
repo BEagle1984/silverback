@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -19,8 +17,8 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
-/// <inheritdoc cref="Producer{TEndpoint}" />
-public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
+/// <inheritdoc cref="Producer" />
+public sealed class KafkaProducer : Producer
 {
     private readonly ISilverbackLogger _logger;
 
@@ -76,7 +74,7 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
                       new DefaultKafkaMessageSerializer(EndpointConfiguration.Serializer);
     }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.Client" />
+    /// <inheritdoc cref="Producer.Client" />
     public new IConfluentProducerWrapper Client { get; }
 
     /// <summary>
@@ -84,53 +82,34 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
     /// </summary>
     public KafkaProducerConfiguration Configuration { get; }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.EndpointConfiguration" />
+    /// <inheritdoc cref="Producer.EndpointConfiguration" />
     public new KafkaProducerEndpointConfiguration EndpointConfiguration { get; }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override IBrokerMessageIdentifier? ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint));
+    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
+    protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
+        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope)); // TODO: No better option?
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override IBrokerMessageIdentifier? ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, headers, endpoint)); // TODO: No better option?
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override void ProduceCore(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        ProduceCore(message.ReadAll(), headers, endpoint, onSuccess, onError);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCore(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]
     protected override void ProduceCore(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint,
+        IOutboundEnvelope envelope,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(envelope, nameof(envelope));
         Check.NotNull(onSuccess, nameof(onSuccess));
         Check.NotNull(onError, nameof(onError));
 
+        KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.Endpoint;
+
         Message<byte[]?, byte[]?> kafkaMessage = new()
         {
-            Key = GetKafkaKey(headers, endpoint),
-            Value = message
+            Key = GetKafkaKey(envelope, endpoint),
+            Value = envelope.RawMessage.ReadAll()
         };
 
-        if (headers != null && headers.Count >= 1)
-            kafkaMessage.Headers = headers.ToConfluentHeaders();
+        if (envelope.Headers.Count >= 1)
+            kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
 
         Client.Produce(
             endpoint.TopicPartition,
@@ -154,33 +133,28 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
             });
     }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint) =>
-        await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint).ConfigureAwait(false);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint)
+    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
     {
-        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(envelope, nameof(envelope));
 
         try
         {
+            KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)envelope.Endpoint;
+
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {
-                Key = GetKafkaKey(headers, endpoint),
-                Value = message
+                Key = GetKafkaKey(envelope, endpoint),
+                Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
             };
 
-            if (headers is { Count: >= 1 })
-                kafkaMessage.Headers = headers.ToConfluentHeaders();
+            if (envelope.Headers.Count >= 1)
+                kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
 
-            DeliveryResult<byte[]?, byte[]?> deliveryResult = await Client.ProduceAsync(endpoint.TopicPartition, kafkaMessage).ConfigureAwait(false);
+            DeliveryResult<byte[]?, byte[]?> deliveryResult = await Client.ProduceAsync(
+                    endpoint.TopicPartition,
+                    kafkaMessage)
+                .ConfigureAwait(false);
 
             if (Configuration.ArePersistenceStatusReportsEnabled)
                 CheckPersistenceStatus(deliveryResult);
@@ -193,37 +167,12 @@ public sealed class KafkaProducer : Producer<KafkaProducerEndpoint>
         }
     }
 
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(Stream,IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override async ValueTask ProduceCoreAsync(
-        Stream? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError) =>
-        await ProduceCoreAsync(await message.ReadAllAsync().ConfigureAwait(false), headers, endpoint, onSuccess, onError).ConfigureAwait(false);
-
-    /// <inheritdoc cref="Producer{TEndpoint}.ProduceCoreAsync(byte[],IReadOnlyCollection{MessageHeader},TEndpoint,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception logged/forwarded")]
-    protected override ValueTask ProduceCoreAsync(
-        byte[]? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        KafkaProducerEndpoint endpoint,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError)
+    private byte[]? GetKafkaKey(IOutboundEnvelope envelope, KafkaProducerEndpoint endpoint)
     {
-        ProduceCore(message, headers, endpoint, onSuccess, onError);
-        return default;
-    }
-
-    private byte[]? GetKafkaKey(IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
-    {
-        if (headers == null)
+        if (!envelope.Headers.TryGetValue(DefaultMessageHeaders.MessageId, out string? kafkaKey) || kafkaKey == null)
             return null;
 
-        if (!headers.TryGetValue(DefaultMessageHeaders.MessageId, out string? kafkaKey) || kafkaKey == null)
-            return null;
-
-        return _serializer.SerializeKey(kafkaKey, headers, endpoint);
+        return _serializer.SerializeKey(kafkaKey, envelope.Headers, endpoint);
     }
 
     private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)

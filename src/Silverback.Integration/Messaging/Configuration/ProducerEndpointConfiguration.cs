@@ -8,6 +8,7 @@ using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Enrichers;
 using Silverback.Messaging.Producing.Filter;
+using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 
@@ -96,6 +97,9 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
 
         if (Strategy == null)
             throw new BrokerConfigurationException("A produce strategy is required.");
+
+        if (Strategy is OutboxProduceStrategy && string.IsNullOrEmpty(FriendlyName))
+            throw new BrokerConfigurationException("A friendly unique name for the endpoint is required when using the outbox produce strategy.");
 
         Chunk?.Validate();
         Encryption?.Validate();

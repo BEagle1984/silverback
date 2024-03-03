@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using MQTTnet.Client;
 using MQTTnet.Packets;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -59,10 +58,7 @@ public interface IMqttClientWrapper : IBrokerClient
     /// <param name="onError">
     ///     A callback to be invoked when an error occurs trying to produce the message.
     /// </param>
-    /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
-    /// </returns>
-    ValueTask ProduceAsync(
+    void Produce(
         byte[]? content,
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,

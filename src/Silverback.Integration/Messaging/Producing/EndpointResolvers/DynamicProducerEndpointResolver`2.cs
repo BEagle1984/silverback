@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
@@ -43,18 +42,18 @@ public abstract record DynamicProducerEndpointResolver<TEndpoint, TConfiguration
     public TEndpoint GetEndpoint(object? message, TConfiguration configuration, IServiceProvider serviceProvider) =>
         GetEndpointCore(message, configuration, serviceProvider);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.SerializeAsync" />
-    public ValueTask<byte[]> SerializeAsync(ProducerEndpoint endpoint) => SerializeAsync((TEndpoint)endpoint);
+    /// <inheritdoc cref="IProducerEndpointSerializer.Serialize" />
+    public string Serialize(ProducerEndpoint endpoint) => Serialize((TEndpoint)endpoint);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.SerializeAsync" />
-    public abstract ValueTask<byte[]> SerializeAsync(TEndpoint endpoint);
+    /// <inheritdoc cref="IProducerEndpointSerializer.Serialize" />
+    public abstract string Serialize(TEndpoint endpoint);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.DeserializeAsync" />
-    public async ValueTask<ProducerEndpoint> DeserializeAsync(byte[] serializedEndpoint, ProducerEndpointConfiguration configuration) =>
-        await DeserializeAsync(serializedEndpoint, (TConfiguration)configuration).ConfigureAwait(false);
+    /// <inheritdoc cref="IProducerEndpointSerializer.Deserialize" />
+    public ProducerEndpoint Deserialize(string serializedEndpoint, ProducerEndpointConfiguration configuration) =>
+        Deserialize(serializedEndpoint, (TConfiguration)configuration);
 
-    /// <inheritdoc cref="IProducerEndpointSerializer.DeserializeAsync" />
-    public abstract ValueTask<TEndpoint> DeserializeAsync(byte[] serializedEndpoint, TConfiguration configuration);
+    /// <inheritdoc cref="IProducerEndpointSerializer.Deserialize" />
+    public abstract TEndpoint Deserialize(string serializedEndpoint, TConfiguration configuration);
 
     /// <inheritdoc cref="IProducerEndpointResolver.GetEndpoint" />
     protected abstract TEndpoint GetEndpointCore(object? message, TConfiguration configuration, IServiceProvider serviceProvider);

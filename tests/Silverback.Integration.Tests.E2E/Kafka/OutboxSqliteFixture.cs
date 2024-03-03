@@ -56,6 +56,7 @@ public class OutboxSqliteFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
@@ -106,6 +107,7 @@ public class OutboxSqliteFixture : KafkaFixture
                         .AddProducer(
                             producer => producer
                                 .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))

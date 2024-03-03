@@ -13,6 +13,4 @@ internal class SqliteDataAccess : DataAccess<SqliteConnection, SqliteTransaction
     }
 
     protected override SqliteConnection CreateConnection(string connectionString) => new(connectionString);
-
-    protected override SqliteParameter CreateParameterCore(string name, object value) => new(name, value);
 }

@@ -79,7 +79,7 @@ internal sealed class ProducerLogger
 
     public void LogProduceError(ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+        if (!logger.IsEnabled(IntegrationLogEvents.ErrorProducingMessage))
             return;
 
         (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Endpoint, envelope.Headers, null);
@@ -100,7 +100,7 @@ internal sealed class ProducerLogger
         IReadOnlyCollection<MessageHeader>? headers,
         Exception exception)
     {
-        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+        if (!logger.IsEnabled(IntegrationLogEvents.ErrorProducingMessage))
             return;
 
         (string? value1, string? value2) = _logEnricher.GetAdditionalValues(endpoint, headers, null);

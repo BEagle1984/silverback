@@ -79,12 +79,10 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         return dataAccess.ExecuteNonQueryAsync(
             $"CREATE TABLE IF NOT EXISTS {tableName} (" +
             "Id INTEGER NOT NULL," +
-            "MessageType TEXT," +
             "Content BLOB," +
             "Headers TEXT," +
-            "EndpointRawName TEXT NOT NULL," +
-            "EndpointFriendlyName TEXT," +
-            "SerializedEndpoint TEXT," +
+            "EndpointName TEXT NOT NULL," +
+            "DynamicEndpoint TEXT," +
             "Created INTEGER NOT NULL," +
             "PRIMARY KEY (Id));");
     }

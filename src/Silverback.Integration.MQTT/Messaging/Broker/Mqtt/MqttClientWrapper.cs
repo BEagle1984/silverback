@@ -80,13 +80,13 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
     public bool IsConnected => _mqttClient.IsConnected;
 
-    public ValueTask ProduceAsync(
+    public void Produce(
         byte[]? content,
         IReadOnlyCollection<MessageHeader>? headers,
         MqttProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        _publishQueueChannel.Writer.WriteAsync(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
+        _publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
 
     protected override ValueTask ConnectCoreAsync()
     {

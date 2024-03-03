@@ -4,8 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
@@ -134,30 +132,27 @@ public sealed record KafkaDynamicProducerEndpointResolver
         _topicPartitionFunction = topicPartitionFunction;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.SerializeAsync(TEndpoint)" />
-    public override ValueTask<byte[]> SerializeAsync(KafkaProducerEndpoint endpoint)
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
+    public override string Serialize(KafkaProducerEndpoint endpoint)
     {
         Check.NotNull(endpoint, nameof(endpoint));
 
-        string serialString = $"{endpoint.TopicPartition.Topic}|{endpoint.TopicPartition.Partition.Value}";
-        return ValueTaskFactory.FromResult(Encoding.UTF8.GetBytes(serialString));
+        return $"{endpoint.TopicPartition.Topic}|{endpoint.TopicPartition.Partition.Value}";
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.DeserializeAsync(byte[],TConfiguration)" />
-    public override ValueTask<KafkaProducerEndpoint> DeserializeAsync(
-        byte[] serializedEndpoint,
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
+    public override KafkaProducerEndpoint Deserialize(
+        string serializedEndpoint,
         KafkaProducerEndpointConfiguration configuration)
     {
         Check.NotNull(serializedEndpoint, nameof(serializedEndpoint));
         Check.NotNull(configuration, nameof(configuration));
 
-        string serialString = Encoding.UTF8.GetString(serializedEndpoint);
-        string[] parts = serialString.Split('|');
+        string[] parts = serializedEndpoint.Split('|');
 
-        TopicPartition topicPartition = new(parts[0], int.Parse(parts[1], CultureInfo.InvariantCulture));
-        KafkaProducerEndpoint endpoint = new(topicPartition, configuration);
-
-        return ValueTaskFactory.FromResult(endpoint);
+        return new KafkaProducerEndpoint(
+            new TopicPartition(parts[0], int.Parse(parts[1], CultureInfo.InvariantCulture)),
+            configuration);
     }
 
     /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore" />

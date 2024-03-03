@@ -19,7 +19,7 @@ namespace Silverback.Tests.Storage.PostgreSql.Messaging.Producing.TransactionalO
 
 public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 {
-    private static readonly OutboxMessageEndpoint Endpoint = new("test", null, null);
+    private static readonly OutboxMessageEndpoint Endpoint = new("test", null);
 
     private readonly PostgreSqlOutboxSettings _outboxSettings;
 
@@ -46,10 +46,10 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        DbOutboxMessage outboxMessage1 = new(1, typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint);
-        DbOutboxMessage outboxMessage2 = new(2, typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint);
-        DbOutboxMessage outboxMessage3 = new(3, typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint);
-        DbOutboxMessage outboxMessage4 = new(4, typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint);
+        DbOutboxMessage outboxMessage1 = new(1, new byte[] { 0x01 }, null, Endpoint);
+        DbOutboxMessage outboxMessage2 = new(2, new byte[] { 0x02 }, null, Endpoint);
+        DbOutboxMessage outboxMessage3 = new(3, new byte[] { 0x03 }, null, Endpoint);
+        DbOutboxMessage outboxMessage4 = new(4, new byte[] { 0x04 }, null, Endpoint);
         await _outboxWriter.AddAsync(outboxMessage1);
         await _outboxWriter.AddAsync(outboxMessage2);
         await _outboxWriter.AddAsync(outboxMessage3);
@@ -77,11 +77,11 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x05 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x04 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
@@ -129,11 +129,11 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x04 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x05 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x04 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
@@ -156,9 +156,9 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
@@ -187,9 +187,9 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x03 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
@@ -231,9 +231,9 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x01 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await Task.Delay(100);
-        await _outboxWriter.AddAsync(new OutboxMessage(typeof(TestMessage), new byte[] { 0x02 }, null, Endpoint));
+        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
@@ -261,9 +261,5 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
         maxAge.Should().Be(TimeSpan.Zero);
-    }
-
-    private class TestMessage
-    {
     }
 }
