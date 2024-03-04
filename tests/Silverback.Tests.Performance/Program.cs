@@ -20,4 +20,4 @@ using Silverback.Tests.Performance;
 * await BenchmarkRunner.Run(typeof(MessageValidatorBenchmark));
 */
 
-BenchmarkRunner.Run(typeof(AsyncEventBenchmark));
+BenchmarkRunner.Run(typeof(EnumerableSortExtensionsBenchmark));

@@ -10,6 +10,7 @@ using BenchmarkDotNet.Configs;
 
 namespace Silverback.Tests.Performance;
 
+[SimpleJob]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [CategoriesColumn]
 [MemoryDiagnoser]
