@@ -17,8 +17,7 @@ namespace Silverback.Util
 
             return sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
                 .Union(notSortables)
-                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>())
-                .ToList();
+                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>());
         }
     }
 }
