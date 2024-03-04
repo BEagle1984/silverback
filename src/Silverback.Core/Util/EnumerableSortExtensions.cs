@@ -13,7 +13,7 @@ namespace Silverback.Util
             var list = items.ToList();
 
             var sortables = list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex).ToList();
-            var notSortables = list.Where(item => item is not ISorted).ToList();
+            var notSortables = list.Where(item => item is not ISorted);
 
             return sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
                 .Union(notSortables)
