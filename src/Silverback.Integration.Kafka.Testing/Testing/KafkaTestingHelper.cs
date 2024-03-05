@@ -78,8 +78,8 @@ namespace Silverback.Testing
                 .Producers.Select(producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
                 .Union(
                     _kafkaBroker.Consumers.Select(
-                        producer =>
-                            ((KafkaConsumerEndpoint)producer.Endpoint).Configuration.BootstrapServers))
+                        consumer =>
+                            ((KafkaConsumerEndpoint)consumer.Endpoint).Configuration.BootstrapServers))
                 .Select(servers => servers.ToUpperInvariant())
                 .Distinct()
                 .Select(servers => _topics.Get(name, servers))
