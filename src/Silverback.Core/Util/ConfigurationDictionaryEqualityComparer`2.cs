@@ -42,30 +42,12 @@ namespace Silverback.Util
     {
         public bool Equals(IEnumerable<KeyValuePair<TKey, TValue>>? x, IEnumerable<KeyValuePair<TKey, TValue>>? y)
         {
-            x = (x ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
-            y = (y ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
+            x ??= Enumerable.Empty<KeyValuePair<TKey, TValue>>();
+            y ??= Enumerable.Empty<KeyValuePair<TKey, TValue>>();
 
-            if (x.Count() != y.Count())
-                return false;
+            var hashY = y.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            var allKeys = x.Select(pair => pair.Key)
-                .Union(y.Select(pair => pair.Key))
-                .Distinct()
-                .ToList();
-
-            if (allKeys.Count != x.Count())
-                return false;
-
-            foreach (var key in allKeys)
-            {
-                var valueX = x.FirstOrDefault(pair => Equals(pair.Key, key));
-                var valueY = y.FirstOrDefault(pair => Equals(pair.Key, key));
-
-                if (!Equals(valueX, valueY))
-                    return false;
-            }
-
-            return true;
+            return x.All(pair => hashY.TryGetValue(pair.Key, out var valueY) && Equals(pair.Value, valueY));
         }
 
         public int GetHashCode(IEnumerable<KeyValuePair<TKey, TValue>> obj) => obj.Count();
