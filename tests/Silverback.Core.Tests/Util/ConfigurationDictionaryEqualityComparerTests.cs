@@ -171,41 +171,25 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_FirstArgumentHasMoreElements_FalseIsReturned()
+        public void Equals_DifferentItemsCount_FalseIsReturned()
         {
-            var dictionaryX = new Dictionary<string, string?>
+            var dictionaryX = new Dictionary<string, string>
             {
                 { "one", "uno" },
                 { "two", "due" }
             };
-            var dictionaryY = new Dictionary<string, string?>
+            var dictionaryY = new Dictionary<string, string>
             {
                 { "one", "uno" }
             };
 
-            var result =
-                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+            var result1 =
+                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result2 =
+                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryY, dictionaryX);
 
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Equals_SecondArgumentHasMoreElements_FalseIsReturned()
-        {
-            var dictionaryX = new Dictionary<string, string?>
-            {
-                { "one", "uno" }
-            };
-            var dictionaryY = new Dictionary<string, string?>
-            {
-                { "one", "uno" },
-                { "two", "due" }
-            };
-
-            var result =
-                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
-
-            result.Should().BeFalse();
+            result1.Should().BeFalse();
+            result2.Should().BeFalse();
         }
     }
 }
