@@ -169,5 +169,43 @@ namespace Silverback.Tests.Core.Util
             result1.Should().BeTrue();
             result2.Should().BeTrue();
         }
+
+        [Fact]
+        public void Equals_FirstArgumentHasMoreElements_FalseIsReturned()
+        {
+            var dictionaryX = new Dictionary<string, string?>
+            {
+                { "one", "uno" },
+                { "two", "due" }
+            };
+            var dictionaryY = new Dictionary<string, string?>
+            {
+                { "one", "uno" }
+            };
+
+            var result =
+                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Equals_SecondArgumentHasMoreElements_FalseIsReturned()
+        {
+            var dictionaryX = new Dictionary<string, string?>
+            {
+                { "one", "uno" }
+            };
+            var dictionaryY = new Dictionary<string, string?>
+            {
+                { "one", "uno" },
+                { "two", "due" }
+            };
+
+            var result =
+                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+
+            result.Should().BeFalse();
+        }
     }
 }
