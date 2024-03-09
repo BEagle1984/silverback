@@ -25,7 +25,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -45,11 +44,11 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -59,8 +58,8 @@ public partial class ProducerEndpointFixture
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);
@@ -74,7 +73,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -100,11 +98,11 @@ public partial class ProducerEndpointFixture
                                                 _ => Partition.Any
                                             })))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -118,8 +116,8 @@ public partial class ProducerEndpointFixture
         partition1.TotalMessagesCount.Should().Be(1);
         partition2.TotalMessagesCount.Should().Be(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);
@@ -135,7 +133,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -156,11 +153,11 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException(),
                                             })))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -170,8 +167,8 @@ public partial class ProducerEndpointFixture
         topic2.MessagesCount.Should().Be(1);
         topic3.MessagesCount.Should().Be(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);
@@ -186,7 +183,6 @@ public partial class ProducerEndpointFixture
                 .AddLogging()
                 .AddSingleton<TestEndpointResolver>()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -197,11 +193,11 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         IInMemoryTopic topic1 = Helper.GetTopic("topic1");
         IInMemoryTopic topic2 = Helper.GetTopic("topic2");
@@ -215,8 +211,8 @@ public partial class ProducerEndpointFixture
         partition1.TotalMessagesCount.Should().Be(1);
         partition2.TotalMessagesCount.Should().Be(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         topic1.MessagesCount.Should().Be(2);
         topic2.MessagesCount.Should().Be(1);

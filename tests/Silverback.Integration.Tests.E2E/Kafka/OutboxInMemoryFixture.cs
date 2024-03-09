@@ -36,7 +36,6 @@ public class OutboxInMemoryFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -61,11 +60,11 @@ public class OutboxInMemoryFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -86,7 +85,6 @@ public class OutboxInMemoryFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -111,7 +109,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         await using SqliteConnection connection = new(database.ConnectionString);
         await connection.OpenAsync();
@@ -119,7 +117,7 @@ public class OutboxInMemoryFixture : KafkaFixture
 
         await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
-        await publisher.PublishAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne());
         await transaction.RollbackAsync();
         await connection.CloseAsync();
 

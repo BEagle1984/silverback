@@ -34,7 +34,6 @@ public class ClientIdFilterFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -66,7 +65,6 @@ public class ClientIdFilterFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -107,7 +105,6 @@ public class ClientIdFilterFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients

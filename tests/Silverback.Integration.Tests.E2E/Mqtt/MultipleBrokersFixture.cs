@@ -30,7 +30,6 @@ public class MultipleBrokersFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -75,7 +74,6 @@ public class MultipleBrokersFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients

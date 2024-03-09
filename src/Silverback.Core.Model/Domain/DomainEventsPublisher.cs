@@ -93,9 +93,9 @@ public class DomainEventsPublisher
         while (events.Any())
         {
             if (executionFlow == ExecutionFlow.Async)
-                await events.ForEachAsync(_publisher.PublishAsync).ConfigureAwait(false);
+                await events.ForEachAsync(message => _publisher.PublishAsync(message)).ConfigureAwait(false);
             else
-                events.ForEach(_publisher.Publish);
+                events.ForEach(message => _publisher.Publish(message));
 
             events = GetDomainEvents();
         }

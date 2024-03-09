@@ -28,7 +28,6 @@ public class HealthCheckFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients

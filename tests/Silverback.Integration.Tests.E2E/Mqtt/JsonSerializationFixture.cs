@@ -32,7 +32,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -44,9 +43,9 @@ public class JsonSerializationFixture : MqttFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -70,7 +69,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -82,8 +80,8 @@ public class JsonSerializationFixture : MqttFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -103,7 +101,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -136,7 +133,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -148,9 +144,9 @@ public class JsonSerializationFixture : MqttFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -174,7 +170,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -186,8 +181,8 @@ public class JsonSerializationFixture : MqttFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -207,7 +202,6 @@ public class JsonSerializationFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients

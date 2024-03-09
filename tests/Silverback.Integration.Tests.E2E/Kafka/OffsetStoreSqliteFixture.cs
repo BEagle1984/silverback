@@ -45,8 +45,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
                             .AddSqliteKafkaOffsetStore())
@@ -103,8 +102,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
                             .AddSqliteKafkaOffsetStore())
@@ -163,8 +161,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
                             .AddSqliteKafkaOffsetStore())
@@ -251,8 +248,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreateSqliteKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
                             .AddSqliteKafkaOffsetStore())

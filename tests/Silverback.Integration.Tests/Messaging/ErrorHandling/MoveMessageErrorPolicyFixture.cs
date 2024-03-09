@@ -220,37 +220,6 @@ public class MoveMessageErrorPolicyFixture
     }
 
     [Fact]
-    public async Task HandleErrorAsync_ShouldTransformMessage()
-    {
-        IProducer producer = Substitute.For<IProducer>();
-        producer.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2"));
-        _serviceProvider.GetRequiredService<IProducerCollection>().As<ProducerCollection>().Add(producer);
-
-        MoveMessageErrorPolicy policy = new("topic2")
-        {
-            TransformMessageAction = (outboundEnvelope, _) => outboundEnvelope.Message = new TestEventTwo()
-        };
-        IErrorPolicyImplementation policyImplementation = policy.Build(_serviceProvider);
-
-        InboundEnvelope inboundEnvelope = new(
-            new TestEventOne(),
-            new MemoryStream(BytesUtil.GetRandomBytes()),
-            null,
-            TestConsumerEndpoint.GetDefault(),
-            Substitute.For<IConsumer>(),
-            new TestOffset());
-
-        await policyImplementation.HandleErrorAsync(
-            ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
-            new InvalidOperationException("test"));
-
-        await producer.Received(1).ProduceAsync(
-            Arg.Is<IOutboundEnvelope>(
-                outboundEnvelope =>
-                    outboundEnvelope.Message is TestEventTwo));
-    }
-
-    [Fact]
     public async Task HandleErrorAsync_ShouldTransformHeaders()
     {
         IProducer producer = Substitute.For<IProducer>();

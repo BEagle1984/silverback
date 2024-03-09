@@ -50,49 +50,28 @@ public class Publisher : IPublisher
         _subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
     }
 
-    /// <inheritdoc cref="IPublisherBase.Context" />
+    /// <inheritdoc cref="IPublisher.Context" />
     public SilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
-
-    /// <inheritdoc cref="IPublisher.Publish(object)" />
-    public void Publish(object message) =>
-        Publish(message, false);
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
-    public void Publish(object message, bool throwIfUnhandled) =>
+    public void Publish(object message, bool throwIfUnhandled = false) =>
         PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult();
-
-    /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
-    public IReadOnlyCollection<TResult> Publish<TResult>(object message) =>
-        Publish<TResult>(message, false);
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
-    public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
+    public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
         CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult()).ToList();
 
-    /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
-    public ValueTask PublishAsync(object message) =>
-        PublishAsync(message, false);
-
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
-    public async ValueTask PublishAsync(object message, bool throwIfUnhandled) =>
+    public async ValueTask PublishAsync(object message, bool throwIfUnhandled = false) =>
         await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false);
 
-    /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object)" />
-    public ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message) =>
-        PublishAsync<TResult>(message, false);
-
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
-    public async ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(
-        object message,
-        bool throwIfUnhandled) =>
-        CastResults<TResult>(
-                await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async)
-                    .ConfigureAwait(false))
-            .ToList();
+    public async ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false) =>
+        CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false)).ToList();
 
     private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,

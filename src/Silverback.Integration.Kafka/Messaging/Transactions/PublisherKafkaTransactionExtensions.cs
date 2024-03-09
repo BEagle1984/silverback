@@ -16,7 +16,7 @@ public static class PublisherKafkaTransactionExtensions
     ///     Initializes the Kafka transaction.
     /// </summary>
     /// <param name="publisher">
-    ///     The publisher.
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="transactionalIdSuffix">
     ///    The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
@@ -24,6 +24,6 @@ public static class PublisherKafkaTransactionExtensions
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.
     /// </returns>
-    public static IKafkaTransaction InitKafkaTransaction(this IPublisherBase publisher, string? transactionalIdSuffix = null) =>
+    public static IKafkaTransaction InitKafkaTransaction(this IPublisher publisher, string? transactionalIdSuffix = null) =>
         Check.NotNull(publisher, nameof(publisher)).Context.InitKafkaTransaction(transactionalIdSuffix);
 }

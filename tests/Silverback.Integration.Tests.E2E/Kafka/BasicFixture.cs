@@ -30,7 +30,6 @@ public class BasicFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -44,11 +43,11 @@ public class BasicFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 15; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

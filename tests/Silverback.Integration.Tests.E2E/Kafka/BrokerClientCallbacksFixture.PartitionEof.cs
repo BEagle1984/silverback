@@ -26,7 +26,6 @@ public partial class BrokerClientCallbacksFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .AddSingletonBrokerClientCallback<KafkaPartitionEofCallback>()
                 .WithConnectionToMessageBroker(
                     options => options

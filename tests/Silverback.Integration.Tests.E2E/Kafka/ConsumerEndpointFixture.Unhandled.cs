@@ -25,7 +25,6 @@ public partial class ConsumerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -64,7 +63,6 @@ public partial class ConsumerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -105,7 +103,6 @@ public partial class ConsumerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))

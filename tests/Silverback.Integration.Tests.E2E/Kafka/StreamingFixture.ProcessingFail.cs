@@ -27,7 +27,6 @@ public partial class StreamingFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -79,7 +78,6 @@ public partial class StreamingFixture
                 .AddLogging()
                 .AddSilverback()
                 .AsObservable()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))

@@ -27,7 +27,6 @@ public partial class ProducerFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -68,7 +67,6 @@ public partial class ProducerFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -109,7 +107,6 @@ public partial class ProducerFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))

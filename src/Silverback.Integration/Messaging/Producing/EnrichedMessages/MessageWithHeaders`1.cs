@@ -19,14 +19,11 @@ public class MessageWithHeaders<T> : IMessageWithHeaders<T>
         Message = message;
     }
 
-    /// <inheritdoc cref="IMessageWithHeaders.Message" />
+    /// <inheritdoc cref="IMessageWrapper{T}.Message" />
     public T? Message { get; }
 
     /// <inheritdoc cref="IMessageWithHeaders.Headers" />
     public MessageHeaderCollection Headers { get; } = new();
-
-    /// <inheritdoc cref="IMessageWithHeaders.Headers" />
-    object? IMessageWithHeaders.Message => Message;
 
     /// <inheritdoc cref="IMessageWithHeaders{T}.AddHeader" />
     public MessageWithHeaders<T> AddHeader(string name, object value)

@@ -36,7 +36,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -79,7 +78,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -144,7 +142,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -208,7 +205,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -248,7 +244,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -287,7 +282,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -317,11 +311,11 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message three" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message four" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message three" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message four" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -356,7 +350,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -386,11 +379,11 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message three" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Long message four" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message three" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Long message four" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -414,7 +407,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -489,7 +481,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -518,8 +509,8 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -542,7 +533,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -572,17 +562,12 @@ public partial class ErrorPoliciesFixture
                 throw new InvalidOperationException("Retry!");
         }
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishAsync(message);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-#if NET5_0
-        Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(7);
-#else
         Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(8);
-#endif
-
         Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
         Helper.Spy.RawOutboundEnvelopes.ForEach(
             envelope =>
@@ -604,7 +589,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -656,7 +640,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -709,7 +692,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -766,7 +748,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -788,6 +769,7 @@ public partial class ErrorPoliciesFixture
         {
             await foreach (IIntegrationEvent dummy in batch)
             {
+                // Do nothing
             }
 
             tryCount++;
@@ -818,7 +800,6 @@ public partial class ErrorPoliciesFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients

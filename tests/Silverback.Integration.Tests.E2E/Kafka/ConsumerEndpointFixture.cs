@@ -37,7 +37,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -86,7 +85,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -132,7 +130,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -179,7 +176,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
@@ -234,7 +230,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(4)))
@@ -287,7 +282,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
@@ -337,7 +331,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(2)))
@@ -390,7 +383,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -429,7 +421,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -473,7 +464,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -521,7 +511,6 @@ public partial class ConsumerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))

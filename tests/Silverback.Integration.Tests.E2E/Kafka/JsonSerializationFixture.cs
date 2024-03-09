@@ -32,7 +32,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -48,9 +47,9 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -74,7 +73,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -90,8 +88,8 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -111,7 +109,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -146,7 +143,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -162,9 +158,9 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -188,7 +184,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -204,8 +199,8 @@ public class JsonSerializationFixture : KafkaFixture
                                 .Consume<TestEventOne>(endpoint => endpoint.ConsumeFrom(DefaultTopicName).DeserializeJsonUsingNewtonsoft())))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "Hello E2E!" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -225,7 +220,6 @@ public class JsonSerializationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))

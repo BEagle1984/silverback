@@ -33,7 +33,6 @@ public class KafkaTransactionsFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -48,13 +47,13 @@ public class KafkaTransactionsFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         using (IKafkaTransaction transaction = publisher.InitKafkaTransaction())
         {
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
 
             // Not committed yet, so we expect no message to be consumed
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -75,7 +74,6 @@ public class KafkaTransactionsFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -90,13 +88,13 @@ public class KafkaTransactionsFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         using (IKafkaTransaction dummy = publisher.InitKafkaTransaction())
         {
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
 
             // No commit means an implicit abort
         }
@@ -119,7 +117,6 @@ public class KafkaTransactionsFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
@@ -151,17 +148,17 @@ public class KafkaTransactionsFixture : KafkaFixture
                             consumer => consumer
                                 .WithGroupId("output")
                                 .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IEventPublisher>(HandleInputBatch)
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
                 .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
                 .AddIntegrationSpy());
 
-        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IEventPublisher publisher)
+        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
             using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
             await foreach (TestEventOne eventOne in batch)
             {
-                await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = eventOne.ContentEventOne });
+                await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = eventOne.ContentEventOne });
                 Interlocked.Increment(ref processedInputMessages);
             }
 
@@ -170,7 +167,7 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batches (1 message missing) to each partition
         for (int i = 0; i < batchSize - 1; i++)
@@ -178,7 +175,7 @@ public class KafkaTransactionsFixture : KafkaFixture
             for (int partition = 0; partition < partitionsPerTopic; partition++)
             {
                 // The input and output topics are co-partitioned to ensure that each transaction is limited to a single partition to simplify the test
-                await publisher.PublishAsync(new TestEventOne { ContentEventOne = partition.ToString(CultureInfo.InvariantCulture) });
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = partition.ToString(CultureInfo.InvariantCulture) });
             }
         }
 
@@ -216,7 +213,6 @@ public class KafkaTransactionsFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
@@ -239,17 +235,17 @@ public class KafkaTransactionsFixture : KafkaFixture
                             consumer => consumer
                                 .WithGroupId("output")
                                 .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IEventPublisher>(HandleInputBatch)
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
                 .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
                 .AddIntegrationSpy());
 
-        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IEventPublisher publisher)
+        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
             using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
             await foreach (TestEventOne dummy in batch)
             {
-                await publisher.PublishAsync(new TestEventTwo());
+                await publisher.PublishEventAsync(new TestEventTwo());
                 Interlocked.Increment(ref processedInputMessages);
             }
 
@@ -258,14 +254,14 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batches (1 message missing) to each partition
         for (int i = 0; i < batchSize - 1; i++)
         {
             for (int partition = 0; partition < partitionsPerTopic; partition++)
             {
-                await publisher.PublishAsync(new TestEventOne());
+                await publisher.PublishEventAsync(new TestEventOne());
             }
         }
 
@@ -301,7 +297,6 @@ public class KafkaTransactionsFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -324,17 +319,17 @@ public class KafkaTransactionsFixture : KafkaFixture
                             consumer => consumer
                                 .WithGroupId("output")
                                 .Consume<TestEventThree>(endpoint => endpoint.ConsumeFrom("output"))))
-                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IEventPublisher>(HandleInputBatch)
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
                 .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
                 .AddIntegrationSpy());
 
-        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IEventPublisher publisher)
+        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
         {
             using IKafkaTransaction transaction = publisher.InitKafkaTransaction();
 
             await foreach (TestEventOne dummy in batch)
             {
-                await publisher.PublishAsync(new TestEventTwo());
+                await publisher.PublishEventAsync(new TestEventTwo());
                 Interlocked.Increment(ref processedInputMessages);
             }
 
@@ -343,12 +338,12 @@ public class KafkaTransactionsFixture : KafkaFixture
 
         void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         // Publish incomplete batch (1 message missing)
         for (int i = 0; i < batchSize - 1; i++)
         {
-            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
         }
 
         await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= batchSize - 1);

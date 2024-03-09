@@ -49,7 +49,7 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     {
         Check.NotNull(returnValue, nameof(returnValue));
 
-        ((IEnumerable<object>)returnValue).ForEach(_publisher.Publish);
+        ((IEnumerable<object>)returnValue).ForEach(message => _publisher.Publish(message));
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
@@ -57,6 +57,6 @@ public class EnumerableMessagesReturnValueHandler : IReturnValueHandler
     {
         Check.NotNull(returnValue, nameof(returnValue));
 
-        return ((IEnumerable<object>)returnValue).ForEachAsync(_publisher.PublishAsync);
+        return ((IEnumerable<object>)returnValue).ForEachAsync(message => _publisher.PublishAsync(message));
     }
 }

@@ -8,13 +8,8 @@ namespace Silverback.Messaging.Producing.EnrichedMessages;
 /// <summary>
 ///     Represents a message enriched with a collection of headers.
 /// </summary>
-public interface IMessageWithHeaders
+public interface IMessageWithHeaders : IMessageWrapper
 {
-    /// <summary>
-    ///     Gets the message.
-    /// </summary>
-    object? Message { get; }
-
     /// <summary>
     ///     Gets the headers.
     /// </summary>

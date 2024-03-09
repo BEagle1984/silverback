@@ -26,7 +26,6 @@ public partial class BrokerClientCallbacksFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .AddSingletonBrokerClientCallback<BrokerClientsConnectedCallback>()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddMqttClients(
@@ -64,7 +63,6 @@ public partial class BrokerClientCallbacksFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .AddSingletonBrokerClientCallback<BrokerClientsConnectedCallback>()
                 .AddSingletonBrokerClientCallback<OtherBrokerClientsConnectedCallback>()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
@@ -97,7 +95,6 @@ public partial class BrokerClientCallbacksFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .AddScopedBrokerClientCallback<ProducingBrokerClientsConnectedCallback>()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(

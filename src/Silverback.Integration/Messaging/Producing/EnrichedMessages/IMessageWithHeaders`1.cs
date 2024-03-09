@@ -11,11 +11,8 @@ namespace Silverback.Messaging.Producing.EnrichedMessages;
 /// <typeparam name="T">
 ///     The type of the message.
 /// </typeparam>
-public interface IMessageWithHeaders<T> : IMessageWithHeaders
+public interface IMessageWithHeaders<T> : IMessageWrapper<T>, IMessageWithHeaders
 {
-    /// <inheritdoc cref="IMessageWithHeaders.Message" />
-    new T? Message { get; }
-
     /// <inheritdoc cref="IMessageWithHeaders.Headers" />
     new MessageHeaderCollection Headers { get; }
 

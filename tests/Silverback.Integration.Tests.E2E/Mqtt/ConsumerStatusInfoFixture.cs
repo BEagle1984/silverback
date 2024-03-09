@@ -29,8 +29,7 @@ public class ConsumerStatusInfoFixture : MqttFixture
                 services => services
                     .AddLogging()
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                     .AddMqttClients(
                         clients => clients
                             .ConnectViaTcp("e2e-mqtt-broker")
@@ -64,8 +63,7 @@ public class ConsumerStatusInfoFixture : MqttFixture
                 services => services
                     .AddLogging()
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                     .AddMqttClients(
                         clients => clients
                             .ConnectViaTcp("e2e-mqtt-broker")
@@ -108,8 +106,7 @@ public class ConsumerStatusInfoFixture : MqttFixture
                 services => services
                     .AddLogging()
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                     .AddMqttClients(
                         clients => clients
                             .ConnectViaTcp("e2e-mqtt-broker")

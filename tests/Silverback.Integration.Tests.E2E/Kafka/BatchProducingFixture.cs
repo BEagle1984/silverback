@@ -33,7 +33,6 @@ public class BatchProducingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -42,8 +41,8 @@ public class BatchProducingFixture : KafkaFixture
                 .AddIntegrationSpy());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(new[] { new TestEventOne(), new TestEventOne() });
-        await publisher.PublishAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() });
+        await publisher.PublishEventsAsync(new[] { new TestEventOne(), new TestEventOne() });
+        await publisher.PublishEventsAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() });
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
         Helper.Spy.OutboundEnvelopes.OfType<IOutboundEnvelope<TestEventOne>>().Should().HaveCount(3);
@@ -58,7 +57,6 @@ public class BatchProducingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -76,7 +74,7 @@ public class BatchProducingFixture : KafkaFixture
         }
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(GetMessagesAsync());
+        await publisher.PublishEventsAsync(GetMessagesAsync());
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.OutboundEnvelopes.OfType<IOutboundEnvelope<TestEventOne>>().Should().HaveCount(1);
@@ -92,7 +90,6 @@ public class BatchProducingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -101,7 +98,7 @@ public class BatchProducingFixture : KafkaFixture
                 .AddIntegrationSpy());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(
+        await publisher.PublishEventsAsync(
             new[]
             {
                 new TestEventOne().AddHeader("header1", "value1").AddHeader("header2", "value2"),
@@ -125,7 +122,6 @@ public class BatchProducingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -169,7 +165,6 @@ public class BatchProducingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()

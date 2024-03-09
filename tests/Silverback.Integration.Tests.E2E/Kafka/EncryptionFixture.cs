@@ -42,7 +42,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -64,9 +63,9 @@ public class EncryptionFixture : KafkaFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -95,7 +94,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -126,9 +124,9 @@ public class EncryptionFixture : KafkaFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -157,7 +155,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -184,9 +181,9 @@ public class EncryptionFixture : KafkaFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -218,7 +215,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -241,9 +237,9 @@ public class EncryptionFixture : KafkaFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -293,7 +289,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -357,7 +352,6 @@ public class EncryptionFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))

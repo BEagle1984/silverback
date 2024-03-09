@@ -21,7 +21,6 @@ public partial class OutboundMessageEnrichmentFixture
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -35,11 +34,11 @@ public partial class OutboundMessageEnrichmentFixture
                                         .WithMessageId<TestEventOne>(message => message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IEventPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IEventPublisher>(Host.ScopedServiceProvider);
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "four" });
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
         Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
@@ -54,7 +53,6 @@ public partial class OutboundMessageEnrichmentFixture
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -68,11 +66,11 @@ public partial class OutboundMessageEnrichmentFixture
                                         .WithMessageId<TestEventOne>(envelope => envelope.Message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
-        IEventPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IEventPublisher>(Host.ScopedServiceProvider);
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "four" });
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "four" });
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
         Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");
@@ -87,7 +85,6 @@ public partial class OutboundMessageEnrichmentFixture
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -102,10 +99,10 @@ public partial class OutboundMessageEnrichmentFixture
                                         .WithMessageId((TestEventTwo? _) => "two"))))
                 .AddIntegrationSpy());
 
-        IEventPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IEventPublisher>(Host.ScopedServiceProvider);
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "two" });
-        await publisher.PublishAsync(new TestEventThree { ContentEventThree = "three" });
+        IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
+        await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
         Helper.Spy.OutboundEnvelopes[0].Headers.Should().ContainSingle(header => header.Name == "x-message-id" && header.Value == "one");

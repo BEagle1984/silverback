@@ -23,7 +23,6 @@ public partial class OutboundMessageEnrichmentFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -33,8 +32,8 @@ public partial class OutboundMessageEnrichmentFixture
                 .AddIntegrationSpy());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
-        await publisher.PublishAsync(new TestEventOne().AddHeader("one", 1).AddHeader("two", 2));
-        await publisher.PublishAsync(new TestEventTwo().AddHeader("three", 3).AddHeader("four", 4));
+        await publisher.PublishEventAsync(new TestEventOne().AddHeader("one", 1).AddHeader("two", 2));
+        await publisher.PublishEventAsync(new TestEventTwo().AddHeader("three", 3).AddHeader("four", 4));
 
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.OutboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();

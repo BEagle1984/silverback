@@ -24,7 +24,6 @@ public partial class OutboundMessageEnrichmentFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -37,10 +36,10 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .WithMessageId(message => message?.ContentEventOne)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
@@ -56,7 +55,6 @@ public partial class OutboundMessageEnrichmentFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -69,10 +67,10 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .WithMessageId(envelope => envelope.Message?.ContentEventOne)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
@@ -88,7 +86,6 @@ public partial class OutboundMessageEnrichmentFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -102,10 +99,10 @@ public partial class OutboundMessageEnrichmentFixture
                                     .WithMessageId<TestEventOne>(message => message?.ContentEventOne)
                                     .WithMessageId<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = "two" });
-        await publisher.PublishAsync(new TestEventThree { ContentEventThree = "three" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = "two" });
+        await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);
@@ -121,7 +118,6 @@ public partial class OutboundMessageEnrichmentFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
@@ -134,10 +130,10 @@ public partial class OutboundMessageEnrichmentFixture
                                     .ProduceTo(DefaultTopicName)
                                     .WithMessageId((TestEventOne? _) => null)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "one" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "two" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "three" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "two" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "three" });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
         messages.Should().HaveCount(3);

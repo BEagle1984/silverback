@@ -32,8 +32,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
                 services => services
                     .AddLogging()
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options.AddMockedKafka(
                             mockedKafkaOptions =>
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
@@ -80,7 +79,6 @@ public class ConsumerStatusInfoFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -122,7 +120,6 @@ public class ConsumerStatusInfoFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -161,7 +158,6 @@ public class ConsumerStatusInfoFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -204,8 +200,7 @@ public class ConsumerStatusInfoFixture : KafkaFixture
                 services => services
                     .AddLogging()
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options.AddMockedKafka(
                             mockedKafkaOptions =>
                                 mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
@@ -253,7 +248,6 @@ public class ConsumerStatusInfoFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options.AddMockedKafka(
                         mockedKafkaOptions =>

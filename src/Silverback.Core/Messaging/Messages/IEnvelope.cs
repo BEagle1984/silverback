@@ -6,7 +6,7 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     Wraps a message when it's being transferred over a message broker.
 /// </summary>
-public interface IEnvelope
+public interface IEnvelope : IMessageWrapper
 {
     /// <summary>
     ///     Gets a value indicating whether this envelope can be automatically unwrapped and the contained
@@ -16,9 +16,4 @@ public interface IEnvelope
     ///     This is internally used to avoid mortal loops.
     /// </remarks>
     bool AutoUnwrap { get; }
-
-    /// <summary>
-    ///     Gets or sets the message body.
-    /// </summary>
-    object? Message { get; set; }
 }

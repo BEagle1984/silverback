@@ -305,6 +305,7 @@ public partial class PublisherFixture
 
         static void Handle(ICommand message)
         {
+            // Irrelevant
         }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -327,6 +328,7 @@ public partial class PublisherFixture
 
         static void Handle(IEvent message)
         {
+            // Irrelevant
         }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -349,63 +351,20 @@ public partial class PublisherFixture
 
         static void Handle(ICommand message)
         {
+            // Irrelevant
         }
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        Action actSync1 = () => publisher.Publish(new TestEventOne(), false);
+        Action actSync1 = () => publisher.Publish(new TestEventOne());
         Action actSync2 = () => publisher.Publish(new TestEventOne());
-        Func<Task> actAsync1 = () => publisher.PublishAsync(new TestEventOne(), false).AsTask();
+        Func<Task> actAsync1 = () => publisher.PublishAsync(new TestEventOne()).AsTask();
         Func<Task> actAsync2 = () => publisher.PublishAsync(new TestEventOne()).AsTask();
 
         actSync1.Should().NotThrow();
         actSync2.Should().NotThrow();
         await actAsync1.Should().NotThrowAsync();
         await actAsync2.Should().NotThrowAsync();
-    }
-
-    [Fact]
-    public async Task Publish_SubscribedMessageWithThrowIfUnhandled_NoExceptionThrown()
-    {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IEvent>(Handle));
-
-        static void Handle(IEvent message)
-        {
-        }
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        Action actSync = () => publisher.Publish(new TestEventOne(), true);
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true).AsTask();
-
-        actSync.Should().NotThrow();
-        await actAsync.Should().NotThrowAsync();
-    }
-
-    [Fact]
-    public async Task Publish_NotSubscribedMessageWithoutThrowIfUnhandled_NoExceptionThrown()
-    {
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IEvent>(Handle));
-
-        static void Handle(IEvent message)
-        {
-        }
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        Action actSync = () => publisher.Publish(new TestCommandOne());
-        Func<Task> actAsync = () => publisher.PublishAsync(new TestCommandOne()).AsTask();
-
-        actSync.Should().NotThrow();
-        await actAsync.Should().NotThrowAsync();
     }
 
     private class BaseTypeSubscriber
