@@ -41,7 +41,6 @@ public class OutboxFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -71,11 +70,11 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne());
-        await publisher.PublishAsync(new TestEventTwo());
-        await publisher.PublishAsync(new TestEventOne());
-        await publisher.PublishAsync(new TestEventTwo());
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventTwo());
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventTwo());
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -95,7 +94,6 @@ public class OutboxFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -127,10 +125,10 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -151,7 +149,6 @@ public class OutboxFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(new SqliteOutboxSettings(database.ConnectionString)))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -181,11 +178,11 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2", "topic3"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -217,7 +214,6 @@ public class OutboxFixture : KafkaFixture
                                 "outbox2"));
                     })
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -257,12 +253,12 @@ public class OutboxFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom("topic1", "topic2"))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventTwo());
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -282,7 +278,6 @@ public class OutboxFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -305,7 +300,7 @@ public class OutboxFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne().WithKafkaKey("key"));
+        await publisher.PublishEventAsync(new TestEventOne().WithKafkaKey("key"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

@@ -23,7 +23,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -42,18 +41,18 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(1);
         Helper.GetMessages("topic2").Should().HaveCount(1);
         Helper.GetMessages("topic3").Should().HaveCount(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(2);
         Helper.GetMessages("topic2").Should().HaveCount(1);
@@ -67,7 +66,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -87,18 +85,18 @@ public partial class ProducerEndpointFixture
                                                 _ => throw new InvalidOperationException()
                                             })))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(1);
         Helper.GetMessages("topic2").Should().HaveCount(1);
         Helper.GetMessages("topic3").Should().HaveCount(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(2);
         Helper.GetMessages("topic2").Should().HaveCount(1);
@@ -113,7 +111,6 @@ public partial class ProducerEndpointFixture
                 .AddLogging()
                 .AddSingleton<TestEndpointResolver>()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -123,18 +120,18 @@ public partial class ProducerEndpointFixture
                                 .WithClientId(DefaultClientId)
                                 .Produce<TestEventOne>(endpoint => endpoint.UseEndpointResolver<TestEndpointResolver>()))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "2" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "2" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(1);
         Helper.GetMessages("topic2").Should().HaveCount(1);
         Helper.GetMessages("topic3").Should().HaveCount(1);
 
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "1" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "3" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "1" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "3" });
 
         Helper.GetMessages("topic1").Should().HaveCount(2);
         Helper.GetMessages("topic2").Should().HaveCount(1);

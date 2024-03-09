@@ -43,58 +43,6 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
                 .AddSilverback()
-                .UseModel()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka()
-                        .AddPostgreSqlOutbox()
-                        .AddOutboxWorker(
-                            worker => worker
-                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
-                                .WithInterval(TimeSpan.FromMilliseconds(50))))
-                .AddKafkaClients(
-                    clients => clients
-                        .WithBootstrapServers("PLAINTEXT://e2e")
-                        .AddProducer(
-                            producer => producer
-                                .Produce<IIntegrationEvent>(
-                                    "my-endpoint",
-                                    endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
-                        .AddConsumer(
-                            consumer => consumer
-                                .WithGroupId(DefaultGroupId)
-                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddIntegrationSpyAndSubscriber());
-
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-
-        for (int i = 0; i < 3; i++)
-        {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
-        }
-
-        await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-        Helper.Spy.InboundEnvelopes
-            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
-            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
-    }
-
-    [Fact]
-    public async Task Outbox_ShouldProduceBatch_WhenUsingPostgreSql()
-    {
-        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
-
-        await Host.ConfigureServicesAndRunAsync(
-            services => services
-                .AddLogging()
-                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
-                .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -121,7 +69,57 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(
+        for (int i = 0; i < 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceBatch_WhenUsingPostgreSql()
+    {
+        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddPostgreSqlOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventsAsync(
             new TestEventOne[]
             {
                 new() { ContentEventOne = "1" },
@@ -148,7 +146,6 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -175,7 +172,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(
+        await publisher.PublishEventsAsync(
             new TestEventOne[]
             {
                 new() { ContentEventOne = "1" },
@@ -202,7 +199,6 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -232,12 +228,12 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"rollback {i}" });
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"rollback {i}" });
             }
 
             await transaction.RollbackAsync();
@@ -250,12 +246,12 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"commit {i}" });
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"commit {i}" });
             }
 
             await transaction.CommitAsync();

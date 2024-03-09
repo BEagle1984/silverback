@@ -23,7 +23,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -35,11 +34,11 @@ public partial class ProducerEndpointFixture
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo(DefaultTopicName, 1))
                                 .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
-            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventOne());
         }
 
         DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
@@ -50,8 +49,8 @@ public partial class ProducerEndpointFixture
 
         for (int i = 1; i <= 3; i++)
         {
-            await publisher.PublishAsync(new TestEventOne());
-            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishEventAsync(new TestEventOne());
+            await publisher.PublishEventAsync(new TestEventTwo());
         }
 
         DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
@@ -68,7 +67,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -79,12 +77,12 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
         DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(2);
         DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(1);
@@ -100,7 +98,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -111,13 +108,13 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "1" });
-        await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "2" });
-        await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "3" });
-        await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "4" });
-        await publisher.PublishAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "5" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "1" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "2" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "3" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = string.Empty, Content = "4" });
+        await publisher.PublishEventAsync(new TestEventWithStringKafkaKey { KafkaKey = null, Content = "5" });
 
         DefaultTopic.Partitions.Where(partition => partition.TotalMessagesCount >= 1).Should().HaveCountGreaterThan(1);
     }
@@ -129,7 +126,6 @@ public partial class ProducerEndpointFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(5)))
@@ -140,13 +136,13 @@ public partial class ProducerEndpointFixture
                             producer => producer
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
-        await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
+        await publisher.PublishEventAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
         DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
         DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);

@@ -90,7 +90,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
 
         await producers
             .Select(producer => CreateOutboundEnvelope(message, producer))
-            .ForEachAsync(_publisher.PublishAsync)
+            .ForEachAsync(envelope => _publisher.PublishAsync(envelope))
             .ConfigureAwait(false);
 
         return true;

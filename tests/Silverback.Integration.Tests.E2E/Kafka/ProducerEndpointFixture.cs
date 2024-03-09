@@ -38,15 +38,14 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message);
 
         DefaultTopic.MessagesCount.Should().Be(1);
         DefaultTopic.GetAllMessages()[0].Value.Should().BeEquivalentTo(rawMessage);
@@ -59,7 +58,6 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -78,13 +76,13 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
-            await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
-            await publisher.PublishAsync(new TestEventThree { ContentEventThree = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
@@ -117,7 +115,6 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -134,13 +131,13 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                                     options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                                                 }))))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
-            await publisher.PublishAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
-            await publisher.PublishAsync(new TestEventThree { ContentEventThree = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventThree { ContentEventThree = $"{i}" });
         }
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
@@ -173,7 +170,6 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -186,11 +182,11 @@ public partial class ProducerEndpointFixture : KafkaFixture
                             producer => producer
                                 .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic3")))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
@@ -232,7 +228,6 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -245,9 +240,9 @@ public partial class ProducerEndpointFixture : KafkaFixture
                                         .AddHeader<TestEventOne>("x-content-nope", envelope => envelope.Message?.ContentEventOne)
                                         .AddHeader("x-static", 42)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(
+        await publisher.PublishEventAsync(
             new TestEventWithHeaders
             {
                 Content = "Hello E2E!",
@@ -273,15 +268,14 @@ public partial class ProducerEndpointFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
                         .AddProducer(producer => producer.Produce(endpoint => endpoint.ProduceTo(DefaultTopicName)))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(new TestEventOne());
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne());
 
         Helper.GetTopic(DefaultTopicName, "PLAINTEXT://e2e").MessagesCount.Should().Be(0); // Needed to force topic creation
         DefaultTopic.MessagesCount.Should().Be(0);

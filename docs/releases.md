@@ -91,6 +91,8 @@ uid: releases
 * Many interfaces changed to return a `ValueTask` instead of `Task`:
     * `IPublisher` async methods
     * `IBehavior`, `IProducerBehavior`, `IConsumerBehavior`
+* `IEventPublisher`, `ICommandPublisher` and `IQueryPublisher` replaced by extension methods on the <xref:IPublisher>
+    * Removed the `UseModel` method
 
 ### Deprecation Notice
 

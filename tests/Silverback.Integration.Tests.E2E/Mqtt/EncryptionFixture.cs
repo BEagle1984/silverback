@@ -38,7 +38,6 @@ public class EncryptionFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -56,9 +55,9 @@ public class EncryptionFixture : MqttFixture
                                         .DecryptUsingAes(AesEncryptionKey))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -85,7 +84,6 @@ public class EncryptionFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -112,9 +110,9 @@ public class EncryptionFixture : MqttFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -141,7 +139,6 @@ public class EncryptionFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients
@@ -164,9 +161,9 @@ public class EncryptionFixture : MqttFixture
                                             }))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-        await publisher.PublishAsync(message1);
-        await publisher.PublishAsync(message2);
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(message1);
+        await publisher.PublishEventAsync(message2);
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -204,7 +201,6 @@ public class EncryptionFixture : MqttFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                 .AddMqttClients(
                     clients => clients

@@ -40,7 +40,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -51,9 +50,9 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .ValidateMessageAndThrow()))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
+        Func<Task> act = () => publisher.PublishEventAsync(message).AsTask();
 
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
 
@@ -69,7 +68,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -80,9 +78,9 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .DisableMessageValidation()))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
+        Func<Task> act = () => publisher.PublishEventAsync(message).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         DefaultTopic.MessagesCount.Should().Be(1);
@@ -97,7 +95,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -108,9 +105,9 @@ public class MessageValidationFixture : KafkaFixture
                                     .ProduceTo(DefaultTopicName)
                                     .ValidateMessageAndWarn()))));
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(message).AsTask();
+        Func<Task> act = () => publisher.PublishEventAsync(message).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         DefaultTopic.MessagesCount.Should().Be(1);
@@ -125,7 +122,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -168,7 +164,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
@@ -211,7 +206,6 @@ public class MessageValidationFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))

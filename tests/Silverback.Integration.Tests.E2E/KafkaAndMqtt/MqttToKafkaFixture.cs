@@ -34,7 +34,6 @@ public class MqttToKafkaFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedMqtt().AddMockedKafka())
                 .AddMqttClients(
                     clients => clients
@@ -65,14 +64,14 @@ public class MqttToKafkaFixture : KafkaFixture
 
         void HandleEventTwo(TestEventTwo message) => Interlocked.Increment(ref eventTwoCount);
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         IMqttTestingHelper mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
 
         await mqttTestingHelper.WaitUntilConnectedAsync();
 
         for (int i = 1; i <= 15; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         await AsyncTestingUtil.WaitAsync(() => eventOneCount >= 15);

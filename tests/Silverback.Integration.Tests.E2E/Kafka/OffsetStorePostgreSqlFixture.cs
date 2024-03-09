@@ -47,8 +47,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
                             .AddPostgreSqlKafkaOffsetStore())
@@ -105,8 +104,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
                             .AddPostgreSqlKafkaOffsetStore())
@@ -165,8 +163,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
                             .AddPostgreSqlKafkaOffsetStore())
@@ -253,8 +250,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
                     .AddSilverback()
-                    .UseModel()
-                    .WithConnectionToMessageBroker(
+                        .WithConnectionToMessageBroker(
                         options => options
                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
                             .AddPostgreSqlKafkaOffsetStore())

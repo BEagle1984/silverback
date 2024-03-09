@@ -33,8 +33,7 @@
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
-//                     .UseModel()
-//                     .WithConnectionToMessageBroker(
+//     //                     .WithConnectionToMessageBroker(
 //                         options => options
 //                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
 //                             .AddInMemoryInboundLog())
@@ -83,8 +82,7 @@
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
-//                     .UseModel()
-//                     .UseDbContext<TestDbContext>()
+//     //                     .UseDbContext<TestDbContext>()
 //                     .WithConnectionToMessageBroker(
 //                         options => options
 //                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
@@ -137,8 +135,7 @@
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
-//                     .UseModel()
-//                     .WithConnectionToMessageBroker(
+//     //                     .WithConnectionToMessageBroker(
 //                         options => options
 //                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))
 //                             .AddInMemoryOffsetStore())
@@ -180,8 +177,7 @@
 //                 services => services
 //                     .AddLogging()
 //                     .AddSilverback()
-//                     .UseModel()
-//                     .UseDbContext<TestDbContext>()
+//     //                     .UseDbContext<TestDbContext>()
 //                     .WithConnectionToMessageBroker(
 //                         options => options
 //                             .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1))

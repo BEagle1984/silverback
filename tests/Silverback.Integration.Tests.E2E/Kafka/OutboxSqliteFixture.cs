@@ -41,7 +41,6 @@ public class OutboxSqliteFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -66,11 +65,11 @@ public class OutboxSqliteFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 0; i < 3; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"{i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -92,7 +91,6 @@ public class OutboxSqliteFixture : KafkaFixture
                 .AddLogging()
                 .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka()
@@ -122,12 +120,12 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"rollback {i}" });
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"rollback {i}" });
             }
 
             await transaction.RollbackAsync();
@@ -140,12 +138,12 @@ public class OutboxSqliteFixture : KafkaFixture
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync())
         {
-            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await using IStorageTransaction storageTransaction = publisher.EnlistDbTransaction(transaction);
 
             for (int i = 0; i < 3; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"commit {i}" });
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"commit {i}" });
             }
 
             await transaction.CommitAsync();

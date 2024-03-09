@@ -28,7 +28,6 @@ public class OutboundMessageFilterFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -45,11 +44,11 @@ public class OutboundMessageFilterFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne());
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "discard" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "something" });
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "discard" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "something" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -64,7 +63,6 @@ public class OutboundMessageFilterFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
@@ -81,11 +79,11 @@ public class OutboundMessageFilterFixture : KafkaFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishAsync(new TestEventOne());
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "discard" });
-        await publisher.PublishAsync(new TestEventOne { ContentEventOne = "something" });
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "discard" });
+        await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "something" });
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

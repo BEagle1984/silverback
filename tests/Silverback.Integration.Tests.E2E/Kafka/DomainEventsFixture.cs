@@ -36,8 +36,7 @@
 //                 .AddLogging()
 //                 .AddDbContext<TestDbContext>(options => options.UseSqlite(Host.SqliteConnectionString))
 //                 .AddSilverback()
-//                 .UseModel()
-//                 .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
+// //                 .AddDelegateSubscriber<ValueChangedDomainEvent, TestEventOne>(HandleDomainEvent)
 //                 .WithConnectionToMessageBroker(options => options.AddMockedKafka())
 //                 .AddKafkaEndpoints(
 //                     endpoints => endpoints

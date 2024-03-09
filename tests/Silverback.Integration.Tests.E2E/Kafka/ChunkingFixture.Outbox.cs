@@ -29,7 +29,6 @@ public partial class ChunkingFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .UseModel()
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddMockedKafka(
@@ -56,11 +55,11 @@ public partial class ChunkingFixture
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
         for (int i = 1; i <= 5; i++)
         {
-            await publisher.PublishAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"Long message {i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

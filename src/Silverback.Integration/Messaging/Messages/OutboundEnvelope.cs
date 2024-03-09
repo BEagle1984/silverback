@@ -32,7 +32,7 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 
     public bool AutoUnwrap { get; }
 
-    public object? Message { get; set; }
+    public object? Message { get; init; }
 
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
