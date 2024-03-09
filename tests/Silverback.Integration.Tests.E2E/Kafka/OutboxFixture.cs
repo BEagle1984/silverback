@@ -10,6 +10,8 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
@@ -22,9 +24,9 @@ using Xunit.Abstractions;
 namespace Silverback.Tests.Integration.E2E.Kafka;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
-public class OutboxRoutingFixture : KafkaFixture
+public class OutboxFixture : KafkaFixture
 {
-    public OutboxRoutingFixture(ITestOutputHelper testOutputHelper)
+    public OutboxFixture(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
     {
     }
@@ -271,5 +273,43 @@ public class OutboxRoutingFixture : KafkaFixture
 
         inboundMessages.OfType<TestEventOne>().Should().HaveCount(3);
         inboundMessages.OfType<TestEventTwo>().Should().HaveCount(3);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldPreserveKafkaKey()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .UseModel()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddInMemoryOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseMemory())
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UseMemory()))))
+                .AddIntegrationSpy());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishAsync(new TestEventOne().WithKafkaKey("key"));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        DefaultTopic.MessagesCount.Should().Be(1);
+        DefaultTopic.GetAllMessages()[0].Key.Should().BeEquivalentTo("key"u8.ToArray());
     }
 }
