@@ -50,7 +50,6 @@ namespace Silverback.Util
 
             var allKeys = x.Select(pair => pair.Key)
                 .Union(y.Select(pair => pair.Key))
-                .Distinct()
                 .ToList();
 
             if (allKeys.Count != x.Count())
