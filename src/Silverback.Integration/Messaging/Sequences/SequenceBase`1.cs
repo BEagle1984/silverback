@@ -230,17 +230,15 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.GetBrokerMessageIdentifiers" />
         public IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers()
         {
-            IReadOnlyList<IBrokerMessageIdentifier> identifiers = _messageIdentifiers?.AsReadOnlyList() ??
-                                                                  Array.Empty<IBrokerMessageIdentifier>();
+            var identifiers = _messageIdentifiers ?? Enumerable.Empty<IBrokerMessageIdentifier>();
 
             if (_sequences != null)
             {
                 identifiers = identifiers
-                    .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()))
-                    .AsReadOnlyList();
+                    .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()));
             }
 
-            return identifiers;
+            return identifiers.AsReadOnlyList();
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
