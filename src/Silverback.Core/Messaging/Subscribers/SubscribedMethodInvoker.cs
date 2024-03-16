@@ -70,9 +70,7 @@ internal static class SubscribedMethodInvoker
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter> filters, object message) =>
         filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private static object?[] GetArgumentValuesArray(
-        SubscribedMethod method,
-        IServiceProvider serviceProvider)
+    private static object?[] GetArgumentValuesArray(SubscribedMethod method, IServiceProvider serviceProvider)
     {
         object?[] values = new object?[method.Parameters.Count];
 
@@ -80,8 +78,7 @@ internal static class SubscribedMethodInvoker
         {
             Type parameterType = method.Parameters[i].ParameterType;
 
-            values[i] = method.AdditionalArgumentsResolvers[i - 1]
-                .GetValue(parameterType, serviceProvider);
+            values[i] = method.AdditionalArgumentsResolvers[i - 1].GetValue(parameterType, serviceProvider);
         }
 
         return values;
@@ -95,7 +92,7 @@ internal static class SubscribedMethodInvoker
         IServiceProvider serviceProvider,
         ExecutionFlow executionFlow)
     {
-        message = UnwrapEnvelopeIfNeeded(message, subscribedMethod);
+        message = UnwrapIfNeeded(message, subscribedMethod);
 
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
         arguments[0] = singleResolver.GetValue(message);
@@ -134,11 +131,11 @@ internal static class SubscribedMethodInvoker
             });
     }
 
-    private static object UnwrapEnvelopeIfNeeded(object message, SubscribedMethod subscribedMethod) =>
-        !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType) &&
-        message is IEnvelope envelope &&
-        subscribedMethod.MessageType.IsInstanceOfType(envelope.Message)
-            ? envelope.Message ?? throw new InvalidOperationException("The envelope message is null.")
+    private static object UnwrapIfNeeded(object message, SubscribedMethod subscribedMethod) =>
+        !typeof(IMessageWrapper).IsAssignableFrom(subscribedMethod.MessageType) &&
+        message is IMessageWrapper wrapper &&
+        subscribedMethod.MessageType.IsInstanceOfType(wrapper.Message)
+            ? wrapper.Message ?? throw new InvalidOperationException("The envelope message is null.")
             : message;
 
     private static Task InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>

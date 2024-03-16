@@ -74,10 +74,9 @@ public class SubscribedMethod
     public SubscriptionOptions Options { get; }
 
     /// <summary>
-    ///     Gets the type of the message (or envelope) being subscribe.
+    ///     Gets the type of the message (or envelope) being subscribed.
     /// </summary>
-    public Type MessageType =>
-        _messageType ?? throw new InvalidOperationException("Not initialized.");
+    public Type MessageType => _messageType ?? throw new InvalidOperationException("Not initialized.");
 
     /// <summary>
     ///     Gets the <see cref="IMessageArgumentResolver" /> to be used to invoke the method.

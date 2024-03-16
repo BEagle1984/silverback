@@ -40,9 +40,7 @@ internal sealed class SubscribedMethodsCacheSingleton
         IServiceProvider serviceProvider) =>
         GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.IsExclusive);
 
-    public IReadOnlyCollection<SubscribedMethod> GetMethods(
-        object message,
-        IServiceProvider serviceProvider)
+    public IReadOnlyCollection<SubscribedMethod> GetMethods(object message, IServiceProvider serviceProvider)
     {
         Type messageType = message.GetType();
 
@@ -70,8 +68,15 @@ internal sealed class SubscribedMethodsCacheSingleton
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IEnvelope { AutoUnwrap: true } envelope && subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
+        if (message is IEnvelope envelope)
+        {
+            if (envelope.AutoUnwrap && subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
+                return true;
+        }
+        else if (message is IMessageWrapper wrapper && subscribedMethod.MessageType.IsInstanceOfType(wrapper.Message))
+        {
             return true;
+        }
 
         if (subscribedMethod.MessageType.IsInstanceOfType(message))
             return true;

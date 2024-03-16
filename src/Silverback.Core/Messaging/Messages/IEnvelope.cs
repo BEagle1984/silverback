@@ -9,8 +9,8 @@ namespace Silverback.Messaging.Messages;
 public interface IEnvelope : IMessageWrapper
 {
     /// <summary>
-    ///     Gets a value indicating whether this envelope can be automatically unwrapped and the contained
-    ///     message can be forwarded to the matching subscribers in its pure form.
+    ///     Gets a value indicating whether the contained message can be automatically unwrapped forwarded to the matching subscribers
+    ///     in its pure form.
     /// </summary>
     /// <remarks>
     ///     This is internally used to avoid mortal loops.
