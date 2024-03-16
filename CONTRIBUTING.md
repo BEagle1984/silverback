@@ -43,7 +43,7 @@ Detailed step-by-step instructions to build and test Silverback can be found in 
 
 ## <a name="cla"></a> Contributor License Agreement
 
-By contributing your code to Silverbvack you grant Sergio Aquilini a non-exclusive, irrevocable, worldwide, royalty-free, sublicenseable,
+By contributing your code to Silverback you grant Sergio Aquilini a non-exclusive, irrevocable, worldwide, royalty-free, sublicenseable,
 transferable license under all of Your relevant intellectual property rights (including copyright, patent, and any other rights), to use,
 copy, prepare derivative works of, distribute and publicly perform and display the Contributions on any licensing terms, including without
 limitation: (a) open source licenses like the MIT license; and (b) binary, proprietary, or commercial licenses. Except for the licenses
