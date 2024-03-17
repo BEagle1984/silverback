@@ -68,12 +68,8 @@ internal sealed class SubscribedMethodsCacheSingleton
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IEnvelope envelope)
-        {
-            if (envelope.AutoUnwrap && subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
-                return true;
-        }
-        else if (message is IMessageWrapper wrapper && subscribedMethod.MessageType.IsInstanceOfType(wrapper.Message))
+        if (message is IMessageWrapper wrapper && (wrapper is IEnvelope envelope && envelope.AutoUnwrap || wrapper is not IEnvelope) &&
+            subscribedMethod.MessageType.IsAssignableFrom(wrapper.GetMessageType()))
         {
             return true;
         }

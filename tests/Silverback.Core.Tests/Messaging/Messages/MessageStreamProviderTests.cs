@@ -524,6 +524,6 @@ public class MessageStreamProviderTests
 
         public bool AutoUnwrap => true;
 
-        public object? Message { get; set; }
+        public object? Message { get; }
     }
 }

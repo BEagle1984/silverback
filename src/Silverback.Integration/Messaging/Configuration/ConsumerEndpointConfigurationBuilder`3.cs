@@ -42,8 +42,6 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
 
     private bool? _throwIfUnhandled;
 
-    private NullMessageHandlingStrategy? _nullMessageHandling;
-
     private IDecryptionSettings? _encryptionSettings;
 
     /// <summary>
@@ -170,44 +168,6 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
         return This;
     }
 
-    /// <summary>
-    ///     Specifies that the null messages have to be mapped to a <see cref="Tombstone{TMessage}" />
-    ///     (<see cref="NullMessageHandlingStrategy.Tombstone" />). This is the default behavior, use the
-    ///     <see cref="UseLegacyNullMessageHandling" /> or <see cref="SkipNullMessages" /> methods to change it.
-    /// </summary>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder HandleTombstoneMessages()
-    {
-        _nullMessageHandling = NullMessageHandlingStrategy.Tombstone;
-        return This;
-    }
-
-    /// <summary>
-    ///     Specifies that the null messages have to be silently skipped (<see cref="NullMessageHandlingStrategy.Skip" />).
-    /// </summary>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder SkipNullMessages()
-    {
-        _nullMessageHandling = NullMessageHandlingStrategy.Skip;
-        return This;
-    }
-
-    /// <summary>
-    ///     Specifies that the null messages have to be forwarded as <c>null</c> (<see cref="NullMessageHandlingStrategy.Legacy" />).
-    /// </summary>
-    /// <returns>
-    ///     The endpoint builder so that additional calls can be chained.
-    /// </returns>
-    public TBuilder UseLegacyNullMessageHandling()
-    {
-        _nullMessageHandling = NullMessageHandlingStrategy.Legacy;
-        return This;
-    }
-
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.Build" />
     public sealed override TConfiguration Build()
     {
@@ -229,7 +189,6 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
                 Timeout = _sequenceTimeout ?? configuration.Sequence.Timeout
             },
             ThrowIfUnhandled = _throwIfUnhandled ?? configuration.ThrowIfUnhandled,
-            NullMessageHandlingStrategy = _nullMessageHandling ?? configuration.NullMessageHandlingStrategy,
             Encryption = _encryptionSettings ?? configuration.Encryption
         };
 

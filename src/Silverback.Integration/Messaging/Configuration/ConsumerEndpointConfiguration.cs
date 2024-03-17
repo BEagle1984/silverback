@@ -47,12 +47,6 @@ public abstract record ConsumerEndpointConfiguration : EndpointConfiguration
     public IErrorPolicy ErrorPolicy { get; init; } = DefaultErrorPolicy;
 
     /// <summary>
-    ///     Gets a value indicating how to handle the null messages. The default is the
-    ///     <see cref="Serialization.NullMessageHandlingStrategy.Tombstone" />.
-    /// </summary>
-    public NullMessageHandlingStrategy NullMessageHandlingStrategy { get; init; }
-
-    /// <summary>
     ///     Gets the encryption settings to be used to decrypt the encrypted messages. The default is <c>null</c>.
     /// </summary>
     public IDecryptionSettings? Encryption { get; init; }

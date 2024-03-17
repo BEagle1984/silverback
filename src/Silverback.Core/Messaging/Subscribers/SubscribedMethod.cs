@@ -64,6 +64,11 @@ public class SubscribedMethod
     public IReadOnlyList<ParameterInfo> Parameters { get; }
 
     /// <summary>
+    ///     Gets the <see cref="ParameterInfo" /> for the message parameter.
+    /// </summary>
+    public ParameterInfo MessageParameter => Parameters[0];
+
+    /// <summary>
     ///     Gets the method return type.
     /// </summary>
     public MethodReturnType ReturnType { get; }

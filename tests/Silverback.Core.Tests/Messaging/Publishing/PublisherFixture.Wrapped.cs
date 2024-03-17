@@ -17,6 +17,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
+    private interface ICustomWrapper<T> : IMessageWrapper<T>
+    {
+    }
+
     [Fact]
     public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
@@ -165,10 +169,6 @@ public partial class PublisherFixture
 
         messages.OfType<TestEnvelope>().Should().HaveCount(2);
         messages.OfType<TestCommandOne>().Should().BeEmpty();
-    }
-
-    private interface ICustomWrapper<T> : IMessageWrapper<T>
-    {
     }
 
     private class CustomWrapper<T> : ICustomWrapper<T>

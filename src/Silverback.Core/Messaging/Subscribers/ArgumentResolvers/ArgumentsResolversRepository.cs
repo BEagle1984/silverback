@@ -21,7 +21,7 @@ internal sealed class ArgumentsResolversRepository
 
     public (IMessageArgumentResolver Resolver, Type MessageType) GetMessageArgumentResolver(SubscribedMethod method)
     {
-        ParameterInfo parameterInfo = method.Parameters[0];
+        ParameterInfo parameterInfo = method.MessageParameter;
         IMessageArgumentResolver resolver = GetMessageArgumentResolver(parameterInfo, method.MethodInfo);
 
         return (resolver, resolver.GetMessageType(parameterInfo.ParameterType));
@@ -37,11 +37,11 @@ internal sealed class ArgumentsResolversRepository
         GetArgumentResolver<IAdditionalArgumentResolver>(parameterInfo, methodInfo);
 
     private TResolver GetArgumentResolver<TResolver>(ParameterInfo parameterInfo, MethodInfo methodInfo)
-        where TResolver : IArgumentResolver
+        where TResolver : class, IArgumentResolver
     {
         TResolver? resolver = _argumentResolvers
             .OfType<TResolver>()
-            .FirstOrDefault(r => r.CanResolve(parameterInfo.ParameterType));
+            .FirstOrDefault(resolver => resolver.CanResolve(parameterInfo.ParameterType));
 
         if (resolver == null)
         {

@@ -27,6 +27,7 @@ uid: releases
     * JsonSerializer typename handling none by default (Security)
     * Outbound message filter
     * Kafka transactions (see...)
+    * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing)
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies
@@ -76,6 +77,7 @@ uid: releases
     * Kafka key not set to random Guid anymore (will be null if not explicitly set)
     * Merged MessageId and KafkaKey headers -> MessageId will not be initialized with random Guid anymore
     * Deprecated the ProduceAsync with callback (it didn't make sense)
+    * Deprecated NullMessageHandlingStrategy (now tombstones can always be consumed both as `null` or as `Tombstone`)
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

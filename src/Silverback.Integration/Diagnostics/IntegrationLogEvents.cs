@@ -9,7 +9,6 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 
 namespace Silverback.Diagnostics;
@@ -405,15 +404,6 @@ public static class IntegrationLogEvents
         LogLevel.Warning,
         GetEventId(62, nameof(RollbackToSkipFailed)),
         "Error occurred rolling back or committing, the skip message error policy cannot be applied. The consumer will be reconnected.");
-
-    /// <summary>
-    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a null message is skipped
-    ///     (see <see cref="NullMessageHandlingStrategy.Skip" />.
-    /// </summary>
-    public static LogEvent NullMessageSkipped { get; } = new(
-        LogLevel.Information,
-        GetEventId(71, nameof(NullMessageSkipped)),
-        "Null message skipped.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written

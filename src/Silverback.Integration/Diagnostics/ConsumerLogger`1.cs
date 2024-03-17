@@ -47,9 +47,6 @@ internal sealed class ConsumerLogger<TCategoryName> : SilverbackLogger<TCategory
     public void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception) =>
         _loggerFactory.GetConsumerLogger(envelope.Endpoint.Configuration).LogRollbackToSkipFailed(this, envelope, exception);
 
-    public void LogNullMessageSkipped(IRawInboundEnvelope envelope) =>
-        _loggerFactory.GetConsumerLogger(envelope.Endpoint.Configuration).LogNullMessageSkipped(this, envelope);
-
     public void LogInvalidMessage(IRawInboundEnvelope envelope, string validationErrors) =>
         _loggerFactory.GetConsumerLogger(envelope.Endpoint.Configuration).LogInvalidMessage(this, envelope, validationErrors);
 

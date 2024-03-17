@@ -272,32 +272,6 @@ public class ConsumerLoggerFixture
     }
 
     [Fact]
-    public void LogNullMessageSkipped_ShouldLog()
-    {
-        RawInboundEnvelope envelope = new(
-            Stream.Null,
-            new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.MessageType, "Message.Type" },
-                { DefaultMessageHeaders.MessageId, "1234" }
-            },
-            new TestConsumerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
-            Substitute.For<IConsumer>(),
-            new TestOffset("a", "42"));
-
-        _consumerLogger.LogNullMessageSkipped(envelope);
-
-        string expectedMessage =
-            "Null message skipped. | " +
-            "endpointName: test1, " +
-            "messageType: Message.Type, " +
-            "messageId: 1234, " +
-            "unused1: (null), " +
-            "unused2: (null)";
-        _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1071);
-    }
-
-    [Fact]
     public void LogInvalidMessage_ShouldLog()
     {
         RawInboundEnvelope envelope = new(

@@ -18,5 +18,5 @@ public class SingleMessageArgumentResolver : ISingleMessageArgumentResolver
     public Type GetMessageType(Type parameterType) => parameterType;
 
     /// <inheritdoc cref="ISingleMessageArgumentResolver.GetValue" />
-    public object GetValue(object message) => message;
+    public object? GetValue(object? message, Type parameterType) => message;
 }

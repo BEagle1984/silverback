@@ -69,7 +69,7 @@ public partial class PublisherFixture
 
         public bool AutoUnwrap { get; }
 
-        public object? Message { get; set; }
+        public object? Message { get; }
     }
 
     private class TestSubscriber<TMessage>

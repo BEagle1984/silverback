@@ -85,7 +85,7 @@ internal static class SubscribedMethodInvoker
     }
 
     private static ValueTask<object?> InvokeWithSingleMessageAsync(
-        object message,
+        object? message,
         SubscribedMethod subscribedMethod,
         object?[] arguments,
         ISingleMessageArgumentResolver singleResolver,
@@ -95,7 +95,7 @@ internal static class SubscribedMethodInvoker
         message = UnwrapIfNeeded(message, subscribedMethod);
 
         object target = subscribedMethod.ResolveTargetType(serviceProvider);
-        arguments[0] = singleResolver.GetValue(message);
+        arguments[0] = singleResolver.GetValue(message, subscribedMethod.MessageParameter.ParameterType);
         return InvokeWithActivityAsync(subscribedMethod, target, arguments, executionFlow);
     }
 
@@ -131,11 +131,10 @@ internal static class SubscribedMethodInvoker
             });
     }
 
-    private static object UnwrapIfNeeded(object message, SubscribedMethod subscribedMethod) =>
+    private static object? UnwrapIfNeeded(object? message, SubscribedMethod subscribedMethod) =>
         !typeof(IMessageWrapper).IsAssignableFrom(subscribedMethod.MessageType) &&
-        message is IMessageWrapper wrapper &&
-        subscribedMethod.MessageType.IsInstanceOfType(wrapper.Message)
-            ? wrapper.Message ?? throw new InvalidOperationException("The envelope message is null.")
+        message is IMessageWrapper wrapper && subscribedMethod.MessageType.IsAssignableFrom(wrapper.GetMessageType())
+            ? wrapper.Message
             : message;
 
     private static Task InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>

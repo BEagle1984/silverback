@@ -228,6 +228,7 @@ public class StreamPublisherFixture
             Interlocked.Increment(ref receivedStreams);
             foreach (IEvent dummy in enumerable)
             {
+                // Irrelevant
             }
         }
 
@@ -236,6 +237,7 @@ public class StreamPublisherFixture
             Interlocked.Increment(ref receivedStreams);
             await foreach (TestEventOne dummy in enumerable)
             {
+                // Irrelevant
             }
         }
 
@@ -381,6 +383,7 @@ public class StreamPublisherFixture
         {
             await foreach (TestEventOne dummy in enumerable)
             {
+                // Irrelevant
             }
         }
 
@@ -424,6 +427,7 @@ public class StreamPublisherFixture
         {
             await foreach (TestEventOne dummy in enumerable)
             {
+                // Irrelevant
             }
         }
 
@@ -700,7 +704,7 @@ public class StreamPublisherFixture
 
         public bool AutoUnwrap { get; }
 
-        public object? Message { get; set; }
+        public object? Message { get; }
     }
 
     private class TestBehavior : IBehavior

@@ -18,7 +18,7 @@ internal static class SerializationHelper
         return type == null || type.IsAssignableFrom(baseType) ? baseType : type;
     }
 
-    public static IRawInboundEnvelope CreateTypedInboundEnvelope(
+    public static IInboundEnvelope CreateTypedInboundEnvelope(
         IRawInboundEnvelope rawInboundEnvelope,
         object? deserializedMessage,
         Type messageType) =>

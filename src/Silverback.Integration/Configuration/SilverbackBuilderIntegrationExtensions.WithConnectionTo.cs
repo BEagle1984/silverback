@@ -23,6 +23,7 @@ using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Validation;
 using Silverback.Util;
 
@@ -60,7 +61,9 @@ public static partial class SilverbackBuilderIntegrationExtensions
         builder
             .AddTypeBasedExtensibleFactory<IBrokerMessageIdentifiersTrackerFactory, BrokerMessageIdentifiersTrackerFactory>()
             .EnableStorage()
-            .Services.AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>();
+            .Services
+            .AddSingleton<IBrokerClientCallbacksInvoker, BrokerClientCallbacksInvoker>()
+            .AddSingleton<IArgumentResolver, TombstoneMessageArgumentResolver>();
 
         BrokerOptionsBuilder optionsBuilder = new(builder);
         optionsAction?.Invoke(optionsBuilder);

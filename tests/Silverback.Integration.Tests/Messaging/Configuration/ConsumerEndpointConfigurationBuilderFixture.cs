@@ -8,7 +8,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
 using Silverback.Tests.Types;
 using Xunit;
@@ -138,36 +137,6 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
         TestConsumerEndpointConfiguration endpoint = builder.IgnoreUnhandledMessages().Build();
 
         endpoint.ThrowIfUnhandled.Should().Be(false);
-    }
-
-    [Fact]
-    public void HandleTombstoneMessages_ShouldSetNullMessageHandlingStrategy()
-    {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
-
-        TestConsumerEndpointConfiguration endpoint = builder.HandleTombstoneMessages().Build();
-
-        endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Tombstone);
-    }
-
-    [Fact]
-    public void SkipNullMessages_ShouldSetNullMessageHandlingStrategy()
-    {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
-
-        TestConsumerEndpointConfiguration endpoint = builder.SkipNullMessages().Build();
-
-        endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Skip);
-    }
-
-    [Fact]
-    public void UseLegacyNullMessageHandling_ShouldSetNullMessageHandlingStrategy()
-    {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
-
-        TestConsumerEndpointConfiguration endpoint = builder.UseLegacyNullMessageHandling().Build();
-
-        endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Legacy);
     }
 
     [Fact]

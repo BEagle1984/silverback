@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 /// <summary>
@@ -15,8 +17,11 @@ public interface ISingleMessageArgumentResolver : IMessageArgumentResolver
     /// <param name="message">
     ///     The message being published.
     /// </param>
+    /// <param name="parameterType">
+    ///     The type of the parameter to be resolved.
+    /// </param>
     /// <returns>
     ///     The actual value to be forwarded to the subscribed method.
     /// </returns>
-    object GetValue(object message);
+    object? GetValue(object? message, Type parameterType);
 }

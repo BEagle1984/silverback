@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Messages;
 
 /// <inheritdoc cref="IOutboundEnvelope" />
-public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope
+public interface IOutboundEnvelope<out TMessage> : IOutboundEnvelope, IEnvelope<TMessage>
 {
     /// <summary>
     ///     Gets the deserialized message body.
