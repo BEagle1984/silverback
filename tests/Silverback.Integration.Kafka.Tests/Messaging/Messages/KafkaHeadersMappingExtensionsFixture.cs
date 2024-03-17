@@ -8,10 +8,10 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
 
-public class KafkaHeadersMappingExtensionsTests
+public class KafkaHeadersMappingExtensionsFixture
 {
     [Fact]
-    public void ToConfluentHeaders_HeadersMapped()
+    public void ToConfluentHeaders_ShouldMapHeaders()
     {
         MessageHeaderCollection headers = new()
         {
@@ -30,7 +30,7 @@ public class KafkaHeadersMappingExtensionsTests
     }
 
     [Fact]
-    public void ToConfluentHeaders_MessageIdHeaderIgnored()
+    public void ToConfluentHeaders_ShouldIgnoreMessageIdHeader()
     {
         MessageHeaderCollection headers = new()
         {

@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -15,8 +16,18 @@ public class MessageHeaderFixture
     public void Ctor_ShouldInitializeNameAndValue()
     {
         MessageHeader messageHeader = new("key", "value");
+
         messageHeader.Name.Should().Be("key");
         messageHeader.Value.Should().Be("value");
+    }
+
+    [Fact]
+    public void Ctor_ShouldConvertDateTimeToStringWithInvariantCulture()
+    {
+        DateTime dateTime = 23.June(1984).At(2, 34, 56, 789);
+        MessageHeader messageHeader = new("key", dateTime);
+
+        messageHeader.Value.Should().Be("1984-06-23T02:34:56.7890000");
     }
 
     [Fact]

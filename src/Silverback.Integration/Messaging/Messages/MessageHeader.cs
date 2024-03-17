@@ -21,7 +21,7 @@ public readonly record struct MessageHeader
     ///     The header value.
     /// </param>
     public MessageHeader(string name, object? value)
-        : this(name, value?.ToString())
+        : this(name, value.ToHeaderValueString())
     {
     }
 

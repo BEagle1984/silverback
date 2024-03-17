@@ -28,6 +28,7 @@ uid: releases
     * Outbound message filter
     * Kafka transactions (see...)
     * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing)
+    * Envelope.IsTombstone() and Kafka envelope extensions
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

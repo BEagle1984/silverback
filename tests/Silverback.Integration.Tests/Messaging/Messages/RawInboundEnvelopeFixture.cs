@@ -11,10 +11,10 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Messages;
 
-public class RawInboundEnvelopeTests
+public class RawInboundEnvelopeFixture
 {
     [Fact]
-    public void Constructor_NullRawMessage_NoExceptionIsThrown()
+    public void Constructor_ShouldNotThrow_WhenRawMessageIsNull()
     {
         RawInboundEnvelope envelope = new(
             (Stream?)null,

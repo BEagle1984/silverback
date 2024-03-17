@@ -9,10 +9,10 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
 
-public class KafkaKeyHelperTests
+public class KafkaKeyHelperFixture
 {
     [Fact]
-    public void GetMessageKey_NullMessage_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenMessageIsNull()
     {
         object? message = null;
 
@@ -22,7 +22,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_MessageWithoutProperties_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenMessageHasNoProperties()
     {
         object message = new { };
 
@@ -32,7 +32,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_NoKeyMembersMessage_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenNoKeyMembersDefined()
     {
         NoKeyMembersMessage message = new()
         {
@@ -48,7 +48,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_SingleKeyMemberMessage_PropertyValueReturned()
+    public void GetMessageKey_ShouldReturnPropertyValue_WhenSingleKeyMemberIsDefined()
     {
         SingleKeyMemberMessage message = new()
         {
@@ -64,7 +64,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_SingleKeyMemberMessage_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenSingleKeyMemberIsEmptyString()
     {
         SingleKeyMemberMessage message = new()
         {
@@ -80,7 +80,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_MultipleKeyMembersMessageWithEmptyValues_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenAllKeyMembersAreEmptyStrings()
     {
         MultipleKeyMembersMessage message = new()
         {
@@ -96,7 +96,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_MultipleKeyMembersMessageWithNullValues_NullReturned()
+    public void GetMessageKey_ShouldReturnNull_WhenMultipleKeyMembersAreNull()
     {
         MultipleKeyMembersMessage message = new()
         {
@@ -112,7 +112,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_MultipleKeyMembersMessagesWithSameKey_ComposedKeyReturned()
+    public void GetMessageKey_ShouldReturnComposedKey_WhenMultipleKeyMembersDefined()
     {
         MultipleKeyMembersMessage message = new()
         {
@@ -128,7 +128,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_MultipleKeyMembersMessagesSecondEmpty_ComposedKeyReturned()
+    public void GetMessageKey_ShouldReturnKey_WhenMultipleKeyMembersPartiallySet()
     {
         MultipleKeyMembersMessage message = new()
         {
@@ -144,7 +144,7 @@ public class KafkaKeyHelperTests
     }
 
     [Fact]
-    public void GetMessageKey_DifferentMessagesMixture_CorrectKeyReturned()
+    public void GetMessageKey_ShouldReturnCorrectKey()
     {
         // This is actually to test the cache.
         MultipleKeyMembersMessage message1 = new()
@@ -185,21 +185,5 @@ public class KafkaKeyHelperTests
         key2.Should().Be("One=1,Two=2");
         key3.Should().Be("One=1");
         key4.Should().Be("Two=2");
-    }
-
-    [Fact]
-    public void GetMessageKey_MultipleKeyMembersMessagesWithOneKeyEmpty_OneKeyReturned()
-    {
-        MultipleKeyMembersMessage message = new()
-        {
-            Id = Guid.NewGuid(),
-            One = "1",
-            Two = string.Empty,
-            Three = "3"
-        };
-
-        string? key = KafkaKeyHelper.GetMessageKey(message);
-
-        key.Should().Be("One=1");
     }
 }

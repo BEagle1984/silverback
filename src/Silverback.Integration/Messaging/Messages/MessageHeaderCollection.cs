@@ -73,13 +73,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="value">
     ///     The header value.
     /// </param>
-    public void Add(string name, object value)
-    {
-        Check.NotNull(name, nameof(name));
-        Check.NotNull(value, nameof(value));
-
-        Add(name, value.ToString());
-    }
+    public void Add(string name, object value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
 
     /// <summary>
     ///     Adds a new header.
@@ -133,7 +127,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="newValue">
     ///     The new header value.
     /// </param>
-    public void AddOrReplace(string name, object? newValue) => AddOrReplace(name, newValue?.ToString());
+    public void AddOrReplace(string name, object? newValue) => AddOrReplace(name, newValue?.ToHeaderValueString());
 
     /// <summary>
     ///     Adds a new header or replaces the header with the same name.
@@ -164,7 +158,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <returns>
     ///     The number of headers that have been replaced.
     /// </returns>
-    public int Replace(string name, object? newValue) => Replace(name, newValue?.ToString());
+    public int Replace(string name, object? newValue) => Replace(name, newValue?.ToHeaderValueString());
 
     /// <summary>
     ///     Replaces the specified header value.
@@ -206,7 +200,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="newValue">
     ///     The new header value.
     /// </param>
-    public void AddIfNotExists(string name, object? newValue) => AddIfNotExists(name, newValue?.ToString());
+    public void AddIfNotExists(string name, object? newValue) => AddIfNotExists(name, newValue?.ToHeaderValueString());
 
     /// <summary>
     ///     Adds a new header if no header with the same name is already set.

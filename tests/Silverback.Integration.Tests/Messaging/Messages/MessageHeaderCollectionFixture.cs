@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using Silverback.Messaging.Messages;
 using Xunit;
 
@@ -187,6 +188,20 @@ public class MessageHeaderCollectionFixture
     }
 
     [Fact]
+    public void Add_ShouldConvertDateTimeToStringWithInvariantCulture()
+    {
+        MessageHeaderCollection collection = new();
+
+        collection.Add("one", 23.June(2023).At(02, 42, 42));
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "2023-06-23T02:42:42.0000000")
+            });
+    }
+
+    [Fact]
     public void AddRange_ShouldAddMessageHeader()
     {
         MessageHeaderCollection collection = new();
@@ -259,6 +274,23 @@ public class MessageHeaderCollectionFixture
             {
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2")
+            });
+    }
+
+    [Fact]
+    public void Replace_ShouldConvertDateTimeToStringWithInvariantCulture()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", 01.January(2023) }
+        };
+
+        collection.Replace("one", 23.June(2023).At(02, 42, 43));
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "2023-06-23T02:42:43.0000000")
             });
     }
 
@@ -341,6 +373,23 @@ public class MessageHeaderCollectionFixture
     }
 
     [Fact]
+    public void AddOrReplace_ShouldConvertDateTimeToStringWithInvariantCulture()
+    {
+        MessageHeaderCollection collection = new()
+        {
+            { "one", 01.January(2023) }
+        };
+
+        collection.AddOrReplace("one", 23.June(2023).At(02, 42, 43));
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "2023-06-23T02:42:43.0000000")
+            });
+    }
+
+    [Fact]
     public void AddIfNotExists_ShouldDoNothing_WhenHeaderExists()
     {
         MessageHeaderCollection collection = new()
@@ -396,6 +445,20 @@ public class MessageHeaderCollectionFixture
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2"),
                 new MessageHeader("three", "3")
+            });
+    }
+
+    [Fact]
+    public void AddIfNotExists_ShouldConvertDateTimeToStringWithInvariantCulture()
+    {
+        MessageHeaderCollection collection = new();
+
+        collection.AddIfNotExists("one", 23.June(2023).At(02, 42, 43));
+
+        collection.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("one", "2023-06-23T02:42:43.0000000")
             });
     }
 
