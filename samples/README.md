@@ -24,11 +24,20 @@ Produce and consume basic messages.
 
 ### Batch Processing
 
-Process consumed messages in batch.
+Produce and consume in batch.
 
 1. Run the two applications
     1. `dotnet run --project ./samples/Kafka/Batch.Producer/.`
     1. `dotnet run --project ./samples/Kafka/Batch.Consumer/.`
+1. Observe the console output while the messages are produced and consumed
+
+### Batch Processing with Tombstones
+
+Produce and consume in batch and handle tombstones.
+
+1. Run the two applications
+    1. `dotnet run --project ./samples/Kafka/BatchWithTombstone.Producer/.`
+    1. `dotnet run --project ./samples/Kafka/BatchWithTombstone.Consumer/.`
 1. Observe the console output while the messages are produced and consumed
 
 ### Binary Files Streaming

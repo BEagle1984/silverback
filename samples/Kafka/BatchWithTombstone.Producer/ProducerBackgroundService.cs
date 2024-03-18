@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Messaging.Publishing;
-using Silverback.Samples.Kafka.Batch.Common;
+using Silverback.Samples.Kafka.BatchWithTombstone.Common;
 
-namespace Silverback.Samples.Kafka.Batch.Producer;
+namespace Silverback.Samples.Kafka.BatchWithTombstone.Producer;
 
 public class ProducerBackgroundService : BackgroundService
 {
@@ -36,7 +38,7 @@ public class ProducerBackgroundService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await ProduceMessagesAsync(publisher, ++number + 100);
+            await ProduceMessagesAsync(publisher, ++number * 100);
 
             await Task.Delay(50, stoppingToken);
         }
@@ -46,13 +48,27 @@ public class ProducerBackgroundService : BackgroundService
     {
         try
         {
-            List<SampleMessage> messages = new();
+            List<MessageWithHeaders<SampleMessage>> messages = new();
+            List<Tombstone<SampleMessage>> tombstones = new();
+
             for (int i = 0; i < 100; i++)
             {
-                messages.Add(new SampleMessage { Number = number + i });
+                string messageKey = $"N{number + i}";
+
+                if (i % 30 == 0)
+                {
+                    tombstones.Add(new Tombstone<SampleMessage>(messageKey));
+                }
+                else
+                {
+                    messages.Add(
+                        new SampleMessage { Number = number + i }
+                            .WithKafkaKey(messageKey));
+                }
             }
 
             await publisher.PublishAsync(messages);
+            await publisher.PublishAsync(tombstones);
 
             _logger.LogInformation("Produced {FirstNumber}-{LastNumber}", number, number + 99);
         }
