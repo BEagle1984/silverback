@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -168,25 +169,28 @@ namespace Silverback.Messaging.Broker
                 });
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,CancellationToken)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
+            string actualEndpointName,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                     message,
-                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                     headers,
-                    actualEndpointName)
+                    actualEndpointName,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,CancellationToken)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
+            string actualEndpointName,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -203,7 +207,7 @@ namespace Silverback.Messaging.Broker
                     actualEndpointName,
                     GetPartition(headers));
 
-                var deliveryResult = await GetConfluentProducer().ProduceAsync(topicPartition, kafkaMessage)
+                var deliveryResult = await GetConfluentProducer().ProduceAsync(topicPartition, kafkaMessage, cancellationToken)
                     .ConfigureAwait(false);
 
                 if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
@@ -223,24 +227,26 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         protected override async Task ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                     message,
-                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                     headers,
                     actualEndpointName,
                     onSuccess,
-                    onError)
+                    onError,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
         protected override Task ProduceCoreAsync(
             object? message,
@@ -248,7 +254,8 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default)
         {
             ProduceCore(message, messageBytes, headers, actualEndpointName, onSuccess, onError);
             return Task.CompletedTask;

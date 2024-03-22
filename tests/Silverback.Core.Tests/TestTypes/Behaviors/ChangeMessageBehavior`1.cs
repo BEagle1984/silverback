@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Publishing;
 
@@ -17,9 +18,14 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
             _changedMessageFactory = changedMessageFactory;
         }
 
-        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
-            next(message is TSourceType
+        public Task<IReadOnlyCollection<object?>> HandleAsync(
+            object message,
+            MessageHandler next,
+            CancellationToken cancellationToken = default) =>
+            next(
+                message is TSourceType
                 ? _changedMessageFactory(message)
-                : message);
+                : message,
+                cancellationToken);
     }
 }

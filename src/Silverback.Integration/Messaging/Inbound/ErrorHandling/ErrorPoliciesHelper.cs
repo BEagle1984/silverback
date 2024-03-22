@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -12,7 +13,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     {
         public static async Task<bool> ApplyErrorPoliciesAsync(
             ConsumerPipelineContext context,
-            Exception exception)
+            Exception exception,
+            CancellationToken cancellationToken = default)
         {
             var failedAttempts = context.Consumer.IncrementFailedAttempts(context.Envelope);
 
@@ -25,7 +27,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 return false;
 
             return await errorPolicyImplementation
-                .HandleErrorAsync(context, exception)
+                .HandleErrorAsync(context, exception, cancellationToken)
                 .ConfigureAwait(false);
         }
     }

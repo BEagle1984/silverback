@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -31,7 +32,10 @@ namespace Silverback.Testing
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public Task HandleAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -39,7 +43,7 @@ namespace Silverback.Testing
             if (context.Envelope is IInboundEnvelope inboundEnvelope)
                 _integrationSpy.AddInboundEnvelope(inboundEnvelope);
 
-            return next(context);
+            return next(context, cancellationToken);
         }
     }
 }

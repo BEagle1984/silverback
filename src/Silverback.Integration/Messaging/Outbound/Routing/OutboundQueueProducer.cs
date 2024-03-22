@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -89,25 +90,28 @@ namespace Silverback.Messaging.Outbound.Routing
             Action<Exception> onError) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,CancellationToken)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
+            string actualEndpointName,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                     message,
-                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                     headers,
-                    actualEndpointName)
+                    actualEndpointName,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,CancellationToken)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
+            string actualEndpointName,
+            CancellationToken cancellationToken = default)
         {
             await _queueWriter.WriteAsync(
                     message,
@@ -120,31 +124,34 @@ namespace Silverback.Messaging.Outbound.Routing
             return null;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         protected override async Task ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             await ProduceCoreAsync(
                     message,
-                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    await messageStream.ReadAllAsync(cancellationToken).ConfigureAwait(false),
                     headers,
                     actualEndpointName,
                     onSuccess,
-                    onError)
+                    onError,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         protected override async Task ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(onSuccess, nameof(onSuccess));
             Check.NotNull(onError, nameof(onError));

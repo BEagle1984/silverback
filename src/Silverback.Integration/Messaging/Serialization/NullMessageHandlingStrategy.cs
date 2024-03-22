@@ -24,6 +24,6 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Silently skip the null message.
         /// </summary>
-        Skip = 1,
+        Skip = 1
     }
 }

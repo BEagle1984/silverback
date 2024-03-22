@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -55,7 +56,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             protected override async Task<bool> ApplyPolicyAsync(
                 ConsumerPipelineContext context,
-                Exception exception)
+                Exception exception,
+                CancellationToken cancellationToken = default)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
@@ -69,7 +71,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             }
 
             [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-            private async Task<bool> TryRollbackAsync(ConsumerPipelineContext context, Exception exception)
+            private async Task<bool> TryRollbackAsync(
+                ConsumerPipelineContext context,
+                Exception exception)
             {
                 try
                 {
