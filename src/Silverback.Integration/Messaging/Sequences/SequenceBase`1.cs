@@ -283,10 +283,10 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// </returns>
     protected virtual async ValueTask<AddToSequenceResult> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
     {
-        await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
-
         try
         {
+            await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+
             if (!IsPending || IsCompleting)
                 return AddToSequenceResult.Failed;
 
