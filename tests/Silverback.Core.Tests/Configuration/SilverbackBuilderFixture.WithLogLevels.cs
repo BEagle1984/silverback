@@ -24,7 +24,7 @@ public partial class SilverbackBuilderFixture
             .WithLogLevels(
                 configurator => configurator
                     .SetLogLevel(CoreLogEvents.BackgroundServiceException.EventId, LogLevel.Information)
-                    .SetLogLevel(CoreLogEvents.BackgroundServiceLockAcquired.EventId, LogLevel.Warning));
+                    .SetLogLevel(CoreLogEvents.LockAcquired.EventId, LogLevel.Warning));
 
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 

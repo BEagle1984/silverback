@@ -28,8 +28,8 @@ public partial class BrokerOptionsBuilderPostgreSqlExtensionsFixture
 
         OutboxSettings outboxSettings = new PostgreSqlOutboxSettings("conn");
 
-        IOutboxReader reader = readerFactory.GetReader(outboxSettings);
-        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings);
+        IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
         reader.Should().BeOfType<PostgreSqlOutboxReader>();
         writer.Should().BeOfType<PostgreSqlOutboxWriter>();

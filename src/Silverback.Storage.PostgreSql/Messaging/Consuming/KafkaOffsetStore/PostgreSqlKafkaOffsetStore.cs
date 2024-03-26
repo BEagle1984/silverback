@@ -16,11 +16,13 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 /// </summary>
 public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
 {
+    private readonly PostgreSqlKafkaOffsetStoreSettings _settings;
+
     private readonly PostgreSqlDataAccess _dataAccess;
 
     private readonly string _getQuerySql;
 
-    private readonly string _insertOrReplaceQuerySql;
+    private readonly string _insertOrReplaceSql;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PostgreSqlKafkaOffsetStore" /> class.
@@ -30,13 +32,14 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
     /// </param>
     public PostgreSqlKafkaOffsetStore(PostgreSqlKafkaOffsetStoreSettings settings)
     {
-        _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
+        _settings = Check.NotNull(settings, nameof(settings));
+        _dataAccess = new PostgreSqlDataAccess(_settings.ConnectionString);
 
         _getQuerySql = $"SELECT \"Topic\", \"Partition\", \"Offset\" FROM \"{settings.TableName}\" WHERE \"GroupId\" = @GroupId";
 
-        _insertOrReplaceQuerySql = $"INSERT INTO \"{settings.TableName}\" (\"GroupId\", \"Topic\", \"Partition\", \"Offset\") " +
-                                   "VALUES(@GroupId, @Topic, @Partition, @Offset) " +
-                                   "ON CONFLICT (\"GroupId\", \"Topic\", \"Partition\") DO UPDATE SET \"Offset\" = @Offset";
+        _insertOrReplaceSql = $"INSERT INTO \"{settings.TableName}\" (\"GroupId\", \"Topic\", \"Partition\", \"Offset\") " +
+                              "VALUES(@GroupId, @Topic, @Partition, @Offset) " +
+                              "ON CONFLICT (\"GroupId\", \"Topic\", \"Partition\") DO UPDATE SET \"Offset\" = @Offset";
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
@@ -44,13 +47,20 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            new NpgsqlParameter("@GroupId", NpgsqlDbType.Text) { Value = groupId });
+            new NpgsqlParameter[]
+            {
+                new("@GroupId", NpgsqlDbType.Text)
+                {
+                    Value = groupId
+                }
+            },
+            _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(offsets, nameof(offsets)),
-            _insertOrReplaceQuerySql,
+            _insertOrReplaceSql,
             new[]
             {
                 new NpgsqlParameter("@GroupId", NpgsqlDbType.Text)
@@ -67,5 +77,6 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
                 parameters[2].Value = offset.TopicPartition.Partition.Value;
                 parameters[3].Value = offset.Offset.Value;
             },
+            _settings.DbCommandTimeout,
             context);
 }

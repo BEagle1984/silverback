@@ -31,7 +31,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
 
     public SqliteOutboxWriterFixture()
     {
-        _outboxSettings = new SqliteOutboxSettings($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared", "TestOutbox");
+        _outboxSettings = new SqliteOutboxSettings($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
         _sqliteConnection = new SqliteConnection(_outboxSettings.ConnectionString);
         _sqliteConnection.Open();
 
@@ -51,7 +51,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -76,7 +76,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -99,7 +99,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -122,7 +122,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
@@ -178,7 +178,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
@@ -245,7 +245,7 @@ public sealed class SqliteOutboxWriterFixture : IDisposable
         await storageInitializer.CreateSqliteOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));

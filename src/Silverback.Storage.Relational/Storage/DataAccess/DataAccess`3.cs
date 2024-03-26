@@ -26,12 +26,9 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         _connectionString = Check.NotNullOrEmpty(connectionString, nameof(connectionString));
     }
 
-    public IReadOnlyCollection<T> ExecuteQuery<T>(
-        Func<DbDataReader, T> projection,
-        string sql,
-        params TParameter[] parameters)
+    public IReadOnlyCollection<T> ExecuteQuery<T>(Func<DbDataReader, T> projection, string sql, TParameter[]? parameters, TimeSpan timeout)
     {
-        using DbCommandWrapper wrapper = GetCommand(sql, parameters);
+        using DbCommandWrapper wrapper = GetCommand(sql, parameters, timeout);
         using DbDataReader reader = wrapper.Command.ExecuteReader();
 
         return Map(reader, projection).ToList();
@@ -40,26 +37,27 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     public async Task<IReadOnlyCollection<T>> ExecuteQueryAsync<T>(
         Func<DbDataReader, T> projection,
         string sql,
-        params TParameter[] parameters)
+        TParameter[]? parameters,
+        TimeSpan timeout)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout).ConfigureAwait(false);
         using DbDataReader reader = await wrapper.Command.ExecuteReaderAsync().ConfigureAwait(false);
 
         return await MapAsync(reader, projection).ToListAsync().ConfigureAwait(false);
     }
 
-    public T? ExecuteScalar<T>(string sql, params TParameter[] parameters)
+    public T? ExecuteScalar<T>(string sql, TParameter[]? parameters, TimeSpan timeout)
     {
-        using DbCommandWrapper wrapper = GetCommand(sql, parameters);
+        using DbCommandWrapper wrapper = GetCommand(sql, parameters, timeout);
 
         object? result = wrapper.Command.ExecuteScalar();
 
         return result == DBNull.Value ? default : (T?)result;
     }
 
-    public async Task<T?> ExecuteScalarAsync<T>(string sql, params TParameter[] parameters)
+    public async Task<T?> ExecuteScalarAsync<T>(string sql, TParameter[]? parameters, TimeSpan timeout)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout).ConfigureAwait(false);
 
         object? result = await wrapper.Command.ExecuteScalarAsync().ConfigureAwait(false);
 
@@ -69,11 +67,9 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return (T?)result;
     }
 
-    public Task ExecuteNonQueryAsync(string sql, params TParameter[] parameters) => ExecuteNonQueryAsync(null, sql, parameters);
-
-    public async Task ExecuteNonQueryAsync(SilverbackContext? context, string sql, params TParameter[] parameters)
+    public async Task ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, SilverbackContext? context = null)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
         try
         {
@@ -92,9 +88,10 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         string sql,
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
+        TimeSpan timeout,
         SilverbackContext? context = null)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
         try
         {
@@ -118,9 +115,10 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         string sql,
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
+        TimeSpan timeout,
         SilverbackContext? context = null)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
         try
         {
@@ -160,7 +158,8 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
     private DbCommandWrapper GetCommand(
         string sql,
-        TParameter[] parameters,
+        TParameter[]? parameters,
+        TimeSpan timeout,
         bool beginTransaction = false,
         SilverbackContext? context = null)
     {
@@ -199,7 +198,11 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         DbCommand command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = sql;
-        command.Parameters.AddRange(parameters);
+
+        if (parameters != null)
+            command.Parameters.AddRange(parameters);
+
+        command.CommandTimeout = (int)timeout.TotalSeconds;
 
         return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
     }
@@ -207,7 +210,8 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
     [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed")]
     private async Task<DbCommandWrapper> GetCommandAsync(
         string sql,
-        TParameter[] parameters,
+        TParameter[]? parameters,
+        TimeSpan timeout,
         bool beginTransaction = false,
         SilverbackContext? context = null)
     {
@@ -246,7 +250,11 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         DbCommand command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = sql;
-        command.Parameters.AddRange(parameters);
+
+        if (parameters != null)
+            command.Parameters.AddRange(parameters);
+
+        command.CommandTimeout = (int)timeout.TotalSeconds;
 
         return new DbCommandWrapper(command, connection, isNewConnection, transaction, isNewTransaction);
     }

@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the <seealso cref="UsePostgreSql" /> method to the <see cref="KafkaOffsetStoreSettingsBuilder" />.
 /// </summary>
-public static class KafkaOffsetStoreSettingsBuilderMemoryExtensions
+public static class KafkaOffsetStoreSettingsBuilderPostgreSqlExtensions
 {
     /// <summary>
     ///     Configures the offsetStore to be stored in memory.

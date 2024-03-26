@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -37,7 +38,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         KafkaOffsetStoreFactory factory = builder.SilverbackBuilder.Services.GetSingletonServiceInstance<KafkaOffsetStoreFactory>() ??
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
-        factory.OverrideFactories(settings => new SqliteKafkaOffsetStore(MapSqliteSettings(settings, connectionString)));
+        factory.OverrideFactories((settings, _) => new SqliteKafkaOffsetStore(MapSqliteSettings(settings, connectionString)));
 
         return builder;
     }
@@ -59,7 +60,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
         if (!factory.HasFactory<SqliteKafkaOffsetStoreSettings>())
-            factory.AddFactory<SqliteKafkaOffsetStoreSettings>(settings => new SqliteKafkaOffsetStore(settings));
+            factory.AddFactory<SqliteKafkaOffsetStoreSettings>((settings, _) => new SqliteKafkaOffsetStore(settings));
 
         return builder;
     }
@@ -77,6 +78,20 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         string settingsHash = BitConverter.ToString(md5.ComputeHash(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
 #endif
 
-        return new SqliteKafkaOffsetStoreSettings(connectionString, settingsHash);
+        sqliteSettings = new SqliteKafkaOffsetStoreSettings(connectionString)
+        {
+            TableName = settingsHash,
+        };
+
+        if (settings is IDatabaseConnectionSettings databaseSettings)
+        {
+            sqliteSettings = sqliteSettings with
+            {
+                DbCommandTimeout = databaseSettings.DbCommandTimeout,
+                CreateTableTimeout = databaseSettings.CreateTableTimeout
+            };
+        }
+
+        return sqliteSettings;
     }
 }

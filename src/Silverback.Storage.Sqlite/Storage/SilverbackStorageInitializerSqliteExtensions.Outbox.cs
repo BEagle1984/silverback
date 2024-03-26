@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage.DataAccess;
@@ -47,7 +48,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
         SqliteOutboxSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreateSqliteOutboxAsync(initializer, settings.ConnectionString, settings.TableName);
+        return CreateSqliteOutboxAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -62,13 +63,17 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     /// <param name="tableName">
     ///     The name of the outbox table.
     /// </param>
+    /// <param name="timeout">
+    ///   The table creation timeout.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreateSqliteOutboxAsync(
         this SilverbackStorageInitializer initializer,
         string connectionString,
-        string tableName)
+        string tableName,
+        TimeSpan timeout)
     {
         Check.NotNull(initializer, nameof(initializer));
         Check.NotNullOrEmpty(connectionString, nameof(connectionString));
@@ -76,14 +81,15 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
 
         SqliteDataAccess dataAccess = new(connectionString);
 
-        return dataAccess.ExecuteNonQueryAsync(
-            $"CREATE TABLE IF NOT EXISTS {tableName} (" +
-            "Id INTEGER NOT NULL," +
-            "Content BLOB," +
-            "Headers TEXT," +
-            "EndpointName TEXT NOT NULL," +
-            "DynamicEndpoint TEXT," +
-            "Created INTEGER NOT NULL," +
-            "PRIMARY KEY (Id));");
+        string sql = $"CREATE TABLE IF NOT EXISTS {tableName} (" +
+                     "Id INTEGER NOT NULL," +
+                     "Content BLOB," +
+                     "Headers TEXT," +
+                     "EndpointName TEXT NOT NULL," +
+                     "DynamicEndpoint TEXT," +
+                     "Created INTEGER NOT NULL," +
+                     "PRIMARY KEY (Id));";
+
+        return dataAccess.ExecuteNonQueryAsync(sql, null, timeout);
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Storage.DataAccess;
@@ -47,7 +48,7 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
         PostgreSqlKafkaOffsetStoreSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreatePostgreSqlKafkaOffsetStoreAsync(initializer, settings.ConnectionString, settings.TableName);
+        return CreatePostgreSqlKafkaOffsetStoreAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -62,13 +63,17 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     /// <param name="tableName">
     ///     The name of the kafka offset store table.
     /// </param>
+    /// <param name="timeout">
+    ///   The table creation timeout.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlKafkaOffsetStoreAsync(
         this SilverbackStorageInitializer initializer,
         string connectionString,
-        string tableName)
+        string tableName,
+        TimeSpan timeout)
     {
         Check.NotNull(initializer, nameof(initializer));
         Check.NotNullOrEmpty(connectionString, nameof(connectionString));
@@ -76,12 +81,13 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
 
         PostgreSqlDataAccess dataAccess = new(connectionString);
 
-        return dataAccess.ExecuteNonQueryAsync(
-            $"CREATE TABLE IF NOT EXISTS \"{tableName}\" (" +
-            "\"GroupId\" TEXT NOT NULL," +
-            "\"Topic\" TEXT NOT NULL," +
-            "\"Partition\" INTEGER NOT NULL," +
-            "\"Offset\" INTEGER NOT NULL," +
-            "PRIMARY KEY (\"GroupId\", \"Topic\", \"Partition\"));");
+        string sql = $"CREATE TABLE IF NOT EXISTS \"{tableName}\" (" +
+                     "\"GroupId\" TEXT NOT NULL," +
+                     "\"Topic\" TEXT NOT NULL," +
+                     "\"Partition\" INTEGER NOT NULL," +
+                     "\"Offset\" INTEGER NOT NULL," +
+                     "PRIMARY KEY (\"GroupId\", \"Topic\", \"Partition\"));";
+
+        return dataAccess.ExecuteNonQueryAsync(sql, null, timeout);
     }
 }

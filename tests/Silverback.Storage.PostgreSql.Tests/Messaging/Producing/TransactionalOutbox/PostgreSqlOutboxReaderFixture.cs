@@ -29,7 +29,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
 
     public PostgreSqlOutboxReaderFixture()
     {
-        _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString, "TestOutbox");
+        _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString);
         _dataAccess = new PostgreSqlDataAccess(ConnectionString);
         _outboxWriter = new PostgreSqlOutboxWriter(_outboxSettings);
     }
@@ -55,14 +55,14 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(outboxMessage3);
         await _outboxWriter.AddAsync(outboxMessage4);
 
-        (await _dataAccess.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM \"TestOutbox\"")).Should().Be(4);
+        (await GetOutboxLengthAsync()).Should().Be(4);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         await outboxReader.AcknowledgeAsync(new[] { outboxMessage1, outboxMessage3 });
 
-        (await _dataAccess.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM \"TestOutbox\"")).Should().Be(2);
+        (await GetOutboxLengthAsync()).Should().Be(2);
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -110,7 +110,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -136,7 +136,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
         IReadOnlyCollection<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
@@ -161,7 +161,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -192,7 +192,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         int count = await outboxReader.GetLengthAsync();
 
@@ -212,7 +212,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         int count = await outboxReader.GetLengthAsync();
 
@@ -236,7 +236,7 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
@@ -256,10 +256,16 @@ public sealed class PostgreSqlOutboxReaderFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
         maxAge.Should().Be(TimeSpan.Zero);
     }
+
+    private Task<long> GetOutboxLengthAsync() =>
+        _dataAccess.ExecuteScalarAsync<long>(
+            $"SELECT COUNT(*) FROM \"{_outboxSettings.TableName}\"",
+            null,
+            TimeSpan.FromSeconds(1));
 }

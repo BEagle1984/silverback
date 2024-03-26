@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Lock;
 using Xunit;
@@ -10,28 +11,33 @@ namespace Silverback.Tests.Storage.Memory.Lock;
 public class InMemoryLockSettingsFixture
 {
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenComparingWithSameInstance()
+    public void Constructor_ShouldSetLockName()
     {
-        InMemoryLockSettings settings = new("lock");
+        InMemoryLockSettings settings = new("my-lock");
 
-        settings.Equals(settings).Should().BeTrue();
+        settings.LockName.Should().Be("my-lock");
     }
 
     [Fact]
-    public void Equals_ShouldReturnTrue_WhenSettingsAreEquivalent()
+    public void Validate_ShouldNotThrow_WhenSettingsAreValid()
     {
-        InMemoryLockSettings settings1 = new("lock");
-        InMemoryLockSettings settings2 = new("lock");
+        InMemoryLockSettings settings = new("my-lock");
 
-        settings1.Equals(settings2).Should().BeTrue();
+        Action act = settings.Validate;
+
+        act.Should().NotThrow();
     }
 
-    [Fact]
-    public void Equals_ShouldReturnFalse_WhenSettingsAreDifferent()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void Validate_ShouldThrow_WhenLockNameIsNullOrWhitespace(string? lockName)
     {
-        InMemoryLockSettings settings1 = new("lock1");
-        InMemoryLockSettings settings2 = new("lock2");
+        InMemoryLockSettings settings = new(lockName!);
 
-        settings1.Equals(settings2).Should().BeFalse();
+        Action act = settings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>();
     }
 }

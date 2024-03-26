@@ -57,7 +57,7 @@ public class SilverbackLoggerFixture
     {
         LogLevelDictionary logLevels = new()
         {
-            { CoreLogEvents.BackgroundServiceLockAcquired.EventId, (_, _, _) => LogLevel.Error }
+            { CoreLogEvents.LockAcquired.EventId, (_, _, _) => LogLevel.Error }
         };
         LoggerSubstitute<SilverbackLoggerFixture> logger = new(LogLevel.Information);
         MappedLevelsLogger<SilverbackLoggerFixture> mappedLevelsLogger = new(logLevels, logger);

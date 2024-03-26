@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class PostgreSqlOutboxReader : IOutboxReader
 {
+    private readonly PostgreSqlOutboxSettings _settings;
+
     private readonly PostgreSqlDataAccess _dataAccess;
 
     private readonly string _getQuerySql;
@@ -38,7 +40,8 @@ public class PostgreSqlOutboxReader : IOutboxReader
     /// </param>
     public PostgreSqlOutboxReader(PostgreSqlOutboxSettings settings)
     {
-        _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
+        _settings = Check.NotNull(settings, nameof(settings));
+        _dataAccess = new PostgreSqlDataAccess(_settings.ConnectionString);
 
         _getQuerySql = "SELECT " +
                        "Id," +
@@ -61,18 +64,23 @@ public class PostgreSqlOutboxReader : IOutboxReader
         _dataAccess.ExecuteQueryAsync(
             MapOutboxMessage,
             _getQuerySql,
-            new NpgsqlParameter("@Limit", NpgsqlDbType.Integer)
+            new NpgsqlParameter[]
             {
-                Value = count
-            });
+                new("@Limit", NpgsqlDbType.Integer) { Value = count }
+            },
+            _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
-    public async Task<int> GetLengthAsync() => (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql).ConfigureAwait(false);
+    public async Task<int> GetLengthAsync() =>
+        (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql, null, _settings.DbCommandTimeout).ConfigureAwait(false);
 
     /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
     public async Task<TimeSpan> GetMaxAgeAsync()
     {
-        DateTime oldestCreated = await _dataAccess.ExecuteScalarAsync<DateTime>(_minCreatedQuerySql).ConfigureAwait(false);
+        DateTime oldestCreated = await _dataAccess.ExecuteScalarAsync<DateTime>(
+            _minCreatedQuerySql,
+            null,
+            _settings.DbCommandTimeout).ConfigureAwait(false);
 
         if (oldestCreated == default)
             return TimeSpan.Zero;
@@ -93,7 +101,8 @@ public class PostgreSqlOutboxReader : IOutboxReader
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Id;
-            });
+            },
+            _settings.DbCommandTimeout);
 
     private static OutboxMessage MapOutboxMessage(DbDataReader reader)
     {

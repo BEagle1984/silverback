@@ -80,7 +80,6 @@ public abstract class DistributedBackgroundService : BackgroundService
     {
         DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
         await using ConfiguredAsyncDisposable disposable = lockHandle.ConfigureAwait(false);
-        _logger.LogBackgroundServiceLockAcquired(this);
         await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
     }
 

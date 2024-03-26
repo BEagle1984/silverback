@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
@@ -25,7 +26,9 @@ public class SilverbackBuilderMemoryExtensionsFixture
                 .AddInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
-        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("lock"));
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(
+            new InMemoryLockSettings("lock"),
+            serviceProvider);
 
         distributedLock.Should().BeOfType<InMemoryLock>();
     }
@@ -40,11 +43,11 @@ public class SilverbackBuilderMemoryExtensionsFixture
                 .UseInMemoryLock());
         DistributedLockFactory lockFactory = serviceProvider.GetRequiredService<DistributedLockFactory>();
 
-        lockFactory.AddFactory<LockSettings1>(_ => new DistributedLock1());
-        lockFactory.AddFactory<LockSettings2>(_ => new DistributedLock2());
+        lockFactory.AddFactory<LockSettings1>((_, _) => new DistributedLock1());
+        lockFactory.AddFactory<LockSettings2>((_, _) => new DistributedLock2());
 
-        IDistributedLock distributedLock1 = lockFactory.GetDistributedLock(new LockSettings1());
-        IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(new LockSettings2());
+        IDistributedLock distributedLock1 = lockFactory.GetDistributedLock(new LockSettings1(), serviceProvider);
+        IDistributedLock distributedLock2 = lockFactory.GetDistributedLock(new LockSettings2(), serviceProvider);
 
         distributedLock1.Should().BeOfType<InMemoryLock>();
         distributedLock2.Should().BeOfType<InMemoryLock>();

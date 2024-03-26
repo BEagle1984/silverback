@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Lock;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -9,7 +11,7 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// <summary>
 ///     The <see cref="PostgreSqlOutboxWriter" /> and <see cref="PostgreSqlOutboxReader" /> settings.
 /// </summary>
-public record PostgreSqlOutboxSettings : OutboxSettings
+public record PostgreSqlOutboxSettings : OutboxSettings, IDatabaseConnectionSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="PostgreSqlOutboxSettings" /> class.
@@ -17,13 +19,9 @@ public record PostgreSqlOutboxSettings : OutboxSettings
     /// <param name="connectionString">
     ///     The connection string to the PostgreSql database.
     /// </param>
-    /// <param name="tableName">
-    ///     The name of the outbox table. If not specified, the default <c>"Silverback_Outbox"</c> will be used.
-    /// </param>
-    public PostgreSqlOutboxSettings(string connectionString, string? tableName = null)
+    public PostgreSqlOutboxSettings(string connectionString)
     {
         ConnectionString = connectionString;
-        TableName = tableName ?? "Silverback_Outbox";
     }
 
     /// <summary>
@@ -32,18 +30,28 @@ public record PostgreSqlOutboxSettings : OutboxSettings
     public string ConnectionString { get; }
 
     /// <summary>
-    ///     Gets the name of the outbox table. The default is <c>"Silverback_Outbox"</c>.
+    ///     Gets the name of the outbox table. The default is <c>"SilverbackOutbox"</c>.
     /// </summary>
-    public string TableName { get; }
+    public string TableName { get; init; } = "SilverbackOutbox";
 
     /// <summary>
-    ///     Returns an instance of <see cref="PostgreSqlLockSettings" />.
+    ///     Gets the database command timeout. The default is 10 seconds.
+    /// </summary>
+    public TimeSpan DbCommandTimeout { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>
+    ///     Gets the timeout for the table creation. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan CreateTableTimeout { get; init; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    ///     Returns an instance of <see cref="PostgreSqlAdvisoryLockSettings" />.
     /// </summary>
     /// <returns>
-    ///     The <see cref="PostgreSqlLockSettings" />.
+    ///     The <see cref="PostgreSqlAdvisoryLockSettings" />.
     /// </returns>
     public override DistributedLockSettings GetCompatibleLockSettings() =>
-        new PostgreSqlLockSettings($"outbox.{ConnectionString.GetSha256Hash()}.{TableName}", ConnectionString);
+        new PostgreSqlAdvisoryLockSettings($"outbox.{ConnectionString.GetSha256Hash()}.{TableName}", ConnectionString);
 
     /// <inheritdoc cref="OutboxSettings.Validate" />
     public override void Validate()
@@ -55,5 +63,11 @@ public record PostgreSqlOutboxSettings : OutboxSettings
 
         if (string.IsNullOrWhiteSpace(TableName))
             throw new SilverbackConfigurationException("The outbox table name is required.");
+
+        if (DbCommandTimeout <= TimeSpan.Zero)
+            throw new SilverbackConfigurationException("The command timeout must be greater than zero.");
+
+        if (CreateTableTimeout <= TimeSpan.Zero)
+            throw new SilverbackConfigurationException("The create table timeout must be greater than zero.");
     }
 }

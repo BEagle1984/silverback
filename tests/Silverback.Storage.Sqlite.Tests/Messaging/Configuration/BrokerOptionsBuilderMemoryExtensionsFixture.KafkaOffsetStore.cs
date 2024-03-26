@@ -28,7 +28,7 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
 
-        IKafkaOffsetStore store = factory.GetStore(new SqliteKafkaOffsetStoreSettings("conn"));
+        IKafkaOffsetStore store = factory.GetStore(new SqliteKafkaOffsetStoreSettings("conn"), serviceProvider);
 
         store.Should().BeOfType<SqliteKafkaOffsetStore>();
     }
@@ -44,11 +44,11 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         KafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<KafkaOffsetStoreFactory>();
 
-        factory.AddFactory<KafkaOffsetStoreSettings1>(_ => new KafkaOffsetStore1());
-        factory.AddFactory<KafkaOffsetStoreSettings2>(_ => new KafkaOffsetStore2());
+        factory.AddFactory<KafkaOffsetStoreSettings1>((_, _) => new KafkaOffsetStore1());
+        factory.AddFactory<KafkaOffsetStoreSettings2>((_, _) => new KafkaOffsetStore2());
 
-        IKafkaOffsetStore store1 = factory.GetStore(new KafkaOffsetStoreSettings1());
-        IKafkaOffsetStore store2 = factory.GetStore(new KafkaOffsetStoreSettings2());
+        IKafkaOffsetStore store1 = factory.GetStore(new KafkaOffsetStoreSettings1(), serviceProvider);
+        IKafkaOffsetStore store2 = factory.GetStore(new KafkaOffsetStoreSettings2(), serviceProvider);
 
         store1.Should().BeOfType<SqliteKafkaOffsetStore>();
         store2.Should().BeOfType<SqliteKafkaOffsetStore>();

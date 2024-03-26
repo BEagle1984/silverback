@@ -23,9 +23,11 @@ public class RecurringDistributedBackgroundServiceFixture
     {
         bool executed = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -33,7 +35,7 @@ public class RecurringDistributedBackgroundServiceFixture
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(null));
+            lockFactory.GetDistributedLock(null, serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
@@ -45,8 +47,12 @@ public class RecurringDistributedBackgroundServiceFixture
     {
         bool executed = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .UseInMemoryLock());
+        IDistributedLockFactory lockFactory = serviceProvider
             .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
@@ -55,7 +61,7 @@ public class RecurringDistributedBackgroundServiceFixture
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("lock"), serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
@@ -70,16 +76,20 @@ public class RecurringDistributedBackgroundServiceFixture
         int executingCount = 0;
         bool executedInParallel = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .UseInMemoryLock());
+        IDistributedLockFactory lockFactory = serviceProvider
             .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service1 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
         using TestRecurringDistributedBackgroundService service2 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
 
         service2.DistributedLock.Should().BeSameAs(service1.DistributedLock);
 
@@ -122,9 +132,11 @@ public class RecurringDistributedBackgroundServiceFixture
         DateTime? firstExecution = null;
         DateTime? secondExecution = null;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -136,7 +148,7 @@ public class RecurringDistributedBackgroundServiceFixture
 
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(null));
+            lockFactory.GetDistributedLock(null, serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => secondExecution != null);
@@ -150,9 +162,11 @@ public class RecurringDistributedBackgroundServiceFixture
     {
         int executions = 0;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
             _ =>
@@ -160,7 +174,7 @@ public class RecurringDistributedBackgroundServiceFixture
                 executions++;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(null));
+            lockFactory.GetDistributedLock(null, serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);
@@ -179,8 +193,11 @@ public class RecurringDistributedBackgroundServiceFixture
     {
         int executions = 0;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        IDistributedLockFactory lockFactory = serviceProvider
             .GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service = new(
@@ -189,7 +206,7 @@ public class RecurringDistributedBackgroundServiceFixture
                 executions++;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(null));
+            lockFactory.GetDistributedLock(null, serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executions > 1);

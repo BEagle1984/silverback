@@ -84,6 +84,64 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
+    public async Task Outbox_ShouldProduceMessages_WhenUsingPostgreSqlWithTableBasedLock()
+    {
+        using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(
+                    async storageInitializer =>
+                    {
+                        await storageInitializer.CreatePostgreSqlOutboxAsync(database.ConnectionString);
+                        await storageInitializer.CreatePostgreSqlLocksTableAsync(database.ConnectionString);
+                    })
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddPostgreSqlOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))
+                                .WithDistributedLock(
+                                    distributedLock => distributedLock
+                                        .UsePostgreSqlTable("outbox-lock", database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = $"{i}" });
+        }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(0, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
     public async Task Outbox_ShouldProduceBatch_WhenUsingPostgreSql()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();

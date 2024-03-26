@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 /// </summary>
 public class SqliteKafkaOffsetStore : IKafkaOffsetStore
 {
+    private readonly SqliteKafkaOffsetStoreSettings _settings;
+
     private readonly SqliteDataAccess _dataAccess;
 
     private readonly string _getQuerySql;
@@ -29,7 +31,8 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
     /// </param>
     public SqliteKafkaOffsetStore(SqliteKafkaOffsetStoreSettings settings)
     {
-        _dataAccess = new SqliteDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
+        _settings = Check.NotNull(settings, nameof(settings));
+        _dataAccess = new SqliteDataAccess(_settings.ConnectionString);
 
         _getQuerySql = $"SELECT Topic, Partition, Offset FROM {settings.TableName} WHERE GroupId = @GroupId";
 
@@ -42,10 +45,14 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            new SqliteParameter("@GroupId", SqliteType.Text)
+            new SqliteParameter[]
             {
-                Value = groupId
-            });
+                new("@GroupId", SqliteType.Text)
+                {
+                    Value = groupId
+                }
+            },
+            _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
     public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
@@ -68,5 +75,6 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
                 parameters[2].Value = offset.TopicPartition.Partition.Value;
                 parameters[3].Value = offset.Offset.Value;
             },
+            _settings.DbCommandTimeout,
             context);
 }

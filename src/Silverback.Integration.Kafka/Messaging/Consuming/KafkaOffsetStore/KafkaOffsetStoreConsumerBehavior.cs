@@ -36,7 +36,9 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
     }
 
     private static KafkaOffsetStoreScope CreateOffsetStoreScope(ConsumerPipelineContext context, KafkaOffsetStoreSettings storeSettings) =>
-        new(context.ServiceProvider.GetRequiredService<IKafkaOffsetStoreFactory>().GetStore(storeSettings), context);
+        new(
+            context.ServiceProvider.GetRequiredService<IKafkaOffsetStoreFactory>().GetStore(storeSettings, context.ServiceProvider),
+            context);
 
     private static ValueTask CommitOffsetsAsync(ConsumerPipelineContext context) =>
         new(context.ServiceProvider.GetRequiredService<SilverbackContext>().GetKafkaOffsetStoreScope().StoreOffsetsAsync());

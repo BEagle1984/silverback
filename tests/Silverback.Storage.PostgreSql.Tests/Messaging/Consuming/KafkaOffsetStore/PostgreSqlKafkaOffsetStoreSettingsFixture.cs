@@ -16,38 +16,33 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
         PostgreSqlKafkaOffsetStoreSettings settings = new("connection-string");
 
         settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("Silverback_KafkaOffsetStore");
-    }
-
-    [Fact]
-    public void Constructor_ShouldSetConnectionStringAndTableName()
-    {
-        PostgreSqlKafkaOffsetStoreSettings settings = new("connection-string", "my-offsets");
-
-        settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("my-offsets");
+        settings.TableName.Should().Be("SilverbackKafkaOffsets");
     }
 
     [Fact]
     public void Validate_ShouldNotThrow_WhenSettingsAreValid()
     {
-        PostgreSqlKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string", "my-offsets");
+        PostgreSqlKafkaOffsetStoreSettings settings = new("connection-string");
 
-        Action act = kafkaOffsetStoreSettings.Validate;
+        Action act = settings.Validate;
 
         act.Should().NotThrow();
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string tableName)
+    public void Validate_ShouldThrow_WhenTableNameIsNullOrWhitespace(string? tableName)
     {
-        PostgreSqlKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new("connection-string", tableName);
+        PostgreSqlKafkaOffsetStoreSettings settings = new("connection-string")
+        {
+            TableName = tableName!
+        };
 
-        Action act = kafkaOffsetStoreSettings.Validate;
+        Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The kafkaOffsetStore table name is required.");
     }
 
     [Theory]
@@ -56,10 +51,62 @@ public class PostgreSqlKafkaOffsetStoreSettingsFixture
     [InlineData(" ")]
     public void Validate_ShouldThrow_WhenConnectionStringIsNullOrWhitespace(string? connectionString)
     {
-        PostgreSqlKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new(connectionString!, "my-offsets");
+        PostgreSqlKafkaOffsetStoreSettings settings = new(connectionString!);
 
-        Action act = kafkaOffsetStoreSettings.Validate;
+        Action act = settings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The connection string is required.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenDbCommandTimeoutIsZero()
+    {
+        PostgreSqlKafkaOffsetStoreSettings outboxSettings = new("connection-string")
+        {
+            DbCommandTimeout = TimeSpan.Zero
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenDbCommandTimeoutIsLessThanZero()
+    {
+        PostgreSqlKafkaOffsetStoreSettings outboxSettings = new("connection-string")
+        {
+            DbCommandTimeout = TimeSpan.FromSeconds(-1)
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenCreateTableTimeoutIsZero()
+    {
+        PostgreSqlKafkaOffsetStoreSettings outboxSettings = new("connection-string")
+        {
+            CreateTableTimeout = TimeSpan.Zero
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenCreateTableTimeoutIsLessThanZero()
+    {
+        PostgreSqlKafkaOffsetStoreSettings outboxSettings = new("connection-string")
+        {
+            CreateTableTimeout = TimeSpan.FromSeconds(-1)
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
     }
 }

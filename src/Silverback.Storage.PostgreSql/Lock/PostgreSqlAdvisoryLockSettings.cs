@@ -4,12 +4,12 @@
 namespace Silverback.Lock;
 
 /// <summary>
-///     The <see cref="PostgreSqlLock" /> settings.
+///     The <see cref="PostgreSqlAdvisoryLock" /> settings.
 /// </summary>
-public record PostgreSqlLockSettings : DistributedLockSettings
+public record PostgreSqlAdvisoryLockSettings : DistributedLockSettings
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="PostgreSqlLockSettings" /> class.
+    ///     Initializes a new instance of the <see cref="PostgreSqlAdvisoryLockSettings" /> class.
     /// </summary>
     /// <param name="lockName">
     ///     The name of the lock.
@@ -17,7 +17,7 @@ public record PostgreSqlLockSettings : DistributedLockSettings
     /// <param name="connectionString">
     ///     The connection string to the PostgreSql database.
     /// </param>
-    public PostgreSqlLockSettings(string lockName, string connectionString)
+    public PostgreSqlAdvisoryLockSettings(string lockName, string connectionString)
         : base(lockName)
     {
         ConnectionString = connectionString;
@@ -27,4 +27,13 @@ public record PostgreSqlLockSettings : DistributedLockSettings
     ///     Gets the connection string to the PostgreSql database.
     /// </summary>
     public string ConnectionString { get; }
+
+    /// <inheritdoc cref="DistributedLockSettings.Validate" />
+    public override void Validate()
+    {
+        base.Validate();
+
+        if (string.IsNullOrWhiteSpace(ConnectionString))
+            throw new SilverbackConfigurationException("The connection string is required.");
+    }
 }

@@ -36,18 +36,18 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     where TService : notnull
     where TDiscriminatorBase : IEquatable<TDiscriminatorBase>
 {
-    private readonly Dictionary<Type, Func<TService>> _factories = new();
+    private readonly Dictionary<Type, Func<IServiceProvider, TService>> _factories = new();
 
     private readonly ConcurrentDictionary<Type, TService?>? _cache;
 
-    private Func<TService>? _overrideFactory;
+    private Func<IServiceProvider, TService>? _overrideFactory;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TypeBasedExtensibleFactory{TService, TDiscriminatorBase}"/> class.
+    ///     Initializes a new instance of the <see cref="TypeBasedExtensibleFactory{TService, TDiscriminatorBase}" /> class.
     /// </summary>
     /// <param name="cacheInstances">
-    ///    A value indicating whether the instances should be cached. If <c>true</c> the same instance will be returned for the same
-    ///    discriminator type.
+    ///     A value indicating whether the instances should be cached. If <c>true</c> the same instance will be returned for the same
+    ///     discriminator type.
     /// </param>
     protected TypeBasedExtensibleFactory(bool cacheInstances = true)
     {
@@ -64,7 +64,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <param name="factory">
     ///     The factory building the <typeparamref name="TService" /> according to the specified discriminator.
     /// </param>
-    public virtual void AddFactory<TDiscriminator>(Func<TService> factory)
+    public virtual void AddFactory<TDiscriminator>(Func<IServiceProvider, TService> factory)
         where TDiscriminator : TDiscriminatorBase
     {
         if (_factories.ContainsKey(typeof(TDiscriminator)))
@@ -90,7 +90,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <param name="factory">
     ///     The factory to be used regardless of the discriminator type.
     /// </param>
-    public void OverrideFactories(Func<TService> factory) => _overrideFactory = factory;
+    public void OverrideFactories(Func<IServiceProvider, TService> factory) => _overrideFactory = factory;
 
     /// <summary>
     ///     Returns an object of type <typeparamref name="TService" /> according to the specified discriminator.
@@ -98,12 +98,15 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <param name="discriminator">
     ///     The discriminator.
     /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
+    /// </param>
     /// <returns>
     ///     The service of type <typeparamref name="TService" />, or <c>null</c> if no factory is registered for the specified
     ///     discriminator type.
     /// </returns>
-    protected TService? GetService(TDiscriminatorBase discriminator) =>
-        GetService(Check.NotNull(discriminator, nameof(discriminator)).GetType());
+    protected TService? GetService(TDiscriminatorBase discriminator, IServiceProvider serviceProvider) =>
+        GetService(Check.NotNull(discriminator, nameof(discriminator)).GetType(), serviceProvider);
 
     /// <summary>
     ///     Returns an object of type <typeparamref name="TService" /> according to the specified discriminator.
@@ -111,29 +114,33 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     /// <param name="discriminatorType">
     ///     The discriminator implementation type.
     /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
+    /// </param>
     /// <returns>
     ///     The service of type <typeparamref name="TService" />, or <c>null</c> if no factory is registered for the specified
     ///     discriminator type.
     /// </returns>
-    protected TService? GetService(Type discriminatorType) =>
+    protected TService? GetService(Type discriminatorType, IServiceProvider serviceProvider) =>
         _cache == null
-            ? CreateServiceInstance(discriminatorType, _factories, _overrideFactory)
+            ? CreateServiceInstance(discriminatorType, _factories, _overrideFactory, serviceProvider)
             : _cache.GetOrAdd(
                 discriminatorType,
                 static (_, args) =>
-                    CreateServiceInstance(args.DiscriminatorType, args.Factories, args.OverrideFactory),
-                (DiscriminatorType: discriminatorType, Factories: _factories, OverrideFactory: _overrideFactory));
+                    CreateServiceInstance(args.DiscriminatorType, args.Factories, args.OverrideFactory, args.ServiceProvider),
+                (DiscriminatorType: discriminatorType, ServiceProvider: serviceProvider, Factories: _factories, OverrideFactory: _overrideFactory));
 
     private static TService? CreateServiceInstance(
         Type discriminatorType,
-        Dictionary<Type, Func<TService>> factories,
-        Func<TService>? overrideFactory)
+        Dictionary<Type, Func<IServiceProvider, TService>> factories,
+        Func<IServiceProvider, TService>? overrideFactory,
+        IServiceProvider serviceProvider)
     {
         if (overrideFactory != null)
-            return overrideFactory.Invoke();
+            return overrideFactory.Invoke(serviceProvider);
 
-        if (factories.TryGetValue(discriminatorType, out Func<TService>? factory))
-            return factory.Invoke();
+        if (factories.TryGetValue(discriminatorType, out Func<IServiceProvider, TService>? factory))
+            return factory.Invoke(serviceProvider);
 
         return default;
     }

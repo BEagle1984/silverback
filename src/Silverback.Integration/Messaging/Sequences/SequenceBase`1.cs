@@ -99,7 +99,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _identifiersTracker = trackIdentifiers
             ? context.ServiceProvider.GetRequiredService<IBrokerMessageIdentifiersTrackerFactory>()
-                .GetTracker(context.Envelope.Endpoint.Configuration)
+                .GetTracker(context.Envelope.Endpoint.Configuration, context.ServiceProvider)
             : null;
     }
 

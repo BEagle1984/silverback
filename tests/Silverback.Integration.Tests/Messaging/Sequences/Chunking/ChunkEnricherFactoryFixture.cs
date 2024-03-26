@@ -3,6 +3,7 @@
 
 using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -18,11 +19,15 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnChunkEnricherAccordingToEndpointType()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<ChunkEnricher1>();
         enricher2.Should().BeOfType<ChunkEnricher2>();
@@ -33,7 +38,7 @@ public class ChunkEnricherFactoryFixture
     {
         ChunkEnricherFactory factory = new();
 
-        Action act = () => factory.GetEnricher(null!);
+        Action act = () => factory.GetEnricher(null!, Substitute.For<IServiceProvider>());
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -42,10 +47,14 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnNullEnricher_WhenFactoryNotRegistered()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic1", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpoint2("topic1", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<NullChunkEnricher>();
         enricher2.Should().BeSameAs(enricher1);
@@ -55,11 +64,15 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedLockInstance()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher2.Should().BeSameAs(enricher1);
     }
@@ -68,14 +81,14 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedLockInstance_WhenOverridden()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
 
-        factory.OverrideFactories(() => new OverrideChunkEnricher());
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
 
         ProducerEndpoint endpoint1 = new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration());
-        IChunkEnricher enricher1 = factory.GetEnricher(endpoint1);
-        IChunkEnricher enricher2 = factory.GetEnricher(endpoint1);
+        IChunkEnricher enricher1 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(endpoint1, Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<OverrideChunkEnricher>();
         enricher2.Should().BeSameAs(enricher1);
@@ -85,15 +98,27 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedInstanceByTypeRegardlessOfSettings()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
 
-        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1A1 = factory.GetEnricher(
+            new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1A2 = factory.GetEnricher(
+            new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B1 = factory.GetEnricher(
+            new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B2 = factory.GetEnricher(
+            new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A1 = factory.GetEnricher(
+            new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A2 = factory.GetEnricher(
+            new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher1A1.Should().BeSameAs(enricher1A2);
         enricher1B1.Should().BeSameAs(enricher1B2);
@@ -106,16 +131,28 @@ public class ChunkEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedInstanceRegardlessOfTypeAndSettings_WhenOverridden()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
-        factory.OverrideFactories(() => new OverrideChunkEnricher());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
 
-        IChunkEnricher enricher1A1 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1A2 = factory.GetEnricher(new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1B1 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher1B2 = factory.GetEnricher(new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2A1 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2A2 = factory.GetEnricher(new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1A1 = factory.GetEnricher(
+            new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1A2 = factory.GetEnricher(
+            new ProducerEndpoint1("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B1 = factory.GetEnricher(
+            new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher1B2 = factory.GetEnricher(
+            new ProducerEndpoint1("B", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A1 = factory.GetEnricher(
+            new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2A2 = factory.GetEnricher(
+            new ProducerEndpoint2("A", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher1A1.Should().BeSameAs(enricher1A2);
         enricher1B1.Should().BeSameAs(enricher1B2);
@@ -128,9 +165,9 @@ public class ChunkEnricherFactoryFixture
     public void AddFactory_ShouldThrow_WhenFactoryAlreadyRegisteredForSameType()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
 
-        Action act = () => factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
+        Action act = () => factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("The factory for the specified discriminator type is already registered.");
@@ -140,13 +177,17 @@ public class ChunkEnricherFactoryFixture
     public void OverrideFactories_ShouldOverrideAllFactories()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
-        factory.AddFactory<ProducerEndpoint2>(() => new ChunkEnricher2());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint2>(_ => new ChunkEnricher2());
 
-        factory.OverrideFactories(() => new OverrideChunkEnricher());
+        factory.OverrideFactories(_ => new OverrideChunkEnricher());
 
-        IChunkEnricher enricher1 = factory.GetEnricher(new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()));
-        IChunkEnricher enricher2 = factory.GetEnricher(new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()));
+        IChunkEnricher enricher1 = factory.GetEnricher(
+            new ProducerEndpoint1("topic1", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
+        IChunkEnricher enricher2 = factory.GetEnricher(
+            new ProducerEndpoint2("topic2", new TestProducerEndpointConfiguration()),
+            Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<OverrideChunkEnricher>();
         enricher2.Should().BeOfType<OverrideChunkEnricher>();
@@ -156,7 +197,7 @@ public class ChunkEnricherFactoryFixture
     public void HasFactory_ShouldReturnTrue_WhenFactoryIsRegistered()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
 
         bool result = factory.HasFactory<ProducerEndpoint1>();
 
@@ -167,7 +208,7 @@ public class ChunkEnricherFactoryFixture
     public void HasFactory_ShouldReturnFalse_WhenFactoryIsNotRegistered()
     {
         ChunkEnricherFactory factory = new();
-        factory.AddFactory<ProducerEndpoint1>(() => new ChunkEnricher1());
+        factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
 
         bool result = factory.HasFactory<ProducerEndpoint2>();
 

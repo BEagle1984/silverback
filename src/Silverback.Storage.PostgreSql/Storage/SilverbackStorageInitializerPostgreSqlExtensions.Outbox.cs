@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage.DataAccess;
@@ -42,12 +43,10 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    public static Task CreatePostgreSqlOutboxAsync(
-        this SilverbackStorageInitializer initializer,
-        PostgreSqlOutboxSettings settings)
+    public static Task CreatePostgreSqlOutboxAsync(this SilverbackStorageInitializer initializer, PostgreSqlOutboxSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
-        return CreatePostgreSqlOutboxAsync(initializer, settings.ConnectionString, settings.TableName);
+        return CreatePostgreSqlOutboxAsync(initializer, settings.ConnectionString, settings.TableName, settings.CreateTableTimeout);
     }
 
     /// <summary>
@@ -62,13 +61,17 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
     /// <param name="tableName">
     ///     The name of the outbox table.
     /// </param>
+    /// <param name="timeout">
+    ///   The table creation timeout.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     public static Task CreatePostgreSqlOutboxAsync(
         this SilverbackStorageInitializer initializer,
         string connectionString,
-        string tableName)
+        string tableName,
+        TimeSpan timeout)
     {
         Check.NotNull(initializer, nameof(initializer));
         Check.NotNullOrEmpty(connectionString, nameof(connectionString));
@@ -76,13 +79,14 @@ public static partial class SilverbackStorageInitializerPostgreSqlExtensions
 
         PostgreSqlDataAccess dataAccess = new(connectionString);
 
-        return dataAccess.ExecuteNonQueryAsync(
-            $"CREATE TABLE IF NOT EXISTS \"{tableName}\" (" +
-            "Id SERIAL PRIMARY KEY," +
-            "Content BYTEA," +
-            "Headers TEXT," +
-            "EndpointName TEXT NOT NULL," +
-            "DynamicEndpoint TEXT," +
-            "Created TIMESTAMP WITH TIME ZONE NOT NULL);");
+        string sql = $"CREATE TABLE IF NOT EXISTS \"{tableName}\" (" +
+                     "Id SERIAL PRIMARY KEY," +
+                     "Content BYTEA," +
+                     "Headers TEXT," +
+                     "EndpointName TEXT NOT NULL," +
+                     "DynamicEndpoint TEXT," +
+                     "Created TIMESTAMP WITH TIME ZONE NOT NULL);";
+
+        return dataAccess.ExecuteNonQueryAsync(sql, null, timeout);
     }
 }

@@ -16,6 +16,8 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class SqliteOutboxWriter : IOutboxWriter
 {
+    private readonly SqliteOutboxSettings _settings;
+
     private readonly SqliteDataAccess _dataAccess;
 
     private readonly string _insertSql;
@@ -28,7 +30,7 @@ public class SqliteOutboxWriter : IOutboxWriter
     /// </param>
     public SqliteOutboxWriter(SqliteOutboxSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings, nameof(settings));
         _dataAccess = new SqliteDataAccess(settings.ConnectionString);
 
         _insertSql = $"INSERT INTO {settings.TableName} (" +
@@ -51,28 +53,32 @@ public class SqliteOutboxWriter : IOutboxWriter
         Check.NotNull(outboxMessage, nameof(outboxMessage));
 
         return _dataAccess.ExecuteNonQueryAsync(
-            context,
             _insertSql,
-            new SqliteParameter("@Content", SqliteType.Blob)
+            new SqliteParameter[]
             {
-                Value = outboxMessage.Content
+                new("@Content", SqliteType.Blob)
+                {
+                    Value = outboxMessage.Content
+                },
+                new("@Headers", SqliteType.Text)
+                {
+                    Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
+                },
+                new("@EndpointName", SqliteType.Text)
+                {
+                    Value = outboxMessage.Endpoint.FriendlyName
+                },
+                new("@DynamicEndpoint", SqliteType.Text)
+                {
+                    Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
+                },
+                new("@Created", SqliteType.Integer)
+                {
+                    Value = DateTime.UtcNow
+                }
             },
-            new SqliteParameter("@Headers", SqliteType.Text)
-            {
-                Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
-            },
-            new SqliteParameter("@EndpointName", SqliteType.Text)
-            {
-                Value = outboxMessage.Endpoint.FriendlyName
-            },
-            new SqliteParameter("@DynamicEndpoint", SqliteType.Text)
-            {
-                Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
-            },
-            new SqliteParameter("@Created", SqliteType.Integer)
-            {
-                Value = DateTime.UtcNow
-            });
+            _settings.DbCommandTimeout,
+            context);
     }
 
     /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
@@ -101,6 +107,7 @@ public class SqliteOutboxWriter : IOutboxWriter
                 parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
+            _settings.DbCommandTimeout,
             context);
     }
 
@@ -130,6 +137,7 @@ public class SqliteOutboxWriter : IOutboxWriter
                 parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
+            _settings.DbCommandTimeout,
             context);
     }
 }

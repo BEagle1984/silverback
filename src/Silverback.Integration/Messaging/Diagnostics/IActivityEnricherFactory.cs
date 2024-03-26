@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Messaging.Diagnostics;
@@ -16,8 +17,11 @@ public interface IActivityEnricherFactory
     /// <param name="configuration">
     ///     The endpoint.
     /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
+    /// </param>
     /// <returns>
     ///     The <see cref="IBrokerActivityEnricher" /> that matches the specified endpoint type.
     /// </returns>
-    IBrokerActivityEnricher GetEnricher(EndpointConfiguration configuration);
+    IBrokerActivityEnricher GetEnricher(EndpointConfiguration configuration, IServiceProvider serviceProvider);
 }

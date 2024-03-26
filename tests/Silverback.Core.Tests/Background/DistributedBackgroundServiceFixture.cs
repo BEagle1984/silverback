@@ -23,9 +23,11 @@ public class DistributedBackgroundServiceFixture
     {
         bool executed = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestDistributedBackgroundService service = new(
             _ =>
@@ -33,7 +35,7 @@ public class DistributedBackgroundServiceFixture
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(null));
+            lockFactory.GetDistributedLock(null, serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
@@ -45,9 +47,12 @@ public class DistributedBackgroundServiceFixture
     {
         bool executed = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            services => services
+                .AddFakeLogger()
+                .AddSilverback()
+                .UseInMemoryLock());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestDistributedBackgroundService service = new(
             _ =>
@@ -55,7 +60,7 @@ public class DistributedBackgroundServiceFixture
                 executed = true;
                 return Task.CompletedTask;
             },
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("lock"), serviceProvider));
         await service.StartAsync(CancellationToken.None);
 
         await AsyncTestingUtil.WaitAsync(() => executed);
@@ -71,16 +76,20 @@ public class DistributedBackgroundServiceFixture
         int executingCount = 0;
         bool executedInParallel = false;
 
-        IDistributedLockFactory lockFactory = ServiceProviderHelper
-            .GetServiceProvider(services => services.AddFakeLogger().AddSilverback().UseInMemoryLock())
-            .GetRequiredService<IDistributedLockFactory>();
+        IServiceProvider serviceProvider = ServiceProviderHelper
+            .GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .UseInMemoryLock());
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestDistributedBackgroundService service1 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
         using TestDistributedBackgroundService service2 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed2 = true),
-            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock")));
+            lockFactory.GetDistributedLock(new InMemoryLockSettings("shared-lock"), serviceProvider));
 
         service2.DistributedLock.Should().BeSameAs(service1.DistributedLock);
 

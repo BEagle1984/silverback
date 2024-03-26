@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -20,11 +21,11 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnBrokerLogEnricherAccordingToEndpointConfigurationType()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
 
-        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1());
-        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2());
+        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<BrokerLogEnricher1>();
         enricher2.Should().BeOfType<BrokerLogEnricher2>();
@@ -34,9 +35,9 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnNullEnricher_WhenFactoryNotRegistered()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
-        IBrokerLogEnricher enricher = factory.GetEnricher(new EndpointConfiguration2());
+        IBrokerLogEnricher enricher = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
         enricher.Should().Be(NullBrokerLogEnricher.Instance);
     }
@@ -45,11 +46,11 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedEnricherInstance()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
 
-        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1());
-        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration1());
+        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
 
         enricher2.Should().BeSameAs(enricher1);
     }
@@ -58,14 +59,14 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedEnricherInstance_WhenOverridden()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
 
-        factory.OverrideFactories(() => new OverrideLogEnricher());
+        factory.OverrideFactories(_ => new OverrideLogEnricher());
 
         EndpointConfiguration1 endpointConfiguration1 = new();
-        IBrokerLogEnricher enricher1 = factory.GetEnricher(endpointConfiguration1);
-        IBrokerLogEnricher enricher2 = factory.GetEnricher(endpointConfiguration1);
+        IBrokerLogEnricher enricher1 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2 = factory.GetEnricher(endpointConfiguration1, Substitute.For<IServiceProvider>());
 
         enricher2.Should().BeSameAs(enricher1);
     }
@@ -74,13 +75,13 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedInstanceByType()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
 
-        IBrokerLogEnricher enricher1A = factory.GetEnricher(new EndpointConfiguration1("A"));
-        IBrokerLogEnricher enricher1B = factory.GetEnricher(new EndpointConfiguration1("B"));
-        IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2());
-        IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2());
+        IBrokerLogEnricher enricher1A = factory.GetEnricher(new EndpointConfiguration1("A"), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher1B = factory.GetEnricher(new EndpointConfiguration1("B"), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
         enricher1A.Should().BeSameAs(enricher1B);
         enricher2A.Should().BeSameAs(enricher2B);
@@ -91,14 +92,14 @@ public class BrokerLogEnricherFactoryFixture
     public void GetEnricher_ShouldReturnCachedInstanceByType_WhenOverridden()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
-        factory.OverrideFactories(() => new OverrideLogEnricher());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
+        factory.OverrideFactories(_ => new OverrideLogEnricher());
 
-        IBrokerLogEnricher enricher1A = factory.GetEnricher(new EndpointConfiguration1("A"));
-        IBrokerLogEnricher enricher1B = factory.GetEnricher(new EndpointConfiguration1("B"));
-        IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2());
-        IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2());
+        IBrokerLogEnricher enricher1A = factory.GetEnricher(new EndpointConfiguration1("A"), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher1B = factory.GetEnricher(new EndpointConfiguration1("B"), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2A = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2B = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
         enricher1A.Should().BeSameAs(enricher1B);
         enricher2A.Should().BeSameAs(enricher2B);
@@ -109,9 +110,9 @@ public class BrokerLogEnricherFactoryFixture
     public void AddFactory_ShouldThrow_WhenFactoryAlreadyRegisteredForSameType()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
-        Action act = () => factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
+        Action act = () => factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("The factory for the specified discriminator type is already registered.");
@@ -121,13 +122,13 @@ public class BrokerLogEnricherFactoryFixture
     public void OverrideFactories_ShouldOverrideAllFactories()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
-        factory.AddFactory<EndpointConfiguration2>(() => new BrokerLogEnricher2());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration2>(_ => new BrokerLogEnricher2());
 
-        factory.OverrideFactories(() => new OverrideLogEnricher());
+        factory.OverrideFactories(_ => new OverrideLogEnricher());
 
-        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1());
-        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2());
+        IBrokerLogEnricher enricher1 = factory.GetEnricher(new EndpointConfiguration1(), Substitute.For<IServiceProvider>());
+        IBrokerLogEnricher enricher2 = factory.GetEnricher(new EndpointConfiguration2(), Substitute.For<IServiceProvider>());
 
         enricher1.Should().BeOfType<OverrideLogEnricher>();
         enricher2.Should().BeOfType<OverrideLogEnricher>();
@@ -137,7 +138,7 @@ public class BrokerLogEnricherFactoryFixture
     public void HasFactory_ShouldReturnTrue_WhenFactoryIsRegistered()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
         bool result = factory.HasFactory<EndpointConfiguration1>();
 
@@ -148,7 +149,7 @@ public class BrokerLogEnricherFactoryFixture
     public void HasFactory_ShouldReturnFalse_WhenFactoryIsNotRegistered()
     {
         BrokerLogEnricherFactory factory = new();
-        factory.AddFactory<EndpointConfiguration1>(() => new BrokerLogEnricher1());
+        factory.AddFactory<EndpointConfiguration1>(_ => new BrokerLogEnricher1());
 
         bool result = factory.HasFactory<EndpointConfiguration2>();
 

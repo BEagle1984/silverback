@@ -23,6 +23,8 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
 
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly ISilverbackLogger _logger;
 
     private readonly IConfluentConsumerBuilder _consumerBuilder;
@@ -44,12 +46,14 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         IConfluentAdminClientBuilder adminClientBuilder,
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
         IKafkaOffsetStoreFactory offsetStoreFactory,
+        IServiceProvider serviceProvider,
         ISilverbackLogger logger)
         : base(name, logger)
     {
         Configuration = Check.NotNull(configuration, nameof(configuration));
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _consumerBuilder = Check.NotNull(consumerBuilder, nameof(consumerBuilder))
@@ -214,7 +218,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private async IAsyncEnumerable<TopicPartitionOffset> GetAssignmentAsync(KafkaConsumerEndpointConfiguration endpointConfiguration)
     {
-        StoredOffsetsLoader storedOffsetsLoader = new(_offsetStoreFactory, Configuration);
+        StoredOffsetsLoader storedOffsetsLoader = new(_offsetStoreFactory, Configuration, _serviceProvider);
 
         foreach (TopicPartitionOffset topicPartitionOffset in endpointConfiguration.TopicPartitions)
         {

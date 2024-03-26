@@ -31,8 +31,8 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
 
         OutboxSettings outboxSettings = new SqliteOutboxSettings("conn");
 
-        IOutboxReader reader = readerFactory.GetReader(outboxSettings);
-        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings);
+        IOutboxReader reader = readerFactory.GetReader(outboxSettings, serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
         reader.Should().BeOfType<SqliteOutboxReader>();
         writer.Should().BeOfType<SqliteOutboxWriter>();
@@ -50,15 +50,15 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
         OutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<OutboxReaderFactory>();
         OutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<OutboxWriterFactory>();
 
-        readerFactory.AddFactory<OutboxSettings1>(_ => new OutboxReader1());
-        readerFactory.AddFactory<OutboxSettings2>(_ => new OutboxReader2());
-        writerFactory.AddFactory<OutboxSettings1>(_ => new OutboxWriter1());
-        writerFactory.AddFactory<OutboxSettings2>(_ => new OutboxWriter2());
+        readerFactory.AddFactory<OutboxSettings1>((_, _) => new OutboxReader1());
+        readerFactory.AddFactory<OutboxSettings2>((_, _) => new OutboxReader2());
+        writerFactory.AddFactory<OutboxSettings1>((_, _) => new OutboxWriter1());
+        writerFactory.AddFactory<OutboxSettings2>((_, _) => new OutboxWriter2());
 
-        IOutboxReader reader1 = readerFactory.GetReader(new OutboxSettings1());
-        IOutboxReader reader2 = readerFactory.GetReader(new OutboxSettings2());
-        IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1());
-        IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2());
+        IOutboxReader reader1 = readerFactory.GetReader(new OutboxSettings1(), serviceProvider);
+        IOutboxReader reader2 = readerFactory.GetReader(new OutboxSettings2(), serviceProvider);
+        IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1(), serviceProvider);
+        IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2(), serviceProvider);
 
         reader1.Should().BeOfType<SqliteOutboxReader>();
         reader2.Should().BeOfType<SqliteOutboxReader>();

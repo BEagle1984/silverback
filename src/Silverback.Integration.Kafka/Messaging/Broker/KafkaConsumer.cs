@@ -147,7 +147,8 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         if (!IsStartedAndNotStopping())
             return Array.Empty<TopicPartitionOffset>(); // TODO: Check this
 
-        topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration).ApplyStoredOffsets(topicPartitionOffsets);
+        topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration, ServiceProvider)
+            .ApplyStoredOffsets(topicPartitionOffsets);
 
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionOffsets)
         {

@@ -30,7 +30,7 @@ public static partial class BrokerOptionsBuilderPostgreSqlExtensions
                                           throw new InvalidOperationException("OffsetStoreFactory not found, AddKafka has not been called.");
 
         if (!factory.HasFactory<PostgreSqlKafkaOffsetStoreSettings>())
-            factory.AddFactory<PostgreSqlKafkaOffsetStoreSettings>(settings => new PostgreSqlKafkaOffsetStore(settings));
+            factory.AddFactory<PostgreSqlKafkaOffsetStoreSettings>((settings, _) => new PostgreSqlKafkaOffsetStore(settings));
 
         return builder;
     }

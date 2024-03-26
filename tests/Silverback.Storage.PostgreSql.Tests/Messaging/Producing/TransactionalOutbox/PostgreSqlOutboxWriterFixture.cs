@@ -29,7 +29,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
 
     public PostgreSqlOutboxWriterFixture()
     {
-        _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString, "TestOutbox");
+        _outboxSettings = new PostgreSqlOutboxSettings(ConnectionString);
         _outboxReader = new PostgreSqlOutboxReader(_outboxSettings);
     }
 
@@ -46,7 +46,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -71,7 +71,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -94,7 +94,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -117,7 +117,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
@@ -171,7 +171,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
@@ -236,7 +236,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlOutboxAsync(_outboxSettings);
 
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, serviceProvider);
 
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));

@@ -51,7 +51,7 @@ public sealed class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxP
     /// <inheritdoc cref="IProduceStrategy.Build" />
     public IProduceStrategyImplementation Build(IServiceProvider serviceProvider, ProducerEndpointConfiguration endpointConfiguration)
     {
-        _outboxWriter ??= serviceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings);
+        _outboxWriter ??= serviceProvider.GetRequiredService<OutboxWriterFactory>().GetWriter(Settings, serviceProvider);
         _logger ??= serviceProvider.GetRequiredService<IProducerLogger<OutboxProduceStrategy>>();
 
         return new OutboxProduceStrategyImplementation(_outboxWriter, endpointConfiguration, serviceProvider, _logger);

@@ -12,11 +12,14 @@ internal sealed class InternalConsumerLoggerFactory
 {
     private readonly IBrokerLogEnricherFactory _enricherFactory;
 
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly ConcurrentDictionary<Type, ConsumerLogger> _cache = new();
 
-    public InternalConsumerLoggerFactory(IBrokerLogEnricherFactory enricherFactory)
+    public InternalConsumerLoggerFactory(IBrokerLogEnricherFactory enricherFactory, IServiceProvider serviceProvider)
     {
         _enricherFactory = Check.NotNull(enricherFactory, nameof(enricherFactory));
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
     public ConsumerLogger GetConsumerLogger(ConsumerEndpointConfiguration endpointConfiguration)
@@ -25,7 +28,10 @@ internal sealed class InternalConsumerLoggerFactory
 
         return _cache.GetOrAdd(
             configurationType,
-            static (_, args) => new ConsumerLogger(args.Factory.GetEnricher(args.Configuration)),
-            (Configuration: endpointConfiguration, Factory: _enricherFactory));
+            static (_, args) => new ConsumerLogger(
+                args.Factory.GetEnricher(
+                    args.Configuration,
+                    args.ServiceProvider)),
+            (Configuration: endpointConfiguration, Factory: _enricherFactory, ServiceProvider: _serviceProvider));
     }
 }
