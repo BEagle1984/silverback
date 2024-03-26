@@ -20,7 +20,12 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
 
     public PostgreSqlTableLockFixture()
     {
-        _lockSettings = new PostgreSqlTableLockSettings("test-lock", ConnectionString);
+        _lockSettings = new PostgreSqlTableLockSettings("test-lock", ConnectionString)
+        {
+            AcquireInterval = TimeSpan.FromMilliseconds(10),
+            HeartbeatInterval = TimeSpan.FromMilliseconds(10),
+            LockTimeout = TimeSpan.FromSeconds(100)
+        };
     }
 
     [Fact]
@@ -84,7 +89,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
         handleA.Should().NotBeNull();
         handleB.Should().NotBeNull();
 
-        await Task.Delay(50);
+        await Task.Delay(100);
 
         (taskA1.IsCompleted ^ taskA2.IsCompleted).Should().BeTrue();
         (taskB1.IsCompleted ^ taskB2.IsCompleted).Should().BeTrue();
@@ -207,11 +212,7 @@ public class PostgreSqlTableLockFixture : PostgresContainerFixture
                 .AddPostgreSqlTableLock());
 
         SilverbackStorageInitializer storageInitializer = serviceProvider.GetRequiredService<SilverbackStorageInitializer>();
-        await storageInitializer.CreatePostgreSqlLocksTableAsync(
-            new PostgreSqlTableLockSettings("test-lock", ConnectionString)
-            {
-                HeartbeatInterval = TimeSpan.FromMilliseconds(10)
-            });
+        await storageInitializer.CreatePostgreSqlLocksTableAsync(_lockSettings);
 
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
         IDistributedLock distributedLock = lockFactory.GetDistributedLock(_lockSettings, serviceProvider);

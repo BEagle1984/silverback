@@ -6,10 +6,10 @@ using Silverback.Lock;
 
 namespace Silverback.Configuration;
 
-/// <content>
+/// <summary>
 ///     Adds the <see cref="UsePostgreSqlAdvisoryLock" /> and  <see cref="UsePostgreSqlTable" /> methods to the
 ///     <see cref="DistributedLockSettingsBuilder" />.
-/// </content>
+/// </summary>
 public static class PostgreSqlDistributedLockSettingsBuilderExtensions
 {
     /// <summary>
