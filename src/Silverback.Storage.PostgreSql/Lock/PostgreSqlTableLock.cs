@@ -1,9 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
@@ -16,15 +13,17 @@ namespace Silverback.Lock;
 /// <summary>
 ///     The distributed lock based on a PostgreSql table.
 /// </summary>
-public class PostgreSqlTableLock : DistributedLock
+public class PostgreSqlTableLock : TableBasedDistributedLock
 {
     private readonly PostgreSqlTableLockSettings _settings;
 
-    private readonly ISilverbackLogger<PostgreSqlTableLock> _logger;
-
     private readonly PostgreSqlDataAccess _dataAccess;
 
-    private readonly string _insertLockSql;
+    private readonly string _acquireLockSql;
+
+    private readonly string _heartbeatSql;
+
+    private readonly string _releaseLockSql;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PostgreSqlTableLock" /> class.
@@ -36,166 +35,61 @@ public class PostgreSqlTableLock : DistributedLock
     ///     The logger.
     /// </param>
     public PostgreSqlTableLock(PostgreSqlTableLockSettings settings, ISilverbackLogger<PostgreSqlTableLock> logger)
+        : base(settings, logger)
     {
         _settings = Check.NotNull(settings, nameof(settings));
-        _logger = Check.NotNull(logger, nameof(logger));
 
         _dataAccess = new PostgreSqlDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
 
-        _insertLockSql = $"INSERT INTO \"{settings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +
-                         "SELECT @lockName, @handler, NOW(), NOW() " +
-                         "WHERE NOT EXISTS (" +
-                         $"   SELECT 1 FROM \"{settings.TableName}\"" +
-                         "    WHERE LockName = @lockName AND " +
-                         "          (Handler IS NULL OR LastHeartbeat < NOW() - @lockTimeout * INTERVAL '1 second'))";
+        _acquireLockSql = $"INSERT INTO \"{settings.TableName}\" (LockName, Handler, AcquiredOn, LastHeartbeat) " +
+                          "SELECT @lockName, @handler, NOW(), NOW() " +
+                          "WHERE NOT EXISTS (" +
+                          $"   SELECT 1 FROM \"{settings.TableName}\"" +
+                          "    WHERE LockName = @lockName AND Handler IS NOT NULL AND " +
+                          "          LastHeartbeat >= NOW() - @lockTimeout * INTERVAL '1 second')";
+
+        _heartbeatSql = $"UPDATE \"{settings.TableName}\" " +
+                        "SET LastHeartbeat = NOW() " +
+                        "WHERE LockName = @lockName AND Handler = @handler";
+
+        _releaseLockSql = $"DELETE FROM \"{settings.TableName}\" " +
+                          "WHERE LockName = @lockName AND Handler = @handler";
     }
 
-    /// <inheritdoc cref="DistributedLock.AcquireCoreAsync" />
-    protected override async ValueTask<DistributedLockHandle> AcquireCoreAsync(CancellationToken cancellationToken)
+    /// <inheritdoc cref="TableBasedDistributedLock.TryAcquireLockAsync" />
+    protected override async Task<bool> TryAcquireLockAsync(string handlerName)
     {
-        string handlerName = Guid.NewGuid().ToString("N");
-
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            try
+        int affected = await _dataAccess.ExecuteNonQueryAsync(
+            _acquireLockSql,
+            new NpgsqlParameter[]
             {
-                await _dataAccess.ExecuteNonQueryAsync(
-                    _insertLockSql,
-                    new NpgsqlParameter[]
-                    {
-                        new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-                        new("@handler", NpgsqlDbType.Text) { Value = handlerName },
-                        new("@lockTimeout", NpgsqlDbType.Integer) { Value = _settings.LockTimeout.TotalSeconds }
-                    },
-                    _settings.DbCommandTimeout).ConfigureAwait(false);
+                new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+                new("@handler", NpgsqlDbType.Text) { Value = handlerName },
+                new("@lockTimeout", NpgsqlDbType.Integer) { Value = _settings.LockTimeout.TotalSeconds }
+            },
+            _settings.DbCommandTimeout).ConfigureAwait(false);
 
-                return new PostgreSqlTableLockHandle(_settings, handlerName, _dataAccess, _logger);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogAcquireLockFailed(_settings.LockName, ex);
-            }
-        }
-
-        throw new OperationCanceledException(cancellationToken);
+        return affected == 1;
     }
 
-    private sealed class PostgreSqlTableLockHandle : DistributedLockHandle
-    {
-        private readonly PostgreSqlTableLockSettings _settings;
-
-        private readonly string _handlerName;
-
-        private readonly PostgreSqlDataAccess _dataAccess;
-
-        private readonly ISilverbackLogger<PostgreSqlTableLock> _logger;
-
-        private readonly string _heartbeatSql;
-
-        private readonly string _releaseLockSql;
-
-        private readonly CancellationTokenSource _lockLostTokenSource = new();
-
-        private readonly CancellationTokenSource _disposeTokenSource = new();
-
-        private bool _isDisposed;
-
-        public PostgreSqlTableLockHandle(PostgreSqlTableLockSettings settings, string handlerName, PostgreSqlDataAccess dataAccess, ISilverbackLogger<PostgreSqlTableLock> logger)
-        {
-            _settings = settings;
-            _handlerName = handlerName;
-            _dataAccess = dataAccess;
-            _logger = logger;
-
-            _heartbeatSql = $"UPDATE \"{settings.TableName}\" " +
-                             "SET LastHeartbeat = NOW() " +
-                             "WHERE LockName = @lockName AND Handler = @handler";
-
-            _releaseLockSql = $"DELETE FROM \"{settings.TableName}\" " +
-                              "WHERE LockName = @lockName AND Handler = @handler";
-
-            Task.Run(HeartbeatAsync).FireAndForget();
-        }
-
-        public override CancellationToken LockLostToken => _lockLostTokenSource.Token;
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                AsyncHelper.RunSynchronously(DisposeCoreAsync);
-        }
-
-        [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Intentional")]
-        protected override async ValueTask DisposeCoreAsync()
-        {
-            if (_isDisposed)
-                return;
-
-            _disposeTokenSource.Cancel();
-
-            await ReleaseLockAsync().ConfigureAwait(false);
-
-            _isDisposed = true;
-
-            _lockLostTokenSource.Dispose();
-            _disposeTokenSource.Dispose();
-        }
-
-        private async Task HeartbeatAsync()
-        {
-            while (!_disposeTokenSource.Token.IsCancellationRequested)
+    /// <inheritdoc cref="TableBasedDistributedLock.UpdateHeartbeatAsync" />
+    protected override Task UpdateHeartbeatAsync(string handlerName) =>
+        _dataAccess.ExecuteNonQueryAsync(
+            _heartbeatSql,
+            new NpgsqlParameter[]
             {
-                if (!await UpdateHeartbeatAsync().ConfigureAwait(false))
-                    return;
+                new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+                new("@handler", NpgsqlDbType.Text) { Value = handlerName }
+            },
+            _settings.DbCommandTimeout);
 
-                await Task.Delay(_settings.HeartbeatInterval, _disposeTokenSource.Token).ConfigureAwait(false);
-            }
-        }
-
-        private async Task<bool> UpdateHeartbeatAsync()
+    /// <inheritdoc cref="TableBasedDistributedLock.ReleaseLockAsync" />
+    protected override Task ReleaseLockAsync(string handlerName) => _dataAccess.ExecuteNonQueryAsync(
+        _releaseLockSql,
+        new NpgsqlParameter[]
         {
-            try
-            {
-                await _dataAccess.ExecuteNonQueryAsync(
-                    _heartbeatSql,
-                    new NpgsqlParameter[]
-                    {
-                        new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-                        new("@handler", NpgsqlDbType.Text) { Value = _handlerName }
-                    },
-                    _settings.DbCommandTimeout).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                if (!_disposeTokenSource.Token.IsCancellationRequested)
-                {
-                    _logger.LogLockLost(_settings.LockName, ex);
-                    _lockLostTokenSource.Cancel();
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-
-        private async Task ReleaseLockAsync()
-        {
-            try
-            {
-                await _dataAccess.ExecuteNonQueryAsync(
-                    _releaseLockSql,
-                    new NpgsqlParameter[]
-                    {
-                        new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-                        new("@handler", NpgsqlDbType.Text) { Value = _handlerName }
-                    },
-                    _settings.DbCommandTimeout).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogReleaseLockFailed(_settings.LockName, ex);
-            }
-        }
-    }
+            new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+            new("@handler", NpgsqlDbType.Text) { Value = handlerName }
+        },
+        _settings.DbCommandTimeout);
 }

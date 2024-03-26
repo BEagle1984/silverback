@@ -67,14 +67,15 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return (T?)result;
     }
 
-    public async Task ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, SilverbackContext? context = null)
+    public async Task<int> ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, SilverbackContext? context = null)
     {
         using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
         try
         {
-            await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
+            int affected = await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
             await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
+            return affected;
         }
         catch (Exception)
         {
