@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Sequences.Chunking;
 /// </summary>
 public class ChunkSequenceWriter : ISequenceWriter
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly IChunkEnricherFactory _chunkEnricherFactory;
 
     /// <summary>
@@ -23,9 +25,13 @@ public class ChunkSequenceWriter : ISequenceWriter
     /// <param name="chunkEnricherFactory">
     ///     The <see cref="IChunkEnricherFactory" />.
     /// </param>
-    public ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory)
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
+    public ChunkSequenceWriter(IChunkEnricherFactory chunkEnricherFactory, IServiceProvider serviceProvider)
     {
         _chunkEnricherFactory = Check.NotNull(chunkEnricherFactory, nameof(chunkEnricherFactory));
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
     /// <inheritdoc cref="ISequenceWriter.CanHandle" />
@@ -94,7 +100,9 @@ public class ChunkSequenceWriter : ISequenceWriter
             // Read and store the offset of the first chunk, after it has been produced (after yield return)
             if (chunkIndex == 0)
             {
-                firstChunkMessageHeader = _chunkEnricherFactory.GetEnricher(chunkEnvelope.Endpoint).GetFirstChunkMessageHeader(chunkEnvelope);
+                firstChunkMessageHeader = _chunkEnricherFactory
+                    .GetEnricher(chunkEnvelope.Endpoint, _serviceProvider)
+                    .GetFirstChunkMessageHeader(chunkEnvelope);
             }
 
             chunkIndex++;

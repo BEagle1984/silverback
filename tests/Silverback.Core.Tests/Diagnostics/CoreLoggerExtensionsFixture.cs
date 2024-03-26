@@ -53,18 +53,6 @@ public class CoreLoggerExtensionsFixture
     }
 
     [Fact]
-    public void LogBackgroundServiceLockAcquired_ShouldLog()
-    {
-        string expectedMessage =
-            "Lock acquired, executing background service " +
-            "Silverback.Tests.Core.Diagnostics.CoreLoggerExtensionsFixture+FakeBackgroundService.";
-
-        _silverbackLogger.LogBackgroundServiceLockAcquired(new FakeBackgroundService());
-
-        _logger.Received(LogLevel.Information, null, expectedMessage, 42);
-    }
-
-    [Fact]
     public void LogBackgroundServiceException_ShouldLog()
     {
         string expectedMessage =
@@ -76,7 +64,7 @@ public class CoreLoggerExtensionsFixture
             new FakeBackgroundService(),
             new TimeoutException());
 
-        _logger.Received(LogLevel.Error, typeof(TimeoutException), expectedMessage, 43);
+        _logger.Received(LogLevel.Error, typeof(TimeoutException), expectedMessage, 42);
     }
 
     [Fact]
@@ -105,6 +93,56 @@ public class CoreLoggerExtensionsFixture
             TimeSpan.FromSeconds(10));
 
         _logger.Received(LogLevel.Debug, null, expectedMessage, 52);
+    }
+
+    [Fact]
+    public void LogLockAcquired_ShouldLog()
+    {
+        string expectedMessage = "Lock my-lock acquired.";
+
+        _silverbackLogger.LogLockAcquired("my-lock");
+
+        _logger.Received(LogLevel.Information, null, expectedMessage, 61);
+    }
+
+    [Fact]
+    public void LogLockReleased_ShouldLog()
+    {
+        string expectedMessage = "Lock my-lock released.";
+
+        _silverbackLogger.LogLockReleased("my-lock");
+
+        _logger.Received(LogLevel.Information, null, expectedMessage, 62);
+    }
+
+    [Fact]
+    public void LogLockLost_ShouldLog()
+    {
+        string expectedMessage = "Lock my-lock lost.";
+
+        _silverbackLogger.LogLockLost("my-lock", new ArithmeticException());
+
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 63);
+    }
+
+    [Fact]
+    public void LogAcquireLockFailed_ShouldLog()
+    {
+        string expectedMessage = "Failed to acquire lock my-lock.";
+
+        _silverbackLogger.LogAcquireLockFailed("my-lock", new ArithmeticException());
+
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 64);
+    }
+
+    [Fact]
+    public void LogReleaseLockFailed_ShouldLog()
+    {
+        string expectedMessage = "Failed to release lock my-lock.";
+
+        _silverbackLogger.LogReleaseLockFailed("my-lock", new ArithmeticException());
+
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 65);
     }
 
     private sealed class FakeBackgroundService : DistributedBackgroundService

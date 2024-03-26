@@ -22,7 +22,7 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
 
     public PostgreSqlKafkaOffsetStoreFixture()
     {
-        _offsetStoreSettings = new PostgreSqlKafkaOffsetStoreSettings(ConnectionString, "TestOutbox");
+        _offsetStoreSettings = new PostgreSqlKafkaOffsetStoreSettings(ConnectionString);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(_offsetStoreSettings);
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        PostgreSqlKafkaOffsetStore store = (PostgreSqlKafkaOffsetStore)factory.GetStore(_offsetStoreSettings);
+        PostgreSqlKafkaOffsetStore store = (PostgreSqlKafkaOffsetStore)factory.GetStore(_offsetStoreSettings, serviceProvider);
 
         await store.StoreOffsetsAsync(
             "group1",
@@ -79,7 +79,7 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
         await storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(_offsetStoreSettings);
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        IKafkaOffsetStore store = factory.GetStore(_offsetStoreSettings);
+        IKafkaOffsetStore store = factory.GetStore(_offsetStoreSettings, serviceProvider);
 
         KafkaOffset[] offsets =
         {

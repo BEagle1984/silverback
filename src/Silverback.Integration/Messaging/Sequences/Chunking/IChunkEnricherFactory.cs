@@ -1,6 +1,8 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+
 namespace Silverback.Messaging.Sequences.Chunking;
 
 /// <summary>
@@ -14,8 +16,11 @@ public interface IChunkEnricherFactory
     /// <param name="endpoint">
     ///     The endpoint that will be used to create the <see cref="IChunkEnricher" />.
     /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
+    /// </param>
     /// <returns>
     ///     The <see cref="IChunkEnricher" />.
     /// </returns>
-    IChunkEnricher GetEnricher(ProducerEndpoint endpoint);
+    IChunkEnricher GetEnricher(ProducerEndpoint endpoint, IServiceProvider serviceProvider);
 }

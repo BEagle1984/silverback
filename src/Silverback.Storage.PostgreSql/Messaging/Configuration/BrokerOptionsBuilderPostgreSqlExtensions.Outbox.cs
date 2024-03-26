@@ -34,12 +34,14 @@ public static partial class BrokerOptionsBuilderPostgreSqlExtensions
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!readerFactory.HasFactory<PostgreSqlOutboxSettings>())
-            readerFactory.AddFactory<PostgreSqlOutboxSettings>(settings => new PostgreSqlOutboxReader(settings));
+            readerFactory.AddFactory<PostgreSqlOutboxSettings>((settings, _) => new PostgreSqlOutboxReader(settings));
 
         if (!writerFactory.HasFactory<PostgreSqlOutboxSettings>())
-            writerFactory.AddFactory<PostgreSqlOutboxSettings>(settings => new PostgreSqlOutboxWriter(settings));
+            writerFactory.AddFactory<PostgreSqlOutboxSettings>((settings, _) => new PostgreSqlOutboxWriter(settings));
 
-        builder.SilverbackBuilder.AddPostgreSqlLock();
+        builder.SilverbackBuilder
+            .AddPostgreSqlAdvisoryLock()
+            .AddPostgreSqlTableLock();
 
         return builder;
     }

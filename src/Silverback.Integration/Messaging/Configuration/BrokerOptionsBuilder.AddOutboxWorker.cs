@@ -55,12 +55,12 @@ public sealed partial class BrokerOptionsBuilder
                 {
                     OutboxWorker outboxWorker = new(
                         settings,
-                        serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox),
+                        serviceProvider.GetRequiredService<OutboxReaderFactory>().GetReader(settings.Outbox, serviceProvider),
                         serviceProvider.GetRequiredService<IProducerCollection>(),
                         serviceProvider.GetRequiredService<IProducerLogger<OutboxWorker>>());
 
                     IDistributedLockFactory distributedLockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
-                    IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock);
+                    IDistributedLock distributedLock = distributedLockFactory.GetDistributedLock(settings.DistributedLock, serviceProvider);
 
                     return new OutboxWorkerService(
                         settings.Interval,

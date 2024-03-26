@@ -18,33 +18,24 @@ public class PostgreSqlOutboxSettingsFixture
         PostgreSqlOutboxSettings settings = new("connection-string");
 
         settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("Silverback_Outbox");
+        settings.TableName.Should().Be("SilverbackOutbox");
     }
 
     [Fact]
-    public void Constructor_ShouldSetConnectionStringAndTableName()
+    public void GetCompatibleLockSettings_ShouldReturnPostgreSqlAdvisoryLockSettings()
     {
-        PostgreSqlOutboxSettings settings = new("connection-string", "my-outbox");
-
-        settings.ConnectionString.Should().Be("connection-string");
-        settings.TableName.Should().Be("my-outbox");
-    }
-
-    [Fact]
-    public void GetCompatibleLockSettings_ShouldReturnPostgreSqlLockSettings()
-    {
-        PostgreSqlOutboxSettings outboxSettings = new("connection-string", "my-outbox");
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string");
 
         DistributedLockSettings lockSettings = outboxSettings.GetCompatibleLockSettings();
 
-        lockSettings.Should().BeOfType<PostgreSqlLockSettings>();
-        lockSettings.As<PostgreSqlLockSettings>().LockName.Should().Be($"outbox.{"connection-string".GetSha256Hash()}.my-outbox");
+        lockSettings.Should().BeOfType<PostgreSqlAdvisoryLockSettings>();
+        lockSettings.As<PostgreSqlAdvisoryLockSettings>().LockName.Should().Be($"outbox.{"connection-string".GetSha256Hash()}.SilverbackOutbox");
     }
 
     [Fact]
     public void Validate_ShouldNotThrow_WhenSettingsAreValid()
     {
-        PostgreSqlOutboxSettings outboxSettings = new("connection-string", "my-outbox");
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string");
 
         Action act = outboxSettings.Validate;
 
@@ -52,15 +43,19 @@ public class PostgreSqlOutboxSettingsFixture
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string tableName)
+    public void Validate_ShouldThrow_WhenTableNameIsEmptyOrWhitespace(string? tableName)
     {
-        PostgreSqlOutboxSettings outboxSettings = new("connection-string", tableName);
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string")
+        {
+            TableName = tableName!
+        };
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The outbox table name is required.");
     }
 
     [Theory]
@@ -69,10 +64,62 @@ public class PostgreSqlOutboxSettingsFixture
     [InlineData(" ")]
     public void Validate_ShouldThrow_WhenConnectionStringIsNullOrWhitespace(string? connectionString)
     {
-        PostgreSqlOutboxSettings outboxSettings = new(connectionString!, "my-outbox");
+        PostgreSqlOutboxSettings outboxSettings = new(connectionString!);
 
         Action act = outboxSettings.Validate;
 
-        act.Should().Throw<SilverbackConfigurationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The connection string is required.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenDbCommandTimeoutIsZero()
+    {
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string")
+        {
+            DbCommandTimeout = TimeSpan.Zero
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenDbCommandTimeoutIsLessThanZero()
+    {
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string")
+        {
+            DbCommandTimeout = TimeSpan.FromSeconds(-1)
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The command timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenCreateTableTimeoutIsZero()
+    {
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string")
+        {
+            CreateTableTimeout = TimeSpan.Zero
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
+    }
+
+    [Fact]
+    public void Validate_ShouldThrow_WhenCreateTableTimeoutIsLessThanZero()
+    {
+        PostgreSqlOutboxSettings outboxSettings = new("connection-string")
+        {
+            CreateTableTimeout = TimeSpan.FromSeconds(-1)
+        };
+
+        Action act = outboxSettings.Validate;
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The create table timeout must be greater than zero.");
     }
 }

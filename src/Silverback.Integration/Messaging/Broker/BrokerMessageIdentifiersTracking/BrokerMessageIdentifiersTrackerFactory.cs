@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.ExtensibleFactories;
 using Silverback.Messaging.Configuration;
 
@@ -18,6 +19,6 @@ public sealed class BrokerMessageIdentifiersTrackerFactory : TypeBasedExtensible
     }
 
     /// <inheritdoc cref="IBrokerMessageIdentifiersTrackerFactory.GetTracker" />
-    public IBrokerMessageIdentifiersTracker GetTracker(EndpointConfiguration configuration) =>
-        GetService(configuration) ?? new SimpleMessageIdentifiersTracker();
+    public IBrokerMessageIdentifiersTracker GetTracker(EndpointConfiguration configuration, IServiceProvider serviceProvider) =>
+        GetService(configuration, serviceProvider) ?? new SimpleMessageIdentifiersTracker();
 }

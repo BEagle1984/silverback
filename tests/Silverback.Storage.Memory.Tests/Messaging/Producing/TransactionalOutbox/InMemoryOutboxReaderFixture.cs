@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
@@ -41,7 +42,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(outboxMessage4);
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         await outboxReader.AcknowledgeAsync(new[] { outboxMessage1, outboxMessage3 });
 
@@ -72,7 +73,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -96,7 +97,7 @@ public class InMemoryOutboxReaderFixture
 
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -122,7 +123,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, Substitute.For<IServiceProvider>());
 
         IReadOnlyCollection<OutboxMessage> batch1 = await outboxReader.GetAsync(3);
         IReadOnlyCollection<OutboxMessage> batch2 = await outboxReader.GetAsync(3);
@@ -147,7 +148,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         IReadOnlyCollection<OutboxMessage> messages = await outboxReader.GetAsync(3);
 
@@ -178,7 +179,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         int count = await outboxReader.GetLengthAsync();
 
@@ -195,7 +196,7 @@ public class InMemoryOutboxReaderFixture
                 .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         int count = await outboxReader.GetLengthAsync();
 
@@ -219,7 +220,7 @@ public class InMemoryOutboxReaderFixture
         outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 
@@ -237,7 +238,7 @@ public class InMemoryOutboxReaderFixture
                 .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         InMemoryOutboxSettings outboxSettings = new();
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
-        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings);
+        IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
         TimeSpan maxAge = await outboxReader.GetMaxAgeAsync();
 

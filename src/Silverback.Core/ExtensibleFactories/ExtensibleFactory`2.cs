@@ -35,11 +35,11 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     where TService : notnull
     where TSettingsBase : IEquatable<TSettingsBase>
 {
-    private readonly Dictionary<Type, Func<TSettingsBase, TService>> _factories = new();
+    private readonly Dictionary<Type, Func<TSettingsBase, IServiceProvider, TService>> _factories = new();
 
     private readonly ConcurrentDictionary<TSettingsBase, TService> _cache = new();
 
-    private Func<TSettingsBase, TService>? _overrideFactory;
+    private Func<TSettingsBase, IServiceProvider, TService>? _overrideFactory;
 
     /// <summary>
     ///     Registers the factory for the specified settings type.
@@ -50,13 +50,13 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     /// <param name="factory">
     ///     The factory building the <typeparamref name="TService" /> according to the specified settings.
     /// </param>
-    public virtual void AddFactory<TSettings>(Func<TSettings, TService> factory)
+    public virtual void AddFactory<TSettings>(Func<TSettings, IServiceProvider, TService> factory)
         where TSettings : TSettingsBase
     {
         if (_factories.ContainsKey(typeof(TSettings)))
             throw new InvalidOperationException("The factory for the specified settings type is already registered.");
 
-        _factories.Add(typeof(TSettings), settings => factory.Invoke((TSettings)settings));
+        _factories.Add(typeof(TSettings), (settings, serviceProvider) => factory.Invoke((TSettings)settings, serviceProvider));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     /// <param name="factory">
     ///     The factory to be used regardless of the settings type.
     /// </param>
-    public void OverrideFactories(Func<TSettingsBase, TService> factory) => _overrideFactory = factory;
+    public void OverrideFactories(Func<TSettingsBase, IServiceProvider, TService> factory) => _overrideFactory = factory;
 
     /// <summary>
     ///     Returns an object of type <typeparamref name="TService" /> according to the specified settings.
@@ -87,10 +87,13 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     /// <param name="settings">
     ///     The settings that will be used to create the service.
     /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> that can be used to resolve additional services.
+    /// </param>
     /// <returns>
     ///     The service of type <typeparamref name="TService" />, or <c>null</c> if no factory is registered for the specified settings type.
     /// </returns>
-    protected TService GetService<TSettings>(TSettings settings)
+    protected TService GetService<TSettings>(TSettings settings, IServiceProvider serviceProvider)
         where TSettings : TSettingsBase =>
         _cache.GetOrAdd(
             settings,
@@ -99,12 +102,12 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
                 Type settingsType = args.Settings.GetType();
 
                 if (args.OverrideFactory != null)
-                    return args.OverrideFactory.Invoke(args.Settings);
+                    return args.OverrideFactory.Invoke(args.Settings, args.ServiceProvider);
 
-                if (args.Factories.TryGetValue(settingsType, out Func<TSettingsBase, TService>? factory))
-                    return factory.Invoke(args.Settings);
+                if (args.Factories.TryGetValue(settingsType, out Func<TSettingsBase, IServiceProvider, TService>? factory))
+                    return factory.Invoke(args.Settings, args.ServiceProvider);
 
                 throw new InvalidOperationException($"No factory registered for the specified settings type ({settingsType.Name}).");
             },
-            (Settings: settings, OverrideFactory: _overrideFactory, Factories: _factories));
+            (Settings: settings, ServiceProvider: serviceProvider, OverrideFactory: _overrideFactory, Factories: _factories));
 }

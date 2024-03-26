@@ -1,6 +1,7 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -29,5 +30,25 @@ public class SqliteKafkaOffsetStoreSettingsBuilderFixture
         KafkaOffsetStoreSettings settings = builder.WithTableName("test-offsetStore").Build();
 
         settings.As<SqliteKafkaOffsetStoreSettings>().TableName.Should().Be("test-offsetStore");
+    }
+
+    [Fact]
+    public void WithDbCommandTimeout_ShouldSetDbCommandTimeout()
+    {
+        SqliteKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
+
+        KafkaOffsetStoreSettings settings = builder.WithDbCommandTimeout(TimeSpan.FromSeconds(20)).Build();
+
+        settings.As<SqliteKafkaOffsetStoreSettings>().DbCommandTimeout.Should().Be(TimeSpan.FromSeconds(20));
+    }
+
+    [Fact]
+    public void WithCreateTableTimeout_ShouldSetCreateTableTimeout()
+    {
+        SqliteKafkaOffsetStoreSettingsBuilder builder = new("connection-string");
+
+        KafkaOffsetStoreSettings settings = builder.WithCreateTableTimeout(TimeSpan.FromSeconds(40)).Build();
+
+        settings.As<SqliteKafkaOffsetStoreSettings>().CreateTableTimeout.Should().Be(TimeSpan.FromSeconds(40));
     }
 }

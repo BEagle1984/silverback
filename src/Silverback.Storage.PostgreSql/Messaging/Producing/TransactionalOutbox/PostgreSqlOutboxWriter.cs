@@ -17,6 +17,8 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class PostgreSqlOutboxWriter : IOutboxWriter
 {
+    private readonly PostgreSqlOutboxSettings _settings;
+
     private readonly PostgreSqlDataAccess _dataAccess;
 
     private readonly string _insertSql;
@@ -29,7 +31,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
     /// </param>
     public PostgreSqlOutboxWriter(PostgreSqlOutboxSettings settings)
     {
-        Check.NotNull(settings, nameof(settings));
+        _settings = Check.NotNull(settings, nameof(settings));
         _dataAccess = new PostgreSqlDataAccess(settings.ConnectionString);
 
         _insertSql = $"INSERT INTO \"{settings.TableName}\" (" +
@@ -52,28 +54,32 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         Check.NotNull(outboxMessage, nameof(outboxMessage));
 
         return _dataAccess.ExecuteNonQueryAsync(
-            context,
             _insertSql,
-            new NpgsqlParameter("@Content", NpgsqlDbType.Bytea)
+            new NpgsqlParameter[]
             {
-                Value = outboxMessage.Content
+                new("@Content", NpgsqlDbType.Bytea)
+                {
+                    Value = outboxMessage.Content
+                },
+                new("@Headers", NpgsqlDbType.Text)
+                {
+                    Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
+                },
+                new("@EndpointName", NpgsqlDbType.Text)
+                {
+                    Value = outboxMessage.Endpoint.FriendlyName
+                },
+                new("@DynamicEndpoint", NpgsqlDbType.Text)
+                {
+                    Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
+                },
+                new("@Created", NpgsqlDbType.TimestampTz)
+                {
+                    Value = DateTime.UtcNow
+                }
             },
-            new NpgsqlParameter("@Headers", NpgsqlDbType.Text)
-            {
-                Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
-            },
-            new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text)
-            {
-                Value = outboxMessage.Endpoint.FriendlyName
-            },
-            new NpgsqlParameter("@DynamicEndpoint", NpgsqlDbType.Text)
-            {
-                Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
-            },
-            new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
-            {
-                Value = DateTime.UtcNow
-            });
+            _settings.DbCommandTimeout,
+            context);
     }
 
     /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
@@ -102,6 +108,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
+            _settings.DbCommandTimeout,
             context);
     }
 
@@ -131,6 +138,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 parameters[2].Value = outboxMessage.Endpoint.FriendlyName;
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
+            _settings.DbCommandTimeout,
             context);
     }
 }

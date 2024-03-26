@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
@@ -41,8 +42,8 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         if (readerFactory == null || writerFactory == null)
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
-        readerFactory.OverrideFactories(settings => new SqliteOutboxReader(MapSqliteSettings(settings, connectionString)));
-        writerFactory.OverrideFactories(settings => new SqliteOutboxWriter(MapSqliteSettings(settings, connectionString)));
+        readerFactory.OverrideFactories((settings, _) => new SqliteOutboxReader(MapSqliteSettings(settings, connectionString)));
+        writerFactory.OverrideFactories((settings, _) => new SqliteOutboxWriter(MapSqliteSettings(settings, connectionString)));
 
         return builder;
     }
@@ -67,10 +68,10 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
             throw new InvalidOperationException("OutboxReaderFactory/OutboxWriterFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!readerFactory.HasFactory<SqliteOutboxSettings>())
-            readerFactory.AddFactory<SqliteOutboxSettings>(settings => new SqliteOutboxReader(settings));
+            readerFactory.AddFactory<SqliteOutboxSettings>((settings, _) => new SqliteOutboxReader(settings));
 
         if (!writerFactory.HasFactory<SqliteOutboxSettings>())
-            writerFactory.AddFactory<SqliteOutboxSettings>(settings => new SqliteOutboxWriter(settings));
+            writerFactory.AddFactory<SqliteOutboxSettings>((settings, _) => new SqliteOutboxWriter(settings));
 
         builder.SilverbackBuilder.AddInMemoryLock();
 
@@ -90,6 +91,20 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
         string settingsHash = BitConverter.ToString(md5.ComputeHash(JsonSerializer.SerializeToUtf8Bytes(settings, settings.GetType())));
 #endif
 
-        return new SqliteOutboxSettings(connectionString, settingsHash);
+        sqliteSettings = new SqliteOutboxSettings(connectionString)
+        {
+            TableName = settingsHash,
+        };
+
+        if (settings is IDatabaseConnectionSettings databaseSettings)
+        {
+            sqliteSettings = sqliteSettings with
+            {
+                DbCommandTimeout = databaseSettings.DbCommandTimeout,
+                CreateTableTimeout = databaseSettings.CreateTableTimeout
+            };
+        }
+
+        return sqliteSettings;
     }
 }

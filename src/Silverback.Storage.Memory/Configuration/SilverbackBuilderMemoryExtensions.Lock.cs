@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Lock;
 using Silverback.Util;
 
@@ -31,7 +32,10 @@ public static partial class SilverbackBuilderMemoryExtensions
         DistributedLockFactory lockFactory = builder.Services.GetSingletonServiceInstance<DistributedLockFactory>() ??
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");
 
-        lockFactory.OverrideFactories(_ => new InMemoryLock());
+        lockFactory.OverrideFactories(
+            (settings, serviceProvider) => new InMemoryLock(
+                settings,
+                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryLock>>()));
 
         return builder;
     }
@@ -53,7 +57,12 @@ public static partial class SilverbackBuilderMemoryExtensions
                                              throw new InvalidOperationException("DistributedLockFactory not found, AddSilverback has not been called.");
 
         if (!lockFactory.HasFactory<InMemoryLockSettings>())
-            lockFactory.AddFactory<InMemoryLockSettings>(_ => new InMemoryLock());
+        {
+            lockFactory.AddFactory<InMemoryLockSettings>(
+                (settings, serviceProvider) => new InMemoryLock(
+                    settings,
+                    serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryLock>>()));
+        }
 
         return builder;
     }

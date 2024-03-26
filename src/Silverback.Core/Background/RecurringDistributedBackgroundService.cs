@@ -65,8 +65,6 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
 
             await using (lockHandle)
             {
-                _logger.LogBackgroundServiceLockAcquired(this);
-
                 while (!linkedCancellationTokenSource.IsCancellationRequested)
                 {
                     if (_enabled)

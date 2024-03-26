@@ -25,7 +25,7 @@ public partial class BrokerOptionsBuilderPostgreSqlExtensionsFixture
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
 
-        IKafkaOffsetStore store = factory.GetStore(new PostgreSqlKafkaOffsetStoreSettings("conn"));
+        IKafkaOffsetStore store = factory.GetStore(new PostgreSqlKafkaOffsetStoreSettings("conn"), serviceProvider);
 
         store.Should().BeOfType<PostgreSqlKafkaOffsetStore>();
     }

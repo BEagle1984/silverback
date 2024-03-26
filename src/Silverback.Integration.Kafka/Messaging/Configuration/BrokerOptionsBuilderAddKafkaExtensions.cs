@@ -74,7 +74,7 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
                                        throw new InvalidOperationException("ChunkEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!factory.HasFactory<KafkaProducerEndpoint>())
-            factory.AddFactory<KafkaProducerEndpoint>(() => new KafkaChunkEnricher());
+            factory.AddFactory<KafkaProducerEndpoint>(_ => new KafkaChunkEnricher());
     }
 
     private static void AddBrokerLogEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)
@@ -83,9 +83,9 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
                                            throw new InvalidOperationException("BrokerLogEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
-            factory.AddFactory<KafkaProducerEndpointConfiguration>(() => new KafkaLogEnricher());
+            factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new KafkaLogEnricher());
         if (!factory.HasFactory<KafkaConsumerEndpointConfiguration>())
-            factory.AddFactory<KafkaConsumerEndpointConfiguration>(() => new KafkaLogEnricher());
+            factory.AddFactory<KafkaConsumerEndpointConfiguration>(_ => new KafkaLogEnricher());
     }
 
     private static void AddActivityEnrichers(BrokerOptionsBuilder brokerOptionsBuilder)
@@ -94,9 +94,9 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
                                           throw new InvalidOperationException("ActivityEnricherFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
-            factory.AddFactory<KafkaProducerEndpointConfiguration>(() => new KafkaActivityEnricher());
+            factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new KafkaActivityEnricher());
         if (!factory.HasFactory<KafkaConsumerEndpointConfiguration>())
-            factory.AddFactory<KafkaConsumerEndpointConfiguration>(() => new KafkaActivityEnricher());
+            factory.AddFactory<KafkaConsumerEndpointConfiguration>(_ => new KafkaActivityEnricher());
     }
 
     private static void AddOffsetsTracker(BrokerOptionsBuilder brokerOptionsBuilder)
@@ -105,8 +105,8 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
                                                                                       throw new InvalidOperationException("BrokerMessageIdentifierTrackerFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
-            factory.AddFactory<KafkaProducerEndpointConfiguration>(() => new OffsetsTracker());
+            factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new OffsetsTracker());
         if (!factory.HasFactory<KafkaConsumerEndpointConfiguration>())
-            factory.AddFactory<KafkaConsumerEndpointConfiguration>(() => new OffsetsTracker());
+            factory.AddFactory<KafkaConsumerEndpointConfiguration>(_ => new OffsetsTracker());
     }
 }

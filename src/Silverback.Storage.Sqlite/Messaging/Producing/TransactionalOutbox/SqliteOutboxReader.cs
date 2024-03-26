@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class SqliteOutboxReader : IOutboxReader
 {
+    private readonly SqliteOutboxSettings _settings;
+
     private readonly SqliteDataAccess _dataAccess;
 
     private readonly string _getQuerySql;
@@ -38,7 +40,8 @@ public class SqliteOutboxReader : IOutboxReader
     /// </param>
     public SqliteOutboxReader(SqliteOutboxSettings settings)
     {
-        _dataAccess = new SqliteDataAccess(Check.NotNull(settings, nameof(settings)).ConnectionString);
+        _settings = Check.NotNull(settings, nameof(settings));
+        _dataAccess = new SqliteDataAccess(_settings.ConnectionString);
 
         _getQuerySql = "SELECT " +
                        "Id," +
@@ -61,18 +64,26 @@ public class SqliteOutboxReader : IOutboxReader
         _dataAccess.ExecuteQueryAsync(
             MapOutboxMessage,
             _getQuerySql,
-            new SqliteParameter("@Limit", SqliteType.Integer)
+            new SqliteParameter[]
             {
-                Value = count
-            });
+                new("@Limit", SqliteType.Integer)
+                {
+                    Value = count
+                }
+            },
+            _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
-    public async Task<int> GetLengthAsync() => (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql).ConfigureAwait(false);
+    public async Task<int> GetLengthAsync() =>
+        (int)await _dataAccess.ExecuteScalarAsync<long>(_countQuerySql, null, _settings.DbCommandTimeout).ConfigureAwait(false);
 
     /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
     public async Task<TimeSpan> GetMaxAgeAsync()
     {
-        string? oldestCreated = await _dataAccess.ExecuteScalarAsync<string>(_minCreatedQuerySql).ConfigureAwait(false);
+        string? oldestCreated = await _dataAccess.ExecuteScalarAsync<string>(
+            _minCreatedQuerySql,
+            null,
+            _settings.DbCommandTimeout).ConfigureAwait(false);
 
         if (string.IsNullOrEmpty(oldestCreated))
             return TimeSpan.Zero;
@@ -94,7 +105,8 @@ public class SqliteOutboxReader : IOutboxReader
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Id;
-            });
+            },
+            _settings.DbCommandTimeout);
 
     private static OutboxMessage MapOutboxMessage(DbDataReader reader)
     {

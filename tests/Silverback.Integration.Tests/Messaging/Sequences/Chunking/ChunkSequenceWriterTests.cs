@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ public class ChunkSequenceWriterTests
             }.GetDefaultEndpoint(),
             Substitute.For<IProducer>());
 
-        ChunkSequenceWriter writer = new(enricherFactory);
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
         result.Should().BeTrue();
@@ -60,7 +61,7 @@ public class ChunkSequenceWriterTests
             }.GetDefaultEndpoint(),
             Substitute.For<IProducer>());
 
-        ChunkSequenceWriter writer = new(enricherFactory);
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
         result.Should().Be(alwaysAddHeaders);
@@ -77,7 +78,7 @@ public class ChunkSequenceWriterTests
             new TestProducerEndpointConfiguration("test").GetDefaultEndpoint(),
             Substitute.For<IProducer>());
 
-        ChunkSequenceWriter writer = new(enricherFactory);
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         bool result = writer.CanHandle(envelope);
 
         result.Should().BeFalse();
@@ -106,7 +107,7 @@ public class ChunkSequenceWriterTests
             new SilverbackContext(),
             true);
 
-        ChunkSequenceWriter writer = new(enricherFactory);
+        ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
         envelopes.Should().HaveCount(4);

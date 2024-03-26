@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Tests.Logging;
@@ -23,7 +24,7 @@ public class InMemoryLockFixture
                 .AddSilverback()
                 .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
-        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"));
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"), serviceProvider);
 
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
@@ -40,7 +41,7 @@ public class InMemoryLockFixture
                 .AddSilverback()
                 .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
-        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"));
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"), serviceProvider);
 
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
@@ -59,7 +60,9 @@ public class InMemoryLockFixture
                 .AddSilverback()
                 .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
-        IDistributedLock distributedLock = lockFactory.GetDistributedLock(new InMemoryLockSettings("Lock"));
+        IDistributedLock distributedLock = lockFactory.GetDistributedLock(
+            new InMemoryLockSettings("Lock"),
+            serviceProvider);
 
         DistributedLockHandle handle = await distributedLock.AcquireAsync();
 
@@ -79,10 +82,10 @@ public class InMemoryLockFixture
                 .AddInMemoryLock());
         IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
-        IDistributedLock distributedLockA1 = lockFactory.GetDistributedLock(new InMemoryLockSettings("A"));
-        IDistributedLock distributedLockA2 = lockFactory.GetDistributedLock(new InMemoryLockSettings("A"));
-        IDistributedLock distributedLockB1 = lockFactory.GetDistributedLock(new InMemoryLockSettings("B"));
-        IDistributedLock distributedLockB2 = lockFactory.GetDistributedLock(new InMemoryLockSettings("B"));
+        IDistributedLock distributedLockA1 = lockFactory.GetDistributedLock(new InMemoryLockSettings("A"), serviceProvider);
+        IDistributedLock distributedLockA2 = lockFactory.GetDistributedLock(new InMemoryLockSettings("A"), serviceProvider);
+        IDistributedLock distributedLockB1 = lockFactory.GetDistributedLock(new InMemoryLockSettings("B"), serviceProvider);
+        IDistributedLock distributedLockB2 = lockFactory.GetDistributedLock(new InMemoryLockSettings("B"), serviceProvider);
 
         Task<DistributedLockHandle> taskA1 = distributedLockA1.AcquireAsync().AsTask();
         Task<DistributedLockHandle> taskA2 = distributedLockA2.AcquireAsync().AsTask();

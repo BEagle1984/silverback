@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Configuration;
 
 namespace Silverback.Lock;
 
@@ -9,7 +10,7 @@ namespace Silverback.Lock;
 ///     The <see cref="DistributedLock" /> settings.
 /// </summary>
 [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor", Justification = "Summary texts")]
-public abstract record DistributedLockSettings
+public abstract record DistributedLockSettings : IValidatableSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="DistributedLockSettings" /> class.
@@ -26,4 +27,11 @@ public abstract record DistributedLockSettings
     ///     Gets the name of the lock.
     /// </summary>
     public string LockName { get; }
+
+    /// <inheritdoc cref="IValidatableSettings.Validate" />
+    public virtual void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(LockName))
+            throw new SilverbackConfigurationException("The lock name is required.");
+    }
 }

@@ -28,7 +28,7 @@ public class InMemoryOutboxWriterFixture
                 .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -52,7 +52,7 @@ public class InMemoryOutboxWriterFixture
                 .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -74,7 +74,7 @@ public class InMemoryOutboxWriterFixture
                 .WithConnectionToMessageBroker(options => options.AddInMemoryOutbox()));
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings = new();
-        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings);
+        IOutboxWriter outboxWriter = writerFactory.GetWriter(outboxSettings, serviceProvider);
 
         OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
         OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
@@ -97,8 +97,8 @@ public class InMemoryOutboxWriterFixture
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         InMemoryOutboxSettings outboxSettings1 = new("outbox1");
         InMemoryOutboxSettings outboxSettings2 = new("outbox2");
-        IOutboxWriter outboxWriter1 = writerFactory.GetWriter(outboxSettings1);
-        IOutboxWriter outboxWriter2 = writerFactory.GetWriter(outboxSettings2);
+        IOutboxWriter outboxWriter1 = writerFactory.GetWriter(outboxSettings1, serviceProvider);
+        IOutboxWriter outboxWriter2 = writerFactory.GetWriter(outboxSettings2, serviceProvider);
 
         await outboxWriter1.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
         await outboxWriter2.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));

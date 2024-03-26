@@ -25,7 +25,7 @@ public sealed class SqliteKafkaOffsetStoreFixture : IDisposable
 
     public SqliteKafkaOffsetStoreFixture()
     {
-        _offsetStoreSettings = new SqliteKafkaOffsetStoreSettings($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared", "TestOutbox");
+        _offsetStoreSettings = new SqliteKafkaOffsetStoreSettings($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
         _sqliteConnection = new SqliteConnection(_offsetStoreSettings.ConnectionString);
         _sqliteConnection.Open();
     }
@@ -43,7 +43,7 @@ public sealed class SqliteKafkaOffsetStoreFixture : IDisposable
         await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(_offsetStoreSettings);
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        SqliteKafkaOffsetStore store = (SqliteKafkaOffsetStore)factory.GetStore(_offsetStoreSettings);
+        SqliteKafkaOffsetStore store = (SqliteKafkaOffsetStore)factory.GetStore(_offsetStoreSettings, serviceProvider);
 
         await store.StoreOffsetsAsync(
             "group1",
@@ -84,7 +84,7 @@ public sealed class SqliteKafkaOffsetStoreFixture : IDisposable
         await storageInitializer.CreateSqliteKafkaOffsetStoreAsync(_offsetStoreSettings);
 
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        IKafkaOffsetStore store = factory.GetStore(_offsetStoreSettings);
+        IKafkaOffsetStore store = factory.GetStore(_offsetStoreSettings, serviceProvider);
 
         KafkaOffset[] offsets =
         {

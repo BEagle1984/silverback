@@ -12,11 +12,14 @@ internal sealed class InternalProducerLoggerFactory
 {
     private readonly IBrokerLogEnricherFactory _enricherFactory;
 
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly ConcurrentDictionary<Type, ProducerLogger> _cache = new();
 
-    public InternalProducerLoggerFactory(IBrokerLogEnricherFactory enricherFactory)
+    public InternalProducerLoggerFactory(IBrokerLogEnricherFactory enricherFactory, IServiceProvider serviceProvider)
     {
         _enricherFactory = Check.NotNull(enricherFactory, nameof(enricherFactory));
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
     public ProducerLogger GetProducerLogger(ProducerEndpointConfiguration endpointConfiguration)
@@ -25,7 +28,10 @@ internal sealed class InternalProducerLoggerFactory
 
         return _cache.GetOrAdd(
             configurationType,
-            static (_, args) => new ProducerLogger(args.Factory.GetEnricher(args.Configuration)),
-            (Configuration: endpointConfiguration, Factory: _enricherFactory));
+            static (_, args) => new ProducerLogger(
+                args.Factory.GetEnricher(
+                    args.Configuration,
+                    args.ServiceProvider)),
+            (Configuration: endpointConfiguration, Factory: _enricherFactory, ServiceProvider: _serviceProvider));
     }
 }

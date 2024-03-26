@@ -28,7 +28,7 @@ public class InMemoryKafkaOffsetStoreFixture
 
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new();
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        InMemoryKafkaOffsetStore store = (InMemoryKafkaOffsetStore)factory.GetStore(kafkaOffsetStoreSettings);
+        InMemoryKafkaOffsetStore store = (InMemoryKafkaOffsetStore)factory.GetStore(kafkaOffsetStoreSettings, serviceProvider);
 
         await store.StoreOffsetsAsync(
             "group1",
@@ -67,7 +67,7 @@ public class InMemoryKafkaOffsetStoreFixture
 
         InMemoryKafkaOffsetStoreSettings kafkaOffsetStoreSettings = new();
         IKafkaOffsetStoreFactory factory = serviceProvider.GetRequiredService<IKafkaOffsetStoreFactory>();
-        IKafkaOffsetStore store = factory.GetStore(kafkaOffsetStoreSettings);
+        IKafkaOffsetStore store = factory.GetStore(kafkaOffsetStoreSettings, serviceProvider);
 
         KafkaOffset[] offsets =
         {

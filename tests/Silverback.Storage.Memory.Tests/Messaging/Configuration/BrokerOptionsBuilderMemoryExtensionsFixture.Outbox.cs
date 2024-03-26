@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Configuration;
 using Silverback.Lock;
 using Silverback.Messaging.Configuration;
@@ -29,8 +30,8 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<IOutboxWriterFactory>();
 
-        IOutboxReader reader = readerFactory.GetReader(new InMemoryOutboxSettings());
-        IOutboxWriter writer = writerFactory.GetWriter(new InMemoryOutboxSettings());
+        IOutboxReader reader = readerFactory.GetReader(new InMemoryOutboxSettings(), serviceProvider);
+        IOutboxWriter writer = writerFactory.GetWriter(new InMemoryOutboxSettings(), serviceProvider);
 
         reader.Should().BeOfType<InMemoryOutboxReader>();
         writer.Should().BeOfType<InMemoryOutboxWriter>();
@@ -48,15 +49,15 @@ public partial class BrokerOptionsBuilderMemoryExtensionsFixture
         OutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<OutboxReaderFactory>();
         OutboxWriterFactory writerFactory = serviceProvider.GetRequiredService<OutboxWriterFactory>();
 
-        readerFactory.AddFactory<OutboxSettings1>(_ => new OutboxReader1());
-        readerFactory.AddFactory<OutboxSettings2>(_ => new OutboxReader2());
-        writerFactory.AddFactory<OutboxSettings1>(_ => new OutboxWriter1());
-        writerFactory.AddFactory<OutboxSettings2>(_ => new OutboxWriter2());
+        readerFactory.AddFactory<OutboxSettings1>((_, _) => new OutboxReader1());
+        readerFactory.AddFactory<OutboxSettings2>((_, _) => new OutboxReader2());
+        writerFactory.AddFactory<OutboxSettings1>((_, _) => new OutboxWriter1());
+        writerFactory.AddFactory<OutboxSettings2>((_, _) => new OutboxWriter2());
 
-        IOutboxReader reader1 = readerFactory.GetReader(new OutboxSettings1());
-        IOutboxReader reader2 = readerFactory.GetReader(new OutboxSettings2());
-        IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1());
-        IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2());
+        IOutboxReader reader1 = readerFactory.GetReader(new OutboxSettings1(), serviceProvider);
+        IOutboxReader reader2 = readerFactory.GetReader(new OutboxSettings2(), serviceProvider);
+        IOutboxWriter writer1 = writerFactory.GetWriter(new OutboxSettings1(), serviceProvider);
+        IOutboxWriter writer2 = writerFactory.GetWriter(new OutboxSettings2(), serviceProvider);
 
         reader1.Should().BeOfType<InMemoryOutboxReader>();
         reader2.Should().BeOfType<InMemoryOutboxReader>();

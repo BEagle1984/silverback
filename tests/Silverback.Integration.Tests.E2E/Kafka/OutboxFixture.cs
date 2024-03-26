@@ -205,13 +205,15 @@ public class OutboxFixture : KafkaFixture
                     async storageInitializer =>
                     {
                         await storageInitializer.CreateSqliteOutboxAsync(
-                            new SqliteOutboxSettings(
-                                database.ConnectionString,
-                                "outbox1"));
+                            new SqliteOutboxSettings(database.ConnectionString)
+                            {
+                                TableName = "outbox1"
+                            });
                         await storageInitializer.CreateSqliteOutboxAsync(
-                            new SqliteOutboxSettings(
-                                database.ConnectionString,
-                                "outbox2"));
+                            new SqliteOutboxSettings(database.ConnectionString)
+                            {
+                                TableName = "outbox2"
+                            });
                     })
                 .AddSilverback()
                 .WithConnectionToMessageBroker(

@@ -64,6 +64,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
                 ServiceProvider.GetRequiredService<IConfluentAdminClientBuilder>(),
                 _brokerClientCallbacksInvoker,
                 _offsetStoreFactory,
+                ServiceProvider,
                 _silverbackLoggerFactory.CreateLogger<ConfluentConsumerWrapper>());
 
             AddClient(confluentConsumerWrapper);

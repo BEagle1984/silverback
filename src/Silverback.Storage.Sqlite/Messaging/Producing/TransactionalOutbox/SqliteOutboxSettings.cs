@@ -1,7 +1,9 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Lock;
+using Silverback.Storage;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -9,7 +11,7 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// <summary>
 ///     The <see cref="SqliteOutboxWriter" /> and <see cref="SqliteOutboxReader" /> settings.
 /// </summary>
-public record SqliteOutboxSettings : OutboxSettings
+public record SqliteOutboxSettings : OutboxSettings, IDatabaseConnectionSettings
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="SqliteOutboxSettings" /> class.
@@ -17,13 +19,9 @@ public record SqliteOutboxSettings : OutboxSettings
     /// <param name="connectionString">
     ///     The connection string to the Sqlite database.
     /// </param>
-    /// <param name="tableName">
-    ///     The name of the outbox table. If not specified, the default <c>"Silverback_Outbox"</c> will be used.
-    /// </param>
-    public SqliteOutboxSettings(string connectionString, string? tableName = null)
+    public SqliteOutboxSettings(string connectionString)
     {
         ConnectionString = connectionString;
-        TableName = tableName ?? "Silverback_Outbox";
     }
 
     /// <summary>
@@ -32,9 +30,19 @@ public record SqliteOutboxSettings : OutboxSettings
     public string ConnectionString { get; }
 
     /// <summary>
-    ///     Gets the name of the outbox table. The default is <c>"Silverback_Outbox"</c>.
+    ///     Gets the name of the outbox table. The default is <c>"SilverbackOutbox"</c>.
     /// </summary>
-    public string TableName { get; }
+    public string TableName { get; init; } = "SilverbackOutbox";
+
+    /// <summary>
+    ///     Gets the database command timeout. The default is 10 seconds.
+    /// </summary>
+    public TimeSpan DbCommandTimeout { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>
+    ///     Gets the timeout for the table creation. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan CreateTableTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
     ///     Returns an instance of <see cref="InMemoryLockSettings" />, since there is no distributed lock implementation for Sqlite and
@@ -56,5 +64,11 @@ public record SqliteOutboxSettings : OutboxSettings
 
         if (string.IsNullOrWhiteSpace(TableName))
             throw new SilverbackConfigurationException("The outbox table name is required.");
+
+        if (DbCommandTimeout <= TimeSpan.Zero)
+            throw new SilverbackConfigurationException("The command timeout must be greater than zero.");
+
+        if (CreateTableTimeout <= TimeSpan.Zero)
+            throw new SilverbackConfigurationException("The create table timeout must be greater than zero.");
     }
 }
