@@ -77,8 +77,14 @@ namespace Silverback.Messaging.Broker
             Task.Run(
                     async () =>
                     {
-                        await _brokerCollection.DisconnectAsync().ConfigureAwait(false);
-                        _brokerDisconnectedTaskCompletionSource.SetResult(true);
+                        try
+                        {
+                            await _brokerCollection.DisconnectAsync().ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            _brokerDisconnectedTaskCompletionSource.SetResult(true);
+                        }
                     })
                 .FireAndForget();
 
