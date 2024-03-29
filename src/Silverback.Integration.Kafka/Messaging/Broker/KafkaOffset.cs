@@ -39,7 +39,7 @@ public sealed record KafkaOffset : IBrokerMessageIdentifier, IComparable<KafkaOf
     /// <param name="offset">
     ///     The offset in the partition.
     /// </param>
-    public KafkaOffset(string topic, int partition, int offset)
+    public KafkaOffset(string topic, int partition, long offset)
         : this(new TopicPartition(Check.NotNull(topic, nameof(topic)), partition), offset)
     {
     }

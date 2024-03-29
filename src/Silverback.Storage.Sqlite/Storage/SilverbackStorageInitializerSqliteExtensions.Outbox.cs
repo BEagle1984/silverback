@@ -15,13 +15,13 @@ namespace Silverback.Storage;
 public static partial class SilverbackStorageInitializerSqliteExtensions
 {
     /// <summary>
-    ///     Creates the Sqlite outbox table.
+    ///     Creates the SQLite outbox table.
     /// </summary>
     /// <param name="initializer">
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -32,7 +32,7 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
             new SqliteOutboxSettings(Check.NotNull(connectionString, nameof(connectionString))));
 
     /// <summary>
-    ///     Creates the Sqlite outbox table.
+    ///     Creates the SQLite outbox table.
     /// </summary>
     /// <param name="initializer">
     ///     The <see cref="SilverbackStorageInitializer" />.
@@ -52,13 +52,13 @@ public static partial class SilverbackStorageInitializerSqliteExtensions
     }
 
     /// <summary>
-    ///     Creates the Sqlite outbox table.
+    ///     Creates the SQLite outbox table.
     /// </summary>
     /// <param name="initializer">
     ///     The <see cref="SilverbackStorageInitializer" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     /// <param name="tableName">
     ///     The name of the outbox table.

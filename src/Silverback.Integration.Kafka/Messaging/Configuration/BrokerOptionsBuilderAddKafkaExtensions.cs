@@ -102,7 +102,7 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
     private static void AddOffsetsTracker(BrokerOptionsBuilder brokerOptionsBuilder)
     {
         BrokerMessageIdentifiersTrackerFactory factory = brokerOptionsBuilder.SilverbackBuilder.Services.GetSingletonServiceInstance<BrokerMessageIdentifiersTrackerFactory>() ??
-                                                                                      throw new InvalidOperationException("BrokerMessageIdentifierTrackerFactory not found, WithConnectionToMessageBroker has not been called.");
+                                                         throw new InvalidOperationException("BrokerMessageIdentifierTrackerFactory not found, WithConnectionToMessageBroker has not been called.");
 
         if (!factory.HasFactory<KafkaProducerEndpointConfiguration>())
             factory.AddFactory<KafkaProducerEndpointConfiguration>(_ => new OffsetsTracker());

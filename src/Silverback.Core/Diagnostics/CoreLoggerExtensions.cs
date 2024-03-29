@@ -36,6 +36,9 @@ internal static class CoreLoggerExtensions
     private static readonly Action<ILogger, string, Exception?> AcquireLockFailed =
         SilverbackLoggerMessage.Define<string>(CoreLogEvents.AcquireLockFailed);
 
+    private static readonly Action<ILogger, string, Exception?> AcquireLockConcurrencyException =
+        SilverbackLoggerMessage.Define<string>(CoreLogEvents.AcquireLockConcurrencyException);
+
     private static readonly Action<ILogger, string, Exception?> ReleaseLockFailed =
         SilverbackLoggerMessage.Define<string>(CoreLogEvents.ReleaseLockFailed);
 
@@ -78,6 +81,9 @@ internal static class CoreLoggerExtensions
 
     public static void LogAcquireLockFailed(this ISilverbackLogger logger, string lockName, Exception exception) =>
         AcquireLockFailed(logger.InnerLogger, lockName, exception);
+
+    public static void LogAcquireLockConcurrencyException(this ISilverbackLogger logger, string lockName, Exception exception) =>
+        AcquireLockConcurrencyException(logger.InnerLogger, lockName, exception);
 
     public static void LogReleaseLockFailed(this ISilverbackLogger logger, string lockName, Exception exception) =>
         ReleaseLockFailed(logger.InnerLogger, lockName, exception);

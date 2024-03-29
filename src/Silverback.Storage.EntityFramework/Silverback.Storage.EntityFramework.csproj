@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(CurrentLatestFramework)</TargetFrameworks>
+    <RootNamespace>$(RootNamespace)</RootNamespace>
+    <Version>$(BaseVersion)</Version>
+    <Authors>$(Authors)</Authors>
+    <Company>$(Company)</Company>
+    <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+    <Copyright>$(Copyright)</Copyright>
+    <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+    <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+    <RepositoryType>$(RepositoryType)</RepositoryType>
+    <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
+    <Description>$(Description) This package contains the Entity Framework (Core) based storage implementation based.</Description>
+    <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+    <PackageTags>$(Tags)</PackageTags>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <PackageId>Silverback.Storage.EntityFramework</PackageId>
+    <Product>Silverback.Storage.EntityFramework</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
+    <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\Silverback.Storage.Relational\Silverback.Storage.Relational.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.3" />
+  </ItemGroup>
+
+</Project>

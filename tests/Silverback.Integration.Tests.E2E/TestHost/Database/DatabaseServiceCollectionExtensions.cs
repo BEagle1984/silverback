@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Storage;
 
@@ -16,4 +17,11 @@ public static class DatabaseServiceCollectionExtensions
                 serviceProvider => new InitDatabaseHostedService(
                     serviceProvider.GetRequiredService<SilverbackStorageInitializer>(),
                     initFunction));
+
+    public static IServiceCollection InitDbContext<TDbContext>(this IServiceCollection services)
+        where TDbContext : DbContext =>
+        services
+            .AddHostedService(
+                serviceProvider =>
+                    new InitDbContextHostedService<TDbContext>(serviceProvider.GetRequiredService<IServiceScopeFactory>()));
 }

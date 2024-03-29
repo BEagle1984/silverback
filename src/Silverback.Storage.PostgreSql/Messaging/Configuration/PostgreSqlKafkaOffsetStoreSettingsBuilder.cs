@@ -35,7 +35,7 @@ public class PostgreSqlKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettin
     ///     Sets the table name.
     /// </summary>
     /// <param name="tableName">
-    ///     The name of the kafkaOffsetStore table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used.
+    ///     The name of the Kafka offset store table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used.
     /// </param>
     /// <returns>
     ///     The <see cref="PostgreSqlKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.

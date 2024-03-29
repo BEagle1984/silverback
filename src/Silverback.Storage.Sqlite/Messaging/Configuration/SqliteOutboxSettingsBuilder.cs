@@ -24,7 +24,7 @@ public class SqliteOutboxSettingsBuilder : IOutboxSettingsImplementationBuilder
     ///     Initializes a new instance of the <see cref="SqliteOutboxSettingsBuilder" /> class.
     /// </summary>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     public SqliteOutboxSettingsBuilder(string connectionString)
     {

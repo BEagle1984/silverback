@@ -15,7 +15,7 @@ public record SqliteKafkaOffsetStoreSettings : KafkaOffsetStoreSettings, IDataba
     ///     Initializes a new instance of the <see cref="SqliteKafkaOffsetStoreSettings" /> class.
     /// </summary>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     public SqliteKafkaOffsetStoreSettings(string connectionString)
     {
@@ -23,12 +23,12 @@ public record SqliteKafkaOffsetStoreSettings : KafkaOffsetStoreSettings, IDataba
     }
 
     /// <summary>
-    ///     Gets the connection string to the Sqlite database.
+    ///     Gets the connection string to the SQLite database.
     /// </summary>
     public string ConnectionString { get; }
 
     /// <summary>
-    ///     Gets the name of the kafkaOffsetStore table. The default is <c>"SilverbackKafkaOffsets"</c>.
+    ///     Gets The name of the Kafka offset store table. The default is <c>"SilverbackKafkaOffsets"</c>.
     /// </summary>
     public string TableName { get; init; } = "SilverbackKafkaOffsets";
 

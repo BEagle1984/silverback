@@ -16,7 +16,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <summary>
-///     Reads from the Sqlite outbox.
+///     Reads from the SQLite outbox.
 /// </summary>
 public class SqliteOutboxReader : IOutboxReader
 {

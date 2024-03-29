@@ -5,13 +5,13 @@ using System;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Storage.Relational;
+namespace Silverback.Storage;
 
 /// <summary>
 ///     Adds the relational storage specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
 // TODO: Test
-public static class SilverbackContextStorageRelationalExtensions
+public static class SilverbackContextRelationalStorageExtensions
 {
     /// <summary>
     ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.

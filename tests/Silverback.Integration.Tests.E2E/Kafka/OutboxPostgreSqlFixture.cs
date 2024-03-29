@@ -14,7 +14,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -34,7 +33,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceMessages_WhenUsingPostgreSql()
+    public async Task Outbox_ShouldProduceMessages()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 
@@ -84,7 +83,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceMessages_WhenUsingPostgreSqlWithTableBasedLock()
+    public async Task Outbox_ShouldProduceMessages_WhenUsingTableBasedLock()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 
@@ -142,7 +141,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceBatch_WhenUsingPostgreSql()
+    public async Task Outbox_ShouldProduceBatch()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 
@@ -195,7 +194,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceAsyncBatch_WhenUsingPostgreSql()
+    public async Task Outbox_ShouldProduceAsyncBatch()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 
@@ -248,7 +247,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldUseTransaction_WhenUsingPostgreSql()
+    public async Task Outbox_ShouldUseTransaction()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 

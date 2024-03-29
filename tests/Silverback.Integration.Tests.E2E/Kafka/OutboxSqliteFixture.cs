@@ -14,7 +14,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -32,7 +31,7 @@ public class OutboxSqliteFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceMessages_WhenUsingSqlite()
+    public async Task Outbox_ShouldProduceMessages()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
@@ -82,7 +81,113 @@ public class OutboxSqliteFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldUseTransaction_WhenUsingSqlite()
+    public async Task Outbox_ShouldProduceBatch()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddSqliteOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventsAsync(
+            new TestEventOne[]
+            {
+                new() { ContentEventOne = "1" },
+                new() { ContentEventOne = "2" },
+                new() { ContentEventOne = "3" },
+            });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceAsyncBatch()
+    {
+        using SqliteDatabase database = await SqliteDatabase.StartAsync();
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .InitDatabase(storageInitializer => storageInitializer.CreateSqliteOutboxAsync(database.ConnectionString))
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddSqliteOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseSqlite(database.ConnectionString))
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        await publisher.PublishEventsAsync(
+            new TestEventOne[]
+            {
+                new() { ContentEventOne = "1" },
+                new() { ContentEventOne = "2" },
+                new() { ContentEventOne = "3" },
+            }.ToAsyncEnumerable());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).ContentEventOne)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldUseTransaction()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 

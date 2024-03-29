@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 public static class KafkaOffsetStoreSettingsBuilderMemoryExtensions
 {
     /// <summary>
-    ///     Configures the offsetStore to be stored in memory.
+    ///     Configures the in-memory offset store.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="KafkaOffsetStoreSettingsBuilder" />.

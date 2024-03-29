@@ -11,13 +11,13 @@ namespace Silverback.Messaging.Configuration;
 public static class OutboxSettingsBuilderSqliteExtensions
 {
     /// <summary>
-    ///     Configures the outbox to be stored in memory.
+    ///     Configures the SQLite outbox.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="OutboxSettingsBuilder" />.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     /// <returns>
     ///     The <see cref="SqliteOutboxSettingsBuilder" />.

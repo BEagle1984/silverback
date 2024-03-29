@@ -14,10 +14,10 @@ public class InMemoryKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettings
     private string? _offsetStoreName;
 
     /// <summary>
-    ///     Sets the offsetStore name.
+    ///     Sets the offset store name.
     /// </summary>
     /// <param name="offsetStoreName">
-    ///     The name of the offsetStore.
+    ///     The name of the offset store.
     /// </param>
     /// <returns>
     ///     The <see cref="InMemoryKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.

@@ -2,15 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -25,8 +22,6 @@ public sealed class KafkaOffsetStoreScope
     private readonly IKafkaOffsetStore _offsetStore;
 
     private readonly ConsumerPipelineContext _pipelineContext;
-
-    private readonly SilverbackContext _silverbackContext;
 
     private readonly string _groupId;
 
@@ -44,10 +39,15 @@ public sealed class KafkaOffsetStoreScope
     public KafkaOffsetStoreScope(IKafkaOffsetStore offsetStore, ConsumerPipelineContext context)
     {
         _pipelineContext = Check.NotNull(context, nameof(context));
-        _silverbackContext = _pipelineContext.ServiceProvider.GetRequiredService<SilverbackContext>();
+        SilverbackContext = _pipelineContext.ServiceProvider.GetRequiredService<SilverbackContext>();
         _offsetStore = Check.NotNull(offsetStore, nameof(offsetStore));
         _groupId = (_pipelineContext.Consumer as KafkaConsumer)?.Configuration.GroupId ?? string.Empty;
     }
+
+    /// <summary>
+    ///     Gets the <see cref="SilverbackContext" />.
+    /// </summary>
+    public SilverbackContext SilverbackContext { get; }
 
     /// <summary>
     ///     Store all offsets that have been processed in this scope.
@@ -62,32 +62,13 @@ public sealed class KafkaOffsetStoreScope
         if (offsets.Count == 0 || AreAllStoredAlready(offsets))
             return;
 
-        await _offsetStore.StoreOffsetsAsync(_groupId, offsets, _silverbackContext).ConfigureAwait(false);
+        await _offsetStore.StoreOffsetsAsync(_groupId, offsets, SilverbackContext).ConfigureAwait(false);
 
         foreach (KafkaOffset offset in offsets)
         {
             _lastStoredOffsets[offset.TopicPartition] = offset.Offset;
         }
     }
-
-    /// <summary>
-    ///     Specifies the transaction to be used for storage operations.
-    /// </summary>
-    /// <param name="transaction">
-    ///     The transaction to be used.
-    /// </param>
-    public void EnlistTransaction(IStorageTransaction transaction) => _silverbackContext.EnlistTransaction(transaction);
-
-    /// <summary>
-    ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
-    /// </summary>
-    /// <param name="dbTransaction">
-    ///     The transaction to be used.
-    /// </param>
-    /// <returns>
-    ///    The <see cref="IStorageTransaction" />.
-    /// </returns>
-    public IStorageTransaction EnlistTransaction(DbTransaction dbTransaction) => _silverbackContext.EnlistDbTransaction(dbTransaction);
 
     private bool AreAllStoredAlready(IReadOnlyCollection<KafkaOffset> offsets) =>
         offsets.All(

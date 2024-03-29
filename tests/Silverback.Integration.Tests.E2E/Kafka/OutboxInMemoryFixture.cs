@@ -13,7 +13,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestHost.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -30,7 +29,7 @@ public class OutboxInMemoryFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task Outbox_ShouldProduceMessages_WhenUsingInMemoryStorage()
+    public async Task Outbox_ShouldProduceMessages()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services

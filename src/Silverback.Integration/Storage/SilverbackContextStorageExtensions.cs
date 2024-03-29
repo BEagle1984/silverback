@@ -39,9 +39,17 @@ public static class SilverbackContextStorageExtensions
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
-    public static bool TryGetStorageTransaction(this SilverbackContext context, [NotNullWhen(true)] out IStorageTransaction? transaction) =>
+    public static bool TryGetStorageTransaction(
+        this SilverbackContext context,
+        [NotNullWhen(true)] out IStorageTransaction? transaction) =>
         Check.NotNull(context, nameof(context)).TryGetObject(StorageTransactionObjectTypeId, out transaction);
 
-    internal static void RemoveTransaction(this SilverbackContext context) =>
+    /// <summary>
+    ///     Clears the storage transaction.
+    /// </summary>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" />.
+    /// </param>
+    public static void RemoveTransaction(this SilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(StorageTransactionObjectTypeId);
 }

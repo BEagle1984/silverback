@@ -36,6 +36,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Testing")]
+[assembly: InternalsVisibleTo("Silverback.Storage.EntityFramework")]
 [assembly: InternalsVisibleTo("Silverback.Storage.Memory")]
 [assembly: InternalsVisibleTo("Silverback.Storage.Relational")]
 [assembly: InternalsVisibleTo("Silverback.Storage.PostgreSql")]

@@ -8,7 +8,6 @@ using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Storage.Relational;
 using Silverback.Util;
 
 namespace Silverback.Storage.DataAccess;

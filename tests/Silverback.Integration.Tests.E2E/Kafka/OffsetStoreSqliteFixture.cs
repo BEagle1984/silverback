@@ -149,7 +149,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
-    public async Task ConsumerEndpoint_ShouldUseTransaction_WhenUsingSqlite()
+    public async Task OffsetStore_ShouldUseTransaction()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 
@@ -237,7 +237,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task OffsetStore_ShouldStoreBatchOffsets_WhenUsingSqlite()
+    public async Task OffsetStore_ShouldStoreBatchOffsets()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
 

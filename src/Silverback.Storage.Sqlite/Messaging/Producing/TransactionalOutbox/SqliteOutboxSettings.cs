@@ -17,7 +17,7 @@ public record SqliteOutboxSettings : OutboxSettings, IDatabaseConnectionSettings
     ///     Initializes a new instance of the <see cref="SqliteOutboxSettings" /> class.
     /// </summary>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     public SqliteOutboxSettings(string connectionString)
     {
@@ -25,7 +25,7 @@ public record SqliteOutboxSettings : OutboxSettings, IDatabaseConnectionSettings
     }
 
     /// <summary>
-    ///     Gets the connection string to the Sqlite database.
+    ///     Gets the connection string to the SQLite database.
     /// </summary>
     public string ConnectionString { get; }
 

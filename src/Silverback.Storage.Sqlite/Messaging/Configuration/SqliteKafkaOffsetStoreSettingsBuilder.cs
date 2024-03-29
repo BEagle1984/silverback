@@ -24,7 +24,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     ///     Initializes a new instance of the <see cref="SqliteKafkaOffsetStoreSettingsBuilder" /> class.
     /// </summary>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     public SqliteKafkaOffsetStoreSettingsBuilder(string connectionString)
     {
@@ -35,7 +35,7 @@ public class SqliteKafkaOffsetStoreSettingsBuilder : IKafkaOffsetStoreSettingsIm
     ///     Sets the table name.
     /// </summary>
     /// <param name="tableName">
-    ///     The name of the kafkaOffsetStore table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used.
+    ///     The name of the Kafka offset store table. If not specified, the default <c>"SilverbackKafkaOffsets"</c> will be used.
     /// </param>
     /// <returns>
     ///     The <see cref="SqliteKafkaOffsetStoreSettingsBuilder" /> so that additional calls can be chained.

@@ -151,7 +151,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
-    public async Task ConsumerEndpoint_ShouldUseTransaction_WhenUsingPostgres()
+    public async Task OffsetStore_ShouldUseTransaction()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 
@@ -239,7 +239,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
     }
 
     [Fact]
-    public async Task OffsetStore_ShouldStoreBatchOffsets_WhenUsingPostgres()
+    public async Task OffsetStore_ShouldStoreBatchOffsets()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
 

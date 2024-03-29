@@ -93,11 +93,20 @@ public static class CoreLogEvents
         "Failed to acquire lock {lockName}.");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a concurrency related exception occurs while trying to
+    ///     acquire a lock. This is usually not an issue and just means that the lock was acquired by another instance in the meantime.
+    /// </summary>
+    public static LogEvent AcquireLockConcurrencyException { get; } = new(
+        LogLevel.Information,
+        GetEventId(65, nameof(LockLost)),
+        "Failed to acquire lock {lockName}.");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception occurs while trying to release a lock.
     /// </summary>
     public static LogEvent ReleaseLockFailed { get; } = new(
         LogLevel.Error,
-        GetEventId(65, nameof(LockLost)),
+        GetEventId(66, nameof(LockLost)),
         "Failed to release lock {lockName}.");
 
     private static EventId GetEventId(int id, string name) => new(id, $"Silverback.Core_{name}");

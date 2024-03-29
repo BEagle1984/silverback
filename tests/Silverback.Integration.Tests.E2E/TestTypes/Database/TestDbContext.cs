@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Silverback.Domain;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Database;
 

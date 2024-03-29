@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 public static class OutboxSettingsBuilderPostgreSqlExtensions
 {
     /// <summary>
-    ///     Configures the outbox to be stored in memory.
+    ///     Configures the PostgreSql outbox.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="OutboxSettingsBuilder" />.

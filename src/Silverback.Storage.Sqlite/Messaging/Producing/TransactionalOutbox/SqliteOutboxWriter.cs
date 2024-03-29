@@ -12,7 +12,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
 
 /// <summary>
-///     Writes to the Sqlite outbox.
+///     Writes to the SQLite outbox.
 /// </summary>
 public class SqliteOutboxWriter : IOutboxWriter
 {

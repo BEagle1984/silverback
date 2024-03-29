@@ -136,13 +136,23 @@ public class CoreLoggerExtensionsFixture
     }
 
     [Fact]
+    public void LogAcquireLockConcurrencyException_ShouldLog()
+    {
+        string expectedMessage = "Failed to acquire lock my-lock.";
+
+        _silverbackLogger.LogAcquireLockConcurrencyException("my-lock", new ArithmeticException());
+
+        _logger.Received(LogLevel.Information, typeof(ArithmeticException), expectedMessage, 65);
+    }
+
+    [Fact]
     public void LogReleaseLockFailed_ShouldLog()
     {
         string expectedMessage = "Failed to release lock my-lock.";
 
         _silverbackLogger.LogReleaseLockFailed("my-lock", new ArithmeticException());
 
-        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 65);
+        _logger.Received(LogLevel.Error, typeof(ArithmeticException), expectedMessage, 66);
     }
 
     private sealed class FakeBackgroundService : DistributedBackgroundService

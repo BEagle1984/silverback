@@ -117,6 +117,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.PostgreS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.PostgreSql.Tests", "tests\Silverback.Storage.PostgreSql.Tests\Silverback.Storage.PostgreSql.Tests.csproj", "{77107DC7-54A9-4E89-91E9-D4482F240C94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.EntityFramework", "src\Silverback.Storage.EntityFramework\Silverback.Storage.EntityFramework.csproj", "{B8337FAA-10DB-4D04-A6A7-5AB45A510949}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.EntityFramework.Tests", "tests\Silverback.Storage.EntityFramework.Tests\Silverback.Storage.EntityFramework.Tests.csproj", "{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -275,6 +279,14 @@ Global
 		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77107DC7-54A9-4E89-91E9-D4482F240C94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8337FAA-10DB-4D04-A6A7-5AB45A510949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8337FAA-10DB-4D04-A6A7-5AB45A510949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8337FAA-10DB-4D04-A6A7-5AB45A510949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8337FAA-10DB-4D04-A6A7-5AB45A510949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,6 +317,7 @@ Global
 		{E761F928-4E34-4194-BDD9-F12FE2B9D4A4} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{72E00BF5-BB1A-406E-880D-9C28E6DD9CDD} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{77107DC7-54A9-4E89-91E9-D4482F240C94} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

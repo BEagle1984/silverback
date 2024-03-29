@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration;
 public static class OutboxSettingsBuilderMemoryExtensions
 {
     /// <summary>
-    ///     Configures the outbox to be stored in memory.
+    ///     Configures the in-memory outbox.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="OutboxSettingsBuilder" />.

@@ -5,7 +5,7 @@ using System.Data.Common;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
-namespace Silverback.Storage.Relational;
+namespace Silverback.Storage;
 
 /// <summary>
 ///     Adds the storage specific methods to the <see cref="Publisher" />.

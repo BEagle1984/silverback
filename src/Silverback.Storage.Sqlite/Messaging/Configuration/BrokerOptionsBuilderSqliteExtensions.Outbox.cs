@@ -19,13 +19,13 @@ namespace Silverback.Messaging.Configuration;
 public static partial class BrokerOptionsBuilderSqliteExtensions
 {
     /// <summary>
-    ///     Replaces all outboxes with the Sqlite version, better suitable for testing.
+    ///     Replaces all outboxes with the SQLite version, better suitable for testing.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
     /// </param>
     /// <param name="connectionString">
-    ///     The connection string to the Sqlite database.
+    ///     The connection string to the SQLite database.
     /// </param>
     /// <returns>
     ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
@@ -49,7 +49,7 @@ public static partial class BrokerOptionsBuilderSqliteExtensions
     }
 
     /// <summary>
-    ///     Adds the Sqlite outbox.
+    ///     Adds the SQLite outbox.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.

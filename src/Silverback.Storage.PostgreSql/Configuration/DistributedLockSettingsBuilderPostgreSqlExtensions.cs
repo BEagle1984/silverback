@@ -10,7 +10,7 @@ namespace Silverback.Configuration;
 ///     Adds the <see cref="UsePostgreSqlAdvisoryLock" /> and  <see cref="UsePostgreSqlTable" /> methods to the
 ///     <see cref="DistributedLockSettingsBuilder" />.
 /// </summary>
-public static class PostgreSqlDistributedLockSettingsBuilderExtensions
+public static class DistributedLockSettingsBuilderPostgreSqlExtensions
 {
     /// <summary>
     ///     Configures the PostgreSql advisory lock.

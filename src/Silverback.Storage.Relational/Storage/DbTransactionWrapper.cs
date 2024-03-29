@@ -6,7 +6,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using Silverback.Util;
 
-namespace Silverback.Storage.Relational;
+namespace Silverback.Storage;
 
 // TODO: Test (equality too)
 internal sealed class DbTransactionWrapper : IStorageTransaction, IEquatable<DbTransactionWrapper>

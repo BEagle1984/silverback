@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Storage;
 
 /// <summary>
-///     The basic settings used to configure the database connection.
+///     The basic settings of the database connection.
 /// </summary>
 public interface IDatabaseConnectionSettings
 {

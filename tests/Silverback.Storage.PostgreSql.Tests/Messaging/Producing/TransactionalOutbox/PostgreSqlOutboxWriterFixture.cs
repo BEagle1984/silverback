@@ -13,7 +13,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Storage;
-using Silverback.Storage.Relational;
 using Silverback.Tests.Logging;
 using Xunit;
 
