@@ -32,7 +32,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

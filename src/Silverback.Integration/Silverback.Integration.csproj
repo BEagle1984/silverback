@@ -27,7 +27,6 @@
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.1" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
