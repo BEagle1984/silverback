@@ -53,7 +53,9 @@ internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TC
                 null,
                 new Lazy<string>(message)));
 
-    public IDisposable BeginScope<TState>(TState state) => _innerLogger.BeginScope(state);
+    public IDisposable? BeginScope<TState>(TState state)
+        where TState : notnull =>
+        _innerLogger.BeginScope(state);
 
     private LogLevel GetActualLogLevel(
         LogLevel logLevel,

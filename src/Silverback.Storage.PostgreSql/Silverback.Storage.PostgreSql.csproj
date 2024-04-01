@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="DistributedLock.Postgres" Version="1.0.4" />
-    <PackageReference Include="Npgsql" Version="7.0.4" />
+    <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
