@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages;
 public readonly record struct MessageHeader
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
+    ///     Initializes a new instance of the <see cref="MessageHeader" /> struct.
     /// </summary>
     /// <param name="name">
     ///     The header name.
@@ -26,7 +26,7 @@ public readonly record struct MessageHeader
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
+    ///     Initializes a new instance of the <see cref="MessageHeader" /> struct.
     /// </summary>
     /// <param name="name">
     ///     The header name.

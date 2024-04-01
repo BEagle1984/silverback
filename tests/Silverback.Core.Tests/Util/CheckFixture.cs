@@ -37,10 +37,7 @@ public class CheckFixture
     [Fact]
     public void NotEmpty_ShouldReturnCollection_WhenCollectionIsNotNullOrEmpty()
     {
-        List<object> collection = new()
-        {
-            new object(), new object()
-        };
+        List<object> collection = [new object(), new object()];
 
         IReadOnlyCollection<object> result = Check.NotEmpty(collection, "param");
 
@@ -50,7 +47,7 @@ public class CheckFixture
     [Fact]
     public void NotEmpty_ShouldThrow_WhenCollectionIsEmpty()
     {
-        List<object> collection = new();
+        List<object> collection = [];
 
         Action act = () => Check.NotEmpty(collection, "param");
 
@@ -130,7 +127,7 @@ public class CheckFixture
     [Fact]
     public void HasNoNulls_ShouldReturnCollection_WhenCollectionIsNotNullAndContainsNoNulls()
     {
-        List<object> collection = new() { new object(), new object() };
+        List<object> collection = [new object(), new object()];
 
         IReadOnlyCollection<object> result = Check.HasNoNulls(collection, "param");
 
@@ -140,7 +137,7 @@ public class CheckFixture
     [Fact]
     public void HasNoNulls_ShouldThrow_WhenCollectionContainsSomeNulls()
     {
-        List<object?> collection = new() { new object(), new object(), null };
+        List<object?> collection = [new object(), new object(), null];
 
         Action act = () => Check.HasNoNulls(collection, "param");
 
@@ -160,7 +157,7 @@ public class CheckFixture
     [Fact]
     public void HasNoEmpties_ShouldReturnCollection_WhenStringCollectionIsNotNullAndContainsNoNullOrEmptyStrings()
     {
-        List<string> collection = new() { "abc", "def" };
+        List<string> collection = ["abc", "def"];
 
         IReadOnlyCollection<string?> result = Check.HasNoEmpties(collection, "param");
 
@@ -170,7 +167,7 @@ public class CheckFixture
     [Fact]
     public void HasNoEmpties_ShouldThrow_WhenStringCollectionContainsSomeEmptyStrings()
     {
-        List<string> collection = new() { "abc", "def", string.Empty };
+        List<string> collection = ["abc", "def", string.Empty];
 
         Action act = () => Check.HasNoEmpties(collection, "param");
 
@@ -180,7 +177,7 @@ public class CheckFixture
     [Fact]
     public void HasNoEmpties_ShouldThrow_WhenStringCollectionContainsSomeNulls()
     {
-        List<string?> collection = new() { "abc", "def", null };
+        List<string?> collection = ["abc", "def", null];
 
         Action act = () => Check.HasNoEmpties(collection, "param");
 

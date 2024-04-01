@@ -36,7 +36,7 @@ public partial class ChunkingFixture
             ContentType = "text/plain"
         };
 
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -78,7 +78,7 @@ public partial class ChunkingFixture
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithIsLastChunkHeader()
     {
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -129,7 +129,7 @@ public partial class ChunkingFixture
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithChunksCountHeader()
     {
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -180,7 +180,7 @@ public partial class ChunkingFixture
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageIdHeader()
     {
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -231,7 +231,7 @@ public partial class ChunkingFixture
     [Fact]
     public async Task Chunking_ShouldConsumeChunkedBinaryMessageWithMessageTypeHeader()
     {
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -284,7 +284,7 @@ public partial class ChunkingFixture
     {
         byte[] rawMessage1 = Encoding.UTF8.GetBytes("Message 1");
         byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -356,7 +356,7 @@ public partial class ChunkingFixture
         byte[] rawMessage3 = BytesUtil.GetRandomBytes(30);
 
         int receivedFilesCount = 0;
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -429,7 +429,7 @@ public partial class ChunkingFixture
     {
         BinaryMessage message1 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "application/pdf" };
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(8), ContentType = "text/plain" };
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

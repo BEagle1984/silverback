@@ -111,11 +111,7 @@ public class MultipleBrokersFixture : MqttFixture
             .Should().Be("e2e-mqtt-broker-2");
     }
 
-    private sealed class Broker1Message : IIntegrationMessage
-    {
-    }
+    private sealed class Broker1Message : IIntegrationMessage;
 
-    private sealed class Broker2Message : IIntegrationMessage
-    {
-    }
+    private sealed class Broker2Message : IIntegrationMessage;
 }

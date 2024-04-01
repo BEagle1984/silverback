@@ -43,8 +43,8 @@ public class SymmetricDecryptionSettingsFixture
     {
         SymmetricDecryptionSettings settings = new()
         {
-            Key = Array.Empty<byte>(),
-            KeyProvider = _ => Array.Empty<byte>()
+            Key = [],
+            KeyProvider = _ => []
         };
 
         Action act = settings.Validate;

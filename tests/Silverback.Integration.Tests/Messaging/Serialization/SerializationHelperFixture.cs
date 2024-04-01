@@ -148,7 +148,7 @@ public class SerializationHelperFixture
     [Fact]
     public void GetTypeFromHeader_ShouldReturnNull_WhenHeadersAreEmpty()
     {
-        Type? type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
+        Type? type = SerializationHelper.GetTypeFromHeaders([]);
 
         type.Should().BeNull();
     }
@@ -156,7 +156,7 @@ public class SerializationHelperFixture
     [Fact]
     public void GetTypeFromHeader_ShouldReturnBaseType_WhenHeadersAreEmpty()
     {
-        Type type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection(), typeof(object));
+        Type type = SerializationHelper.GetTypeFromHeaders([], typeof(object));
 
         type.Should().Be(typeof(object));
     }
@@ -182,8 +182,8 @@ public class SerializationHelperFixture
     {
         TestConsumerEndpoint endpoint = TestConsumerEndpoint.GetDefault();
         RawInboundEnvelope rawEnvelope = new(
-            Array.Empty<byte>(),
-            new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
+            [],
+            [new MessageHeader("one", "1"), new MessageHeader("two", "2")],
             endpoint,
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -198,11 +198,7 @@ public class SerializationHelperFixture
         envelope.Endpoint.Should().Be(endpoint);
     }
 
-    private class BaseClass
-    {
-    }
+    private class BaseClass;
 
-    private class ChildClass : BaseClass
-    {
-    }
+    private class ChildClass : BaseClass;
 }

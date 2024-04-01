@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -47,8 +46,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
     public Task StopReadingAsync(TopicPartition topicPartition)
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         PartitionChannel? channel = GetChannel(topicPartition);
 
@@ -60,37 +58,34 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
 
     public void Reset(TopicPartition topicPartition)
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         GetChannel(topicPartition)?.Reset();
     }
 
     public void ResetAll()
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         _channels.Values.ForEach(channel => channel.Reset());
     }
 
     public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         PartitionChannel channel = GetOrCreateChannel(consumeResult.TopicPartition);
 
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Writing message ({topic}[{partition}]@{offset}) to channel {channel}.",
-            () => new object[]
-            {
+            () =>
+            [
                 consumeResult.Topic,
                 consumeResult.Partition.Value,
                 consumeResult.Offset.Value,
                 channel.Id
-            });
+            ]);
 
         // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
         // synchronously to stay within a single long-running thread with the Consume loop.

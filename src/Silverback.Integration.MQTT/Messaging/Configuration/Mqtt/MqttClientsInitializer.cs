@@ -101,14 +101,14 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         AddConsumer(consumer);
     }
 
-    private IReadOnlyCollection<MqttProducer> InitializeProducers(
+    private List<MqttProducer> InitializeProducers(
         string name,
         MqttClientConfiguration configuration,
         IMqttClientWrapper mqttClientWrapper,
         bool routing = true)
     {
         int i = 0;
-        List<MqttProducer> producers = new();
+        List<MqttProducer> producers = [];
 
         foreach (MqttProducerEndpointConfiguration? endpointConfiguration in configuration.ProducerEndpoints)
         {

@@ -54,29 +54,28 @@ public class SqliteOutboxWriter : IOutboxWriter
 
         return _dataAccess.ExecuteNonQueryAsync(
             _insertSql,
-            new SqliteParameter[]
-            {
-                new("@Content", SqliteType.Blob)
+            [
+                new SqliteParameter("@Content", SqliteType.Blob)
                 {
                     Value = outboxMessage.Content
                 },
-                new("@Headers", SqliteType.Text)
+                new SqliteParameter("@Headers", SqliteType.Text)
                 {
                     Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
                 },
-                new("@EndpointName", SqliteType.Text)
+                new SqliteParameter("@EndpointName", SqliteType.Text)
                 {
                     Value = outboxMessage.Endpoint.FriendlyName
                 },
-                new("@DynamicEndpoint", SqliteType.Text)
+                new SqliteParameter("@DynamicEndpoint", SqliteType.Text)
                 {
                     Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
                 },
-                new("@Created", SqliteType.Integer)
+                new SqliteParameter("@Created", SqliteType.Integer)
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             _settings.DbCommandTimeout,
             context);
     }
@@ -89,8 +88,7 @@ public class SqliteOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
             _insertSql,
-            new[]
-            {
+            [
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
@@ -99,7 +97,7 @@ public class SqliteOutboxWriter : IOutboxWriter
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Content;
@@ -119,8 +117,7 @@ public class SqliteOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
             _insertSql,
-            new[]
-            {
+            [
                 new SqliteParameter("@Content", SqliteType.Blob),
                 new SqliteParameter("@Headers", SqliteType.Text),
                 new SqliteParameter("@EndpointName", SqliteType.Text),
@@ -129,7 +126,7 @@ public class SqliteOutboxWriter : IOutboxWriter
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Content;

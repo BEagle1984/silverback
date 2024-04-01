@@ -60,7 +60,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         CancellationToken cancellationToken = default)
     {
         Check.NotNull(message, nameof(message));
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
 
@@ -89,7 +89,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
         Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null)
     {
         Check.NotNull(message, nameof(message));
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         try
         {
@@ -193,11 +193,5 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
 
             return _lastPushedPartition;
         }
-    }
-
-    private void EnsureNotDisposed()
-    {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
     }
 }

@@ -195,7 +195,7 @@ public class EncryptionFixture : MqttFixture
             ContentType = "text/plain"
         };
 
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

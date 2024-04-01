@@ -20,7 +20,5 @@ public class OutboxSettingsBuilderEntityFrameworkExtensionsFixture
         implementationBuilder.Should().BeOfType<EntityFrameworkOutboxSettingsBuilder>();
     }
 
-    private class TestDbContext : DbContext
-    {
-    }
+    private class TestDbContext : DbContext;
 }

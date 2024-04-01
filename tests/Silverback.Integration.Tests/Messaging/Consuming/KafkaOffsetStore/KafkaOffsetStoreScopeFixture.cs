@@ -66,7 +66,7 @@ public class KafkaOffsetStoreScopeFixture
 
     private class TestOffsetStore : IKafkaOffsetStore
     {
-        private readonly Dictionary<string, IReadOnlyCollection<KafkaOffset>> _offsets = new();
+        private readonly Dictionary<string, IReadOnlyCollection<KafkaOffset>> _offsets = [];
 
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) => _offsets[groupId];
 

@@ -47,13 +47,12 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            new NpgsqlParameter[]
-            {
-                new("@GroupId", NpgsqlDbType.Text)
+            [
+                new NpgsqlParameter("@GroupId", NpgsqlDbType.Text)
                 {
                     Value = groupId
                 }
-            },
+            ],
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
@@ -61,8 +60,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(offsets, nameof(offsets)),
             _insertOrReplaceSql,
-            new[]
-            {
+            [
                 new NpgsqlParameter("@GroupId", NpgsqlDbType.Text)
                 {
                     Value = groupId
@@ -70,7 +68,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
                 new NpgsqlParameter("@Topic", NpgsqlDbType.Text),
                 new NpgsqlParameter("@Partition", NpgsqlDbType.Integer),
                 new NpgsqlParameter("@Offset", NpgsqlDbType.Integer)
-            },
+            ],
             (offset, parameters) =>
             {
                 parameters[1].Value = offset.TopicPartition.Topic;

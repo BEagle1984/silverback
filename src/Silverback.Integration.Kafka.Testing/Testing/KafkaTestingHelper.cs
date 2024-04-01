@@ -40,8 +40,7 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
     }
 
     /// <inheritdoc cref="IKafkaTestingHelper.ConsumerGroups" />
-    public IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups =>
-        (IReadOnlyCollection<IMockedConsumerGroup>?)_groups ?? Array.Empty<IMockedConsumerGroup>();
+    public IReadOnlyCollection<IMockedConsumerGroup> ConsumerGroups => (IReadOnlyCollection<IMockedConsumerGroup>?)_groups ?? [];
 
     /// <inheritdoc cref="IKafkaTestingHelper.GetConsumerGroup(string)" />
     public IMockedConsumerGroup GetConsumerGroup(string groupId)

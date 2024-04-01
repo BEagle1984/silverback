@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 
 internal class SharedSubscriptionsManager
 {
-    private readonly Dictionary<string, GroupSubscriptions> _groupSubscriptions = new();
+    private readonly Dictionary<string, GroupSubscriptions> _groupSubscriptions = [];
 
     public void Add(Subscription subscription)
     {
@@ -50,7 +50,7 @@ internal class SharedSubscriptionsManager
 
     private sealed class GroupSubscriptions
     {
-        private readonly List<Subscription> _subscriptions = new();
+        private readonly List<Subscription> _subscriptions = [];
 
         public Subscription? ActiveSubscription => _subscriptions.FirstOrDefault();
 

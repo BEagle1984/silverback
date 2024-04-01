@@ -12,6 +12,4 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TMessage">
 ///     The type of the messages being streamed.
 /// </typeparam>
-public interface IMessageStreamObservable<out TMessage> : IObservable<TMessage>
-{
-}
+public interface IMessageStreamObservable<out TMessage> : IObservable<TMessage>;

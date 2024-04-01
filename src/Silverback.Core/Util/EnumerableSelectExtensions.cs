@@ -18,7 +18,7 @@ internal static class EnumerableSelectExtensions
         Func<T, TResult> selector,
         int? maxDegreeOfParallelism = null)
     {
-        ConcurrentBag<TResult> values = new();
+        ConcurrentBag<TResult> values = [];
         Parallel.ForEach(
             source,
             new ParallelOptions { MaxDegreeOfParallelism = maxDegreeOfParallelism ?? -1 },
@@ -42,7 +42,7 @@ internal static class EnumerableSelectExtensions
         using SemaphoreSlim semaphore = new(maxDegreeOfParallelism.Value);
         using CancellationTokenSource cancellationTokenSource = new();
 
-        async ValueTask<TResult> InvokeSelector(T value)
+        async ValueTask<TResult> InvokeSelectorAsync(T value)
         {
             await semaphore.WaitAsync(cancellationTokenSource.Token).ConfigureAwait(false);
             try
@@ -53,12 +53,17 @@ internal static class EnumerableSelectExtensions
             }
             catch (Exception)
             {
+#if NETSTANDARD
                 cancellationTokenSource.Cancel();
+#else
+                await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+#endif
+
                 throw;
             }
         }
 
-        return await source.ParallelSelect(InvokeSelector).AwaitAllAsync().ConfigureAwait(false);
+        return await source.ParallelSelect(InvokeSelectorAsync).AwaitAllAsync().ConfigureAwait(false);
     }
 
     public static IEnumerable<TResult> Select<T, TResult>(
@@ -72,11 +77,11 @@ internal static class EnumerableSelectExtensions
         this IEnumerable<T> source,
         Func<T, ValueTask<TResult>> selector)
     {
-        List<TResult> results = new();
+        List<TResult> results = [];
 
-        async ValueTask InvokeSelector(T item) => results.Add(await selector.Invoke(item).ConfigureAwait(false));
+        async ValueTask InvokeSelectorAsync(T item) => results.Add(await selector.Invoke(item).ConfigureAwait(false));
 
-        await source.ForEachAsync(InvokeSelector).ConfigureAwait(false);
+        await source.ForEachAsync(InvokeSelectorAsync).ConfigureAwait(false);
         return results;
     }
 

@@ -21,7 +21,7 @@ public partial class StreamingFixture
     public async Task Streaming_ShouldAbortEnumeration_WhenDisconnecting()
     {
         bool aborted = false;
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -74,7 +74,7 @@ public partial class StreamingFixture
     public async Task Streaming_ShouldCompleteObservable_WhenDisconnecting()
     {
         bool completed = false;
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

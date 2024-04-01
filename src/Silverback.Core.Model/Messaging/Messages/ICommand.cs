@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 ///     A message that triggers an action.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface ICommand : IMessage
-{
-}
+public interface ICommand : IMessage;

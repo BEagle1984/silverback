@@ -13,6 +13,4 @@ namespace Silverback.Diagnostics;
 ///     The type who's name is used for the logger category name.
 /// </typeparam>
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used to init logger category")]
-internal interface IMappedLevelsLogger<out TCategoryName> : IMappedLevelsLogger
-{
-}
+internal interface IMappedLevelsLogger<out TCategoryName> : IMappedLevelsLogger;

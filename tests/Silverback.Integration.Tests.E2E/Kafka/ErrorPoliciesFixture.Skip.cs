@@ -130,7 +130,7 @@ public partial class ErrorPoliciesFixture
         TestEventOne message = new() { ContentEventOne = "Hello E2E!" };
         byte[] rawMessage = DefaultSerializers.Json.SerializeToBytes(message);
         byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
-        List<List<TestEventOne>> receivedBatches = new();
+        List<List<TestEventOne>> receivedBatches = [];
         int completedBatches = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -156,7 +156,7 @@ public partial class ErrorPoliciesFixture
 
         async Task HandleBatch(IMessageStreamEnumerable<TestEventOne> batch)
         {
-            List<TestEventOne> list = new();
+            List<TestEventOne> list = [];
             receivedBatches.Add(list);
 
             await foreach (TestEventOne testEvent in batch)

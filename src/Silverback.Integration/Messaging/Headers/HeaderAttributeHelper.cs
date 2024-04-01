@@ -26,7 +26,7 @@ internal static class HeaderAttributeHelper
             .Where(property => property.PropertyInfo.CanRead)
             .ToList();
 
-        if (!properties.Any())
+        if (properties.Count == 0)
             yield break;
 
         foreach (DecoratedProperty? property in properties)
@@ -52,7 +52,7 @@ internal static class HeaderAttributeHelper
             .Where(property => property.PropertyInfo.CanWrite)
             .ToList();
 
-        if (!properties.Any())
+        if (properties.Count == 0)
             return;
 
         foreach (DecoratedProperty? property in properties)

@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 ///     internally used (in Silverback.Integration) to trigger additional tasks related to the publishing of
 ///     the domain events.
 /// </summary>
-public class TransactionAbortedEvent : ISilverbackEvent
-{
-}
+public class TransactionAbortedEvent : ISilverbackEvent;

@@ -16,7 +16,14 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsReadOnlyCollection_ShouldReturnNewEquivalentCollection_WhenEnumerableIsPassed()
     {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
+        IEnumerable<int> enumerable = GetEnumerable();
+
+        static IEnumerable<int> GetEnumerable()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
 
         IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
@@ -27,7 +34,7 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsReadOnlyCollection_ShouldReturnSameObject_WhenListIsPassed()
     {
-        List<int> enumerable = new() { 1, 2, 3, 4 };
+        List<int> enumerable = [1, 2, 3, 4];
 
         IReadOnlyCollection<int> collection = enumerable.AsReadOnlyCollection();
 
@@ -37,7 +44,14 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsReadOnlyList_ShouldReturnNewEquivalentList_WhenEnumerableIsPassed()
     {
-        IEnumerable<int> enumerable = Enumerable.Range(1, 10);
+        IEnumerable<int> enumerable = GetEnumerable();
+
+        static IEnumerable<int> GetEnumerable()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
 
         IReadOnlyList<int> list = enumerable.AsReadOnlyList();
 
@@ -48,7 +62,7 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsReadOnlyList_ShouldReturnSameObject_WhenListIsPassed()
     {
-        int[] enumerable = { 1, 2, 3, 4 };
+        int[] enumerable = [1, 2, 3, 4];
 
         IReadOnlyList<int> list = enumerable.AsReadOnlyList();
 
@@ -69,7 +83,7 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsList_ShouldReturnSameObject_WhenListIsPassed()
     {
-        List<int> enumerable = new() { 1, 2, 3, 4 };
+        List<int> enumerable = [1, 2, 3, 4];
 
         List<int> list = enumerable.AsList();
 
@@ -90,7 +104,7 @@ public class EnumerableAsCollectionExtensionsFixture
     [Fact]
     public void AsArray_ShouldReturnSameObject_WhenArrayIsPassed()
     {
-        int[] enumerable = { 1, 2, 3, 4 };
+        int[] enumerable = [1, 2, 3, 4];
 
         int[] array = enumerable.AsArray();
 

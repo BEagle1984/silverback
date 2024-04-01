@@ -41,13 +41,13 @@ public partial class ProducerFixture
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         producer.RawProduce(
-            new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 },
+            [0x01, 0x01, 0x01, 0x01, 0x01],
             new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } });
         producer.RawProduce(
-            new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 },
+            [0x02, 0x02, 0x02, 0x02, 0x02],
             new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } });
         producer.RawProduce(
-            new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 },
+            [0x03, 0x03, 0x03, 0x03, 0x03],
             new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
@@ -81,13 +81,13 @@ public partial class ProducerFixture
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 }),
+            new MemoryStream([0x01, 0x01, 0x01, 0x01, 0x01]),
             new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } });
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 }),
+            new MemoryStream([0x02, 0x02, 0x02, 0x02, 0x02]),
             new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } });
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 }),
+            new MemoryStream([0x03, 0x03, 0x03, 0x03, 0x03]),
             new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } });
 
         IReadOnlyList<Message<byte[]?, byte[]?>> messages = DefaultTopic.GetAllMessages();
@@ -124,17 +124,17 @@ public partial class ProducerFixture
         KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
 
         producer.RawProduce(
-            new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 },
+            [0x01, 0x01, 0x01, 0x01, 0x01],
             new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
         producer.RawProduce(
-            new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 },
+            [0x02, 0x02, 0x02, 0x02, 0x02],
             new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
         producer.RawProduce(
-            new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 },
+            [0x03, 0x03, 0x03, 0x03, 0x03],
             new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
@@ -180,17 +180,17 @@ public partial class ProducerFixture
         KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
 
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x01, 0x01, 0x01, 0x01, 0x01 }),
+            new MemoryStream([0x01, 0x01, 0x01, 0x01, 0x01]),
             new MessageHeaderCollection { { "x-custom", "test 1" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x02, 0x02, 0x02, 0x02, 0x02 }),
+            new MemoryStream([0x02, 0x02, 0x02, 0x02, 0x02]),
             new MessageHeaderCollection { { "x-custom", "test 2" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));
         producer.RawProduce(
-            new MemoryStream(new byte[] { 0x03, 0x03, 0x03, 0x03, 0x03 }),
+            new MemoryStream([0x03, 0x03, 0x03, 0x03, 0x03]),
             new MessageHeaderCollection { { "x-custom", "test 3" }, { "two", "2" } },
             _ => Interlocked.Increment(ref produced),
             _ => Interlocked.Increment(ref errors));

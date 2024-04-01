@@ -48,7 +48,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
     private DateTime _timeoutExpiration = DateTime.MaxValue;
 
-    private ICollection<ISequence>? _sequences;
+    private List<ISequence>? _sequences;
 
     private bool _isDisposed;
 
@@ -116,7 +116,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
     /// <inheritdoc cref="ISequence.Sequences" />
-    public IReadOnlyCollection<ISequence> Sequences => _sequences?.AsReadOnlyCollection() ?? Array.Empty<ISequence>();
+    public IReadOnlyCollection<ISequence> Sequences => _sequences?.AsReadOnlyCollection() ?? [];
 
     /// <inheritdoc cref="ISequence.Context" />
     public ConsumerPipelineContext Context { get; }
@@ -228,8 +228,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.GetCommitIdentifiers" />
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers()
     {
-        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetCommitIdentifiers()
-                                                                    ?? Array.Empty<IBrokerMessageIdentifier>();
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetCommitIdentifiers() ?? [];
 
         if (_sequences != null)
         {
@@ -244,8 +243,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <inheritdoc cref="ISequence.GetRollbackIdentifiers" />
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers()
     {
-        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetRollbackIdentifiers() ??
-                                                                    Array.Empty<IBrokerMessageIdentifier>();
+        IReadOnlyCollection<IBrokerMessageIdentifier> identifiers = _identifiersTracker?.GetRollbackIdentifiers() ?? [];
 
         if (_sequences != null)
         {
@@ -295,7 +293,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
             if (sequence != null && sequence != this)
             {
-                _sequences ??= new List<ISequence>();
+                _sequences ??= [];
                 _sequences.Add(sequence);
                 (sequence as ISequenceImplementation)?.SetParentSequence(this);
             }
@@ -323,12 +321,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
                 _logger.LogLowLevelTrace(
                     "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
-                    () => new object[]
-                    {
+                    () =>
+                    [
                         GetType().Name,
                         SequenceId,
                         TotalLength
-                    });
+                    ]);
             }
 
             if (IsCompleting)
@@ -341,11 +339,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             _logger.LogLowLevelTrace(
                 ex,
                 "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () => new object[]
-                {
+                () =>
+                [
                     GetType().Name,
                     SequenceId
-                });
+                ]);
 
             return AddToSequenceResult.Aborted(_abortingTaskCompletionSource?.Task);
         }
@@ -354,11 +352,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
             _logger.LogLowLevelTrace(
                 ex,
                 "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                () => new object[]
-                {
+                () =>
+                [
                     GetType().Name,
                     SequenceId
-                });
+                ]);
 
             throw;
         }
@@ -396,12 +394,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogLowLevelTrace(
             "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
-            () => new object[]
-            {
+            () =>
+            [
                 GetType().Name,
                 SequenceId,
                 Length
-            });
+            ]);
 
         IsComplete = true;
         IsCompleting = false;
@@ -426,11 +424,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogLowLevelTrace(
             "Disposing {sequenceType} '{sequenceId}'...",
-            () => new object[]
-            {
+            () =>
+            [
                 GetType().Name,
                 SequenceId
-            });
+            ]);
 
         _abortingTaskCompletionSource?.Task.Wait();
 
@@ -441,11 +439,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogLowLevelTrace(
             "Waiting adding semaphore ({sequenceType} '{sequenceId}')...",
-            () => new object[]
-            {
+            () =>
+            [
                 GetType().Name,
                 SequenceId
-            });
+            ]);
 
         _addingSemaphoreSlim.Wait();
         _addingSemaphoreSlim.Dispose();
@@ -458,11 +456,11 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _logger.LogLowLevelTrace(
             "{sequenceType} '{sequenceId}' disposed.",
-            () => new object[]
-            {
+            () =>
+            [
                 GetType().Name,
                 SequenceId
-            });
+            ]);
     }
 
     /// <summary>
@@ -572,12 +570,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         _logger.LogLowLevelTrace(
             AbortException,
             "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
-            () => new object[]
-            {
+            () =>
+            [
                 GetType().Name,
                 SequenceId,
                 AbortReason
-            });
+            ]);
 
         await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
         if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
@@ -585,7 +583,12 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
 
         _streamProvider.AbortIfPending();
 
+#if NETSTANDARD
         _abortCancellationTokenSource.Cancel();
+#else
+        await _abortCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+#endif
+
         _abortingTaskCompletionSource?.SetResult(true);
     }
 

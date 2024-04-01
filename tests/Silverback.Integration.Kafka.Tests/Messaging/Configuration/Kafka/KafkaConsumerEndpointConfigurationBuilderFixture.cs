@@ -154,7 +154,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     {
         KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        builder.ConsumeFrom(new[] { "topic1", "topic2" }, partitions => partitions);
+        builder.ConsumeFrom(["topic1", "topic2"], partitions => partitions);
 
         KafkaConsumerEndpointConfiguration configuration = builder.Build();
         configuration.TopicPartitions.Should().BeEquivalentTo(

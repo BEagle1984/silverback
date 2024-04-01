@@ -20,7 +20,7 @@ public class JsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldSerialize()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageSerializer serializer = new();
 
@@ -34,7 +34,7 @@ public class JsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldAddTypeHeader()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageSerializer serializer = new();
 
@@ -47,7 +47,7 @@ public class JsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldNotAddTypeHeader_WhenDisabled()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageSerializer serializer = new()
         {
@@ -68,7 +68,7 @@ public class JsonMessageSerializerFixture
 
         Stream? serialized = await serializer.SerializeAsync(
             messageStream,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeSameAs(messageStream);
@@ -83,7 +83,7 @@ public class JsonMessageSerializerFixture
 
         Stream? serialized = await serializer.SerializeAsync(
             messageBytes,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
@@ -95,7 +95,7 @@ public class JsonMessageSerializerFixture
         JsonMessageSerializer serializer = new();
 
         Stream? serialized = await serializer
-            .SerializeAsync(null, new MessageHeaderCollection(), TestProducerEndpoint.GetDefault());
+            .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeNull();
     }

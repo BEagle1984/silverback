@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservable<TMessage>, IDisposable
 {
-    private readonly ISubject<TMessage> _subject = new Subject<TMessage>();
+    private readonly Subject<TMessage> _subject = new();
 
     private readonly SemaphoreSlim _subscribeSemaphore = new(0, 1);
 
@@ -66,6 +66,7 @@ internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservab
         _subscribeSemaphore.Dispose();
         _subscription?.Dispose();
         _subscription = null;
+        _subject.Dispose();
     }
 
     IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)

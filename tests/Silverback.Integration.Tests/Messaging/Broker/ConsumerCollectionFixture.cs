@@ -16,7 +16,7 @@ public class ConsumerCollectionFixture
     [Fact]
     public void Add_ShouldAddConsumer()
     {
-        ConsumerCollection consumerCollection = new();
+        ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
         IConsumer consumer2 = Substitute.For<IConsumer>();
 
@@ -30,7 +30,7 @@ public class ConsumerCollectionFixture
     [Fact]
     public void Add_ShouldThrow_WhenFriendlyNameNotUnique()
     {
-        ConsumerCollection consumerCollection = new();
+        ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
         consumer1.EndpointsConfiguration.Returns(
             new TestConsumerEndpointConfiguration[]
@@ -84,7 +84,7 @@ public class ConsumerCollectionFixture
     [Fact]
     public void GetEnumerator_ShouldReturnEnumerator()
     {
-        ConsumerCollection consumerCollection = new();
+        ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
         IConsumer consumer2 = Substitute.For<IConsumer>();
 
@@ -103,7 +103,7 @@ public class ConsumerCollectionFixture
     [Fact]
     public void Count_ShouldReturnCount()
     {
-        ConsumerCollection consumerCollection = new();
+        ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
         IConsumer consumer2 = Substitute.For<IConsumer>();
 

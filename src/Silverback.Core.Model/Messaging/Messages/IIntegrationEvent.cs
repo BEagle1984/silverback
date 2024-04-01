@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 ///     A message that is sent over the message broker to notify an event.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IIntegrationEvent : IEvent, IIntegrationMessage
-{
-}
+public interface IIntegrationEvent : IEvent, IIntegrationMessage;

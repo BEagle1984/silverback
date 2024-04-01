@@ -21,7 +21,5 @@ public class DistributedLockSettingsBuilderEntityFrameworkExtensionsFixture
         implementationBuilder.Should().BeOfType<EntityFrameworkLockSettingsBuilder>();
     }
 
-    private class TestDbContext : DbContext
-    {
-    }
+    private class TestDbContext : DbContext;
 }

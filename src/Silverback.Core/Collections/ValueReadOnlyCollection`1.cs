@@ -12,7 +12,7 @@ namespace Silverback.Collections;
 /// <inheritdoc cref="IValueReadOnlyCollection{T}" />
 public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IEquatable<ValueReadOnlyCollection<T>>
 {
-    private readonly IEqualityComparer<T> _equalityComparer = EqualityComparer<T>.Default;
+    private readonly EqualityComparer<T> _equalityComparer = EqualityComparer<T>.Default;
 
     private readonly IReadOnlyCollection<T> _collection;
 
@@ -24,7 +24,7 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
     /// </param>
     public ValueReadOnlyCollection(IEnumerable<T> collection)
     {
-        _collection = Check.NotNull(collection, nameof(collection)).AsArray();
+        _collection = Check.NotNull(collection, nameof(collection)).AsReadOnlyCollection();
     }
 
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />

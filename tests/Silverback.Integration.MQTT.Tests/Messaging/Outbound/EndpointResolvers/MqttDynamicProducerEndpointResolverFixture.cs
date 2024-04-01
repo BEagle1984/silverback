@@ -30,7 +30,7 @@ public class MqttDynamicProducerEndpointResolverFixture
     [Fact]
     public void GetEndpoint_ShouldReturnTopicFromTopicNameFormat()
     {
-        MqttDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => new[] { "123" });
+        MqttDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => ["123"]);
 
         ProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new MqttProducerEndpointConfiguration(), Substitute.For<IServiceProvider>());
 
@@ -68,7 +68,7 @@ public class MqttDynamicProducerEndpointResolverFixture
     [Fact]
     public void RawName_ShouldReturnFormatStringFromTopicFormat()
     {
-        MqttDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => new[] { "123" });
+        MqttDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => ["123"]);
 
         endpointResolver.RawName.Should().StartWith("topic-{0}");
     }

@@ -45,13 +45,12 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteQuery(
             reader => new KafkaOffset(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2)),
             _getQuerySql,
-            new SqliteParameter[]
-            {
-                new("@GroupId", SqliteType.Text)
+            [
+                new SqliteParameter("@GroupId", SqliteType.Text)
                 {
                     Value = groupId
                 }
-            },
+            ],
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
@@ -59,8 +58,7 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(offsets, nameof(offsets)),
             _insertOrReplaceQuerySql,
-            new[]
-            {
+            [
                 new SqliteParameter("@GroupId", SqliteType.Text)
                 {
                     Value = groupId
@@ -68,7 +66,7 @@ public class SqliteKafkaOffsetStore : IKafkaOffsetStore
                 new SqliteParameter("@Topic", SqliteType.Text),
                 new SqliteParameter("@Partition", SqliteType.Integer),
                 new SqliteParameter("@Offset", SqliteType.Integer)
-            },
+            ],
             (offset, parameters) =>
             {
                 parameters[1].Value = offset.TopicPartition.Topic;

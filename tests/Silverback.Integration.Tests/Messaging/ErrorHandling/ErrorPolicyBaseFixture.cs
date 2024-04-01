@@ -27,79 +27,72 @@ public class ErrorPolicyBaseFixture
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
 
     public static IEnumerable<object[]> IncludedExceptions_TestData =>
-        new[]
-        {
-            new object[] { new ArgumentException(), true },
-            new object[] { new ArgumentOutOfRangeException(), true },
-            new object[] { new InvalidCastException(), true },
-            new object[] { new FormatException(), false }
-        };
+    [
+        [new ArgumentException(), true],
+        [new ArgumentOutOfRangeException(), true],
+        [new InvalidCastException(), true],
+        [new FormatException(), false]
+    ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
     public static IEnumerable<object[]> ExcludedException_TestData =>
-        new[]
-        {
-            new object[] { new ArgumentException(), false },
-            new object[] { new ArgumentOutOfRangeException(), false },
-            new object[] { new InvalidCastException(), false },
-            new object[] { new FormatException(), true }
-        };
+    [
+        [new ArgumentException(), false],
+        [new ArgumentOutOfRangeException(), false],
+        [new InvalidCastException(), false],
+        [new FormatException(), true]
+    ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
     public static IEnumerable<object[]> IncludedAndExcludedExceptions_TestData =>
-        new[]
-        {
-            new object[] { new ArgumentException(), true },
-            new object[] { new ArgumentNullException(), true },
-            new object[] { new ArgumentOutOfRangeException(), false },
-            new object[] { new InvalidCastException(), false },
-            new object[] { new FormatException(), true }
-        };
+    [
+        [new ArgumentException(), true],
+        [new ArgumentNullException(), true],
+        [new ArgumentOutOfRangeException(), false],
+        [new InvalidCastException(), false],
+        [new FormatException(), true]
+    ];
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
     public static IEnumerable<object[]> ApplyRule_TestData =>
-        new[]
-        {
-            new object[]
-            {
-                new InboundEnvelope(
-                    null,
-                    Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                    TestConsumerEndpoint.GetDefault(),
-                    Substitute.For<IConsumer>(),
-                    new TestOffset()),
-                new ArgumentException(),
-                true
-            },
-            new object[]
-            {
-                new InboundEnvelope(
-                    null,
-                    Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
-                    TestConsumerEndpoint.GetDefault(),
-                    Substitute.For<IConsumer>(),
-                    new TestOffset()),
-                new ArgumentException(),
-                false
-            },
-            new object[]
-            {
-                new InboundEnvelope(
-                    null,
-                    Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
-                    TestConsumerEndpoint.GetDefault(),
-                    Substitute.For<IConsumer>(),
-                    new TestOffset()),
-                new ArgumentException("no"),
-                false
-            }
-        };
+    [
+        [
+            new InboundEnvelope(
+                null,
+                Stream.Null,
+                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
+                TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
+                new TestOffset()),
+            new ArgumentException(),
+            true
+        ],
+        [
+            new InboundEnvelope(
+                null,
+                Stream.Null,
+                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6")],
+                TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
+                new TestOffset()),
+            new ArgumentException(),
+            false
+        ],
+        [
+            new InboundEnvelope(
+                null,
+                Stream.Null,
+                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
+                TestConsumerEndpoint.GetDefault(),
+                Substitute.For<IConsumer>(),
+                new TestOffset()),
+            new ArgumentException("no"),
+            false
+        ]
+    ];
 
     [Theory]
     [MemberData(nameof(IncludedExceptions_TestData))]
@@ -107,7 +100,7 @@ public class ErrorPolicyBaseFixture
     {
         TestErrorPolicy policy = new()
         {
-            IncludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+            IncludedExceptions = [typeof(ArgumentException), typeof(InvalidCastException)]
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
@@ -116,7 +109,7 @@ public class ErrorPolicyBaseFixture
                 new InboundEnvelope(
                     null,
                     Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
                     TestConsumerEndpoint.GetDefault(),
                     Substitute.For<IConsumer>(),
                     new TestOffset())),
@@ -131,7 +124,7 @@ public class ErrorPolicyBaseFixture
     {
         TestErrorPolicy policy = new()
         {
-            ExcludedExceptions = new[] { typeof(ArgumentException), typeof(InvalidCastException) }
+            ExcludedExceptions = [typeof(ArgumentException), typeof(InvalidCastException)]
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
@@ -140,7 +133,7 @@ public class ErrorPolicyBaseFixture
                 new InboundEnvelope(
                     null,
                     Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
                     TestConsumerEndpoint.GetDefault(),
                     Substitute.For<IConsumer>(),
                     new TestOffset())),
@@ -155,8 +148,8 @@ public class ErrorPolicyBaseFixture
     {
         TestErrorPolicy policy = new()
         {
-            IncludedExceptions = new[] { typeof(ArgumentException), typeof(FormatException) },
-            ExcludedExceptions = new[] { typeof(ArgumentOutOfRangeException) }
+            IncludedExceptions = [typeof(ArgumentException), typeof(FormatException)],
+            ExcludedExceptions = [typeof(ArgumentOutOfRangeException)]
         };
         IErrorPolicyImplementation policyImplementation = policy.Build(Substitute.For<IServiceProvider>());
 
@@ -165,7 +158,7 @@ public class ErrorPolicyBaseFixture
                 new InboundEnvelope(
                     null,
                     Stream.Null,
-                    new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99")],
                     TestConsumerEndpoint.GetDefault(),
                     Substitute.For<IConsumer>(),
                     new TestOffset())),
@@ -201,10 +194,9 @@ public class ErrorPolicyBaseFixture
     {
         InboundEnvelope envelope = new(
             Stream.Null,
-            new[]
-            {
+            [
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-            },
+            ],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -237,7 +229,7 @@ public class ErrorPolicyBaseFixture
 
         InboundEnvelope envelope = new(
             Stream.Null,
-            new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
+            [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());
@@ -264,10 +256,9 @@ public class ErrorPolicyBaseFixture
 
         InboundEnvelope envelope = new(
             Stream.Null,
-            new[]
-            {
+            [
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")
-            },
+            ],
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset());

@@ -15,6 +15,4 @@ namespace Silverback.Messaging.Diagnostics;
 /// </typeparam>
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for DI")]
 public interface IBrokerActivityEnricher<TConfiguration> : IBrokerActivityEnricher
-    where TConfiguration : EndpointConfiguration
-{
-}
+    where TConfiguration : EndpointConfiguration;

@@ -265,9 +265,7 @@ public class EventPublisherExtensionsFixture
         await publisher.Received(1).PublishAsync(Arg.Any<IAsyncEnumerable<Wrapper<TestEvent>>>(), throwIfUnhandled);
     }
 
-    private class TestEvent : IEvent
-    {
-    }
+    private class TestEvent : IEvent;
 
     private class Wrapper<T> : IMessageWrapper<T>
         where T : new()

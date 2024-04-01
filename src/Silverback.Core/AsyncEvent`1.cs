@@ -34,7 +34,7 @@ public class AsyncEvent<TArg>
 
         lock (_lockObject)
         {
-            _handlers ??= new List<Func<TArg, ValueTask>>();
+            _handlers ??= [];
             _handlers.Add(handler);
         }
     }

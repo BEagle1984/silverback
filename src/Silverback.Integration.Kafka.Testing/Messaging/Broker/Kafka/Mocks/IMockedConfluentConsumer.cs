@@ -28,7 +28,7 @@ public interface IMockedConfluentConsumer : IConsumer<byte[]?, byte[]?>
     /// <summary>
     ///     Gets a value indicating whether this instance was disposed.
     /// </summary>
-    bool Disposed { get; }
+    bool IsDisposed { get; }
 
     /// <summary>
     ///     Gets the stored offset for the specified topic partition.

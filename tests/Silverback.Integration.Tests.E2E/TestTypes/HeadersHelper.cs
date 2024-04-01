@@ -97,7 +97,7 @@ public static class HeadersHelper
         {
             yield return new MessageHeader(
                 DefaultMessageHeaders.ChunksCount,
-                chunksCount.ToString());
+                chunksCount.Value.ToString(CultureInfo.InvariantCulture));
         }
 
         if (isLastChunk != null)

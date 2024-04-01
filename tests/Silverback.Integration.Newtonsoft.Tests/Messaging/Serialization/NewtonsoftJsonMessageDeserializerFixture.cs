@@ -23,7 +23,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldCorrectlyDeserializeSerializedMessage()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageSerializer serializer = new();
         NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new();
@@ -44,7 +44,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader()
     {
         MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new();
 
@@ -61,7 +61,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader_WhenNotMandatory(JsonMessageDeserializerTypeHeaderBehavior typeHeaderBehavior)
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
         {
@@ -190,7 +190,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldThrowWhenMissingTypeHeader_WhenBehaviorSetToMandatory()
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
         {
@@ -230,7 +230,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, _) = await deserializer.DeserializeAsync(
             null,
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         deserializedObject.Should().BeNull();
@@ -243,7 +243,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (_, Type type) = await deserializer.DeserializeAsync(
             null,
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         type.Should().Be(typeof(TestEventOne));
@@ -256,7 +256,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (object? deserializedObject, _) = await deserializer.DeserializeAsync(
             new MemoryStream(),
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         deserializedObject.Should().BeNull();
@@ -269,7 +269,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
 
         (_, Type type) = await deserializer.DeserializeAsync(
             new MemoryStream(),
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         type.Should().Be(typeof(TestEventOne));

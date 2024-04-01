@@ -25,7 +25,7 @@ public sealed class KafkaOffsetStoreScope
 
     private readonly string _groupId;
 
-    private readonly Dictionary<TopicPartition, Offset> _lastStoredOffsets = new();
+    private readonly Dictionary<TopicPartition, Offset> _lastStoredOffsets = [];
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaOffsetStoreScope" /> class.

@@ -283,7 +283,7 @@ public class EncryptionFixture : KafkaFixture
             ContentType = "text/plain"
         };
 
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -346,7 +346,7 @@ public class EncryptionFixture : KafkaFixture
             ContentType = "text/plain"
         };
 
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

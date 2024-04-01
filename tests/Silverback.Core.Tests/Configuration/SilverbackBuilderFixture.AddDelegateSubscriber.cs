@@ -1,7 +1,6 @@
 // Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
-using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 using Xunit;
 
@@ -36,7 +34,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -57,7 +55,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -76,7 +74,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -95,7 +93,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -114,7 +112,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -133,7 +131,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -152,7 +150,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -171,7 +169,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -190,7 +188,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -209,7 +207,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -228,7 +226,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -247,7 +245,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -268,7 +266,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -289,7 +287,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -308,7 +306,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -327,7 +325,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -346,7 +344,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -365,7 +363,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -384,7 +382,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -403,7 +401,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -422,7 +420,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -441,7 +439,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -460,7 +458,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -479,7 +477,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -500,7 +498,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -521,7 +519,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -540,7 +538,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -559,7 +557,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -578,7 +576,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -597,7 +595,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -616,7 +614,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -635,7 +633,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -654,7 +652,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -673,7 +671,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -692,7 +690,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -711,7 +709,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -732,7 +730,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -753,7 +751,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -772,7 +770,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -791,7 +789,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -810,7 +808,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -829,7 +827,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -848,7 +846,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -867,7 +865,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -886,7 +884,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -905,7 +903,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -924,7 +922,7 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = true,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
@@ -943,12 +941,10 @@ public partial class SilverbackBuilderFixture
             new DelegateSubscriptionOptions
             {
                 IsExclusive = false,
-                Filters = Array.Empty<IMessageFilter>()
+                Filters = []
             });
     }
 
     [UsedImplicitly]
-    private class TestEventOne
-    {
-    }
+    private class TestEventOne;
 }

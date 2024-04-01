@@ -109,10 +109,10 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         eventOneEnvelopes.Should().HaveCount(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(new[] { "1", "2", "3", "4", "5" }, options => options.WithoutStrictOrdering());
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
         eventTwoEnvelopes.Should().HaveCount(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(new[] { "1", "2", "3", "4", "5" }, options => options.WithoutStrictOrdering());
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
     }
 
     [Fact]

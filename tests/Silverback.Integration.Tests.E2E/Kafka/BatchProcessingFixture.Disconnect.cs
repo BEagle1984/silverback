@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -24,7 +23,7 @@ public partial class BatchProcessingFixture
     {
         int batchesCount = 0;
         int abortedCount = 0;
-        TestingCollection<TestEventOne> receivedMessages = new();
+        TestingCollection<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -121,7 +120,7 @@ public partial class BatchProcessingFixture
 
             try
             {
-                List<TestEventOne> dummy = batch.ToList();
+                List<TestEventOne> dummy = [.. batch]; // Enumerate
             }
             catch (OperationCanceledException)
             {
@@ -158,7 +157,7 @@ public partial class BatchProcessingFixture
     [Fact]
     public async Task Batch_ShouldAwaitSubscriberBeforeDisconnecting()
     {
-        TestingCollection<TestEventOne> receivedMessages = new();
+        TestingCollection<TestEventOne> receivedMessages = [];
         bool hasSubscriberReturned = false;
 
         await Host.ConfigureServicesAndRunAsync(

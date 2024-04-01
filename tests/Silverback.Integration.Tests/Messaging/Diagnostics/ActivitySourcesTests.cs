@@ -20,7 +20,7 @@ public class ActivitySourcesTests
     [Fact]
     public void StartConsumeActivity_WithoutActivityHeaders_ActivityIsNotModified()
     {
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(new MessageHeaderCollection());
+        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
 
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
@@ -78,7 +78,7 @@ public class ActivitySourcesTests
     {
         using TestActivityListener listener = new();
 
-        IRawInboundEnvelope envelope = CreateInboundEnvelope(new MessageHeaderCollection());
+        IRawInboundEnvelope envelope = CreateInboundEnvelope([]);
         Activity activity = ActivitySources.StartConsumeActivity(envelope);
 
         listener.Activities.Should().Contain(activity);
@@ -96,7 +96,7 @@ public class ActivitySourcesTests
     {
         private readonly ActivityListener _listener;
 
-        private readonly List<Activity> _activities = new();
+        private readonly List<Activity> _activities = [];
 
         public TestActivityListener()
         {

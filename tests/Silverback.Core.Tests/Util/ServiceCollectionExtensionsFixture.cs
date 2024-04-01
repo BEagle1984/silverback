@@ -10,18 +10,14 @@ namespace Silverback.Tests.Core.Util;
 
 public class ServiceCollectionExtensionsFixture
 {
-    private interface IService
-    {
-    }
+    private interface IService;
 
-    private interface IOtherService
-    {
-    }
+    private interface IOtherService;
 
     [Fact]
     public void ContainsAny_ShouldReturnTrue_WhenTypeSpecifiedViaTypeParameterIsAlreadyRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         bool result = services.ContainsAny(typeof(IService));
@@ -32,7 +28,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void ContainsAny_ShouldReturnTrue_WhenTypeSpecifiedViaGenericArgumentIsAlreadyRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         bool result = services.ContainsAny<IService>();
@@ -43,7 +39,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void ContainsAny_ShouldReturnFalse_WhenTypeSpecifiedViaTypeParameterIsNotRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         bool result = services.ContainsAny(typeof(IOtherService));
@@ -54,7 +50,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void ContainsAny_ShouldReturnFalse_WhenTypeSpecifiedViaGenericArgumentIsNotRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         bool result = services.ContainsAny<IOtherService>();
@@ -65,7 +61,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnInstanceOfRegisteredSingleton_WhenTypeIsSpecified()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService>(new Service());
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
@@ -77,7 +73,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnInstanceOfRegisteredSingleton_WhenGenericArgumentIsSpecified()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService>(new Service());
 
         IService? result = services.GetSingletonServiceInstance<IService>();
@@ -89,7 +85,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaTypeParameterIsNotRegisteredAsSingleton()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddTransient<IService, Service>();
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
@@ -100,7 +96,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaGenericArgumentIsNotRegisteredAsSingleton()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddTransient<IService, Service>();
 
         IService? result = services.GetSingletonServiceInstance<IService>();
@@ -111,7 +107,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaTypeParameterIsNotRegisteredWithImplementationInstance()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
@@ -122,7 +118,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaGenericArgumentIsNotRegisteredWithImplementationInstance()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton<IService, Service>();
 
         IService? result = services.GetSingletonServiceInstance<IService>();
@@ -133,7 +129,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaTypeParameterIsNotRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         object? result = services.GetSingletonServiceInstance(typeof(IService));
 
@@ -143,14 +139,12 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void GetSingletonServiceInstance_ShouldReturnNull_WhenTypeSpecifiedViaGenericArgumentIsNotRegistered()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         IService? result = services.GetSingletonServiceInstance<IService>();
 
         result.Should().BeNull();
     }
 
-    private class Service : IService
-    {
-    }
+    private class Service : IService;
 }

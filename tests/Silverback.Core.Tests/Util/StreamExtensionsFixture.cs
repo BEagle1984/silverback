@@ -76,7 +76,7 @@ public class StreamExtensionsFixture
     [Fact]
     public async Task ReadAsync_ShouldReturnSlice()
     {
-        MemoryStream stream = new(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 });
+        MemoryStream stream = new([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
 
         byte[]? result = await stream.ReadAsync(2);
         result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02 });
@@ -88,7 +88,7 @@ public class StreamExtensionsFixture
     [Fact]
     public async Task ReadAsync_ShouldReturnIncompleteSlice()
     {
-        MemoryStream stream = new(new byte[] { 0x01, 0x02, 0x03 });
+        MemoryStream stream = new([0x01, 0x02, 0x03]);
 
         byte[]? result = await stream.ReadAsync(5);
         result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });
@@ -97,7 +97,7 @@ public class StreamExtensionsFixture
     [Fact]
     public void Read_ShouldReturnSlice()
     {
-        MemoryStream stream = new(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 });
+        MemoryStream stream = new([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08]);
 
         byte[]? result = stream.Read(2);
         result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02 });
@@ -109,7 +109,7 @@ public class StreamExtensionsFixture
     [Fact]
     public void Read_ShouldReturnIncompleteSlice()
     {
-        MemoryStream stream = new(new byte[] { 0x01, 0x02, 0x03 });
+        MemoryStream stream = new([0x01, 0x02, 0x03]);
 
         byte[]? result = stream.Read(5);
         result.Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });

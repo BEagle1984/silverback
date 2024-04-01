@@ -9,6 +9,4 @@ namespace Silverback.Messaging.BinaryMessages;
 /// <summary>
 ///     Wraps the consumed bytes stream into an <see cref="IBinaryMessage" />.
 /// </summary>
-internal interface IBinaryMessageDeserializer : IMessageDeserializer
-{
-}
+internal interface IBinaryMessageDeserializer : IMessageDeserializer;

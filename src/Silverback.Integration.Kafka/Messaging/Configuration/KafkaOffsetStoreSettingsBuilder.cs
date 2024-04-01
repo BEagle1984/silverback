@@ -8,6 +8,4 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Builds the <see cref="KafkaOffsetStoreSettings" />.
 /// </summary>
-public class KafkaOffsetStoreSettingsBuilder
-{
-}
+public class KafkaOffsetStoreSettingsBuilder;

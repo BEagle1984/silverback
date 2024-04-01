@@ -10,54 +10,32 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
-    private interface IEvent : IMessage
-    {
-    }
+    private interface IEvent : IMessage;
 
-    private interface ICommand : IMessage
-    {
-    }
+    private interface ICommand : IMessage;
 
-    private interface IQuery
-    {
-    }
+    private interface IQuery;
 
-    private interface ITestRawEnvelope
-    {
-    }
+    private interface ITestRawEnvelope;
 
-    private class TestEvent : IEvent
-    {
-    }
+    private class TestEvent : IEvent;
 
     private class TestEventOne : TestEvent
     {
         public string? Message { get; init; }
     }
 
-    private class TestEventTwo : TestEvent
-    {
-    }
+    private class TestEventTwo : TestEvent;
 
-    private class TestCommandOne : ICommand
-    {
-    }
+    private class TestCommandOne : ICommand;
 
-    private class TestCommandTwo : ICommand
-    {
-    }
+    private class TestCommandTwo : ICommand;
 
-    private class TestQueryOne : IQuery
-    {
-    }
+    private class TestQueryOne : IQuery;
 
-    private class TestQueryTwo : IQuery
-    {
-    }
+    private class TestQueryTwo : IQuery;
 
-    private class TestQueryThree : IQuery
-    {
-    }
+    private class TestQueryThree : IQuery;
 
     private class TestEnvelope : IEnvelope, ITestRawEnvelope
     {
@@ -74,7 +52,7 @@ public partial class PublisherFixture
 
     private class TestSubscriber<TMessage>
     {
-        public TestingCollection<TMessage> ReceivedMessages { get; } = new();
+        public TestingCollection<TMessage> ReceivedMessages { get; } = [];
 
         [Subscribe]
         [UsedImplicitly]
@@ -82,7 +60,5 @@ public partial class PublisherFixture
     }
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
-    private class TestSubscriber : TestSubscriber<object>
-    {
-    }
+    private class TestSubscriber : TestSubscriber<object>;
 }

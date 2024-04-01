@@ -42,11 +42,12 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        return dbContext.Set<SilverbackStoredOffset>()
+        IQueryable<KafkaOffset> offsets = dbContext.Set<SilverbackStoredOffset>()
             .AsNoTracking()
             .Where(storedOffset => storedOffset.GroupId == groupId)
-            .Select(storedOffset => new KafkaOffset(storedOffset.Topic, storedOffset.Partition, storedOffset.Offset))
-            .ToList();
+            .Select(storedOffset => new KafkaOffset(storedOffset.Topic, storedOffset.Partition, storedOffset.Offset));
+
+        return [.. offsets];
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />

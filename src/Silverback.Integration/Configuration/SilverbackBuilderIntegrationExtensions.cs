@@ -6,6 +6,4 @@ namespace Silverback.Configuration;
 /// <summary>
 ///     Adds the Silverback.Integration specific methods to the <see cref="SilverbackBuilder" />.
 /// </summary>
-public static partial class SilverbackBuilderIntegrationExtensions
-{
-}
+public static partial class SilverbackBuilderIntegrationExtensions;

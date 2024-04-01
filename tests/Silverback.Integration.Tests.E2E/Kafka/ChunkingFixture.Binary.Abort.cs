@@ -27,7 +27,7 @@ public partial class ChunkingFixture
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -105,7 +105,7 @@ public partial class ChunkingFixture
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -183,7 +183,7 @@ public partial class ChunkingFixture
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
         byte[] rawMessage1 = message1.Content.ReadAll()!;
         byte[] rawMessage2 = message2.Content.ReadAll()!;
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -218,7 +218,7 @@ public partial class ChunkingFixture
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
 
         await producer.RawProduceAsync(
-            rawMessage1.ToArray(),
+            [.. rawMessage1],
             HeadersHelper.GetChunkHeaders("1", 0, true, contentType: message1.ContentType));
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

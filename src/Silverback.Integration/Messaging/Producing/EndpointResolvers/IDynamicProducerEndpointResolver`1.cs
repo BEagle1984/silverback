@@ -8,6 +8,4 @@ namespace Silverback.Messaging.Producing.EndpointResolvers;
 ///     The type of the endpoint being resolved.
 /// </typeparam>
 public interface IDynamicProducerEndpointResolver<TEndpoint> : IDynamicProducerEndpointResolver, IProducerEndpointResolver<TEndpoint>
-    where TEndpoint : ProducerEndpoint
-{
-}
+    where TEndpoint : ProducerEndpoint;

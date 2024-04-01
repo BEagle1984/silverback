@@ -15,14 +15,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
-    private interface IService
-    {
-    }
+    private interface IService;
 
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscriber_WhenSubscribedToExactType()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -43,7 +41,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeDelegateSubscriber_WhenSubscribedToExactType()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -66,7 +64,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscriber_WhenSubscribedToBaseType()
     {
-        TestingCollection<TestEvent> messages = new();
+        TestingCollection<TestEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -93,7 +91,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeDelegateSubscriber_WhenSubscribedToBaseType()
     {
-        TestingCollection<TestEvent> messages = new();
+        TestingCollection<TestEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -122,7 +120,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscriber_WhenSubscribedToInterface()
     {
-        TestingCollection<IEvent> messages = new();
+        TestingCollection<IEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -149,7 +147,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeDelegateSubscriber_WhenSubscribedToInterface()
     {
-        TestingCollection<IEvent> messages = new();
+        TestingCollection<IEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -178,7 +176,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeGenericSubscriber_WhenSubscribedToExactType()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -199,7 +197,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeGenericSubscriber_WhenSubscribedToBaseType()
     {
-        TestingCollection<TestEvent> messages = new();
+        TestingCollection<TestEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -226,7 +224,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeGenericSubscriber_WhenSubscribedToInterface()
     {
-        TestingCollection<IEvent> messages = new();
+        TestingCollection<IEvent> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -253,7 +251,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscribers_WhenRegisteredViaInterface()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -274,7 +272,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldThrow_WhenSubscriberRegisteredViaInterfaceIsNotRegisteredAsSelf()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services

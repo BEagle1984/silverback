@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 // ReSharper disable CheckNamespace
-#if !NET5_0_OR_GREATER
+#if NETSTANDARD
 
 #pragma warning disable IDE0130
 namespace System.Runtime.CompilerServices;

@@ -17,7 +17,7 @@ public class OutboundEnvelopeFixture
     [Fact]
     public void Constructor_ShouldSetRawMessageFromByteArray()
     {
-        byte[] message = { 1, 2, 3 };
+        byte[] message = [1, 2, 3];
         OutboundEnvelope outboundEnvelope = new(message, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         outboundEnvelope.Message.Should().BeSameAs(message);
@@ -27,7 +27,7 @@ public class OutboundEnvelopeFixture
     [Fact]
     public void Constructor_ShouldSetRawMessageFromStream()
     {
-        MemoryStream stream = new(new byte[] { 1, 2, 3 });
+        MemoryStream stream = new([1, 2, 3]);
         OutboundEnvelope outboundEnvelope = new(stream, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         outboundEnvelope.Message.Should().BeSameAs(stream);

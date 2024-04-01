@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// </summary>
 public partial class KafkaProducerConfigurationBuilder : KafkaClientConfigurationBuilder<ProducerConfig, KafkaProducerConfigurationBuilder>
 {
-    private readonly Dictionary<string, KafkaProducerEndpointConfiguration> _endpoints = new();
+    private readonly Dictionary<string, KafkaProducerEndpointConfiguration> _endpoints = [];
 
     private bool? _throwIfNotAcknowledged;
 

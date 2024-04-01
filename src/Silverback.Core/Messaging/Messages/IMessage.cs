@@ -11,6 +11,4 @@ namespace Silverback.Messaging.Messages;
 ///     interface but it's not mandatory.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IMessage
-{
-}
+public interface IMessage;

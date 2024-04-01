@@ -29,8 +29,8 @@ public partial class ConsumerEndpointFixture : KafkaFixture
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeSequentially()
     {
-        int[] receivedMessages = { 0, 0, 0 };
-        int[] exitedSubscribers = { 0, 0, 0 };
+        int[] receivedMessages = [0, 0, 0];
+        int[] exitedSubscribers = [0, 0, 0];
         bool areOverlapping = false;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -117,10 +117,10 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         eventOneEnvelopes.Should().HaveCount(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
-        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(new[] { "1", "2", "3", "4", "5" }, options => options.WithoutStrictOrdering());
+        eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
         eventTwoEnvelopes.Should().HaveCount(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
-        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(new[] { "1", "2", "3", "4", "5" }, options => options.WithoutStrictOrdering());
+        eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(["1", "2", "3", "4", "5"], options => options.WithoutStrictOrdering());
     }
 
     [Fact]
@@ -160,12 +160,12 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         eventOneEnvelopes.Should().HaveCount(5);
         eventOneEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic1");
         eventOneEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
-            new[] { "1", "2", "3", "4", "5" },
+            ["1", "2", "3", "4", "5"],
             options => options.WithoutStrictOrdering());
         eventTwoEnvelopes.Should().HaveCount(5);
         eventTwoEnvelopes.Select(envelope => envelope.Endpoint.RawName).Should().AllBe("topic2");
         eventTwoEnvelopes.Select(envelope => envelope.Message?.ContentEventTwo).Should().BeEquivalentTo(
-            new[] { "1", "2", "3", "4", "5" },
+            ["1", "2", "3", "4", "5"],
             options => options.WithoutStrictOrdering());
     }
 
@@ -214,7 +214,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
 
         IInboundEnvelope<TestEventOne>[] inboundEnvelopes = Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().ToArray();
         inboundEnvelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
-            new[] { "1", "2", "3", "4", "5", "6", "7", "8" },
+            ["1", "2", "3", "4", "5", "6", "7", "8"],
             options => options.WithoutStrictOrdering());
         IInboundEnvelope<TestEventOne>[] consumer1Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[0]).ToArray();
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
@@ -266,10 +266,10 @@ public partial class ConsumerEndpointFixture : KafkaFixture
         IInboundEnvelope<TestEventOne>[] consumer2Envelopes = inboundEnvelopes.Where(envelope => envelope.Consumer == consumers[1]).ToArray();
 
         consumer1Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
-            new[] { "1", "2", "3", "4", "5", "6", "7", "8" },
+            ["1", "2", "3", "4", "5", "6", "7", "8"],
             options => options.WithoutStrictOrdering());
         consumer2Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo(
-            new[] { "1", "2", "3", "4", "5", "6", "7", "8" },
+            ["1", "2", "3", "4", "5", "6", "7", "8"],
             options => options.WithoutStrictOrdering());
     }
 
@@ -504,7 +504,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
     [Fact]
     public async Task ConsumerEndpoint_ShouldLimitParallelism()
     {
-        List<TestEventWithKafkaKey> receivedMessages = new();
+        List<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(

@@ -314,7 +314,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogConsumerTrace(
             IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
             envelope,
-            () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
+            () => [nameof(RetryErrorPolicy), 5, 3]);
 
         string expectedMessage =
             "The RetryErrorPolicy will be skipped because the current failed " +
@@ -345,7 +345,7 @@ public class ConsumerLoggerFixture
             IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
             envelope,
             new InvalidOperationException(),
-            () => new object?[] { nameof(RetryErrorPolicy), 5, 3 });
+            () => [nameof(RetryErrorPolicy), 5, 3]);
 
         string expectedMessage =
             "The RetryErrorPolicy will be skipped because the current failed " +
@@ -375,11 +375,11 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogConsumerLowLevelTrace(
             "{sequenceType} '{sequenceId}' processing has completed...",
             envelope,
-            () => new object[]
-            {
+            () =>
+            [
                 "BatchSequence",
                 "batch123"
-            });
+            ]);
 
         string expectedMessage =
             "BatchSequence 'batch123' processing has completed... | " +
@@ -409,11 +409,11 @@ public class ConsumerLoggerFixture
             "{sequenceType} '{sequenceId}' processing has failed.",
             envelope,
             new OperationCanceledException(),
-            () => new object[]
-            {
+            () =>
+            [
                 "BatchSequence",
                 "batch123"
-            });
+            ]);
 
         string expectedMessage =
             "BatchSequence 'batch123' processing has failed. | " +

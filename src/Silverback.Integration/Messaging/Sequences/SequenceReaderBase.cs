@@ -153,7 +153,7 @@ public abstract class SequenceReaderBase : ISequenceReader
 
     private async Task AwaitOrAbortPreviousSequencesAsync(ISequenceStore sequenceStore)
     {
-        List<ISequence> sequences = sequenceStore.ToList();
+        List<ISequence> sequences = [.. sequenceStore];
 
         async ValueTask AwaitOrAbortPreviousSequenceAsync(ISequence sequence)
         {

@@ -8,6 +8,4 @@ namespace Silverback.Messaging.Messages;
 ///     before saving changes (see Silverback.Core.EntityFrameworkCore) and it is internally used (in
 ///     Silverback.Integration) to trigger additional tasks related to the publishing of the domain events.
 /// </summary>
-public class TransactionStartedEvent : ISilverbackEvent
-{
-}
+public class TransactionStartedEvent : ISilverbackEvent;

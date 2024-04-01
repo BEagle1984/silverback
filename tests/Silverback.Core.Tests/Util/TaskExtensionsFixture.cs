@@ -180,7 +180,7 @@ public class TaskExtensionsFixture
 
         ValueTask WaitSemaphore() => new(semaphore.WaitAsync());
 
-        IEnumerable<ValueTask> tasks = new[] { WaitSemaphore(), WaitSemaphore(), WaitSemaphore() };
+        IEnumerable<ValueTask> tasks = [WaitSemaphore(), WaitSemaphore(), WaitSemaphore()];
         ValueTask awaitTask = tasks.AwaitAllAsync();
 
         awaitTask.IsCompleted.Should().BeFalse();
@@ -212,7 +212,7 @@ public class TaskExtensionsFixture
             throw new InvalidOperationException("Test");
         }
 
-        IEnumerable<ValueTask> tasks = new[] { Dummy(), Throw(), Dummy() };
+        IEnumerable<ValueTask> tasks = [Dummy(), Throw(), Dummy()];
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
@@ -232,7 +232,7 @@ public class TaskExtensionsFixture
             throw new InvalidOperationException("Test");
         }
 
-        IEnumerable<ValueTask> tasks = new[] { Dummy(), Throw(), Throw() };
+        IEnumerable<ValueTask> tasks = [Dummy(), Throw(), Throw()];
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
@@ -252,7 +252,7 @@ public class TaskExtensionsFixture
             return value;
         }
 
-        IEnumerable<ValueTask<int>> tasks = new[] { WaitSemaphore(1), WaitSemaphore(2), WaitSemaphore(3) };
+        IEnumerable<ValueTask<int>> tasks = [WaitSemaphore(1), WaitSemaphore(2), WaitSemaphore(3)];
         ValueTask<IReadOnlyCollection<int>> awaitTask = tasks.AwaitAllAsync();
 
         awaitTask.IsCompleted.Should().BeFalse();
@@ -289,7 +289,7 @@ public class TaskExtensionsFixture
             throw new InvalidOperationException("Test");
         }
 
-        IEnumerable<ValueTask<int>> tasks = new[] { Dummy(), Throw(), Dummy() };
+        IEnumerable<ValueTask<int>> tasks = [Dummy(), Throw(), Dummy()];
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 
@@ -313,7 +313,7 @@ public class TaskExtensionsFixture
             throw new InvalidOperationException("Test");
         }
 
-        IEnumerable<ValueTask<int>> tasks = new[] { Dummy(), Throw(), Throw() };
+        IEnumerable<ValueTask<int>> tasks = [Dummy(), Throw(), Throw()];
 
         Func<Task> act = () => tasks.AwaitAllAsync().AsTask();
 

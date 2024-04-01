@@ -100,8 +100,8 @@ public class BrokerStatistics
     public WindowStatistics Throttle { get; init; } = new();
 
     [JsonPropertyName("req")]
-    public Dictionary<string, long> Requests { get; init; } = new();
+    public Dictionary<string, long> Requests { get; init; } = [];
 
     [JsonPropertyName("toppars")]
-    public Dictionary<string, TopicPartitions> TopicPartitions { get; init; } = new();
+    public Dictionary<string, TopicPartitions> TopicPartitions { get; init; } = [];
 }

@@ -106,7 +106,5 @@ public class BinaryMessageHandlerProducerBehaviorTests
         result!.Should().BeSameAs(envelope);
     }
 
-    private sealed class InheritedBinaryMessage : BinaryMessage
-    {
-    }
+    private sealed class InheritedBinaryMessage : BinaryMessage;
 }

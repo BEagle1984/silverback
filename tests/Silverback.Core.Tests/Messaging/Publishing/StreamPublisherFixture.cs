@@ -22,9 +22,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public class StreamPublisherFixture
 {
-    private interface IEvent : IMessage
-    {
-    }
+    private interface IEvent : IMessage;
 
     [Fact]
     public async Task PublishAndPublishAsync_ShouldInvokeSubscribers_WhenMessageStreamProviderIsPushedWithMessages()
@@ -267,19 +265,19 @@ public class StreamPublisherFixture
         void Handle1(IMessageStreamEnumerable<IEvent> enumerable)
         {
             Interlocked.Increment(ref receivedStreams);
-            List<IEvent> dummy = enumerable.ToList();
+            List<IEvent> dummy = [.. enumerable];
         }
 
         void Handle2(IMessageStreamEnumerable<TestEventOne> enumerable)
         {
             Interlocked.Increment(ref receivedStreams);
-            List<TestEventOne> dummy = enumerable.ToList();
+            List<TestEventOne> dummy = [.. enumerable];
         }
 
         void Handle3(IMessageStreamEnumerable<TestCommandOne> enumerable)
         {
             Interlocked.Increment(ref receivedStreams);
-            List<TestCommandOne> dummy = enumerable.ToList();
+            List<TestCommandOne> dummy = [.. enumerable];
         }
 
         IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
@@ -611,7 +609,7 @@ public class StreamPublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldInvokeUnwrappedMessageSubscribersOnlyWhenEnvelopeIsAutoUnwrap()
     {
-        List<IEvent> receivedEvents = new();
+        List<IEvent> receivedEvents = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -681,18 +679,12 @@ public class StreamPublisherFixture
         testBehavior.ExitCount.Should().Be(1);
     }
 
-    private class TestEventOne : IEvent
-    {
-    }
+    private class TestEventOne : IEvent;
 
-    private class TestEventTwo : IEvent
-    {
-    }
+    private class TestEventTwo : IEvent;
 
     [UsedImplicitly]
-    private class TestCommandOne : IMessage
-    {
-    }
+    private class TestCommandOne : IMessage;
 
     private class TestEnvelope : IEnvelope
     {

@@ -25,7 +25,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsSingleMessage()
     {
-        TestingCollection<TestCommandOne> republishedMessages = new();
+        TestingCollection<TestCommandOne> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -53,7 +53,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsSingleMessageCastedToInterface()
     {
-        TestingCollection<ICommand> republishedMessages = new();
+        TestingCollection<ICommand> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -80,7 +80,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableWithMessages()
     {
-        TestingCollection<TestCommandOne> republishedMessages = new();
+        TestingCollection<TestCommandOne> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -92,7 +92,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
                 .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
-        static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => new TestCommandOne[] { new(), new() };
+        static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => [new TestCommandOne(), new TestCommandOne()];
         static Task<TestCommandOne[]> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() });
         static ValueTask<TestCommandOne[]> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne[] { new(), new() });
         void Handle4(TestCommandOne message) => republishedMessages.Add(message);
@@ -108,7 +108,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsEnumerableOfInterface()
     {
-        TestingCollection<ICommand> republishedMessages = new();
+        TestingCollection<ICommand> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -120,7 +120,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestEventOne, ICommand[]>(Handle3)
                 .AddDelegateSubscriber<ICommand>(Handle4));
 
-        static IEnumerable<ICommand> Handle1(TestEventOne message) => new ICommand[] { new TestCommandOne(), new TestCommandTwo() };
+        static IEnumerable<ICommand> Handle1(TestEventOne message) => [new TestCommandOne(), new TestCommandTwo()];
         static Task<ICommand[]> Handle2(TestEventOne message) => Task.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
         static ValueTask<ICommand[]> Handle3(TestEventOne message) => ValueTask.FromResult(new ICommand[] { new TestCommandOne(), new TestCommandTwo() });
         void Handle4(ICommand message) => republishedMessages.Add(message);
@@ -136,7 +136,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsAsyncEnumerableWithMessages()
     {
-        TestingCollection<TestCommandOne> republishedMessages = new();
+        TestingCollection<TestCommandOne> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -164,7 +164,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublish_WhenSyncOrAsyncOrDelegateSubscriberReturnsAsyncEnumerableOfInterface()
     {
-        TestingCollection<ICommand> republishedMessages = new();
+        TestingCollection<ICommand> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -192,7 +192,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldNotRepublishCustomType_WhenHandleMessageOfTypeWasNotUsed()
     {
-        TestingCollection<UnhandledMessage> republishedMessages = new();
+        TestingCollection<UnhandledMessage> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -220,7 +220,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldRepublishCustomType_WhenHandleMessageOfTypeWasUsed()
     {
-        TestingCollection<UnhandledMessage> republishedMessages = new();
+        TestingCollection<UnhandledMessage> republishedMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -281,7 +281,7 @@ public partial class PublisherFixture
         syncResults.Should().BeEquivalentTo(
             new[]
             {
-                new[] { "result-2-sync-1", "result-2-sync-2" },
+                ["result-2-sync-1", "result-2-sync-2"],
                 new[] { "result-2-async-1", "result-2-async-2" }
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
@@ -304,7 +304,7 @@ public partial class PublisherFixture
         syncResults.Should().BeEquivalentTo(
             new[]
             {
-                new[] { "result-2-sync-1", "result-2-sync-2" },
+                ["result-2-sync-1", "result-2-sync-2"],
                 new[] { "result-2-async-1", "result-2-async-2" }
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
@@ -343,10 +343,10 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
         syncResults.Should().BeEquivalentTo(
-            new[]
+            new IEnumerable<string>[]
             {
-                Enumerable.Empty<string>(),
-                Enumerable.Empty<string>()
+                [],
+                []
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
     }
@@ -386,7 +386,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle2)
                 .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle3));
 
-        static string[] Handle1(TestQueryTwo message) => new[] { "result1-sync", "result2-sync" };
+        static string[] Handle1(TestQueryTwo message) => ["result1-sync", "result2-sync"];
         static Task<string[]> Handle2(TestQueryTwo message) => Task.FromResult(new[] { "result1-task", "result2-task" });
         static ValueTask<string[]> Handle3(TestQueryTwo message) => ValueTask.FromResult(new[] { "result1-value-task", "result2-value-task" });
 
@@ -398,8 +398,8 @@ public partial class PublisherFixture
         syncResults.Should().BeEquivalentTo(
             new[]
             {
-                new[] { "result1-sync", "result2-sync" },
-                new[] { "result1-task", "result2-task" },
+                ["result1-sync", "result2-sync"],
+                ["result1-task", "result2-task"],
                 new[] { "result1-value-task", "result2-value-task" }
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
@@ -440,7 +440,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle2)
                 .AddDelegateSubscriber<TestQueryTwo, IEnumerable<string>>(Handle3));
 
-        static IEnumerable<string> Handle1(TestQueryTwo message) => Enumerable.Empty<string>();
+        static IEnumerable<string> Handle1(TestQueryTwo message) => [];
         static Task<IEnumerable<string>> Handle2(TestQueryTwo message) => Task.FromResult(Enumerable.Empty<string>());
         static ValueTask<IEnumerable<string>> Handle3(TestQueryTwo message) => ValueTask.FromResult(Enumerable.Empty<string>());
 
@@ -450,11 +450,11 @@ public partial class PublisherFixture
         IReadOnlyCollection<IEnumerable<string>> asyncResults = await publisher.PublishAsync<IEnumerable<string>>(new TestQueryTwo());
 
         syncResults.Should().BeEquivalentTo(
-            new[]
+            new IEnumerable<string>[]
             {
-                Enumerable.Empty<string>(),
-                Enumerable.Empty<string>(),
-                Enumerable.Empty<string>()
+                [],
+                [],
+                []
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
     }
@@ -502,7 +502,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestQueryOne, int>(Handle5)
                 .AddDelegateSubscriber<TestQueryOne, int>(Handle6));
 
-        static int[] Handle1(TestQueryOne message) => new[] { 42 };
+        static int[] Handle1(TestQueryOne message) => [42];
         static Task<int[]> Handle2(TestQueryOne message) => Task.FromResult(new[] { 42 });
         static ValueTask<int[]> Handle3(TestQueryOne message) => ValueTask.FromResult(new[] { 42 });
         static int Handle4(TestQueryOne message) => 42;
@@ -554,8 +554,8 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestQueryTwo, string[]>(Handle1)
                 .AddDelegateSubscriber<TestQueryTwo, int[]>(Handle2));
 
-        static string[] Handle1(TestQueryTwo message) => new[] { "result-delegate-1", "result-delegate-2" };
-        static int[] Handle2(TestQueryTwo message) => new[] { 42, 42 };
+        static string[] Handle1(TestQueryTwo message) => ["result-delegate-1", "result-delegate-2"];
+        static int[] Handle2(TestQueryTwo message) => [42, 42];
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
@@ -565,8 +565,8 @@ public partial class PublisherFixture
         syncResults.Should().BeEquivalentTo(
             new[]
             {
-                new[] { "result-2-sync-1", "result-2-sync-2" },
-                new[] { "result-2-async-1", "result-2-async-2" },
+                ["result-2-sync-1", "result-2-sync-2"],
+                ["result-2-async-1", "result-2-async-2"],
                 new[] { "result-delegate-1", "result-delegate-2" }
             });
         asyncResults.Should().BeEquivalentTo(syncResults);
@@ -606,14 +606,14 @@ public partial class PublisherFixture
     private class PublishEnumerableSubscriber
     {
         [UsedImplicitly]
-        public IEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) => new TestCommandOne[] { new(), new() };
+        public IEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) => [new TestCommandOne(), new TestCommandOne()];
 
         [UsedImplicitly]
         public Task<List<TestCommandOne>> AsyncSubscriber(TestEventOne message) => Task.FromResult(new List<TestCommandOne> { new(), new() });
 
         [UsedImplicitly]
         public ValueTask<IReadOnlyCollection<TestCommandOne>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>(new TestCommandOne[] { new(), new() });
+            ValueTaskFactory.FromResult<IReadOnlyCollection<TestCommandOne>>([new TestCommandOne(), new TestCommandOne()]);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]
@@ -677,7 +677,7 @@ public partial class PublisherFixture
         public Task<string> HandleAsync(TestQueryOne message) => Task.FromResult("result-1-async");
 
         [UsedImplicitly]
-        public IEnumerable<string> Handle(TestQueryTwo message) => new[] { "result-2-sync-1", "result-2-sync-2" }.ToList();
+        public IEnumerable<string> Handle(TestQueryTwo message) => ["result-2-sync-1", "result-2-sync-2"];
 
         [UsedImplicitly]
         public Task<string[]> HandleAsync(TestQueryTwo message) => Task.FromResult(new[] { "result-2-async-1", "result-2-async-2" });
@@ -701,7 +701,7 @@ public partial class PublisherFixture
         public Task<int[]> HandleAsync(TestQueryOne message) => Task.FromResult(new[] { 42, 42 });
 
         [UsedImplicitly]
-        public IEnumerable<int> Handle(TestQueryTwo message) => new[] { 42, 42 }.ToList();
+        public IEnumerable<int> Handle(TestQueryTwo message) => [42, 42];
 
         [UsedImplicitly]
         public Task<int> HandleAsync(TestQueryTwo message) => Task.FromResult(42);
@@ -729,7 +729,7 @@ public partial class PublisherFixture
     private class EmptyQueryHandler
     {
         [UsedImplicitly]
-        public IEnumerable<string> Handle(TestQueryTwo message) => Enumerable.Empty<string>();
+        public IEnumerable<string> Handle(TestQueryTwo message) => [];
 
         [UsedImplicitly]
         public Task<string[]> HandleAsync(TestQueryTwo message) => Task.FromResult(Array.Empty<string>());
@@ -749,7 +749,5 @@ public partial class PublisherFixture
         public ValueTask<TestCommandOne> AsyncValueTaskSubscriber(TestEventOne message) => ValueTaskFactory.FromResult(new TestCommandOne());
     }
 
-    private class UnhandledMessage
-    {
-    }
+    private class UnhandledMessage;
 }

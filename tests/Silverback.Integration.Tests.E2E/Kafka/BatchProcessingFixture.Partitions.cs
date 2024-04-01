@@ -19,7 +19,7 @@ public partial class BatchProcessingFixture
     [Fact]
     public async Task Batch_ShouldCreateConcurrentBatchPerPartition()
     {
-        TestingCollection<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -43,7 +43,7 @@ public partial class BatchProcessingFixture
 
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
-            List<TestEventOne> list = new();
+            List<TestEventOne> list = [];
             receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
@@ -74,7 +74,7 @@ public partial class BatchProcessingFixture
     [Fact]
     public async Task Batch_ShouldCreateSingleBatch_WhenPartitionsProcessedTogether()
     {
-        TestingCollection<List<TestEventOne>> receivedBatches = new();
+        TestingCollection<List<TestEventOne>> receivedBatches = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -99,7 +99,7 @@ public partial class BatchProcessingFixture
 
         async Task HandleBatch(IAsyncEnumerable<TestEventOne> batch)
         {
-            List<TestEventOne> list = new();
+            List<TestEventOne> list = [];
             receivedBatches.Add(list);
 
             await foreach (TestEventOne message in batch)
@@ -124,7 +124,7 @@ public partial class BatchProcessingFixture
     [Fact]
     public async Task Batch_ShouldLimitParallelism_WhenConsumingFromMultiplePartitions()
     {
-        TestingCollection<TestEventWithKafkaKey> receivedMessages = new();
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(

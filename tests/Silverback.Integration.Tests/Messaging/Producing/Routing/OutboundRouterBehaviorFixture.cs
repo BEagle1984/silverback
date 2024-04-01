@@ -23,7 +23,7 @@ public class OutboundRouterBehaviorFixture
     public async Task HandleAsync_ShouldRouteToSingleEndpoint()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = new();
+        ProducerCollection producers = [];
         IProducer producer1 = Substitute.For<IProducer>();
         producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
         producers.Add(producer1);
@@ -45,14 +45,14 @@ public class OutboundRouterBehaviorFixture
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
         await behavior.HandleAsync(
             new TestEventTwo(),
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
 
         nextBehaviorCalls.Should().Be(0);
@@ -72,7 +72,7 @@ public class OutboundRouterBehaviorFixture
     public async Task HandleAsync_ShouldRouteEnumerable()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = new();
+        ProducerCollection producers = [];
         IProducer producer1 = Substitute.For<IProducer>();
         producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
         producers.Add(producer1);
@@ -89,22 +89,22 @@ public class OutboundRouterBehaviorFixture
 
         int nextBehaviorCalls = 0;
 
-        IEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() };
-        IEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() };
+        IEnumerable<TestEventOne> events1 = [new TestEventOne(), new TestEventOne()];
+        IEnumerable<TestEventTwo> events2 = [new TestEventTwo(), new TestEventTwo()];
 
         await behavior.HandleAsync(
             events1,
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
         await behavior.HandleAsync(
             events2,
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
 
         nextBehaviorCalls.Should().Be(0);
@@ -124,7 +124,7 @@ public class OutboundRouterBehaviorFixture
     public async Task HandleAsync_ShouldRouteAsyncEnumerable()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = new();
+        ProducerCollection producers = [];
         IProducer producer1 = Substitute.For<IProducer>();
         producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
         producers.Add(producer1);
@@ -149,14 +149,14 @@ public class OutboundRouterBehaviorFixture
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
         await behavior.HandleAsync(
             events2,
             _ =>
             {
                 nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>(Array.Empty<object?>());
+                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
             });
 
         nextBehaviorCalls.Should().Be(0);

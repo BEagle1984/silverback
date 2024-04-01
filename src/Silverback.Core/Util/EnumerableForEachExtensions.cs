@@ -56,12 +56,12 @@ internal static class EnumerableForEachExtensions
         Func<T, ValueTask> action,
         int? maxDegreeOfParallelism = null)
     {
-        async ValueTask<int> InvokeAction(T item)
+        async ValueTask<int> InvokeActionAsync(T item)
         {
             await action(item).ConfigureAwait(false);
             return 0;
         }
 
-        await source.ParallelSelectAsync(InvokeAction, maxDegreeOfParallelism).ConfigureAwait(false);
+        await source.ParallelSelectAsync(InvokeActionAsync, maxDegreeOfParallelism).ConfigureAwait(false);
     }
 }

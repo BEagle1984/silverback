@@ -30,7 +30,7 @@ public class MoveMessageErrorPolicyFixture
 
     public MoveMessageErrorPolicyFixture()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())

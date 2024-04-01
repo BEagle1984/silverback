@@ -6,6 +6,4 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the Silverback.Storage.Sqlite specific methods to the <see cref="BrokerOptionsBuilder" />.
 /// </summary>
-public static partial class BrokerOptionsBuilderSqliteExtensions
-{
-}
+public static partial class BrokerOptionsBuilderSqliteExtensions;

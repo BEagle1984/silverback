@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using MQTTnet.Client;
@@ -40,7 +39,7 @@ public class MqttClientIdFilterAttributeFixture
         serviceProvider.GetService(typeof(ISequenceStore)).Returns(Substitute.For<ISequenceStore>());
         InboundEnvelope inboundEnvelope = new(
             new MemoryStream(),
-            new List<MessageHeader>(),
+            [],
             new MqttConsumerEndpoint(
                 "my-topic",
                 new MqttConsumerEndpointConfiguration()),
@@ -74,7 +73,7 @@ public class MqttClientIdFilterAttributeFixture
     {
         InboundEnvelope envelope = new(
             new MemoryStream(),
-            new List<MessageHeader>(),
+            [],
             new MqttConsumerEndpoint(
                 "my-topic",
                 new MqttConsumerEndpointConfiguration()),

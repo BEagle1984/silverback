@@ -21,7 +21,7 @@ public class JsonMessageSerializerBenchmark
 
     private readonly JsonMessageSerializer _serializer = new();
 
-    private readonly MessageHeaderCollection _messageHeaderCollection = new();
+    private readonly MessageHeaderCollection _messageHeaderCollection = [];
 
     private readonly ProducerEndpoint _producerEndpoint = new TestProducerEndpoint("Name", new TestProducerEndpointConfiguration());
 

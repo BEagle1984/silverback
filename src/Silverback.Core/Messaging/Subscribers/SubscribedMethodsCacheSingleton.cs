@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class SubscribedMethodsCacheSingleton
 {
-    private readonly Dictionary<Type, IReadOnlyCollection<SubscribedMethod>> _cache = new();
+    private readonly Dictionary<Type, IReadOnlyCollection<SubscribedMethod>> _cache = [];
 
     private readonly BusOptions _options;
 

@@ -6,6 +6,4 @@ namespace Silverback.Storage;
 /// <summary>
 ///     Adds the Silverback.Storage.PostgreSql specific methods to the <see cref="SilverbackStorageInitializer" />.
 /// </summary>
-public static partial class SilverbackStorageInitializerPostgreSqlExtensions
-{
-}
+public static partial class SilverbackStorageInitializerPostgreSqlExtensions;

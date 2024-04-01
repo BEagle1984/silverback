@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Broker;
 
 internal class ConsumerCollection : IConsumerCollection, IAsyncDisposable
 {
-    private readonly List<IConsumer> _consumers = new();
+    private readonly List<IConsumer> _consumers = [];
 
     public int Count => _consumers.Count;
 

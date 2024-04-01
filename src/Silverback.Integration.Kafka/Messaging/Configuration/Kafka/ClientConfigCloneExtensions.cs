@@ -15,7 +15,7 @@ internal static class ClientConfigCloneExtensions
     public static TClientConfig CloneAs<TClientConfig>(this ClientConfig source)
         where TClientConfig : ClientConfig
     {
-        Dictionary<string, string> cloneDictionary = new();
+        Dictionary<string, string> cloneDictionary = [];
 
         foreach (KeyValuePair<string, string> keyValuePair in source)
         {

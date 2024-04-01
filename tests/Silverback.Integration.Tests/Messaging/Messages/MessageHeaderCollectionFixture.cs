@@ -136,7 +136,7 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void Add_ShouldAddHeaderWithIntValue()
     {
-        MessageHeaderCollection collection = new();
+        MessageHeaderCollection collection = [];
 
         collection.Add("one", 1);
         collection.Add("two", 2);
@@ -154,7 +154,7 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void Add_ShouldAddHeaderWithStringValue()
     {
-        MessageHeaderCollection collection = new();
+        MessageHeaderCollection collection = [];
 
         collection.Add("one", "1");
         collection.Add("two", "2");
@@ -172,11 +172,12 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void Add_ShouldAddMessageHeader()
     {
-        MessageHeaderCollection collection = new();
-
-        collection.Add(new MessageHeader("one", "1"));
-        collection.Add(new MessageHeader("two", "2"));
-        collection.Add(new MessageHeader("three", "3"));
+        MessageHeaderCollection collection =
+        [
+            new MessageHeader("one", "1"),
+            new MessageHeader("two", "2"),
+            new MessageHeader("three", "3")
+        ];
 
         collection.Should().BeEquivalentTo(
             new[]
@@ -190,7 +191,7 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void Add_ShouldConvertDateTimeToStringWithInvariantCulture()
     {
-        MessageHeaderCollection collection = new();
+        MessageHeaderCollection collection = [];
 
         collection.Add("one", 23.June(2023).At(02, 42, 42));
 
@@ -204,7 +205,7 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void AddRange_ShouldAddMessageHeader()
     {
-        MessageHeaderCollection collection = new();
+        MessageHeaderCollection collection = [];
 
         collection.AddRange(new MessageHeaderCollection { { "one", "1" }, { "two", "2" }, { "three", "3" } });
 
@@ -451,7 +452,7 @@ public class MessageHeaderCollectionFixture
     [Fact]
     public void AddIfNotExists_ShouldConvertDateTimeToStringWithInvariantCulture()
     {
-        MessageHeaderCollection collection = new();
+        MessageHeaderCollection collection = [];
 
         collection.AddIfNotExists("one", 23.June(2023).At(02, 42, 43));
 

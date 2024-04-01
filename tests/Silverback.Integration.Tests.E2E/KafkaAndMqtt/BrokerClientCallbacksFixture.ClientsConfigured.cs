@@ -100,9 +100,7 @@ public partial class BrokerClientCallbacksFixture
     }
 
     [UsedImplicitly]
-    private sealed class OtherBrokerClientsConfiguredCallback : BrokerClientsConfiguredCallback
-    {
-    }
+    private sealed class OtherBrokerClientsConfiguredCallback : BrokerClientsConfiguredCallback;
 
     [UsedImplicitly]
     private sealed class ProducingBrokerClientsConfiguredCallback : IBrokerClientsConfiguredCallback

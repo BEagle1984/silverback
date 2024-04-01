@@ -82,13 +82,12 @@ public class MqttClientConfigurationFixture
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
             ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
-                new[]
+            [
+                new MqttProducerEndpointConfiguration
                 {
-                    new MqttProducerEndpointConfiguration
-                    {
-                        Endpoint = null!
-                    }
-                })
+                    Endpoint = null!
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -102,13 +101,12 @@ public class MqttClientConfigurationFixture
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = null!
-                    }
-                })
+                    Topics = null!
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -122,17 +120,16 @@ public class MqttClientConfigurationFixture
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic1", "topic2" })
-                    },
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic2" })
-                    }
-                })
+                    Topics = new ValueReadOnlyCollection<string>(["topic1", "topic2"])
+                },
+                new MqttConsumerEndpointConfiguration
+                {
+                    Topics = new ValueReadOnlyCollection<string>(["topic2"])
+                }
+            ])
         };
         Action act = configuration.Validate;
 
@@ -190,10 +187,9 @@ public class MqttClientConfigurationFixture
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
             UserProperties = new ValueReadOnlyCollection<MqttUserProperty>(
-                new[]
-                {
-                    new MqttUserProperty(null!, null!)
-                })
+            [
+                new MqttUserProperty(null!, null!)
+            ])
         };
 
         Action act = configuration.Validate;
@@ -227,14 +223,13 @@ public class MqttClientConfigurationFixture
         {
             ProtocolVersion = MqttProtocolVersion.V311,
             ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
-                new[]
+            [
+                new MqttProducerEndpointConfiguration
                 {
-                    new MqttProducerEndpointConfiguration
-                    {
-                        Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
-                        Serializer = new JsonMessageSerializer()
-                    }
-                })
+                    Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
+                    Serializer = new JsonMessageSerializer()
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -249,14 +244,13 @@ public class MqttClientConfigurationFixture
         {
             ProtocolVersion = MqttProtocolVersion.V311,
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Deserializer = new JsonMessageDeserializer<object>()
-                    }
-                })
+                    Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                    Deserializer = new JsonMessageDeserializer<object>()
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -272,14 +266,13 @@ public class MqttClientConfigurationFixture
         {
             ProtocolVersion = MqttProtocolVersion.V311,
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Deserializer = new JsonMessageDeserializer<TestEventOne>()
-                    }
-                })
+                    Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                    Deserializer = new JsonMessageDeserializer<TestEventOne>()
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -294,19 +287,18 @@ public class MqttClientConfigurationFixture
         {
             ProtocolVersion = MqttProtocolVersion.V311,
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Deserializer = new JsonMessageDeserializer<TestEventOne>(),
-                        ErrorPolicy = new ErrorPolicyChain(
-                            new MoveMessageErrorPolicy("topic2")
-                            {
-                                MaxFailedAttempts = 3
-                            })
-                    }
-                })
+                    Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                    Deserializer = new JsonMessageDeserializer<TestEventOne>(),
+                    ErrorPolicy = new ErrorPolicyChain(
+                        new MoveMessageErrorPolicy("topic2")
+                        {
+                            MaxFailedAttempts = 3
+                        })
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -322,15 +314,14 @@ public class MqttClientConfigurationFixture
         {
             ProtocolVersion = MqttProtocolVersion.V311,
             ConsumerEndpoints = new ValueReadOnlyCollection<MqttConsumerEndpointConfiguration>(
-                new[]
+            [
+                new MqttConsumerEndpointConfiguration
                 {
-                    new MqttConsumerEndpointConfiguration
-                    {
-                        Topics = new ValueReadOnlyCollection<string>(new[] { "topic1" }),
-                        Deserializer = new JsonMessageDeserializer<TestEventOne>(),
-                        ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy { MaxFailedAttempts = 5 })
-                    }
-                })
+                    Topics = new ValueReadOnlyCollection<string>(["topic1"]),
+                    Deserializer = new JsonMessageDeserializer<TestEventOne>(),
+                    ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy { MaxFailedAttempts = 5 })
+                }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -395,11 +386,11 @@ public class MqttClientConfigurationFixture
     [Fact]
     public void GetMqttClientOptions_ShouldReturnUserProperties()
     {
-        List<MqttUserProperty> mqttUserProperties = new()
-        {
+        List<MqttUserProperty> mqttUserProperties =
+        [
             new MqttUserProperty("key1", "value1"),
             new MqttUserProperty("key2", "value2")
-        };
+        ];
 
         MqttClientConfiguration configuration = new()
         {
@@ -420,13 +411,12 @@ public class MqttClientConfigurationFixture
             },
             ClientId = "client42",
             ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
-                new[]
+            [
+                new MqttProducerEndpointConfiguration
                 {
-                    new MqttProducerEndpointConfiguration
-                    {
-                        Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
-                        Serializer = new JsonMessageSerializer()
-                    }
-                })
+                    Endpoint = new MqttStaticProducerEndpointResolver("topic1"),
+                    Serializer = new JsonMessageSerializer()
+                }
+            ])
         };
 }

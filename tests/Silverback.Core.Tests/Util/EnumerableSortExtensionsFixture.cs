@@ -15,14 +15,14 @@ public class EnumerableSortExtensionsFixture
     public void SortBySortIndex_ShouldSortItems()
     {
         Item[] items =
-        {
+        [
             new SortedItem(100),
             new SortedItem(-50),
             new SortedItem(50),
             new SortedItem(-100),
-            new("unsorted3"),
-            new("unsorted2")
-        };
+            new Item("unsorted3"),
+            new Item("unsorted2")
+        ];
 
         IEnumerable<Item> sorted = items.SortBySortIndex();
 

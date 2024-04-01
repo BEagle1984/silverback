@@ -6,6 +6,4 @@ using Silverback.Tests.Integration.E2E.TestTypes.Database;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes.Messages;
 
-public class ValueChangedDomainEvent : DomainEvent<TestDomainEntity>
-{
-}
+public class ValueChangedDomainEvent : DomainEvent<TestDomainEntity>;

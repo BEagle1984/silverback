@@ -90,7 +90,7 @@ public class DomainEventsPublisher
         IReadOnlyCollection<object> events = GetDomainEvents();
 
         // Keep publishing events fired inside the event handlers
-        while (events.Any())
+        while (events.Count != 0)
         {
             if (executionFlow == ExecutionFlow.Async)
                 await events.ForEachAsync(message => _publisher.PublishAsync(message)).ConfigureAwait(false);
@@ -101,7 +101,7 @@ public class DomainEventsPublisher
         }
     }
 
-    private IReadOnlyCollection<object> GetDomainEvents() =>
+    private List<object> GetDomainEvents() =>
         _entitiesProvider.Invoke().SelectMany(
             entity =>
             {

@@ -12,7 +12,7 @@ public class LoggerSubstitute : ILogger
 {
     private readonly LoggerSubstituteFactory _factory;
 
-    private readonly List<ReceivedCall> _receivedCalls = new();
+    private readonly List<ReceivedCall> _receivedCalls = [];
 
     public LoggerSubstitute(ILoggerFactory factory)
     {

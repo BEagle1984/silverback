@@ -40,7 +40,7 @@ public partial class PublisherFixture
     {
         private readonly ActivityListener _listener;
 
-        private readonly List<Activity> _activities = new();
+        private readonly List<Activity> _activities = [];
 
         public TestActivityListener()
         {

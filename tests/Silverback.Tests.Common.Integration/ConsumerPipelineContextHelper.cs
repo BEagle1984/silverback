@@ -33,7 +33,7 @@ public static class ConsumerPipelineContextHelper
         ConsumerPipelineContext context = new(
             envelope ?? new RawInboundEnvelope(
                 Stream.Null,
-                Array.Empty<MessageHeader>(),
+                [],
                 endpoint ?? TestConsumerEndpoint.GetDefault(),
                 consumer ?? Substitute.For<IConsumer>(),
                 identifier ?? new TestOffset()),

@@ -25,7 +25,7 @@ public sealed class ConsumerPipelineContext : IDisposable
 
     private IRawInboundEnvelope _envelope;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
@@ -128,7 +128,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     The identifiers to be used to commit.
     /// </returns>
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetCommitIdentifiers() =>
-        Sequence?.GetCommitIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+        Sequence?.GetCommitIdentifiers() ?? [Envelope.BrokerMessageIdentifier];
 
     /// <summary>
     ///     Gets the identifiers to be used to rollback in case of error.
@@ -137,7 +137,7 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     The identifiers to be used to rollback.
     /// </returns>
     public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackIdentifiers() =>
-        Sequence?.GetRollbackIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
+        Sequence?.GetRollbackIdentifiers() ?? [Envelope.BrokerMessageIdentifier];
 
     /// <summary>
     ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.
@@ -179,10 +179,10 @@ public sealed class ConsumerPipelineContext : IDisposable
     {
         lock (_disposeLock)
         {
-            if (_disposed)
+            if (_isDisposed)
                 return;
 
-            _disposed = true;
+            _isDisposed = true;
         }
 
         _serviceScope?.Dispose();

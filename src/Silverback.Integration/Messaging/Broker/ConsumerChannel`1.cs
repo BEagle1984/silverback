@@ -85,10 +85,16 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
         return true;
     }
 
-    public Task StopReadingAsync()
+    public async Task StopReadingAsync()
     {
         if (!_readCancellationTokenSource.IsCancellationRequested)
+        {
+#if NETSTANDARD
             _readCancellationTokenSource.Cancel();
+#else
+            await _readCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+#endif
+        }
 
         lock (_readingLock)
         {
@@ -96,7 +102,7 @@ internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
                 _readTaskCompletionSource.TrySetResult(true);
         }
 
-        return _readTaskCompletionSource.Task;
+        await _readTaskCompletionSource.Task.ConfigureAwait(false);
     }
 
     public async Task NotifyReadingStoppedAsync(bool hasThrown)

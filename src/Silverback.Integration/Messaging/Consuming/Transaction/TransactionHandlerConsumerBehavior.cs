@@ -142,11 +142,11 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
                 _logger.LogConsumerLowLevelTrace(
                     "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
                     context.Envelope,
-                    () => new object[]
-                    {
+                    () =>
+                    [
                         sequence.GetType().Name,
                         sequence.SequenceId
-                    });
+                    ]);
             }
 
             LogSequenceCompletedTrace(context, sequence);
@@ -185,22 +185,22 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             _logger.LogConsumerLowLevelTrace(
                 "Awaiting {sequenceType} '{sequenceId}' processing task.",
                 context.Envelope,
-                () => new object[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId
-                });
+                ]);
 
             await processingTask.ConfigureAwait(false);
 
             _logger.LogConsumerLowLevelTrace(
                 "Successfully awaited {sequenceType} '{sequenceId}' processing task.",
                 context.Envelope,
-                () => new object[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId
-                });
+                ]);
 
             // Break if this isn't the beginning of the outer sequence
             // (e.g. when combining batching and chunking)
@@ -229,11 +229,11 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             _logger.LogConsumerLowLevelTrace(
                 logMessage,
                 context.Envelope,
-                () => new object[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId
-                });
+                ]);
         }
 
         if (sequence.IsPending)
@@ -247,24 +247,24 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             _logger.LogConsumerLowLevelTrace(
                 logMessage,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId,
                     context.ProcessingTask?.Status,
                     context.ProcessingTask?.Id
-                });
+                ]);
         }
         else
         {
             _logger.LogConsumerLowLevelTrace(
                 "{sequenceType} '{sequenceId}' processing completed.",
                 context.Envelope,
-                () => new object[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId
-                });
+                ]);
         }
     }
 

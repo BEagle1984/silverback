@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Broker.Callbacks;
 ///     The marker interface implemented by all interfaces declaring the client callbacks handlers.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IBrokerClientCallback
-{
-}
+public interface IBrokerClientCallback;

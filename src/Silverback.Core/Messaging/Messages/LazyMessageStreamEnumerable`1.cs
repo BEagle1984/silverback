@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
 
@@ -20,7 +21,7 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     private MessageStreamEnumerable<TMessage>? _stream;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public LazyMessageStreamEnumerable(IReadOnlyCollection<IMessageFilter>? filters = null)
     {
@@ -47,8 +48,7 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
     /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
     public IMessageStreamEnumerable GetOrCreateStream()
     {
-        if (_disposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (_stream == null)
         {
@@ -64,10 +64,10 @@ internal sealed class LazyMessageStreamEnumerable<TMessage>
 
     public void Dispose()
     {
-        if (_disposed)
+        if (_isDisposed)
             return;
 
         _stream?.Dispose();
-        _disposed = true;
+        _isDisposed = true;
     }
 }

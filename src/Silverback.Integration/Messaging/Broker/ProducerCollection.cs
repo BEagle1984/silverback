@@ -16,14 +16,14 @@ namespace Silverback.Messaging.Broker;
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
     private static readonly Type[] CompatibleGenericInterfaces =
-    {
+    [
         typeof(ITombstone<>),
         typeof(IEnumerable<>),
         typeof(IAsyncEnumerable<>),
         typeof(IMessageWithHeaders<>)
-    };
+    ];
 
-    private readonly List<ProducerItem> _producers = new();
+    private readonly List<ProducerItem> _producers = [];
 
     private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
 
@@ -75,7 +75,7 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     public ValueTask DisposeAsync() => _producers.DisposeAllAsync();
 
-    private static IReadOnlyCollection<IProducer> GetProducersForMessage(List<ProducerItem> producers, Type messageType) =>
+    private static List<IProducer> GetProducersForMessage(List<ProducerItem> producers, Type messageType) =>
         producers
             .Where(
                 item =>

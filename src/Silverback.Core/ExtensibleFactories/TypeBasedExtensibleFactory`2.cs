@@ -36,7 +36,7 @@ public abstract class TypeBasedExtensibleFactory<TService, TDiscriminatorBase> :
     where TService : notnull
     where TDiscriminatorBase : IEquatable<TDiscriminatorBase>
 {
-    private readonly Dictionary<Type, Func<IServiceProvider, TService>> _factories = new();
+    private readonly Dictionary<Type, Func<IServiceProvider, TService>> _factories = [];
 
     private readonly ConcurrentDictionary<Type, TService?>? _cache;
 

@@ -67,7 +67,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     [Fact]
     public void GetEndpoint_ShouldReturnTopicAndPartitionFromTopicNameFormatAndPartitionFunction()
     {
-        KafkaDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => new[] { "123" }, _ => 42);
+        KafkaDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => ["123"], _ => 42);
 
         KafkaProducerEndpoint endpoint = endpointResolver.GetEndpoint(null, new KafkaProducerEndpointConfiguration(), Substitute.For<IServiceProvider>());
 
@@ -128,7 +128,7 @@ public class KafkaDynamicProducerEndpointResolverFixture
     [Fact]
     public void RawName_ShouldReturnFormatStringFromTopicFormat()
     {
-        KafkaDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => new[] { "123" });
+        KafkaDynamicProducerEndpointResolver endpointResolver = new("topic-{0}", _ => ["123"]);
 
         endpointResolver.RawName.Should().StartWith("topic-{0}");
     }

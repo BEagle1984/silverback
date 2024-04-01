@@ -37,7 +37,7 @@ public class InMemoryOutboxFixture
         outbox.Add(outboxMessage2);
         outbox.Add(outboxMessage3);
 
-        outbox.Remove(new[] { outboxMessage1, outboxMessage2 });
+        outbox.Remove([outboxMessage1, outboxMessage2]);
 
         outbox.Get(10).Should().BeEquivalentTo(new[] { outboxMessage3 });
     }

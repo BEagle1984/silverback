@@ -32,10 +32,10 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
-        OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
-        OutboxMessage outboxMessage3 = new(new byte[] { 0x03 }, null, Endpoint);
-        OutboxMessage outboxMessage4 = new(new byte[] { 0x04 }, null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
+        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
+        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
+        OutboxMessage outboxMessage4 = new([0x04], null, Endpoint);
         outbox.Add(outboxMessage1);
         outbox.Add(outboxMessage2);
         outbox.Add(outboxMessage3);
@@ -44,12 +44,12 @@ public class InMemoryOutboxReaderFixture
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
 
-        await outboxReader.AcknowledgeAsync(new[] { outboxMessage1, outboxMessage3 });
+        await outboxReader.AcknowledgeAsync([outboxMessage1, outboxMessage3]);
 
         outbox.Get(10).Select(message => message.Content).Should().BeEquivalentTo(
             new[]
             {
-                new byte[] { 0x02 },
+                [0x02],
                 new byte[] { 0x04 }
             });
     }
@@ -66,11 +66,11 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        outbox.Add(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x04 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x01], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x02], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x03], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x04], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x05], null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
@@ -80,8 +80,8 @@ public class InMemoryOutboxReaderFixture
         messages.Select(message => message.Content).Should().BeEquivalentTo(
             new[]
             {
-                new byte[] { 0x01 },
-                new byte[] { 0x02 },
+                [0x01],
+                [0x02],
                 new byte[] { 0x03 }
             });
     }
@@ -116,11 +116,11 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        outbox.Add(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x04 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x05 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x01], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x02], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x03], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x04], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x05], null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, Substitute.For<IServiceProvider>());
@@ -143,9 +143,9 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        outbox.Add(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x01], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x02], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x03], null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
@@ -155,8 +155,8 @@ public class InMemoryOutboxReaderFixture
         messages.Select(message => message.Content).Should().BeEquivalentTo(
             new[]
             {
-                new byte[] { 0x01 },
-                new byte[] { 0x02 },
+                [0x01],
+                [0x02],
                 new byte[] { 0x03 }
             },
             options => options.WithStrictOrdering());
@@ -174,9 +174,9 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        outbox.Add(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        outbox.Add(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x01], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x02], null, Endpoint));
+        outbox.Add(new OutboxMessage([0x03], null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);
@@ -215,9 +215,9 @@ public class InMemoryOutboxReaderFixture
         InMemoryOutboxFactory outboxFactory = serviceProvider.GetRequiredService<InMemoryOutboxFactory>();
         InMemoryOutbox outbox = outboxFactory.GetOutbox(outboxSettings);
 
-        outbox.Add(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x01], null, Endpoint));
         await Task.Delay(100);
-        outbox.Add(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
+        outbox.Add(new OutboxMessage([0x02], null, Endpoint));
 
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(outboxSettings, serviceProvider);

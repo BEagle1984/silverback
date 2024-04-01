@@ -25,7 +25,7 @@ public class SkipMessageErrorPolicyFixture
 
     public SkipMessageErrorPolicyFixture()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddFakeLogger()

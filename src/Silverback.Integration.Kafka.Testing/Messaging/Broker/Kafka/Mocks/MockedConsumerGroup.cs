@@ -19,13 +19,13 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
     private static readonly CooperativeStickyRebalanceStrategy CooperativeStickyRebalanceStrategy = new();
 
-    private readonly Dictionary<IMockedConfluentConsumer, PartitionAssignment> _partitionAssignments = new();
+    private readonly Dictionary<IMockedConfluentConsumer, PartitionAssignment> _partitionAssignments = [];
 
-    private readonly List<ConsumerSubscription> _subscriptions = new();
+    private readonly List<ConsumerSubscription> _subscriptions = [];
 
-    private readonly List<SubscribedConsumer> _subscribedConsumers = new();
+    private readonly List<SubscribedConsumer> _subscribedConsumers = [];
 
-    private readonly List<IMockedConfluentConsumer> _manuallyAssignedConsumers = new();
+    private readonly List<IMockedConfluentConsumer> _manuallyAssignedConsumers = [];
 
     private readonly ConcurrentDictionary<TopicPartition, TopicPartitionOffset> _committedOffsets = new();
 
@@ -303,7 +303,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         return PartitionAssignmentStrategy.Range;
     }
 
-    private IReadOnlyList<TopicPartition> GetPartitionsToAssign() =>
+    private List<TopicPartition> GetPartitionsToAssign() =>
         _subscriptions.Select(subscription => subscription.Topic).Distinct()
             .Select(topicName => _topicCollection.Get(topicName, BootstrapServers))
             .SelectMany(
@@ -325,12 +325,15 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         }
     }
 
-    private Task WaitUntilPartitionsAssignedAsync() =>
-        Task.WhenAll(_subscribedConsumers.Select(consumer => Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(1000))));
+    private Task<Task[]> WaitUntilPartitionsAssignedAsync() =>
+        Task.WhenAll(
+            _subscribedConsumers.Select(
+                consumer =>
+                    Task.WhenAny(consumer.PartitionsAssignedTaskCompletionSource.Task, Task.Delay(1000))));
 
     private bool HasFinishedConsuming(IMockedConfluentConsumer consumer)
     {
-        if (consumer.Disposed)
+        if (consumer.IsDisposed)
             return true;
 
         if (!consumer.PartitionsAssigned)

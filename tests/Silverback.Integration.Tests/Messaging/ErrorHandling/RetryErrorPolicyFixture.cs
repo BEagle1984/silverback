@@ -26,7 +26,7 @@ public class RetryErrorPolicyFixture
 
     public RetryErrorPolicyFixture()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddSingleton(Substitute.For<IHostApplicationLifetime>())
@@ -52,9 +52,9 @@ public class RetryErrorPolicyFixture
 
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+        ];
 
         InboundEnvelope envelope = new(
             rawMessage,
@@ -81,9 +81,9 @@ public class RetryErrorPolicyFixture
 
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+        ];
 
         InboundEnvelope envelope = new(
             rawMessage,

@@ -128,9 +128,7 @@ public partial class BrokerClientCallbacksFixture
     }
 
     [UsedImplicitly]
-    private sealed class OtherBrokerClientsConnectedCallback : BrokerClientsConnectedCallback
-    {
-    }
+    private sealed class OtherBrokerClientsConnectedCallback : BrokerClientsConnectedCallback;
 
     [UsedImplicitly]
     private sealed class ProducingBrokerClientsConnectedCallback : IBrokerClientsConnectedCallback

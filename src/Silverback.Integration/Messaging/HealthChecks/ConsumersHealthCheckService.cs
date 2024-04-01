@@ -42,7 +42,7 @@ public class ConsumersHealthCheckService : IConsumersHealthCheckService
         // disconnected and since the shutdown could take a while we don't want to report the application
         // as unhealthy.
         if (_applicationIsStopping)
-            return Task.FromResult((IReadOnlyCollection<IConsumer>)Array.Empty<IConsumer>());
+            return Task.FromResult((IReadOnlyCollection<IConsumer>)[]);
 
         IReadOnlyCollection<IConsumer> disconnectedConsumers =
             _consumerCollection

@@ -12,7 +12,7 @@ namespace Silverback.Tools.Generators.Docs.LogEvents;
 internal static class DocsGenerator
 {
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Local", Justification = "Used to ensure id uniqueness")]
-    private static readonly HashSet<int> EventIdSet = new();
+    private static readonly HashSet<int> EventIdSet = [];
 
     public static void GenerateDocsTable(Type logEventsType)
     {

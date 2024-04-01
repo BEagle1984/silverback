@@ -439,7 +439,7 @@ public class StreamPublisherTests
     [Fact]
     public async Task Publish_MessageStreamProviderOfEnvelopes_OnlyAutoUnwrapMessagesReceived()
     {
-        List<IEvent> receivedEvents = new();
+        List<IEvent> receivedEvents = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services

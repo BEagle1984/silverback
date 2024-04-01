@@ -27,7 +27,7 @@ public class OutboxWorker : IOutboxWorker
 
     private readonly IProducerLogger<OutboxWorker> _logger;
 
-    private readonly ConcurrentBag<OutboxMessage> _producedMessages = new();
+    private readonly ConcurrentBag<OutboxMessage> _producedMessages = [];
 
     private int _pendingProduceOperations;
 

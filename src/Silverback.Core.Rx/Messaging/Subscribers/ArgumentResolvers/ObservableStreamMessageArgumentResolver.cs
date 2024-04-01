@@ -54,7 +54,7 @@ public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageA
 
         return (ILazyArgumentValue)_createObservableMethodInfo!
             .MakeGenericMethod(targetMessageType)
-            .Invoke(this, new object[] { streamProvider.CreateLazyStream(targetMessageType, filters) })!;
+            .Invoke(this, [streamProvider.CreateLazyStream(targetMessageType, filters)])!;
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]

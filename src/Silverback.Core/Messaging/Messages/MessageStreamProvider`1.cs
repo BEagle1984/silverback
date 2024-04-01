@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages;
 /// </typeparam>
 internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
 {
-    private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new();
+    private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = [];
 
     private MethodInfo? _genericCreateStreamMethodInfo;
 
@@ -164,11 +164,11 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
         _genericCreateStreamMethodInfo ??= GetType().GetMethod(
             nameof(CreateLazyStream),
             1,
-            new[] { typeof(IReadOnlyCollection<IMessageFilter>) })!;
+            [typeof(IReadOnlyCollection<IMessageFilter>)])!;
 
         object lazyStream = _genericCreateStreamMethodInfo
             .MakeGenericMethod(messageType)
-            .Invoke(this, new object?[] { filters })!;
+            .Invoke(this, [filters])!;
 
         return (ILazyMessageStreamEnumerable<object>)lazyStream;
     }
@@ -193,8 +193,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
             AsyncHelper.RunSynchronously(() => CompleteAsync());
     }
 
-    private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
-        new LazyMessageStreamEnumerable<TMessageLinked>(filters);
+    private static LazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>
+        new(filters);
 
     private static bool PushIfCompatibleType(
         ILazyMessageStreamEnumerable lazyStream,

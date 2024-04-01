@@ -4,6 +4,4 @@
 namespace Silverback.Messaging.Subscribers.Subscriptions;
 
 /// <inheritdoc cref="SubscriptionOptions" />
-public class DelegateSubscriptionOptions : SubscriptionOptions
-{
-}
+public class DelegateSubscriptionOptions : SubscriptionOptions;

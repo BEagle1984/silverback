@@ -36,7 +36,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     public KafkaLoggerExtensionsFixture()
     {
         _loggerSubstitute = new LoggerSubstitute<KafkaLoggerExtensionsFixture>(LogLevel.Trace);
-        MappedLevelsLogger<KafkaLoggerExtensionsFixture> mappedLevelsLogger = new(new LogLevelDictionary(), _loggerSubstitute);
+        MappedLevelsLogger<KafkaLoggerExtensionsFixture> mappedLevelsLogger = new([], _loggerSubstitute);
         _silverbackLogger = new SilverbackLogger<KafkaLoggerExtensionsFixture>(mappedLevelsLogger);
 
         IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
@@ -60,13 +60,12 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             new KafkaProducerConfiguration
             {
                 Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(
-                    new[]
+                [
+                    new KafkaProducerEndpointConfiguration
                     {
-                        new KafkaProducerEndpointConfiguration
-                        {
-                            Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
-                        }
-                    })
+                        Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+                    }
+                ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             Substitute.For<IOutboundEnvelopeFactory>(),
@@ -76,7 +75,7 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
         _transactionalProducerWrapper = Substitute.For<IConfluentProducerWrapper>();
         _transactionalProducerWrapper.DisplayName.Returns("producer1");
         _transactionalProducerWrapper.Configuration.Returns(
-            new KafkaProducerConfiguration()
+            new KafkaProducerConfiguration
             {
                 TransactionalId = "transactional1"
             });

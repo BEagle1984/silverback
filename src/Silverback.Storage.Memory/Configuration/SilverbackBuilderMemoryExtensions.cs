@@ -6,6 +6,4 @@ namespace Silverback.Configuration;
 /// <summary>
 ///     Adds the Silverback.Storage.Memory specific methods to the <see cref="SilverbackBuilder" />.
 /// </summary>
-public static partial class SilverbackBuilderMemoryExtensions
-{
-}
+public static partial class SilverbackBuilderMemoryExtensions;

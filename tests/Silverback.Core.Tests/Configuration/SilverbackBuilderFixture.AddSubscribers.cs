@@ -14,9 +14,7 @@ namespace Silverback.Tests.Core.Configuration;
 [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod", Justification = "Makes test code more obvious")]
 public partial class SilverbackBuilderFixture
 {
-    private interface ISubscriber
-    {
-    }
+    private interface ISubscriber;
 
     [Fact]
     public void AddSubscribers_ShouldRegisterSubscriber_WhenTypeIsSpecified()

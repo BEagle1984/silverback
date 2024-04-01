@@ -62,7 +62,7 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     public void ProduceTo_ShouldSetEndpointFromTopicNameFormat()
     {
         MqttProducerEndpointConfiguration endpointConfiguration = new MqttProducerEndpointConfigurationBuilder<TestEventOne>()
-            .ProduceTo("some-topic/{0}", _ => new[] { "123" })
+            .ProduceTo("some-topic/{0}", _ => ["123"])
             .Build();
 
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();

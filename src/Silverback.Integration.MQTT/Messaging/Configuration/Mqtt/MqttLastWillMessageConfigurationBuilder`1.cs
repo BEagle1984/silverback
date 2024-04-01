@@ -7,7 +7,6 @@ using System.IO;
 using MQTTnet;
 using MQTTnet.Protocol;
 using Silverback.Collections;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -22,7 +21,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </typeparam>
 public class MqttLastWillMessageConfigurationBuilder<TMessage>
 {
-    private readonly List<MqttUserProperty> _userProperties = new();
+    private readonly List<MqttUserProperty> _userProperties = [];
 
     private string? _topic;
 
@@ -272,7 +271,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
         {
             MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerEndpointConfiguration());
             payloadStream = AsyncHelper.RunSynchronously(
-                () => _serializer.SerializeAsync(_message, new MessageHeaderCollection(), endpoint));
+                () => _serializer.SerializeAsync(_message, [], endpoint));
         }
 
         MqttLastWillMessageConfiguration configuration = new()

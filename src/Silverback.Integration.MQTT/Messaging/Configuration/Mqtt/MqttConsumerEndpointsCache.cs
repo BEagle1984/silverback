@@ -13,7 +13,7 @@ internal class MqttConsumerEndpointsCache
 {
     private readonly ConcurrentDictionary<string, MqttConsumerEndpoint> _endpoints = new();
 
-    private readonly List<WildcardSubscription> _wildcardSubscriptions = new();
+    private readonly List<WildcardSubscription> _wildcardSubscriptions = [];
 
     public MqttConsumerEndpointsCache(MqttClientConfiguration configuration)
     {

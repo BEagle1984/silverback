@@ -27,6 +27,6 @@ internal static class EnumerableTypeParameterExtensions
         typeof(Enumerable)
                 .GetMethod(methodName, BindingFlags.Static | BindingFlags.Public)
                 ?.MakeGenericMethod(type)
-                .Invoke(null, new object[] { source })
-            as IEnumerable<object> ?? Enumerable.Empty<object>();
+                .Invoke(null, [source])
+            as IEnumerable<object> ?? [];
 }

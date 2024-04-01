@@ -94,24 +94,22 @@ public partial class ProducerEndpointFixture : MqttFixture
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
         Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
                 "{\"contentEventTwo\":\"3\"}",
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
@@ -150,24 +148,22 @@ public partial class ProducerEndpointFixture : MqttFixture
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
         Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
                 "{\"contentEventTwo\":\"3\"}",
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
@@ -200,34 +196,31 @@ public partial class ProducerEndpointFixture : MqttFixture
         }
 
         Helper.GetMessages("topic1").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetMessages("topic2").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetMessages("topic3").GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 

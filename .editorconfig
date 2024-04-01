@@ -27,6 +27,8 @@ dotnet_diagnostic.IDE0046.severity = suggestion
 dotnet_diagnostic.IDE0058.severity = none
 # IDE0072: Add missing cases to switch expression
 dotnet_diagnostic.IDE0072.severity = none
+# IDE0290: Use primary constructor"
+dotnet_diagnostic.IDE0290.severity = suggestion
 
 # StyleCop.Analyzers
 # SA1101: A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code file

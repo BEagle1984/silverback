@@ -18,7 +18,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void AddSilverback_ShouldReturnSilverbackBuilder()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         SilverbackBuilder builder = serviceCollection.AddSilverback();
 
@@ -29,7 +29,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void AddSilverback_ShouldRegisterBasicServices()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         serviceCollection.AddFakeLogger().AddSilverback();
 
@@ -42,7 +42,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void AddSilverback_ShouldBeIdempotent()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         serviceCollection.AddSilverback();
         serviceCollection.AddSilverback();
@@ -53,7 +53,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void ConfigureSilverback_ShouldReturnSilverbackBuilder()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         SilverbackBuilder builder = serviceCollection.ConfigureSilverback();
 
@@ -64,7 +64,7 @@ public class ServiceCollectionExtensionsFixture
     [Fact]
     public void AddSilverback_ShouldRegisterDefaultDistributedLockFactory()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         serviceCollection.AddFakeLogger().AddSilverback();
 

@@ -55,29 +55,28 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
 
         return _dataAccess.ExecuteNonQueryAsync(
             _insertSql,
-            new NpgsqlParameter[]
-            {
-                new("@Content", NpgsqlDbType.Bytea)
+            [
+                new NpgsqlParameter("@Content", NpgsqlDbType.Bytea)
                 {
                     Value = outboxMessage.Content
                 },
-                new("@Headers", NpgsqlDbType.Text)
+                new NpgsqlParameter("@Headers", NpgsqlDbType.Text)
                 {
                     Value = outboxMessage.Headers == null ? DBNull.Value : JsonSerializer.Serialize(outboxMessage.Headers)
                 },
-                new("@EndpointName", NpgsqlDbType.Text)
+                new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text)
                 {
                     Value = outboxMessage.Endpoint.FriendlyName
                 },
-                new("@DynamicEndpoint", NpgsqlDbType.Text)
+                new NpgsqlParameter("@DynamicEndpoint", NpgsqlDbType.Text)
                 {
                     Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value
                 },
-                new("@Created", NpgsqlDbType.TimestampTz)
+                new NpgsqlParameter("@Created", NpgsqlDbType.TimestampTz)
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             _settings.DbCommandTimeout,
             context);
     }
@@ -90,8 +89,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
             _insertSql,
-            new[]
-            {
+            [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
@@ -100,7 +98,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Content;
@@ -120,8 +118,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
         return _dataAccess.ExecuteNonQueryAsync(
             outboxMessages,
             _insertSql,
-            new[]
-            {
+            [
                 new NpgsqlParameter("@Content", NpgsqlDbType.Bytea),
                 new NpgsqlParameter("@Headers", NpgsqlDbType.Text),
                 new NpgsqlParameter("@EndpointName", NpgsqlDbType.Text),
@@ -130,7 +127,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 {
                     Value = DateTime.UtcNow
                 }
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Content;

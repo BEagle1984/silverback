@@ -147,9 +147,9 @@ public partial class ProducerEndpointFixture
                                             "topic{0}",
                                             message => message?.ContentEventOne switch
                                             {
-                                                "1" => new[] { "1" },
-                                                "2" => new[] { "2" },
-                                                "3" => new[] { "3" },
+                                                "1" => ["1"],
+                                                "2" => ["2"],
+                                                "3" => ["3"],
                                                 _ => throw new InvalidOperationException(),
                                             })))));
 

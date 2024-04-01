@@ -35,7 +35,7 @@ public abstract class ExtensibleFactory<TService, TSettingsBase> : IExtensibleFa
     where TService : notnull
     where TSettingsBase : IEquatable<TSettingsBase>
 {
-    private readonly Dictionary<Type, Func<TSettingsBase, IServiceProvider, TService>> _factories = new();
+    private readonly Dictionary<Type, Func<TSettingsBase, IServiceProvider, TService>> _factories = [];
 
     private readonly ConcurrentDictionary<TSettingsBase, TService> _cache = new();
 

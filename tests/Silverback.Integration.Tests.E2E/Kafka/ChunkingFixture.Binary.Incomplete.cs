@@ -24,7 +24,7 @@ public partial class ChunkingFixture
     {
         byte[] rawMessage1 = BytesUtil.GetRandomBytes(30);
         byte[] rawMessage2 = BytesUtil.GetRandomBytes(27);
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
         int aborted = 0;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -89,7 +89,7 @@ public partial class ChunkingFixture
     public async Task Chunking_ShouldDiscardIncompleteBinaryMessageAfterTimeout()
     {
         byte[] rawMessage = BytesUtil.GetRandomBytes();
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
         bool aborted = false;
 
         await Host.ConfigureServicesAndRunAsync(
@@ -168,7 +168,7 @@ public partial class ChunkingFixture
         byte[] rawMessage1 = BytesUtil.GetRandomBytes();
         byte[] rawMessage2 = BytesUtil.GetRandomBytes();
 
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

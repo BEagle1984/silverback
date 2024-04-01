@@ -21,7 +21,7 @@ public class NewtonsoftJsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldSerialize()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageSerializer serializer = new();
 
@@ -35,7 +35,7 @@ public class NewtonsoftJsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldAddTypeHeader()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageSerializer serializer = new();
 
@@ -48,7 +48,7 @@ public class NewtonsoftJsonMessageSerializerFixture
     public async Task SerializeAsync_ShouldNotAddTypeHeader_WhenDisabled()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         NewtonsoftJsonMessageSerializer serializer = new()
         {
@@ -69,7 +69,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         Stream? serialized = await serializer.SerializeAsync(
             messageBytes,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
@@ -84,7 +84,7 @@ public class NewtonsoftJsonMessageSerializerFixture
 
         Stream? serialized = await serializer.SerializeAsync(
             stream,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeSameAs(stream);
@@ -96,7 +96,7 @@ public class NewtonsoftJsonMessageSerializerFixture
         NewtonsoftJsonMessageSerializer serializer = new();
 
         Stream? serialized = await serializer
-            .SerializeAsync(null, new MessageHeaderCollection(), TestProducerEndpoint.GetDefault());
+            .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeNull();
     }

@@ -9,7 +9,7 @@ namespace Silverback.Util;
 
 internal class MergeableActionCollection<T> : IReadOnlyCollection<MergedAction<T>>
 {
-    private readonly Dictionary<string, MergedAction<T>> _actions = new();
+    private readonly Dictionary<string, MergedAction<T>> _actions = [];
 
     public int Count => _actions.Count;
 

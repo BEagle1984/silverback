@@ -71,7 +71,5 @@ public class TypesCacheFixture
         type.Should().Be(typeof(TestObject));
     }
 
-    private class TestObject
-    {
-    }
+    private class TestObject;
 }

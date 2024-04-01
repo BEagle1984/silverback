@@ -14,12 +14,12 @@ internal class SimpleRebalanceStrategy : IRebalanceStrategy
         IReadOnlyList<TopicPartition> partitionsToAssign,
         IReadOnlyList<SubscriptionPartitionAssignment> partitionAssignments)
     {
-        Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>> revokedPartitions = new();
+        Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>> revokedPartitions = [];
 
         foreach (SubscriptionPartitionAssignment assignment in partitionAssignments)
         {
             if (assignment.Partitions.Count > 0)
-                revokedPartitions[assignment.Consumer] = assignment.Partitions.ToList(); // Clone via ToList
+                revokedPartitions[assignment.Consumer] = [.. assignment.Partitions]; // Clone via [.. ]
 
             assignment.Partitions.Clear();
         }

@@ -8,6 +8,11 @@ namespace Silverback.Util;
 
 internal static class ComparisonHelper
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        MaxDepth = 1000
+    };
+
     /// <summary>
     ///     Determines whether the specified object instances are considered equal comparing their JSON representations.
     /// </summary>
@@ -30,8 +35,5 @@ internal static class ComparisonHelper
         JsonSerializer.Serialize(
             obj,
             obj.GetType(),
-            new JsonSerializerOptions
-            {
-                MaxDepth = 1000
-            });
+            JsonSerializerOptions);
 }

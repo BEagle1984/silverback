@@ -9,6 +9,4 @@ namespace Silverback.Domain;
 ///     This empty interface has no other purpose than help recognizing the aggregate root.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IAggregateRoot
-{
-}
+public interface IAggregateRoot;

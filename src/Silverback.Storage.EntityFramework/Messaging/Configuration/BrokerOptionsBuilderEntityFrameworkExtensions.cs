@@ -6,6 +6,4 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the Silverback.Storage.EntityFramework specific methods to the <see cref="BrokerOptionsBuilder" />.
 /// </summary>
-public static partial class BrokerOptionsBuilderEntityFrameworkExtensions
-{
-}
+public static partial class BrokerOptionsBuilderEntityFrameworkExtensions;

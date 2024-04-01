@@ -68,14 +68,13 @@ public class IntegrationLoggingBenchmark
             new KafkaConsumerEndpointConfigurationBuilder<TestEventOne>().ConsumeFrom("test-topic").Build());
 
         _inboundEnvelope = new RawInboundEnvelope(
-            Array.Empty<byte>(),
-            new MessageHeaderCollection
-            {
-                new("Test", "Test"),
-                new(DefaultMessageHeaders.FailedAttempts, "1"),
-                new(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                new(DefaultMessageHeaders.MessageId, "1234")
-            },
+            [],
+            [
+                new MessageHeader("Test", "Test"),
+                new MessageHeader(DefaultMessageHeaders.FailedAttempts, "1"),
+                new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
+            ],
             consumerEndpoint,
             new TestConsumer(),
             new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
@@ -88,10 +87,7 @@ public class IntegrationLoggingBenchmark
         _outboundEnvelope =
             new OutboundEnvelope(
                 new TestEventOne(),
-                new MessageHeaderCollection
-                {
-                    new("Test", "Test")
-                },
+                [new MessageHeader("Test", "Test")],
                 producerEndpoint,
                 new TestProducer(),
                 new SilverbackContext(),
@@ -143,7 +139,7 @@ public class IntegrationLoggingBenchmark
 
         public IBrokerClient Client { get; } = new TestClient();
 
-        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = Array.Empty<ConsumerEndpointConfiguration>();
+        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = [];
 
         public IConsumerStatusInfo StatusInfo { get; } = new ConsumerStatusInfo();
 

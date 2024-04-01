@@ -47,12 +47,11 @@ public partial class ProducerFixture
 
         DefaultTopic.MessagesCount.Should().Be(3);
         DefaultTopic.GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 

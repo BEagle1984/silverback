@@ -54,10 +54,10 @@ public class KafkaStatistics
     public long MetadataCacheCnt { get; init; }
 
     [JsonPropertyName("brokers")]
-    public Dictionary<string, BrokerStatistics> Brokers { get; init; } = new();
+    public Dictionary<string, BrokerStatistics> Brokers { get; init; } = [];
 
     [JsonPropertyName("topics")]
-    public Dictionary<string, TopicStatistics> Topics { get; init; } = new();
+    public Dictionary<string, TopicStatistics> Topics { get; init; } = [];
 
     [JsonPropertyName("cgrp")]
     public ConsumerGroupStatistics ConsumerGroup { get; init; } = new();

@@ -51,8 +51,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
 
     public void Start()
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (IsConsuming)
             return;
@@ -79,24 +78,30 @@ internal sealed class ConsumeLoopHandler : IDisposable
             .FireAndForget();
     }
 
-    public Task StopAsync()
+    public async Task StopAsync()
     {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (!IsConsuming)
-            return Stopping;
+        {
+            await Stopping.ConfigureAwait(false);
+            return;
+        }
 
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Stopping ConsumeLoopHandler... | instanceId: {instanceId}",
-            () => new object[] { Id });
+            () => [Id]);
 
+#if NETSTANDARD
         _cancellationTokenSource.Cancel();
+#else
+        await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+#endif
 
         IsConsuming = false;
 
-        return Stopping;
+        await Stopping.ConfigureAwait(false);
     }
 
     public void Dispose()
@@ -107,7 +112,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Disposing ConsumeLoopHandler... | instanceId: {instanceId}",
-            () => new object[] { Id });
+            () => [Id]);
 
         AsyncHelper.RunSynchronously(StopAsync);
         _cancellationTokenSource.Dispose();
@@ -115,7 +120,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "ConsumeLoopHandler disposed. | instanceId: {instanceId}",
-            () => new object[] { Id });
+            () => [Id]);
 
         _isDisposed = true;
     }
@@ -129,11 +134,11 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",
-            () => new object[]
-            {
+            () =>
+            [
                 Id,
                 taskCompletionSource.Task.Id
-            });
+            ]);
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -144,11 +149,11 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _logger.LogConsumerLowLevelTrace(
             _consumer,
             "Consume loop stopped. | instanceId: {instanceId}, taskId: {taskId}",
-            () => new object[]
-            {
+            () =>
+            [
                 Id,
                 taskCompletionSource.Task.Id
-            });
+            ]);
 
         taskCompletionSource.TrySetResult(true);
 

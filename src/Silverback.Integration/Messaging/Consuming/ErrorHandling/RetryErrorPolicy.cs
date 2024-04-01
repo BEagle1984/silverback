@@ -127,10 +127,10 @@ public record RetryErrorPolicy : ErrorPolicyBase
             _logger.LogConsumerTrace(
                 IntegrationLogEvents.RetryDelayed,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     delay
-                });
+                ]);
 
             await Task.Delay(delay).ConfigureAwait(false);
         }

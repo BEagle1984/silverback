@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -42,7 +41,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
     public MqttLoggerExtensionsFixture()
     {
         _loggerSubstitute = new LoggerSubstitute<MqttLoggerExtensionsFixture>(LogLevel.Trace);
-        MappedLevelsLogger<MqttLoggerExtensionsFixture> mappedLevelsLogger = new(new LogLevelDictionary(), _loggerSubstitute);
+        MappedLevelsLogger<MqttLoggerExtensionsFixture> mappedLevelsLogger = new([], _loggerSubstitute);
         _silverbackLogger = new SilverbackLogger<MqttLoggerExtensionsFixture>(mappedLevelsLogger);
 
         IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
@@ -77,13 +76,12 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
             new MqttClientConfiguration
             {
                 ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(
-                    new[]
-                    {
+                    [
                         new MqttProducerEndpointConfiguration
                         {
                             Endpoint = new MqttStaticProducerEndpointResolver("topic1")
                         }
-                    })
+                    ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             Substitute.For<IOutboundEnvelopeFactory>(),
@@ -100,10 +98,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                 new MqttApplicationMessage
                 {
                     Topic = "some-topic",
-                    UserProperties = new List<MqttUserProperty>
-                    {
-                        new(DefaultMessageHeaders.MessageId, "123")
-                    }
+                    UserProperties = [new MqttUserProperty(DefaultMessageHeaders.MessageId, "123")]
                 },
                 new MqttPublishPacket(),
                 (_, _) => Task.CompletedTask));
@@ -126,10 +121,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                 new MqttApplicationMessage
                 {
                     Topic = "some-topic",
-                    UserProperties = new List<MqttUserProperty>
-                    {
-                        new(DefaultMessageHeaders.MessageId, "123")
-                    }
+                    UserProperties = [new MqttUserProperty(DefaultMessageHeaders.MessageId, "123")]
                 },
                 new MqttPublishPacket(),
                 (_, _) => Task.CompletedTask));
@@ -221,7 +213,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _silverbackLogger.LogMqttClientError(
             "source",
             "error {0} occurred",
-            new object[] { 42 },
+            [42],
             new InvalidOperationException("test"));
 
         _loggerSubstitute.Received(
@@ -237,7 +229,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _silverbackLogger.LogMqttClientWarning(
             "source",
             "warning {0}",
-            new object[] { 13 },
+            [13],
             new InvalidOperationException("test"));
 
         _loggerSubstitute.Received(
@@ -253,7 +245,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _silverbackLogger.LogMqttClientInformation(
             "source",
             "info {0}",
-            new object[] { "whatever" },
+            ["whatever"],
             null);
 
         _loggerSubstitute.Received(
@@ -269,7 +261,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _silverbackLogger.LogMqttClientVerbose(
             "source",
             "info {0}",
-            new object[] { "whatever" },
+            ["whatever"],
             null);
 
         _loggerSubstitute.Received(

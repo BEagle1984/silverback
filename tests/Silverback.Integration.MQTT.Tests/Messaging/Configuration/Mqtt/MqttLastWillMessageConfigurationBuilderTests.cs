@@ -9,7 +9,6 @@ using FluentAssertions;
 using MQTTnet.Protocol;
 using Newtonsoft.Json;
 using Silverback.Messaging.Configuration.Mqtt;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -46,7 +45,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
 
         (object? deserializedMessage, Type _) = await new JsonMessageDeserializer<TestEventOne>().DeserializeAsync(
             new MemoryStream(willMessage.Payload!),
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         deserializedMessage.Should().BeEquivalentTo(message);
@@ -144,7 +143,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
         };
         byte[]? messageBytes = (await serializer.SerializeAsync(
             message,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault())).ReadAll();
         MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 
@@ -171,7 +170,7 @@ public class MqttLastWillMessageConfigurationBuilderTests
         };
         byte[]? messageBytes = (await serializer.SerializeAsync(
             message,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault())).ReadAll();
         MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
 

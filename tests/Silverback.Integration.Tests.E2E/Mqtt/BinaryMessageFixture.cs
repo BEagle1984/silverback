@@ -38,7 +38,7 @@ public class BinaryMessageFixture : MqttFixture
             ContentType = "text/plain"
         };
 
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

@@ -39,20 +39,14 @@ internal sealed class MockedConfluentAdminClient : IAdminClient
                     i => new PartitionMetadata(
                         i,
                         0,
-                        new[] { 0 },
-                        new[] { 0 },
+                        [0],
+                        [0],
                         null))
                 .ToList();
 
         return new Metadata(
-            new List<BrokerMetadata>
-            {
-                new(0, "test", 42)
-            },
-            new List<TopicMetadata>
-            {
-                new(topic, partitionsMetadata, null)
-            },
+            [new BrokerMetadata(0, "test", 42)],
+            [new TopicMetadata(topic, partitionsMetadata, null)],
             0,
             "test");
     }

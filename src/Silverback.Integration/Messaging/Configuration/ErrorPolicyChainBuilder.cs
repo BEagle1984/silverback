@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration;
 
 internal class ErrorPolicyChainBuilder : IErrorPolicyChainBuilder
 {
-    private readonly IList<ErrorPolicyBase> _errorPolicies = new List<ErrorPolicyBase>();
+    private readonly List<ErrorPolicyBase> _errorPolicies = [];
 
     public IErrorPolicyChainBuilder ThenStop(Action<StopConsumerErrorPolicyBuilder>? policyBuilderAction = null)
     {

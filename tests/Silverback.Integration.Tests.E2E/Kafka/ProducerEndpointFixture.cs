@@ -87,24 +87,22 @@ public partial class ProducerEndpointFixture : KafkaFixture
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
         Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
                 "{\"contentEventTwo\":\"3\"}",
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
@@ -142,24 +140,22 @@ public partial class ProducerEndpointFixture : KafkaFixture
 
         Host.ServiceProvider.GetRequiredService<IProducerCollection>().Should().HaveCount(2);
         Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"contentEventTwo\":\"1\"}",
                 "{\"contentEventTwo\":\"2\"}",
                 "{\"contentEventTwo\":\"3\"}",
                 "{\"contentEventTwo\":\"4\"}",
                 "{\"contentEventTwo\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
@@ -190,34 +186,31 @@ public partial class ProducerEndpointFixture : KafkaFixture
         }
 
         Helper.GetTopic("topic1").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetTopic("topic2").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
         Helper.GetTopic("topic3").GetAllMessages().GetContentAsString().Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "{\"ContentEventOne\":\"1\"}",
                 "{\"ContentEventOne\":\"2\"}",
                 "{\"ContentEventOne\":\"3\"}",
                 "{\"ContentEventOne\":\"4\"}",
                 "{\"ContentEventOne\":\"5\"}"
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 

@@ -39,7 +39,7 @@ internal static class SubscribedMethodInvoker
                     serviceProvider,
                     executionFlow).ConfigureAwait(false),
             IStreamEnumerableMessageArgumentResolver resolver =>
-                InvokeWithStreamEnumerable(
+                InvokeWithStreamEnumerableAsync(
                     (IMessageStreamProvider)message,
                     subscribedMethod,
                     arguments,
@@ -99,7 +99,7 @@ internal static class SubscribedMethodInvoker
         return InvokeWithActivityAsync(subscribedMethod, target, arguments, executionFlow);
     }
 
-    private static object InvokeWithStreamEnumerable(
+    private static Task InvokeWithStreamEnumerableAsync(
         IMessageStreamProvider messageStreamProvider,
         SubscribedMethod subscribedMethod,
         object?[] arguments,
@@ -137,7 +137,7 @@ internal static class SubscribedMethodInvoker
             ? wrapper.Message
             : message;
 
-    private static Task InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
+    private static Task<object?> InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>
         Task.Run(() => InvokeWithActivityAsync(subscribedMethod, target, arguments).AsTask());
 
     private static ValueTask<object?> InvokeWithActivityAsync(

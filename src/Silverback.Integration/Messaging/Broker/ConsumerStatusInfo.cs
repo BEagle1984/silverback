@@ -10,7 +10,7 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 {
     private const int MaxHistorySize = 10;
 
-    private readonly LinkedList<IConsumerStatusChange> _history = new();
+    private readonly LinkedList<IConsumerStatusChange> _history = [];
 
     public IReadOnlyCollection<IConsumerStatusChange> History => _history;
 

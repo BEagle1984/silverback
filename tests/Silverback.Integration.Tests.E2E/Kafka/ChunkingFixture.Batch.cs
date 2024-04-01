@@ -26,7 +26,7 @@ public partial class ChunkingFixture
         const int chunksPerMessage = 4;
         const int batchSize = 3;
 
-        TestingCollection<List<TestEventOne>> batches = new();
+        TestingCollection<List<TestEventOne>> batches = [];
         string? failedCommit = null;
         string? enumerationAborted = null;
 
@@ -56,7 +56,7 @@ public partial class ChunkingFixture
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> streamEnumerable)
         {
-            List<TestEventOne> list = new();
+            List<TestEventOne> list = [];
             batches.Add(list);
 
             await foreach (TestEventOne message in streamEnumerable)
@@ -125,7 +125,7 @@ public partial class ChunkingFixture
         const int chunksPerMessage = 3;
         const int batchSize = 5;
 
-        TestingCollection<List<string?>> batches = new();
+        TestingCollection<List<string?>> batches = [];
         string? failedCommit = null;
         string? enumerationAborted = null;
 
@@ -155,7 +155,7 @@ public partial class ChunkingFixture
 
         async ValueTask HandleBatch(IAsyncEnumerable<BinaryMessage> streamEnumerable)
         {
-            List<string?> list = new();
+            List<string?> list = [];
             batches.Add(list);
 
             await foreach (BinaryMessage message in streamEnumerable)
@@ -228,7 +228,7 @@ public partial class ChunkingFixture
         const int chunksPerMessage = 1;
         const int batchSize = 3;
 
-        TestingCollection<List<TestEventOne>> batches = new();
+        TestingCollection<List<TestEventOne>> batches = [];
         string? failedCommit = null;
         string? enumerationAborted = null;
 
@@ -258,7 +258,7 @@ public partial class ChunkingFixture
 
         async ValueTask HandleBatch(IAsyncEnumerable<TestEventOne> streamEnumerable)
         {
-            List<TestEventOne> list = new();
+            List<TestEventOne> list = [];
             batches.Add(list);
 
             await foreach (TestEventOne message in streamEnumerable)
@@ -327,7 +327,7 @@ public partial class ChunkingFixture
         const int chunksPerMessage = 1;
         const int batchSize = 5;
 
-        TestingCollection<List<string?>> batches = new();
+        TestingCollection<List<string?>> batches = [];
         string? failedCommit = null;
         string? enumerationAborted = null;
 
@@ -357,7 +357,7 @@ public partial class ChunkingFixture
 
         async ValueTask HandleBatch(IAsyncEnumerable<BinaryMessage> streamEnumerable)
         {
-            List<string?> list = new();
+            List<string?> list = [];
             batches.Add(list);
 
             await foreach (BinaryMessage message in streamEnumerable)

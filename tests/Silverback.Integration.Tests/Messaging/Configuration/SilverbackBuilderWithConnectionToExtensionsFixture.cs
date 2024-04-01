@@ -16,7 +16,7 @@ public class SilverbackBuilderWithConnectionToExtensionsFixture
     [Fact]
     public void WithConnectionToMessageBroker_ShouldRegisterClientsCollections()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         serviceCollection
             .AddFakeLogger()
@@ -33,7 +33,7 @@ public class SilverbackBuilderWithConnectionToExtensionsFixture
     [Fact]
     public void WithConnectionToMessageBroker_ShouldRegisterDefaultOutboxFactories()
     {
-        ServiceCollection serviceCollection = new();
+        ServiceCollection serviceCollection = [];
 
         serviceCollection
             .AddFakeLogger()

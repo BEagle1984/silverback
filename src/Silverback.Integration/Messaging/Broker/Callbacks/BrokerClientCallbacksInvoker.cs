@@ -179,7 +179,7 @@ internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvok
             scope = TryCreateServiceScope();
 
             if (scope == null)
-                return (Enumerable.Empty<TCallback>(), null);
+                return ([], null);
 
             scopedServiceProvider = scope.ServiceProvider;
         }

@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Producing.EndpointResolvers;
 /// </typeparam>
 public interface IStaticProducerEndpointResolver<TEndpoint>
     : IStaticProducerEndpointResolver, IProducerEndpointResolver<TEndpoint>
-    where TEndpoint : ProducerEndpoint
-{
-}
+    where TEndpoint : ProducerEndpoint;

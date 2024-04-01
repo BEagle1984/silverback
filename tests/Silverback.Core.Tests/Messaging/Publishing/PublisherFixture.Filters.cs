@@ -66,9 +66,9 @@ public partial class PublisherFixture
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private class TestFilteredSubscriber
     {
-        public TestingCollection<IEvent> ReceivedMessages { get; } = new();
+        public TestingCollection<IEvent> ReceivedMessages { get; } = [];
 
-        public TestingCollection<IEnvelope> ReceivedEnvelopes { get; } = new();
+        public TestingCollection<IEnvelope> ReceivedEnvelopes { get; } = [];
 
         [EventOneFilter]
         [UsedImplicitly]

@@ -16,7 +16,7 @@ public partial class SilverbackBuilderFixture
     [Fact]
     public void WithLogLevels_ShouldSetLogLevelsDictionary()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddFakeLogger()

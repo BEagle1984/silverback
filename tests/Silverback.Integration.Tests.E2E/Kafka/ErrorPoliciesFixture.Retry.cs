@@ -401,7 +401,7 @@ public partial class ErrorPoliciesFixture
         BinaryMessage message2 = new() { Content = BytesUtil.GetRandomStream(30), ContentType = "text/plain" };
 
         int tryCount = 0;
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

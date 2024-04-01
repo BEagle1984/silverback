@@ -8,6 +8,4 @@ namespace Silverback.Configuration;
 /// <summary>
 ///     Builds the <see cref="DistributedLockSettings" />.
 /// </summary>
-public class DistributedLockSettingsBuilder
-{
-}
+public class DistributedLockSettingsBuilder;

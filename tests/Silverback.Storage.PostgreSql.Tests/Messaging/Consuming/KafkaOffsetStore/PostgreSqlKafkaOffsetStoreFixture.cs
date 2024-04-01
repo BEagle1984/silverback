@@ -42,27 +42,24 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
 
         await store.StoreOffsetsAsync(
             "group1",
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
-            });
+            ]);
         await store.StoreOffsetsAsync(
             "group2",
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 0, 42)
-            });
+            ]);
 
         IReadOnlyCollection<KafkaOffset> offsets = store.GetStoredOffsets("group1");
 
         offsets.Should().HaveCount(2);
         offsets.Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 0, 42),
                 new KafkaOffset("topic1", 1, 42)
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
@@ -82,10 +79,10 @@ public sealed class PostgreSqlKafkaOffsetStoreFixture : PostgresContainerFixture
         IKafkaOffsetStore store = factory.GetStore(_offsetStoreSettings, serviceProvider);
 
         KafkaOffset[] offsets =
-        {
-            new("topic1", 3, 42),
-            new("topic1", 5, 42)
-        };
+        [
+            new KafkaOffset("topic1", 3, 42),
+            new KafkaOffset("topic1", 5, 42)
+        ];
 
         await store.StoreOffsetsAsync("group1", offsets);
 

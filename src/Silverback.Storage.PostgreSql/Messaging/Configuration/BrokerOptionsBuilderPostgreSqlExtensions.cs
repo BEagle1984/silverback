@@ -6,6 +6,4 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Adds the Silverback.Storage.PostgreSql specific methods to the <see cref="BrokerOptionsBuilder" />.
 /// </summary>
-public static partial class BrokerOptionsBuilderPostgreSqlExtensions
-{
-}
+public static partial class BrokerOptionsBuilderPostgreSqlExtensions;

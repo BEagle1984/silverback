@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// </summary>
 public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfigurationBuilder<ConsumerConfig, KafkaConsumerConfigurationBuilder>
 {
-    private readonly Dictionary<string, KafkaConsumerEndpointConfiguration> _endpoints = new();
+    private readonly Dictionary<string, KafkaConsumerEndpointConfiguration> _endpoints = [];
 
     private bool? _commitOffsets;
 

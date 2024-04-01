@@ -29,7 +29,7 @@ public static class ReflectionHelper
     public static MethodInfo[] GetMethods(Type type)
     {
         BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly;
-        return type.GetMethods(bindingFlags).ToArray();
+        return [.. type.GetMethods(bindingFlags)];
     }
 
     public static string GetTypeString(Type propertyType, bool forceReferenceTypeNullability)

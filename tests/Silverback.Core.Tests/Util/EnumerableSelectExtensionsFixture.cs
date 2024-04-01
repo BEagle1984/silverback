@@ -163,7 +163,7 @@ public class EnumerableSelectExtensionsFixture
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow();
 
-                return new[] { item * 2, item * 3 };
+                return [item * 2, item * 3];
             });
 
         result.Should().BeEquivalentTo(new[] { 2, 3, 4, 6, 6, 9 });
@@ -183,7 +183,7 @@ public class EnumerableSelectExtensionsFixture
                 countdownEvent.Signal();
                 countdownEvent.WaitOrThrow(TimeSpan.FromMilliseconds(100));
 
-                return new[] { item * 2, item * 3 };
+                return [item * 2, item * 3];
             },
             2).AsTask();
 

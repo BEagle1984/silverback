@@ -28,7 +28,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToStream()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -75,7 +75,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToEnvelopesStream()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -122,7 +122,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToStreamAndEnumeratingAsynchronously()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -169,7 +169,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToEnumerable()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -216,7 +216,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToAsyncEnumerable()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -263,7 +263,7 @@ public partial class StreamingFixture : KafkaFixture
     [Fact]
     public async Task Streaming_ShouldConsumeAndCommit_WhenSubscribingToObservable()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

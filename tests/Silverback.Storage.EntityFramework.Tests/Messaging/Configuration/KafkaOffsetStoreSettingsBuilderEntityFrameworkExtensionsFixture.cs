@@ -20,7 +20,5 @@ public class KafkaOffsetStoreSettingsBuilderEntityFrameworkExtensionsFixture
         implementationBuilder.Should().BeOfType<EntityFrameworkKafkaOffsetStoreSettingsBuilder>();
     }
 
-    private class TestDbContext : DbContext
-    {
-    }
+    private class TestDbContext : DbContext;
 }

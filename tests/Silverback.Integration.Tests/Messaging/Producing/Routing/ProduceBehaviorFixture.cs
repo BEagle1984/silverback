@@ -40,7 +40,7 @@ public class ProduceBehaviorFixture
         TestProduceStrategy testProduceStrategy = new();
         OutboundEnvelope<TestEventOne> outboundEnvelope = new(
             new TestEventOne(),
-            Array.Empty<MessageHeader>(),
+            [],
             new TestProducerEndpointConfiguration("test")
             {
                 Strategy = testProduceStrategy
@@ -75,17 +75,17 @@ public class ProduceBehaviorFixture
         ProduceBehavior behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
             .First(behavior => behavior is ProduceBehavior);
 
-        IEnumerable<TestEventOne> messages = new[]
-        {
+        IEnumerable<TestEventOne> messages =
+        [
             new TestEventOne(),
             new TestEventOne(),
             new TestEventOne()
-        };
+        ];
 
         TestProduceStrategy testProduceStrategy = new();
         OutboundEnvelope<IEnumerable<TestEventOne>> outboundEnvelope = new(
             messages,
-            Array.Empty<MessageHeader>(),
+            [],
             new TestProducerEndpointConfiguration("test")
             {
                 Strategy = testProduceStrategy
@@ -124,7 +124,7 @@ public class ProduceBehaviorFixture
         TestProduceStrategy testProduceStrategy = new();
         OutboundEnvelope<IAsyncEnumerable<TestEventOne>> outboundEnvelope = new(
             messages,
-            Array.Empty<MessageHeader>(),
+            [],
             new TestProducerEndpointConfiguration("test")
             {
                 Strategy = testProduceStrategy
@@ -143,7 +143,7 @@ public class ProduceBehaviorFixture
 
     private class TestProduceStrategy : IProduceStrategy
     {
-        public List<IOutboundEnvelope> ProducedEnvelopes { get; } = new();
+        public List<IOutboundEnvelope> ProducedEnvelopes { get; } = [];
 
         public bool Equals(IProduceStrategy? other) => throw new NotSupportedException();
 

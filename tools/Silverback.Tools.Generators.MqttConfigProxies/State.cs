@@ -10,7 +10,7 @@ public class State
 {
     public Queue<Type> GeneratorQueue { get; } = new();
 
-    public HashSet<Type> DiscoveredTypes { get; } = new();
+    public HashSet<Type> DiscoveredTypes { get; } = [];
 
     public void AddType<T>() => AddType(typeof(T));
 

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -44,7 +43,7 @@ public class AvroMessageSerializer<TMessage> : IAvroMessageSerializer
 
         byte[]? serializedKey = AsyncHelper.RunSynchronously(() => SerializeAsync<string>(key, MessageComponentType.Key, endpoint).AsTask());
 
-        return serializedKey ?? Array.Empty<byte>();
+        return serializedKey ?? [];
     }
 
     private static SerializationContext GetConfluentSerializationContext(MessageComponentType componentType, Endpoint endpoint) =>

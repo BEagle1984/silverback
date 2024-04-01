@@ -5,6 +5,4 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
 
-public interface ICommand : IMessage
-{
-}
+public interface ICommand : IMessage;

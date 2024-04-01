@@ -129,8 +129,12 @@ public partial class ConsumerEndpointFixture
                                 .WithGroupId(DefaultGroupId)
                                 .Consume(
                                     endpoint => endpoint.ConsumeFrom(
-                                        new[] { "topic1", "topic2" },
-                                        _ => new TopicPartition[] { new("topic1", 2), new("topic2", 1) }))))
+                                        ["topic1", "topic2"],
+                                        _ =>
+                                        [
+                                            new TopicPartition("topic1", 2),
+                                            new TopicPartition("topic2", 1)
+                                        ]))))
                 .AddIntegrationSpyAndSubscriber());
 
         IProducer producerTopic1Partition1 = Helper.GetProducer(

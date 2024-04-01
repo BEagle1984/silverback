@@ -11,7 +11,7 @@ namespace Silverback.Diagnostics;
 /// </summary>
 public sealed class LogLevelConfigurator
 {
-    internal LogLevelDictionary LogLevelDictionary { get; } = new();
+    internal LogLevelDictionary LogLevelDictionary { get; } = [];
 
     /// <summary>
     ///     Configure the log level that should be applied to the specified event.

@@ -13,6 +13,4 @@ namespace Silverback.Messaging.Producing.Enrichers;
 /// </typeparam>
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for DI")]
 public interface IMovePolicyMessageEnricher<TEndpoint> : IMovePolicyMessageEnricher
-    where TEndpoint : Endpoint
-{
-}
+    where TEndpoint : Endpoint;

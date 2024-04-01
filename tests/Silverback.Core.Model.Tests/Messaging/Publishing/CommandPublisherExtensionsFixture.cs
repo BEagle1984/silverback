@@ -628,13 +628,9 @@ public class CommandPublisherExtensionsFixture
         result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
     }
 
-    private class TestCommand : ICommand
-    {
-    }
+    private class TestCommand : ICommand;
 
-    private class TestCommandWithResult : ICommand<IEnumerable<int>>
-    {
-    }
+    private class TestCommandWithResult : ICommand<IEnumerable<int>>;
 
     private class Wrapper<T> : IMessageWrapper<T>
         where T : new()

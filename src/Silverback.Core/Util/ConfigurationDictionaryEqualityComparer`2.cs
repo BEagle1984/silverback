@@ -41,8 +41,8 @@ internal sealed class ConfigurationDictionaryEqualityComparer<TKey, TValue> : IE
 {
     public bool Equals(IEnumerable<KeyValuePair<TKey, TValue>>? x, IEnumerable<KeyValuePair<TKey, TValue>>? y)
     {
-        x = (x ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
-        y = (y ?? Enumerable.Empty<KeyValuePair<TKey, TValue>>()).ToList();
+        x = (x ?? []).AsReadOnlyCollection();
+        y = (y ?? []).AsReadOnlyCollection();
 
         if (x.Count() != y.Count())
             return false;

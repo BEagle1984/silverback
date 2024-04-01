@@ -77,9 +77,9 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenNotEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, _outboxEndpoint1));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = false },
@@ -96,9 +96,9 @@ public class OutboxWorkerFixture
     [Fact]
     public async Task ProcessOutboxAsync_ShouldDequeueAndProduceMessages_WhenEnforcingOrder()
     {
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, _outboxEndpoint2));
-        await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x02], null, _outboxEndpoint2));
+        await _outboxWriter.AddAsync(new OutboxMessage([0x03], null, _outboxEndpoint1));
 
         OutboxWorker outboxWorker = new(
             new OutboxWorkerSettings(new InMemoryOutboxSettings()) { EnforceMessageOrder = true },
@@ -343,7 +343,7 @@ public class OutboxWorkerFixture
     {
         for (int i = 0; i < 10; i++)
         {
-            await _outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, _outboxEndpoint1));
+            await _outboxWriter.AddAsync(new OutboxMessage([0x01], null, _outboxEndpoint1));
         }
 
         int tries = 0;

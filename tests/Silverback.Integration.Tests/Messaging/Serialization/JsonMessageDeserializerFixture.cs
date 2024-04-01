@@ -23,7 +23,7 @@ public class JsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldCorrectlyDeserializeSerializedMessage()
     {
         TestEventOne message = new() { Content = "the message" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageSerializer serializer = new();
         JsonMessageDeserializer<TestEventOne> deserializer = new();
@@ -47,7 +47,7 @@ public class JsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader()
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageDeserializer<TestEventOne> deserializer = new();
 
@@ -65,7 +65,7 @@ public class JsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldDeserializeDespiteMissingTypeHeader_WhenNotMandatory(JsonMessageDeserializerTypeHeaderBehavior typeHeaderBehavior)
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageDeserializer<TestEventOne> deserializer = new()
         {
@@ -195,7 +195,7 @@ public class JsonMessageDeserializerFixture
     public async Task DeserializeAsync_ShouldThrowWhenMissingTypeHeader_WhenBehaviorSetToMandatory()
     {
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         JsonMessageDeserializer<TestEventOne> deserializer = new()
         {
@@ -233,7 +233,7 @@ public class JsonMessageDeserializerFixture
     {
         JsonMessageDeserializer<TestEventOne> deserializer = new();
 
-        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(null, new MessageHeaderCollection(), TestConsumerEndpoint.GetDefault());
+        (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(null, [], TestConsumerEndpoint.GetDefault());
 
         deserializedObject.Should().BeNull();
         type.Should().Be(typeof(TestEventOne));
@@ -246,7 +246,7 @@ public class JsonMessageDeserializerFixture
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(
             new MemoryStream(),
-            new MessageHeaderCollection(),
+            [],
             TestConsumerEndpoint.GetDefault());
 
         deserializedObject.Should().BeNull();

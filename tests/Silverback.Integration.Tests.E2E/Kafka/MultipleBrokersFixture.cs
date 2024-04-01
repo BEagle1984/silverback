@@ -121,11 +121,7 @@ public class MultipleBrokersFixture : KafkaFixture
         Helper.Spy.InboundEnvelopes[1].Consumer.As<KafkaConsumer>().Configuration.BootstrapServers.Should().Be("PLAINTEXT://e2e-2");
     }
 
-    private sealed class Broker1Message : IIntegrationMessage
-    {
-    }
+    private sealed class Broker1Message : IIntegrationMessage;
 
-    private sealed class Broker2Message : IIntegrationMessage
-    {
-    }
+    private sealed class Broker2Message : IIntegrationMessage;
 }

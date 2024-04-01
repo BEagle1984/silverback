@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions;
@@ -21,5 +20,5 @@ public abstract class SubscriptionOptions
     /// <summary>
     ///     Gets or sets the filters to be applied.
     /// </summary>
-    public IReadOnlyCollection<IMessageFilter> Filters { get; set; } = Array.Empty<IMessageFilter>();
+    public IReadOnlyCollection<IMessageFilter> Filters { get; set; } = [];
 }

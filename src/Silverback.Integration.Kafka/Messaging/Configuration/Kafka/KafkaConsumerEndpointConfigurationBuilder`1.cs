@@ -48,7 +48,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     ///     The <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(string topic) =>
-        ConsumeFrom(new[] { Check.NotNullOrEmpty(topic, nameof(topic)) });
+        ConsumeFrom([Check.NotNullOrEmpty(topic, nameof(topic))]);
 
     /// <summary>
     ///     Specifies the topics to be subscribed.
@@ -146,7 +146,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(
         string topic,
         Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> partitionsProvider) =>
-        ConsumeFrom(new[] { topic }, partitionsProvider);
+        ConsumeFrom([topic], partitionsProvider);
 
     /// <summary>
     ///     Specifies the topic and a function that returns the partitions to be consumed, as well as the starting offsets.

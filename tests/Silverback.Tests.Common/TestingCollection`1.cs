@@ -10,7 +10,7 @@ namespace Silverback.Tests;
 // TODO: Use in E2E tests
 public class TestingCollection<T> : IReadOnlyList<T>
 {
-    private readonly List<T> _items = new();
+    private readonly List<T> _items = [];
 
     public int Count => _items.Count;
 

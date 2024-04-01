@@ -5,6 +5,4 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Types.Domain;
 
-public interface IIntegrationMessage : IMessage
-{
-}
+public interface IIntegrationMessage : IMessage;

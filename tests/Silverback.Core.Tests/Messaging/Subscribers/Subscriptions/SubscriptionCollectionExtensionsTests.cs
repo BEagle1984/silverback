@@ -13,7 +13,7 @@ public class SubscriptionCollectionExtensionsTests
     [Fact]
     public void AddTypedSubscriptionIfNotExists_NewType_Added()
     {
-        List<ISubscription> collection = new();
+        List<ISubscription> collection = [];
 
         collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
         collection.AddTypeSubscriptionIfNotExists(typeof(TestOtherSubscriber), new TypeSubscriptionOptions());
@@ -24,7 +24,7 @@ public class SubscriptionCollectionExtensionsTests
     [Fact]
     public void AddTypedSubscriptionIfNotExists_ExistingType_NotAdded()
     {
-        List<ISubscription> collection = new();
+        List<ISubscription> collection = [];
 
         collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
         collection.AddTypeSubscriptionIfNotExists(typeof(TestSubscriber), new TypeSubscriptionOptions());
@@ -32,11 +32,7 @@ public class SubscriptionCollectionExtensionsTests
         collection.Should().HaveCount(1);
     }
 
-    private class TestSubscriber
-    {
-    }
+    private class TestSubscriber;
 
-    private class TestOtherSubscriber
-    {
-    }
+    private class TestOtherSubscriber;
 }

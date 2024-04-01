@@ -18,7 +18,7 @@ public interface ISequenceStore : IReadOnlyCollection<ISequence>, IAsyncDisposab
     /// <summary>
     ///     Gets a value indicating whether the store has been disposed.
     /// </summary>
-    bool Disposed { get; }
+    bool IsDisposed { get; }
 
     /// <summary>
     ///     Gets the sequence with the specified id.

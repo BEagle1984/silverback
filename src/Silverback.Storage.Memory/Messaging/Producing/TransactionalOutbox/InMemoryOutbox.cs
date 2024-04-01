@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public class InMemoryOutbox
 {
-    private readonly List<StoredOutboxMessage> _storedOutboxMessages = new();
+    private readonly List<StoredOutboxMessage> _storedOutboxMessages = [];
 
     /// <summary>
     ///     Gets the number of items in the storage.

@@ -13,7 +13,7 @@ namespace Silverback;
 // TODO: Test new methods
 public class SilverbackContext
 {
-    private readonly Dictionary<Guid, object> _objects = new();
+    private readonly Dictionary<Guid, object> _objects = [];
 
     /// <summary>
     ///     Stores the specified object. It will throw if an object with the same type id is already stored.

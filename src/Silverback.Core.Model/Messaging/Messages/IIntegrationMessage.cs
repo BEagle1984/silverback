@@ -10,6 +10,4 @@ namespace Silverback.Messaging.Messages;
 ///     <see cref="IIntegrationEvent" /> and <see cref="IIntegrationCommand" />.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IIntegrationMessage : IMessage
-{
-}
+public interface IIntegrationMessage : IMessage;

@@ -17,6 +17,6 @@ internal static class ObservableTypeParameterExtensions
         typeof(Observable)
                 .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)
                 ?.MakeGenericMethod(type)
-                .Invoke(null, new object[] { source })
+                .Invoke(null, [source])
             as IObservable<object> ?? Observable.Empty<object>();
 }

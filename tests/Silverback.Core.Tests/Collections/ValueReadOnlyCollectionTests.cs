@@ -14,13 +14,12 @@ public class ValueReadOnlyCollectionTests
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
     public static IEnumerable<object[]> Equals_StringCollection_CorrectResultReturned_TestData =>
-        new[]
-        {
-            new object[] { new[] { "a", "b", "c" }, new[] { "a", "b", "c" }, true },
-            new object[] { new[] { "a", "b", "c" }, new[] { "a", "b" }, false },
-            new object[] { new[] { "a", "c" }, new[] { "a", "b", "c" }, false },
-            new object[] { new[] { "a", "b", "c" }, new[] { "d", "e", "f" }, false }
-        };
+    [
+        [new[] { "a", "b", "c" }, new[] { "a", "b", "c" }, true],
+        [new[] { "a", "b", "c" }, new[] { "a", "b" }, false],
+        [new[] { "a", "c" }, new[] { "a", "b", "c" }, false],
+        [new[] { "a", "b", "c" }, new[] { "d", "e", "f" }, false]
+    ];
 
     [Theory]
     [MemberData(nameof(Equals_StringCollection_CorrectResultReturned_TestData))]
@@ -36,7 +35,7 @@ public class ValueReadOnlyCollectionTests
     [Fact]
     public void Count_CorrectValueReturned()
     {
-        ValueReadOnlyCollection<int> collection = new(new[] { 1, 2, 3 });
+        ValueReadOnlyCollection<int> collection = new([1, 2, 3]);
         collection.Count.Should().Be(3);
     }
 

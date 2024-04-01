@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TMessage">
 ///     The type of the message that was expected.
 /// </typeparam>
-public interface ITombstone<out TMessage> : ITombstone
-{
-}
+public interface ITombstone<out TMessage> : ITombstone;

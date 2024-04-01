@@ -12,18 +12,14 @@ namespace Silverback.Tests.Core.Util;
 [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Test code")]
 public class EnumerableTypeParameterExtensionsFixture
 {
-    private interface IObjectA
-    {
-    }
+    private interface IObjectA;
 
-    private interface IObjectB
-    {
-    }
+    private interface IObjectB;
 
     [Fact]
     public void OfType_ShouldReturnObjectsOfMatchingType_WhenTypeSpecifiedViaParameter()
     {
-        object[] objects = { new ObjectA(), new ObjectB(), new ObjectA(), new ObjectB() };
+        object[] objects = [new ObjectA(), new ObjectB(), new ObjectA(), new ObjectB()];
 
         IEnumerable<object> results = objects.OfType(typeof(ObjectA));
 
@@ -36,7 +32,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void OfType_ShouldReturnObjectsMatchingInterface_WhenInterfaceTypeSpecifiedViaParameter()
     {
-        object[] objects = { new ObjectA(), new ObjectB(), new ObjectA(), new ObjectB() };
+        object[] objects = [new ObjectA(), new ObjectB(), new ObjectA(), new ObjectB()];
 
         IEnumerable<object> results = objects.OfType(typeof(IObjectA));
 
@@ -49,7 +45,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void Cast_ShouldReturnEnumerableOfMatchingType_WhenTypeSpecifiedViaParameter()
     {
-        object[] objects = { new ObjectA(), new ObjectA() };
+        object[] objects = [new ObjectA(), new ObjectA()];
 
         IEnumerable<object> results = objects.Cast(typeof(IObjectA));
 
@@ -60,7 +56,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void ToList_ShouldReturnEquivalentList_WhenTypeSpecifiedViaParameter()
     {
-        ObjectA[] objects = { new(), new() };
+        ObjectA[] objects = [new ObjectA(), new ObjectA()];
 
         IEnumerable<object> results = objects.ToList(typeof(ObjectA));
 
@@ -72,7 +68,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void ToList_ShouldReturnEquivalentListOfInterfaceType_WhenTypeSpecifiedViaParameter()
     {
-        ObjectA[] objects = { new(), new() };
+        ObjectA[] objects = [new ObjectA(), new ObjectA()];
 
         IEnumerable<object> results = objects.ToList(typeof(IObjectA));
 
@@ -81,11 +77,7 @@ public class EnumerableTypeParameterExtensionsFixture
         results.Should().AllBeOfType<ObjectA>();
     }
 
-    private class ObjectA : IObjectA
-    {
-    }
+    private class ObjectA : IObjectA;
 
-    private class ObjectB : IObjectB
-    {
-    }
+    private class ObjectB : IObjectB;
 }

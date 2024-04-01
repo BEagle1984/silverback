@@ -13,6 +13,4 @@ namespace Silverback.Messaging.Messages;
 /// </typeparam>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
-public interface ICommand<out TResult> : ICommand
-{
-}
+public interface ICommand<out TResult> : ICommand;

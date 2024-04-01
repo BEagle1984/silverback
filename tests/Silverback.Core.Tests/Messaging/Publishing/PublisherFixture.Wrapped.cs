@@ -17,14 +17,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
-    private interface ICustomWrapper<T> : IMessageWrapper<T>
-    {
-    }
+    private interface ICustomWrapper<T> : IMessageWrapper<T>;
 
     [Fact]
     public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -45,7 +43,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldUnwrapEnvelope()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -66,7 +64,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldPublishCustomWrapper()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -87,7 +85,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldMatchCustomWrapperInterface()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -108,7 +106,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldUnwrapCustomWrapper()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -130,7 +128,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldCastEnvelope()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()
@@ -151,7 +149,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldNotUnwrap_WhenUnwrappingIsDisabled()
     {
-        List<object> messages = new();
+        List<object> messages = [];
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
                 .AddFakeLogger()

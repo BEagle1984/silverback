@@ -20,7 +20,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
 
     private readonly Channel<MqttApplicationMessage> _channel = Channel.CreateUnbounded<MqttApplicationMessage>();
 
-    private readonly List<Subscription> _subscriptions = new();
+    private readonly List<Subscription> _subscriptions = [];
 
     private CancellationTokenSource _readCancellationTokenSource = new();
 

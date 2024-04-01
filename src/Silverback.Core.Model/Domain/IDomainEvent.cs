@@ -8,9 +8,7 @@ namespace Silverback.Domain;
 /// <summary>
 ///     An event that generates inside the domain (model).
 /// </summary>
-public interface IDomainEvent : IMessageWithSource, IEvent
-{
-}
+public interface IDomainEvent : IMessageWithSource, IEvent;
 
 /// <inheritdoc cref="IDomainEvent" />
 /// <typeparam name="TEntity">

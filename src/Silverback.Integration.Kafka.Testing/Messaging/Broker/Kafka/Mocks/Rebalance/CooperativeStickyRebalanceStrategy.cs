@@ -14,8 +14,8 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         IReadOnlyList<TopicPartition> partitionsToAssign,
         IReadOnlyList<SubscriptionPartitionAssignment> partitionAssignments)
     {
-        Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions = new();
-        Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions = new();
+        Dictionary<IMockedConfluentConsumer, List<TopicPartition>> assignedPartitions = [];
+        Dictionary<IMockedConfluentConsumer, List<TopicPartition>> revokedPartitions = [];
 
         IEnumerable<IGrouping<string, TopicPartition>> partitionsByTopic =
             partitionsToAssign.GroupBy(topicPartition => topicPartition.Topic);
@@ -26,7 +26,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
                 .Where(assignment => assignment.Consumer.Subscription.Contains(topicPartitions.Key)).ToList();
 
             AssignTopicPartitions(
-                topicPartitions.ToList(),
+                [.. topicPartitions],
                 partitionAssignmentsForTopic,
                 assignedPartitions,
                 revokedPartitions);

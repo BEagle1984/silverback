@@ -839,7 +839,5 @@ public partial class SilverbackBuilderFixture
     }
 
     [UsedImplicitly]
-    private class TestSubscriber
-    {
-    }
+    private class TestSubscriber;
 }

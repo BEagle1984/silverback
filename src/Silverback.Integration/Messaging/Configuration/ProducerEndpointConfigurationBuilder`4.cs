@@ -40,7 +40,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     where TEndpoint : ProducerEndpoint
     where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
-    private readonly List<IOutboundMessageEnricher> _messageEnrichers = new();
+    private readonly List<IOutboundMessageEnricher> _messageEnrichers = [];
 
     private IMessageSerializer? _serializer;
 

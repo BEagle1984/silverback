@@ -15,23 +15,21 @@ namespace Silverback.Tests.Core.Messaging.Messages;
 
 public class MessageStreamProviderTests
 {
-    private interface IEvent : IMessage
-    {
-    }
+    private interface IEvent : IMessage;
 
     [Fact]
     public async Task PushAsync_Messages_RelayedToMatchingStreams()
     {
         MessageStreamProvider<IMessage> provider = new();
 
-        List<IEvent> eventsList = new();
-        List<TestEventOne> testEventOnesList = new();
+        List<IEvent> eventsList = [];
+        List<TestEventOne> testEventOnesList = [];
 
         IMessageStreamEnumerable<IEvent> eventsStream = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<TestEventOne> testEventOneStream = provider.CreateStream<TestEventOne>();
 
-        Task<List<IEvent>> task1 = Task.Run(() => eventsList = eventsStream.ToList());
-        Task<List<TestEventOne>> task2 = Task.Run(() => testEventOnesList = testEventOneStream.ToList());
+        Task<List<IEvent>> task1 = Task.Run(() => eventsList = [.. eventsStream]);
+        Task<List<TestEventOne>> task2 = Task.Run(() => testEventOnesList = [.. testEventOneStream.ToList()]);
 
         await provider.PushAsync(new TestEventOne());
         await provider.PushAsync(new TestEventTwo());
@@ -110,7 +108,7 @@ public class MessageStreamProviderTests
 
         List<TestEnvelope>? envelopes = null;
 
-        Task<List<TestEnvelope>> task = Task.Run(() => envelopes = stream.ToList());
+        Task<List<TestEnvelope>> task = Task.Run(() => envelopes = [.. stream]);
 
         await provider.PushAsync(new TestEnvelope(new TestEventOne()));
         await provider.PushAsync(new TestEnvelope(new TestEventTwo()));
@@ -130,11 +128,11 @@ public class MessageStreamProviderTests
         IMessageStreamEnumerable<IEvent> eventsStream = provider.CreateStream<IEvent>();
         IMessageStreamEnumerable<TestEventOne> testEventOnesStream = provider.CreateStream<TestEventOne>();
 
-        List<IEvent> eventsList = new();
-        List<TestEventOne> testEventOnesList = new();
+        List<IEvent> eventsList = [];
+        List<TestEventOne> testEventOnesList = [];
 
-        Task<List<IEvent>> task1 = Task.Run(() => eventsList = eventsStream.ToList());
-        Task<List<TestEventOne>> task2 = Task.Run(() => testEventOnesList = testEventOnesStream.ToList());
+        Task<List<IEvent>> task1 = Task.Run(() => eventsList = [.. eventsStream]);
+        Task<List<TestEventOne>> task2 = Task.Run(() => testEventOnesList = [.. testEventOnesStream]);
 
         await provider.PushAsync(new TestEnvelope(new TestEventOne()), false);
         await provider.PushAsync(new TestEnvelope(new TestEventTwo()), false);
@@ -425,7 +423,7 @@ public class MessageStreamProviderTests
     {
         MessageStreamProvider<IEvent> provider = new();
         ILazyMessageStreamEnumerable<TestEventTwo> lazyStream = provider.CreateLazyStream<TestEventTwo>();
-        List<TestEventTwo> receivedTwos = new();
+        List<TestEventTwo> receivedTwos = [];
 
         Task.Run(
             async () =>
@@ -499,21 +497,13 @@ public class MessageStreamProviderTests
         stream2.Should().BeOfType(stream1.GetType());
     }
 
-    private class TestEvent : IEvent
-    {
-    }
+    private class TestEvent : IEvent;
 
-    private class TestEventOne : TestEvent
-    {
-    }
+    private class TestEventOne : TestEvent;
 
-    private class TestEventTwo : TestEvent
-    {
-    }
+    private class TestEventTwo : TestEvent;
 
-    private class TestCommandOne : IMessage
-    {
-    }
+    private class TestCommandOne : IMessage;
 
     private class TestEnvelope : IEnvelope
     {

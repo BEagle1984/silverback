@@ -350,9 +350,7 @@ public class QueryPublisherExtensionsFixture
         result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
     }
 
-    private class TestQuery : IQuery<IEnumerable<int>>
-    {
-    }
+    private class TestQuery : IQuery<IEnumerable<int>>;
 
     private class Wrapper<T> : IMessageWrapper<T>
         where T : new()

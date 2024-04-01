@@ -25,7 +25,7 @@ public class ErrorPolicyChainFixture
 
     public ErrorPolicyChainFixture()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddFakeLogger()
@@ -44,9 +44,9 @@ public class ErrorPolicyChainFixture
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+        ];
 
         TestErrorPolicy testPolicy = new();
 
@@ -79,9 +79,9 @@ public class ErrorPolicyChainFixture
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+        ];
 
         TestErrorPolicy testPolicy = new();
 
@@ -116,16 +116,16 @@ public class ErrorPolicyChainFixture
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+        ];
 
         ErrorPolicyBase[] policies =
-        {
+        [
             new TestErrorPolicy { MaxFailedAttempts = 2 },
             new TestErrorPolicy { MaxFailedAttempts = 2 },
             new TestErrorPolicy { MaxFailedAttempts = 2 }
-        };
+        ];
 
         IErrorPolicyImplementation chain = new ErrorPolicyChain(policies).Build(_serviceProvider);
 
@@ -150,16 +150,16 @@ public class ErrorPolicyChainFixture
     {
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
-        {
-            new(DefaultMessageHeaders.FailedAttempts, 42)
-        };
+        [
+            new MessageHeader(DefaultMessageHeaders.FailedAttempts, 42)
+        ];
 
         ErrorPolicyBase[] policies =
-        {
+        [
             new TestErrorPolicy { MaxFailedAttempts = 2 },
             new TestErrorPolicy(),
             new TestErrorPolicy { MaxFailedAttempts = 2 }
-        };
+        ];
 
         IErrorPolicyImplementation chain = new ErrorPolicyChain(policies).Build(_serviceProvider);
 

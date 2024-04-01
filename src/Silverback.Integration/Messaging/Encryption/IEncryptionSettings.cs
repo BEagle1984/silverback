@@ -8,6 +8,4 @@ namespace Silverback.Messaging.Encryption;
 /// <summary>
 ///     The interface to be implemented by the encryption settings classes such as <see cref="SymmetricEncryptionSettings" />.
 /// </summary>
-public interface IEncryptionSettings : IValidatableSettings
-{
-}
+public interface IEncryptionSettings : IValidatableSettings;

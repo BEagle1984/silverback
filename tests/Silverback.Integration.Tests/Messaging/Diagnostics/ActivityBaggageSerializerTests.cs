@@ -13,12 +13,12 @@ public class ActivityBaggageSerializerTests
     [Fact]
     public void Serialize_SomeItems_SerializedStringReturned()
     {
-        List<KeyValuePair<string, string?>> itemsToAdd = new()
-        {
+        List<KeyValuePair<string, string?>> itemsToAdd =
+        [
             new KeyValuePair<string, string?>("key1", "value1"),
             new KeyValuePair<string, string?>("key2", "value2"),
             new KeyValuePair<string, string?>("key3", "value3")
-        };
+        ];
 
         string result = ActivityBaggageSerializer.Serialize(itemsToAdd);
 

@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 ///     A message that notifies an event.
 /// </summary>
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
-public interface IEvent : IMessage
-{
-}
+public interface IEvent : IMessage;

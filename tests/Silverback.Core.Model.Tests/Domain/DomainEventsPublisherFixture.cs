@@ -18,7 +18,7 @@ public sealed class DomainEventsPublisherFixture
     public void PublishDomainEvents_ShouldPublishEvents()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
-        List<DomainEntity> entities = new();
+        List<DomainEntity> entities = [];
         DomainEventsPublisher eventsPublisher = new(() => entities, publisher);
 
         TestAggregateRoot aggregateRoot = new();
@@ -39,7 +39,7 @@ public sealed class DomainEventsPublisherFixture
     public async Task PublishDomainEventsAsync_ShouldPublishEvents()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
-        List<DomainEntity> entities = new();
+        List<DomainEntity> entities = [];
         DomainEventsPublisher eventsPublisher = new(() => entities, publisher);
 
         TestAggregateRoot aggregateRoot = new();
@@ -59,7 +59,7 @@ public sealed class DomainEventsPublisherFixture
     [Fact]
     public void PublishDomainEvents_ShouldPublishEventsChain()
     {
-        List<DomainEntity> entities = new();
+        List<DomainEntity> entities = [];
         TestAggregateRoot aggregateRoot = new();
         aggregateRoot.AddEvent<TestDomainEventOne>();
         entities.Add(aggregateRoot);
@@ -88,7 +88,7 @@ public sealed class DomainEventsPublisherFixture
     [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "NSubstitute setup")]
     public async Task PublishDomainEventsAsync_ShouldPublishEventsChain()
     {
-        List<DomainEntity> entities = new();
+        List<DomainEntity> entities = [];
         TestAggregateRoot aggregateRoot = new();
         aggregateRoot.AddEvent<TestDomainEventOne>();
         entities.Add(aggregateRoot);

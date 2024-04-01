@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
 internal sealed class InMemoryPartition : IInMemoryPartition
 {
-    private readonly List<StoredMessage> _messages = new();
+    private readonly List<StoredMessage> _messages = [];
 
-    private readonly List<Transaction> _transactions = new();
+    private readonly List<Transaction> _transactions = [];
 
     private Offset _nextOffset = new(0);
 
@@ -183,6 +183,6 @@ internal sealed class InMemoryPartition : IInMemoryPartition
 
     private record Transaction(Guid Id)
     {
-        public List<StoredMessage> Messages { get; } = new();
+        public List<StoredMessage> Messages { get; } = [];
     }
 }

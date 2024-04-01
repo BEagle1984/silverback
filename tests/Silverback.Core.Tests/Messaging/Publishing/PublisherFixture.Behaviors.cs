@@ -62,7 +62,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAndPublishAsync_ShouldExecuteSortedBehaviorsInExpectedOrder()
     {
-        List<string> callsSequence = new();
+        List<string> callsSequence = [];
         TestSortedBehavior behavior1 = new(100, callsSequence);
         TestSortedBehavior behavior2 = new(50, callsSequence);
         TestSortedBehavior behavior3 = new(-50, callsSequence);
@@ -83,18 +83,17 @@ public partial class PublisherFixture
         await publisher.PublishAsync(new TestCommandOne());
 
         callsSequence.Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 "-100", "-50", "unsorted", "50", "100",
                 "-100", "-50", "unsorted", "50", "100"
-            },
+            ],
             options => options.WithStrictOrdering());
     }
 
     [Fact]
     public async Task Publish_MessageChangingBehavior_BehaviorExecuted()
     {
-        List<object> receivedMessages = new();
+        List<object> receivedMessages = [];
         ChangeMessageBehavior<TestCommandOne> behavior = new(_ => new TestCommandTwo());
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services

@@ -106,7 +106,7 @@ public class KafkaProducerConfigurationFixture
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
-            Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(Array.Empty<KafkaProducerEndpointConfiguration>())
+            Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>([])
         };
 
         Action act = configuration.Validate;
@@ -120,10 +120,9 @@ public class KafkaProducerConfigurationFixture
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
             Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(
-                new[]
-                {
-                    new KafkaProducerEndpointConfiguration { Endpoint = null! }
-                })
+            [
+                new KafkaProducerEndpointConfiguration { Endpoint = null! }
+            ])
         };
 
         Action act = configuration.Validate;
@@ -191,12 +190,11 @@ public class KafkaProducerConfigurationFixture
     {
         BootstrapServers = "test-server",
         Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(
-            new[]
+        [
+            new KafkaProducerEndpointConfiguration
             {
-                new KafkaProducerEndpointConfiguration
-                {
-                    Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
-                }
-            })
+                Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+            }
+        ])
     };
 }

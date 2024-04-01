@@ -19,7 +19,7 @@ public static class ServiceProviderHelper
         Action<IServiceCollection> servicesConfigurationAction,
         IHostApplicationLifetime? hostApplicationLifetime = null)
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
         services.AddSingleton(hostApplicationLifetime ?? Substitute.For<IHostApplicationLifetime>());
 
         servicesConfigurationAction(services);

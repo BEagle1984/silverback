@@ -3,6 +3,4 @@
 
 namespace Silverback.Tests.Types.Domain;
 
-public interface IEvent
-{
-}
+public interface IEvent;

@@ -64,8 +64,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     public KafkaConsumerConfiguration Configuration { get; }
 
-    public IReadOnlyList<TopicPartition> Assignment =>
-        (IReadOnlyList<TopicPartition>?)_confluentConsumer?.Assignment ?? Array.Empty<TopicPartition>();
+    public IReadOnlyList<TopicPartition> Assignment => (IReadOnlyList<TopicPartition>?)_confluentConsumer?.Assignment ?? [];
 
     public KafkaConsumer Consumer
     {
@@ -193,7 +192,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private async ValueTask PerformStaticAssignmentAsync()
     {
-        List<TopicPartitionOffset> assignment = new();
+        List<TopicPartitionOffset> assignment = [];
 
         try
         {

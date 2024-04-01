@@ -379,15 +379,16 @@ internal static class IntegrationLoggerExtensions
         if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
             return;
 
-        List<object?> args = new(argumentsProvider?.Invoke() ?? Array.Empty<object>())
-        {
+        object?[] args =
+        [
+            ..argumentsProvider?.Invoke() ?? [],
             consumer?.DisplayName ?? string.Empty
-        };
+        ];
 
         logger.InnerLogger.Log(
             IntegrationLogEvents.LowLevelTracing.Level,
             IntegrationLogEvents.LowLevelTracing.EventId,
             message + " | consumerName: {consumerName}",
-            args.ToArray());
+            args);
     }
 }

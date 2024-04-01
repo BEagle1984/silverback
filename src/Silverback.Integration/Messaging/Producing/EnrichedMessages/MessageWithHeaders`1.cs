@@ -23,7 +23,7 @@ public class MessageWithHeaders<T> : IMessageWithHeaders<T>
     public T? Message { get; }
 
     /// <inheritdoc cref="IMessageWithHeaders.Headers" />
-    public MessageHeaderCollection Headers { get; } = new();
+    public MessageHeaderCollection Headers { get; } = [];
 
     /// <inheritdoc cref="IMessageWithHeaders{T}.AddHeader" />
     public MessageWithHeaders<T> AddHeader(string name, object value)

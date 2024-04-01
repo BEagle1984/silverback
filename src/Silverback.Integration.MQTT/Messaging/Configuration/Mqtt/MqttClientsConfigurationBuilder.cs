@@ -15,9 +15,9 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public sealed partial class MqttClientsConfigurationBuilder
 {
-    private readonly MergeableActionCollection<MqttClientConfigurationBuilder> _configurationActions = new();
+    private readonly MergeableActionCollection<MqttClientConfigurationBuilder> _configurationActions = [];
 
-    private readonly List<Action<MqttClientConfigurationBuilder>> _sharedConfigurationActions = new();
+    private readonly List<Action<MqttClientConfigurationBuilder>> _sharedConfigurationActions = [];
 
     /// <summary>
     ///     Specifies the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V500" />.

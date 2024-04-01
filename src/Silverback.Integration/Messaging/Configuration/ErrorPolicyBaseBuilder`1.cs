@@ -18,9 +18,9 @@ namespace Silverback.Messaging.Configuration;
 public abstract class ErrorPolicyBaseBuilder<TBuilder>
     where TBuilder : ErrorPolicyBaseBuilder<TBuilder>
 {
-    private readonly List<Type> _includedExceptions = new();
+    private readonly List<Type> _includedExceptions = [];
 
-    private readonly List<Type> _excludedExceptions = new();
+    private readonly List<Type> _excludedExceptions = [];
 
     private Func<IRawInboundEnvelope, Exception, bool>? _applyRule;
 

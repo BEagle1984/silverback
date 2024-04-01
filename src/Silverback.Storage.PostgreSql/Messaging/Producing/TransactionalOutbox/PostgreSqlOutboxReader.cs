@@ -64,10 +64,9 @@ public class PostgreSqlOutboxReader : IOutboxReader
         _dataAccess.ExecuteQueryAsync(
             MapOutboxMessage,
             _getQuerySql,
-            new NpgsqlParameter[]
-            {
-                new("@Limit", NpgsqlDbType.Integer) { Value = count }
-            },
+            [
+                new NpgsqlParameter("@Limit", NpgsqlDbType.Integer) { Value = count }
+            ],
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
@@ -94,10 +93,9 @@ public class PostgreSqlOutboxReader : IOutboxReader
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
             _deleteSql,
-            new[]
-            {
+            [
                 new NpgsqlParameter("@Id", NpgsqlDbType.Bigint)
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Id;

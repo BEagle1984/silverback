@@ -73,7 +73,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         // as OutboundEnvelope and will be normally subscribable
         // (if PublishOutboundMessagesToInternalBus is true)
         if (wasRouted)
-            return Array.Empty<object?>();
+            return [];
 
         return await next(message).ConfigureAwait(false);
     }
@@ -99,7 +99,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     private IOutboundEnvelope CreateOutboundEnvelope(object message, IProducer producer) =>
         _envelopeFactory.CreateEnvelope(
             message,
-            new MessageHeaderCollection(),
+            [],
             producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, _serviceProvider),
             producer,
             _context);

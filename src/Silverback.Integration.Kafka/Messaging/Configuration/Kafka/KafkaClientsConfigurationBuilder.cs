@@ -18,7 +18,7 @@ public partial class KafkaClientsConfigurationBuilder
 {
     private readonly KafkaClientsConfigurationActions _configurationActions = new();
 
-    private readonly List<Action<IKafkaClientConfigurationBuilder>> _sharedConfigurationActions = new();
+    private readonly List<Action<IKafkaClientConfigurationBuilder>> _sharedConfigurationActions = [];
 
     /// <summary>
     ///     Adds a Kafka producer.

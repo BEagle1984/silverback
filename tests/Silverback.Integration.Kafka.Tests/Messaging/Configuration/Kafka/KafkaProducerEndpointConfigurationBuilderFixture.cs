@@ -151,7 +151,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     {
         KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
-        builder.ProduceTo("some-topic-{0}", _ => new[] { "123" }, _ => 42);
+        builder.ProduceTo("some-topic-{0}", _ => ["123"], _ => 42);
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
         configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();

@@ -442,7 +442,7 @@ public class IntegrationLoggerExtensionsFixture
 
         _silverbackLogger.LogLowLevelTrace(
             "Message {string} {int} {bool}",
-            () => new object[] { "A", 42, true });
+            () => ["A", 42, true]);
 
         _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
     }
@@ -453,7 +453,7 @@ public class IntegrationLoggerExtensionsFixture
         _silverbackLogger.LogLowLevelTrace(
             new InvalidComObjectException(),
             "Message {string} {int} {bool}",
-            () => new object[] { "A", 42, true });
+            () => ["A", 42, true]);
 
         _loggerSubstitute.Received(
             LogLevel.Trace,
@@ -468,7 +468,7 @@ public class IntegrationLoggerExtensionsFixture
         _silverbackLogger.LogConsumerLowLevelTrace(
             new TestConsumer(),
             "Message {string} {int} {bool}",
-            () => new object[] { "A", 42, true });
+            () => ["A", 42, true]);
 
         _loggerSubstitute.Received(
             LogLevel.Trace,
@@ -524,7 +524,7 @@ public class IntegrationLoggerExtensionsFixture
 
         public IBrokerClient Client { get; } = new TestClient();
 
-        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = Array.Empty<ConsumerEndpointConfiguration>();
+        public IReadOnlyCollection<ConsumerEndpointConfiguration> EndpointsConfiguration { get; } = [];
 
         public IConsumerStatusInfo StatusInfo { get; } = new ConsumerStatusInfo();
 

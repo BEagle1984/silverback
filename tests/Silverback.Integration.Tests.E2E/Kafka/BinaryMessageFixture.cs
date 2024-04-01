@@ -42,7 +42,7 @@ public class BinaryMessageFixture : KafkaFixture
             ContentType = "text/plain"
         };
 
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -134,8 +134,8 @@ public class BinaryMessageFixture : KafkaFixture
             ContentEventOne = "test"
         };
 
-        TestingCollection<BinaryMessage> receivedBinaryMessages = new();
-        TestingCollection<TestEventOne> receivedJsonMessages = new();
+        TestingCollection<BinaryMessage> receivedBinaryMessages = [];
+        TestingCollection<TestEventOne> receivedJsonMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -190,7 +190,7 @@ public class BinaryMessageFixture : KafkaFixture
             ContentType = "text/plain"
         };
 
-        List<byte[]?> receivedFiles = new();
+        List<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -250,7 +250,7 @@ public class BinaryMessageFixture : KafkaFixture
             CustomHeader = "two"
         };
 
-        TestingCollection<byte[]?> receivedFiles = new();
+        TestingCollection<byte[]?> receivedFiles = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

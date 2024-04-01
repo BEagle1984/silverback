@@ -14,10 +14,7 @@ public static class FluentAssertionsExtensions
     {
         AndConstraint<ObjectAssertions>? result = actualValue.Should().NotBeNull();
 
-        if (actualValue == null)
-        {
-            throw new ArgumentNullException(nameof(actualValue)); // Will never be thrown, needed only to trick the compiler
-        }
+        ArgumentNullException.ThrowIfNull(actualValue);
 
         return result;
     }

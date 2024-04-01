@@ -64,13 +64,12 @@ public class SqliteOutboxReader : IOutboxReader
         _dataAccess.ExecuteQueryAsync(
             MapOutboxMessage,
             _getQuerySql,
-            new SqliteParameter[]
-            {
-                new("@Limit", SqliteType.Integer)
+            [
+                new SqliteParameter("@Limit", SqliteType.Integer)
                 {
                     Value = count
                 }
-            },
+            ],
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
@@ -98,10 +97,9 @@ public class SqliteOutboxReader : IOutboxReader
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
             _deleteSql,
-            new[]
-            {
+            [
                 new SqliteParameter("@Id", SqliteType.Integer)
-            },
+            ],
             (outboxMessage, parameters) =>
             {
                 parameters[0].Value = outboxMessage.Id;

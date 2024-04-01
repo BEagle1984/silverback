@@ -22,5 +22,5 @@ public abstract class DomainEntity : MessagesSource<IDomainEvent>
     /// </summary>
     [NotMapped]
     public IEnumerable<IDomainEvent> DomainEvents =>
-        GetMessages()?.Cast<IDomainEvent>() ?? Enumerable.Empty<IDomainEvent>();
+        GetMessages()?.Cast<IDomainEvent>() ?? [];
 }

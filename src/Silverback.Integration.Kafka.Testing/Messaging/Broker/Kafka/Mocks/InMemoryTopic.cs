@@ -21,7 +21,7 @@ internal sealed class InMemoryTopic : IInMemoryTopic
         if (partitions < 1)
             throw new ArgumentOutOfRangeException(nameof(partitions), partitions, "The number of partition must be a positive number greater or equal to 1.");
 
-        _partitions = new List<InMemoryPartition>(Enumerable.Range(0, partitions).Select(i => new InMemoryPartition(i, this)));
+        _partitions = [.. Enumerable.Range(0, partitions).Select(i => new InMemoryPartition(i, this))];
     }
 
     public string Name { get; }

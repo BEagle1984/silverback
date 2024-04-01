@@ -13,7 +13,7 @@ public class EnumerableFirstExtensionsFixture
     [Fact]
     public async Task FirstOrDefaultAsync_ShouldReturnMatchingItem()
     {
-        object?[] enumerable = { "one", 1, null };
+        object?[] enumerable = ["one", 1, null];
 
         object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int));
 
@@ -23,7 +23,7 @@ public class EnumerableFirstExtensionsFixture
     [Fact]
     public async Task FirstOrDefaultAsync_ShouldReturnNull_WhenNoMatchingObjectIsFound()
     {
-        object?[] enumerable = { "one", 1, null };
+        object?[] enumerable = ["one", 1, null];
 
         object? result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item is int intItem && intItem == 2));
 
@@ -33,7 +33,7 @@ public class EnumerableFirstExtensionsFixture
     [Fact]
     public async Task FirstOrDefaultAsync_ShouldReturnZero_WhenNoMatchingIntIsFound()
     {
-        int[] enumerable = { 1, 3, 5, 7, 9 };
+        int[] enumerable = [1, 3, 5, 7, 9];
 
         int result = await enumerable.FirstOrDefaultAsync(item => ValueTask.FromResult(item % 2 == 0));
 

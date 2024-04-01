@@ -97,12 +97,12 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         _logger.LogConsumerLowLevelTrace(
             "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}).",
             context.Envelope,
-            () => new object[]
-            {
+            () =>
+            [
                 sequence.GetType().Name,
                 sequence.SequenceId,
                 processingTask.Id
-            });
+            ]);
     }
 
     private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context)
@@ -128,11 +128,11 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         _logger.LogConsumerLowLevelTrace(
             "Publishing {sequenceType} '{sequenceId}'...",
             context.Envelope,
-            () => new object[]
-            {
+            () =>
+            [
                 sequence.GetType().Name,
                 sequence.SequenceId
-            });
+            ]);
 
         IStreamPublisher publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
@@ -143,11 +143,11 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
             _logger.LogConsumerLowLevelTrace(
                 "No subscribers for {sequenceType} '{sequenceId}'.",
                 context.Envelope,
-                () => new object[]
-                {
+                () =>
+                [
                     sequence.GetType().Name,
                     sequence.SequenceId
-                });
+                ]);
 
             return Task.CompletedTask;
         }
@@ -190,14 +190,14 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
                     _logger.LogLowLevelTrace(
                         "All {sequenceType} '{sequenceId}' subscribers completed. (sequence.IsCompleted={completed}, faultedTasks={faultedCount}/{tasksCount}).",
-                        () => new object[]
-                        {
+                        () =>
+                        [
                             sequence.GetType().Name,
                             sequence.SequenceId,
                             sequence.IsComplete,
                             processingTasks.Count(task => task.IsFaulted),
                             processingTasks.Count
-                        });
+                        ]);
                 }
                 catch (Exception exception)
                 {
@@ -210,11 +210,11 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                     _logger.LogConsumerLowLevelTrace(
                         "{sequenceType} '{sequenceId}' processing completed.",
                         context.Envelope,
-                        () => new object[]
-                        {
+                        () =>
+                        [
                             sequence.GetType().Name,
                             sequence.SequenceId
-                        });
+                        ]);
                 }
             });
     }

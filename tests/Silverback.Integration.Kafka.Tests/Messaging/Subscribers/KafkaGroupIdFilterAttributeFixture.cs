@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -36,7 +35,7 @@ public class KafkaGroupIdFilterAttributeFixture
         confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
         InboundEnvelope envelope = new(
             new MemoryStream(),
-            new List<MessageHeader>(),
+            [],
             new KafkaConsumerEndpoint(
                 "my-topic",
                 1,
@@ -51,17 +50,15 @@ public class KafkaGroupIdFilterAttributeFixture
                     })
                 {
                     Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
-                        new[]
+                    [
+                        new KafkaConsumerEndpointConfiguration
                         {
-                            new KafkaConsumerEndpointConfiguration
-                            {
-                                TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                                    new[]
-                                    {
-                                        new TopicPartitionOffset("my-topic", 1, Offset.Unset)
-                                    })
-                            }
-                        })
+                            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
+                            [
+                                new TopicPartitionOffset("my-topic", 1, Offset.Unset)
+                            ])
+                        }
+                    ])
                 },
                 Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
                 Substitute.For<IBrokerClientCallbacksInvoker>(),
@@ -88,7 +85,7 @@ public class KafkaGroupIdFilterAttributeFixture
     {
         InboundEnvelope envelope = new(
             new MemoryStream(),
-            new List<MessageHeader>(),
+            [],
             new KafkaConsumerEndpoint(
                 "my-topic",
                 1,

@@ -11,6 +11,4 @@ namespace Silverback.Collections;
 /// <typeparam name="T">
 ///     The type of the elements.
 /// </typeparam>
-public interface IValueReadOnlyCollection<out T> : IReadOnlyCollection<T>
-{
-}
+public interface IValueReadOnlyCollection<out T> : IReadOnlyCollection<T>;

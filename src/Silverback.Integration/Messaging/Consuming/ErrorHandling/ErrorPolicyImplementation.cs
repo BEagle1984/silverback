@@ -90,27 +90,26 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
             _logger.LogConsumerTrace(
                 IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     GetType().Name,
                     failedAttempts,
                     _maxFailedAttempts
-                });
+                ]);
 
             return false;
         }
 
-        if (_includedExceptions.Any() &&
-            _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
+        if (_includedExceptions.Count != 0 && _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
         {
             _logger.LogConsumerTrace(
                 IntegrationLogEvents.PolicyExceptionNotIncluded,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     GetType().Name,
                     exception.GetType().Name
-                });
+                ]);
 
             return false;
         }
@@ -120,11 +119,11 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
             _logger.LogConsumerTrace(
                 IntegrationLogEvents.PolicyExceptionExcluded,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     GetType().Name,
                     exception.GetType().Name
-                });
+                ]);
 
             return false;
         }
@@ -134,10 +133,10 @@ public abstract class ErrorPolicyImplementation : IErrorPolicyImplementation
             _logger.LogConsumerTrace(
                 IntegrationLogEvents.PolicyApplyRuleReturnedFalse,
                 context.Envelope,
-                () => new object?[]
-                {
+                () =>
+                [
                     GetType().Name
-                });
+                ]);
 
             return false;
         }

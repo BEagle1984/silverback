@@ -21,7 +21,7 @@ public class BinaryMessageSerializerTests
     public async Task SerializeAsync_Message_TypeHeaderAdded()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         BinaryMessageSerializer serializer = new();
 
@@ -41,7 +41,7 @@ public class BinaryMessageSerializerTests
 
         Stream? serialized = await serializer.SerializeAsync(
             messageStream,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeSameAs(messageStream);
@@ -56,7 +56,7 @@ public class BinaryMessageSerializerTests
 
         Stream? serialized = await serializer.SerializeAsync(
             messageBytes,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
@@ -66,7 +66,7 @@ public class BinaryMessageSerializerTests
     public async Task SerializeAsync_BinaryMessage_RawContentProduced()
     {
         BinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
@@ -77,7 +77,7 @@ public class BinaryMessageSerializerTests
     public async Task SerializeAsync_InheritedBinaryMessage_RawContentProduced()
     {
         InheritedBinaryMessage message = new() { Content = BytesUtil.GetRandomStream() };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
@@ -88,7 +88,7 @@ public class BinaryMessageSerializerTests
     public async Task SerializeAsync_NonBinaryMessage_ExceptionThrown()
     {
         TestEventOne message = new() { Content = "hey!" };
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Func<Task> act = async () => await new BinaryMessageSerializer().SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
@@ -100,7 +100,7 @@ public class BinaryMessageSerializerTests
     {
         Stream? result = await new BinaryMessageSerializer().SerializeAsync(
             null,
-            new MessageHeaderCollection(),
+            [],
             TestProducerEndpoint.GetDefault());
 
         result.Should().BeNull();
@@ -110,7 +110,7 @@ public class BinaryMessageSerializerTests
     public async Task SerializeAsync_NullMessageWithHardcodedType_NullReturned()
     {
         Stream? serialized = await new BinaryMessageSerializer()
-            .SerializeAsync(null, new MessageHeaderCollection(), TestProducerEndpoint.GetDefault());
+            .SerializeAsync(null, [], TestProducerEndpoint.GetDefault());
 
         serialized.Should().BeNull();
     }
@@ -137,7 +137,5 @@ public class BinaryMessageSerializerTests
         result.Should().BeTrue();
     }
 
-    private sealed class InheritedBinaryMessage : BinaryMessage
-    {
-    }
+    private sealed class InheritedBinaryMessage : BinaryMessage;
 }

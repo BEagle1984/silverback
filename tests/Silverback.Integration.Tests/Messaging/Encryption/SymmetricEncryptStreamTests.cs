@@ -19,7 +19,7 @@ public class SymmetricEncryptStreamTests
 
     private const int AesDefaultInitializationVectorSizeInBytes = 16;
 
-    private static readonly byte[] ClearTextMessage = { 0x1, 0x2, 0x3, 0x4, 0x5 };
+    private static readonly byte[] ClearTextMessage = [0x1, 0x2, 0x3, 0x4, 0x5];
 
     [Fact]
     public async Task ReadAsync_UsingDefaultAesAlgorithmWithDefaultSettings_MessageIsSuccessfullyEncrypted()

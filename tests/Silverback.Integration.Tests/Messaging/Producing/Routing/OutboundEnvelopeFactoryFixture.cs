@@ -20,7 +20,7 @@ public class OutboundEnvelopeFactoryFixture
     {
         TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
         TestEventOne message = new();
-        MessageHeader[] headers = { new("one", "1"), new("two", "2") };
+        MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
         OutboundEnvelopeFactory factory = new(
@@ -43,7 +43,7 @@ public class OutboundEnvelopeFactoryFixture
     public void CreateEnvelope_ShouldCreateEnvelope_WhenMessageIsNull()
     {
         TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
-        MessageHeader[] headers = { new("one", "1"), new("two", "2") };
+        MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
         OutboundEnvelopeFactory factory = new(
@@ -67,7 +67,7 @@ public class OutboundEnvelopeFactoryFixture
     {
         TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
         IMessageWithHeaders message = new TestEventOne().AddHeader("one", "1").AddHeader("two", "2");
-        MessageHeader[] headers = { new("three", "3"), new("four", "4") };
+        MessageHeader[] headers = [new MessageHeader("three", "3"), new MessageHeader("four", "4")];
         IProducer producer = Substitute.For<IProducer>();
 
         OutboundEnvelopeFactory factory = new(
@@ -93,7 +93,7 @@ public class OutboundEnvelopeFactoryFixture
     {
         TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
         TestEventOne message = new();
-        MessageHeader[] headers = { new("one", "1"), new("two", "2") };
+        MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
         IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer, null, true);
@@ -111,7 +111,7 @@ public class OutboundEnvelopeFactoryFixture
     {
         TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
         TestEventOne message = new();
-        MessageHeader[] headers = { new("one", "1"), new("two", "2") };
+        MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
         OutboundEnvelope<TestEventOne> originalEnvelope = new(message, headers, endpoint, producer, null, true);
 

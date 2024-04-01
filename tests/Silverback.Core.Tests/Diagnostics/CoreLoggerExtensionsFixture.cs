@@ -22,7 +22,7 @@ public class CoreLoggerExtensionsFixture
 
     public CoreLoggerExtensionsFixture()
     {
-        LogLevelDictionary logLevels = new();
+        LogLevelDictionary logLevels = [];
         _logger = new LoggerSubstitute<CoreLoggerExtensionsFixture>(LogLevel.Trace);
         MappedLevelsLogger<CoreLoggerExtensionsFixture> mappedLevelsLogger = new(logLevels, _logger);
         _silverbackLogger = new SilverbackLogger<CoreLoggerExtensionsFixture>(mappedLevelsLogger);

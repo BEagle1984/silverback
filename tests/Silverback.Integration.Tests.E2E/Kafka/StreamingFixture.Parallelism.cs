@@ -20,8 +20,8 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldPublishStreamPerPartition_WhenProcessingPartitionsIndependently()
     {
-        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = new();
-        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = new();
+        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
+        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -68,8 +68,8 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldPublishSingleStream_WhenProcessingAllPartitionsTogether()
     {
-        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = new();
-        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = new();
+        ConcurrentBag<TestEventWithKafkaKey> receivedMessages = [];
+        ConcurrentBag<IMessageStreamEnumerable<TestEventWithKafkaKey>> receivedStreams = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -117,7 +117,7 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldLimitParallelism()
     {
-        TestingCollection<TestEventWithKafkaKey> receivedMessages = new();
+        TestingCollection<TestEventWithKafkaKey> receivedMessages = [];
         TaskCompletionSource<bool> taskCompletionSource = new();
 
         await Host.ConfigureServicesAndRunAsync(

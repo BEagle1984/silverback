@@ -20,7 +20,7 @@ public class SilverbackLoggerFixture
     [Fact]
     public void Log_ShouldUseDefaultLogLevel_WhenMappingIsEmpty()
     {
-        LogLevelDictionary logLevels = new();
+        LogLevelDictionary logLevels = [];
         LoggerSubstitute<SilverbackLoggerFixture> logger = new(LogLevel.Information);
         MappedLevelsLogger<SilverbackLoggerFixture> mappedLevelsLogger = new(logLevels, logger);
         SilverbackLogger<SilverbackLoggerFixture> silverbackLogger = new(mappedLevelsLogger);

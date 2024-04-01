@@ -168,7 +168,7 @@ public class ConfigurationDictionaryEqualityComparerFixture
     [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
     public void Equals_ShouldReturnTrue_WhenComparingNullWithEmptyDictionary()
     {
-        Dictionary<string, string> dictionaryX = new();
+        Dictionary<string, string> dictionaryX = [];
         Dictionary<string, string>? dictionaryY = null;
 
         bool result1 = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);

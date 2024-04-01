@@ -21,10 +21,9 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = null
         };
 
@@ -37,11 +36,10 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic", 2, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic", 1, Offset.Unset),
+                new TopicPartitionOffset("topic", 2, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = null
         };
 
@@ -54,10 +52,9 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = _ => ValueTask.FromResult(Enumerable.Empty<TopicPartitionOffset>())
         };
 
@@ -70,10 +67,9 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic", Partition.Any, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = null
         };
 
@@ -86,15 +82,13 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
-                    new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset),
-                    new TopicPartitionOffset("topic3", Partition.Any, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("topic2", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("topic3", Partition.Any, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = null
         };
-
         configuration.RawName.Should().Be("topic1,topic2,topic3");
     }
 
@@ -104,12 +98,11 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", 3, Offset.Unset),
-                    new TopicPartitionOffset("topic1", 4, Offset.Unset),
-                    new TopicPartitionOffset("topic2", 1, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic1", 3, Offset.Unset),
+                new TopicPartitionOffset("topic1", 4, Offset.Unset),
+                new TopicPartitionOffset("topic2", 1, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = null
         };
 
@@ -120,9 +113,7 @@ public class KafkaConsumerEndpointConfigurationFixture
     public void Validate_ShouldNotThrow_WhenIsValid()
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration();
-
         Action act = configuration.Validate;
-
         act.Should().NotThrow<BrokerConfigurationException>();
     }
 
@@ -130,9 +121,7 @@ public class KafkaConsumerEndpointConfigurationFixture
     public void Validate_ShouldThrow_WhenTopicPartitionsIsNull()
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with { TopicPartitions = null! };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
@@ -141,11 +130,9 @@ public class KafkaConsumerEndpointConfigurationFixture
     {
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(Array.Empty<TopicPartitionOffset>())
+            TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>([])
         };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
@@ -157,14 +144,11 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset(topicName, Partition.Any, Offset.Unset)
-                })
+            [
+                new TopicPartitionOffset(topicName, Partition.Any, Offset.Unset)
+            ])
         };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
@@ -174,11 +158,10 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
-                    new TopicPartitionOffset("topic3", -42, Offset.Unset)
-                })
+            [
+                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset),
+                new TopicPartitionOffset("topic3", -42, Offset.Unset)
+            ])
         };
 
         Action act = configuration.Validate;
@@ -192,10 +175,9 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", 3, Offset.Unset)
-                }),
+            [
+                new TopicPartitionOffset("topic", 3, Offset.Unset)
+            ]),
             PartitionOffsetsProvider = _ => ValueTask.FromResult(Enumerable.Empty<TopicPartitionOffset>())
         };
 
@@ -210,11 +192,10 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic1", 1, Offset.Beginning)
-                })
+            [
+                new TopicPartitionOffset("topic1", 1, Offset.Unset),
+                new TopicPartitionOffset("topic1", 1, Offset.Beginning)
+            ])
         };
 
         Action act = configuration.Validate;
@@ -228,15 +209,12 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
-                })
+            [
+                new TopicPartitionOffset("topic1", 1, Offset.Unset),
+                new TopicPartitionOffset("topic1", Partition.Any, Offset.Unset)
+            ])
         };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>()
             .WithMessage("Cannot mix Partition.Any with a specific partition assignment*");
     }
@@ -247,18 +225,15 @@ public class KafkaConsumerEndpointConfigurationFixture
         KafkaConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic1", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic1", 2, Offset.Unset),
-                    new TopicPartitionOffset("topic1", 3, Offset.Unset),
-                    new TopicPartitionOffset("topic2", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic2", 2, Offset.Unset)
-                })
+            [
+                new TopicPartitionOffset("topic1", 1, Offset.Unset),
+                new TopicPartitionOffset("topic1", 2, Offset.Unset),
+                new TopicPartitionOffset("topic1", 3, Offset.Unset),
+                new TopicPartitionOffset("topic2", 1, Offset.Unset),
+                new TopicPartitionOffset("topic2", 2, Offset.Unset)
+            ])
         };
-
         Action act = configuration.Validate;
-
         act.Should().NotThrow();
     }
 
@@ -269,9 +244,7 @@ public class KafkaConsumerEndpointConfigurationFixture
         {
             Deserializer = null!
         };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
@@ -282,9 +255,7 @@ public class KafkaConsumerEndpointConfigurationFixture
         {
             Sequence = null!
         };
-
         Action act = configuration.Validate;
-
         act.Should().ThrowExactly<BrokerConfigurationException>();
     }
 
@@ -292,9 +263,8 @@ public class KafkaConsumerEndpointConfigurationFixture
         new()
         {
             TopicPartitions = new ValueReadOnlyCollection<TopicPartitionOffset>(
-                new[]
-                {
-                    new TopicPartitionOffset("topic", 42, Offset.Unset)
-                })
+            [
+                new TopicPartitionOffset("topic", 42, Offset.Unset)
+            ])
         };
 }

@@ -25,5 +25,5 @@ public class TopicStatistics
     public WindowStatistics BatchCnt { get; init; } = new();
 
     [JsonPropertyName("partitions")]
-    public Dictionary<string, PartitionStatistics> Partitions { get; init; } = new();
+    public Dictionary<string, PartitionStatistics> Partitions { get; init; } = [];
 }

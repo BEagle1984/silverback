@@ -14,7 +14,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 {
     private readonly IInMemoryTopicCollection _topics;
 
-    private readonly List<TransactionalProducerInfo> _producersInfo = new();
+    private readonly List<TransactionalProducerInfo> _producersInfo = [];
 
     public InMemoryTransactionManager(IInMemoryTopicCollection topics)
     {

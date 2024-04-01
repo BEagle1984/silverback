@@ -21,31 +21,30 @@ public class ActivityExtensionsTests
     public void AddBaggageRange_SomeNewItems_ItemsAreAppended()
     {
         Activity activity = new("test");
-        IList<KeyValuePair<string, string>> itemsToAdd = new List<KeyValuePair<string, string>>
-        {
-            new("key1", "value1"),
-            new("key2", "value2"),
-            new("key3", "value3")
-        };
+        IList<KeyValuePair<string, string>> itemsToAdd =
+        [
+            new KeyValuePair<string, string>("key1", "value1"),
+            new KeyValuePair<string, string>("key2", "value2"),
+            new KeyValuePair<string, string>("key3", "value3")
+        ];
 
         activity.AddBaggage("key0", "value0");
 
         activity.AddBaggageRange(itemsToAdd);
 
         activity.Baggage.Should().BeEquivalentTo(
-            new[]
-            {
-                new KeyValuePair<string, string>("key0", "value0"),
-                new KeyValuePair<string, string>("key1", "value1"),
-                new KeyValuePair<string, string>("key2", "value2"),
-                new KeyValuePair<string, string>("key3", "value3")
-            });
+        [
+            new KeyValuePair<string, string>("key0", "value0"),
+            new KeyValuePair<string, string>("key1", "value1"),
+            new KeyValuePair<string, string>("key2", "value2"),
+            new KeyValuePair<string, string>("key3", "value3")
+        ]);
     }
 
     [Fact]
     public void SetMessageHeaders_StartedActivity_TraceIdHeaderIsSet()
     {
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Activity activity = new("test");
         activity.Start();
@@ -58,7 +57,7 @@ public class ActivityExtensionsTests
     [Fact]
     public void SetMessageHeaders_ActivityWithState_TraceStateHeaderIsSet()
     {
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Activity activity = new("test");
         activity.Start();
@@ -71,7 +70,7 @@ public class ActivityExtensionsTests
     [Fact]
     public void SetMessageHeaders_ActivityWithoutState_TraceStateHeaderIsNotSet()
     {
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Activity activity = new("test");
         activity.Start();
@@ -83,7 +82,7 @@ public class ActivityExtensionsTests
     [Fact]
     public void SetMessageHeaders_ActivityWithBaggage_BaggageHeaderIsSet()
     {
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Activity activity = new("test");
         activity.Start();
@@ -96,7 +95,7 @@ public class ActivityExtensionsTests
     [Fact]
     public void SetMessageHeaders_ActivityWithoutBaggage_BaggageHeaderIsNotSet()
     {
-        MessageHeaderCollection headers = new();
+        MessageHeaderCollection headers = [];
 
         Activity activity = new("test");
         activity.Start();

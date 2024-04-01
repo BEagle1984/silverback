@@ -68,7 +68,5 @@ public class EntityFrameworkOutboxSettingsFixture
 
     private static DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) => new TestDbContext();
 
-    private class TestDbContext : DbContext
-    {
-    }
+    private class TestDbContext : DbContext;
 }

@@ -13,8 +13,7 @@ namespace Silverback.Messaging.Validation;
 
 internal static class MessageValidator
 {
-    private static readonly ConcurrentDictionary<Type, IReadOnlyCollection<PropertyInfo>>
-        NestedObjectPropertiesCache = new();
+    private static readonly ConcurrentDictionary<Type, List<PropertyInfo>> NestedObjectPropertiesCache = new();
 
     public static bool IsValid(
         object message,
@@ -45,7 +44,7 @@ internal static class MessageValidator
     {
         ValidationContext validationContext = new(obj);
 
-        List<ValidationResult> results = new();
+        List<ValidationResult> results = [];
         validationResults = results;
         bool result = Validator.TryValidateObject(obj, validationContext, results, true);
 
@@ -88,7 +87,7 @@ internal static class MessageValidator
         return false;
     }
 
-    private static IReadOnlyCollection<PropertyInfo> GetNestedObjectProperties(object obj)
+    private static List<PropertyInfo> GetNestedObjectProperties(object obj)
     {
         Type type = obj.GetType();
 
@@ -97,10 +96,10 @@ internal static class MessageValidator
             static addedType => GetNestedObjectProperties(addedType));
     }
 
-    private static IReadOnlyCollection<PropertyInfo> GetNestedObjectProperties(Type type)
+    private static List<PropertyInfo> GetNestedObjectProperties(Type type)
     {
         if (type.IsPrimitive || type.IsArray && type.HasElementType && type.GetElementType()!.IsPrimitive)
-            return Array.Empty<PropertyInfo>();
+            return [];
 
         return type
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)

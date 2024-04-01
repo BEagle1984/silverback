@@ -65,14 +65,14 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
         }
     }
 
-    private IReadOnlyCollection<IProducer> InitializeNormalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
+    private List<KafkaProducer> InitializeNormalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
     {
         // TODO: Append suffix to name?
         IConfluentProducerWrapper confluentProducerWrapper = _confluentProducerWrapperFactory.Create(name, configuration);
         AddClient(confluentProducerWrapper);
 
         int i = 0;
-        List<KafkaProducer> producers = new();
+        List<KafkaProducer> producers = [];
 
         foreach (KafkaProducerEndpointConfiguration endpointConfiguration in configuration.Endpoints)
         {
@@ -97,10 +97,10 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
         return producers;
     }
 
-    private IReadOnlyCollection<IProducer> InitializeTransactionalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
+    private List<KafkaTransactionalProducer> InitializeTransactionalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
     {
         int i = 0;
-        List<KafkaTransactionalProducer> producers = new();
+        List<KafkaTransactionalProducer> producers = [];
 
         foreach (KafkaProducerEndpointConfiguration endpointConfiguration in configuration.Endpoints)
         {

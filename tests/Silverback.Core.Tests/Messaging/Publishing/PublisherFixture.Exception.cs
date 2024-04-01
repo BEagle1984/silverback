@@ -18,7 +18,7 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldRethrow_WhenSyncSubscriberThrows()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -41,7 +41,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldRethrow_WhenSyncSubscriberThrows()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -64,7 +64,7 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldRethrow_WhenAsyncSubscriberThrows()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -89,7 +89,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldRethrow_WhenAsyncSubscriberThrows()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services

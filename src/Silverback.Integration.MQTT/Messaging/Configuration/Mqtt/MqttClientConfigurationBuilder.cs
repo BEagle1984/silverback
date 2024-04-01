@@ -20,11 +20,11 @@ public partial class MqttClientConfigurationBuilder
 {
     private readonly IServiceProvider? _serviceProvider;
 
-    private readonly List<MqttUserProperty> _userProperties = new();
+    private readonly List<MqttUserProperty> _userProperties = [];
 
-    private readonly Dictionary<string, MqttProducerEndpointConfiguration> _producerEndpoints = new();
+    private readonly Dictionary<string, MqttProducerEndpointConfiguration> _producerEndpoints = [];
 
-    private readonly Dictionary<string, MqttConsumerEndpointConfiguration> _consumerEndpoints = new();
+    private readonly Dictionary<string, MqttConsumerEndpointConfiguration> _consumerEndpoints = [];
 
     private MqttClientConfiguration _configuration = new();
 

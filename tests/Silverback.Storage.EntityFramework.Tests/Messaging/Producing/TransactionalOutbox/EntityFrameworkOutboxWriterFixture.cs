@@ -60,9 +60,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
-        OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
-        OutboxMessage outboxMessage3 = new(new byte[] { 0x03 }, null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
+        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
+        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
         await outboxWriter.AddAsync(outboxMessage1);
         await outboxWriter.AddAsync(outboxMessage2);
         await outboxWriter.AddAsync(outboxMessage3);
@@ -80,10 +80,10 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
-        OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
-        OutboxMessage outboxMessage3 = new(new byte[] { 0x03 }, null, Endpoint);
-        await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
+        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
+        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
+        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
+        await outboxWriter.AddAsync([outboxMessage1, outboxMessage2, outboxMessage3]);
 
         (await _outboxReader.GetAsync(10)).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
     }
@@ -98,9 +98,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        OutboxMessage outboxMessage1 = new(new byte[] { 0x01 }, null, Endpoint);
-        OutboxMessage outboxMessage2 = new(new byte[] { 0x02 }, null, Endpoint);
-        OutboxMessage outboxMessage3 = new(new byte[] { 0x03 }, null, Endpoint);
+        OutboxMessage outboxMessage1 = new([0x01], null, Endpoint);
+        OutboxMessage outboxMessage2 = new([0x02], null, Endpoint);
+        OutboxMessage outboxMessage3 = new([0x03], null, Endpoint);
         await outboxWriter.AddAsync(new[] { outboxMessage1, outboxMessage2, outboxMessage3 }.ToAsyncEnumerable());
 
         (await _outboxReader.GetAsync(10)).Should().BeEquivalentTo(new[] { outboxMessage1, outboxMessage2, outboxMessage3 });
@@ -116,9 +116,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
         SilverbackContext context = new();
 
@@ -127,7 +127,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
             await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction.GetDbTransaction());
 
             // Add and rollback
-            await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x99 }, null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, Endpoint), context);
             await transaction.RollbackAsync();
         }
 
@@ -135,7 +135,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage(new byte[] { 0x99 }, null, Endpoint),
+            new OutboxMessage([0x99], null, Endpoint),
             context);
 
         (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
@@ -145,9 +145,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         {
             await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction.GetDbTransaction());
 
-            await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x99 }, null, Endpoint), context);
-            await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x99 }, null, Endpoint), context);
-            await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x99 }, null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, Endpoint), context);
+            await outboxWriter.AddAsync(new OutboxMessage([0x99], null, Endpoint), context);
             await transaction.CommitAsync();
         }
 
@@ -164,9 +164,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = _serviceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
         SilverbackContext context = new();
 
@@ -176,11 +176,10 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
 
             // Add and rollback
             await outboxWriter.AddAsync(
-                new OutboxMessage[]
-                {
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint)
-                },
+                [
+                    new OutboxMessage([0x99], null, Endpoint),
+                    new OutboxMessage([0x99], null, Endpoint)
+                ],
                 context);
             await transaction.RollbackAsync();
         }
@@ -189,7 +188,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage(new byte[] { 0x99 }, null, Endpoint),
+            new OutboxMessage([0x99], null, Endpoint),
             context);
 
         (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
@@ -200,12 +199,11 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
             await using IStorageTransaction storageTransaction = context.EnlistDbTransaction(transaction.GetDbTransaction());
 
             await outboxWriter.AddAsync(
-                new OutboxMessage[]
-                {
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint)
-                },
+                [
+                    new OutboxMessage([0x99], null, Endpoint),
+                    new OutboxMessage([0x99], null, Endpoint),
+                    new OutboxMessage([0x99], null, Endpoint)
+                ],
                 context);
             await transaction.CommitAsync();
         }
@@ -223,9 +221,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         IOutboxWriterFactory writerFactory = scope.ServiceProvider.GetRequiredService<IOutboxWriterFactory>();
         IOutboxWriter outboxWriter = writerFactory.GetWriter(_outboxSettings, _serviceProvider);
 
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x01 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x02 }, null, Endpoint));
-        await outboxWriter.AddAsync(new OutboxMessage(new byte[] { 0x03 }, null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x01], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
+        await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
         SilverbackContext context = new();
 
@@ -237,8 +235,8 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
             await outboxWriter.AddAsync(
                 new OutboxMessage[]
                 {
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint)
+                    new([0x99], null, Endpoint),
+                    new([0x99], null, Endpoint)
                 }.ToAsyncEnumerable(),
                 context);
             await transaction.RollbackAsync();
@@ -248,7 +246,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
 
         // Add after rollback
         await outboxWriter.AddAsync(
-            new OutboxMessage(new byte[] { 0x99 }, null, Endpoint),
+            new OutboxMessage([0x99], null, Endpoint),
             context);
 
         (await _outboxReader.GetAsync(10)).Should().HaveCount(4);
@@ -261,9 +259,9 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
             await outboxWriter.AddAsync(
                 new OutboxMessage[]
                 {
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint),
-                    new(new byte[] { 0x99 }, null, Endpoint)
+                    new([0x99], null, Endpoint),
+                    new([0x99], null, Endpoint),
+                    new([0x99], null, Endpoint)
                 }.ToAsyncEnumerable(),
                 context);
             await transaction.CommitAsync();

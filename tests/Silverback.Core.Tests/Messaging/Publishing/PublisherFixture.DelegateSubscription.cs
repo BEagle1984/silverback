@@ -19,7 +19,7 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldInvokeDelegateSubscriber()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -40,7 +40,7 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldInvokeDelegateSubscriber()
     {
-        TestingCollection<TestEventOne> messages = new();
+        TestingCollection<TestEventOne> messages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -61,8 +61,8 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldInvokeSyncAndAsyncDelegateSubscriber()
     {
-        TestingCollection<TestEventOne> syncMessages = new();
-        TestingCollection<TestEventOne> asyncMessages = new();
+        TestingCollection<TestEventOne> syncMessages = [];
+        TestingCollection<TestEventOne> asyncMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -86,8 +86,8 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldInvokeSyncAndAsyncDelegateSubscriber()
     {
-        TestingCollection<TestEventOne> syncMessages = new();
-        TestingCollection<TestEventOne> asyncMessages = new();
+        TestingCollection<TestEventOne> syncMessages = [];
+        TestingCollection<TestEventOne> asyncMessages = [];
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -111,8 +111,8 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldInvokeDelegateSubscribersSequentially_WhenExclusive()
     {
-        TestingCollection<TestEventOne> messages1 = new();
-        TestingCollection<TestEventOne> messages2 = new();
+        TestingCollection<TestEventOne> messages1 = [];
+        TestingCollection<TestEventOne> messages2 = [];
         int executingCount = 0;
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
@@ -148,8 +148,8 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldInvokeDelegateSubscribersSequentially_WhenExclusive()
     {
-        TestingCollection<TestEventOne> messages1 = new();
-        TestingCollection<TestEventOne> messages2 = new();
+        TestingCollection<TestEventOne> messages1 = [];
+        TestingCollection<TestEventOne> messages2 = [];
         int executingCount = 0;
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
@@ -185,8 +185,8 @@ public partial class PublisherFixture
     [Fact]
     public void Publish_ShouldInvokeDelegateSubscribersInParallel_WhenNotExclusive()
     {
-        TestingCollection<TestEventOne> messages1 = new();
-        TestingCollection<TestEventOne> messages2 = new();
+        TestingCollection<TestEventOne> messages1 = [];
+        TestingCollection<TestEventOne> messages2 = [];
         CountdownEvent countdownEvent = new(2);
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
@@ -218,8 +218,8 @@ public partial class PublisherFixture
     [Fact]
     public async Task PublishAsync_ShouldInvokeDelegateSubscribersInParallel_WhenNotExclusive()
     {
-        TestingCollection<TestEventOne> messages1 = new();
-        TestingCollection<TestEventOne> messages2 = new();
+        TestingCollection<TestEventOne> messages1 = [];
+        TestingCollection<TestEventOne> messages2 = [];
         CountdownEvent countdownEvent = new(2);
 
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(

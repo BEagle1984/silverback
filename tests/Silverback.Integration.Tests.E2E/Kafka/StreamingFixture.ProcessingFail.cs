@@ -21,7 +21,7 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenAsyncEnumerableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -71,7 +71,7 @@ public partial class StreamingFixture
     [Fact]
     public async Task Streaming_ShouldDisconnect_WhenObservableProcessingFails()
     {
-        List<TestEventOne> receivedMessages = new();
+        List<TestEventOne> receivedMessages = [];
 
         await Host.ConfigureServicesAndRunAsync(
             services => services

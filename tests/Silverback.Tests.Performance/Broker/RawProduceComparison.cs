@@ -43,11 +43,11 @@ public static class RawProduceComparison
     private const int WarmupMessages = 100;
 
     // private static readonly int[] MessageSizes = { 50, 100, 1_000, 10_000 };
-    private static readonly int[] MessageSizes = { 50 };
+    private static readonly int[] MessageSizes = [50];
 
     public static async Task RunAsync()
     {
-        List<Stats> statsList = new();
+        List<Stats> statsList = [];
 
         // Warmup
         await RunConfluentWithCallbacks(100_000, CreateMessage(10), null, null);

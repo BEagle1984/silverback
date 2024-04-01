@@ -49,7 +49,7 @@ public static class ProduceStrategiesComparisonRunner
         int? startStrategyIndex = null,
         int? endStrategyIndex = null)
     {
-        List<ProduceStrategiesImplementation.Stats> statsCollection = new();
+        List<ProduceStrategiesImplementation.Stats> statsCollection = [];
 
         if (MustExecute(1, startStrategyIndex, endStrategyIndex))
         {

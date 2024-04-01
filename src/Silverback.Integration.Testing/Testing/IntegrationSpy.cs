@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Testing;
@@ -11,13 +10,13 @@ namespace Silverback.Testing;
 /// <inheritdoc cref="IIntegrationSpy" />
 public class IntegrationSpy : IIntegrationSpy
 {
-    private readonly List<IOutboundEnvelope> _outboundEnvelopes = new();
+    private readonly List<IOutboundEnvelope> _outboundEnvelopes = [];
 
-    private readonly List<IRawOutboundEnvelope> _rawOutboundEnvelopes = new();
+    private readonly List<IRawOutboundEnvelope> _rawOutboundEnvelopes = [];
 
-    private readonly List<IRawInboundEnvelope> _rawInboundEnvelopes = new();
+    private readonly List<IRawInboundEnvelope> _rawInboundEnvelopes = [];
 
-    private readonly List<IInboundEnvelope> _inboundEnvelopes = new();
+    private readonly List<IInboundEnvelope> _inboundEnvelopes = [];
 
     /// <inheritdoc cref="IIntegrationSpy.OutboundEnvelopes" />
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
@@ -27,7 +26,7 @@ public class IntegrationSpy : IIntegrationSpy
         {
             lock (_outboundEnvelopes)
             {
-                return _outboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+                return [.. _outboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
             }
         }
     }
@@ -40,7 +39,7 @@ public class IntegrationSpy : IIntegrationSpy
         {
             lock (_rawOutboundEnvelopes)
             {
-                return _rawOutboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+                return [.. _rawOutboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
             }
         }
     }
@@ -53,7 +52,7 @@ public class IntegrationSpy : IIntegrationSpy
         {
             lock (_rawInboundEnvelopes)
             {
-                return _rawInboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+                return [.. _rawInboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
             }
         }
     }
@@ -66,7 +65,7 @@ public class IntegrationSpy : IIntegrationSpy
         {
             lock (_inboundEnvelopes)
             {
-                return _inboundEnvelopes.ToList(); // Intentionally cloning to avoid concurrency issues
+                return [.. _inboundEnvelopes]; // Intentionally cloning to avoid concurrency issues
             }
         }
     }

@@ -25,7 +25,7 @@ public class StopConsumerErrorPolicyFixture
 
     public StopConsumerErrorPolicyFixture()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddFakeLogger()

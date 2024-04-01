@@ -12,7 +12,7 @@ internal static class EnumerableSortExtensions
     {
         List<T> list = items.ToList();
 
-        List<ISorted> sortables = list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex).ToList();
+        List<ISorted> sortables = [.. list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex)];
         List<T> notSortables = list.Where(item => item is not ISorted).ToList();
 
         return sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()

@@ -15,5 +15,5 @@ internal abstract class PartitionAssignment
 
     public IMockedConfluentConsumer Consumer { get; }
 
-    public List<TopicPartition> Partitions { get; } = new();
+    public List<TopicPartition> Partitions { get; } = [];
 }

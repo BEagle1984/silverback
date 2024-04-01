@@ -61,12 +61,11 @@ public class PostgreSqlTableLock : TableBasedDistributedLock
     {
         int affected = await _dataAccess.ExecuteNonQueryAsync(
             _acquireLockSql,
-            new NpgsqlParameter[]
-            {
-                new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-                new("@handler", NpgsqlDbType.Text) { Value = handlerName },
-                new("@lockTimeout", NpgsqlDbType.Integer) { Value = _settings.LockTimeout.TotalSeconds }
-            },
+            [
+                new NpgsqlParameter("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+                new NpgsqlParameter("@handler", NpgsqlDbType.Text) { Value = handlerName },
+                new NpgsqlParameter("@lockTimeout", NpgsqlDbType.Integer) { Value = _settings.LockTimeout.TotalSeconds }
+            ],
             _settings.DbCommandTimeout).ConfigureAwait(false);
 
         return affected == 1;
@@ -76,20 +75,18 @@ public class PostgreSqlTableLock : TableBasedDistributedLock
     protected override Task UpdateHeartbeatAsync(string handlerName) =>
         _dataAccess.ExecuteNonQueryAsync(
             _heartbeatSql,
-            new NpgsqlParameter[]
-            {
-                new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-                new("@handler", NpgsqlDbType.Text) { Value = handlerName }
-            },
+            [
+                new NpgsqlParameter("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+                new NpgsqlParameter("@handler", NpgsqlDbType.Text) { Value = handlerName }
+            ],
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="TableBasedDistributedLock.ReleaseLockAsync" />
     protected override Task ReleaseLockAsync(string handlerName) => _dataAccess.ExecuteNonQueryAsync(
         _releaseLockSql,
-        new NpgsqlParameter[]
-        {
-            new("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
-            new("@handler", NpgsqlDbType.Text) { Value = handlerName }
-        },
+        [
+            new NpgsqlParameter("@lockName", NpgsqlDbType.Text) { Value = _settings.LockName },
+            new NpgsqlParameter("@handler", NpgsqlDbType.Text) { Value = handlerName }
+        ],
         _settings.DbCommandTimeout);
 }

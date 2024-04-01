@@ -6,6 +6,4 @@ namespace Silverback.Configuration;
 /// <summary>
 ///     Adds the Silverback.Storage.PostgreSql specific methods to the <see cref="SilverbackBuilder" />.
 /// </summary>
-public static partial class SilverbackBuilderPostgreSqlExtensions
-{
-}
+public static partial class SilverbackBuilderPostgreSqlExtensions;

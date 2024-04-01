@@ -14,6 +14,4 @@ namespace Silverback.Messaging.Messages;
 [SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "Marker interface")]
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
 [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used by the Publisher")]
-public interface IQuery<out TResult> : IMessage
-{
-}
+public interface IQuery<out TResult> : IMessage;

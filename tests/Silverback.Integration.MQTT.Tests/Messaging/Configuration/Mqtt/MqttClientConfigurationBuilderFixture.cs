@@ -357,7 +357,7 @@ public class MqttClientConfigurationBuilderFixture
     {
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
-        builder.WithAuthentication("method", new byte[] { 0x01, 0x02, 0x03 });
+        builder.WithAuthentication("method", [0x01, 0x02, 0x03]);
 
         MqttClientConfiguration config = builder.Build();
         config.AuthenticationMethod.Should().Be("method");
@@ -721,7 +721,7 @@ public class MqttClientConfigurationBuilderFixture
                 "pass",
                 "domain",
                 true,
-                new[] { "local1", "local2" });
+                ["local1", "local2"]);
 
         MqttClientConfiguration config = builder.Build();
         config.Channel.As<MqttClientWebSocketConfiguration>().Proxy.Should().NotBeNull();
@@ -748,7 +748,7 @@ public class MqttClientConfigurationBuilderFixture
                     Password = "pass",
                     Domain = "domain",
                     BypassOnLocal = true,
-                    BypassList = new[] { "local1", "local2" }
+                    BypassList = ["local1", "local2"]
                 });
 
         MqttClientConfiguration config = builder.Build();

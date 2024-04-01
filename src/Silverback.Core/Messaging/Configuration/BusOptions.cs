@@ -16,11 +16,11 @@ public class BusOptions
     /// <summary>
     ///     Gets the collection of <see cref="ISubscription" />. A single subscription can resolve to multiple subscribed methods.
     /// </summary>
-    public IList<ISubscription> Subscriptions { get; } = new List<ISubscription>();
+    public IList<ISubscription> Subscriptions { get; } = [];
 
     /// <summary>
     ///     Gets the collection of handled message types. These types will be recognized as messages and thus automatically republished
     ///     when returned by a subscribed method.
     /// </summary>
-    public IList<Type> MessageTypes { get; } = new List<Type> { typeof(IMessage) };
+    public IList<Type> MessageTypes { get; } = [typeof(IMessage)];
 }

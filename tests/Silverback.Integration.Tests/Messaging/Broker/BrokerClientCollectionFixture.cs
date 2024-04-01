@@ -14,7 +14,7 @@ public class BrokerClientCollectionFixture
     [Fact]
     public void Add_ShouldAddClient()
     {
-        BrokerClientCollection brokerClientCollection = new();
+        BrokerClientCollection brokerClientCollection = [];
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
         IBrokerClient client2 = Substitute.For<IBrokerClient>();
 
@@ -28,7 +28,7 @@ public class BrokerClientCollectionFixture
     [Fact]
     public async Task ConnectAllAsync_ShouldConnectAllClients()
     {
-        BrokerClientCollection brokerClientCollection = new();
+        BrokerClientCollection brokerClientCollection = [];
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
         IBrokerClient client2 = Substitute.For<IBrokerClient>();
 
@@ -44,7 +44,7 @@ public class BrokerClientCollectionFixture
     [Fact]
     public async Task DisconnectAllAsync_ShouldConnectAllClients()
     {
-        BrokerClientCollection brokerClientCollection = new();
+        BrokerClientCollection brokerClientCollection = [];
 
         IBrokerClient client1 = Substitute.For<IBrokerClient>();
         IBrokerClient client2 = Substitute.For<IBrokerClient>();

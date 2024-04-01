@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Broker;
 
 internal sealed class BrokerClientCollection : IReadOnlyCollection<IBrokerClient>, IDisposable
 {
-    private readonly ConcurrentBag<IBrokerClient> _clients = new();
+    private readonly ConcurrentBag<IBrokerClient> _clients = [];
 
     public int Count => _clients.Count;
 

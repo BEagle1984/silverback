@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
@@ -278,20 +277,21 @@ internal sealed class ConsumerLogger
             envelope.Headers,
             envelope.BrokerMessageIdentifier);
 
-        List<object?> args = new(argumentsProvider?.Invoke() ?? Array.Empty<object?>())
-        {
+        object?[] args =
+        [
+            ..argumentsProvider?.Invoke() ?? [],
             envelope.Endpoint.DisplayName,
             envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
             envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
             value1,
             value2
-        };
+        ];
 
         logger.InnerLogger.Log(
             logLevel,
             eventId,
             exception,
             _logEnricher.Enrich(message),
-            args.ToArray());
+            args);
     }
 }

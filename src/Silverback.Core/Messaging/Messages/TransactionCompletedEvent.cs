@@ -9,6 +9,4 @@ namespace Silverback.Messaging.Messages;
 ///     (in Silverback.Integration) to trigger additional tasks related to the publishing of the domain
 ///     events.
 /// </summary>
-public class TransactionCompletedEvent : ISilverbackEvent
-{
-}
+public class TransactionCompletedEvent : ISilverbackEvent;

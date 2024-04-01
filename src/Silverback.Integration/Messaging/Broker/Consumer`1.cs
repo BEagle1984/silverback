@@ -234,7 +234,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     {
         Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        return CommitAsync(new[] { brokerMessageIdentifier });
+        return CommitAsync([brokerMessageIdentifier]);
     }
 
     /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
@@ -267,7 +267,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     {
         Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        return RollbackAsync(new[] { brokerMessageIdentifier });
+        return RollbackAsync([brokerMessageIdentifier]);
     }
 
     /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />

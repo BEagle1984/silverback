@@ -18,7 +18,7 @@ public class MqttConsumerEndpointConfigurationFixture
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Topics = new ValueReadOnlyCollection<string>(new[] { "topic" })
+            Topics = new ValueReadOnlyCollection<string>(["topic"])
         };
 
         configuration.RawName.Should().Be("topic");
@@ -29,7 +29,7 @@ public class MqttConsumerEndpointConfigurationFixture
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Topics = new ValueReadOnlyCollection<string>(new[] { "topic1", "topic2", "topic3" })
+            Topics = new ValueReadOnlyCollection<string>(["topic1", "topic2", "topic3"])
         };
 
         configuration.RawName.Should().Be("topic1,topic2,topic3");
@@ -90,7 +90,7 @@ public class MqttConsumerEndpointConfigurationFixture
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Topics = new ValueReadOnlyCollection<string>(Array.Empty<string>())
+            Topics = new ValueReadOnlyCollection<string>([])
         };
 
         Action act = configuration.Validate;
@@ -106,7 +106,7 @@ public class MqttConsumerEndpointConfigurationFixture
     {
         MqttConsumerEndpointConfiguration configuration = GetValidConfiguration() with
         {
-            Topics = new ValueReadOnlyCollection<string>(new[] { topicName! })
+            Topics = new ValueReadOnlyCollection<string>([topicName!])
         };
 
         Action act = configuration.Validate;
@@ -132,6 +132,6 @@ public class MqttConsumerEndpointConfigurationFixture
     private static MqttConsumerEndpointConfiguration GetValidConfiguration() =>
         new()
         {
-            Topics = new ValueReadOnlyCollection<string>(new[] { "test" })
+            Topics = new ValueReadOnlyCollection<string>(["test"])
         };
 }

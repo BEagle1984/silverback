@@ -43,7 +43,7 @@ internal sealed class TypeSubscription : ISubscription
     public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)
     {
         if (_subscriberInstance != null)
-            return GetSubscribedMethods(_subscriberInstance, serviceProvider).ToList();
+            return GetSubscribedMethods(_subscriberInstance, serviceProvider);
 
         return _subscribedMethods ??= serviceProvider
             .GetServices(SubscriberType)
@@ -51,10 +51,10 @@ internal sealed class TypeSubscription : ISubscription
             .ToList();
     }
 
-    private IEnumerable<SubscribedMethod> GetSubscribedMethods(object? subscriber, IServiceProvider serviceProvider)
+    private List<SubscribedMethod> GetSubscribedMethods(object? subscriber, IServiceProvider serviceProvider)
     {
         if (subscriber == null)
-            return Enumerable.Empty<SubscribedMethod>();
+            return [];
 
         Type targetType = subscriber.GetType();
 
@@ -96,5 +96,5 @@ internal sealed class TypeSubscription : ISubscription
                     methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
                     Options.AutoSubscribeAllPublicMethods && methodInfo.IsPublic &&
                     !methodInfo.IsSpecialName &&
-                    methodInfo.DeclaringType == type && methodInfo.GetParameters().Any());
+                    methodInfo.DeclaringType == type && methodInfo.GetParameters().Length != 0);
 }

@@ -21,15 +21,15 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private readonly IMockedKafkaOptions _options;
 
-    private readonly Dictionary<TopicPartition, TopicPartitionOffset> _currentOffsets = new();
+    private readonly Dictionary<TopicPartition, TopicPartitionOffset> _currentOffsets = [];
 
-    private readonly Dictionary<TopicPartition, TopicPartitionOffset> _storedOffsets = new();
+    private readonly Dictionary<TopicPartition, TopicPartitionOffset> _storedOffsets = [];
 
-    private readonly Dictionary<TopicPartition, Offset> _lastEofOffsets = new();
+    private readonly Dictionary<TopicPartition, Offset> _lastEofOffsets = [];
 
     private readonly int _autoCommitIntervalMs;
 
-    private readonly List<TopicPartition> _pausedPartitions = new();
+    private readonly List<TopicPartition> _pausedPartitions = [];
 
     public MockedConfluentConsumer(
         ConsumerConfig config,
@@ -68,15 +68,15 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public ConsumerConfig Config { get; }
 
-    public List<TopicPartition> Assignment { get; } = new();
+    public List<TopicPartition> Assignment { get; } = [];
 
-    public List<string> Subscription { get; } = new();
+    public List<string> Subscription { get; } = [];
 
     public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
 
     public bool PartitionsAssigned { get; private set; }
 
-    public bool Disposed { get; private set; }
+    public bool IsDisposed { get; private set; }
 
     internal Action<IConsumer<byte[]?, byte[]?>, string>? StatisticsHandler { get; set; }
 
@@ -109,7 +109,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Subscribe(IEnumerable<string> topics)
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
         IReadOnlyList<string> topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
@@ -125,7 +125,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Unsubscribe()
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
         _consumerGroup.Unsubscribe(this);
@@ -178,14 +178,14 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         Check.NotNull(result, nameof(result));
 
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
         StoreOffset(result.TopicPartitionOffset);
     }
 
     public void StoreOffset(TopicPartitionOffset offset)
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
         Check.NotNull(offset, nameof(offset));
 
@@ -264,7 +264,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     public void Dispose()
     {
         Close();
-        Disposed = true;
+        IsDisposed = true;
     }
 
     internal void OnRebalancing() => PartitionsAssigned = false;
@@ -298,7 +298,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private bool TryConsume(CancellationToken cancellationToken, [NotNullWhen(true)] out ConsumeResult<byte[]?, byte[]?>? result)
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -415,7 +415,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Ensures retry in next iteration")]
     private async Task AutoCommitAsync()
     {
-        while (!Disposed)
+        while (!IsDisposed)
         {
             try
             {
@@ -432,15 +432,15 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     private List<TopicPartitionOffset> CommitCore(bool isAutoCommit)
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(IsDisposed, GetType());
         CheckGroupIdNotEmpty();
 
         lock (_storedOffsets)
         {
             if (_storedOffsets.Count == 0)
-                return new List<TopicPartitionOffset>();
+                return [];
 
-            List<TopicPartitionOffset> committedOffsets = _storedOffsets.Values.ToList();
+            List<TopicPartitionOffset> committedOffsets = [.. _storedOffsets.Values];
             _consumerGroup.Commit(committedOffsets);
             _storedOffsets.Clear();
 
@@ -488,11 +488,5 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         if (string.IsNullOrEmpty(Config.GroupId))
             throw new ArgumentException("'group.id' configuration parameter is required and was not specified.");
-    }
-
-    private void EnsureNotDisposed()
-    {
-        if (Disposed)
-            throw new ObjectDisposedException(GetType().FullName);
     }
 }

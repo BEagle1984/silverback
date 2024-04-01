@@ -112,7 +112,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                new MessageHeader[] { new(DefaultMessageHeaders.MessageId, "42") },
+                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -131,7 +131,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                new MessageHeader[] { new(DefaultMessageHeaders.MessageId, "42") },
+                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -150,7 +150,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                new MessageHeader[] { new(DefaultMessageHeaders.MessageId, "42") },
+                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),
@@ -169,7 +169,7 @@ public class TombstoneMessageArgumentResolverFixture
         IInboundEnvelope envelope = new InboundEnvelope<TestEventOne>(
             new RawInboundEnvelope(
                 (byte[]?)null,
-                new MessageHeader[] { new(DefaultMessageHeaders.MessageId, "42") },
+                [new MessageHeader(DefaultMessageHeaders.MessageId, "42")],
                 TestConsumerEndpoint.GetDefault(),
                 Substitute.For<IConsumer>(),
                 new TestOffset()),

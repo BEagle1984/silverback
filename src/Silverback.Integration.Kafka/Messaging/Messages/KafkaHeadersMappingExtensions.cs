@@ -13,7 +13,7 @@ internal static class KafkaHeadersMappingExtensions
 
     public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
     {
-        Confluent.Kafka.Headers kafkaHeaders = new();
+        Confluent.Kafka.Headers kafkaHeaders = [];
         headers.ForEach(
             header =>
             {

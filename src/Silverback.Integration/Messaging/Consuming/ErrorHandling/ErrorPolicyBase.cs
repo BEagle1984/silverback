@@ -15,12 +15,12 @@ public abstract record ErrorPolicyBase : IErrorPolicy
     /// <summary>
     ///     Gets the collection of exception types this policy doesn't have to be applied to.
     /// </summary>
-    public IReadOnlyCollection<Type> ExcludedExceptions { get; init; } = new List<Type>();
+    public IReadOnlyCollection<Type> ExcludedExceptions { get; init; } = [];
 
     /// <summary>
     ///     Gets the collection of exception types this policy have to be applied to.
     /// </summary>
-    public IReadOnlyCollection<Type> IncludedExceptions { get; init; } = new List<Type>();
+    public IReadOnlyCollection<Type> IncludedExceptions { get; init; } = [];
 
     /// <summary>
     ///     Gets the number of times this policy should be applied to the same message in case of multiple failed attempts.

@@ -69,7 +69,7 @@ public sealed class MockedMqttClient : IMqttClient
     {
         Check.NotNull(options, nameof(options));
 
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (_connecting)
             throw new InvalidOperationException("ConnectAsync shouldn't be called concurrently.");
@@ -91,7 +91,7 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
     public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken = default)
     {
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         _broker.Disconnect(this);
 
@@ -104,7 +104,7 @@ public sealed class MockedMqttClient : IMqttClient
     public Task<MqttClientSubscribeResult> SubscribeAsync(MqttClientSubscribeOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options, nameof(options));
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         _broker.Subscribe(this, options.TopicFilters.Select(filter => filter.Topic).ToList());
 
@@ -115,7 +115,7 @@ public sealed class MockedMqttClient : IMqttClient
     public Task<MqttClientUnsubscribeResult> UnsubscribeAsync(MqttClientUnsubscribeOptions options, CancellationToken cancellationToken = default)
     {
         Check.NotNull(options, nameof(options));
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         _broker.Unsubscribe(this, options.TopicFilters);
 
@@ -126,7 +126,7 @@ public sealed class MockedMqttClient : IMqttClient
     public async Task<MqttClientPublishResult> PublishAsync(MqttApplicationMessage applicationMessage, CancellationToken cancellationToken = default)
     {
         Check.NotNull(applicationMessage, nameof(applicationMessage));
-        EnsureNotDisposed();
+        Check.ThrowObjectDisposedIf(_isDisposed, this);
 
         if (Options == null)
             throw new InvalidOperationException("The client is not connected.");
@@ -153,10 +153,4 @@ public sealed class MockedMqttClient : IMqttClient
     [SuppressMessage("Usage", "VSTHRD110", MessageId = "Observe result of async calls", Justification = "False positive")]
     internal Task HandleMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
         ApplicationMessageReceivedAsync?.Invoke(eventArgs) ?? Task.CompletedTask;
-
-    private void EnsureNotDisposed()
-    {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
-    }
 }

@@ -11,7 +11,7 @@ public class ParallelTestingUtil
 {
     private int _lastStep;
 
-    public ConcurrentBag<int> Steps { get; } = new();
+    public ConcurrentBag<int> Steps { get; } = [];
 
     public void DoWork()
     {

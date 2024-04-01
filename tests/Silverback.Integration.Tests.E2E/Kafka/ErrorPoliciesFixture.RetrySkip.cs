@@ -133,7 +133,7 @@ public partial class ErrorPoliciesFixture
 
         void HandleBatch(IMessageStreamEnumerable<IIntegrationEvent> batch)
         {
-            List<IIntegrationEvent> dummy = batch.ToList(); // Enumerate
+            List<IIntegrationEvent> dummy = [.. batch]; // Enumerate
             tryCount++;
             throw new InvalidOperationException("Retry!");
         }

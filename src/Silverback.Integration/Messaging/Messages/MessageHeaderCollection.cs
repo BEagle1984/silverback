@@ -34,7 +34,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// </param>
     public MessageHeaderCollection(IReadOnlyCollection<MessageHeader>? headers)
     {
-        _list = headers != null ? new List<MessageHeader>(headers) : new List<MessageHeader>();
+        _list = headers != null ? [.. headers] : [];
     }
 
     /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />

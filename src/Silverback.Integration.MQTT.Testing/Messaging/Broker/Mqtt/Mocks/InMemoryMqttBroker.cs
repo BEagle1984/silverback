@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks;
 [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used via DI")]
 internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
 {
-    private readonly Dictionary<string, ClientSession> _sessions = new();
+    private readonly Dictionary<string, ClientSession> _sessions = [];
 
-    private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = new();
+    private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = [];
 
     private readonly SharedSubscriptionsManager _sharedSubscriptionsManager = new();
 
@@ -30,8 +30,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic, string? server = null) =>
         (IReadOnlyList<MqttApplicationMessage>?)_messagesByTopic.FirstOrDefault(
             messagesByTopicPair => messagesByTopicPair
-                .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ??
-        Array.Empty<MqttApplicationMessage>();
+                .Key.StartsWith($"{topic}|{server}", StringComparison.Ordinal)).Value ?? [];
 
     public void Connect(MockedMqttClient client)
     {
@@ -139,7 +138,7 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
             string topicKey = $"{message.Topic}|{clientOptions.ChannelOptions}";
 
             if (!_messagesByTopic.ContainsKey(topicKey))
-                _messagesByTopic[topicKey] = new List<MqttApplicationMessage>();
+                _messagesByTopic[topicKey] = [];
 
             _messagesByTopic[topicKey].Add(message);
         }

@@ -13,25 +13,25 @@ public class EnumerableDisposeAllExtensionsFixture
 {
     private interface IMustDispose
     {
-        public bool Disposed { get; }
+        public bool IsDisposed { get; }
     }
 
     [Fact]
     public async Task DisposeAllAsync_ShouldDisposeAllDisposableObjects()
     {
-        object[] objects = { new Disposable(), new NotDisposable(), new AsyncDisposable(), new AsyncAndSyncDisposable() };
+        object[] objects = [new Disposable(), new NotDisposable(), new AsyncDisposable(), new AsyncAndSyncDisposable()];
 
         await objects.DisposeAllAsync();
 
-        objects[0].As<IMustDispose>().Disposed.Should().BeTrue();
-        objects[2].As<IMustDispose>().Disposed.Should().BeTrue();
-        objects[3].As<IMustDispose>().Disposed.Should().BeTrue();
+        objects[0].As<IMustDispose>().IsDisposed.Should().BeTrue();
+        objects[2].As<IMustDispose>().IsDisposed.Should().BeTrue();
+        objects[3].As<IMustDispose>().IsDisposed.Should().BeTrue();
     }
 
     [Fact]
     public async Task DisposeAllAsync_ShouldDisposeObjectsOnce_WhenBothSyncAndAsyncDisposableAreImplemented()
     {
-        AsyncAndSyncDisposable[] objects = { new(), new() };
+        AsyncAndSyncDisposable[] objects = [new AsyncAndSyncDisposable(), new AsyncAndSyncDisposable()];
 
         await objects.DisposeAllAsync();
 
@@ -43,25 +43,25 @@ public class EnumerableDisposeAllExtensionsFixture
 
     private class Disposable : IDisposable, IMustDispose
     {
-        public bool Disposed { get; private set; }
+        public bool IsDisposed { get; private set; }
 
-        public void Dispose() => Disposed = true;
+        public void Dispose() => IsDisposed = true;
     }
 
     private class AsyncDisposable : IAsyncDisposable, IMustDispose
     {
-        public bool Disposed { get; set; }
+        public bool IsDisposed { get; set; }
 
         public ValueTask DisposeAsync()
         {
-            Disposed = true;
+            IsDisposed = true;
             return ValueTask.CompletedTask;
         }
     }
 
-    private class AsyncAndSyncDisposable : IDisposable, IAsyncDisposable, IMustDispose
+    private sealed class AsyncAndSyncDisposable : IDisposable, IAsyncDisposable, IMustDispose
     {
-        public bool Disposed => SyncDisposed || AsyncDisposed;
+        public bool IsDisposed => SyncDisposed || AsyncDisposed;
 
         public bool SyncDisposed { get; set; }
 
@@ -76,7 +76,5 @@ public class EnumerableDisposeAllExtensionsFixture
         }
     }
 
-    private class NotDisposable
-    {
-    }
+    private class NotDisposable;
 }

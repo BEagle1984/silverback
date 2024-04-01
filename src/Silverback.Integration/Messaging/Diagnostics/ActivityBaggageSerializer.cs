@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,7 +21,7 @@ internal static class ActivityBaggageSerializer
     public static IReadOnlyCollection<KeyValuePair<string, string>> Deserialize(string baggage)
     {
         if (string.IsNullOrEmpty(baggage))
-            return Array.Empty<KeyValuePair<string, string>>();
+            return [];
 
         string[] baggageItemsAsStrings = baggage.Split(BaggageItemSeparator);
         return Deserialize(baggageItemsAsStrings).ToList();

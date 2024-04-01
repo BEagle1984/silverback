@@ -117,7 +117,7 @@ public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
         {
             partitionsRevokedHandler(consumer, partitions);
 
-            return Enumerable.Empty<TopicPartitionOffset>();
+            return [];
         };
 
         return this;

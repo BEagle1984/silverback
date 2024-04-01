@@ -43,7 +43,5 @@ public partial class SilverbackBuilderFixture
     }
 
     [UsedImplicitly]
-    private class UnhandledMessage
-    {
-    }
+    private class UnhandledMessage;
 }

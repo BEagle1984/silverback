@@ -41,7 +41,7 @@ public abstract class MessagesSource<TBaseEvent> : IMessagesSource
     /// </param>
     protected virtual void AddEvent(TBaseEvent @event)
     {
-        _events ??= new List<TBaseEvent>();
+        _events ??= [];
 
         if (@event is IMessageWithSource messageWithSource)
             messageWithSource.Source = this;

@@ -145,7 +145,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
     {
         if (!IsStartedAndNotStopping())
-            return Array.Empty<TopicPartitionOffset>(); // TODO: Check this
+            return []; // TODO: Check this
 
         topicPartitionOffsets = new StoredOffsetsLoader(_offsetStoreFactory, Configuration, ServiceProvider)
             .ApplyStoredOffsets(topicPartitionOffsets);
@@ -367,7 +367,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
                     continue;
 
                 _channelsManager.StartReading(topicPartition);
-                Client.Resume(new[] { topicPartition });
+                Client.Resume([topicPartition]);
                 _logger.LogPartitionResumed(topicPartition, this);
             }
         }
@@ -390,11 +390,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         _logger.LogConsumerLowLevelTrace(
             this,
             "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
-            () => new object[]
-            {
+            () =>
+            [
                 _consumeLoopHandler.Id,
                 _consumeLoopHandler.Stopping.Id
-            });
+            ]);
     }
 
     private async Task RestartConsumeLoopHandlerAsync()
@@ -418,20 +418,20 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         _logger.LogConsumerLowLevelTrace(
             this,
             "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
-            () => new object[]
-            {
+            () =>
+            [
                 _consumeLoopHandler.Id,
                 _consumeLoopHandler.Stopping.Id
-            });
+            ]);
         await _consumeLoopHandler.Stopping.ConfigureAwait(false);
         _logger.LogConsumerLowLevelTrace(
             this,
             "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
-            () => new object[]
-            {
+            () =>
+            [
                 _consumeLoopHandler.Id,
                 _consumeLoopHandler.Stopping.Id
-            });
+            ]);
     }
 
     private async Task WaitUntilChannelsManagerStopsAsync()
@@ -446,12 +446,12 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         _logger.LogConsumerLowLevelTrace(
             this,
             "Storing offset {topic}[{partition}]@{offset}.",
-            () => new object[]
-            {
+            () =>
+            [
                 offset.Topic,
                 offset.Partition.Value,
                 offset.Offset.Value
-            });
+            ]);
         Client.StoreOffset(offset);
     }
 

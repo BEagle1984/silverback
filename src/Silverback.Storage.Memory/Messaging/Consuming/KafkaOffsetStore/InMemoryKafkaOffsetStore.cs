@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -15,7 +14,7 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 /// </summary>
 public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
 {
-    private readonly Dictionary<string, Dictionary<TopicPartition, KafkaOffset>> _offsetsByGroupId = new();
+    private readonly Dictionary<string, Dictionary<TopicPartition, KafkaOffset>> _offsetsByGroupId = [];
 
     /// <inheritdoc cref="IKafkaOffsetStore.GetStoredOffsets" />
     public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId)
@@ -25,7 +24,7 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
             if (_offsetsByGroupId.TryGetValue(groupId, out Dictionary<TopicPartition, KafkaOffset>? offsetsByTopicPartition))
                 return offsetsByTopicPartition.Values;
 
-            return Array.Empty<KafkaOffset>();
+            return [];
         }
     }
 
@@ -37,7 +36,7 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
         lock (_offsetsByGroupId)
         {
             Dictionary<TopicPartition, KafkaOffset> offsetsByTopicPartition =
-                _offsetsByGroupId.GetOrAdd(groupId, _ => new Dictionary<TopicPartition, KafkaOffset>());
+                _offsetsByGroupId.GetOrAdd(groupId, _ => []);
 
             foreach (KafkaOffset offset in offsets)
             {

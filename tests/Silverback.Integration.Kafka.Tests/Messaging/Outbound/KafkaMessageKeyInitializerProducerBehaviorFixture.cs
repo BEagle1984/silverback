@@ -34,13 +34,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             new KafkaProducerConfiguration
             {
                 Endpoints = new ValueReadOnlyCollection<KafkaProducerEndpointConfiguration>(
-                    new[]
+                [
+                    new KafkaProducerEndpointConfiguration
                     {
-                        new KafkaProducerEndpointConfiguration
-                        {
-                            Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
-                        }
-                    })
+                        Endpoint = new KafkaStaticProducerEndpointResolver("topic1")
+                    }
+                ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
             Substitute.For<IOutboundEnvelopeFactory>(),

@@ -8,6 +8,4 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Builds the <see cref="OutboxSettings" />.
 /// </summary>
-public class OutboxSettingsBuilder
-{
-}
+public class OutboxSettingsBuilder;

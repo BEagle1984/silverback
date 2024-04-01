@@ -18,7 +18,7 @@ internal sealed class CustomHeadersMappings : ICustomHeadersMappings
 
     public void Add(string defaultHeaderName, string customHeaderName)
     {
-        _mappings ??= new Dictionary<string, string>();
+        _mappings ??= [];
 
         _mappings[defaultHeaderName] = customHeaderName;
 

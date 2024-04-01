@@ -32,7 +32,7 @@ public class ValidatorConsumerBehaviorTests
 
     public ValidatorConsumerBehaviorTests()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = [];
 
         services
             .AddLoggerSubstitute()
@@ -54,8 +54,8 @@ public class ValidatorConsumerBehaviorTests
     {
         get
         {
-            yield return new object[]
-            {
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1",
@@ -63,28 +63,28 @@ public class ValidatorConsumerBehaviorTests
                     IntRange = 5,
                     NumbersOnly = "123"
                 }
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
                 }
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     String10 = "123456", IntRange = 5, NumbersOnly = "123"
                 }
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
                 }
-            };
+            ];
         }
     }
 
@@ -94,48 +94,48 @@ public class ValidatorConsumerBehaviorTests
     {
         get
         {
-            yield return new object[]
-            {
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123"
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The field IntRange must be between 5 and 10."
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 30, NumbersOnly = "123"
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     String10 = "123456", IntRange = 5, NumbersOnly = "123"
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The Id field is required."
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
-            };
-            yield return new object[]
-            {
+            ];
+            yield return
+            [
                 new TestValidationMessage
                 {
                     Id = "1",
@@ -148,7 +148,7 @@ public class ValidatorConsumerBehaviorTests
                     }
                 },
                 $"Invalid message consumed:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
-            };
+            ];
         }
     }
 
