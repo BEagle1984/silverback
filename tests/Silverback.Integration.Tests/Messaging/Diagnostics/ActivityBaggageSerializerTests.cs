@@ -43,9 +43,9 @@ public class ActivityBaggageSerializerTests
     [InlineData(null)]
     [InlineData(",")]
     [InlineData("(null)")]
-    public void TryDeserialize_InvalidString_EmptyCollectionReturned(string deserializeValue)
+    public void TryDeserialize_InvalidString_EmptyCollectionReturned(string? deserializeValue)
     {
-        IReadOnlyCollection<KeyValuePair<string, string>> result = ActivityBaggageSerializer.Deserialize(deserializeValue);
+        IReadOnlyCollection<KeyValuePair<string, string>> result = ActivityBaggageSerializer.Deserialize(deserializeValue!);
 
         result.Should().BeEmpty();
     }

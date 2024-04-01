@@ -25,13 +25,13 @@ public class ValueTaskFactoryFixture
     [SuppressMessage("Usage", "VSTHRD104:Offer async methods", Justification = "Test method")]
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Test method")]
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Test method")]
-    public void FromResult_ShouldReturnCompletedValueTask()
+    public async Task FromResult_ShouldReturnCompletedValueTask()
     {
         ValueTask<int> result = ValueTaskFactory.FromResult(42);
 
         result.IsCompleted.Should().BeTrue();
         result.IsCompletedSuccessfully.Should().BeTrue();
-        result.Result.Should().Be(42);
+        (await result).Should().Be(42);
     }
 
     [Fact]

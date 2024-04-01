@@ -92,11 +92,11 @@ public class KafkaConsumerConfigurationFixture
     [InlineData(null)]
     [InlineData("")]
     [Theory]
-    public void GroupId_ShouldReturnUnset_WhenNullOrEmpty(string groupId)
+    public void GroupId_ShouldReturnUnset_WhenNullOrEmpty(string? groupId)
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            GroupId = groupId
+            GroupId = groupId!
         };
 
         configuration.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);

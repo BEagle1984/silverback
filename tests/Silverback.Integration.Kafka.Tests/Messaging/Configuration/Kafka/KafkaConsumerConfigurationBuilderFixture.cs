@@ -154,7 +154,7 @@ public class KafkaConsumerConfigurationBuilderFixture
     [InlineData(null)]
     [InlineData("")]
     [Theory]
-    public void WithGroupId_ShouldSetGroupIdToUnset_WhenNullOrEmpty(string groupId)
+    public void WithGroupId_ShouldSetGroupIdToUnset_WhenNullOrEmpty(string? groupId)
     {
         KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfiguration();
         builder.Consume(endpoint => endpoint.ConsumeFrom("topic1", 1));

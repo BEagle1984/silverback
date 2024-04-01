@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -26,73 +25,77 @@ public class ErrorPolicyBaseFixture
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
 
-    public static IEnumerable<object[]> IncludedExceptions_TestData =>
-    [
-        [new ArgumentException(), true],
-        [new ArgumentOutOfRangeException(), true],
-        [new InvalidCastException(), true],
-        [new FormatException(), false]
-    ];
+    public static TheoryData<Exception, bool> IncludedExceptions_TestData =>
+        new()
+        {
+            { new ArgumentException(), true },
+            { new ArgumentOutOfRangeException(), true },
+            { new InvalidCastException(), true },
+            { new FormatException(), false }
+        };
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> ExcludedException_TestData =>
-    [
-        [new ArgumentException(), false],
-        [new ArgumentOutOfRangeException(), false],
-        [new InvalidCastException(), false],
-        [new FormatException(), true]
-    ];
+    public static TheoryData<Exception, bool> ExcludedException_TestData =>
+        new()
+        {
+            { new ArgumentException(), false },
+            { new ArgumentOutOfRangeException(), false },
+            { new InvalidCastException(), false },
+            { new FormatException(), true }
+        };
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> IncludedAndExcludedExceptions_TestData =>
-    [
-        [new ArgumentException(), true],
-        [new ArgumentNullException(), true],
-        [new ArgumentOutOfRangeException(), false],
-        [new InvalidCastException(), false],
-        [new FormatException(), true]
-    ];
+    public static TheoryData<Exception, bool> IncludedAndExcludedExceptions_TestData =>
+        new()
+        {
+            { new ArgumentException(), true },
+            { new ArgumentNullException(), true },
+            { new ArgumentOutOfRangeException(), false },
+            { new InvalidCastException(), false },
+            { new FormatException(), true }
+        };
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-    public static IEnumerable<object[]> ApplyRule_TestData =>
-    [
-        [
-            new InboundEnvelope(
-                null,
-                Stream.Null,
-                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new ArgumentException(),
-            true
-        ],
-        [
-            new InboundEnvelope(
-                null,
-                Stream.Null,
-                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new ArgumentException(),
-            false
-        ],
-        [
-            new InboundEnvelope(
-                null,
-                Stream.Null,
-                [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
-                TestConsumerEndpoint.GetDefault(),
-                Substitute.For<IConsumer>(),
-                new TestOffset()),
-            new ArgumentException("no"),
-            false
-        ]
-    ];
+    public static TheoryData<IInboundEnvelope, Exception, bool> ApplyRule_TestData =>
+        new()
+        {
+            {
+                new InboundEnvelope(
+                    null,
+                    Stream.Null,
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
+                new ArgumentException(),
+                true
+            },
+            {
+                new InboundEnvelope(
+                    null,
+                    Stream.Null,
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6")],
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
+                new ArgumentException(),
+                false
+            },
+            {
+                new InboundEnvelope(
+                    null,
+                    Stream.Null,
+                    [new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")],
+                    TestConsumerEndpoint.GetDefault(),
+                    Substitute.For<IConsumer>(),
+                    new TestOffset()),
+                new ArgumentException("no"),
+                false
+            }
+        };
 
     [Theory]
     [MemberData(nameof(IncludedExceptions_TestData))]

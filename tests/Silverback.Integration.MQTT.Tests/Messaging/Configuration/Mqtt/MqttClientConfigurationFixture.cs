@@ -140,11 +140,11 @@ public class MqttClientConfigurationFixture
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validate_ShouldThrow_WhenClientIdIsNullOrEmpty(string clientId)
+    public void Validate_ShouldThrow_WhenClientIdIsNullOrEmpty(string? clientId)
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
-            ClientId = clientId
+            ClientId = clientId!
         };
 
         Action act = configuration.Validate;
