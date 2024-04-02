@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -62,6 +61,5 @@ internal sealed class BrokerClientsConnectorService : IHostedService
                 })
             .FireAndForget();
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
-    private void OnApplicationStopped() => _brokerDisconnectedTaskCompletionSource.Task.Wait();
+    private void OnApplicationStopped() => AsyncHelper.RunSynchronously(() => _brokerDisconnectedTaskCompletionSource.Task);
 }

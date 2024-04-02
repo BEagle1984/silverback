@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,11 +130,14 @@ public sealed class ChunkStream : Stream
     }
 
     /// <inheritdoc cref="Stream.Dispose(bool)" />
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     protected override void Dispose(bool disposing)
     {
-        _asyncEnumerator?.DisposeAsync().AsTask().Wait();
-        _asyncEnumerator = null;
+        if (_asyncEnumerator != null)
+        {
+            AsyncHelper.RunSynchronously(() => _asyncEnumerator.DisposeAsync());
+            _asyncEnumerator = null;
+        }
+
         _syncEnumerator?.Dispose();
         _syncEnumerator = null;
 

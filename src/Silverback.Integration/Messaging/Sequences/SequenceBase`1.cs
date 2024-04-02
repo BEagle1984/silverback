@@ -413,7 +413,6 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
     /// <param name="disposing">
     ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the finalizer.
     /// </param>
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     protected virtual void Dispose(bool disposing)
     {
         if (_isDisposed)
@@ -430,7 +429,8 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 SequenceId
             ]);
 
-        _abortingTaskCompletionSource?.Task.Wait();
+        if (_abortingTaskCompletionSource != null)
+            AsyncHelper.RunSynchronously(() => _abortingTaskCompletionSource.Task);
 
         _streamProvider.Dispose();
         _abortCancellationTokenSource.Dispose();

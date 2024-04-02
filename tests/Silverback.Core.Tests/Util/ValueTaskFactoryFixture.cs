@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -22,9 +21,6 @@ public class ValueTaskFactoryFixture
     }
 
     [Fact]
-    [SuppressMessage("Usage", "VSTHRD104:Offer async methods", Justification = "Test method")]
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Test method")]
-    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Test method")]
     public async Task FromResult_ShouldReturnCompletedValueTask()
     {
         ValueTask<int> result = ValueTaskFactory.FromResult(42);

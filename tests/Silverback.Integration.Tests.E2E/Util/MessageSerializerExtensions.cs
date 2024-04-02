@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging;
@@ -22,15 +21,13 @@ public static class MessageSerializerExtensions
         await serializer.SerializeAsync(message, headers ?? [], NullProducerEndpoint.Instance) ??
         throw new InvalidOperationException("Serializer returned null");
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static Stream Serialize(
         this IMessageSerializer serializer,
         object message,
         MessageHeaderCollection? headers = null) =>
-        SerializeAsync(serializer, message, headers).AsTask().Result ??
+        AsyncHelper.RunSynchronously(() => SerializeAsync(serializer, message, headers)) ??
         throw new InvalidOperationException("Serializer returned null");
 
-    [SuppressMessage("Usage", "VSTHRD104:Offer async methods", Justification = "Test method")]
     public static byte[] SerializeToBytes(
         this IMessageSerializer serializer,
         object message,

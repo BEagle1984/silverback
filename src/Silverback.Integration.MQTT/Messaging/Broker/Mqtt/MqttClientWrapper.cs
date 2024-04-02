@@ -287,14 +287,14 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
     private Task OnMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs messageReceivedEventArgs) =>
         MessageReceived.InvokeAsync(messageReceivedEventArgs).AsTask();
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     private void WaitFlushingCompletes()
     {
         if (_publishQueueChannel.Reader.Completion.IsCompleted)
             return;
 
         _publishQueueChannel.Writer.Complete();
-        _publishQueueChannel.Reader.Completion.Wait();
+
+        AsyncHelper.RunSynchronously(() => _publishQueueChannel.Reader.Completion);
     }
 
     private sealed record QueuedMessage(

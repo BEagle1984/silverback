@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2023 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Util;
 
 namespace Silverback.Tests.Types;
 
@@ -15,14 +15,13 @@ public sealed class FakeSequence : SequenceBase<IInboundEnvelope>
         Length = 3;
     }
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public FakeSequence(string sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
         : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))
     {
         if (isComplete)
-            CompleteAsync().AsTask().Wait();
+            AsyncHelper.RunSynchronously(() => CompleteAsync());
 
         if (isAborted)
-            AbortAsync(SequenceAbortReason.EnumerationAborted).AsTask().Wait();
+            AsyncHelper.RunSynchronously(() => AbortAsync(SequenceAbortReason.EnumerationAborted));
     }
 }

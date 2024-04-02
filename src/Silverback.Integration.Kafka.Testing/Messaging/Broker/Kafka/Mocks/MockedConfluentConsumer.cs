@@ -344,7 +344,6 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         return false;
     }
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     private void EnsurePartitionsAssigned(CancellationToken cancellationToken)
     {
         if (PartitionsAssigned)
@@ -352,11 +351,11 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         while (_consumerGroup.IsRebalancing || _consumerGroup.IsRebalanceScheduled)
         {
-            Task.Delay(10, cancellationToken).Wait(cancellationToken);
+            AsyncHelper.RunSynchronously(() => Task.Delay(10, cancellationToken));
         }
 
         if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
-            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).Wait(cancellationToken);
+            AsyncHelper.RunSynchronously(() => Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken));
 
         IReadOnlyCollection<TopicPartition> assignedPartitions = _consumerGroup
             .GetAssignment(this)
