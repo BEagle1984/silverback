@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,16 +53,12 @@ public class Publisher : IPublisher
     public SilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
-    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
     public void Publish(object message, bool throwIfUnhandled = false) =>
-        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult();
+        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).SafeWait();
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
-    [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Syncronous execution according to ExecutionFlow")]
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Syncronous execution according to ExecutionFlow")]
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
-        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).GetAwaiter().GetResult()).ToList();
+        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).SafeWait()).ToList();
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
     public async ValueTask PublishAsync(object message, bool throwIfUnhandled = false) =>

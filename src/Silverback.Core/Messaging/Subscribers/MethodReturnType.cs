@@ -97,7 +97,7 @@ public record MethodReturnType
     /// </returns>
     public object? AwaitAndUnwrapResult(object? invokeResult) =>
         (IsTask || IsValueTask) && invokeResult != null
-            ? AsyncHelper.RunSynchronously(() => AwaitAndUnwrapResultAsync(invokeResult))
+            ? AwaitAndUnwrapResultAsync(invokeResult).SafeWait()
             : invokeResult;
 
     /// <summary>

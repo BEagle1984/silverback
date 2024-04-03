@@ -82,7 +82,7 @@ public class DomainEventsPublisher
     /// <summary>
     ///     Publishes the domain events stored into the domain entities returned by the provider function.
     /// </summary>
-    public void PublishDomainEvents() => AsyncHelper.RunSynchronously(() => PublishDomainEventsAsync(ExecutionFlow.Sync));
+    public void PublishDomainEvents() => PublishDomainEventsAsync(ExecutionFlow.Sync).SafeWait();
 
     [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes sync or async")]
     private async ValueTask PublishDomainEventsAsync(ExecutionFlow executionFlow)

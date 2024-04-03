@@ -58,7 +58,8 @@ public class AvroMessageDeserializer<TMessage> : IAvroMessageDeserializer
     {
         Check.NotNull(key, nameof(key));
 
-        return AsyncHelper.RunSynchronously(() => DeserializeAsync<string>(key, MessageComponentType.Key, endpoint))!;
+        return DeserializeAsync<string>(key, MessageComponentType.Key, endpoint).SafeWait() ??
+               throw new InvalidOperationException("The key could not be deserialized.");
     }
 
     private static SerializationContext GetConfluentSerializationContext(MessageComponentType componentType, Endpoint endpoint) =>

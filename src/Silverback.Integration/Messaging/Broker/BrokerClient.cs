@@ -135,7 +135,7 @@ public abstract class BrokerClient : IBrokerClient
         if (!disposing)
             return;
 
-        AsyncHelper.RunSynchronously(DisconnectAsync);
+        DisconnectAsync().SafeWait();
 
         _disconnectCancellationTokenSource.Dispose();
     }

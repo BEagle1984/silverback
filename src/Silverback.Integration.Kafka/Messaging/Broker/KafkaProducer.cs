@@ -87,7 +87,7 @@ public sealed class KafkaProducer : Producer
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope)); // TODO: No better option?
+        ProduceCoreAsync(envelope).SafeWait(); // TODO: No better option?
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]

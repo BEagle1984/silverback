@@ -351,11 +351,11 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         while (_consumerGroup.IsRebalancing || _consumerGroup.IsRebalanceScheduled)
         {
-            AsyncHelper.RunSynchronously(() => Task.Delay(10, cancellationToken));
+            Task.Delay(10, cancellationToken).SafeWait(cancellationToken);
         }
 
         if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
-            AsyncHelper.RunSynchronously(() => Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken));
+            Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).SafeWait(cancellationToken);
 
         IReadOnlyCollection<TopicPartition> assignedPartitions = _consumerGroup
             .GetAssignment(this)

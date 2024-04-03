@@ -90,7 +90,7 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
         if (!disposing || _isDisposed)
             return;
 
-        AsyncHelper.RunSynchronously(StopReadingAsync);
+        StopReadingAsync().SafeWait();
         GetChannels().OfType<IDisposable>().ForEach(channel => channel.Dispose());
 
         _logger.LogConsumerLowLevelTrace(_consumer, "All channels disposed.");

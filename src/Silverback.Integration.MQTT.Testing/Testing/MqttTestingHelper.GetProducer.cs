@@ -31,7 +31,7 @@ public partial class MqttTestingHelper
             .InitializeProducers($"test-{Guid.NewGuid():N}", producerConfiguration, false)
             .Single();
 
-        AsyncHelper.RunSynchronously(newProducer.Client.ConnectAsync);
+        newProducer.Client.ConnectAsync().SafeWait();
 
         return newProducer;
     }

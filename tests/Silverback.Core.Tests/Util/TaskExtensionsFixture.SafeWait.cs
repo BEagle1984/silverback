@@ -9,14 +9,14 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util;
 
-public class AsyncHelperFixture
+public partial class TaskExtensionsFixture
 {
     [Fact]
-    public void RunSynchronously_ShouldExecuteAsyncMethodReturningTask()
+    public void SafeWait_ShouldExecuteAsyncMethodReturningTask()
     {
         bool done = false;
 
-        AsyncHelper.RunSynchronously(AsyncMethod);
+        AsyncMethod().SafeWait();
 
         done.Should().BeTrue();
 
@@ -28,9 +28,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteAsyncMethodReturningTaskWithResult()
+    public void SafeWait_ShouldExecuteAsyncMethodReturningTaskWithResult()
     {
-        int result = AsyncHelper.RunSynchronously(AsyncMethod);
+        int result = AsyncMethod().SafeWait();
 
         result.Should().Be(3);
 
@@ -42,9 +42,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningTaskThrows()
+    public void SafeWait_ShouldRethrow_WhenAsyncMethodReturningTaskThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+        Action act = () => AsyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 
@@ -56,9 +56,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningTaskWithResultThrows()
+    public void SafeWait_ShouldRethrow_WhenAsyncMethodReturningTaskWithResultThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+        Action act = () => AsyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 
@@ -70,11 +70,11 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteAsyncMethodReturningValueTask()
+    public void SafeWait_ShouldExecuteAsyncMethodReturningValueTask()
     {
         bool done = false;
 
-        AsyncHelper.RunSynchronously(AsyncMethod);
+        AsyncMethod().SafeWait();
 
         done.Should().BeTrue();
 
@@ -86,11 +86,11 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteSyncMethodReturningValueTask()
+    public void SafeWait_ShouldExecuteSyncMethodReturningValueTask()
     {
-        bool done = false;
+        bool done;
 
-        AsyncHelper.RunSynchronously(SyncMethod);
+        SyncMethod().SafeWait();
 
         done.Should().BeTrue();
 
@@ -102,9 +102,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteAsyncMethodReturningValueTaskWithResult()
+    public void SafeWait_ShouldExecuteAsyncMethodReturningValueTaskWithResult()
     {
-        int result = AsyncHelper.RunSynchronously(AsyncMethod);
+        int result = AsyncMethod().SafeWait();
 
         result.Should().Be(3);
 
@@ -116,9 +116,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldExecuteSyncMethodReturningValueTaskWithResult()
+    public void SafeWait_ShouldExecuteSyncMethodReturningValueTaskWithResult()
     {
-        int result = AsyncHelper.RunSynchronously(SyncMethod);
+        int result = SyncMethod().SafeWait();
 
         result.Should().Be(3);
 
@@ -126,9 +126,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningValueTaskThrows()
+    public void SafeWait_ShouldRethrow_WhenAsyncMethodReturningValueTaskThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+        Action act = () => AsyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 
@@ -140,9 +140,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenSyncMethodReturningValueTaskThrows()
+    public void SafeWait_ShouldRethrow_WhenSyncMethodReturningValueTaskThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+        Action act = () => AsyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 
@@ -150,9 +150,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenAsyncMethodReturningValueTaskWithResultThrows()
+    public void SafeWait_ShouldRethrow_WhenAsyncMethodReturningValueTaskWithResultThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+        Action act = () => AsyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 
@@ -164,9 +164,9 @@ public class AsyncHelperFixture
     }
 
     [Fact]
-    public void RunSynchronously_ShouldRethrow_WhenSyncMethodReturningValueTaskWithResultThrows()
+    public void SafeWait_ShouldRethrow_WhenSyncMethodReturningValueTaskWithResultThrows()
     {
-        Action act = () => AsyncHelper.RunSynchronously(SyncMethod);
+        Action act = () => SyncMethod().SafeWait();
 
         act.Should().Throw<NotSupportedException>();
 

@@ -139,7 +139,7 @@ public abstract class TableBasedDistributedLock : DistributedLock
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                AsyncHelper.RunSynchronously(DisposeCoreAsync);
+                DisposeCoreAsync().SafeWait();
         }
 
         protected override async ValueTask DisposeCoreAsync()

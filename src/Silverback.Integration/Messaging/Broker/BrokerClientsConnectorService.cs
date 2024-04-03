@@ -61,5 +61,5 @@ internal sealed class BrokerClientsConnectorService : IHostedService
                 })
             .FireAndForget();
 
-    private void OnApplicationStopped() => AsyncHelper.RunSynchronously(() => _brokerDisconnectedTaskCompletionSource.Task);
+    private void OnApplicationStopped() => _brokerDisconnectedTaskCompletionSource.Task.SafeWait();
 }

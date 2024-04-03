@@ -270,8 +270,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
         if (!string.IsNullOrEmpty(_topic))
         {
             MqttProducerEndpoint endpoint = new MqttStaticProducerEndpointResolver(_topic).GetEndpoint(new MqttProducerEndpointConfiguration());
-            payloadStream = AsyncHelper.RunSynchronously(
-                () => _serializer.SerializeAsync(_message, [], endpoint));
+            payloadStream = _serializer.SerializeAsync(_message, [], endpoint).SafeWait();
         }
 
         MqttLastWillMessageConfiguration configuration = new()

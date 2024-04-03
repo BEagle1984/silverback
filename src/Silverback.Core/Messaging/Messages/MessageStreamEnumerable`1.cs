@@ -108,7 +108,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()
     {
-        AsyncHelper.RunSynchronously(() => CompleteAsync());
+        CompleteAsync().SafeWait();
 
         _readSemaphore.Dispose();
         _writeSemaphore.Dispose();
@@ -130,7 +130,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
 
     private IEnumerable<TMessage> GetEnumerable()
     {
-        while (AsyncHelper.RunSynchronously(() => WaitForNextAsync(CancellationToken.None)))
+        while (WaitForNextAsync(CancellationToken.None).SafeWait())
         {
             if (!_hasCurrent || _current == null)
                 continue;

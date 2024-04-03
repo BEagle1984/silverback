@@ -104,21 +104,20 @@ public abstract class Producer : IProducer, IDisposable
         {
             IBrokerMessageIdentifier? brokerMessageIdentifier = null;
 
-            AsyncHelper.RunSynchronously(
-                () =>
-                    ExecutePipelineAsync(
-                        new ProducerPipelineContext(envelope, this, _serviceProvider),
-                        finalContext =>
-                        {
-                            brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
+            ExecutePipelineAsync(
+                    new ProducerPipelineContext(envelope, this, _serviceProvider),
+                    finalContext =>
+                    {
+                        brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
 
-                            ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                                brokerMessageIdentifier;
+                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                            brokerMessageIdentifier;
 
-                            _logger.LogProduced(finalContext.Envelope);
+                        _logger.LogProduced(finalContext.Envelope);
 
-                            return ValueTaskFactory.CompletedTask;
-                        }));
+                        return ValueTaskFactory.CompletedTask;
+                    })
+                .SafeWait();
 
             return brokerMessageIdentifier;
         }
@@ -151,8 +150,7 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            AsyncHelper.RunSynchronously(
-                () => ExecutePipelineAsync(
+            ExecutePipelineAsync(
                     new ProducerPipelineContext(envelope, this, _serviceProvider),
                     finalContext =>
                     {
@@ -173,7 +171,8 @@ public abstract class Producer : IProducer, IDisposable
                         _logger.LogProduced(finalContext.Envelope);
 
                         return ValueTaskFactory.CompletedTask;
-                    }));
+                    })
+                .SafeWait();
         }
         catch (Exception ex)
         {

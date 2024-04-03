@@ -32,7 +32,7 @@ public partial class KafkaTestingHelper
             .Single();
 
         if (newProducer is KafkaProducer kafkaProducer)
-            AsyncHelper.RunSynchronously(kafkaProducer.Client.ConnectAsync);
+            kafkaProducer.Client.ConnectAsync().SafeWait();
 
         return newProducer;
     }

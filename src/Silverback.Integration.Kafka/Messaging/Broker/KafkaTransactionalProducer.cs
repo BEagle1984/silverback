@@ -134,7 +134,7 @@ public sealed class KafkaTransactionalProducer : IProducer
         throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
 
     private KafkaProducer GetProducerForTransaction(IOutboundEnvelope envelope) =>
-        AsyncHelper.RunSynchronously(() => GetProducerForTransactionAsync(envelope));
+        GetProducerForTransactionAsync(envelope).SafeWait();
 
     private async ValueTask<KafkaProducer> GetProducerForTransactionAsync(IOutboundEnvelope envelope)
     {

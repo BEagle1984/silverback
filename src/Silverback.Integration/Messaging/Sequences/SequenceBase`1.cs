@@ -429,8 +429,7 @@ public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
                 SequenceId
             ]);
 
-        if (_abortingTaskCompletionSource != null)
-            AsyncHelper.RunSynchronously(() => _abortingTaskCompletionSource.Task);
+        _abortingTaskCompletionSource?.Task.SafeWait();
 
         _streamProvider.Dispose();
         _abortCancellationTokenSource.Dispose();

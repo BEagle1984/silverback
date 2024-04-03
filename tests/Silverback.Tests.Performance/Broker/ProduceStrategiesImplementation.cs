@@ -42,12 +42,12 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
 
         _serviceScope = _rootServiceProvider.CreateScope();
 
-        AsyncHelper.RunSynchronously(ConnectAsync);
+        ConnectAsync().SafeWait();
     }
 
     public void Dispose()
     {
-        AsyncHelper.RunSynchronously(DisconnectAsync);
+        DisconnectAsync().SafeWait();
         _serviceScope.Dispose();
     }
 

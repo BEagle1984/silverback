@@ -41,7 +41,7 @@ public class AvroMessageSerializer<TMessage> : IAvroMessageSerializer
     {
         Check.NotNullOrEmpty(key, nameof(key));
 
-        byte[]? serializedKey = AsyncHelper.RunSynchronously(() => SerializeAsync<string>(key, MessageComponentType.Key, endpoint).AsTask());
+        byte[]? serializedKey = SerializeAsync<string>(key, MessageComponentType.Key, endpoint).SafeWait();
 
         return serializedKey ?? [];
     }

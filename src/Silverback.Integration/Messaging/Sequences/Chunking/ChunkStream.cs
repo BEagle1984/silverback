@@ -134,7 +134,7 @@ public sealed class ChunkStream : Stream
     {
         if (_asyncEnumerator != null)
         {
-            AsyncHelper.RunSynchronously(() => _asyncEnumerator.DisposeAsync());
+            _asyncEnumerator.DisposeAsync().SafeWait();
             _asyncEnumerator = null;
         }
 

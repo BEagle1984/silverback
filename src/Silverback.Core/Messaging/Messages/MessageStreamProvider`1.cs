@@ -190,7 +190,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     public override void Dispose()
     {
         if (!_aborted && !_completed)
-            AsyncHelper.RunSynchronously(() => CompleteAsync());
+            CompleteAsync().SafeWait();
     }
 
     private static LazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(IReadOnlyCollection<IMessageFilter>? filters = null) =>

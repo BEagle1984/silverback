@@ -93,7 +93,7 @@ internal sealed class SequenceStore : ISequenceStore
 
     public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
 
-    public void Dispose() => AsyncHelper.RunSynchronously(DisposeAsync);
+    public void Dispose() => DisposeAsync().SafeWait();
 
     public async ValueTask DisposeAsync()
     {

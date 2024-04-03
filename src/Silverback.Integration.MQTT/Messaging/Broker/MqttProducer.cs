@@ -77,7 +77,7 @@ public sealed class MqttProducer : Producer
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-        AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
+        ProduceCoreAsync(envelope).SafeWait();
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
     protected override void ProduceCore(

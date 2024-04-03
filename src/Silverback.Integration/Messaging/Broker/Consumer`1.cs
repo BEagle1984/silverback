@@ -414,7 +414,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         if (!disposing || _isDisposed)
             return;
 
-        AsyncHelper.RunSynchronously(() => StopAsync(false));
+        StopAsync(false).SafeWait();
 
         Client.Initialized.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);

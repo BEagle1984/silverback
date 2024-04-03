@@ -294,7 +294,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
 
         _publishQueueChannel.Writer.Complete();
 
-        AsyncHelper.RunSynchronously(() => _publishQueueChannel.Reader.Completion);
+        _publishQueueChannel.Reader.Completion.SafeWait();
     }
 
     private sealed record QueuedMessage(

@@ -71,7 +71,7 @@ public class ProduceBenchmark
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo("benchmarks-2").DisableMessageValidation()))));
 
         BrokerClientsConnectorService clientsConnectorService = serviceProvider.GetServices<IHostedService>().OfType<BrokerClientsConnectorService>().Single();
-        AsyncHelper.RunSynchronously(() => clientsConnectorService.StartAsync(CancellationToken.None));
+        clientsConnectorService.StartAsync(CancellationToken.None).SafeWait();
 
         IProducerCollection producerCollection = serviceProvider.GetRequiredService<IProducerCollection>();
         _producer = producerCollection[0];

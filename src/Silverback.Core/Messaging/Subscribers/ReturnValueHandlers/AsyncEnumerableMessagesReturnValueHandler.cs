@@ -49,7 +49,7 @@ public class AsyncEnumerableMessagesReturnValueHandler : IReturnValueHandler
     {
         Check.NotNull(returnValue, nameof(returnValue));
 
-        AsyncHelper.RunSynchronously(() => ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => _publisher.PublishAsync(message)));
+        ((IAsyncEnumerable<object>)returnValue).ForEachAsync(message => _publisher.PublishAsync(message)).SafeWait();
     }
 
     /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />

@@ -114,7 +114,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
             "Disposing ConsumeLoopHandler... | instanceId: {instanceId}",
             () => [Id]);
 
-        AsyncHelper.RunSynchronously(StopAsync);
+        StopAsync().SafeWait();
         _cancellationTokenSource.Dispose();
 
         _logger.LogConsumerLowLevelTrace(

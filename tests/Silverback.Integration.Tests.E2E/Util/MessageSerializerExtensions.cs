@@ -25,7 +25,7 @@ public static class MessageSerializerExtensions
         this IMessageSerializer serializer,
         object message,
         MessageHeaderCollection? headers = null) =>
-        AsyncHelper.RunSynchronously(() => SerializeAsync(serializer, message, headers)) ??
+        SerializeAsync(serializer, message, headers).SafeWait() ??
         throw new InvalidOperationException("Serializer returned null");
 
     public static byte[] SerializeToBytes(
