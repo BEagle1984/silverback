@@ -317,9 +317,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
         foreach (TopicPartitionOffset topicPartitionOffset in topicPartitionsOffsets)
         {
-            IInMemoryPartition inMemoryPartition =
-                _topics.Get(topicPartitionOffset.Topic, Config)
-                    .Partitions[topicPartitionOffset.Partition];
+            IInMemoryPartition inMemoryPartition = _topics.Get(topicPartitionOffset.Topic, Config).Partitions[topicPartitionOffset.Partition];
 
             bool pulled = inMemoryPartition.TryPull(topicPartitionOffset.Offset, out result);
 
@@ -330,9 +328,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
             if (pulled)
             {
-                _currentOffsets[result!.TopicPartition] =
-                    new TopicPartitionOffset(result.TopicPartition, result.Offset + 1);
-
+                _currentOffsets[result!.TopicPartition] = new TopicPartitionOffset(result.TopicPartition, result.Offset + 1);
                 return true;
             }
 

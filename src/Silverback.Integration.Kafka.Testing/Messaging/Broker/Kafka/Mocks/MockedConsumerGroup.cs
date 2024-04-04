@@ -44,8 +44,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
     public string BootstrapServers { get; }
 
-    public IReadOnlyCollection<TopicPartitionOffset> CommittedOffsets =>
-        _committedOffsets.Values.AsReadOnlyCollection();
+    public IReadOnlyCollection<TopicPartitionOffset> CommittedOffsets => _committedOffsets.Values.AsReadOnlyCollection();
 
     public bool IsRebalancing { get; private set; } = true;
 
@@ -143,7 +142,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             if (_subscribedConsumers.Any(subscribedConsumer => subscribedConsumer.Consumer == consumer))
                 UnsubscribeCore(consumer);
 
-            // TODO: IMPORTANT: Invoke OnPartitionsRevoked
+            ScheduleRebalance();
         }
         finally
         {
@@ -215,6 +214,10 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             IsRebalancing = false;
 
             await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
+
+            // Add a delay to avoid deadlocks
+            // TODO: Investigate why it's needed
+            await Task.Delay(50).ConfigureAwait(false);
 
             return result;
         }

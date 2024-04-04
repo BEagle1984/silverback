@@ -208,6 +208,7 @@ public class RebalanceFixture : KafkaFixture
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
 
         await DefaultConsumerGroup.RebalanceAsync();
+
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
     }
 
