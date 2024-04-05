@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Publishing
 
         /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
         public void Publish(object message, bool throwIfUnhandled) =>
-            PublishAsync(message, throwIfUnhandled, false).Wait();
+            AsyncHelper.RunSynchronously(() => PublishAsync(message, throwIfUnhandled, false));
 
         /// <inheritdoc cref="IPublisher.Publish{TResult}(object)" />
         public IReadOnlyCollection<TResult> Publish<TResult>(object message) =>
@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Publishing
 
         /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
         public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled) =>
-            CastResults<TResult>(PublishAsync(message, throwIfUnhandled, false).Result).ToList();
+            CastResults<TResult>(AsyncHelper.RunSynchronously(() => PublishAsync(message, throwIfUnhandled, false))).ToList();
 
         /// <inheritdoc cref="IPublisher.PublishAsync(object)" />
         public Task PublishAsync(object message) =>

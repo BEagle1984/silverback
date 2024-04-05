@@ -86,7 +86,9 @@ namespace Silverback.EntityFrameworkCore
         {
             Check.NotNull(saveChanges, nameof(saveChanges));
 
-            return ExecuteSaveTransactionAsync(() => Task.FromResult(saveChanges()), false).Result;
+            return AsyncHelper.RunSynchronously(
+                () =>
+                    ExecuteSaveTransactionAsync(() => Task.FromResult(saveChanges()), false));
         }
 
         /// <summary>

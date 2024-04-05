@@ -159,8 +159,12 @@ namespace Silverback.Messaging.Sequences.Chunking
         /// <inheritdoc cref="Stream.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
-            _asyncEnumerator?.DisposeAsync().AsTask().Wait();
-            _asyncEnumerator = null;
+            if (_asyncEnumerator != null)
+            {
+                AsyncHelper.RunValueTaskSynchronously(() => _asyncEnumerator.DisposeAsync());
+                _asyncEnumerator = null;
+            }
+
             _syncEnumerator?.Dispose();
             _syncEnumerator = null;
 

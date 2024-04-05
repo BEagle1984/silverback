@@ -89,7 +89,7 @@ namespace Silverback.Messaging.Broker
                 .FireAndForget();
 
         private void OnApplicationStopped() =>
-            _brokerDisconnectedTaskCompletionSource.Task.Wait();
+            AsyncHelper.RunSynchronously(() => _brokerDisconnectedTaskCompletionSource.Task);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ConnectAsync()

@@ -83,13 +83,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             while (!_assignmentsDictionary.ContainsKey(consumer.GroupId) ||
                    !_assignmentsDictionary[consumer.GroupId].ContainsKey(consumer))
             {
-                Task.Delay(10, cancellationToken).Wait(cancellationToken);
+                AsyncHelper.RunSynchronously(() => Task.Delay(10, cancellationToken));
             }
 
             cancellationToken.ThrowIfCancellationRequested();
 
             if (assignmentDelay > TimeSpan.Zero)
-                Task.Delay(assignmentDelay, cancellationToken).Wait(cancellationToken);
+                AsyncHelper.RunSynchronously(() => Task.Delay(assignmentDelay, cancellationToken));
 
             cancellationToken.ThrowIfCancellationRequested();
 

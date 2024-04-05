@@ -296,7 +296,7 @@ namespace Silverback.Messaging.Broker
         private void Flush()
         {
             _queueChannel.Writer.Complete();
-            _queueChannel.Reader.Completion.Wait();
+            AsyncHelper.RunSynchronously(() => _queueChannel.Reader.Completion);
         }
 
         private sealed class QueuedMessage

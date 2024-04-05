@@ -518,8 +518,6 @@ dotnet_diagnostic.SA1503.severity = none
 dotnet_diagnostic.SA1633.severity = none
 
 # Microsoft.VisualStudio.Threading.Analyzers
-# VSTHRD002: Avoid problematic synchronous waits
-dotnet_diagnostic.VSTHRD002.severity = none
 # VSTHRD003: Avoid awaiting or returning a Task representing work that was not started within your context as that can lead to deadlocks
 dotnet_diagnostic.VSTHRD003.severity = none
 # VSTHRD104: Offer async option

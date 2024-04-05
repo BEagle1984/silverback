@@ -10,6 +10,7 @@
     THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,8 +25,14 @@ namespace Silverback.Util
             TaskContinuationOptions.None,
             TaskScheduler.Default);
 
+        [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
         public static TResult RunSynchronously<TResult>(Func<Task<TResult>> func)
         {
+            Task<TResult> task = func();
+
+            if (task.IsCompletedSuccessfully)
+                return task.Result;
+
             var culture = CultureInfo.CurrentCulture;
             var uiCulture = CultureInfo.CurrentUICulture;
 
@@ -33,7 +40,7 @@ namespace Silverback.Util
             {
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = uiCulture;
-                return func();
+                return task;
             }
 
             return TaskFactory.StartNew(
@@ -49,14 +56,19 @@ namespace Silverback.Util
 
         public static void RunSynchronously(Func<Task> func)
         {
+            Task task = func();
+
             var culture = CultureInfo.CurrentCulture;
             var uiCulture = CultureInfo.CurrentUICulture;
+
+            if (task.IsCompletedSuccessfully)
+                return;
 
             Task ExecuteTask()
             {
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = uiCulture;
-                return func();
+                return task;
             }
 
             TaskFactory.StartNew(

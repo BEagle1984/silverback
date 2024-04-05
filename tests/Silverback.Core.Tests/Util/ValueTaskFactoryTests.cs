@@ -22,13 +22,13 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         [SuppressMessage("", "CA2012", Justification = "Test method")]
         [SuppressMessage("", "VSTHRD104", Justification = "Test method")]
-        public void FromResult_IntResult_SuccessfulTaskCreated()
+        public async Task FromResult_IntResult_SuccessfulTaskCreated()
         {
             var result = ValueTaskFactory.FromResult(42);
 
             result.IsCompleted.Should().BeTrue();
             result.IsCompletedSuccessfully.Should().BeTrue();
-            result.Result.Should().Be(42);
+            (await result).Should().Be(42);
         }
 
         [Fact]

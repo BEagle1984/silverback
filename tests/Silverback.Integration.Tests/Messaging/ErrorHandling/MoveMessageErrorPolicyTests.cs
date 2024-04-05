@@ -21,6 +21,7 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
@@ -44,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             _serviceProvider = services.BuildServiceProvider();
 
             _broker = _serviceProvider.GetRequiredService<IBroker>();
-            _broker.ConnectAsync().Wait();
+            AsyncHelper.RunSynchronously(() => _broker.ConnectAsync());
         }
 
         [Fact]

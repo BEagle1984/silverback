@@ -3,6 +3,7 @@
 
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Util;
 
 namespace Silverback.Tests.Types
 {
@@ -18,10 +19,10 @@ namespace Silverback.Tests.Types
             : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))
         {
             if (isComplete)
-                CompleteAsync().Wait();
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
 
             if (isAborted)
-                AbortAsync(SequenceAbortReason.EnumerationAborted).Wait();
+                AsyncHelper.RunSynchronously(() => AbortAsync(SequenceAbortReason.EnumerationAborted));
         }
     }
 }

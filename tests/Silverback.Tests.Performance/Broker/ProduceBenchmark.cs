@@ -9,6 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 
 namespace Silverback.Tests.Performance.Broker
 {
@@ -73,7 +74,7 @@ namespace Silverback.Tests.Performance.Broker
 
             _broker = serviceProvider.GetRequiredService<IBroker>();
 
-            _broker.ConnectAsync().Wait();
+            AsyncHelper.RunSynchronously(() => _broker.ConnectAsync());
 
             _producer = _broker.Producers[0];
             _endpoint = _producer.Endpoint;

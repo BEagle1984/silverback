@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
                             .AddOutbound<TestEventThree>(new TestProducerEndpoint("topic3b"))));
 
             _broker = serviceProvider.GetRequiredService<TestBroker>();
-            _broker.ConnectAsync().Wait();
+            AsyncHelper.RunSynchronously(() => _broker.ConnectAsync());
 
             _worker = serviceProvider.GetRequiredService<IOutboxWorker>();
             _outboxWriter = serviceProvider.GetRequiredService<IOutboxWriter>();

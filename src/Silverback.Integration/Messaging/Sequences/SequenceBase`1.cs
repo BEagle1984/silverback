@@ -419,7 +419,8 @@ namespace Silverback.Messaging.Sequences
                         SequenceId
                     });
 
-                _abortingTaskCompletionSource?.Task.Wait();
+                if (_abortingTaskCompletionSource != null)
+                    AsyncHelper.RunSynchronously(() => _abortingTaskCompletionSource.Task);
 
                 _streamProvider.Dispose();
                 _abortCancellationTokenSource.Dispose();
