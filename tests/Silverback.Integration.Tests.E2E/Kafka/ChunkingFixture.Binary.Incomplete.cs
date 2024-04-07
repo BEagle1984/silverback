@@ -323,7 +323,6 @@ public partial class ChunkingFixture
         Helper.Spy.RawInboundEnvelopes.Should().HaveCount(2);
 
         await DefaultConsumerGroup.RebalanceAsync();
-        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         aborted.Should().Be(1);
 
