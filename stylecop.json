@@ -8,7 +8,7 @@
     },
     "documentationRules": {
       "xmlHeader": false,
-      "copyrightText": "Copyright (c) 2023 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)",
+      "copyrightText": "Copyright (c) 2024 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)",
       "documentInterfaces": true,
       "documentExposedElements": true,
       "documentInternalElements": false,
