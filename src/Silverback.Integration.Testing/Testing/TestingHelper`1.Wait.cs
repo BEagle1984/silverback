@@ -51,14 +51,14 @@ public abstract partial class TestingHelper
                 await Task.Delay(10, cancellationToken).ConfigureAwait(false);
             }
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
             const string message = "Timeout elapsed before the consumers successfully established a connection";
 
             if (throwTimeoutException)
                 throw new TimeoutException(message);
 
-            _logger.LogWarning(message);
+            _logger.LogWarning(ex, message);
         }
     }
 
@@ -91,14 +91,14 @@ public abstract partial class TestingHelper
             }
             while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
             const string message = "Timeout elapsed before all messages could be consumed and processed";
 
             if (throwTimeoutException)
                 throw new TimeoutException(message);
 
-            _logger.LogWarning(message);
+            _logger.LogWarning(ex, message);
         }
     }
 

@@ -16,6 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.KafkaAndMqtt;
 
+[Trait("Type", "E2E")] // Specified here because traits are not inherited from E2EFixture
 [Trait("Broker", "Kafka+MQTT")]
 public class MqttToKafkaFixture : KafkaFixture
 {
