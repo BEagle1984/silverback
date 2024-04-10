@@ -30,7 +30,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     {
         TestConsumerEndpointConfigurationBuilder<object> builder = new();
 
-        byte[]? key = BytesUtil.GetRandomBytes();
+        byte[] key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();
 
         byte[] DecryptionKeyCallback(string? keyIdentifier) => key;

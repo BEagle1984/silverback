@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Sequences;
 ///     The exception that is thrown when a sequence cannot be properly recreated (e.g. because of bad
 ///     ordering or similar).
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class SequenceException : SilverbackException
 {

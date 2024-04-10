@@ -31,6 +31,5 @@ public sealed class MqttClientIdFilterAttribute : MessageFilterAttribute
 
     /// <inheritdoc cref="MessageFilterAttribute.MustProcess" />
     public override bool MustProcess(object message) =>
-        message is IInboundEnvelope { Consumer: MqttConsumer consumer } &&
-        ClientId.Any(groupId => groupId == consumer.Configuration.ClientId);
+        message is IInboundEnvelope { Consumer: MqttConsumer consumer } && ClientId.Contains(consumer.Configuration.ClientId);
 }

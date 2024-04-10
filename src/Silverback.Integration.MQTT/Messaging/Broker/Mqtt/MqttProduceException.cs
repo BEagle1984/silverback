@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     The exception that is thrown when the result of a publish to the MQTT broker doesn't indicate success.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class MqttProduceException : ProduceException
 {

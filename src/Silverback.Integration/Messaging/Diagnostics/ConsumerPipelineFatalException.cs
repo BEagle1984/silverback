@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Diagnostics;
 ///     The exception that is rethrown by the <see cref="FatalExceptionLoggerConsumerBehavior" /> when a fatal
 ///     exception occurs down the consumer pipeline.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class ConsumerPipelineFatalException : SilverbackException
 {

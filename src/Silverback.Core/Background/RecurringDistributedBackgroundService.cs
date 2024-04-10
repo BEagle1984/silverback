@@ -59,32 +59,36 @@ public abstract class RecurringDistributedBackgroundService : DistributedBackgro
         while (!stoppingToken.IsCancellationRequested)
         {
             DistributedLockHandle lockHandle = await DistributedLock.AcquireAsync(stoppingToken).ConfigureAwait(false);
-            using CancellationTokenSource linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-                stoppingToken,
-                lockHandle.LockLostToken);
+            using CancellationTokenSource linkedCancellationTokenSource =
+                CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, lockHandle.LockLostToken);
 
             await using (lockHandle)
             {
-                while (!linkedCancellationTokenSource.IsCancellationRequested)
-                {
-                    if (_enabled)
-                    {
-                        await ExecuteLockedAsync(linkedCancellationTokenSource.Token).ConfigureAwait(false);
-
-                        if (linkedCancellationTokenSource.IsCancellationRequested)
-                            break;
-
-                        await SleepAsync(_interval, linkedCancellationTokenSource.Token).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await SleepAsync(TimeSpan.FromMilliseconds(100), linkedCancellationTokenSource.Token).ConfigureAwait(false);
-                    }
-                }
+                await ExecuteWhileLockedAsync(linkedCancellationTokenSource).ConfigureAwait(false);
             }
         }
 
         _logger.LogRecurringBackgroundServiceStopped(this);
+    }
+
+    private async Task ExecuteWhileLockedAsync(CancellationTokenSource linkedCancellationTokenSource)
+    {
+        while (!linkedCancellationTokenSource.IsCancellationRequested)
+        {
+            if (_enabled)
+            {
+                await ExecuteLockedAsync(linkedCancellationTokenSource.Token).ConfigureAwait(false);
+
+                if (linkedCancellationTokenSource.IsCancellationRequested)
+                    break;
+
+                await SleepAsync(_interval, linkedCancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            else
+            {
+                await SleepAsync(TimeSpan.FromMilliseconds(100), linkedCancellationTokenSource.Token).ConfigureAwait(false);
+            }
+        }
     }
 
     private async Task SleepAsync(TimeSpan delay, CancellationToken stoppingToken)

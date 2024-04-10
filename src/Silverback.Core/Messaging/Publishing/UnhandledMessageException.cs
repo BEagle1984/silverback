@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Publishing;
 ///     The exception that is thrown when some published messages aren't handled by any registered
 ///     subscriber.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class UnhandledMessageException : SilverbackException
 {

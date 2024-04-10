@@ -96,7 +96,7 @@ internal sealed class ClientSession : IDisposable, IClientSession
     {
         lock (_subscriptions)
         {
-            if (_subscriptions.All(
+            if (_subscriptions.TrueForAll(
                 subscription => !subscription.IsMatch(message, clientOptions) ||
                                 !_sharedSubscriptionsManager.IsActive(subscription)))
             {

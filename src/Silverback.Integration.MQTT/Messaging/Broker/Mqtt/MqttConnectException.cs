@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     The exception that is thrown when the MQTT client connection fails.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class MqttConnectException : SilverbackException
 {

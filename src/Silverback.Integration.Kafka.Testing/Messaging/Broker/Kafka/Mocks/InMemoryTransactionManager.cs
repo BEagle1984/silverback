@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
@@ -27,7 +26,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
         lock (_producersInfo)
         {
-            TransactionalProducerInfo? producerInfo = _producersInfo.FirstOrDefault(info => info.TransactionalId == transactionalId);
+            TransactionalProducerInfo? producerInfo = _producersInfo.Find(info => info.TransactionalId == transactionalId);
 
             if (producerInfo == null)
             {
@@ -96,11 +95,11 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
         if (transactionalUniqueId == Guid.Empty)
             throw new InvalidOperationException("Transactions have not been initialized.");
 
-        return _producersInfo.FirstOrDefault(info => info.TransactionalUniqueId == transactionalUniqueId) ??
+        return _producersInfo.Find(info => info.TransactionalUniqueId == transactionalUniqueId) ??
                throw new InvalidOperationException("The producer has been fenced.");
     }
 
-    private class TransactionalProducerInfo
+    private sealed class TransactionalProducerInfo
     {
         public TransactionalProducerInfo(string transactionalId)
         {

@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Serialization;
 ///     specific error occurs, other exceptions related to reflection or the underlying serializer are not
 ///     wrapped.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class MessageSerializerException : SilverbackException
 {

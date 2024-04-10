@@ -35,6 +35,5 @@ public sealed class KafkaGroupIdFilterAttribute : MessageFilterAttribute
         MessageIsFromAllowedGroups(message) || message is IMessageStreamProvider;
 
     private bool MessageIsFromAllowedGroups(object message) =>
-        message is IInboundEnvelope { Consumer: KafkaConsumer consumer }
-        && GroupId.Any(groupId => groupId == consumer.Configuration.GroupId);
+        message is IInboundEnvelope { Consumer: KafkaConsumer consumer } && GroupId.Contains(consumer.Configuration.GroupId);
 }

@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     The exception that is thrown when the broker client configuration is not valid.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class BrokerConfigurationException : SilverbackConfigurationException
 {

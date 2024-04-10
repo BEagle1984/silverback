@@ -87,14 +87,19 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
         if (TopicPartitions.Any(topicPartition => topicPartition.Partition.Value < Partition.Any))
             throw new BrokerConfigurationException("The partition must be a value greater or equal to 0, or Partition.Any.");
 
-        if (PartitionOffsetsProvider != null &&
-            TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any))
+        if (PartitionOffsetsProvider != null && TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any))
         {
             throw new BrokerConfigurationException(
                 $"Cannot specify a {nameof(PartitionOffsetsProvider)} if the partitions are already specified. " +
                 "Use Partition.Any when specifying the topic partition or remove the resolver.");
         }
 
+        ValidateTopicPartitions();
+        ValidatePartitionsAssignment();
+    }
+
+    private void ValidateTopicPartitions()
+    {
         foreach (IGrouping<string, TopicPartitionOffset> groupedPartitions in TopicPartitions.GroupBy(topicPartition => topicPartition.Topic))
         {
             List<Partition> partitions = groupedPartitions.Select(topicPartition => topicPartition.Partition).ToList();
@@ -105,12 +110,15 @@ public sealed record KafkaConsumerEndpointConfiguration : ConsumerEndpointConfig
                 throw new BrokerConfigurationException("Each partition must be specified only once.");
             }
 
-            if (partitions.Any(partition => partition == Partition.Any) && partitions.Count > 1)
+            if (partitions.Exists(partition => partition == Partition.Any) && partitions.Count > 1)
             {
                 throw new BrokerConfigurationException("Cannot mix Partition.Any with a specific partition assignment for the same topic.");
             }
         }
+    }
 
+    private void ValidatePartitionsAssignment()
+    {
         if (TopicPartitions.Any(topicPartition => topicPartition.Partition == Partition.Any) &&
             TopicPartitions.Any(topicPartition => topicPartition.Partition != Partition.Any) &&
             PartitionOffsetsProvider == null)

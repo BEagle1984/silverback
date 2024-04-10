@@ -219,7 +219,7 @@ internal sealed class BrokerClientCallbacksInvoker : IBrokerClientCallbacksInvok
 
         return _hasCallbacks.GetOrAdd(
             typeof(TCallback),
-            static (_, types) => types.Any(type => typeof(TCallback).IsAssignableFrom(type)),
+            static (_, types) => types.Exists(type => typeof(TCallback).IsAssignableFrom(type)),
             _callbackTypes);
     }
 }

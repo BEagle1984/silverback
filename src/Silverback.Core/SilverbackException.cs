@@ -9,7 +9,7 @@ namespace Silverback;
 /// <summary>
 ///     The base class for all the custom exceptions thrown by Silverback.
 /// </summary>
-[Serializable]
+[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public abstract class SilverbackException : Exception
 {

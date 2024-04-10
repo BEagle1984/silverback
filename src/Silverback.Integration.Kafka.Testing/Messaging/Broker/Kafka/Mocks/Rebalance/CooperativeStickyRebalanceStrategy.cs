@@ -75,7 +75,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
     {
         if (unassignedPartitions.Count > 0)
         {
-            TopicPartition topicPartition = unassignedPartitions.First();
+            TopicPartition topicPartition = unassignedPartitions[0];
 
             assignment.Partitions.Add(topicPartition);
             assignedPartitions.GetOrAddDefault(assignment.Consumer).Add(topicPartition);
@@ -97,7 +97,7 @@ internal class CooperativeStickyRebalanceStrategy : IRebalanceStrategy
         PartitionAssignment? revokableAssignment = FindRevokablaAssignment(partitionAssignments, partitionsPerConsumer);
         if (revokableAssignment != null)
         {
-            TopicPartition topicPartition = revokableAssignment.Partitions.Last();
+            TopicPartition topicPartition = revokableAssignment.Partitions[^1];
 
             assignment.Partitions.Add(topicPartition);
             assignedPartitions.GetOrAddDefault(assignment.Consumer).Add(topicPartition);

@@ -139,7 +139,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
             if (_manuallyAssignedConsumers.Contains(consumer))
                 UnassignCore(consumer);
 
-            if (_subscribedConsumers.Any(subscribedConsumer => subscribedConsumer.Consumer == consumer))
+            if (_subscribedConsumers.Exists(subscribedConsumer => subscribedConsumer.Consumer == consumer))
                 UnsubscribeCore(consumer);
 
             ScheduleRebalance();
@@ -241,7 +241,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         while (!cancellationToken.IsCancellationRequested)
         {
             if (_subscribedConsumers.Select(subscribedConsumer => subscribedConsumer.Consumer).All(HasFinishedConsuming) &&
-                _manuallyAssignedConsumers.All(HasFinishedConsuming))
+                _manuallyAssignedConsumers.TrueForAll(HasFinishedConsuming))
             {
                 return;
             }
@@ -289,14 +289,14 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
     private PartitionAssignmentStrategy GetAssignmentStrategy()
     {
-        if (_subscriptions.All(
+        if (_subscriptions.TrueForAll(
             subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
                             subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.CooperativeSticky)))
         {
             return PartitionAssignmentStrategy.CooperativeSticky;
         }
 
-        if (_subscriptions.All(
+        if (_subscriptions.TrueForAll(
             subscription => subscription.Consumer.Config.PartitionAssignmentStrategy.HasValue &&
                             subscription.Consumer.Config.PartitionAssignmentStrategy.Value.HasFlag(PartitionAssignmentStrategy.RoundRobin)))
         {
@@ -342,7 +342,7 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
         if (!consumer.PartitionsAssigned)
             return false;
 
-        return consumer.Assignment.All(
+        return consumer.Assignment.TrueForAll(
             topicPartition =>
             {
                 IInMemoryTopic topic = _topicCollection.Get(topicPartition.Topic, consumer.Config);
