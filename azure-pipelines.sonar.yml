@@ -21,7 +21,7 @@ steps:
       scannerMode: 'MSBuild'
       projectKey: 'silverback'
       projectName: 'silverback'
-      projectVersion: '3.2.0'
+      projectVersion: '5.0.0'
       extraProperties: |
         sonar.exclusions=**/obj/**,**/*.dll
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.*.opencover.xml
@@ -37,7 +37,7 @@ steps:
         --verbosity Normal \
         --logger trx \
         --framework net8.0 \
-        --filter "Type!=E2E&Dependency!=Docker" \
+        --filter "Type!=E2E&Dependency!=Docker&CI!=Skip" \
         --collect "Code coverage" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
@@ -50,7 +50,7 @@ steps:
         --verbosity Normal \
         --logger trx \
         --framework net8.0 \
-        --filter "Type=E2E&Dependency!=Docker" \
+        --filter "Type=E2E&Dependency!=Docker&CI!=Skip" \
         --collect "Code coverage" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \

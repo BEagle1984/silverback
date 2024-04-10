@@ -68,6 +68,7 @@ public class RecurringDistributedBackgroundServiceFixture
         executed.Should().BeTrue();
     }
 
+    // TODO: Investigate flaky test
     [Fact]
     public async Task StartAsync_ShouldNotExecuteInParallel_WhenInMemoryLockIsUsed()
     {
@@ -81,8 +82,7 @@ public class RecurringDistributedBackgroundServiceFixture
                 .AddFakeLogger()
                 .AddSilverback()
                 .UseInMemoryLock());
-        IDistributedLockFactory lockFactory = serviceProvider
-            .GetRequiredService<IDistributedLockFactory>();
+        IDistributedLockFactory lockFactory = serviceProvider.GetRequiredService<IDistributedLockFactory>();
 
         using TestRecurringDistributedBackgroundService service1 = new(
             async stoppingToken => await ExecuteTask(stoppingToken, () => executed1 = true),
