@@ -424,15 +424,18 @@ public class MessageStreamProviderTests
         MessageStreamProvider<IEvent> provider = new();
         ILazyMessageStreamEnumerable<TestEventTwo> lazyStream = provider.CreateLazyStream<TestEventTwo>();
         List<TestEventTwo> receivedTwos = [];
+        bool completed = false;
 
         Task.Run(
             async () =>
             {
                 await lazyStream.WaitUntilCreatedAsync();
-                foreach (TestEventTwo message in lazyStream.Stream!)
+                await foreach (TestEventTwo message in lazyStream.Stream!)
                 {
                     receivedTwos.Add(message);
                 }
+
+                completed = true;
             }).FireAndForget();
 
         Task createStreamTask = lazyStream.WaitUntilCreatedAsync();
@@ -453,6 +456,9 @@ public class MessageStreamProviderTests
         receivedTwos.Should().HaveCount(2);
 
         await provider.CompleteAsync();
+
+        await AsyncTestingUtil.WaitAsync(() => completed);
+        completed.Should().BeTrue();
     }
 
     [Fact]
