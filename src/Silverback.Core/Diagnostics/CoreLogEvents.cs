@@ -11,7 +11,7 @@ namespace Silverback.Diagnostics;
 /// <summary>
 ///     Contains the <see cref="LogEvent" /> constants of all events logged by the Silverback.Core package.
 /// </summary>
-[SuppressMessage("ReSharper", "SA1118", Justification = "Cleaner and clearer this way")]
+[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "Cleaner and clearer this way")]
 public static class CoreLogEvents
 {
     /// <summary>

@@ -10,7 +10,6 @@ namespace Silverback;
 /// <summary>
 ///     Used to persist objects that are valid within the same DI scope. This is used for example to share the storage transaction.
 /// </summary>
-// TODO: Test new methods
 public class SilverbackContext
 {
     private readonly Dictionary<Guid, object> _objects = [];
@@ -24,11 +23,10 @@ public class SilverbackContext
     /// <param name="obj">
     ///     The object.
     /// </param>
-    // TODO: Test exception behavior
     public void AddObject(Guid objectTypeId, object obj)
     {
         if (!_objects.TryAdd(objectTypeId, obj) && GetObject(objectTypeId) != obj)
-            throw new InvalidOperationException($"An object of type {objectTypeId} is already set.");
+            throw new InvalidOperationException($"An object of type {objectTypeId} has already been added.");
     }
 
     /// <summary>

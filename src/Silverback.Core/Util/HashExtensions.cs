@@ -11,7 +11,6 @@ internal static class HashExtensions
 {
     private static readonly SHA256 ShaHash = SHA256.Create();
 
-    // TODO: Test
     public static string GetSha256Hash(this string input)
     {
         byte[] hashBytes = ShaHash.ComputeHash(Encoding.UTF8.GetBytes(input));

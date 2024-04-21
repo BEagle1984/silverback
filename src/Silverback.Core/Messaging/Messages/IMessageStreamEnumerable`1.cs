@@ -12,7 +12,4 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TMessage">
 ///     The type of the messages being streamed.
 /// </typeparam>
-public interface IMessageStreamEnumerable<out TMessage> : IEnumerable<TMessage>, IAsyncEnumerable<TMessage>
-{
-    // TODO: Add Count property when size is known (e.g. batch)
-}
+public interface IMessageStreamEnumerable<out TMessage> : IEnumerable<TMessage>, IAsyncEnumerable<TMessage>;

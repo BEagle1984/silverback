@@ -18,11 +18,11 @@ internal static class CoreLoggerExtensions
     private static readonly Action<ILogger, string, Exception?> BackgroundServiceException =
         SilverbackLoggerMessage.Define<string>(CoreLogEvents.BackgroundServiceException);
 
-    private static readonly Action<ILogger, string, Exception?>
-        RecurringBackgroundServiceStopped = SilverbackLoggerMessage.Define<string>(CoreLogEvents.RecurringBackgroundServiceStopped);
+    private static readonly Action<ILogger, string, Exception?> RecurringBackgroundServiceStopped =
+        SilverbackLoggerMessage.Define<string>(CoreLogEvents.RecurringBackgroundServiceStopped);
 
-    private static readonly Action<ILogger, string, double, Exception?>
-        RecurringBackgroundServiceSleeping = SilverbackLoggerMessage.Define<string, double>(CoreLogEvents.RecurringBackgroundServiceSleeping);
+    private static readonly Action<ILogger, string, double, Exception?> RecurringBackgroundServiceSleeping =
+        SilverbackLoggerMessage.Define<string, double>(CoreLogEvents.RecurringBackgroundServiceSleeping);
 
     private static readonly Action<ILogger, string, Exception?> LockAcquired =
         SilverbackLoggerMessage.Define<string>(CoreLogEvents.LockAcquired);

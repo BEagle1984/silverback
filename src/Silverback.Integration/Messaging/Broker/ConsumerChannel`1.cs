@@ -10,7 +10,6 @@ using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker;
 
-// TODO: Write dedicated fixture (?)
 internal class ConsumerChannel<T> : IConsumerChannel, IDisposable
 {
     private readonly int _capacity;

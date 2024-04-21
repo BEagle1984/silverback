@@ -249,7 +249,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             if (_failedAttemptsDictionary.IsEmpty)
                 return;
 
-            // TODO: Is this the most efficient way to remove a bunch of items?
             foreach (IBrokerMessageIdentifier? messageIdentifier in brokerMessageIdentifiers)
             {
                 _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
