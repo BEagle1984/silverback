@@ -15,7 +15,6 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.EndpointResolvers;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Silverback.Util;
@@ -43,7 +42,6 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-            Substitute.For<IOutboundEnvelopeFactory>(),
             Substitute.For<IServiceProvider>(),
             Substitute.For<IProducerLogger<KafkaProducer>>());
     }

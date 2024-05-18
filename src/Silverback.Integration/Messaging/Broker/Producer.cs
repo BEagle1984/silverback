@@ -24,8 +24,6 @@ public abstract class Producer : IProducer, IDisposable
 
     private readonly IProducerLogger<IProducer> _logger;
 
-    private readonly IOutboundEnvelopeFactory _envelopeFactory;
-
     private bool _isDisposed;
 
     /// <summary>
@@ -43,9 +41,6 @@ public abstract class Producer : IProducer, IDisposable
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
-    /// <param name="envelopeFactory">
-    ///     The <see cref="IOutboundEnvelopeFactory" />.
-    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
     /// </param>
@@ -57,7 +52,6 @@ public abstract class Producer : IProducer, IDisposable
         IBrokerClient client,
         ProducerEndpointConfiguration endpointConfiguration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         IServiceProvider serviceProvider,
         IProducerLogger<IProducer> logger)
     {
@@ -65,7 +59,6 @@ public abstract class Producer : IProducer, IDisposable
         EndpointConfiguration = Check.NotNull(endpointConfiguration, nameof(endpointConfiguration));
         Client = Check.NotNull(client, nameof(client));
         _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
-        _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
     }
@@ -89,7 +82,7 @@ public abstract class Producer : IProducer, IDisposable
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null) =>
         Produce(
-            _envelopeFactory.CreateEnvelope(
+            OutboundEnvelopeFactory.CreateEnvelope(
                 message,
                 headers,
                 EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
@@ -139,7 +132,7 @@ public abstract class Producer : IProducer, IDisposable
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
         Produce(
-            _envelopeFactory.CreateEnvelope(
+            OutboundEnvelopeFactory.CreateEnvelope(
                 message,
                 headers,
                 EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
@@ -316,7 +309,7 @@ public abstract class Producer : IProducer, IDisposable
         object? message,
         IReadOnlyCollection<MessageHeader>? headers = null) =>
         ProduceAsync(
-            _envelopeFactory.CreateEnvelope(
+            OutboundEnvelopeFactory.CreateEnvelope(
                 message,
                 headers,
                 EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),

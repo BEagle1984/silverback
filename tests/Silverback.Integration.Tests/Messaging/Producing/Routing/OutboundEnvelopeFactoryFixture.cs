@@ -23,13 +23,7 @@ public class OutboundEnvelopeFactoryFixture
         MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
-        OutboundEnvelopeFactory factory = new(
-            new OutboundRoutingConfiguration
-            {
-                PublishOutboundMessagesToInternalBus = true
-            });
-
-        IOutboundEnvelope envelope = factory.CreateEnvelope(message, headers, endpoint, producer);
+        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer);
 
         envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
         envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);
@@ -46,13 +40,7 @@ public class OutboundEnvelopeFactoryFixture
         MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
-        OutboundEnvelopeFactory factory = new(
-            new OutboundRoutingConfiguration
-            {
-                PublishOutboundMessagesToInternalBus = true
-            });
-
-        IOutboundEnvelope envelope = factory.CreateEnvelope(null, headers, endpoint, producer);
+        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(null, headers, endpoint, producer);
 
         envelope.Should().BeOfType<OutboundEnvelope>();
         envelope.Message.Should().BeNull();
@@ -70,13 +58,7 @@ public class OutboundEnvelopeFactoryFixture
         MessageHeader[] headers = [new MessageHeader("three", "3"), new MessageHeader("four", "4")];
         IProducer producer = Substitute.For<IProducer>();
 
-        OutboundEnvelopeFactory factory = new(
-            new OutboundRoutingConfiguration
-            {
-                PublishOutboundMessagesToInternalBus = true
-            });
-
-        IOutboundEnvelope envelope = factory.CreateEnvelope(message, headers, endpoint, producer);
+        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer);
 
         envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
         envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message.Message);
@@ -96,7 +78,7 @@ public class OutboundEnvelopeFactoryFixture
         MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
         IProducer producer = Substitute.For<IProducer>();
 
-        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer, null, true);
+        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer);
 
         envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
         envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);
@@ -115,7 +97,7 @@ public class OutboundEnvelopeFactoryFixture
         IProducer producer = Substitute.For<IProducer>();
         OutboundEnvelope<TestEventOne> originalEnvelope = new(message, headers, endpoint, producer, null, true);
 
-        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateSimilarEnvelope(message, originalEnvelope);
+        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, originalEnvelope);
 
         envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
         envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message);

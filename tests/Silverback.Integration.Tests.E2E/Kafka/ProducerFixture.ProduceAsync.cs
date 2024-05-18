@@ -110,13 +110,12 @@ public partial class ProducerFixture
                                 .Produce<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .AddIntegrationSpyAndSubscriber());
 
-        IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
         KafkaProducer producer = (KafkaProducer)Helper.GetProducerForEndpoint(DefaultTopicName);
 
         for (int i = 1; i <= 3; i++)
         {
             await producer.ProduceAsync(
-                envelopeFactory.CreateEnvelope(
+                OutboundEnvelopeFactory.CreateEnvelope(
                     new TestEventOne { ContentEventOne = $"Hello E2E {i}!" },
                     new MessageHeaderCollection { { "x-custom", $"test {i}" }, { "two", "2" } },
                     new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.EndpointConfiguration),

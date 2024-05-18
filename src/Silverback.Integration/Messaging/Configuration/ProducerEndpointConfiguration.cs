@@ -73,6 +73,12 @@ public abstract record ProducerEndpointConfiguration : EndpointConfiguration
     public IOutboundMessageFilter? Filter { get; init; }
 
     /// <summary>
+    ///     Gets a value indicating whether the produced messages can be subscribed to.
+    ///     The default is <c>false</c>.
+    /// </summary>
+    public bool EnableSubscribing { get; init; }
+
+    /// <summary>
     ///     Gets the (base) type of the messages being routed via this producer.
     /// </summary>
     internal Type MessageType { get; init; } = typeof(object);

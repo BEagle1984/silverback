@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
@@ -32,9 +31,6 @@ public sealed class MqttProducer : Producer
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
-    /// <param name="envelopeFactory">
-    ///     The <see cref="IOutboundEnvelopeFactory" />.
-    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
@@ -46,7 +42,6 @@ public sealed class MqttProducer : Producer
         IMqttClientWrapper client,
         MqttClientConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         IServiceProvider serviceProvider,
         IProducerLogger<MqttProducer> logger)
         : base(
@@ -54,7 +49,6 @@ public sealed class MqttProducer : Producer
             client,
             Check.NotNull(configuration, nameof(configuration)).ProducerEndpoints.Single(),
             behaviorsProvider,
-            envelopeFactory,
             serviceProvider,
             logger)
     {

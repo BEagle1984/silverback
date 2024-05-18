@@ -79,6 +79,7 @@ uid: releases
     * Merged MessageId and KafkaKey headers -> MessageId will not be initialized with random Guid anymore
     * Deprecated the ProduceAsync with callback (it didn't make sense)
     * Deprecated NullMessageHandlingStrategy (now tombstones can always be consumed both as `null` or as `Tombstone`)
+    * Moved `PublishToInternalBus` 
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

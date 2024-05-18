@@ -6,12 +6,12 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Transactions;
 using Silverback.Util;
 
@@ -29,8 +29,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
 
-    private readonly IOutboundEnvelopeFactory _envelopeFactory;
-
     private readonly IServiceProvider _serviceProvider;
 
     private readonly ConcurrentDictionary<string, KafkaProducer> _producersByName = new();
@@ -41,7 +39,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         ProducerCollection producers,
         IProducerLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         RootServiceProvider rootServiceProvider)
     {
         _factory = Check.NotNull(factory, nameof(factory));
@@ -49,7 +46,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         _producers = Check.NotNull(producers, nameof(producers));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
-        _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
 
         // Ensure that the root service provider is used to resolve the needed service, to avoid premature disposal
         _serviceProvider = rootServiceProvider.ServiceProvider;
@@ -77,7 +73,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
                     TransactionalId = $"{configuration.TransactionalId}|{transaction.TransactionalIdSuffix}"
                 },
                 _behaviorsProvider,
-                _envelopeFactory,
                 _serviceProvider,
                 _producerLogger);
 
@@ -93,7 +88,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
                         client,
                         args.Configuration,
                         args.BehaviorsProvider,
-                        args.EnvelopeFactory,
                         args.ServiceProvider,
                         args.ProducerLogger);
                     args.Producers.Add(producer, false);
@@ -109,6 +103,7 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         return producer;
     }
 
+    [MustDisposeResource]
     public IEnumerator<KafkaProducer> GetEnumerator() => _producersByName.Values.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -119,7 +114,6 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
         ProducerCollection Producers,
         KafkaProducerConfiguration Configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> BehaviorsProvider,
-        IOutboundEnvelopeFactory EnvelopeFactory,
         IServiceProvider ServiceProvider,
         IProducerLogger<KafkaProducer> ProducerLogger);
 }

@@ -9,7 +9,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
@@ -22,8 +21,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _behaviorsProvider;
 
-    private readonly IOutboundEnvelopeFactory _envelopeFactory;
-
     private readonly IConfluentProducerWrapperFactory _confluentProducerWrapperFactory;
 
     private readonly IKafkaTransactionalProducerCollection _transactionalProducers;
@@ -32,7 +29,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
         KafkaClientsConfigurationActions configurationActions,
         IProducerLogger<KafkaProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         IConfluentProducerWrapperFactory confluentProducerWrapperFactory,
         IKafkaTransactionalProducerCollection transactionalProducers,
         IServiceProvider serviceProvider,
@@ -42,7 +38,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
         _configurationActions = Check.NotNull(configurationActions, nameof(configurationActions));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _behaviorsProvider = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider));
-        _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
         _confluentProducerWrapperFactory = Check.NotNull(confluentProducerWrapperFactory, nameof(confluentProducerWrapperFactory));
         _transactionalProducers = Check.NotNull(transactionalProducers, nameof(transactionalProducers));
     }
@@ -86,7 +81,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
                 confluentProducerWrapper,
                 trimmedConfiguration,
                 _behaviorsProvider,
-                _envelopeFactory,
                 ServiceProvider,
                 _producerLogger);
 

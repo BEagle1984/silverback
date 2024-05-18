@@ -11,7 +11,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -39,9 +38,6 @@ public sealed class KafkaProducer : Producer
     /// <param name="behaviorsProvider">
     ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
     /// </param>
-    /// <param name="envelopeFactory">
-    ///     The <see cref="IOutboundEnvelopeFactory" />.
-    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
@@ -53,7 +49,6 @@ public sealed class KafkaProducer : Producer
         IConfluentProducerWrapper client,
         KafkaProducerConfiguration configuration,
         IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         IServiceProvider serviceProvider,
         IProducerLogger<KafkaProducer> logger)
         : base(
@@ -61,7 +56,6 @@ public sealed class KafkaProducer : Producer
             client,
             Check.NotNull(configuration, nameof(configuration)).Endpoints.Single(),
             behaviorsProvider,
-            envelopeFactory,
             serviceProvider,
             logger)
     {

@@ -49,13 +49,13 @@ public class ProduceBehavior : IBehavior, ISorted
                     await produceStrategy.ProduceAsync(
                         messages.Select(
                             enumeratedMessage =>
-                                OutboundEnvelopeFactory.CreateSimilarEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
+                                OutboundEnvelopeFactory.CreateEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
                     break;
                 case IOutboundEnvelope { Message: IEnumerable<object> messages }:
                     await produceStrategy.ProduceAsync(
                         messages.Select(
                             enumeratedMessage =>
-                                OutboundEnvelopeFactory.CreateSimilarEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
+                                OutboundEnvelopeFactory.CreateEnvelope(enumeratedMessage, envelope))).ConfigureAwait(false);
                     break;
                 default:
                     await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);

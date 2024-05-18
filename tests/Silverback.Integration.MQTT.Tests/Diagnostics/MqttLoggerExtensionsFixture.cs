@@ -18,7 +18,6 @@ using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing.EndpointResolvers;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Logging;
 using Xunit;
@@ -84,7 +83,6 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                     ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-            Substitute.For<IOutboundEnvelopeFactory>(),
             serviceProvider,
             Substitute.For<IProducerLogger<MqttProducer>>());
     }

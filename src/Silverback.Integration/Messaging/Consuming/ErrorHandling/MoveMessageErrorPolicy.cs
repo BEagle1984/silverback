@@ -59,7 +59,6 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             ApplyRule,
             MessageToPublishFactory,
             serviceProvider.GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
-            serviceProvider.GetRequiredService<IOutboundEnvelopeFactory>(),
             serviceProvider,
             serviceProvider.GetRequiredService<IConsumerLogger<MoveMessageErrorPolicy>>());
 
@@ -75,8 +74,6 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
         private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
-        private readonly IOutboundEnvelopeFactory _outboundEnvelopeFactory;
-
         private IProducer? _producer;
 
         public MoveMessageErrorPolicyImplementation(
@@ -89,7 +86,6 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
             IBrokerOutboundMessageEnrichersFactory enricherFactory,
-            IOutboundEnvelopeFactory outboundEnvelopeFactory,
             IServiceProvider serviceProvider,
             IConsumerLogger<MoveMessageErrorPolicy> logger)
             : base(
@@ -105,7 +101,6 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
             _producers = producers;
             _transformationAction = transformationAction;
             _enricherFactory = enricherFactory;
-            _outboundEnvelopeFactory = outboundEnvelopeFactory;
             _logger = logger;
         }
 
@@ -140,7 +135,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
 
             IOutboundEnvelope outboundEnvelope =
                 envelope is IInboundEnvelope deserializedEnvelope
-                    ? _outboundEnvelopeFactory.CreateEnvelope(
+                    ? OutboundEnvelopeFactory.CreateEnvelope(
                         deserializedEnvelope.Message,
                         deserializedEnvelope.Headers,
                         _producer.EndpointConfiguration.Endpoint.GetEndpoint(
@@ -148,7 +143,7 @@ public record MoveMessageErrorPolicy : ErrorPolicyBase
                             _producer.EndpointConfiguration,
                             serviceProvider),
                         _producer)
-                    : _outboundEnvelopeFactory.CreateEnvelope(
+                    : OutboundEnvelopeFactory.CreateEnvelope(
                         envelope.RawMessage,
                         envelope.Headers,
                         _producer.EndpointConfiguration.Endpoint.GetEndpoint(

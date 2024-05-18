@@ -10,39 +10,77 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.Routing;
 
-internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
+/// <summary>
+///     The factory used to build the <see cref="IOutboundEnvelope" /> or <see cref="IOutboundEnvelope{TMessage}" /> instances.
+/// </summary>
+public static class OutboundEnvelopeFactory
 {
-    private readonly IOutboundRoutingConfiguration _routingConfiguration;
-
-    public OutboundEnvelopeFactory(IOutboundRoutingConfiguration routingConfiguration)
-    {
-        _routingConfiguration = routingConfiguration;
-    }
-
-    public IOutboundEnvelope CreateEnvelope(
+    /// <summary>
+    ///     Creates a new instance of <see cref="IOutboundEnvelope" /> or <see cref="IOutboundEnvelope{TMessage}" />.
+    /// </summary>
+    /// <param name="message">
+    ///     The message to be wrapped in the envelope.
+    /// </param>
+    /// <param name="headers">
+    ///     The message headers.
+    /// </param>
+    /// <param name="endpoint">
+    ///     The destination endpoint.
+    /// </param>
+    /// <param name="producer">
+    ///     The producer to be used to produce this message.
+    /// </param>
+    /// <param name="context">
+    ///     The <see cref="SilverbackContext" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IOutboundEnvelope" /> instance.
+    /// </returns>
+    public static IOutboundEnvelope CreateEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
-        SilverbackContext? context = null) =>
-        CreateEnvelope(message, headers, endpoint, producer, context, _routingConfiguration.PublishOutboundMessagesToInternalBus);
+        SilverbackContext? context = null)
+    {
+        Check.NotNull(endpoint, nameof(endpoint));
 
-    internal static IOutboundEnvelope CreateSimilarEnvelope(object? message, IOutboundEnvelope originalEnvelope) =>
-        CreateEnvelope(
+        return CreateEnvelope(message, headers, endpoint, producer, context, endpoint.Configuration.EnableSubscribing);
+    }
+
+    /// <summary>
+    ///     Creates a new instance of <see cref="IOutboundEnvelope" /> or <see cref="IOutboundEnvelope{TMessage}" /> cloning the original
+    ///     envelope and replacing the message.
+    /// </summary>
+    /// <param name="message">
+    ///     The message to be wrapped in the envelope.
+    /// </param>
+    /// <param name="originalEnvelope">
+    ///     The original envelope to be cloned.
+    /// </param>
+    /// <returns>
+    ///     The new <see cref="IOutboundEnvelope" /> instance.
+    /// </returns>
+    public static IOutboundEnvelope CreateEnvelope(object? message, IOutboundEnvelope originalEnvelope)
+    {
+        Check.NotNull(originalEnvelope, nameof(originalEnvelope));
+
+        return CreateEnvelope(
             message,
             originalEnvelope.Headers,
             originalEnvelope.Endpoint,
             originalEnvelope.Producer,
             originalEnvelope.Context,
             originalEnvelope.AutoUnwrap);
+    }
 
-    internal static IOutboundEnvelope CreateEnvelope(
+    private static IOutboundEnvelope CreateEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
         SilverbackContext? context,
-        bool publishToInternalBus)
+        bool autoUnwrap)
     {
         Check.NotNull(endpoint, nameof(endpoint));
         Check.NotNull(producer, nameof(producer));
@@ -50,7 +88,7 @@ internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
         if (message is IMessageWithHeaders { Headers.Count: > 0 } messageWithHeaders)
         {
             IOutboundEnvelope outboundEnvelope = messageWithHeaders.Message == null
-                ? new OutboundEnvelope(null, headers, endpoint, producer, context, publishToInternalBus)
+                ? new OutboundEnvelope(null, headers, endpoint, producer, context, autoUnwrap)
                 : (IOutboundEnvelope)Activator.CreateInstance(
                     typeof(OutboundEnvelope<>).MakeGenericType(messageWithHeaders.Message.GetType()),
                     messageWithHeaders.Message,
@@ -58,7 +96,7 @@ internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
                     endpoint,
                     producer,
                     context,
-                    publishToInternalBus)!;
+                    autoUnwrap)!;
 
             outboundEnvelope.Headers.AddRange(messageWithHeaders.Headers);
 
@@ -66,7 +104,7 @@ internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
         }
 
         return message == null
-            ? new OutboundEnvelope(null, headers, endpoint, producer, context, publishToInternalBus)
+            ? new OutboundEnvelope(null, headers, endpoint, producer, context, autoUnwrap)
             : (IOutboundEnvelope)Activator.CreateInstance(
                 typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
                 message,
@@ -74,6 +112,6 @@ internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
                 endpoint,
                 producer,
                 context,
-                publishToInternalBus)!;
+                autoUnwrap)!;
     }
 }

@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing;
@@ -27,7 +26,6 @@ internal class DelegatedProducer : Producer
             DelegatedClientInstance,
             endpointConfiguration,
             serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-            serviceProvider.GetRequiredService<IOutboundEnvelopeFactory>(),
             serviceProvider,
             serviceProvider.GetRequiredService<IProducerLogger<Producer>>())
     {

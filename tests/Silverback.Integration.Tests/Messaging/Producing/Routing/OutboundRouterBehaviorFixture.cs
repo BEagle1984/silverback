@@ -30,11 +30,9 @@ public class OutboundRouterBehaviorFixture
         IProducer producer2 = Substitute.For<IProducer>();
         producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
         producers.Add(producer2);
-        OutboundRoutingConfiguration outboundRoutingConfiguration = new();
         OutboundRouterBehavior behavior = new(
             publisher,
             producers,
-            new OutboundEnvelopeFactory(outboundRoutingConfiguration),
             new SilverbackContext(),
             Substitute.For<IServiceProvider>());
 
@@ -79,11 +77,9 @@ public class OutboundRouterBehaviorFixture
         IProducer producer2 = Substitute.For<IProducer>();
         producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
         producers.Add(producer2);
-        OutboundRoutingConfiguration outboundRoutingConfiguration = new();
         OutboundRouterBehavior behavior = new(
             publisher,
             producers,
-            new OutboundEnvelopeFactory(outboundRoutingConfiguration),
             new SilverbackContext(),
             Substitute.For<IServiceProvider>());
 
@@ -131,11 +127,9 @@ public class OutboundRouterBehaviorFixture
         IProducer producer2 = Substitute.For<IProducer>();
         producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
         producers.Add(producer2);
-        OutboundRoutingConfiguration outboundRoutingConfiguration = new();
         OutboundRouterBehavior behavior = new(
             publisher,
             producers,
-            new OutboundEnvelopeFactory(outboundRoutingConfiguration),
             new SilverbackContext(),
             Substitute.For<IServiceProvider>());
 

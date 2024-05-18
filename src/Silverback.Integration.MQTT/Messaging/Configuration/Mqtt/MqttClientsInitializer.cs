@@ -9,7 +9,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Mqtt;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
@@ -24,8 +23,6 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
 
     private readonly IBrokerBehaviorsProvider<IProducerBehavior> _producerBehaviorsProvider;
 
-    private readonly IOutboundEnvelopeFactory _envelopeFactory;
-
     private readonly IConsumerLogger<MqttConsumer> _consumerLogger;
 
     private readonly IBrokerBehaviorsProvider<IConsumerBehavior> _consumerBehaviorsProvider;
@@ -35,7 +32,6 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         IMqttClientWrapperFactory clientWrapperFactory,
         IProducerLogger<MqttProducer> producerLogger,
         IBrokerBehaviorsProvider<IProducerBehavior> producerBehaviorsProvider,
-        IOutboundEnvelopeFactory envelopeFactory,
         IConsumerLogger<MqttConsumer> consumerLogger,
         IBrokerBehaviorsProvider<IConsumerBehavior> consumerBehaviorsProvider,
         IServiceProvider serviceProvider,
@@ -46,7 +42,6 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
         _clientWrapperFactory = Check.NotNull(clientWrapperFactory, nameof(clientWrapperFactory));
         _producerLogger = Check.NotNull(producerLogger, nameof(producerLogger));
         _producerBehaviorsProvider = Check.NotNull(producerBehaviorsProvider, nameof(producerBehaviorsProvider));
-        _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
         _consumerLogger = Check.NotNull(consumerLogger, nameof(consumerLogger));
         _consumerBehaviorsProvider = Check.NotNull(consumerBehaviorsProvider, nameof(consumerBehaviorsProvider));
     }
@@ -123,7 +118,6 @@ internal class MqttClientsInitializer : BrokerClientsInitializer
                 mqttClientWrapper,
                 producerConfiguration,
                 _producerBehaviorsProvider,
-                _envelopeFactory,
                 ServiceProvider,
                 _producerLogger);
 

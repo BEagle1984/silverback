@@ -54,6 +54,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
 
     private IOutboundMessageFilter? _filter;
 
+    private bool? _enableSubscribing;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" /> class.
     /// </summary>
@@ -174,6 +176,30 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
         return This;
     }
 
+    /// <summary>
+    ///     Enable subscribing to the produced messages.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder EnableSubscribing()
+    {
+        _enableSubscribing = true;
+        return This;
+    }
+
+    /// <summary>
+    ///     Disable subscribing to the produced messages.
+    /// </summary>
+    /// <returns>
+    ///     The endpoint builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder DisableSubscribing()
+    {
+        _enableSubscribing = false;
+        return This;
+    }
+
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.Build" />
     public sealed override TConfiguration Build()
     {
@@ -193,7 +219,8 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
                 },
             MessageEnrichers = _messageEnrichers.Union(configuration.MessageEnrichers).AsValueReadOnlyCollection(),
             Encryption = _encryptionSettings ?? configuration.Encryption,
-            Filter = _filter ?? configuration.Filter
+            Filter = _filter ?? configuration.Filter,
+            EnableSubscribing = _enableSubscribing ?? configuration.EnableSubscribing
         };
 
         configuration.Validate();

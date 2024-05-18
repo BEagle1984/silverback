@@ -15,7 +15,6 @@ using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Producing.EndpointResolvers;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -68,7 +67,6 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
                 ])
             },
             Substitute.For<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-            Substitute.For<IOutboundEnvelopeFactory>(),
             Substitute.For<IServiceProvider>(),
             Substitute.For<IProducerLogger<KafkaProducer>>());
 

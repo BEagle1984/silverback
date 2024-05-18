@@ -88,10 +88,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
             .AddScopedBehavior<OutboundRouterBehavior>()
             .AddScopedBehavior<ProduceBehavior>()
             .AddExtensibleFactory<IOutboxReaderFactory, OutboxReaderFactory>()
-            .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>()
-            .Services
-            .AddSingleton<IOutboundEnvelopeFactory, OutboundEnvelopeFactory>()
-            .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration());
+            .AddExtensibleFactory<IOutboxWriterFactory, OutboxWriterFactory>();
 
     private static void AddLoggers(SilverbackBuilder builder) =>
         builder

@@ -21,8 +21,6 @@ public class OutboundRouterBehavior : IBehavior, ISorted
 
     private readonly IProducerCollection _producers;
 
-    private readonly IOutboundEnvelopeFactory _envelopeFactory;
-
     private readonly SilverbackContext _context;
 
     private readonly IServiceProvider _serviceProvider;
@@ -36,9 +34,6 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     /// <param name="producers">
     ///     The <see cref="IProducerCollection" />.
     /// </param>
-    /// <param name="envelopeFactory">
-    ///     The <see cref="IOutboundEnvelopeFactory" />.
-    /// </param>
     /// <param name="context">
     ///     The <see cref="SilverbackContext" />.
     /// </param>
@@ -48,13 +43,11 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     public OutboundRouterBehavior(
         IPublisher publisher,
         IProducerCollection producers,
-        IOutboundEnvelopeFactory envelopeFactory,
         SilverbackContext context,
         IServiceProvider serviceProvider)
     {
         _publisher = Check.NotNull(publisher, nameof(publisher));
         _producers = Check.NotNull(producers, nameof(producers));
-        _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
         _context = Check.NotNull(context, nameof(context));
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
@@ -97,7 +90,7 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     }
 
     private IOutboundEnvelope CreateOutboundEnvelope(object message, IProducer producer) =>
-        _envelopeFactory.CreateEnvelope(
+        OutboundEnvelopeFactory.CreateEnvelope(
             message,
             [],
             producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, _serviceProvider),
