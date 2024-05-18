@@ -14,6 +14,7 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Diagnostics;
@@ -58,6 +59,8 @@ public class KafkaActivityEnricherFixture
         ProducerPipelineContext context = new(
             envelope,
             Substitute.For<IProducer>(),
+            [],
+            _ => ValueTaskFactory.CompletedTask,
             Substitute.For<IServiceProvider>());
 
         Activity activity = new("Test Activity");

@@ -46,6 +46,7 @@ public class ActivityConsumerBehaviorTests
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
+                    [],
                     Substitute.For<IServiceProvider>()),
                 _ =>
                 {
@@ -85,6 +86,7 @@ public class ActivityConsumerBehaviorTests
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
+                    [],
                     Substitute.For<IServiceProvider>()),
                 _ =>
                 {

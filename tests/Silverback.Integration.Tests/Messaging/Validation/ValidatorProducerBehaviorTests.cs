@@ -18,6 +18,7 @@ using Silverback.Messaging.Validation;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Validation;
@@ -140,6 +141,8 @@ public class ValidatorProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -170,6 +173,8 @@ public class ValidatorProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -200,6 +205,8 @@ public class ValidatorProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -230,6 +237,8 @@ public class ValidatorProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {

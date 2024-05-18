@@ -18,6 +18,7 @@ using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound;
@@ -63,7 +64,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                _kafkaProducer,
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().BeNull();
@@ -85,7 +91,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                _kafkaProducer,
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
@@ -107,7 +118,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                _kafkaProducer,
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
@@ -132,7 +148,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                _kafkaProducer,
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
@@ -160,7 +181,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, _kafkaProducer, Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                _kafkaProducer,
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().NotBeNullOrEmpty();
@@ -188,7 +214,12 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
             _kafkaProducer);
 
         await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().NotContain(header => header.Name == DefaultMessageHeaders.MessageId);

@@ -39,6 +39,9 @@ public sealed class ConsumerPipelineContext : IDisposable
     /// <param name="sequenceStore">
     ///     The <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
     /// </param>
+    /// <param name="pipeline">
+    ///     The behaviors composing the pipeline.
+    /// </param>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
     /// </param>
@@ -46,11 +49,13 @@ public sealed class ConsumerPipelineContext : IDisposable
         IRawInboundEnvelope envelope,
         IConsumer consumer,
         ISequenceStore sequenceStore,
+        IReadOnlyList<IConsumerBehavior> pipeline,
         IServiceProvider serviceProvider)
     {
         _envelope = Check.NotNull(envelope, nameof(envelope));
         Consumer = Check.NotNull(consumer, nameof(consumer));
         SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
+        Pipeline = Check.NotNull(pipeline, nameof(pipeline));
         ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
@@ -65,7 +70,12 @@ public sealed class ConsumerPipelineContext : IDisposable
     public ISequenceStore SequenceStore { get; }
 
     /// <summary>
-    ///     Gets a the <see cref="ISequence" /> the current message belongs to.
+    ///     Gets the behaviors composing the pipeline.
+    /// </summary>
+    public IReadOnlyList<IConsumerBehavior> Pipeline { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="ISequence" /> that the current message belongs to.
     /// </summary>
     public ISequence? Sequence { get; private set; }
 
@@ -122,6 +132,11 @@ public sealed class ConsumerPipelineContext : IDisposable
     public Task? ProcessingTask { get; internal set; }
 
     /// <summary>
+    ///     Gets the index of the current step in the pipeline.
+    /// </summary>
+    public int CurrentStepIndex { get; internal set; }
+
+    /// <summary>
     ///     Gets the identifiers to be used to commit after successful processing.
     /// </summary>
     /// <returns>
@@ -173,6 +188,21 @@ public sealed class ConsumerPipelineContext : IDisposable
     ///     the sequence.
     /// </summary>
     public void SetIsSequenceEnd() => IsSequenceEnd = true;
+
+    /// <summary>
+    ///     Clones the current context, optionally replacing the envelope.
+    /// </summary>
+    /// <param name="newEnvelope">
+    ///     The new envelope to be used in the cloned context.
+    /// </param>
+    /// <returns>
+    ///     The cloned context.
+    /// </returns>
+    public ConsumerPipelineContext Clone(IRawInboundEnvelope? newEnvelope = null) =>
+        new(newEnvelope ?? Envelope, Consumer, SequenceStore, Pipeline, ServiceProvider)
+        {
+            CurrentStepIndex = CurrentStepIndex
+        };
 
     /// <inheritdoc cref="IDisposable.Dispose" />
     public void Dispose()

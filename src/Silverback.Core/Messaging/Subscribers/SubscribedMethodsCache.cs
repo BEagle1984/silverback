@@ -19,7 +19,6 @@ internal sealed class SubscribedMethodsCache
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
-    // TODO: check by type
     public bool HasAnyMessageStreamSubscriber => _cacheSingleton.HasAnyMessageStreamSubscriber(_serviceProvider);
 
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(object message) =>

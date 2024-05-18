@@ -39,6 +39,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 envelope,
                 Substitute.For<IConsumer>(),
                 Substitute.For<ISequenceStore>(),
+                [],
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -68,6 +69,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 envelope,
                 Substitute.For<IConsumer>(),
                 Substitute.For<ISequenceStore>(),
+                [],
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -104,6 +106,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 envelope,
                 Substitute.For<IConsumer>(),
                 Substitute.For<ISequenceStore>(),
+                [],
                 Substitute.For<IServiceProvider>()),
             context =>
             {

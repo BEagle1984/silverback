@@ -105,18 +105,22 @@ public abstract class Producer : IProducer, IDisposable
             IBrokerMessageIdentifier? brokerMessageIdentifier = null;
 
             ExecutePipelineAsync(
-                    new ProducerPipelineContext(envelope, this, _serviceProvider),
-                    finalContext =>
-                    {
-                        brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
+                    new ProducerPipelineContext(
+                        envelope,
+                        this,
+                        _behaviors,
+                        finalContext =>
+                        {
+                            brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
 
-                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                            brokerMessageIdentifier;
+                            ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                                brokerMessageIdentifier;
 
-                        _logger.LogProduced(finalContext.Envelope);
+                            _logger.LogProduced(finalContext.Envelope);
 
-                        return ValueTaskFactory.CompletedTask;
-                    })
+                            return ValueTaskFactory.CompletedTask;
+                        },
+                        _serviceProvider))
                 .SafeWait();
 
             return brokerMessageIdentifier;
@@ -151,27 +155,31 @@ public abstract class Producer : IProducer, IDisposable
         try
         {
             ExecutePipelineAsync(
-                    new ProducerPipelineContext(envelope, this, _serviceProvider),
-                    finalContext =>
-                    {
-                        ProduceCore(
-                            finalContext.Envelope,
-                            identifier =>
-                            {
-                                ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                                    identifier;
-                                _logger.LogProduced(finalContext.Envelope);
-                                onSuccess.Invoke(identifier);
-                            },
-                            exception =>
-                            {
-                                _logger.LogProduceError(finalContext.Envelope, exception);
-                                onError.Invoke(exception);
-                            });
-                        _logger.LogProduced(finalContext.Envelope);
+                    new ProducerPipelineContext(
+                        envelope,
+                        this,
+                        _behaviors,
+                        finalContext =>
+                        {
+                            ProduceCore(
+                                finalContext.Envelope,
+                                identifier =>
+                                {
+                                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                                        identifier;
+                                    _logger.LogProduced(finalContext.Envelope);
+                                    onSuccess.Invoke(identifier);
+                                },
+                                exception =>
+                                {
+                                    _logger.LogProduceError(finalContext.Envelope, exception);
+                                    onError.Invoke(exception);
+                                });
+                            _logger.LogProduced(finalContext.Envelope);
 
-                        return ValueTaskFactory.CompletedTask;
-                    })
+                            return ValueTaskFactory.CompletedTask;
+                        },
+                        _serviceProvider))
                 .SafeWait();
         }
         catch (Exception ex)
@@ -322,15 +330,19 @@ public abstract class Producer : IProducer, IDisposable
             IBrokerMessageIdentifier? brokerMessageIdentifier = null;
 
             await ExecutePipelineAsync(
-                new ProducerPipelineContext(envelope, this, _serviceProvider),
-                async finalContext =>
-                {
-                    brokerMessageIdentifier = await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
+                new ProducerPipelineContext(
+                    envelope,
+                    this,
+                    _behaviors,
+                    async finalContext =>
+                    {
+                        brokerMessageIdentifier = await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
 
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = brokerMessageIdentifier;
+                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = brokerMessageIdentifier;
 
-                    _logger.LogProduced(finalContext.Envelope);
-                }).ConfigureAwait(false);
+                        _logger.LogProduced(finalContext.Envelope);
+                    },
+                    _serviceProvider)).ConfigureAwait(false);
 
             return brokerMessageIdentifier;
         }
@@ -459,17 +471,17 @@ public abstract class Producer : IProducer, IDisposable
         _isDisposed = true;
     }
 
-    private ValueTask ExecutePipelineAsync(
-        ProducerPipelineContext context,
-        ProducerBehaviorHandler finalAction,
-        int stepIndex = 0)
+    private static ValueTask ExecutePipelineAsync(ProducerPipelineContext context)
     {
-        if (stepIndex >= _behaviors.Count)
-            return finalAction(context);
+        if (context.CurrentStepIndex >= context.Pipeline.Count)
+            return context.FinalAction(context);
 
-        // TODO: Can get rid of this delegate allocation?
-        return _behaviors[stepIndex].HandleAsync(
+        return context.Pipeline[context.CurrentStepIndex].HandleAsync(
             context,
-            nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1));
+            static nextContext =>
+            {
+                nextContext.CurrentStepIndex++;
+                return ExecutePipelineAsync(nextContext);
+            });
     }
 }

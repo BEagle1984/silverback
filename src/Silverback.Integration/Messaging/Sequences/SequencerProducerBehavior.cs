@@ -52,7 +52,7 @@ public class SequencerProducerBehavior : IProducerBehavior
 
             await foreach (IOutboundEnvelope? envelope in envelopesEnumerable.ConfigureAwait(false))
             {
-                ProducerPipelineContext newContext = new(envelope, context.Producer, context.ServiceProvider);
+                ProducerPipelineContext newContext = context.Clone(envelope);
                 await next(newContext).ConfigureAwait(false);
             }
 

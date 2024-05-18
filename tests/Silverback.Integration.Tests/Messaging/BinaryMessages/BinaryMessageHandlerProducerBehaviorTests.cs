@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.BinaryMessages;
@@ -28,6 +29,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -50,6 +53,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -76,6 +81,8 @@ public class BinaryMessageHandlerProducerBehaviorTests
             new ProducerPipelineContext(
                 envelope,
                 Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
             context =>
             {
@@ -95,7 +102,12 @@ public class BinaryMessageHandlerProducerBehaviorTests
 
         IOutboundEnvelope? result = null;
         await new BinaryMessageHandlerProducerBehavior().HandleAsync(
-            new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             context =>
             {
                 result = context.Envelope;

@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
@@ -31,7 +32,12 @@ public class ActivityProducerBehaviorTests
         OutboundEnvelope envelope = new(null, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
-            new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().Contain(
@@ -47,7 +53,12 @@ public class ActivityProducerBehaviorTests
         OutboundEnvelope envelope = new(null, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 
         await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
-            new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+            new ProducerPipelineContext(
+                envelope,
+                Substitute.For<IProducer>(),
+                [],
+                _ => ValueTaskFactory.CompletedTask,
+                Substitute.For<IServiceProvider>()),
             _ => default);
 
         envelope.Headers.Should().Contain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));

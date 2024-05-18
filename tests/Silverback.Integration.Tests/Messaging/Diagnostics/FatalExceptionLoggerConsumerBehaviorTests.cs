@@ -59,6 +59,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
                     Substitute.For<ISequenceStore>(),
+                    [],
                     Substitute.For<IServiceProvider>()),
                 _ => throw new InvalidCastException());
         }
@@ -85,6 +86,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
                 rawEnvelope,
                 Substitute.For<IConsumer>(),
                 Substitute.For<ISequenceStore>(),
+                [],
                 Substitute.For<IServiceProvider>()),
             _ => throw new InvalidCastException()).AsTask();
 

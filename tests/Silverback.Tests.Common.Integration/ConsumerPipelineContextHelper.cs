@@ -39,6 +39,7 @@ public static class ConsumerPipelineContextHelper
                 identifier ?? new TestOffset()),
             consumer ?? Substitute.For<IConsumer>(),
             sequenceStore ?? Substitute.For<ISequenceStore>(),
+            [],
             serviceProvider ?? GetServiceProvider())
         {
             TransactionManager = transactionManager ?? Substitute.For<IConsumerTransactionManager>()

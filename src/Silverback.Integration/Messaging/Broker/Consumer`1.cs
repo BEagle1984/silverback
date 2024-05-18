@@ -380,7 +380,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         ISequenceStore sequenceStore)
     {
         RawInboundEnvelope envelope = new(message, headers, endpoint, this, brokerMessageIdentifier);
-        ConsumerPipelineContext context = new(envelope, this, sequenceStore, ServiceProvider);
+        ConsumerPipelineContext context = new(envelope, this, sequenceStore, _behaviors, ServiceProvider);
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
@@ -432,6 +432,20 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected bool IsStartedAndNotStopping() =>
         Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && (IsStarting || IsStarted) && !IsStopping;
 
+    private static ValueTask ExecutePipelineAsync(ConsumerPipelineContext context)
+    {
+        if (context.CurrentStepIndex >= context.Pipeline.Count)
+            return ValueTaskFactory.CompletedTask;
+
+        return context.Pipeline[context.CurrentStepIndex].HandleAsync(
+            context,
+            static nextContext =>
+            {
+                nextContext.CurrentStepIndex++;
+                return ExecutePipelineAsync(nextContext);
+            });
+    }
+
     private ValueTask OnClientConnectedAsync(BrokerClient client)
     {
         _statusInfo.SetStarted();
@@ -462,16 +476,5 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         {
             _logger.LogConsumerLowLevelTrace(this, "Consumer stopped.");
         }
-    }
-
-    private ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
-    {
-        if (stepIndex >= _behaviors.Count)
-            return ValueTaskFactory.CompletedTask;
-
-        // TODO: Can get rid of this delegate allocation?
-        return _behaviors[stepIndex].HandleAsync(
-            context,
-            nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1));
     }
 }
