@@ -10,7 +10,6 @@ namespace Silverback.Storage;
 /// <summary>
 ///     Adds the storage specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
-// TODO: Test?
 public static class SilverbackContextStorageExtensions
 {
     private static readonly Guid StorageTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");
