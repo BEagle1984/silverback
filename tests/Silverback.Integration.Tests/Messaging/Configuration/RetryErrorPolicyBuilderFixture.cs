@@ -187,7 +187,7 @@ public class RetryErrorPolicyBuilderFixture
     [Theory]
     [InlineData(0)]
     [InlineData(-42)]
-    public void WithInterval_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)
+    public void WithIncrementalDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)
     {
         RetryErrorPolicyBuilder builder = new();
 
@@ -199,11 +199,35 @@ public class RetryErrorPolicyBuilderFixture
     [Theory]
     [InlineData(0)]
     [InlineData(-42)]
-    public void WithInterval_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int value)
+    public void WithIncrementalDelay_ShouldThrow_WhenDelayIncrementIsLowerOrEqualToZero(int value)
     {
         RetryErrorPolicyBuilder builder = new();
 
         Action act = () => builder.WithIncrementalDelay(TimeSpan.MaxValue, TimeSpan.FromMinutes(value));
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public void WithExponentialDelay_ShouldSetInitialDelayAndFactor()
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        builder.WithExponentialDelay(TimeSpan.FromMinutes(42), 2.0);
+
+        RetryErrorPolicy policy = (RetryErrorPolicy)builder.Build();
+        policy.InitialDelay.Should().Be(TimeSpan.FromMinutes(42));
+        policy.DelayFactor.Should().Be(2.0);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-42)]
+    public void WithExponentialDelay_ShouldThrow_WhenInitialDelayIsLowerOrEqualToZero(int value)
+    {
+        RetryErrorPolicyBuilder builder = new();
+
+        Action act = () => builder.WithExponentialDelay(TimeSpan.FromMinutes(value), 2.0);
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }

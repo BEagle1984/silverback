@@ -17,7 +17,6 @@ namespace Silverback.Messaging.Consuming.ErrorHandling;
 ///     This policy retries to process the message that previously failed to be to processed. An optional
 ///     delay can be specified.
 /// </summary>
-/// TODO: Exponential backoff variant
 public record RetryErrorPolicy : ErrorPolicyBase
 {
     internal RetryErrorPolicy()
@@ -34,11 +33,17 @@ public record RetryErrorPolicy : ErrorPolicyBase
     /// </summary>
     public TimeSpan DelayIncrement { get; init; } = TimeSpan.Zero;
 
+    /// <summary>
+    ///     Gets the factor to be applied to the delay to be applied at each retry.
+    /// </summary>
+    public double DelayFactor { get; init; } = 1.0;
+
     /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
     protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
         new RetryErrorPolicyImplementation(
             InitialDelay,
             DelayIncrement,
+            DelayFactor,
             MaxFailedAttempts,
             ExcludedExceptions,
             IncludedExceptions,
@@ -53,11 +58,14 @@ public record RetryErrorPolicy : ErrorPolicyBase
 
         private readonly TimeSpan _delayIncrement;
 
+        private readonly double _delayFactor;
+
         private readonly IConsumerLogger<RetryErrorPolicy> _logger;
 
         public RetryErrorPolicyImplementation(
             TimeSpan initialDelay,
             TimeSpan delayIncrement,
+            double delayFactor,
             int? maxFailedAttempts,
             IReadOnlyCollection<Type> excludedExceptions,
             IReadOnlyCollection<Type> includedExceptions,
@@ -76,6 +84,7 @@ public record RetryErrorPolicy : ErrorPolicyBase
         {
             _initialDelay = initialDelay;
             _delayIncrement = delayIncrement;
+            _delayFactor = delayFactor;
             _logger = logger;
         }
 
@@ -117,11 +126,11 @@ public record RetryErrorPolicy : ErrorPolicyBase
 
         private async Task ApplyDelayAsync(ConsumerPipelineContext context)
         {
-            int delay = (int)_initialDelay.TotalMilliseconds +
-                        (context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
-                         (int)_delayIncrement.TotalMilliseconds);
+            int failedAttempts = context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 
-            if (delay <= 0)
+            TimeSpan delay = IncrementalDelayHelper.Compute(failedAttempts, _initialDelay, _delayIncrement, _delayFactor);
+
+            if (delay <= TimeSpan.Zero)
                 return;
 
             _logger.LogConsumerTrace(

@@ -16,6 +16,8 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
 
     private TimeSpan _delayIncrement = TimeSpan.Zero;
 
+    private double _delayFactor = 1.0;
+
     private int? _maxFailedAttempts;
 
     /// <inheritdoc cref="ErrorPolicyBaseBuilder{TBuilder}.This" />
@@ -33,6 +35,8 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     public RetryErrorPolicyBuilder WithInterval(TimeSpan interval)
     {
         _initialDelay = Check.GreaterThan(interval, nameof(interval), TimeSpan.Zero);
+        _delayIncrement = TimeSpan.Zero;
+        _delayFactor = 1.0;
         return this;
     }
 
@@ -52,6 +56,27 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
     {
         _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
         _delayIncrement = Check.GreaterThan(delayIncrement, nameof(delayIncrement), TimeSpan.Zero);
+        _delayFactor = 1.0;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies an initial delay before the first retry and a factor to be applied to the delay at each retry.
+    /// </summary>
+    /// <param name="initialDelay">
+    ///     The initial delay before the first retry.
+    /// </param>
+    /// <param name="delayFactor">
+    ///     The factor to be applied at each retry.
+    /// </param>
+    /// <returns>
+    ///     The policy builder so that additional calls can be chained.
+    /// </returns>
+    public RetryErrorPolicyBuilder WithExponentialDelay(TimeSpan initialDelay, double delayFactor)
+    {
+        _initialDelay = Check.GreaterThan(initialDelay, nameof(initialDelay), TimeSpan.Zero);
+        _delayIncrement = TimeSpan.Zero;
+        _delayFactor = Check.GreaterThan(delayFactor, nameof(delayFactor), 0);
         return this;
     }
 
@@ -76,6 +101,7 @@ public class RetryErrorPolicyBuilder : ErrorPolicyBaseBuilder<RetryErrorPolicyBu
         {
             InitialDelay = _initialDelay,
             DelayIncrement = _delayIncrement,
+            DelayFactor = _delayFactor,
             MaxFailedAttempts = _maxFailedAttempts
         };
 }

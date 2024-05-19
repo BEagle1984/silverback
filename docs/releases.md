@@ -33,6 +33,7 @@ uid: releases
 * Reduce allocations
 * Better builders for error policies
 * Support subscribers returning `ValueTask`
+* Support exponential delay in `RetryErrorPolicy`
   
 ### Breaking Changes
 
