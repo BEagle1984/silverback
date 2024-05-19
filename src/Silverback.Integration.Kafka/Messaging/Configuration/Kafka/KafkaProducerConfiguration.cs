@@ -81,8 +81,6 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
-        /* TODO: IMPORTANT: Must ensure unique TransactionalID? */
-
         if (Endpoints == null || Endpoints.Count == 0)
             throw new BrokerConfigurationException("At least one endpoint must be configured.");
 

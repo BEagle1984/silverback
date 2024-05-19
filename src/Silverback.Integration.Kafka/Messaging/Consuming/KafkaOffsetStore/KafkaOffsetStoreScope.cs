@@ -16,7 +16,6 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 ///     The scope of the client side offset store. A scope is created per each consume cycle and is used to atomically store the processed
 ///     offsets.
 /// </summary>
-// TODO: Test
 public sealed class KafkaOffsetStoreScope
 {
     private readonly IKafkaOffsetStore _offsetStore;

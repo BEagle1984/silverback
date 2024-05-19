@@ -7,7 +7,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Producing.Enrichers;
 
-// TODO: Review double interface thing
 internal sealed class KafkaMovePolicyMessageEnricher : IMovePolicyMessageEnricher<KafkaProducerEndpoint>, IMovePolicyMessageEnricher<KafkaConsumerEndpoint>
 {
     public void Enrich(IRawInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)

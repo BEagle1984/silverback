@@ -14,7 +14,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
-// TODO: Unit test?
 internal class KafkaConsumersInitializer : BrokerClientsInitializer
 {
     private readonly KafkaClientsConfigurationActions _configurationActions;
