@@ -10,7 +10,6 @@ using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Configuration.Kafka;
 
-// TODO: Test
 internal class KafkaConsumerEndpointsCache
 {
     private readonly ConcurrentDictionary<TopicPartition, CachedEndpoint> _endpoints = new();
