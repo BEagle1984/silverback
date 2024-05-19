@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
@@ -84,7 +85,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
     /// <summary>
     ///     Gets the number of message to be processed before committing the offset to the server. The most
-    ///     reliable level is 1 but it reduces throughput.
+    ///     reliable level is 1, but it reduces throughput.
     /// </summary>
     public int? CommitOffsetEach { get; init; }
 
@@ -96,7 +97,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
     /// <summary>
     ///     Gets a value indicating whether the partitions must be processed independently.
-    ///     When <c>true</c> a stream will published per each partition and the sequences (<see cref="ChunkSequence" />,
+    ///     When <c>true</c> a stream will be published per each partition and the sequences (<see cref="ChunkSequence" />,
     ///     <see cref="BatchSequence" />, ...) cannot span across the partitions.
     ///     The default is <c>true</c>.
     /// </summary>
@@ -128,6 +129,11 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     The default is 2.
     /// </summary>
     public int BackpressureLimit { get; init; } = 2;
+
+    /// <summary>
+    ///     Gets the timeout to wait for the metadata to be retrieved from the broker. The default is 30 seconds.
+    /// </summary>
+    public TimeSpan GetMetadataTimeout { get; init; } = TimeSpan.FromSeconds(30);
 
     /// <summary>
     ///     Gets the configured endpoints.
@@ -170,6 +176,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         if (BackpressureLimit < 1)
             throw new BrokerConfigurationException("The backpressure limit must be greater or equal to 1.");
+
+        if (GetMetadataTimeout <= TimeSpan.Zero)
+            throw new BrokerConfigurationException("The get metadata timeout must be greater than 0.");
 
         if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
             throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");

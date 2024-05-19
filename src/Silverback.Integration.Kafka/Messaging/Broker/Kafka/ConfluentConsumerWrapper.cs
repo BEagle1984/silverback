@@ -246,7 +246,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
         List<TopicPartition> availablePartitions =
             _adminClient
-                .GetMetadata(topicPartitionOffset.Topic, TimeSpan.FromMinutes(5)) // TODO: 5 minutes timeout?
+                .GetMetadata(topicPartitionOffset.Topic, Configuration.GetMetadataTimeout)
                 .Topics[0].Partitions
                 .Select(metadata => new TopicPartition(topicPartitionOffset.Topic, metadata.PartitionId))
                 .ToList();

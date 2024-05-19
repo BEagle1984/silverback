@@ -440,14 +440,29 @@ public class KafkaConsumerConfigurationFixture
         Action act = configuration.Validate;
 
         if (isValid)
-        {
             act.Should().NotThrow();
-        }
         else
+            act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The backpressure limit must be greater or equal to 1.");
+    }
+
+    [Theory]
+    [InlineData(1, true)]
+    [InlineData(42, true)]
+    [InlineData(0, false)]
+    [InlineData(-1, false)]
+    public void Validate_ShouldValidateGetMetadataTimeout(int valueInSeconds, bool isValid)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
-            act.Should().ThrowExactly<BrokerConfigurationException>()
-                .WithMessage("The backpressure limit must be greater or equal to 1.");
-        }
+            GetMetadataTimeout = TimeSpan.FromSeconds(valueInSeconds)
+        };
+
+        Action act = configuration.Validate;
+
+        if (isValid)
+            act.Should().NotThrow();
+        else
+            act.Should().ThrowExactly<BrokerConfigurationException>().WithMessage("The get metadata timeout must be greater than 0.");
     }
 
     [Fact]

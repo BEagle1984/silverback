@@ -425,6 +425,17 @@ public class KafkaConsumerConfigurationBuilderFixture
         configuration.BackpressureLimit.Should().Be(42);
     }
 
+    [Fact]
+    public void WithGetMetadataTimeout_ShouldSetTimeout()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.WithGetMetadataTimeout(TimeSpan.FromSeconds(42));
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.GetMetadataTimeout.Should().Be(TimeSpan.FromSeconds(42));
+    }
+
     private static KafkaConsumerConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint() =>
         GetBuilderWithValidConfiguration().Consume(endpoint => endpoint.ConsumeFrom("topic"));
 

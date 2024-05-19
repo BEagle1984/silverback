@@ -34,6 +34,8 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
 
     private int? _backpressureLimit;
 
+    private TimeSpan? _getMetadataTimeout;
+
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaConsumerConfigurationBuilder This => this;
 
@@ -359,6 +361,21 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Sets the timeout used to wait for the metadata to be retrieved from the broker. The default is 30 seconds.
+    /// </summary>
+    /// <param name="getMetadataTimeout">
+    ///     The timeout used to wait for the metadata to be retrieved from the broker.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder WithGetMetadataTimeout(TimeSpan? getMetadataTimeout)
+    {
+        _getMetadataTimeout = getMetadataTimeout;
+        return this;
+    }
+
+    /// <summary>
     ///     Sets a comma-separated list of fields that may be optionally set in <see cref="ConsumeResult{TKey,TValue}" /> objects returned by
     ///     the <see cref="Consumer{TKey,TValue}.Consume(System.TimeSpan)" /> method. Disabling fields that you do not require will improve
     ///     throughput and reduce memory consumption. Allowed values: <c>headers</c>, <c>timestamp</c>, <c>topic</c>, <c>all</c>, <c>none</c>.
@@ -655,6 +672,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
             ClientSideOffsetStore = _clientSideOffsetStoreSettings ?? configuration.ClientSideOffsetStore,
             EnableAutoRecovery = _enableAutoRecovery ?? configuration.EnableAutoRecovery,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,
+            GetMetadataTimeout = _getMetadataTimeout ?? configuration.GetMetadataTimeout,
             ProcessPartitionsIndependently = _processPartitionsIndependently ?? configuration.ProcessPartitionsIndependently,
             Endpoints = _endpoints.Values.AsValueReadOnlyCollection()
         };
