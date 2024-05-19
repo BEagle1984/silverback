@@ -19,7 +19,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 
 public class KafkaClientsConfigurationBuilderFixture
 {
-    // TODO: Should convert to unit test? (without using service provider)
     [Fact]
     public async Task WithBootstrapServers_ShouldSetBootstrapServers()
     {

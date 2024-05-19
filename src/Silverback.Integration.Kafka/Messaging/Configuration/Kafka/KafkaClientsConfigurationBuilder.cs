@@ -13,7 +13,6 @@ namespace Silverback.Messaging.Configuration.Kafka;
 ///     Configures the Kafka producers and consumers building the <see cref="KafkaProducerConfiguration" /> and
 ///     <see cref="KafkaConsumerConfiguration" />.
 /// </summary>
-/// TODO: Test idempotency (e.g. AddOrMergeProducer should distinct on message type and topic)
 public partial class KafkaClientsConfigurationBuilder
 {
     private readonly KafkaClientsConfigurationActions _configurationActions = new();

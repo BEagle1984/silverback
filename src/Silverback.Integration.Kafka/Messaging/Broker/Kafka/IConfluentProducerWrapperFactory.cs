@@ -8,7 +8,6 @@ namespace Silverback.Messaging.Broker.Kafka;
 /// <summary>
 ///     Creates <see cref="IConfluentProducerWrapper" /> instances.
 /// </summary>
-// TODO: Test
 public interface IConfluentProducerWrapperFactory
 {
     /// <summary>

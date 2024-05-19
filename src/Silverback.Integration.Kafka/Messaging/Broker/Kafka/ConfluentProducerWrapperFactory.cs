@@ -10,7 +10,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
 
-// TODO: Test
 internal class ConfluentProducerWrapperFactory : IConfluentProducerWrapperFactory
 {
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
