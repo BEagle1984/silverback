@@ -16,7 +16,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka;
 
-// TODO: Test (above all assignment, subscription, etc.)
 internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrapper
 {
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
