@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages;
@@ -95,8 +96,8 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
     }
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
-    public IEnumerator<TMessage> GetEnumerator() =>
-        GetEnumerable().GetEnumerator();
+    [MustDisposeResource]
+    public IEnumerator<TMessage> GetEnumerator() => GetEnumerable().GetEnumerator();
 
     /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
     public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>

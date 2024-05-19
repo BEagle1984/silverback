@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Confluent.Kafka;
+using JetBrains.Annotations;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -30,6 +31,7 @@ internal class MockedConsumerGroupsCollection : IMockedConsumerGroupsCollection
             static (_, args) => new MockedConsumerGroup(args.name, args.bootstrapServers, args._topicCollection),
             (name, bootstrapServers, _topicCollection));
 
+    [MustDisposeResource]
     public IEnumerator<IMockedConsumerGroup> GetEnumerator() => _groups.Values.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

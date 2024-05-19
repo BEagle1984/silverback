@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Silverback.Util;
 
 namespace Silverback.Collections;
@@ -31,6 +32,7 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
     public int Count => _collection.Count;
 
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
+    [MustDisposeResource]
     public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

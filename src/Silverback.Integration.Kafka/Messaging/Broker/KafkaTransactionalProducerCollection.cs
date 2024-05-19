@@ -106,6 +106,7 @@ internal class KafkaTransactionalProducerCollection : IKafkaTransactionalProduce
     [MustDisposeResource]
     public IEnumerator<KafkaProducer> GetEnumerator() => _producersByName.Values.GetEnumerator();
 
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     private record struct FactoryArguments(

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
@@ -24,7 +25,9 @@ internal sealed class BrokerClientCollection : IReadOnlyCollection<IBrokerClient
 
     public void Dispose() => _clients.ForEach(client => client.Dispose());
 
+    [MustDisposeResource]
     public IEnumerator<IBrokerClient> GetEnumerator() => _clients.GetEnumerator();
 
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

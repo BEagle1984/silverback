@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Confluent.Kafka;
+using JetBrains.Annotations;
 using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
@@ -31,7 +32,9 @@ internal sealed class InMemoryTopicCollection : IInMemoryTopicCollection
             static (_, args) => new InMemoryTopic(args.Name, args.BootstrapServers, args.DefaultPartitionsCount),
             (Name: name, BootstrapServers: bootstrapServers, _options.DefaultPartitionsCount));
 
+    [MustDisposeResource]
     public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
