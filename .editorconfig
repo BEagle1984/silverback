@@ -52,6 +52,10 @@ dotnet_diagnostic.CA1852.severity = none
 # VSTHRD003: Avoid awaiting foreign Tasks
 dotnet_diagnostic.VSTHRD003.severity = none
 
+# xUnit
+# xUnit1045: xUnit1045 : The type argument TestValidationMessage might not be serializable...
+dotnet_diagnostic.xUnit1045.severity = suggestion
+
 # C#/.NET style rules
 csharp_new_line_before_members_in_object_initializers = false
 csharp_preferred_modifier_order = public, private, protected, internal, static, new, abstract, virtual, sealed, override, readonly, extern, unsafe, volatile, async
