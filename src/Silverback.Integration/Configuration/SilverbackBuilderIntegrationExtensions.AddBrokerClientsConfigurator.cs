@@ -57,7 +57,7 @@ public static partial class SilverbackBuilderIntegrationExtensions
     }
 
     /// <summary>
-    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to setup the broker endpoints.
+    ///     Adds an <see cref="IBrokerClientsConfigurator" /> to be used to setup the producers and consumers.
     /// </summary>
     /// <param name="builder">
     ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
@@ -68,7 +68,6 @@ public static partial class SilverbackBuilderIntegrationExtensions
     /// <returns>
     ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
     /// </returns>
-    // TODO: review summary and document rename in release notes
     public static SilverbackBuilder AddBrokerClientsConfigurator(
         this SilverbackBuilder builder,
         Func<IServiceProvider, IBrokerClientsConfigurator> implementationFactory)
