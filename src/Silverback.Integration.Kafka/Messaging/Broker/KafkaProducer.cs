@@ -83,12 +83,13 @@ public sealed class KafkaProducer : Producer
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
         ProduceCoreAsync(envelope).SafeWait(); // TODO: No better option?
 
-    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
+    /// <inheritdoc cref="Producer.ProduceCore{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]
-    protected override void ProduceCore(
+    protected override void ProduceCore<TState>(
         IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError)
+        Action<IBrokerMessageIdentifier, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state)
     {
         Check.NotNull(envelope, nameof(envelope));
         Check.NotNull(onSuccess, nameof(onSuccess));
@@ -118,11 +119,11 @@ public sealed class KafkaProducer : Producer
                     if (Configuration.ArePersistenceStatusReportsEnabled)
                         CheckPersistenceStatus(deliveryReport);
 
-                    onSuccess.Invoke(new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset));
+                    onSuccess.Invoke(new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset), state);
                 }
                 catch (Exception ex)
                 {
-                    onError.Invoke(ex);
+                    onError.Invoke(ex, state);
                 }
             });
     }

@@ -73,11 +73,12 @@ public sealed class MqttProducer : Producer
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
         ProduceCoreAsync(envelope).SafeWait();
 
-    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override void ProduceCore(
+    /// <inheritdoc cref="Producer.ProduceCore{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    protected override void ProduceCore<TState>(
         IOutboundEnvelope envelope,
-        Action<IBrokerMessageIdentifier?> onSuccess,
-        Action<Exception> onError)
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -85,8 +86,8 @@ public sealed class MqttProducer : Producer
             envelope.RawMessage.ReadAll(),
             envelope.Headers,
             (MqttProducerEndpoint)envelope.Endpoint,
-            onSuccess,
-            onError);
+            identifier => onSuccess.Invoke(identifier, state),
+            exception => onError.Invoke(exception, state));
     }
 
     /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />

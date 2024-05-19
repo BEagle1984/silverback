@@ -36,9 +36,12 @@ internal class DelegatedProducer : Producer
     protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope) =>
         throw new NotSupportedException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    protected override void ProduceCore(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
-        throw new NotSupportedException("Only asynchronous operations are supported.");
+    /// <inheritdoc cref="Producer.ProduceCore{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    protected override void ProduceCore<TState>(
+        IOutboundEnvelope envelope,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state) => throw new NotSupportedException("Only asynchronous operations are supported.");
 
     /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
     protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)

@@ -102,8 +102,16 @@ public sealed class KafkaTransactionalProducer : IProducer
     public void RawProduce(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
         throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
 
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(ProducerEndpoint, byte[], IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    public void RawProduce<TState>(ProducerEndpoint endpoint, byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
+        throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
+
     /// <inheritdoc cref="IProducer.RawProduce(ProducerEndpoint, Stream?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?}, Action{Exception})" />
     public void RawProduce(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError) =>
+        throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
+
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(ProducerEndpoint, Stream?, IReadOnlyCollection{MessageHeader}?, Action{IBrokerMessageIdentifier?, TState}, Action{Exception, TState}, TState)" />
+    public void RawProduce<TState>(ProducerEndpoint endpoint, Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers, Action<IBrokerMessageIdentifier?, TState> onSuccess, Action<Exception, TState> onError, TState state) =>
         throw new NotSupportedException("Use the overload accepting an IOutboundEnvelope instead.");
 
     /// <inheritdoc cref="IProducer.ProduceAsync(object?, IReadOnlyCollection{MessageHeader}?)" />

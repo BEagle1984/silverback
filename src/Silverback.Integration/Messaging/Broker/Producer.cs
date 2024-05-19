@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
@@ -95,28 +96,25 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = null;
+            ProducerPipelineContext context = new(
+                envelope,
+                this,
+                _behaviors,
+                static finalContext =>
+                {
+                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                        finalContext.BrokerMessageIdentifier =
+                            ((Producer)finalContext.Producer).ProduceCore(finalContext.Envelope);
 
-            ExecutePipelineAsync(
-                    new ProducerPipelineContext(
-                        envelope,
-                        this,
-                        _behaviors,
-                        finalContext =>
-                        {
-                            brokerMessageIdentifier = ProduceCore(finalContext.Envelope);
+                    finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
 
-                            ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                                brokerMessageIdentifier;
+                    return ValueTaskFactory.CompletedTask;
+                },
+                _serviceProvider);
 
-                            _logger.LogProduced(finalContext.Envelope);
+            ExecutePipelineAsync(context).SafeWait();
 
-                            return ValueTaskFactory.CompletedTask;
-                        },
-                        _serviceProvider))
-                .SafeWait();
-
-            return brokerMessageIdentifier;
+            return context.BrokerMessageIdentifier;
         }
         catch (Exception ex)
         {
@@ -147,33 +145,36 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            ExecutePipelineAsync(
-                    new ProducerPipelineContext(
-                        envelope,
-                        this,
-                        _behaviors,
-                        finalContext =>
-                        {
-                            ProduceCore(
-                                finalContext.Envelope,
-                                identifier =>
-                                {
-                                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                                        identifier;
-                                    _logger.LogProduced(finalContext.Envelope);
-                                    onSuccess.Invoke(identifier);
-                                },
-                                exception =>
-                                {
-                                    _logger.LogProduceError(finalContext.Envelope, exception);
-                                    onError.Invoke(exception);
-                                });
-                            _logger.LogProduced(finalContext.Envelope);
+            ProducerPipelineContext context = new(
+                envelope,
+                this,
+                _behaviors,
+                static finalContext =>
+                {
+                    static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
+                    {
+                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
+                        finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                        finalContext.OnSuccess!.Invoke(identifier);
+                    }
 
-                            return ValueTaskFactory.CompletedTask;
-                        },
-                        _serviceProvider))
-                .SafeWait();
+                    static void OnError(Exception exception, ProducerPipelineContext finalContext)
+                    {
+                        finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduceError(finalContext.Envelope, exception);
+                        finalContext.OnError!.Invoke(exception);
+                    }
+
+                    ((Producer)finalContext.Producer).ProduceCore(finalContext.Envelope, OnSuccess, OnError, finalContext);
+
+                    return ValueTaskFactory.CompletedTask;
+                },
+                _serviceProvider)
+            {
+                OnSuccess = onSuccess,
+                OnError = onError
+            };
+
+            ExecutePipelineAsync(context).SafeWait();
         }
         catch (Exception ex)
         {
@@ -271,18 +272,28 @@ public abstract class Producer : IProducer, IDisposable
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        ProduceCore(
+        RawProduce(
+            endpoint,
             new OutboundEnvelope(messageContent, headers, endpoint, this),
-            identifier =>
-            {
-                _logger.LogProduced(endpoint, headers, identifier);
-                onSuccess.Invoke(identifier);
-            },
-            exception =>
-            {
-                _logger.LogProduceError(endpoint, headers, exception);
-                onError.Invoke(exception);
-            });
+            headers,
+            onSuccess,
+            onError);
+
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(ProducerEndpoint,byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    public void RawProduce<TState>(
+        ProducerEndpoint endpoint,
+        byte[]? messageContent,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state) =>
+        RawProduce(
+            endpoint,
+            new OutboundEnvelope(messageContent, headers, endpoint, this),
+            headers,
+            onSuccess,
+            onError,
+            state);
 
     /// <inheritdoc cref="IProducer.RawProduce(ProducerEndpoint,Stream,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
     public void RawProduce(
@@ -291,18 +302,28 @@ public abstract class Producer : IProducer, IDisposable
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError) =>
-        ProduceCore(
+        RawProduce(
+            endpoint,
             new OutboundEnvelope(messageStream, headers, endpoint, this),
-            identifier =>
-            {
-                _logger.LogProduced(endpoint, headers, identifier);
-                onSuccess.Invoke(identifier);
-            },
-            exception =>
-            {
-                _logger.LogProduceError(endpoint, headers, exception);
-                onError.Invoke(exception);
-            });
+            headers,
+            onSuccess,
+            onError);
+
+    /// <inheritdoc cref="IProducer.RawProduce{TState}(ProducerEndpoint,Stream,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
+    public void RawProduce<TState>(
+        ProducerEndpoint endpoint,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state) =>
+        RawProduce(
+            endpoint,
+            new OutboundEnvelope(messageStream, headers, endpoint, this),
+            headers,
+            onSuccess,
+            onError,
+            state);
 
     /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
     public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
@@ -320,24 +341,23 @@ public abstract class Producer : IProducer, IDisposable
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = null;
+            ProducerPipelineContext context = new(
+                envelope,
+                this,
+                _behaviors,
+                static async finalContext =>
+                {
+                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                        finalContext.BrokerMessageIdentifier =
+                            await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
 
-            await ExecutePipelineAsync(
-                new ProducerPipelineContext(
-                    envelope,
-                    this,
-                    _behaviors,
-                    async finalContext =>
-                    {
-                        brokerMessageIdentifier = await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
+                    finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
+                },
+                _serviceProvider);
 
-                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = brokerMessageIdentifier;
+            await ExecutePipelineAsync(context).ConfigureAwait(false);
 
-                        _logger.LogProduced(finalContext.Envelope);
-                    },
-                    _serviceProvider)).ConfigureAwait(false);
-
-            return brokerMessageIdentifier;
+            return context.BrokerMessageIdentifier;
         }
         catch (Exception ex)
         {
@@ -427,6 +447,9 @@ public abstract class Producer : IProducer, IDisposable
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
+    /// <typeparam name="TState">
+    ///     The type of the state object that will be passed to the callbacks.
+    /// </typeparam>
     /// <param name="envelope">
     ///     The envelope containing the message to be produced.
     /// </param>
@@ -436,7 +459,14 @@ public abstract class Producer : IProducer, IDisposable
     /// <param name="onError">
     ///     The callback to be invoked when the produce fails.
     /// </param>
-    protected abstract void ProduceCore(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError);
+    /// <param name="state">
+    ///     The state object that will be passed to the callbacks.
+    /// </param>
+    protected abstract void ProduceCore<TState>(
+        IOutboundEnvelope envelope,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state);
 
     /// <summary>
     ///     Publishes the specified message and returns its identifier.
@@ -477,4 +507,45 @@ public abstract class Producer : IProducer, IDisposable
                 return ExecutePipelineAsync(nextContext);
             });
     }
+
+    private void RawProduce(
+        ProducerEndpoint endpoint,
+        IOutboundEnvelope envelope,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError) =>
+        ProduceCore(
+            envelope,
+            static (identifier, state) =>
+            {
+                state.Logger.LogProduced(state.Endpoint, state.Headers, identifier);
+                state.OnSuccess.Invoke(identifier);
+            },
+            static (exception, state) =>
+            {
+                state.Logger.LogProduceError(state.Endpoint, state.Headers, exception);
+                state.OnError.Invoke(exception);
+            },
+            (OnSuccess: onSuccess, OnError: onError, Endpoint: endpoint, Headers: headers, Logger: _logger));
+
+    private void RawProduce<TState>(
+        ProducerEndpoint endpoint,
+        IOutboundEnvelope envelope,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state) =>
+        ProduceCore(
+            envelope,
+            static (identifier, innerState) =>
+            {
+                innerState.Logger.LogProduced(innerState.Endpoint, innerState.Headers, identifier);
+                innerState.OnSuccess.Invoke(identifier, innerState.State);
+            },
+            static (exception, innerState) =>
+            {
+                innerState.Logger.LogProduceError(innerState.Endpoint, innerState.Headers, exception);
+                innerState.OnError.Invoke(exception, innerState.State);
+            },
+            (OnSuccess: onSuccess, OnError: onError, Endpoint: endpoint, Headers: headers, State: state, Logger: _logger));
 }

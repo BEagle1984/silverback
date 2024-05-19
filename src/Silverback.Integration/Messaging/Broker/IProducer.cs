@@ -259,6 +259,42 @@ public interface IProducer
     ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
     ///     are called when the message is actually produced (or the produce failed).
     /// </remarks>
+    /// <typeparam name="TState">
+    ///     The type of the state object to be passed to the callbacks.
+    /// </typeparam>
+    /// <param name="endpoint">
+    ///     The target endpoint.
+    /// </param>
+    /// <param name="messageContent">
+    ///     The message.
+    /// </param>
+    /// <param name="headers">
+    ///     The optional message headers.
+    /// </param>
+    /// <param name="onSuccess">
+    ///     The callback to be invoked when the message is successfully produced.
+    /// </param>
+    /// <param name="onError">
+    ///     The callback to be invoked when the produce fails.
+    /// </param>
+    /// <param name="state">
+    ///     The state object to be passed to the callbacks.
+    /// </param>
+    void RawProduce<TState>(
+        ProducerEndpoint endpoint,
+        byte[]? messageContent,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state);
+
+    /// <summary>
+    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+    /// </summary>
+    /// <remarks>
+    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+    ///     are called when the message is actually produced (or the produce failed).
+    /// </remarks>
     /// <param name="endpoint">
     ///     The target endpoint.
     /// </param>
@@ -280,6 +316,42 @@ public interface IProducer
         IReadOnlyCollection<MessageHeader>? headers,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
+
+    /// <summary>
+    ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+    /// </summary>
+    /// <remarks>
+    ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+    ///     are called when the message is actually produced (or the produce failed).
+    /// </remarks>
+    /// <typeparam name="TState">
+    ///     The type of the state object to be passed to the callbacks.
+    /// </typeparam>
+    /// <param name="endpoint">
+    ///     The target endpoint.
+    /// </param>
+    /// <param name="messageStream">
+    ///     The message.
+    /// </param>
+    /// <param name="headers">
+    ///     The optional message headers.
+    /// </param>
+    /// <param name="onSuccess">
+    ///     The callback to be invoked when the message is successfully produced.
+    /// </param>
+    /// <param name="onError">
+    ///     The callback to be invoked when the produce fails.
+    /// </param>
+    /// <param name="state">
+    ///     The state object to be passed to the callbacks.
+    /// </param>
+    void RawProduce<TState>(
+        ProducerEndpoint endpoint,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Action<IBrokerMessageIdentifier?, TState> onSuccess,
+        Action<Exception, TState> onError,
+        TState state);
 
     /// <summary>
     ///     Publishes the specified message.

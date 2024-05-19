@@ -60,8 +60,9 @@ public class OutboxWorkerFixture
                     Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-                    Arg.Any<Action<Exception>>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
+                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
+                    Arg.Any<OutboxWorker.ProduceState>()))
             .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null));
         _producer2
             .When(
@@ -69,8 +70,9 @@ public class OutboxWorkerFixture
                     Arg.Any<ProducerEndpoint>(),
                     Arg.Any<byte[]>(),
                     Arg.Any<IReadOnlyCollection<MessageHeader>>(),
-                    Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-                    Arg.Any<Action<Exception>>()))
+                    Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
+                    Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
+                    Arg.Any<OutboxWorker.ProduceState>()))
             .Do(callInfo => callInfo.ArgAt<Action<IBrokerMessageIdentifier?>>(3).Invoke(null));
     }
 
@@ -382,9 +384,10 @@ public class OutboxWorkerFixture
         producer.Received(requiredNumberOfCalls).RawProduce(
             Arg.Any<ProducerEndpoint>(),
             Arg.Any<byte[]>(),
-            Arg.Any<IReadOnlyCollection<MessageHeader>?>(),
-            Arg.Any<Action<IBrokerMessageIdentifier?>>(),
-            Arg.Any<Action<Exception>>());
+            Arg.Any<IReadOnlyCollection<MessageHeader>>(),
+            Arg.Any<Action<IBrokerMessageIdentifier?, OutboxWorker.ProduceState>>(),
+            Arg.Any<Action<Exception, OutboxWorker.ProduceState>>(),
+            Arg.Any<OutboxWorker.ProduceState>());
 
     private static ValueTask<IBrokerMessageIdentifier?> AssertReceivedBlockingCallsAsync(IProducer producer, int requiredNumberOfCalls) =>
         producer.Received(requiredNumberOfCalls).RawProduceAsync(

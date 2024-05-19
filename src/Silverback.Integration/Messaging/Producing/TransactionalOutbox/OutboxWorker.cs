@@ -148,25 +148,13 @@ public class OutboxWorker : IOutboxWorker
                 return;
             }
 
-            // TODO: Avoid closure allocations
             producer.RawProduce(
                 endpoint,
                 message.Content,
                 message.Headers,
-                _ =>
-                {
-                    _producedMessages.Add(message);
-                    Interlocked.Decrement(ref _pendingProduceOperations);
-                },
-                exception =>
-                {
-                    _failed = true;
-                    Interlocked.Decrement(ref _pendingProduceOperations);
-
-                    _logger.LogErrorProducingOutboxStoredMessage(
-                        new OutboundEnvelope(message.Content, message.Headers, endpoint, producer),
-                        exception);
-                });
+                OnProduceSuccess,
+                OnProduceError,
+                new ProduceState(producer, endpoint, message));
         }
         catch (Exception ex)
         {
@@ -179,6 +167,22 @@ public class OutboxWorker : IOutboxWorker
             if (_settings.EnforceMessageOrder)
                 throw;
         }
+    }
+
+    private void OnProduceSuccess(IBrokerMessageIdentifier? identifier, ProduceState state)
+    {
+        _producedMessages.Add(state.Message);
+        Interlocked.Decrement(ref _pendingProduceOperations);
+    }
+
+    private void OnProduceError(Exception exception, ProduceState state)
+    {
+        _failed = true;
+        Interlocked.Decrement(ref _pendingProduceOperations);
+
+        _logger.LogErrorProducingOutboxStoredMessage(
+            new OutboundEnvelope(state.Message.Content, state.Message.Headers, state.Endpoint, state.Producer),
+            exception);
     }
 
     private async ValueTask BlockingProcessMessageAsync(OutboxMessage message)
@@ -214,4 +218,6 @@ public class OutboxWorker : IOutboxWorker
             await Task.Delay(50).ConfigureAwait(false);
         }
     }
+
+    internal record struct ProduceState(IProducer Producer, ProducerEndpoint Endpoint, OutboxMessage Message);
 }
