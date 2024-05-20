@@ -164,7 +164,7 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     public KafkaConsumerEndpointConfigurationBuilder<TMessage> ConsumeFrom(
         string topic,
         Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> partitionOffsetsProvider) =>
-        ConsumeFrom(new[] { topic }, partitionOffsetsProvider);
+        ConsumeFrom([topic], partitionOffsetsProvider);
 
     /// <summary>
     ///     Specifies the topics and a function that returns the partitions to be consumed, as well as the starting offsets.

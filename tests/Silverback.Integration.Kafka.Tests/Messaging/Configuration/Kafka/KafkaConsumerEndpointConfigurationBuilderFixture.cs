@@ -196,7 +196,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
 
         builder
             .ConsumeFrom(
-                new[] { "topic1", "topic2" },
+                ["topic1", "topic2"],
                 topicPartitions => topicPartitions.Select(
                     partition =>
                         new TopicPartitionOffset(partition, Offset.Beginning)));

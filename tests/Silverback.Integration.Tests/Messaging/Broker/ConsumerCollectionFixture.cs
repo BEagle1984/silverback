@@ -33,45 +33,42 @@ public class ConsumerCollectionFixture
         ConsumerCollection consumerCollection = [];
         IConsumer consumer1 = Substitute.For<IConsumer>();
         consumer1.EndpointsConfiguration.Returns(
-            new TestConsumerEndpointConfiguration[]
+        [
+            new TestConsumerEndpointConfiguration("topic1")
             {
-                new("topic1")
-                {
-                    FriendlyName = "one"
-                },
-                new("topic2")
-                {
-                    FriendlyName = "two"
-                }
-            });
+                FriendlyName = "one"
+            },
+            new TestConsumerEndpointConfiguration("topic2")
+            {
+                FriendlyName = "two"
+            }
+        ]);
 
         IConsumer consumer2 = Substitute.For<IConsumer>();
         consumer2.EndpointsConfiguration.Returns(
-            new TestConsumerEndpointConfiguration[]
-            {
-                new("topic1")
+            [
+                new TestConsumerEndpointConfiguration("topic1")
                 {
                     FriendlyName = "three"
                 },
-                new("topic2")
+                new TestConsumerEndpointConfiguration("topic2")
                 {
                     FriendlyName = "four"
                 }
-            });
+            ]);
 
         IConsumer consumer3 = Substitute.For<IConsumer>();
         consumer3.EndpointsConfiguration.Returns(
-            new TestConsumerEndpointConfiguration[]
-            {
-                new("topic1")
+            [
+                new TestConsumerEndpointConfiguration("topic1")
                 {
                     FriendlyName = "five"
                 },
-                new("topic2")
+                new TestConsumerEndpointConfiguration("topic2")
                 {
                     FriendlyName = "four"
                 }
-            });
+            ]);
 
         consumerCollection.Add(consumer1);
         consumerCollection.Add(consumer2);

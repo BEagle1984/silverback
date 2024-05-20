@@ -121,7 +121,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
         _consumerGroup.Subscribe(this, topicsList);
     }
 
-    public void Subscribe(string topic) => Subscribe(new[] { topic });
+    public void Subscribe(string topic) => Subscribe([topic]);
 
     public void Unsubscribe()
     {

@@ -26,11 +26,10 @@ public class KafkaOffsetStoreScopeFixture
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
-                new KafkaOffset("topic1", 2, 3),
-                new KafkaOffset("topic2", 3, 4)
-            });
+        [
+            new KafkaOffset("topic1", 2, 3),
+            new KafkaOffset("topic2", 3, 4)
+        ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
 
@@ -82,12 +81,11 @@ public class KafkaOffsetStoreScopeFixture
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
-                new KafkaOffset("topic1", 1, 5),
-                new KafkaOffset("topic1", 2, 4),
-                new KafkaOffset("topic1", 3, 3),
-            });
+        [
+            new KafkaOffset("topic1", 1, 5),
+            new KafkaOffset("topic1", 2, 4),
+            new KafkaOffset("topic1", 3, 3),
+        ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
 
@@ -95,11 +93,10 @@ public class KafkaOffsetStoreScopeFixture
         offsetStore.ClearReceivedCalls();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
-                new KafkaOffset("topic1", 1, 5),
-                new KafkaOffset("topic1", 2, 4)
-            });
+        [
+            new KafkaOffset("topic1", 1, 5),
+            new KafkaOffset("topic1", 2, 4)
+        ]);
 
         await scope.StoreOffsetsAsync();
 
@@ -118,12 +115,11 @@ public class KafkaOffsetStoreScopeFixture
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
-                new KafkaOffset("topic1", 1, 5),
-                new KafkaOffset("topic1", 2, 4),
-                new KafkaOffset("topic1", 3, 3),
-            });
+        [
+            new KafkaOffset("topic1", 1, 5),
+            new KafkaOffset("topic1", 2, 4),
+            new KafkaOffset("topic1", 3, 3),
+        ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
 
@@ -131,10 +127,9 @@ public class KafkaOffsetStoreScopeFixture
         offsetStore.ClearReceivedCalls();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 1, 6)
-            });
+            ]);
 
         await scope.StoreOffsetsAsync();
 
@@ -158,12 +153,11 @@ public class KafkaOffsetStoreScopeFixture
         SilverbackContext silverbackContext = context.ServiceProvider.GetRequiredService<SilverbackContext>();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
-                new KafkaOffset("topic1", 1, 5),
-                new KafkaOffset("topic1", 2, 4),
-                new KafkaOffset("topic1", 3, 3),
-            });
+        [
+            new KafkaOffset("topic1", 1, 5),
+            new KafkaOffset("topic1", 2, 4),
+            new KafkaOffset("topic1", 3, 3),
+        ]);
 
         KafkaOffsetStoreScope scope = new(offsetStore, context);
 
@@ -171,10 +165,9 @@ public class KafkaOffsetStoreScopeFixture
         offsetStore.ClearReceivedCalls();
 
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 1, 2)
-            });
+            ]);
 
         await scope.StoreOffsetsAsync();
 

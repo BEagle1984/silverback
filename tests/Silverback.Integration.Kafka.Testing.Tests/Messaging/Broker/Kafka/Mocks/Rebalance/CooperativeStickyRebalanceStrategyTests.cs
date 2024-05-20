@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
 using NSubstitute;
@@ -254,7 +253,7 @@ public class CooperativeStickyRebalanceStrategyTests
     private static IMockedConfluentConsumer GetMockedConsumer(params string[] topics)
     {
         IMockedConfluentConsumer? consumer = Substitute.For<IMockedConfluentConsumer>();
-        consumer.Subscription.Returns(topics.ToList());
+        consumer.Subscription.Returns<List<string>>([.. topics]);
         return consumer;
     }
 }

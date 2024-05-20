@@ -74,10 +74,10 @@ public class ClientIdFilterFixture : MqttFixture
                 .AddSingletonSubscriber<Subscriber>(
                     new TypeSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new MqttClientIdFilterAttribute("client1")
-                        }
+                        ]
                     })
                 .AddIntegrationSpyAndSubscriber());
 
@@ -115,19 +115,19 @@ public class ClientIdFilterFixture : MqttFixture
                     HandleEventclient1,
                     new DelegateSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new MqttClientIdFilterAttribute("client1")
-                        }
+                        ]
                     })
                 .AddDelegateSubscriber<IEvent>(
                     HandleEventclient2,
                     new DelegateSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new MqttClientIdFilterAttribute("client2")
-                        }
+                        ]
                     })
                 .AddIntegrationSpy());
 

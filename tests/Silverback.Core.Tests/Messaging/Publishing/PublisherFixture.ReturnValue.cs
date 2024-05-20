@@ -621,15 +621,15 @@ public partial class PublisherFixture
     private class PublishEnumerableOfInterfaceSubscriber
     {
         [UsedImplicitly]
-        public IEnumerable<IMessage> SyncSubscriber(TestEventOne message) => new TestCommandOne[] { new(), new() };
+        public IEnumerable<IMessage> SyncSubscriber(TestEventOne message) => [new TestCommandOne(), new TestCommandOne()];
 
         [UsedImplicitly]
         public Task<List<ICommand>> AsyncSubscriber(TestEventOne message) =>
-            Task.FromResult(new List<ICommand>(new TestCommandTwo[] { new(), new() }));
+            Task.FromResult(new List<ICommand>([new TestCommandTwo(), new TestCommandTwo()]));
 
         [UsedImplicitly]
         public ValueTask<IReadOnlyCollection<ICommand>> AsyncValueTaskSubscriber(TestEventOne message) =>
-            ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>(new TestCommandOne[] { new(), new() });
+            ValueTaskFactory.FromResult<IReadOnlyCollection<ICommand>>([new TestCommandOne(), new TestCommandOne()]);
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code")]

@@ -66,7 +66,7 @@ public sealed class SqliteOutboxReaderFixture : IDisposable
         IOutboxReaderFactory readerFactory = serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, serviceProvider);
 
-        await outboxReader.AcknowledgeAsync(new[] { outboxMessage1, outboxMessage3 });
+        await outboxReader.AcknowledgeAsync([outboxMessage1, outboxMessage3]);
 
         (await GetOutboxLengthAsync()).Should().Be(2);
     }

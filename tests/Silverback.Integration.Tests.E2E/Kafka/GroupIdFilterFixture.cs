@@ -88,10 +88,10 @@ public class GroupIdFilterFixture : KafkaFixture
                 .AddSingletonSubscriber<Subscriber>(
                     new TypeSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new KafkaGroupIdFilterAttribute("group1")
-                        }
+                        ]
                     })
                 .AddIntegrationSpy());
 
@@ -135,19 +135,19 @@ public class GroupIdFilterFixture : KafkaFixture
                     HandleEventGroup1,
                     new DelegateSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new KafkaGroupIdFilterAttribute("group1")
-                        }
+                        ]
                     })
                 .AddDelegateSubscriber<IEvent>(
                     HandleEventGroup2,
                     new DelegateSubscriptionOptions
                     {
-                        Filters = new[]
-                        {
+                        Filters =
+                        [
                             new KafkaGroupIdFilterAttribute("group2")
-                        }
+                        ]
                     })
                 .AddIntegrationSpy());
 

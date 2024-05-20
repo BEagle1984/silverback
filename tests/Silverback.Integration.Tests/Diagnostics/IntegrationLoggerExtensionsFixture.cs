@@ -261,11 +261,10 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogConsumerCommitError(
             new TestConsumer(),
-            new[]
-            {
+            [
                 new TestOffset("a", "42"),
                 new TestOffset("b", "13")
-            },
+            ],
             new TimeoutException());
 
         _loggerSubstitute.Received(
@@ -280,11 +279,10 @@ public class IntegrationLoggerExtensionsFixture
     {
         _silverbackLogger.LogConsumerRollbackError(
             new TestConsumer(),
-            new[]
-            {
+            [
                 new TestOffset("a", "42"),
                 new TestOffset("b", "13")
-            },
+            ],
             new TimeoutException());
 
         _loggerSubstitute.Received(

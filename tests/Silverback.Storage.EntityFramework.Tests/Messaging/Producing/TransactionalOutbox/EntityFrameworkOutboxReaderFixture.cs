@@ -69,7 +69,7 @@ public sealed class EntityFrameworkOutboxReaderFixture : IDisposable
         IOutboxReaderFactory readerFactory = _serviceProvider.GetRequiredService<IOutboxReaderFactory>();
         IOutboxReader outboxReader = readerFactory.GetReader(_outboxSettings, _serviceProvider);
 
-        await outboxReader.AcknowledgeAsync(new[] { outboxMessage1, outboxMessage3 });
+        await outboxReader.AcknowledgeAsync([outboxMessage1, outboxMessage3]);
 
         dbContext.Outbox.AsNoTracking().Count().Should().Be(2);
     }

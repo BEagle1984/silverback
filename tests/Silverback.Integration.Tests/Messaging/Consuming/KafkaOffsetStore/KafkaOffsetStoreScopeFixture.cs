@@ -42,11 +42,10 @@ public class KafkaOffsetStoreScopeFixture
 
         ISequence sequence = Substitute.For<ISequence>();
         sequence.GetCommitIdentifiers().Returns(
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 3, 42),
                 new KafkaOffset("topic2", 6, 13)
-            });
+            ]);
         ConsumerPipelineContext context = ConsumerPipelineContextHelper.CreateSubstitute(sequence: sequence);
 
         KafkaOffsetStoreScope scope = new(store, context);
@@ -56,11 +55,10 @@ public class KafkaOffsetStoreScopeFixture
         IReadOnlyCollection<KafkaOffset> storedOffsets = store.GetStoredOffsets(string.Empty);
         storedOffsets.Should().HaveCount(2);
         storedOffsets.Should().BeEquivalentTo(
-            new[]
-            {
+            [
                 new KafkaOffset("topic1", 3, 42),
                 new KafkaOffset("topic2", 6, 13)
-            },
+            ],
             options => options.WithoutStrictOrdering());
     }
 
