@@ -13,7 +13,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Consuming;
+namespace Silverback.Tests.Integration.Kafka.Messaging.Consuming.KafkaOffsetStore;
 
 public class KafkaOffsetStoreScopeFixture
 {

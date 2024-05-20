@@ -10,7 +10,6 @@ namespace Silverback.Messaging.Transactions;
 /// <summary>
 ///     Adds the <see cref="InitKafkaTransaction" /> method to the <see cref="SilverbackContext" />.
 /// </summary>
-// TODO: Test?
 public static class SilverbackContextKafkaTransactionExtensions
 {
     private static readonly Guid KafkaTransactionObjectTypeId = new("f6c8c224-392a-4d57-8344-46e190624e3c");

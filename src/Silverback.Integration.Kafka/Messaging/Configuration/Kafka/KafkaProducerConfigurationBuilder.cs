@@ -103,7 +103,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
         configurationBuilderAction.Invoke(builder);
         KafkaProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}"; // TODO: Check if OK to concat type (needed when pushing multiple types to same topic)
+        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}";
 
         if (_endpoints.ContainsKey(name))
             return this;

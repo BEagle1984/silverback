@@ -11,7 +11,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 
-// TODO: Test
 internal class StoredOffsetsLoader
 {
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
@@ -47,7 +46,7 @@ internal class StoredOffsetsLoader
 
         KafkaOffset? storedOffset = _storedOffsets.FirstOrDefault(offset => offset.TopicPartition == topicPartitionOffset.TopicPartition);
 
-        if (storedOffset != null && storedOffset.Offset >= topicPartitionOffset.Offset) // TODO: Test edge case (>=)
+        if (storedOffset != null && storedOffset.Offset >= topicPartitionOffset.Offset)
             return new TopicPartitionOffset(storedOffset.TopicPartition, storedOffset.Offset + 1); // Kafka works with the next offset (+1)
 
         return topicPartitionOffset;

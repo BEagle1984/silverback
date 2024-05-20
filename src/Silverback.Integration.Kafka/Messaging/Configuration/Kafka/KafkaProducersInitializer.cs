@@ -62,7 +62,6 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
 
     private List<KafkaProducer> InitializeNormalProducers(string name, KafkaProducerConfiguration configuration, bool routing)
     {
-        // TODO: Append suffix to name?
         IConfluentProducerWrapper confluentProducerWrapper = _confluentProducerWrapperFactory.Create(name, configuration);
         AddClient(confluentProducerWrapper);
 

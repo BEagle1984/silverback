@@ -9,7 +9,6 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 /// <summary>
 ///     Adds the Kafka offset store specific methods to the <see cref="SilverbackContext" />.
 /// </summary>
-// TODO: Test?
 public static class SilverbackContextKafkaOffsetStoreExtensions
 {
     private static readonly Guid OffsetStoreObjectTypeId = new("9d9795c6-4b91-43ee-b370-fa0f539a20f8");

@@ -61,7 +61,7 @@ public class ChunkEnricherFactoryFixture
     }
 
     [Fact]
-    public void GetEnricher_ShouldReturnCachedLockInstance()
+    public void GetEnricher_ShouldReturnCachedInstance()
     {
         ChunkEnricherFactory factory = new();
         factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());
@@ -78,7 +78,7 @@ public class ChunkEnricherFactoryFixture
     }
 
     [Fact]
-    public void GetEnricher_ShouldReturnCachedLockInstance_WhenOverridden()
+    public void GetEnricher_ShouldReturnCachedInstance_WhenOverridden()
     {
         ChunkEnricherFactory factory = new();
         factory.AddFactory<ProducerEndpoint1>(_ => new ChunkEnricher1());

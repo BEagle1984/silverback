@@ -15,7 +15,6 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker;
 
 /// <inheritdoc cref="Producer" />
-// TODO: Overloads (or extensions) accepting an additional KafkaTransaction parameter
 public sealed class KafkaTransactionalProducer : IProducer
 {
     private readonly IKafkaTransactionalProducerCollection _transactionalProducers;
@@ -147,7 +146,7 @@ public sealed class KafkaTransactionalProducer : IProducer
     private async ValueTask<KafkaProducer> GetProducerForTransactionAsync(IOutboundEnvelope envelope)
     {
         KafkaTransaction transaction = envelope.Context?.GetKafkaTransaction()
-                                       ?? throw new InvalidOperationException("The transaction is not available."); // TODO: Improve message and exception type
+                                       ?? throw new MissingKafkaTransactionException();
 
         KafkaProducer producer = await _transactionalProducers.GetOrCreateAsync(Name, Configuration, envelope, transaction).ConfigureAwait(false);
 

@@ -9,7 +9,6 @@ namespace Silverback.Messaging.Transactions;
 /// <summary>
 ///     Adds the <see cref="InitKafkaTransaction" /> method to the <see cref="Publisher" />.
 /// </summary>
-// TODO: Test
 public static class PublisherKafkaTransactionExtensions
 {
     /// <summary>
