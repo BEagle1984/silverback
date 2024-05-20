@@ -11,7 +11,6 @@ namespace Silverback.Messaging.Subscribers;
 ///     The exception that is thrown when a subscribed method cannot be invoked. This usually happens
 ///     because no value can be resolved for one or more arguments.
 /// </summary>
-[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class SubscribedMethodInvocationException : SilverbackException
 {

@@ -10,7 +10,6 @@ namespace Silverback.Messaging.Broker;
 ///     The exception that is thrown by the <see cref="IProducer" /> when the message cannot be produced or
 ///     the message broker didn't acknowledge it.
 /// </summary>
-[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class ProduceException : SilverbackException
 {

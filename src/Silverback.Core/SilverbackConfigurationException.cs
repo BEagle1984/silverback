@@ -9,7 +9,6 @@ namespace Silverback;
 /// <summary>
 ///     The exception that is thrown when the specified configuration is not valid.
 /// </summary>
-[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class SilverbackConfigurationException : SilverbackException
 {
@@ -21,8 +20,7 @@ public class SilverbackConfigurationException : SilverbackException
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SilverbackConfigurationException" /> class with the
-    ///     specified message.
+    ///     Initializes a new instance of the <see cref="SilverbackConfigurationException" /> class with the specified message.
     /// </summary>
     /// <param name="message">
     ///     The exception message.
@@ -33,8 +31,7 @@ public class SilverbackConfigurationException : SilverbackException
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="SilverbackConfigurationException" /> class with the
-    ///     specified message and inner exception.
+    ///     Initializes a new instance of the <see cref="SilverbackConfigurationException" /> class with the specified message and inner exception.
     /// </summary>
     /// <param name="message">
     ///     The exception message.

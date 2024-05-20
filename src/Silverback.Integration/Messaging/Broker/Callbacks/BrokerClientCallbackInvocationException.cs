@@ -9,7 +9,6 @@ namespace Silverback.Messaging.Broker.Callbacks;
 /// <summary>
 ///     The exception that wraps the exception thrown by a <see cref="IBrokerClientCallback" />.
 /// </summary>
-[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class BrokerClientCallbackInvocationException : SilverbackException
 {

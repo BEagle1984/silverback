@@ -10,7 +10,6 @@ namespace Silverback.Messaging.Validation;
 ///     The exception that is thrown when the message is not valid and the validation mode is
 ///     <see cref="MessageValidationMode.ThrowException" />.
 /// </summary>
-[SuppressMessage("Usage", "CA2237:Mark ISerializable types with serializable", Justification = "Not required anymore")]
 [ExcludeFromCodeCoverage]
 public class MessageValidationException : SilverbackException
 {
