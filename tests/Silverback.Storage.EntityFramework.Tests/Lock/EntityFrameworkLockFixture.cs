@@ -235,7 +235,7 @@ public sealed class EntityFrameworkLockFixture : IDisposable
 
         DateTime initialHeartbeat = dbContext.Locks.AsNoTracking().Single().LastHeartbeat ?? DateTime.MinValue;
 
-        await Task.Delay(1000);
+        await AsyncTestingUtil.WaitAsync(() => dbContext.Locks.AsNoTracking().Single().LastHeartbeat > initialHeartbeat);
 
         DateTime lastHeartbeat = dbContext.Locks.AsNoTracking().Single().LastHeartbeat ?? DateTime.MinValue;
         lastHeartbeat.Should().BeAfter(initialHeartbeat);

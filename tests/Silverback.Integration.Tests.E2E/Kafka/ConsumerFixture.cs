@@ -125,7 +125,7 @@ public class ConsumerFixture : KafkaFixture
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
         consumer.Seek(new TopicPartitionOffset(DefaultTopicName, 1, 0));
 
-        await AsyncTestingUtil.WaitAsync(() => receivedMessages.Sum() > 9);
+        await AsyncTestingUtil.WaitAsync(() => receivedMessages.Sum() >= 12);
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         receivedMessages.Sum().Should().Be(12);
         receivedMessages[1].Should().Be(6);
