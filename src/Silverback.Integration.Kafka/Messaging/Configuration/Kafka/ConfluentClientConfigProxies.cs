@@ -1009,6 +1009,28 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
+        ///     Group protocol type. NOTE: Currently, the only supported group protocol type is `consumer`.
+        ///     <br /><br />default: consumer
+        ///     <br />importance: low
+        /// </summary>
+        public GroupProtocol? GroupProtocol
+        {
+            get => ConfluentConfig.GroupProtocol;
+            set => ConfluentConfig.GroupProtocol = value;
+        }
+
+        /// <summary>
+        ///     Server side assignor to use. Keep it null to make server select a suitable assignor for the group. Available assignors: uniform or range. Default is null
+        ///     <br /><br />default: ''
+        ///     <br />importance: medium
+        /// </summary>
+        public string GroupRemoteAssignor
+        {
+            get => ConfluentConfig.GroupRemoteAssignor;
+            set => ConfluentConfig.GroupRemoteAssignor = value;
+        }
+
+        /// <summary>
         ///     How often to query for the current client group coordinator. If the currently assigned coordinator is down the configured query interval will be divided by ten to more quickly recover in case of coordinator reassignment.
         ///     <br /><br />default: 600000
         ///     <br />importance: low

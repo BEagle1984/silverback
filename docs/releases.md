@@ -9,6 +9,7 @@ uid: releases
 ### What's new
 
 * Upgrade to [MQTTnet 4.3.6.1152](https://github.com/chkr1011/MQTTnet/releases/tag/v4.3.6.1152)
+* Upgrade to [Confluent.Kafka 2.4.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v2.3.0)
 * Minor changes to reduce the likelihood of a deadlock
 
 ## [4.4.1](https://github.com/BEagle1984/silverback/releases/tag/v4.4.1)

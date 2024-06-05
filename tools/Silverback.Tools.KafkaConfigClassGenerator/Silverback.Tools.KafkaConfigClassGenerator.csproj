@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="2.3.0">
+    <PackageReference Include="Confluent.Kafka" Version="2.4.0">
       <!-- Workaround for xml documentation not being copied to output folder -->
       <CopyToOutputDirectory>lib/netcoreapp2.1/*.xml</CopyToOutputDirectory>
     </PackageReference>
