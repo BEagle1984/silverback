@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [4.5.1](https://github.com/BEagle1984/silverback/releases/tag/v4.4.1)
+## [4.5.0](https://github.com/BEagle1984/silverback/releases/tag/v4.5.0)
 
 ### What's new
 
