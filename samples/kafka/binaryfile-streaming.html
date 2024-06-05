@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Kafka - Files Streaming | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka - Files Streaming | Silverback ">
-    <meta name="generator" content="docfx 2.59.4.0">
-    
+    <meta name="generator" content="docfx ">
   
+
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-  
+
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+  
+  <meta property="docfx:rel" content="../../">
+  
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -90,22 +90,22 @@
 <p>See also: <a class="xref" href="../../concepts/broker/binary-files.html">Binary Files</a>, <a class="xref" href="../../concepts/broker/chunking.html">Chunking</a></p>
 <h2 id="producer">Producer</h2>
 <p>The producer exposes two REST API that receive the path of a local file to be streamed. The second API uses a custom <code>BinaryFileMessage</code> to forward further metadata (the file name in this example).</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_1_producer-startup" role="tab" aria-controls="tabpanel_1_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-endpoints" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_1_producer-endpoints" role="tab" aria-controls="tabpanel_1_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-custom-message" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-custom-message" data-tab="producer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+<a href="#tabpanel_1_producer-custom-message" role="tab" aria-controls="tabpanel_1_producer-custom-message" data-tab="producer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_producer-controller" role="tab" aria-controls="tabpanel_bHGHmlrG6S_producer-controller" data-tab="producer-controller" tabindex="-1">API Controller</a>
+<a href="#tabpanel_1_producer-controller" role="tab" aria-controls="tabpanel_1_producer-controller" data-tab="producer-controller" tabindex="-1">API Controller</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_producer-startup" role="tabpanel" data-tab="producer-startup">
+<section id="tabpanel_1_producer-startup" role="tabpanel" data-tab="producer-startup">
 <pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -151,7 +151,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 
@@ -196,7 +196,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S_producer-custom-message" role="tabpanel" data-tab="producer-custom-message" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_producer-custom-message" role="tabpanel" data-tab="producer-custom-message" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
 
 namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Messages
@@ -208,7 +208,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Messages
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S_producer-controller" role="tabpanel" data-tab="producer-controller" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_producer-controller" role="tabpanel" data-tab="producer-controller" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Producer.ProducerController">using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -286,22 +286,22 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
 <p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BinaryFileStreaming.Producer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BinaryFileStreaming.Producer</a></em></p>
 <h2 id="consumer">Consumer</h2>
 <p>The consumer simply streams the file to a temporary folder in the local file system.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<div class="tabGroup" id="tabgroup_2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_consumer-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_2_consumer-startup" role="tab" aria-controls="tabpanel_2_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_consumer-endpoints" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_2_consumer-endpoints" role="tab" aria-controls="tabpanel_2_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_consumer-custom-message" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-custom-message" data-tab="consumer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
+<a href="#tabpanel_2_consumer-custom-message" role="tab" aria-controls="tabpanel_2_consumer-custom-message" data-tab="consumer-custom-message" tabindex="-1">CustomBinaryFileMessage</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_consumer-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_2_consumer-subscriber" role="tab" aria-controls="tabpanel_2_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-1_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<section id="tabpanel_2_consumer-startup" role="tabpanel" data-tab="consumer-startup">
 <pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
 using Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers;
 
@@ -334,7 +334,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S-1_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_2_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.EndpointsConfigurator">using Confluent.Kafka;
 using Silverback.Messaging.Configuration;
 using Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Messages;
@@ -416,7 +416,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S-1_consumer-custom-message" role="tabpanel" data-tab="consumer-custom-message" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_2_consumer-custom-message" role="tabpanel" data-tab="consumer-custom-message" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.CustomBinaryFileMessage">using Silverback.Messaging.Messages;
 
 namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Messages
@@ -428,7 +428,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Messages
     }
 }
 </code></pre></section>
-<section id="tabpanel_bHGHmlrG6S-1_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_2_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
 <pre><code class="lang-csharp" name="Consumer.BinaryFileSubscriber">using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -487,7 +487,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
 <p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BinaryFileStreaming.Consumer">https://github.com/BEagle1984/silverback/tree/master/samples/Kafka/BinaryFileStreaming.Consumer</a></em></p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -504,7 +504,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -515,13 +515,13 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-            © 2020 Sergio Aquilini
-            
+      © 2020 Sergio Aquilini
+      
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>
