@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Net;
 using FluentAssertions;
 using MQTTnet.Client;
 using NSubstitute;
@@ -36,7 +37,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration
             policy.As<MoveMessageErrorPolicy>().Endpoint.Name.Should().Be("test-move");
             policy.As<MoveMessageErrorPolicy>().Endpoint
                 .As<MqttProducerEndpoint>().Configuration.ChannelOptions
-                .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
+                .As<MqttClientTcpOptions>().RemoteEndpoint.As<DnsEndPoint>().Host.Should().Be("tests-server");
         }
 
         [Fact]
@@ -53,7 +54,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration
             policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
             policy.As<MoveMessageErrorPolicy>().Endpoint
                 .As<MqttProducerEndpoint>().Configuration.ChannelOptions
-                .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
+                .As<MqttClientTcpOptions>().RemoteEndpoint.As<DnsEndPoint>().Host.Should().Be("tests-server");
         }
     }
 }

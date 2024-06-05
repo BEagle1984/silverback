@@ -19,8 +19,10 @@ namespace Silverback.Messaging.Messages
     internal sealed class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
+        [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "False positive")]
         private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
+        [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "False positive")]
         private readonly SemaphoreSlim _readSemaphore = new(0, 1);
 
         private readonly SemaphoreSlim _processedSemaphore = new(0, 1);
@@ -115,6 +117,7 @@ namespace Silverback.Messaging.Messages
             _abortCancellationTokenSource.Dispose();
         }
 
+        [SuppressMessage("ReSharper", "SuspiciousLockOverSynchronizationPrimitive", Justification = "Intentional")]
         private static void SafelyRelease(SemaphoreSlim semaphore)
         {
             lock (semaphore)

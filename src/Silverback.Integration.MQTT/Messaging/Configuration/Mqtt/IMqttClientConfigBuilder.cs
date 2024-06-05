@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Sockets;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
 
@@ -314,10 +315,13 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <param name="port">
         ///     The server port. If not specified the default port 1883 will be used.
         /// </param>
+        /// <param name="addressFamily">
+        ///     The address family to use for the connection. The default is <see cref="AddressFamily.Unspecified" />.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
-        IMqttClientConfigBuilder ConnectViaTcp(string server, int? port = null);
+        IMqttClientConfigBuilder ConnectViaTcp(string server, int? port = null, AddressFamily addressFamily = AddressFamily.Unspecified);
 
         /// <summary>
         ///     Specifies the TCP connection settings.

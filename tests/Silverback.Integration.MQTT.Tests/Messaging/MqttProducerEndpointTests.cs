@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Net;
 using FluentAssertions;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
@@ -212,7 +213,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                 {
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "test-server"
+                        RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                     }
                 }
             };
@@ -231,7 +232,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                 {
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "test-server"
+                        RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                     },
                     ProtocolVersion = MqttProtocolVersion.V311
                 },
@@ -255,7 +256,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                 {
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "test-server"
+                        RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                     }
                 },
                 Chunk = new ChunkSettings
@@ -276,7 +277,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                 {
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "test-server"
+                        RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                     }
                 }
             };

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -434,8 +435,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             builder.ConnectViaTcp(
                 options =>
                 {
-                    options.Server = "tests-server";
-                    options.Port = 1234;
+                    options.RemoteEndpoint = new DnsEndPoint("tests-server", 1234);
                 });
 
             var config = builder.Build();

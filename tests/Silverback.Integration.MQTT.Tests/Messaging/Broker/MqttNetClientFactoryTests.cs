@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client;
@@ -43,7 +44,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             {
                 ChannelOptions = new MqttClientTcpOptions
                 {
-                    Server = "mqtt-server"
+                    RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                 }
             };
 
@@ -81,7 +82,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -93,7 +94,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -121,7 +122,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -133,7 +134,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -161,7 +162,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -173,7 +174,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -201,7 +202,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -214,7 +215,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -233,7 +234,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -245,7 +246,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server2"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -264,7 +265,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client1",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });
@@ -276,7 +277,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         ClientId = "client2",
                         ChannelOptions = new MqttClientTcpOptions
                         {
-                            Server = "mqtt-server"
+                            RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                         }
                     }
                 });

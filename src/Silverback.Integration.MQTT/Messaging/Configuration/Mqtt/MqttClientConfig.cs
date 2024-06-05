@@ -369,8 +369,10 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
             if (ChannelOptions is MqttClientTcpOptions tcpOptions)
             {
-                if (string.IsNullOrEmpty(tcpOptions.Server))
-                    throw new EndpointConfigurationException("ChannelOptions.Server cannot be empty.");
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (tcpOptions.RemoteEndpoint == null && string.IsNullOrEmpty(tcpOptions.Server))
+#pragma warning restore CS0618 // Type or member is obsolete
+                throw new EndpointConfigurationException("ChannelOptions.RemoteEndpoint cannot be empty.");
             }
             else if (ChannelOptions is MqttClientWebSocketOptions webSocketOptions)
             {

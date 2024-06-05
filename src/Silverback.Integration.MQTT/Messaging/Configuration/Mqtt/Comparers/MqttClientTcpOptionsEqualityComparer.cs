@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using MQTTnet.Client;
 
+#pragma warning disable CS0618 // Type or member is obsolete -> MQTTnet marked some properties as obsolete
+
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
     internal sealed class MqttClientTcpOptionsEqualityComparer : IEqualityComparer<MqttClientTcpOptions>
@@ -25,7 +27,8 @@ namespace Silverback.Messaging.Configuration.Mqtt.Comparers
             if (x.GetType() != y.GetType())
                 return false;
 
-            return x.Server == y.Server &&
+            return Equals(x.RemoteEndpoint, y.RemoteEndpoint) &&
+                   x.Server == y.Server &&
                    x.Port == y.Port &&
                    x.BufferSize == y.BufferSize &&
                    x.DualMode == y.DualMode &&
@@ -35,6 +38,7 @@ namespace Silverback.Messaging.Configuration.Mqtt.Comparers
         }
 
         public int GetHashCode(MqttClientTcpOptions obj) => HashCode.Combine(
+            obj.RemoteEndpoint,
             obj.Server,
             obj.Port,
             obj.BufferSize,

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,7 +38,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
             {
                 ChannelOptions = new MqttClientTcpOptions
                 {
-                    Server = "test-server"
+                    RemoteEndpoint = new DnsEndPoint("test-server", 4242)
                 }
             }
         };
@@ -96,15 +97,14 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                     ClientId = "test-client",
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "mqtt",
-                        Port = 1234
+                        RemoteEndpoint = new DnsEndPoint("mqtt", 1234)
                     }
                 },
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
-                "Error occurred connecting to the MQTT broker. | clientId: test-client, broker: mqtt:1234";
+                "Error occurred connecting to the MQTT broker. | clientId: test-client, broker: Unspecified/mqtt:1234";
 
             _silverbackLogger.LogConnectError(mqttClientWrapper, new MqttCommunicationException("test"));
 
@@ -153,8 +153,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                     ClientId = "test-client",
                     ChannelOptions = new MqttClientTcpOptions
                     {
-                        Server = "mqtt",
-                        Port = 1234
+                        RemoteEndpoint = new DnsEndPoint("mqtt", 1234)
                     }
                 },
                 Substitute.For<IBrokerCallbacksInvoker>(),
@@ -162,7 +161,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
 
             var expectedMessage =
                 "Connection with the MQTT broker lost. The client will try to reconnect. | " +
-                "clientId: test-client, broker: mqtt:1234";
+                "clientId: test-client, broker: Unspecified/mqtt:1234";
 
             _silverbackLogger.LogConnectionLost(mqttClientWrapper);
 

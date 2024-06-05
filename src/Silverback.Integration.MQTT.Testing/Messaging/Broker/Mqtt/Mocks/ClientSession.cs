@@ -215,7 +215,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                 clientOptions.ChannelOptions switch
                 {
                     MqttClientTcpOptions tcpOptions =>
-                        $"{tcpOptions.Server.ToUpperInvariant()}-{tcpOptions.GetPort()}",
+                        $"{tcpOptions.RemoteEndpoint}",
                     MqttClientWebSocketOptions socketOptions =>
                         socketOptions.Uri.ToUpperInvariant(),
                     _ => throw new InvalidOperationException(

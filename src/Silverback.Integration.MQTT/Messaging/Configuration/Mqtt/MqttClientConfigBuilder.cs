@@ -3,9 +3,13 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Sockets;
+using System.Security;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
+using MQTTnet.Implementations;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt
@@ -59,8 +63,11 @@ namespace Silverback.Messaging.Configuration.Mqtt
                 ConnectViaTcp(
                     options =>
                     {
+                        options.RemoteEndpoint = tcpOptions.RemoteEndpoint;
+#pragma warning disable CS0618 // Type or member is obsolete
                         options.Port = tcpOptions.Port;
                         options.Server = tcpOptions.Server;
+#pragma warning restore CS0618 // Type or member is obsolete
                         options.AddressFamily = tcpOptions.AddressFamily;
                         options.BufferSize = tcpOptions.BufferSize;
                         options.DualMode = tcpOptions.DualMode;
@@ -338,12 +345,12 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
-        /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaTcp(string,int?)" />
-        public IMqttClientConfigBuilder ConnectViaTcp(string server, int? port = null)
+        /// <inheritdoc cref="IMqttClientConfigBuilder.ConnectViaTcp(string,int?,AddressFamily)" />
+        public IMqttClientConfigBuilder ConnectViaTcp(string server, int? port = null, AddressFamily addressFamily = AddressFamily.Unspecified)
         {
             Check.NotNull(server, nameof(server));
 
-            _builder.WithTcpServer(server, port);
+            _builder.WithTcpServer(server, port, addressFamily);
             return this;
         }
 
@@ -353,6 +360,16 @@ namespace Silverback.Messaging.Configuration.Mqtt
             Check.NotNull(optionsAction, nameof(optionsAction));
 
             _builder.WithTcpServer(optionsAction);
+
+            // MQTTnet is not properly setting the remote endpoint when using this method
+            var options = new MqttClientTcpOptions();
+            optionsAction.Invoke(options);
+
+            if (options.RemoteEndpoint is DnsEndPoint dnsEndPoint)
+                ConnectViaTcp(dnsEndPoint.Host, dnsEndPoint.Port, options.AddressFamily);
+            else if (options.RemoteEndpoint is IPEndPoint ipEndPoint)
+                ConnectViaTcp(ipEndPoint.Address.ToString(), ipEndPoint.Port, options.AddressFamily);
+
             return this;
         }
 

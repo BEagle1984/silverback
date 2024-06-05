@@ -4,6 +4,13 @@ uid: releases
 
 # Releases
 
+## [4.5.1](https://github.com/BEagle1984/silverback/releases/tag/v4.4.1)
+
+### What's new
+
+* Upgrade to [MQTTnet 4.3.6.1152](https://github.com/chkr1011/MQTTnet/releases/tag/v4.3.6.1152)
+* Minor changes to reduce the likelihood of a deadlock
+
 ## [4.4.1](https://github.com/BEagle1984/silverback/releases/tag/v4.4.1)
 
 ### What's new

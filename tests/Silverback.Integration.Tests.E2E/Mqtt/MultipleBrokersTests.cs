@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,12 +68,12 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             Helper.Spy.InboundEnvelopes[0]
                 .Endpoint.As<MqttConsumerEndpoint>()
                 .Configuration.ChannelOptions.As<MqttClientTcpOptions>()
-                .Server.Should().Be("e2e-mqtt-broker-1");
+                .RemoteEndpoint.As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-1");
             Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
             Helper.Spy.InboundEnvelopes[1]
                 .Endpoint.As<MqttConsumerEndpoint>()
                 .Configuration.ChannelOptions.As<MqttClientTcpOptions>()
-                .Server.Should().Be("e2e-mqtt-broker-2");
+                .RemoteEndpoint.As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-2");
         }
 
         private sealed class Broker1Message : IIntegrationMessage

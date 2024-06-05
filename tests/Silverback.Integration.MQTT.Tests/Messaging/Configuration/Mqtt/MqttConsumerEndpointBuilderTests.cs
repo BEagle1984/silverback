@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Net;
 using FluentAssertions;
 using MQTTnet.Client;
 using MQTTnet.Protocol;
@@ -17,7 +18,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         {
             ChannelOptions = new MqttClientTcpOptions
             {
-                Server = "tests-server"
+                RemoteEndpoint = new DnsEndPoint("test-server", 4242)
             }
         };
 
