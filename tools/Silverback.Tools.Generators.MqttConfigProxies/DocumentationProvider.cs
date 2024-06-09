@@ -110,6 +110,20 @@ internal static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the maximum size of the buffer writer. The writer will reduce its internal buffer to this value after serializing a");
                 builder.AppendLine("    ///     packet. Do not change this value when no memory issues are experienced.");
                 break;
+            case nameof(MqttClientOptions.AllowPacketFragmentation):
+                builder.AppendLine("    ///     Gets a value indicating whether the broker allows packet fragmentation.");
+                builder.AppendLine("    ///     Unfortunately not all brokers (like AWS) do support fragmentation and will close the connection when receiving such packets.");
+                builder.AppendLine("    ///     If such a service is used this flag must be set to <c>false</c>.");
+                builder.AppendLine("    ///     The default is <c>true</c>.");
+                break;
+            case nameof(MqttClientOptions.ThrowOnNonSuccessfulConnectResponse):
+                builder.AppendLine("    ///     Gets a value indicating whether an exception should be thrown when the server replies with a non success ACK packet.");
+                builder.AppendLine("    ///     The default is <c>true</c>.");
+                break;
+            case nameof(MqttClientOptions.ValidateFeatures):
+                builder.AppendLine("    ///     Gets a value indicating whether the client should check if the configuration is valid for the selected protocol version.");
+                builder.AppendLine("    ///     The default is <c>true</c>.");
+                break;
         }
     }
 
@@ -117,11 +131,8 @@ internal static class DocumentationProvider
     {
         switch (property.Name)
         {
-            case nameof(MqttClientTcpOptions.Server):
-                builder.AppendLine("    ///     Gets the server name or address.");
-                break;
-            case nameof(MqttClientTcpOptions.Port):
-                builder.AppendLine("    ///     Gets the server port.");
+            case nameof(MqttClientTcpOptions.RemoteEndpoint):
+                builder.AppendLine("    ///     Gets the remote endpoint (server).");
                 break;
             case nameof(MqttClientTcpOptions.BufferSize):
                 builder.AppendLine("    ///     Gets the size of both the receive and send buffers of the underlying <see cref=\"Socket\" />.");
@@ -141,6 +152,10 @@ internal static class DocumentationProvider
             case nameof(MqttClientTcpOptions.LingerState):
                 builder.AppendLine("    ///     Gets the <see cref=\"System.Net.Sockets.LingerOption\" />.");
                 break;
+            case nameof(MqttClientTcpOptions.ProtocolType):
+                builder.AppendLine("    ///     Gets the protocol type, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).");
+                builder.AppendLine("    ///     The default is <see cref=\"ProtocolType.Tcp\" />.");
+                break;
         }
     }
 
@@ -152,13 +167,23 @@ internal static class DocumentationProvider
                 builder.AppendLine("    ///     Gets the server URI.");
                 break;
             case nameof(MqttClientWebSocketOptions.RequestHeaders):
-                builder.AppendLine("    ///     Gets the HTTP request headers.");
+                builder.AppendLine("    ///     Gets the request headers.");
                 break;
             case nameof(MqttClientWebSocketOptions.SubProtocols):
                 builder.AppendLine("    ///     Gets the sub-protocols to be negotiated during the WebSocket connection handshake.");
                 break;
             case nameof(MqttClientWebSocketOptions.CookieContainer):
                 builder.AppendLine("    ///     Gets the cookies associated with the request.");
+                break;
+            case nameof(MqttClientWebSocketOptions.Credentials):
+                builder.AppendLine("    ///     Gets the credentials to be used.");
+                break;
+            case nameof(MqttClientWebSocketOptions.UseDefaultCredentials):
+                builder.AppendLine("    ///     Gets a value indicating whether the default (system) credentials should be used. The default is <c>false</c>.");
+                break;
+            case nameof(MqttClientWebSocketOptions.KeepAliveInterval):
+                builder.AppendLine("    ///     Gets the keep alive interval for the web socket connection. This is not related to the keep alive interval for the MQTT protocol.");
+                builder.AppendLine("    ///     The default is <see cref=\"WebSocket.DefaultKeepAliveInterval\" />.");
                 break;
         }
     }
@@ -180,13 +205,25 @@ internal static class DocumentationProvider
                 builder.AppendLine("    ///     Gets a value indicating whether the client should accept untrusted certificates.");
                 break;
             case nameof(MqttClientTlsOptions.SslProtocol):
-                builder.AppendLine("    ///     Gets the protocol to be used. The default is TLS 1.3 (or TLS 1.2 for older .NET versions).");
+                builder.AppendLine("    ///     Gets the protocol to be used. The default is TLS 1.3 or TLS 1.2.");
                 break;
             case nameof(MqttClientTlsOptions.CertificateValidationHandler):
                 builder.AppendLine("    ///     Gets the function to be used to validate the remote certificate.");
                 break;
             case nameof(MqttClientTlsOptions.RevocationMode):
                 builder.AppendLine("    ///     Gets the <see cref=\"System.Security.Cryptography.X509Certificates.X509RevocationMode\" />.");
+                break;
+            case nameof(MqttClientTlsOptions.CertificateSelectionHandler):
+                builder.AppendLine("    ///     Gets the function to be used to select the client certificate.");
+                break;
+            case nameof(MqttClientTlsOptions.ClientCertificatesProvider):
+                builder.AppendLine("    ///     Gets the provider to be used to get the client certificates.");
+                break;
+            case nameof(MqttClientTlsOptions.EncryptionPolicy):
+                builder.AppendLine("    ///     Gets the <see cref=\"System.Net.Security.EncryptionPolicy\" />.");
+                break;
+            case nameof(MqttClientTlsOptions.TargetHost):
+                builder.AppendLine("    ///     Gets the target host. If the value is <c>null</c> or empty the same host as the TCP socket host will be used.");
                 break;
         }
     }
@@ -212,6 +249,9 @@ internal static class DocumentationProvider
                 break;
             case nameof(MqttClientWebSocketProxyOptions.BypassList):
                 builder.AppendLine("    ///     Gets the bypass list.");
+                break;
+            case nameof(MqttClientWebSocketProxyOptions.UseDefaultCredentials):
+                builder.AppendLine("    ///     Gets a value indicating whether the default (system) credentials should be used.");
                 break;
         }
     }

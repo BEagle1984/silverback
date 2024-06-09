@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.E2E.Util;
 public static class MqttApplicationMessageExtensions
 {
     public static string? GetContentAsString(this MqttApplicationMessage message) =>
-        message.Payload == null ? null : Encoding.UTF8.GetString(message.Payload);
+        Encoding.UTF8.GetString(message.PayloadSegment);
 
     public static IReadOnlyCollection<string?> GetContentAsString(this IEnumerable<MqttApplicationMessage> messages) =>
         messages.Select(GetContentAsString).ToList();

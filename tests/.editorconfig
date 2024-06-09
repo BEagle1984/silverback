@@ -7,6 +7,8 @@ dotnet_diagnostic.CA1030.severity = none
 dotnet_diagnostic.CA1031.severity = none
 # CA1040: Avoid empty interfaces
 dotnet_diagnostic.CA1040.severity = none
+# CA1054: URI-like parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none
 # CA1062: Validate arguments of public methods
 dotnet_diagnostic.CA1062.severity = none
 # CA1303: Do not pass literals as localized parameters

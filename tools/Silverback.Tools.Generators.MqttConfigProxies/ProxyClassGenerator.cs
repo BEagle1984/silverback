@@ -137,11 +137,17 @@ internal sealed class ProxyClassGenerator
                 property => property.DeclaringType != typeof(MqttClientTlsOptions) ||
                             property.Name
                                 is not nameof(MqttClientTlsOptions.ApplicationProtocols)
-                                and not nameof(MqttClientTlsOptions.Certificates)
-                                and not nameof(MqttClientTlsOptions.CipherSuitesPolicy))
+                                and not nameof(MqttClientTlsOptions.CipherSuitesPolicy)
+                                and not nameof(MqttClientTlsOptions.EncryptionPolicy)
+                                and not nameof(MqttClientTlsOptions.AllowRenegotiation)
+                                and not nameof(MqttClientTlsOptions.TrustChain))
             .Where(
                 property => property.DeclaringType != typeof(MqttClientTcpOptions) ||
-                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions))
+                            property.Name is not nameof(MqttClientTcpOptions.TlsOptions)
+#pragma warning disable CS0618 // Type or member is obsolete
+                                and not nameof(MqttClientTcpOptions.Server)
+                                and not nameof(MqttClientTcpOptions.Port))
+#pragma warning restore CS0618 // Type or member is obsolete
             .Where(
                 property => property.DeclaringType != typeof(MqttClientWebSocketOptions) ||
                             property.Name

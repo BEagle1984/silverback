@@ -15,7 +15,7 @@ public static class ValueReadOnlyCollectionExtensions
     ///     <see cref="IEnumerable{T}" />.
     /// </summary>
     /// <param name="collection">
-    ///     The The collection whose elements are copied to the new <see cref="IValueReadOnlyCollection{T}" />.
+    ///     The collection whose elements are copied to the new <see cref="IValueReadOnlyCollection{T}" />.
     /// </param>
     /// <typeparam name="T">
     ///     The type of the elements.

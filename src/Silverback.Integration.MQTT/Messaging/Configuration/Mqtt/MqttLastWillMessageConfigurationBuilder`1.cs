@@ -35,6 +35,8 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
 
     private uint? _delay;
 
+    private uint? _expiration;
+
     private string? _contentType;
 
     private byte[]? _correlationData;
@@ -88,6 +90,24 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
         Check.Range(delay, nameof(delay), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
 
         _delay = (uint)delay.TotalSeconds;
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the last will message expiration.
+    /// </summary>
+    /// t
+    /// <param name="expiration">
+    ///     The <see cref="TimeSpan" /> representing the expiration.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttLastWillMessageConfigurationBuilder<TMessage> WithExpiration(TimeSpan expiration)
+    {
+        Check.Range(expiration, nameof(expiration), TimeSpan.Zero, TimeSpan.FromSeconds(uint.MaxValue));
+
+        _expiration = (uint)expiration.TotalSeconds;
         return this;
     }
 
@@ -287,6 +307,9 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
 
         if (_delay.HasValue)
             configuration = configuration with { Delay = _delay.Value };
+
+        if (_expiration.HasValue)
+            configuration = configuration with { Expiration = _expiration.Value };
 
         if (_payloadFormatIndicator.HasValue)
             configuration = configuration with { PayloadFormatIndicator = _payloadFormatIndicator.Value };

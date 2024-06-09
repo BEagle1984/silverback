@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -54,8 +55,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
                 ClientId = "id1",
                 Channel = new MqttClientTcpConfiguration
                 {
-                    Server = "test-broker",
-                    Port = 1234
+                    RemoteEndpoint = new DnsEndPoint("test-broker", 1234)
                 }
             },
             Substitute.For<IBrokerClientCallbacksInvoker>(),
@@ -141,7 +141,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             typeof(MqttCommunicationException),
-            "Error occurred connecting to the MQTT broker. | clientName: client1, clientId: id1, broker: test-broker:1234",
+            "Error occurred connecting to the MQTT broker. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
             4021);
     }
 
@@ -153,7 +153,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Debug,
             typeof(MqttCommunicationException),
-            "Error occurred retrying to connect to the MQTT broker. | clientName: client1, clientId: id1, broker: test-broker:1234",
+            "Error occurred retrying to connect to the MQTT broker. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
             4022);
     }
 
@@ -165,7 +165,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Warning,
             null,
-            "Connection with the MQTT broker lost. The client will try to reconnect. | clientName: client1, clientId: id1, broker: test-broker:1234",
+            "Connection with the MQTT broker lost. The client will try to reconnect. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
             4023);
     }
 
@@ -177,7 +177,7 @@ public sealed class MqttLoggerExtensionsFixture : IDisposable
         _loggerSubstitute.Received(
             LogLevel.Information,
             null,
-            "Connection with the MQTT broker reestablished. | clientName: client1, clientId: id1, broker: test-broker:1234",
+            "Connection with the MQTT broker reestablished. | clientName: client1, clientId: id1, broker: Unspecified/test-broker:1234",
             4024);
     }
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using FluentAssertions;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
@@ -172,13 +173,13 @@ public class MqttClientConfigurationFixture
     {
         MqttClientConfiguration configuration = GetValidConfiguration() with
         {
-            Channel = new MqttClientTcpConfiguration { Server = null! }
+            Channel = new MqttClientTcpConfiguration { RemoteEndpoint = null! }
         };
 
         Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("The server is required*");
+            .WithMessage("The remote endpoint is required*");
     }
 
     [Fact]
@@ -407,7 +408,7 @@ public class MqttClientConfigurationFixture
         {
             Channel = new MqttClientTcpConfiguration
             {
-                Server = "test-server"
+                RemoteEndpoint = new DnsEndPoint("test", 1883)
             },
             ClientId = "client42",
             ProducerEndpoints = new ValueReadOnlyCollection<MqttProducerEndpointConfiguration>(

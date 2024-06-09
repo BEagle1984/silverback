@@ -64,7 +64,7 @@ public partial class MqttTestingHelper
         switch (clientConfiguration.Channel)
         {
             case MqttClientTcpConfiguration tcpChannel:
-                builder.ConnectViaTcp(tcpChannel.Server!, tcpChannel.Port);
+                builder.ConnectViaTcp(tcpChannel.RemoteEndpoint!);
 
                 if (tcpChannel.Tls.UseTls)
                     builder.EnableTls(tcpChannel.Tls);
@@ -81,6 +81,7 @@ public partial class MqttTestingHelper
 
         builder
             .WithClientId($"test-{Guid.NewGuid():N}")
+            .DisableParallelProcessing()
             .Produce<object>(endpoint => MapEndpoint(endpoint, endpointConfiguration));
     }
 

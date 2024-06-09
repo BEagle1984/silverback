@@ -185,7 +185,7 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     ///     from the time the topic is first referenced in the client.
     /// </summary>
     /// <param name="topicMetadataPropagationMaxMs">
-    ///     The the delay to be observed before marking a topic as non-existent.
+    ///     The delay to be observed before marking a topic as non-existent.
     /// </param>
     /// <returns>
     ///     The builder so that additional calls can be chained.

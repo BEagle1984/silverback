@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -57,6 +59,24 @@ public class MqttClientConfigurationBuilderFixture
 
         configuration1.ClientId.Should().Be("one");
         configuration2.ClientId.Should().Be("two");
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Build_ShouldInferPortFromTls(bool useTls)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder
+            .ConnectViaTcp("tests-server")
+            .EnableTls(new MqttClientTlsConfiguration { UseTls = useTls });
+
+        MqttClientConfiguration config = builder.Build();
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(
+            new DnsEndPoint(
+                "tests-server",
+                useTls ? 8883 : 1883));
     }
 
     [Fact]
@@ -612,18 +632,19 @@ public class MqttClientConfigurationBuilderFixture
         config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
     }
 
-    // TODO: Test all ConnectTo() possibilities
-    [Fact]
-    public void ConnectTo_ShouldConnectViaTcp()
+    [Theory]
+    [InlineData("mqtt://test:42")]
+    [InlineData("tcp://test:42")]
+    public void ConnectTo_ShouldConnectViaTcp(string uri)
     {
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
-        builder.ConnectTo("mqtt://test:42");
+        builder.ConnectTo(uri);
 
         MqttClientConfiguration configuration = builder.Build();
 
-        configuration.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
-        configuration.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
+        configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("test", 42));
+        configuration.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeFalse();
     }
 
     [Fact]
@@ -635,13 +656,56 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration configuration = builder.Build();
 
-        configuration.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
-        configuration.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
+        configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("test", 42));
         configuration.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
     }
 
+    [Theory]
+    [InlineData("ws://test:42/")]
+    [InlineData("wss://test:42/")]
+    public void ConnectTo_ShouldConnectViaWebSocket(string uri)
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.ConnectTo(uri);
+
+        MqttClientConfiguration configuration = builder.Build();
+
+        configuration.Channel.As<MqttClientWebSocketConfiguration>().Uri.Should().Be(uri);
+        configuration.Channel.As<MqttClientWebSocketConfiguration>().Tls.UseTls.Should().BeFalse();
+    }
+
     [Fact]
-    public void ConnectViaTcp_ShouldSetChannelFromServerAndPort()
+    public void ConnectViaTcp_ShouldSetChannelAndRemoteEndpointFromServer()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.ConnectViaTcp("tests-server");
+
+        MqttClientConfiguration config = builder.Build();
+        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1883));
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelAndRemoteEndpointFromServerAndPort()
+    {
+        MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.ConnectViaTcp("tests-server", 1234, AddressFamily.InterNetworkV6, ProtocolType.IP);
+
+        MqttClientConfiguration config = builder.Build();
+        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(
+            new DnsEndPoint(
+                "tests-server",
+                1234,
+                AddressFamily.InterNetworkV6));
+        config.Channel.As<MqttClientTcpConfiguration>().ProtocolType.Should().Be(ProtocolType.IP);
+    }
+
+    [Fact]
+    public void ConnectViaTcp_ShouldSetChannelAndRemoteEndpointFromServerAndPortAndAddressFamilyAndProtocolType()
     {
         MqttClientConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
 
@@ -649,8 +713,7 @@ public class MqttClientConfigurationBuilderFixture
 
         MqttClientConfiguration config = builder.Build();
         config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]
@@ -661,14 +724,12 @@ public class MqttClientConfigurationBuilderFixture
         builder.ConnectViaTcp(
             new MqttClientTcpConfiguration
             {
-                Server = "tests-server",
-                Port = 1234
+                RemoteEndpoint = new DnsEndPoint("tests-server", 1234),
             });
 
         MqttClientConfiguration config = builder.Build();
         config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]

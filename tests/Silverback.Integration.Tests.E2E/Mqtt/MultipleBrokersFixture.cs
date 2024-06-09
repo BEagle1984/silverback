@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,11 +61,11 @@ public class MultipleBrokersFixture : MqttFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().Server
-            .Should().Be("e2e-mqtt-broker-1");
+        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
+            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-1");
         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().Server
-            .Should().Be("e2e-mqtt-broker-2");
+        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
+            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-2");
     }
 
     [Fact]
@@ -104,11 +105,11 @@ public class MultipleBrokersFixture : MqttFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Broker1Message>();
-        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().Server
-            .Should().Be("e2e-mqtt-broker-1");
+        Helper.Spy.InboundEnvelopes[0].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
+            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-1");
         Helper.Spy.InboundEnvelopes[1].Message.Should().BeOfType<Broker2Message>();
-        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().Server
-            .Should().Be("e2e-mqtt-broker-2");
+        Helper.Spy.InboundEnvelopes[1].Consumer.As<MqttConsumer>().Configuration.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint
+            .As<DnsEndPoint>().Host.Should().Be("e2e-mqtt-broker-2");
     }
 
     private sealed class Broker1Message : IIntegrationMessage;

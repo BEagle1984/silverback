@@ -37,6 +37,7 @@ internal sealed class BuilderGenerator
         methodName
             is "WithProtocolVersion"
             or "WithCleanSession"
+            or "WithCleanStart"
             or "WithKeepAliveSendInterval"
             or "WithNoKeepAlive"
             or "WithKeepAlivePeriod"
@@ -68,7 +69,13 @@ internal sealed class BuilderGenerator
             or "WithWillResponseTopic"
             or "WithWillUserProperty"
             or "WithTryPrivate"
-            or "WithWillPayloadFormatIndicator";
+            or "WithWillPayloadFormatIndicator"
+            or "WithEndPoint"
+            or "WithoutPacketFragmentation"
+            or "WithoutThrowOnNonSuccessfulConnectResponse"
+            or "WithProtocolType"
+            or "WithTlsOptions"
+            or "WithWillMessageExpiryInterval";
 
     private void GenerateHeading()
     {

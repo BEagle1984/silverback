@@ -15,7 +15,7 @@ public interface IKafkaPartitionsRevokedCallback : IBrokerClientCallback
     ///     Called immediately prior to a group partition assignment being revoked.
     /// </summary>
     /// <param name="topicPartitionsOffset">
-    ///     A collection of <see cref="TopicPartitionOffset" /> representing the the set of partitions the consumer
+    ///     A collection of <see cref="TopicPartitionOffset" /> representing the set of partitions the consumer
     ///     is currently assigned to, and the current position of the consumer on each of these partitions.
     /// </param>
     /// <param name="consumer">

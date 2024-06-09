@@ -12,20 +12,19 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguration
 {
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    // TODO: Test
     public override void Validate()
     {
-        if (string.IsNullOrEmpty(Server))
-            throw new BrokerConfigurationException("The server is required to connect with the message broker.");
+        if (RemoteEndpoint == null)
+            throw new BrokerConfigurationException("The remote endpoint is required to connect with the message broker.");
 
-        if (Port <= 0)
-            throw new BrokerConfigurationException("The port must be greater than zero.");
+        if (Tls == null)
+            throw new BrokerConfigurationException("The TLS configuration is required.");
 
         Tls.Validate();
     }
 
     /// <inheritdoc cref="object.ToString" />
-    public override string ToString() => $"{Server}:{GetPort()}";
+    public override string ToString() => RemoteEndpoint?.ToString() ?? "[undefined remote endpoint]";
 
     internal override IMqttClientChannelOptions ToMqttNetType()
     {
@@ -33,6 +32,4 @@ public partial record MqttClientTcpConfiguration : MqttClientChannelConfiguratio
         options.TlsOptions = Tls.ToMqttNetType();
         return options;
     }
-
-    private int GetPort() => Port ?? (Tls.UseTls ? 8883 : 1883);
 }

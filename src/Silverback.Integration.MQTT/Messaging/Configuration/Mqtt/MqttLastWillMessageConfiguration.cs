@@ -35,7 +35,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     /// <summary>
     ///     Gets the message expiry interval.
     /// </summary>
-    public uint MessageExpiration { get; init; }
+    public uint Expiration { get; init; }
 
     /// <summary>
     ///     Gets the message payload.
@@ -86,7 +86,7 @@ public record MqttLastWillMessageConfiguration : IValidatableSettings
     {
         options.WillContentType = ContentType;
         options.WillCorrelationData = CorrelationData;
-        options.WillMessageExpiryInterval = MessageExpiration;
+        options.WillMessageExpiryInterval = Expiration;
         options.WillPayload = Payload;
         options.WillPayloadFormatIndicator = PayloadFormatIndicator;
         options.WillQualityOfServiceLevel = QualityOfServiceLevel;

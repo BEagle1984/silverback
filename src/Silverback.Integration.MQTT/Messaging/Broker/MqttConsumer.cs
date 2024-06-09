@@ -105,7 +105,7 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
             throw new InvalidOperationException("The message has been processed already.");
 
         await HandleMessageAsync(
-                message.ApplicationMessage.Payload,
+                [.. message.ApplicationMessage.PayloadSegment],
                 headers,
                 endpoint,
                 new MqttMessageIdentifier(Configuration.ClientId, message.Id),

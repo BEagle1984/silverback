@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.WebSockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using MQTTnet.Client;
@@ -20,6 +21,14 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public partial record MqttClientConfiguration
 {
     private static readonly MqttClientOptions DefaultInstance = new();
+
+    /// <summary>
+    ///     Gets a value indicating whether the broker allows packet fragmentation.
+    ///     Unfortunately not all brokers (like AWS) do support fragmentation and will close the connection when receiving such packets.
+    ///     If such a service is used this flag must be set to <c>false</c>.
+    ///     The default is <c>true</c>.
+    /// </summary>
+    public bool AllowPacketFragmentation { get; init; } = DefaultInstance.AllowPacketFragmentation;
 
     /// <summary>
     ///     Gets the authentication data to be used for the custom authentication.
@@ -81,6 +90,12 @@ public partial record MqttClientConfiguration
     public uint SessionExpiryInterval { get; init; } = DefaultInstance.SessionExpiryInterval;
 
     /// <summary>
+    ///     Gets a value indicating whether an exception should be thrown when the server replies with a non success ACK packet.
+    ///     The default is <c>true</c>.
+    /// </summary>
+    public bool ThrowOnNonSuccessfulConnectResponse { get; init; } = DefaultInstance.ThrowOnNonSuccessfulConnectResponse;
+
+    /// <summary>
     ///     Gets the timeout which will be applied at socket level and internal operations.
     ///     The default value is the same as for sockets in .NET in general.
     /// </summary>
@@ -101,6 +116,12 @@ public partial record MqttClientConfiguration
     public bool TryPrivate { get; init; } = DefaultInstance.TryPrivate;
 
     /// <summary>
+    ///     Gets a value indicating whether the client should check if the configuration is valid for the selected protocol version.
+    ///     The default is <c>true</c>.
+    /// </summary>
+    public bool ValidateFeatures { get; init; } = DefaultInstance.ValidateFeatures;
+
+    /// <summary>
     ///     Gets the default and initial size of the packet write buffer. It is recommended to set this to a value close to the usual expected
     ///     packet size * 1.5. Do not change this value when no memory issues are experienced.
     /// </summary>
@@ -115,6 +136,7 @@ public partial record MqttClientConfiguration
     private MqttClientOptions MapCore() =>
         new()
         {
+            AllowPacketFragmentation = AllowPacketFragmentation,
             AuthenticationData = AuthenticationData,
             AuthenticationMethod = AuthenticationMethod,
             CleanSession = CleanSession,
@@ -126,9 +148,11 @@ public partial record MqttClientConfiguration
             RequestProblemInformation = RequestProblemInformation,
             RequestResponseInformation = RequestResponseInformation,
             SessionExpiryInterval = SessionExpiryInterval,
+            ThrowOnNonSuccessfulConnectResponse = ThrowOnNonSuccessfulConnectResponse,
             Timeout = Timeout,
             TopicAliasMaximum = TopicAliasMaximum,
             TryPrivate = TryPrivate,
+            ValidateFeatures = ValidateFeatures,
             WriterBufferSize = WriterBufferSize,
             WriterBufferSizeMax = WriterBufferSizeMax
         };
@@ -149,11 +173,6 @@ public partial record MqttClientTcpConfiguration
     public AddressFamily AddressFamily { get; init; } = DefaultInstance.AddressFamily;
 
     /// <summary>
-    ///     Gets the local endpoint (network card) which is used by the client. If <c>null</c> the OS will select the network card.
-    /// </summary>
-    public EndPoint? LocalEndpoint { get; init; }
-
-    /// <summary>
     ///     Gets the size of both the receive and send buffers of the underlying <see cref="Socket" />.
     /// </summary>
     public int BufferSize { get; init; } = DefaultInstance.BufferSize;
@@ -169,31 +188,37 @@ public partial record MqttClientTcpConfiguration
     public LingerOption? LingerState { get; init; } = DefaultInstance.LingerState;
 
     /// <summary>
+    ///     Gets the local endpoint (network card) which is used by the client. If <c>null</c> the OS will select the network card.
+    /// </summary>
+    public EndPoint? LocalEndpoint { get; init; }
+
+    /// <summary>
     ///     Gets a value indicating whether the underlying <see cref="Socket" /> is a dual-mode socket used for both IPv4 and IPv6.
     /// </summary>
     public bool NoDelay { get; init; } = DefaultInstance.NoDelay;
 
     /// <summary>
-    ///     Gets the server port.
+    ///     Gets the protocol type, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
+    ///     The default is <see cref="ProtocolType.Tcp" />.
     /// </summary>
-    public int? Port { get; init; }
+    public ProtocolType ProtocolType { get; init; } = DefaultInstance.ProtocolType;
 
     /// <summary>
-    ///     Gets the server name or address.
+    ///     Gets the remote endpoint (server).
     /// </summary>
-    public string? Server { get; init; }
+    public EndPoint? RemoteEndpoint { get; init; }
 
     private MqttClientTcpOptions MapCore() =>
         new()
         {
             AddressFamily = AddressFamily,
-            LocalEndpoint = LocalEndpoint,
             BufferSize = BufferSize,
             DualMode = DualMode,
             LingerState = LingerState,
+            LocalEndpoint = LocalEndpoint,
             NoDelay = NoDelay,
-            Port = Port,
-            Server = Server
+            ProtocolType = ProtocolType,
+            RemoteEndpoint = RemoteEndpoint
         };
 }
 
@@ -212,7 +237,12 @@ public partial record MqttClientWebSocketConfiguration
     public CookieContainer? CookieContainer { get; init; }
 
     /// <summary>
-    ///     Gets the HTTP request headers.
+    ///     Gets the credentials to be used.
+    /// </summary>
+    public ICredentials? Credentials { get; init; }
+
+    /// <summary>
+    ///     Gets the request headers.
     /// </summary>
     public IDictionary<string, string>? RequestHeaders { get; init; }
 
@@ -227,13 +257,27 @@ public partial record MqttClientWebSocketConfiguration
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Generated according to wrapped class.")]
     public string? Uri { get; init; }
 
+    /// <summary>
+    ///     Gets the keep alive interval for the web socket connection. This is not related to the keep alive interval for the MQTT protocol.
+    ///     The default is <see cref="WebSocket.DefaultKeepAliveInterval" />.
+    /// </summary>
+    public TimeSpan KeepAliveInterval { get; init; } = DefaultInstance.KeepAliveInterval;
+
+    /// <summary>
+    ///     Gets a value indicating whether the default (system) credentials should be used. The default is <c>false</c>.
+    /// </summary>
+    public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
+
     private MqttClientWebSocketOptions MapCore() =>
         new()
         {
             CookieContainer = CookieContainer,
+            Credentials = Credentials,
             RequestHeaders = RequestHeaders,
             SubProtocols = SubProtocols,
-            Uri = Uri
+            Uri = Uri,
+            KeepAliveInterval = KeepAliveInterval,
+            UseDefaultCredentials = UseDefaultCredentials
         };
 }
 
@@ -250,6 +294,11 @@ public partial record MqttClientTlsConfiguration
     ///     Gets the function to be used to validate the remote certificate.
     /// </summary>
     public Func<MqttClientCertificateValidationEventArgs, bool>? CertificateValidationHandler { get; init; }
+
+    /// <summary>
+    ///     Gets the function to be used to select the client certificate.
+    /// </summary>
+    public Func<MqttClientCertificateSelectionEventArgs, X509Certificate>? CertificateSelectionHandler { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the client should use TLS.
@@ -277,7 +326,17 @@ public partial record MqttClientTlsConfiguration
     public X509RevocationMode RevocationMode { get; init; } = DefaultInstance.RevocationMode;
 
     /// <summary>
-    ///     Gets the protocol to be used. The default is TLS 1.3 (or TLS 1.2 for older .NET versions).
+    ///     Gets the provider to be used to get the client certificates.
+    /// </summary>
+    public IMqttClientCertificatesProvider? ClientCertificatesProvider { get; init; }
+
+    /// <summary>
+    ///     Gets the target host. If the value is <c>null</c> or empty the same host as the TCP socket host will be used.
+    /// </summary>
+    public string? TargetHost { get; init; }
+
+    /// <summary>
+    ///     Gets the protocol to be used. The default is TLS 1.3 or TLS 1.2.
     /// </summary>
     public SslProtocols SslProtocol { get; init; } = DefaultInstance.SslProtocol;
 
@@ -285,11 +344,14 @@ public partial record MqttClientTlsConfiguration
         new()
         {
             CertificateValidationHandler = CertificateValidationHandler,
+            CertificateSelectionHandler = CertificateSelectionHandler,
             UseTls = UseTls,
             IgnoreCertificateRevocationErrors = IgnoreCertificateRevocationErrors,
             IgnoreCertificateChainErrors = IgnoreCertificateChainErrors,
             AllowUntrustedCertificates = AllowUntrustedCertificates,
             RevocationMode = RevocationMode,
+            ClientCertificatesProvider = ClientCertificatesProvider,
+            TargetHost = TargetHost,
             SslProtocol = SslProtocol
         };
 }
@@ -329,6 +391,11 @@ public partial record MqttClientWebSocketProxyConfiguration
     public bool BypassOnLocal { get; init; } = DefaultInstance.BypassOnLocal;
 
     /// <summary>
+    ///     Gets a value indicating whether the default (system) credentials should be used.
+    /// </summary>
+    public bool UseDefaultCredentials { get; init; } = DefaultInstance.UseDefaultCredentials;
+
+    /// <summary>
     ///     Gets the bypass list.
     /// </summary>
     public string[]? BypassList { get; init; }
@@ -341,6 +408,7 @@ public partial record MqttClientWebSocketProxyConfiguration
             Password = Password,
             Domain = Domain,
             BypassOnLocal = BypassOnLocal,
+            UseDefaultCredentials = UseDefaultCredentials,
             BypassList = BypassList
         };
 }
@@ -353,6 +421,8 @@ public partial record MqttClientWebSocketProxyConfiguration
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Autogenerated")]
 public partial class MqttClientConfigurationBuilder
 {
+    public partial MqttClientConfigurationBuilder WithAddressFamily(AddressFamily addressFamily);
+
     public partial MqttClientConfigurationBuilder WithAuthentication(string? method, byte[]? data);
 
     public partial MqttClientConfigurationBuilder WithTimeout(TimeSpan value);
@@ -366,6 +436,8 @@ public partial class MqttClientConfigurationBuilder
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Autogenerated")]
 public partial class MqttClientsConfigurationBuilder
 {
+    public partial MqttClientsConfigurationBuilder WithAddressFamily(AddressFamily addressFamily);
+
     public partial MqttClientsConfigurationBuilder WithAuthentication(string? method, byte[]? data);
 
     public partial MqttClientsConfigurationBuilder WithTimeout(TimeSpan value);

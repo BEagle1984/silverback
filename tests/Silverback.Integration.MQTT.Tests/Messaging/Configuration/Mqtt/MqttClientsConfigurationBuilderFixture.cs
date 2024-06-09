@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
@@ -444,7 +445,6 @@ public class MqttClientsConfigurationBuilderFixture
         config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
     }
 
-    // TODO: Test all ConnectTo() possibilities
     [Fact]
     public void ConnectTo_ShouldConnectViaTcp()
     {
@@ -457,25 +457,7 @@ public class MqttClientsConfigurationBuilderFixture
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
         config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
-    }
-
-    [Fact]
-    public void ConnectTo_ShouldConnectViaTcpWithSsl()
-    {
-        MqttClientsConfigurationBuilder builder = GetBuilder();
-
-        builder.ConnectTo("mqtts://test:42");
-
-        MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
-        builder.GetConfigurationActions().ForEach(action => action.Action.Invoke(clientConfigurationBuilder));
-        MqttClientConfiguration config = clientConfigurationBuilder.Build();
-
-        config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("test");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(42);
-        config.Channel.As<MqttClientTcpConfiguration>().Tls.UseTls.Should().BeTrue();
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("test", 42));
     }
 
     [Fact]
@@ -490,8 +472,7 @@ public class MqttClientsConfigurationBuilderFixture
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
         config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]
@@ -502,8 +483,7 @@ public class MqttClientsConfigurationBuilderFixture
         builder.ConnectViaTcp(
             new MqttClientTcpConfiguration
             {
-                Server = "tests-server",
-                Port = 1234
+                RemoteEndpoint = new DnsEndPoint("tests-server", 1234),
             });
 
         MqttClientConfigurationBuilder clientConfigurationBuilder = GetClientConfigurationBuilderWithValidConfigurationAndEndpoint();
@@ -513,8 +493,7 @@ public class MqttClientsConfigurationBuilderFixture
         MqttClientConfiguration config = clientConfigurationBuilder.Build();
 
         config.Channel.Should().BeOfType<MqttClientTcpConfiguration>();
-        config.Channel.As<MqttClientTcpConfiguration>().Server.Should().Be("tests-server");
-        config.Channel.As<MqttClientTcpConfiguration>().Port.Should().Be(1234);
+        config.Channel.As<MqttClientTcpConfiguration>().RemoteEndpoint.Should().BeEquivalentTo(new DnsEndPoint("tests-server", 1234));
     }
 
     [Fact]
@@ -652,7 +631,7 @@ public class MqttClientsConfigurationBuilderFixture
     }
 
     [Fact]
-    public void EnableTls_ShouldSetUseTlsSet_WhenConnectingViaWebSocket()
+    public void EnableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 
@@ -668,7 +647,7 @@ public class MqttClientsConfigurationBuilderFixture
     }
 
     [Fact]
-    public void DisableTls_ShouldSetUseTlsSet_WhenConnectingViaWebSocket()
+    public void DisableTls_ShouldSetUseTls_WhenConnectingViaWebSocket()
     {
         MqttClientsConfigurationBuilder builder = GetBuilder();
 

@@ -16,7 +16,7 @@ public interface IRawBrokerEnvelope
     MessageHeaderCollection Headers { get; }
 
     /// <summary>
-    ///     Gets the the source or destination endpoint.
+    ///     Gets the source or destination endpoint.
     /// </summary>
     Endpoint Endpoint { get; }
 

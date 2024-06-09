@@ -240,7 +240,7 @@ public partial class KafkaClientsConfigurationBuilder
     ///     from the time the topic is first referenced in the client.
     /// </summary>
     /// <param name="topicMetadataPropagationMaxMs">
-    ///     The the delay to be observed before marking a topic as non-existent.
+    ///     The delay to be observed before marking a topic as non-existent.
     /// </param>
     /// <returns>
     ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.

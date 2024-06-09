@@ -56,7 +56,7 @@ public partial class ErrorPoliciesFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);
-        messages[0].Payload.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages[0].PayloadSegment.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 
     [Fact]
@@ -149,6 +149,6 @@ public partial class ErrorPoliciesFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = Helper.GetMessages("other-topic");
         messages.Should().HaveCount(1);
-        messages[0].Payload.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        messages[0].PayloadSegment.Should().BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
     }
 }

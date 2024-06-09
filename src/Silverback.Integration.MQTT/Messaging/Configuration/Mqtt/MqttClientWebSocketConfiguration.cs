@@ -17,10 +17,9 @@ public partial record MqttClientWebSocketConfiguration : MqttClientChannelConfig
     public MqttClientWebSocketProxyConfiguration? Proxy { get; init; }
 
     /// <inheritdoc cref="object.ToString" />
-    public override string ToString() => Uri ?? string.Empty;
+    public override string ToString() => Uri ?? "[undefined uri]";
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    // TODO: Test
     public override void Validate()
     {
         if (string.IsNullOrEmpty(Uri))

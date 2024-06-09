@@ -53,7 +53,7 @@ public partial class ProducerEndpointFixture : MqttFixture
 
         IReadOnlyList<MqttApplicationMessage> messages = GetDefaultTopicMessages();
         messages.Should().HaveCount(1);
-        messages[0].Payload.Should().BeEquivalentTo(rawMessage);
+        messages[0].PayloadSegment.Should().BeEquivalentTo(rawMessage);
     }
 
     [Fact]

@@ -31,8 +31,7 @@ internal sealed class Subscription : ParsedTopic
         if (clientOptions.ChannelOptions is MqttClientTcpOptions tcpOptions1 &&
             _clientOptions.ChannelOptions is MqttClientTcpOptions tcpOptions2)
         {
-            return tcpOptions1.Server.Equals(tcpOptions2.Server, StringComparison.OrdinalIgnoreCase) &&
-                   tcpOptions1.Port == tcpOptions2.Port;
+            return tcpOptions1.RemoteEndpoint.Equals(tcpOptions2.RemoteEndpoint);
         }
 
         if (clientOptions.ChannelOptions is MqttClientWebSocketOptions webSocketOptions1 &&

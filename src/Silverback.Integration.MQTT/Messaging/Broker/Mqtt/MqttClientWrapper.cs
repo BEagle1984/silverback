@@ -11,6 +11,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Internal;
 using MQTTnet.Packets;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
@@ -257,7 +258,7 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         MqttApplicationMessage mqttApplicationMessage = new()
         {
             Topic = queuedMessage.Endpoint.Topic,
-            Payload = queuedMessage.Content,
+            PayloadSegment = queuedMessage.Content ?? EmptyBuffer.ArraySegment,
             QualityOfServiceLevel = queuedMessage.Endpoint.Configuration.QualityOfServiceLevel,
             Retain = queuedMessage.Endpoint.Configuration.Retain,
             MessageExpiryInterval = queuedMessage.Endpoint.Configuration.MessageExpiryInterval

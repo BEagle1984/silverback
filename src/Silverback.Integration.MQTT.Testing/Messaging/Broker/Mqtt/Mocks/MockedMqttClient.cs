@@ -55,8 +55,8 @@ public sealed class MockedMqttClient : IMqttClient
     /// <inheritdoc cref="IMqttClient.DisconnectedAsync" />
     public event Func<MqttClientDisconnectedEventArgs, Task>? DisconnectedAsync;
 
-    /// <inheritdoc cref="IMqttClient.InspectPackage" />
-    public event Func<InspectMqttPacketEventArgs, Task>? InspectPackage;
+    /// <inheritdoc cref="IMqttClient.InspectPacketAsync" />
+    public event Func<InspectMqttPacketEventArgs, Task>? InspectPacketAsync;
 
     /// <inheritdoc cref="IMqttClient.IsConnected" />
     public bool IsConnected { get; private set; }
@@ -108,7 +108,12 @@ public sealed class MockedMqttClient : IMqttClient
 
         _broker.Subscribe(this, options.TopicFilters.Select(filter => filter.Topic).ToList());
 
-        return Task.FromResult(new MqttClientSubscribeResult());
+        return Task.FromResult(
+            new MqttClientSubscribeResult(
+                0,
+                options.TopicFilters.Select(filter => new MqttClientSubscribeResultItem(filter, MqttClientSubscribeResultCode.GrantedQoS0)).ToList(),
+                string.Empty,
+                []));
     }
 
     /// <inheritdoc cref="IMqttClient.UnsubscribeAsync" />
@@ -119,7 +124,7 @@ public sealed class MockedMqttClient : IMqttClient
 
         _broker.Unsubscribe(this, options.TopicFilters);
 
-        return Task.FromResult(new MqttClientUnsubscribeResult());
+        return Task.FromResult(new MqttClientUnsubscribeResult(0, [], string.Empty, []));
     }
 
     /// <inheritdoc cref="IMqttClient.PublishAsync" />
@@ -133,10 +138,7 @@ public sealed class MockedMqttClient : IMqttClient
 
         await _broker.PublishAsync(this, applicationMessage, Options).ConfigureAwait(false);
 
-        return new MqttClientPublishResult
-        {
-            ReasonCode = MqttClientPublishReasonCode.Success
-        };
+        return new MqttClientPublishResult(0, MqttClientPublishReasonCode.Success, string.Empty, []);
     }
 
     /// <inheritdoc cref="IMqttClient.PingAsync" />

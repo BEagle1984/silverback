@@ -4,10 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Silverback.Collections;
 using Silverback.Util;
 
@@ -35,6 +38,8 @@ public partial class MqttClientConfigurationBuilder
     private int? _maxDegreeOfParallelism;
 
     private int? _backpressureLimit;
+
+    private AddressFamily? _addressFamily;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
@@ -120,7 +125,7 @@ public partial class MqttClientConfigurationBuilder
         configurationBuilderAction.Invoke(builder);
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}"; // TODO: Check if OK to concat type (needed when pushing multiple types to same topic)
+        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}";
 
         if (_producerEndpoints.ContainsKey(name))
             return this;
@@ -277,6 +282,10 @@ public partial class MqttClientConfigurationBuilder
     ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
     ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
     /// </summary>
+    /// <remarks>
+    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
+    ///     <see cref="RequestCleanStart" /> are the same.
+    /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
@@ -285,6 +294,19 @@ public partial class MqttClientConfigurationBuilder
         _configuration = _configuration with { CleanSession = true };
         return this;
     }
+
+    /// <summary>
+    ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
+    ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
+    /// </summary>
+    /// <remarks>
+    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
+    ///     <see cref="RequestCleanStart" /> are the same.
+    /// </remarks>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder RequestCleanStart() => RequestCleanSession();
 
     /// <summary>
     ///     Specifies that a persistent session has to be created for this client.
@@ -306,7 +328,7 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables the the keep alive mechanism. No ping packet will be sent.
+    ///     Disables the keep alive mechanism. No ping packet will be sent.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -396,6 +418,21 @@ public partial class MqttClientConfigurationBuilder
             AuthenticationMethod = method,
             AuthenticationData = data
         };
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the address family.
+    /// </summary>
+    /// <param name="addressFamily">
+    ///     The address family.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial MqttClientConfigurationBuilder WithAddressFamily(AddressFamily addressFamily)
+    {
+        _addressFamily = addressFamily;
         return this;
     }
 
@@ -547,7 +584,7 @@ public partial class MqttClientConfigurationBuilder
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
     /// <param name="username">
-    ///     The user name.
+    ///     The username.
     /// </param>
     /// <param name="password">
     ///     The user password.
@@ -570,7 +607,7 @@ public partial class MqttClientConfigurationBuilder
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
     /// <param name="username">
-    ///     The user name.
+    ///     The username.
     /// </param>
     /// <param name="password">
     ///     The user password.
@@ -717,12 +754,23 @@ public partial class MqttClientConfigurationBuilder
     ///     The server address.
     /// </param>
     /// <param name="port">
-    ///     The server port. If not specified the default port 1883 will be used.
+    ///     The server port. If not specified the default port 1883 or 8883 (TLS) will be used.
+    /// </param>
+    /// <param name="addressFamily">
+    ///     The address family to be used. The default is <see cref="AddressFamily.Unspecified" />.
+    /// </param>
+    /// <param name="protocolType">
+    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
+    ///     The default is <see cref="ProtocolType.Tcp" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder ConnectViaTcp(string server, int? port = null)
+    public MqttClientConfigurationBuilder ConnectViaTcp(
+        string server,
+        int? port = null,
+        AddressFamily addressFamily = AddressFamily.Unspecified,
+        ProtocolType protocolType = ProtocolType.Tcp)
     {
         Check.NotNull(server, nameof(server));
 
@@ -730,8 +778,36 @@ public partial class MqttClientConfigurationBuilder
         {
             Channel = new MqttClientTcpConfiguration
             {
-                Server = server,
-                Port = port
+                RemoteEndpoint = new DnsEndPoint(server, port ?? 0, addressFamily),
+                ProtocolType = protocolType
+            }
+        };
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the TCP connection settings.
+    /// </summary>
+    /// <param name="remoteEndpoint">
+    ///     The remote endpoint.
+    /// </param>
+    /// <param name="protocolType">
+    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
+    ///     The default is <see cref="ProtocolType.Tcp" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder ConnectViaTcp(EndPoint remoteEndpoint, ProtocolType protocolType = ProtocolType.Tcp)
+    {
+        Check.NotNull(remoteEndpoint, nameof(remoteEndpoint));
+
+        _configuration = _configuration with
+        {
+            Channel = new MqttClientTcpConfiguration
+            {
+                RemoteEndpoint = remoteEndpoint,
+                ProtocolType = protocolType
             }
         };
         return this;
@@ -857,18 +933,6 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables TLS. The network traffic will not be encrypted.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientConfigurationBuilder DisableTls()
-    {
-        _tlsConfiguration = new MqttClientTlsConfiguration { UseTls = false };
-        return this;
-    }
-
-    /// <summary>
     ///     Specifies that TLS has to be used to encrypt the network traffic.
     /// </summary>
     /// <returns>
@@ -894,6 +958,66 @@ public partial class MqttClientConfigurationBuilder
         Check.NotNull(configuration, nameof(configuration));
 
         _tlsConfiguration = configuration;
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables TLS. The network traffic will not be encrypted.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder DisableTls()
+    {
+        _tlsConfiguration = new MqttClientTlsConfiguration { UseTls = false };
+        return this;
+    }
+
+    /// <summary>
+    ///  Allow packet fragmentation. This is the default, use <see cref="DisablePacketFragmentation" /> to turn it off.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder AllowPacketFragmentation()
+    {
+        _configuration = _configuration with { AllowPacketFragmentation = true };
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables packet fragmentation. This is necessary when the broker does not support it.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder DisablePacketFragmentation()
+    {
+        _configuration = _configuration with { AllowPacketFragmentation = false };
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the client must throw an exception when the server replies with a non success ACK packet.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder ThrowOnNonSuccessfulConnectResponse()
+    {
+        _configuration = _configuration with { ThrowOnNonSuccessfulConnectResponse = true };
+        return this;
+    }
+
+    /// <summary>
+    ///   Disables the exception throwing when the server replies with a non success ACK packet.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientConfigurationBuilder DisableThrowOnNonSuccessfulConnectResponse()
+    {
+        _configuration = _configuration with { ThrowOnNonSuccessfulConnectResponse = false };
         return this;
     }
 
@@ -959,13 +1083,20 @@ public partial class MqttClientConfigurationBuilder
         switch (_configuration.Channel)
         {
             case MqttClientTcpConfiguration tcpChannel:
+
+                tcpChannel = tcpChannel with
+                {
+                    Tls = _tlsConfiguration,
+                    AddressFamily = _addressFamily ?? tcpChannel.AddressFamily
+                };
+
                 _configuration = _configuration with
                 {
-                    Channel = tcpChannel with
-                    {
-                        Tls = _tlsConfiguration
-                    }
+                    Channel = tcpChannel
                 };
+
+                EnsurePort(tcpChannel);
+
                 break;
             case MqttClientWebSocketConfiguration webSocketChannel:
                 _configuration = _configuration with
@@ -982,11 +1113,33 @@ public partial class MqttClientConfigurationBuilder
         _configuration = _configuration with
         {
             MaxDegreeOfParallelism = _maxDegreeOfParallelism ?? _configuration.MaxDegreeOfParallelism,
-            BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit,
+            BackpressureLimit = _backpressureLimit ?? _configuration.BackpressureLimit
         };
 
         _configuration.Validate();
 
         return _configuration;
     }
+
+    private void EnsurePort(MqttClientTcpConfiguration tcpChannel) =>
+        _configuration = tcpChannel.RemoteEndpoint switch
+        {
+            DnsEndPoint { Port: 0 } dnsEndPoint =>
+                _configuration with
+                {
+                    Channel = tcpChannel with
+                    {
+                        RemoteEndpoint = new DnsEndPoint(dnsEndPoint.Host, tcpChannel.Tls.UseTls ? MqttPorts.Secure : MqttPorts.Default)
+                    }
+                },
+            IPEndPoint { Port: 0 } ipEndPoint =>
+                _configuration with
+                {
+                    Channel = tcpChannel with
+                    {
+                        RemoteEndpoint = new IPEndPoint(ipEndPoint.Address, tcpChannel.Tls.UseTls ? MqttPorts.Secure : MqttPorts.Default)
+                    }
+                },
+            _ => _configuration
+        };
 }

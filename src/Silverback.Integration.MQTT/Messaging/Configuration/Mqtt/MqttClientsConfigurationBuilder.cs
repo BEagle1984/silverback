@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.Sockets;
 using MQTTnet.Client;
 using MQTTnet.Formatter;
 using Silverback.Util;
@@ -35,7 +37,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Sets the the timeout which will be applied at socket level and internal operations.
+    ///     Sets the timeout which will be applied at socket level and internal operations.
     ///     The default value is the same as for sockets in .NET in general.
     /// </summary>
     /// <param name="value">
@@ -82,12 +84,33 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
     ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
     /// </summary>
+    /// <remarks>
+    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
+    ///     <see cref="RequestCleanStart" /> are the same.
+    /// </remarks>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public MqttClientsConfigurationBuilder RequestCleanSession()
     {
         _sharedConfigurationActions.Add(builder => builder.RequestCleanSession());
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that a clean non-persistent session has to be created for this client. This is the default,
+    ///     use <see cref="RequestPersistentSession" /> to switch to a persistent session.
+    /// </summary>
+    /// <remarks>
+    ///     Clean session in MQTT versions below 5.0 is the same as clean start in MQTT 5.0. <see cref="RequestCleanSession" /> and
+    ///     <see cref="RequestCleanStart" /> are the same.
+    /// </remarks>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder RequestCleanStart()
+    {
+        _sharedConfigurationActions.Add(builder => builder.RequestCleanStart());
         return this;
     }
 
@@ -104,7 +127,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables the the keep alive mechanism. No ping packet will be sent.
+    ///     Disables the keep alive mechanism. No ping packet will be sent.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
@@ -168,6 +191,21 @@ public sealed partial class MqttClientsConfigurationBuilder
     public partial MqttClientsConfigurationBuilder WithAuthentication(string? method, byte[]? data)
     {
         _sharedConfigurationActions.Add(builder => builder.WithAuthentication(method, data));
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the address family.
+    /// </summary>
+    /// <param name="addressFamily">
+    ///     The address family.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial MqttClientsConfigurationBuilder WithAddressFamily(AddressFamily addressFamily)
+    {
+        _sharedConfigurationActions.Add(builder => builder.WithAddressFamily(addressFamily));
         return this;
     }
 
@@ -319,7 +357,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
     /// <param name="username">
-    ///     The user name.
+    ///     The username.
     /// </param>
     /// <param name="password">
     ///     The user password.
@@ -339,7 +377,7 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     Sets the credential to be used to authenticate with the message broker.
     /// </summary>
     /// <param name="username">
-    ///     The user name.
+    ///     The username.
     /// </param>
     /// <param name="password">
     ///     The user password.
@@ -458,16 +496,48 @@ public sealed partial class MqttClientsConfigurationBuilder
     ///     The server address.
     /// </param>
     /// <param name="port">
-    ///     The server port. If not specified the default port 1883 will be used.
+    ///     The server port. If not specified the default port 1883 or 8883 (TLS) will be used.
+    /// </param>
+    /// <param name="addressFamily">
+    ///     The address family to be used. The default is <see cref="AddressFamily.Unspecified" />.
+    /// </param>
+    /// <param name="protocolType">
+    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
+    ///     The default is <see cref="ProtocolType.Tcp" />.
     /// </param>
     /// <returns>
     ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientsConfigurationBuilder ConnectViaTcp(string server, int? port = null)
+    public MqttClientsConfigurationBuilder ConnectViaTcp(
+        string server,
+        int? port = null,
+        AddressFamily addressFamily = AddressFamily.Unspecified,
+        ProtocolType protocolType = ProtocolType.Tcp)
     {
         Check.NotNull(server, nameof(server));
 
-        _sharedConfigurationActions.Add(builder => builder.ConnectViaTcp(server, port));
+        _sharedConfigurationActions.Add(builder => builder.ConnectViaTcp(server, port, addressFamily, protocolType));
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies the TCP connection settings.
+    /// </summary>
+    /// <param name="remoteEndpoint">
+    ///     The remote endpoint.
+    /// </param>
+    /// <param name="protocolType">
+    ///     The protocol type to be used, usually TCP but when using other endpoint types like unix sockets it must be changed (IP for unix sockets).
+    ///     The default is <see cref="ProtocolType.Tcp" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder ConnectViaTcp(EndPoint remoteEndpoint, ProtocolType protocolType = ProtocolType.Tcp)
+    {
+        Check.NotNull(remoteEndpoint, nameof(remoteEndpoint));
+
+        _sharedConfigurationActions.Add(builder => builder.ConnectViaTcp(remoteEndpoint, protocolType));
         return this;
     }
 
@@ -577,18 +647,6 @@ public sealed partial class MqttClientsConfigurationBuilder
     }
 
     /// <summary>
-    ///     Disables TLS. The network traffic will not be encrypted.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public MqttClientsConfigurationBuilder DisableTls()
-    {
-        _sharedConfigurationActions.Add(builder => builder.DisableTls());
-        return this;
-    }
-
-    /// <summary>
     ///     Specifies that TLS has to be used to encrypt the network traffic.
     /// </summary>
     /// <returns>
@@ -614,6 +672,110 @@ public sealed partial class MqttClientsConfigurationBuilder
         Check.NotNull(configuration, nameof(configuration));
 
         _sharedConfigurationActions.Add(builder => builder.EnableTls(configuration));
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables TLS. The network traffic will not be encrypted.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder DisableTls()
+    {
+        _sharedConfigurationActions.Add(builder => builder.DisableTls());
+        return this;
+    }
+
+    /// <summary>
+    ///     Allow packet fragmentation. This is the default, use <see cref="DisablePacketFragmentation" /> to turn it off.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder AllowPacketFragmentation()
+    {
+        _sharedConfigurationActions.Add(builder => builder.AllowPacketFragmentation());
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables packet fragmentation. This is necessary when the broker does not support it.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder DisablePacketFragmentation()
+    {
+        _sharedConfigurationActions.Add(builder => builder.DisablePacketFragmentation());
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that the client must throw an exception when the server replies with a non success ACK packet.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder ThrowOnNonSuccessfulConnectResponse()
+    {
+        _sharedConfigurationActions.Add(builder => builder.ThrowOnNonSuccessfulConnectResponse());
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables the exception throwing when the server replies with a non success ACK packet.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder DisableThrowOnNonSuccessfulConnectResponse()
+    {
+        _sharedConfigurationActions.Add(builder => builder.DisableThrowOnNonSuccessfulConnectResponse());
+        return this;
+    }
+
+    /// <summary>
+    ///     Enables parallel processing and sets the maximum number of incoming message that can be processed concurrently.
+    /// </summary>
+    /// <param name="maxDegreeOfParallelism">
+    ///     The maximum number of incoming message that can be processed concurrently.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder EnableParallelProcessing(int maxDegreeOfParallelism)
+    {
+        _sharedConfigurationActions.Add(builder => builder.EnableParallelProcessing(maxDegreeOfParallelism));
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables parallel messages processing, setting the max degree of parallelism to 1 (default).
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder DisableParallelProcessing()
+    {
+        _sharedConfigurationActions.Add(builder => builder.DisableParallelProcessing());
+        return this;
+    }
+
+    /// <summary>
+    ///     Sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+    ///     The limit will be applied per partition when processing the partitions independently (default).
+    ///     The default limit is 2.
+    /// </summary>
+    /// <param name="backpressureLimit">
+    ///     The maximum number of messages to be enqueued.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MqttClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttClientsConfigurationBuilder LimitBackpressure(int backpressureLimit)
+    {
+        _sharedConfigurationActions.Add(builder => builder.LimitBackpressure(backpressureLimit));
         return this;
     }
 
