@@ -10,14 +10,21 @@ namespace Silverback.Util
     {
         public static IEnumerable<T> SortBySortIndex<T>(this IEnumerable<T> items)
         {
-            var list = items.ToList();
+            return items.OrderBy(item => item, new SortedComparer<T>());
+        }
 
-            var sortables = list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex).ToList();
-            var notSortables = list.Where(item => item is not ISorted).ToList();
-
-            return sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
-                .Union(notSortables)
-                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>());
+        private sealed class SortedComparer<T> : IComparer<T>
+        {
+            public int Compare(T x, T y)
+            {
+                return (x, y) switch
+                {
+                    (ISorted xSorted, ISorted ySorted) => xSorted.SortIndex.CompareTo(ySorted.SortIndex),
+                    (ISorted xSorted, _) => xSorted.SortIndex > 0 ? 1 : -1,
+                    (_, ISorted ySorted) => ySorted.SortIndex > 0 ? -1 : 1,
+                    _ => 0
+                };
+            }
         }
     }
 }
