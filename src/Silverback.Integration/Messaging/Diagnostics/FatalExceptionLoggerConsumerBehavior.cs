@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -35,14 +36,15 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         public async Task HandleAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
             try
             {
-                await next(context).ConfigureAwait(false);
+                await next(context, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

@@ -87,7 +87,7 @@ namespace Silverback.Messaging
             IEnumerable<TopicPartition> topicPartitions,
             KafkaClientConfig? clientConfig = null)
             : this(
-                topicPartitions?.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
+                topicPartitions.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
                 clientConfig)
         {
         }

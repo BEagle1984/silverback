@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -21,17 +22,20 @@ namespace Silverback.Messaging.BinaryFiles
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         public async Task HandleAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope = await HandleAsync(context.Envelope).ConfigureAwait(false);
+            context.Envelope = await HandleAsync(context.Envelope, cancellationToken).ConfigureAwait(false);
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
 
-        private static async Task<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
+        private static async Task<IRawInboundEnvelope> HandleAsync(
+            IRawInboundEnvelope envelope,
+            CancellationToken cancellationToken = default)
         {
             if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer ||
                 envelope.Endpoint.Serializer.GetType().IsGenericType &&
@@ -48,7 +52,8 @@ namespace Silverback.Messaging.BinaryFiles
             var (deserializedObject, deserializedType) = await BinaryFileMessageSerializer.Default.DeserializeAsync(
                     envelope.RawMessage,
                     envelope.Headers,
-                    MessageSerializationContext.Empty)
+                    MessageSerializationContext.Empty,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
             // Create typed message for easier specific subscription

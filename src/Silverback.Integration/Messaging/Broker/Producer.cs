@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -137,7 +138,7 @@ namespace Silverback.Messaging.Broker
                     async () =>
                         await ExecutePipelineAsync(
                             new ProducerPipelineContext(envelope, this, _serviceProvider),
-                            finalContext =>
+                            (finalContext, _) =>
                             {
                                 brokerMessageIdentifier = ProduceCore(
                                     finalContext.Envelope.Message,
@@ -184,7 +185,7 @@ namespace Silverback.Messaging.Broker
                     {
                         await ExecutePipelineAsync(
                             new ProducerPipelineContext(envelope, this, _serviceProvider),
-                            finalContext =>
+                            (finalContext, _) =>
                             {
                                 ProduceCore(
                                     finalContext.Envelope.Message,
@@ -342,14 +343,17 @@ namespace Silverback.Messaging.Broker
                     onError.Invoke(exception);
                 });
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task<IBrokerMessageIdentifier?> ProduceAsync(
             object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint));
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default) =>
+            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint), cancellationToken);
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
-        public async Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
+        public async Task<IBrokerMessageIdentifier?> ProduceAsync(
+            IOutboundEnvelope envelope,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -357,20 +361,22 @@ namespace Silverback.Messaging.Broker
 
                 await ExecutePipelineAsync(
                     new ProducerPipelineContext(envelope, this, _serviceProvider),
-                    async finalContext =>
+                    async (finalContext, _) =>
                     {
                         brokerMessageIdentifier = await ProduceCoreAsync(
                                 finalContext.Envelope.Message,
                                 finalContext.Envelope.RawMessage,
                                 finalContext.Envelope.Headers,
-                                finalContext.Envelope.ActualEndpointName)
+                                finalContext.Envelope.ActualEndpointName,
+                                cancellationToken)
                             .ConfigureAwait(false);
 
                         ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                             brokerMessageIdentifier;
 
                         _logger.LogProduced(envelope);
-                    }).ConfigureAwait(false);
+                    },
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 return brokerMessageIdentifier;
             }
@@ -381,22 +387,24 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         public Task ProduceAsync(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
-            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
+            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint), onSuccess, onError, cancellationToken);
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception},CancellationToken)" />
         public async Task ProduceAsync(
             IOutboundEnvelope envelope,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             await ExecutePipelineAsync(
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
-                finalContext => ProduceCoreAsync(
+                (finalContext, _) => ProduceCoreAsync(
                     finalContext.Envelope.Message,
                     finalContext.Envelope.RawMessage,
                     finalContext.Envelope.Headers,
@@ -411,25 +419,30 @@ namespace Silverback.Messaging.Broker
                     {
                         _logger.LogProduceError(envelope, exception);
                         onError.Invoke(exception);
-                    })).ConfigureAwait(false);
+                    },
+                    cancellationToken),
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task<IBrokerMessageIdentifier?> RawProduceAsync(
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            RawProduceAsync(Endpoint.Name, messageContent, headers);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default) =>
+            RawProduceAsync(Endpoint.Name, messageContent, headers, cancellationToken);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task<IBrokerMessageIdentifier?> RawProduceAsync(
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            RawProduceAsync(Endpoint.Name, messageStream, headers);
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default) =>
+            RawProduceAsync(Endpoint.Name, messageStream, headers, cancellationToken);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(string, byte[],IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string,byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public async Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null)
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -437,7 +450,8 @@ namespace Silverback.Messaging.Broker
                         null,
                         messageContent,
                         headers,
-                        actualEndpointName)
+                        actualEndpointName,
+                        cancellationToken)
                     .ConfigureAwait(false);
 
                 _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
@@ -451,11 +465,12 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(string, Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string,Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public async Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null)
+            IReadOnlyCollection<MessageHeader>? headers = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -463,7 +478,8 @@ namespace Silverback.Messaging.Broker
                         null,
                         messageStream,
                         headers,
-                        actualEndpointName)
+                        actualEndpointName,
+                        cancellationToken)
                     .ConfigureAwait(false);
 
                 _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
@@ -477,39 +493,44 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task RawProduceAsync(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             RawProduceAsync(
                 Endpoint.Name,
                 messageContent,
                 headers,
                 onSuccess,
-                onError);
+                onError,
+                cancellationToken);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task RawProduceAsync(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             RawProduceAsync(
                 Endpoint.Name,
                 messageStream,
                 headers,
                 onSuccess,
-                onError);
+                onError,
+                cancellationToken);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(string,byte[],IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string,byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task RawProduceAsync(
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             ProduceCoreAsync(
                 null,
                 messageContent,
@@ -524,15 +545,17 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
                     onError.Invoke(exception);
-                });
+                },
+                cancellationToken);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(string,Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string,Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
         public Task RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default) =>
             ProduceCoreAsync(
                 null,
                 messageStream,
@@ -547,7 +570,8 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
                     onError.Invoke(exception);
-                });
+                },
+                cancellationToken);
 
         /// <summary>
         ///     Connects to the message broker.
@@ -572,8 +596,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -601,8 +625,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -634,8 +658,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -672,8 +696,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -706,8 +730,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -719,6 +743,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="actualEndpointName">
         ///     The actual endpoint to produce to.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     message identifier assigned by the broker (the Kafka offset or similar).
@@ -727,7 +754,8 @@ namespace Silverback.Messaging.Broker
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName);
+            string actualEndpointName,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message and returns its identifier.
@@ -736,8 +764,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -749,6 +777,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="actualEndpointName">
         ///     The actual endpoint to produce to.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     message identifier assigned by the broker (the Kafka offset or similar).
@@ -757,7 +788,8 @@ namespace Silverback.Messaging.Broker
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName);
+            string actualEndpointName,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message and returns its identifier.
@@ -770,8 +802,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -789,6 +821,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -799,7 +834,8 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Publishes the specified message and returns its identifier.
@@ -812,8 +848,8 @@ namespace Silverback.Messaging.Broker
         ///     The message to be delivered before serialization. This might be null if
         ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
         ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader},CancellationToken)" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader},CancellationToken)" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -831,6 +867,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
@@ -841,19 +880,22 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
             Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError);
+            Action<Exception> onError,
+            CancellationToken cancellationToken = default);
 
         private Task ExecutePipelineAsync(
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction,
-            int stepIndex = 0)
+            int stepIndex = 0,
+            CancellationToken cancellationToken = default)
         {
             if (_behaviors.Count <= 0 || stepIndex >= _behaviors.Count)
-                return finalAction(context);
+                return finalAction(context, cancellationToken);
 
             return _behaviors[stepIndex].HandleAsync(
                 context,
-                nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1));
+                (nextContext, ctx) => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1, ctx),
+                cancellationToken);
         }
     }
 }

@@ -60,6 +60,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             endpoint.Should().BeEquivalentTo(endpointCopy);
         }
 
-        public void Dispose() => _broker?.Dispose();
+        public void Dispose() => _broker.Dispose();
     }
 }

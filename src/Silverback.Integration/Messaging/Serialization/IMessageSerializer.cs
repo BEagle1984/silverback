@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -31,6 +32,9 @@ namespace Silverback.Messaging.Serialization
         /// <param name="context">
         ///     The context information.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="Stream" /> with the serialized message.
@@ -38,7 +42,8 @@ namespace Silverback.Messaging.Serialization
         ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Deserializes the byte array back into a message object.
@@ -52,6 +57,9 @@ namespace Silverback.Messaging.Serialization
         /// <param name="context">
         ///     The context information.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     deserialized message (or <c>null</c> when the input is null or empty) and the type of the message.
@@ -59,6 +67,7 @@ namespace Silverback.Messaging.Serialization
         ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context);
+            MessageSerializationContext context,
+            CancellationToken cancellationToken = default);
     }
 }

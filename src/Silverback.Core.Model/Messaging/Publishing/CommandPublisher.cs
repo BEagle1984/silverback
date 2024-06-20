@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -38,24 +39,31 @@ namespace Silverback.Messaging.Publishing
         public TResult Execute<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled) =>
             _publisher.Publish<TResult>(commandMessage, throwIfUnhandled).SingleOrDefault();
 
-        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync(ICommand)" />
-        public Task ExecuteAsync(ICommand commandMessage) => _publisher.PublishAsync(commandMessage);
+        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync(ICommand, CancellationToken)" />
+        public Task ExecuteAsync(ICommand commandMessage, CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync(commandMessage, cancellationToken);
 
-        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync(ICommand, bool)" />
-        public Task ExecuteAsync(ICommand commandMessage, bool throwIfUnhandled) =>
-            _publisher.PublishAsync(commandMessage, throwIfUnhandled);
+        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync(ICommand, bool, CancellationToken)" />
+        public Task ExecuteAsync(
+            ICommand commandMessage,
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync(commandMessage, throwIfUnhandled, cancellationToken);
 
-        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult})" />
-        public async Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage) =>
-            (await _publisher.PublishAsync<TResult>(commandMessage)
+        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult}, CancellationToken)" />
+        public async Task<TResult> ExecuteAsync<TResult>(
+            ICommand<TResult> commandMessage,
+            CancellationToken cancellationToken = default) =>
+            (await _publisher.PublishAsync<TResult>(commandMessage, cancellationToken)
                 .ConfigureAwait(false))
             .SingleOrDefault();
 
-        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult}, bool)" />
+        /// <inheritdoc cref="ICommandPublisher.ExecuteAsync{TResult}(ICommand{TResult}, bool, CancellationToken)" />
         public async Task<TResult> ExecuteAsync<TResult>(
             ICommand<TResult> commandMessage,
-            bool throwIfUnhandled) =>
-            (await _publisher.PublishAsync<TResult>(commandMessage, throwIfUnhandled)
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default) =>
+            (await _publisher.PublishAsync<TResult>(commandMessage, throwIfUnhandled, cancellationToken)
                 .ConfigureAwait(false))
             .SingleOrDefault();
     }

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -16,14 +17,17 @@ namespace Silverback.Messaging.Broker.Behaviors
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        public async Task HandleAsync(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
             MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Headers);
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.Transaction;
@@ -38,11 +39,17 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <param name="exception">
         ///     The exception that was thrown during the processing.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     boolean flag indicating whether the error was handled. If <c>false</c> is returned the exception will
         ///     be rethrown and the consumer will stop.
         /// </returns>
-        Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception);
+        Task<bool> HandleErrorAsync(
+            ConsumerPipelineContext context,
+            Exception exception,
+            CancellationToken cancellationToken = default);
     }
 }

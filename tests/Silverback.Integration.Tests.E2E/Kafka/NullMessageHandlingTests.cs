@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -358,7 +359,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             public ValueTask<Stream?> SerializeAsync(
                 object? message,
                 MessageHeaderCollection messageHeaders,
-                MessageSerializationContext context)
+                MessageSerializationContext context,
+                CancellationToken cancellationToken = default)
             {
                 throw new NotSupportedException();
             }
@@ -366,7 +368,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             public ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
                 Stream? messageStream,
                 MessageHeaderCollection messageHeaders,
-                MessageSerializationContext context)
+                MessageSerializationContext context,
+                CancellationToken cancellationToken = default)
             {
                 var wrapper = new RawMessage
                 {

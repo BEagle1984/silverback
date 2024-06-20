@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -40,7 +41,9 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 _logger = logger;
             }
 
-            public Task ProduceAsync(IOutboundEnvelope envelope)
+            public Task ProduceAsync(
+                IOutboundEnvelope envelope,
+                CancellationToken cancellationToken = default)
             {
                 Check.NotNull(envelope, nameof(envelope));
 
@@ -51,7 +54,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 if (producer == null || !producer.Endpoint.Equals(envelope.Endpoint))
                     producer = _producer = _outboundQueueBroker.GetProducer(envelope.Endpoint);
 
-                return producer.ProduceAsync(envelope);
+                return producer.ProduceAsync(envelope, cancellationToken);
             }
         }
     }

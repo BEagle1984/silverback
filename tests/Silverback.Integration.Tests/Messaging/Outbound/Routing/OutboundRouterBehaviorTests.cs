@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,7 +90,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 message,
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
@@ -118,7 +120,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
@@ -131,12 +134,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             var messages = await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             messages.Should().BeEmpty();
 
             messages = await _behavior.HandleAsync(
                 new TestEventTwo(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             messages.Should().NotBeEmpty();
         }
 
@@ -148,7 +153,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             _testSubscriber.ReceivedMessages.Should()
                 .BeEmpty(); // Because TestSubscriber discards the envelopes
@@ -163,12 +169,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             var messages = await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             messages.Should().BeEmpty();
 
             messages = await _behavior.HandleAsync(
                 new TestEventTwo(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             messages.Should().NotBeEmpty();
         }
 
@@ -182,7 +190,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             _testSubscriber.ReceivedMessages.Should().HaveCount(1);
             _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
@@ -200,7 +209,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                     new TestEventOne(),
                     null,
                     new TestProducerEndpoint("eventOne")),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             messages.Should().HaveCount(1);
         }
@@ -217,7 +227,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 message,
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
@@ -232,13 +243,16 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 new TestEventThree(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
             await _behavior.HandleAsync(
                 new TestEventTwo(),
-                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+                (nextMessage, _) => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!,
+                CancellationToken.None);
 
             _broker.ProducedMessages.Should().HaveCount(2);
             _otherBroker.ProducedMessages.Should().HaveCount(1);
