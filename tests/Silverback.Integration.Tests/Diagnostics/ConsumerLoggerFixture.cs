@@ -52,7 +52,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogProcessing(envelope);
 
         string expectedMessage =
-            "Processing inbound message. | " +
+            "Processing consumed message. | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
             "messageId: 1234, " +
@@ -78,7 +78,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogProcessingError(envelope, new InvalidDataException());
 
         string expectedMessage =
-            "Error occurred processing the inbound message. | " +
+            "Error occurred processing the consumed message. | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
             "messageId: 1234, " +
@@ -261,7 +261,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogRollbackToSkipFailed(envelope, new TimeoutException());
 
         string expectedMessage =
-            "Error occurred rolling back or committing, the skip message error policy " +
+            "Error occurred rolling back the transaction or committing the offset, the skip message error policy " +
             "cannot be applied. The consumer will be reconnected. | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
@@ -288,7 +288,7 @@ public class ConsumerLoggerFixture
         _consumerLogger.LogInvalidMessage(envelope, "[errors]");
 
         string expectedMessage =
-            "Invalid message consumed:[errors] | " +
+            "Invalid message consumed: [errors] | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
             "messageId: 1234, " +

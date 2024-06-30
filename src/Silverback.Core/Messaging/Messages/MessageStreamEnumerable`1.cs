@@ -104,6 +104,7 @@ internal sealed class MessageStreamEnumerable<TMessage> : IMessageStreamEnumerab
         GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
 
     /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc cref="IDisposable.Dispose" />

@@ -13,7 +13,6 @@ namespace Silverback.Testing;
 public abstract partial class TestingHelper
 {
     /// <inheritdoc cref="ITestingHelper.GetProducerForEndpoint" />
-    // TODO: Test
     public IProducer GetProducerForEndpoint(string endpointName)
     {
         IProducer? producer = _producers?.FirstOrDefault(

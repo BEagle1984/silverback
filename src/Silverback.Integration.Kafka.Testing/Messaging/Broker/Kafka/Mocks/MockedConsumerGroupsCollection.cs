@@ -34,5 +34,6 @@ internal class MockedConsumerGroupsCollection : IMockedConsumerGroupsCollection
     [MustDisposeResource]
     public IEnumerator<IMockedConsumerGroup> GetEnumerator() => _groups.Values.GetEnumerator();
 
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

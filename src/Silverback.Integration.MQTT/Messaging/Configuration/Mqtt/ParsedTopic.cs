@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
-// TODO: Test
 internal class ParsedTopic
 {
     public ParsedTopic(string topic)

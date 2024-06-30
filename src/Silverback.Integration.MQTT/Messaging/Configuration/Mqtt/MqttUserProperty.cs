@@ -22,7 +22,6 @@ public record MqttUserProperty(string Name, string? Value) : IValidatableSetting
     public string? Value { get; } = Value;
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    // TODO: Test
     public void Validate()
     {
         if (string.IsNullOrEmpty(Name))

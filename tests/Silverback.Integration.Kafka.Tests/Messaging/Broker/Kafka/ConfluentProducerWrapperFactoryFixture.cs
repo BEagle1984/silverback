@@ -8,7 +8,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Tests.Integration.Kafka.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker.Kafka;

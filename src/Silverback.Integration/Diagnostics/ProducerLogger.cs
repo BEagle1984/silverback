@@ -82,7 +82,7 @@ internal sealed class ProducerLogger
         if (!logger.IsEnabled(IntegrationLogEvents.ErrorProducingMessage))
             return;
 
-        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Endpoint, envelope.Headers, null);
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(envelope.Endpoint, envelope.Headers, envelope.BrokerMessageIdentifier);
 
         _errorProducingMessage.Invoke(
             logger.InnerLogger,

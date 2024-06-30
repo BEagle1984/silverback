@@ -26,7 +26,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessage { get; } = new(
         LogLevel.Information,
         GetEventId(1, nameof(ProcessingConsumedMessage)),
-        "Processing inbound message.");
+        "Processing consumed message.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs processing the consumed message.
@@ -37,7 +37,7 @@ public static class IntegrationLogEvents
     public static LogEvent ProcessingConsumedMessageError { get; } = new(
         LogLevel.Error,
         GetEventId(2, nameof(ProcessingConsumedMessageError)),
-        "Error occurred processing the inbound message.");
+        "Error occurred processing the consumed message.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an unhandled error occurs processing the
@@ -295,9 +295,8 @@ public static class IntegrationLogEvents
     public static LogEvent PolicyMaxFailedAttemptsExceeded { get; } = new(
         LogLevel.Trace,
         GetEventId(51, nameof(PolicyMaxFailedAttemptsExceeded)),
-        "The {policyType} will be skipped because the current failed " +
-        "attempts ({failedAttempts}) exceeds the configured maximum attempts " +
-        "({maxFailedAttempts}).");
+        "The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum " +
+        "attempts ({maxFailedAttempts}).");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
@@ -403,7 +402,7 @@ public static class IntegrationLogEvents
     public static LogEvent RollbackToSkipFailed { get; } = new(
         LogLevel.Warning,
         GetEventId(62, nameof(RollbackToSkipFailed)),
-        "Error occurred rolling back or committing, the skip message error policy cannot be applied. The consumer will be reconnected.");
+        "Error occurred rolling back the transaction or committing the offset, the skip message error policy cannot be applied. The consumer will be reconnected.");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being written
@@ -466,7 +465,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidMessageProduced { get; } = new(
         LogLevel.Warning,
         GetEventId(81, nameof(InvalidMessageProduced)),
-        "Invalid message produced:{validationErrors}");
+        "Invalid message produced: {validationErrors}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
@@ -475,7 +474,7 @@ public static class IntegrationLogEvents
     public static LogEvent InvalidMessageConsumed { get; } = new(
         LogLevel.Warning,
         GetEventId(82, nameof(InvalidMessageConsumed)),
-        "Invalid message consumed:{validationErrors}");
+        "Invalid message consumed: {validationErrors}");
 
     /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint

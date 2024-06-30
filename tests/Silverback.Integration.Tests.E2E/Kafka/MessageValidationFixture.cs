@@ -33,7 +33,7 @@ public class MessageValidationFixture : KafkaFixture
     public async Task Validation_ShouldNotProduceInvalidMessage_WhenValidationEnabled()
     {
         TestValidationMessage message = new() { String10 = "1234567890abcd" };
-        string expectedMessage = $"The message is not valid:{Environment.NewLine}" +
+        string expectedMessage = $"The message is not valid: {Environment.NewLine}" +
                                  "- The field String10 must be a string with a maximum length of 10.";
 
         await Host.ConfigureServicesAndRunAsync(

@@ -12,7 +12,6 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 public partial record MqttClientWebSocketProxyConfiguration : IValidatableSettings
 {
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    // TODO: Test
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Address))

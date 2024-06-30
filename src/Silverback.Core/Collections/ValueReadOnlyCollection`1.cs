@@ -67,5 +67,6 @@ public sealed class ValueReadOnlyCollection<T> : IValueReadOnlyCollection<T>, IE
             (current, element) => (current * 397) ^ (element == null ? 0 : _equalityComparer.GetHashCode(element))));
 
     /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

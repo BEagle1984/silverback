@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace Silverback.Messaging.Configuration.Mqtt;
 
-// TODO: Test
 internal class MqttConsumerEndpointsCache
 {
     private readonly ConcurrentDictionary<string, MqttConsumerEndpoint> _endpoints = new();

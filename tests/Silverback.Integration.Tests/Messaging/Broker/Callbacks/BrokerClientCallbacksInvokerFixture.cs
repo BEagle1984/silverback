@@ -11,8 +11,8 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks;

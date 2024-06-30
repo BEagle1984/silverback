@@ -8,7 +8,6 @@ using FluentAssertions;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Xunit;
 

@@ -123,10 +123,7 @@ public class ProducerLoggerFixture
             { DefaultMessageHeaders.MessageId, "1234" }
         };
 
-        _producerLogger.LogProduceError(
-            endpoint,
-            headers,
-            new InvalidDataException());
+        _producerLogger.LogProduceError(endpoint, headers, new InvalidDataException());
 
         string expectedMessage =
             "Error occurred producing the message. | " +
@@ -245,7 +242,7 @@ public class ProducerLoggerFixture
         _producerLogger.LogInvalidMessage(envelope, "[errors]");
 
         string expectedMessage =
-            "Invalid message produced:[errors] | " +
+            "Invalid message produced: [errors] | " +
             "endpointName: test1, " +
             "messageType: Message.Type, " +
             "messageId: 1234, " +

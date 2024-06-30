@@ -8,7 +8,6 @@ namespace Silverback.Messaging.Broker.Mqtt;
 /// <summary>
 ///     Creates <see cref="IMqttClientWrapperFactory" /> instances.
 /// </summary>
-// TODO: Test
 public interface IMqttClientWrapperFactory
 {
     /// <summary>

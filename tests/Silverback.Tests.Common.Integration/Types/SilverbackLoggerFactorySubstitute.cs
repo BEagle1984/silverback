@@ -3,7 +3,7 @@
 
 using Silverback.Diagnostics;
 
-namespace Silverback.Tests.Integration.Kafka.TestTypes;
+namespace Silverback.Tests.Types;
 
 public class SilverbackLoggerFactorySubstitute : ISilverbackLoggerFactory
 {

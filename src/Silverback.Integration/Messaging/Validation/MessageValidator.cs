@@ -33,7 +33,7 @@ internal static class MessageValidator
             results.Select(validationResult => $"{Environment.NewLine}- {validationResult.ErrorMessage}"));
 
         if (validationMode == MessageValidationMode.ThrowException)
-            throw new MessageValidationException($"The message is not valid:{validationErrors}");
+            throw new MessageValidationException($"The message is not valid: {validationErrors}");
 
         return false;
     }

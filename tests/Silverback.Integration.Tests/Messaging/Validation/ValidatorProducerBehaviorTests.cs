@@ -80,35 +80,35 @@ public class ValidatorProducerBehaviorTests
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123"
                 },
-                $"Invalid message produced:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
+                $"Invalid message produced: {Environment.NewLine}- The field String10 must be a string with a maximum length of 10."
             },
             {
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 30, NumbersOnly = "123"
                 },
-                $"Invalid message produced:{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message produced: {Environment.NewLine}- The field IntRange must be between 5 and 10."
             },
             {
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456789abc", IntRange = 30, NumbersOnly = "123"
                 },
-                $"Invalid message produced:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
+                $"Invalid message produced: {Environment.NewLine}- The field String10 must be a string with a maximum length of 10.{Environment.NewLine}- The field IntRange must be between 5 and 10."
             },
             {
                 new TestValidationMessage
                 {
                     String10 = "123456", IntRange = 5, NumbersOnly = "123"
                 },
-                $"Invalid message produced:{Environment.NewLine}- The Id field is required."
+                $"Invalid message produced: {Environment.NewLine}- The Id field is required."
             },
             {
                 new TestValidationMessage
                 {
                     Id = "1", String10 = "123456", IntRange = 5, NumbersOnly = "Test1234"
                 },
-                $"Invalid message produced:{Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
+                $"Invalid message produced: {Environment.NewLine}- The field NumbersOnly must match the regular expression '^[0-9]*$'."
             },
             {
                 new TestValidationMessage
@@ -122,7 +122,7 @@ public class ValidatorProducerBehaviorTests
                         String5 = "123456"
                     }
                 },
-                $"Invalid message produced:{Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
+                $"Invalid message produced: {Environment.NewLine}- The field String5 must be a string with a maximum length of 5."
             }
         };
 
@@ -225,7 +225,7 @@ public class ValidatorProducerBehaviorTests
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =
-            $"The message is not valid:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
+            $"The message is not valid: {Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
         TestProducerEndpoint endpoint = new TestProducerEndpointConfiguration("topic1")
         {
             MessageValidationMode = MessageValidationMode.ThrowException
