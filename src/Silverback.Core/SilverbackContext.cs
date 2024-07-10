@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Util;
 
 namespace Silverback;
 
@@ -13,6 +14,19 @@ namespace Silverback;
 public class SilverbackContext
 {
     private readonly Dictionary<Guid, object> _objects = [];
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="SilverbackContext" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
+    public SilverbackContext(IServiceProvider serviceProvider)
+    {
+        ServiceProvider = serviceProvider;
+    }
+
+    internal IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     ///     Stores the specified object. It will throw if an object with the same type id is already stored.
@@ -123,4 +137,64 @@ public class SilverbackContext
     ///     A value indicating whether the transaction was found.
     /// </returns>
     public bool TryGetObject(Guid objectTypeId, [NotNullWhen(true)] out object? obj) => _objects.TryGetValue(objectTypeId, out obj);
+
+    /// <summary>
+    ///     Returns the object with the specified type id or adds a new one if not found.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of the object.
+    /// </typeparam>
+    /// <param name="objectTypeId">
+    ///     A unique identifier for the object type.
+    /// </param>
+    /// <param name="factory">
+    ///     The factory to create the object if not found.
+    /// </param>
+    /// <returns>
+    ///     The object.
+    /// </returns>
+    public T GetOrAddObject<T>(Guid objectTypeId, Func<T> factory)
+    {
+        Check.NotNull(factory, nameof(factory));
+
+        if (TryGetObject(objectTypeId, out T? obj))
+            return obj;
+
+        T newObj = factory.Invoke() ?? throw new InvalidOperationException("The factory returned null.");
+        AddObject(objectTypeId, newObj);
+        return newObj;
+    }
+
+    /// <summary>
+    ///     Returns the object with the specified type id or adds a new one if not found.
+    /// </summary>
+    /// <typeparam name="TObject">
+    ///     The type of the object.
+    /// </typeparam>
+    /// <typeparam name="TArg">
+    ///     The type of the argument to pass to the factory.
+    /// </typeparam>
+    /// <param name="objectTypeId">
+    ///     A unique identifier for the object type.
+    /// </param>
+    /// <param name="factory">
+    ///     The factory to create the object if not found.
+    /// </param>
+    /// <param name="argument">
+    ///     The argument to pass to the factory.
+    /// </param>
+    /// <returns>
+    ///     The object.
+    /// </returns>
+    public TObject GetOrAddObject<TObject, TArg>(Guid objectTypeId, Func<TArg, TObject> factory, TArg argument)
+    {
+        Check.NotNull(factory, nameof(factory));
+
+        if (TryGetObject(objectTypeId, out TObject? obj))
+            return obj;
+
+        TObject newObj = factory.Invoke(argument) ?? throw new InvalidOperationException("The factory returned null.");
+        AddObject(objectTypeId, newObj);
+        return newObj;
+    }
 }

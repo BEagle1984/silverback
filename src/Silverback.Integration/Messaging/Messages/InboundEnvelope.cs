@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
@@ -52,6 +53,8 @@ internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
     {
         Message = message;
     }
+
+    public virtual Type MessageType => Message?.GetType() ?? typeof(object);
 
     public bool AutoUnwrap => true;
 

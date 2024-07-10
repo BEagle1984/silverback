@@ -18,7 +18,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
         TestProducerEndpointConfiguration endpoint = builder
-            .WithMessageId(message => message?.Content)
+            .SetMessageId(message => message?.Content)
             .Build();
 
         endpoint.MessageEnrichers.Should().HaveCount(1);
@@ -31,7 +31,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<IIntegrationEvent> builder = new();
 
         TestProducerEndpointConfiguration endpoint = builder
-            .WithMessageId<TestEventOne>(message => message?.Content)
+            .SetMessageId<TestEventOne>(message => message?.Content)
             .Build();
 
         endpoint.MessageEnrichers.Should().HaveCount(1);
@@ -44,7 +44,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
 
         TestProducerEndpointConfiguration endpoint = builder
-            .WithMessageId(envelope => envelope.Headers.Count)
+            .SetMessageId(envelope => envelope.Headers.Count)
             .Build();
 
         endpoint.MessageEnrichers.Should().HaveCount(1);
@@ -57,7 +57,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
         TestProducerEndpointConfigurationBuilder<IIntegrationEvent> builder = new();
 
         TestProducerEndpointConfiguration endpoint = builder
-            .WithMessageId<TestEventOne>(envelope => envelope.Headers.Count)
+            .SetMessageId<TestEventOne>(envelope => envelope.Headers.Count)
             .Build();
 
         endpoint.MessageEnrichers.Should().HaveCount(1);

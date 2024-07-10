@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 public partial class OutboundMessageEnrichmentFixture
 {
     [Fact]
-    public async Task WithKafkaKey_ShouldSetMessageKeyFromMessage()
+    public async Task SetKafkaKey_ShouldSetMessageKeyFromMessage()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -34,7 +34,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(message => message?.ContentEventOne)))));
+                                    .SetKafkaKey(message => message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -49,7 +49,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithKafkaKey_ShouldSetMessageKeyFromEnvelope()
+    public async Task SetKafkaKey_ShouldSetMessageKeyFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -65,7 +65,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey(envelope => envelope.Message?.ContentEventOne)))));
+                                    .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -80,7 +80,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithKafkaKey_ShouldSetMessageKeyByMessageType()
+    public async Task SetKafkaKey_ShouldSetMessageKeyByMessageType()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -96,8 +96,8 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey<TestEventOne>(message => message?.ContentEventOne)
-                                    .WithKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
+                                    .SetKafkaKey<TestEventOne>(message => message?.ContentEventOne)
+                                    .SetKafkaKey<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -112,7 +112,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithKafkaKey_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
+    public async Task SetKafkaKey_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -128,7 +128,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithKafkaKey((TestEventOne? _) => null)))));
+                                    .SetKafkaKey((TestEventOne? _) => null)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });

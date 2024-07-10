@@ -14,6 +14,48 @@ namespace Silverback.Tests.Integration.Messaging.Messages;
 public class InboundEnvelopeFixture
 {
     [Fact]
+    public void MessageType_ShouldReturnType_WhenMessageIsNotNull()
+    {
+        InboundEnvelope envelope = new(
+            new TestEventOne(),
+            null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "b"));
+
+        envelope.MessageType.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
+    public void MessageType_ShouldReturnObject_WhenMessageIsNull()
+    {
+        InboundEnvelope envelope = new(
+            null,
+            null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "b"));
+
+        envelope.MessageType.Should().Be(typeof(object));
+    }
+
+    [Fact]
+    public void MessageType_ShouldReturnGenericArgumentType_WhenMessageNullAndGenericArgumentProvided()
+    {
+        InboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "b"));
+
+        envelope.MessageType.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
     public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
     {
         InboundEnvelope envelope = new(

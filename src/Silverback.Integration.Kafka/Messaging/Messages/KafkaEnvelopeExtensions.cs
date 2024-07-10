@@ -25,6 +25,25 @@ public static class KafkaEnvelopeExtensions
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(DefaultMessageHeaders.MessageId);
 
     /// <summary>
+    ///     Set the key of the message to be produced to Kafka.
+    /// </summary>
+    /// <param name="envelope">
+    ///     The envelope containing the message.
+    /// </param>
+    /// <param name="key">
+    ///     The Kafka message key.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="IRawOutboundEnvelope" /> so that additional calls can be chained.
+    /// </returns>
+    public static IRawOutboundEnvelope SetKafkaKey(this IRawOutboundEnvelope envelope, string key)
+    {
+        Check.NotNull(envelope, nameof(envelope));
+        envelope.SetMessageId(key);
+        return envelope;
+    }
+
+    /// <summary>
     ///     Gets the timestamp of the message consumed from Kafka.
     /// </summary>
     /// <param name="envelope">

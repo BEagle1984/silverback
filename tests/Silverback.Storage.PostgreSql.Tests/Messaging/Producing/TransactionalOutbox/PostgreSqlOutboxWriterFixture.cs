@@ -125,7 +125,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         NpgsqlConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(serviceProvider);
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {
@@ -179,7 +179,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         NpgsqlConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(serviceProvider);
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {
@@ -241,7 +241,7 @@ public sealed class PostgreSqlOutboxWriterFixture : PostgresContainerFixture
         NpgsqlConnection connection = new(_outboxSettings.ConnectionString);
         await connection.OpenAsync();
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(serviceProvider);
 
         await using (DbTransaction transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {

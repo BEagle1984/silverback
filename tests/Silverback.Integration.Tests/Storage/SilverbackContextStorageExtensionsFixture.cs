@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Storage;
@@ -13,7 +14,7 @@ public class SilverbackContextStorageExtensionsFixture
     [Fact]
     public void EnlistTransaction_ShouldSetTransaction()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         IStorageTransaction transaction = Substitute.For<IStorageTransaction>();
 
         context.EnlistTransaction(transaction);
@@ -25,7 +26,7 @@ public class SilverbackContextStorageExtensionsFixture
     [Fact]
     public void TryGetStorageTransaction_ShouldReturnTrue_WhenTransactionIsStored()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         IStorageTransaction transaction = Substitute.For<IStorageTransaction>();
         context.EnlistTransaction(transaction);
 
@@ -38,7 +39,7 @@ public class SilverbackContextStorageExtensionsFixture
     [Fact]
     public void TryGetStorageTransaction_ShouldReturnFalse_WhenNoTransactionIsStored()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
 
         bool result = context.TryGetStorageTransaction(out IStorageTransaction? storedTransaction);
 
@@ -49,7 +50,7 @@ public class SilverbackContextStorageExtensionsFixture
     [Fact]
     public void RemoveTransaction_ShouldClearTransaction()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         IStorageTransaction transaction = Substitute.For<IStorageTransaction>();
         context.EnlistTransaction(transaction);
 

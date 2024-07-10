@@ -13,11 +13,6 @@ namespace Silverback.Messaging.Producing;
 public static class IntegrationBehaviorsSortIndexes
 {
     /// <summary>
-    ///     The <see cref="ProduceBehavior" /> sort index.
-    /// </summary>
-    public const int OutboundProducer = 200;
-
-    /// <summary>
     ///     The <see cref="OutboundRouterBehavior" /> sort index.
     /// </summary>
     public const int OutboundRouter = 300;

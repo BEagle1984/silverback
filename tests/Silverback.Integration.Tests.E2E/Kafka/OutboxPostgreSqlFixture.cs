@@ -176,7 +176,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishEventsAsync(
+        await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
             {
                 new() { ContentEventOne = "1" },
@@ -229,7 +229,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishEventsAsync(
+        await publisher.WrapAndPublishBatchAsync(
             new TestEventOne[]
             {
                 new() { ContentEventOne = "1" },

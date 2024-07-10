@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 
@@ -10,7 +11,7 @@ internal sealed record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundE
     where TMessage : class
 {
     public OutboundEnvelope(
-        TMessage message,
+        TMessage? message,
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
@@ -22,4 +23,6 @@ internal sealed record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundE
     }
 
     public new TMessage? Message { get; }
+
+    public override Type MessageType => Message?.GetType() ?? typeof(TMessage);
 }

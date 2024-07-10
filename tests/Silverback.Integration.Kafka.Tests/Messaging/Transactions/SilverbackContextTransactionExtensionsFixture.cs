@@ -4,6 +4,7 @@
 using System;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Consuming.ContextEnrichment;
 using Silverback.Messaging.Transactions;
 using Xunit;
@@ -15,7 +16,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void InitKafkaTransaction_ShouldInitAndReturnTransaction()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
 
         IKafkaTransaction transaction = context.InitKafkaTransaction();
 
@@ -26,7 +27,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void InitKafkaTransaction_ShouldSetTransactionalIdSuffix()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
 
         IKafkaTransaction transaction = context.InitKafkaTransaction("suffix");
 
@@ -40,7 +41,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [InlineData("suffix")]
     public void InitKafkaTransaction_ShouldAppendPartitionToTransactionalId_WhenInConsumerContext(string? baseSuffix)
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetConsumedPartition(new TopicPartition("topic1", 42), true);
 
         IKafkaTransaction transaction = context.InitKafkaTransaction(baseSuffix);
@@ -52,7 +53,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void InitKafkaTransaction_ShouldNotAppendPartitionToTransactionalId_WhenNotProcessingIndependently()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.SetConsumedPartition(new TopicPartition("topic1", 42), false);
 
         IKafkaTransaction transaction = context.InitKafkaTransaction();
@@ -64,7 +65,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void AddKafkaTransaction_ShouldSetTransaction()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         context.AddKafkaTransaction(transaction);
 
@@ -74,7 +75,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void AddKafkaTransaction_ShouldThrow_WhenTransactionIsAlreadySet()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.AddKafkaTransaction(new KafkaTransaction(context));
 
         Action act = () => context.AddKafkaTransaction(new KafkaTransaction(context));
@@ -85,7 +86,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void AddKafkaTransaction_ShouldNotThrow_WhenAddingSameTransactionAgain()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         context.AddKafkaTransaction(transaction);
 
@@ -97,7 +98,7 @@ public class SilverbackContextTransactionExtensionsFixture
     [Fact]
     public void RemoveKafkaTransaction_ShouldRemoveTransaction()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         context.AddKafkaTransaction(new KafkaTransaction(context));
 
         context.RemoveKafkaTransaction();

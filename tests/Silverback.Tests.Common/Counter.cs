@@ -10,13 +10,14 @@ public class Counter
 {
     private int _value;
 
+    public Counter(int value = 0)
+    {
+        _value = value;
+    }
+
     public int Value => _value;
 
-    public void Increment() => Interlocked.Increment(ref _value);
+    public int Increment() => Interlocked.Increment(ref _value);
 
-    public Task IncrementAsync()
-    {
-        Interlocked.Increment(ref _value);
-        return Task.CompletedTask;
-    }
+    public Task<int> IncrementAsync() => Task.FromResult(Interlocked.Increment(ref _value));
 }

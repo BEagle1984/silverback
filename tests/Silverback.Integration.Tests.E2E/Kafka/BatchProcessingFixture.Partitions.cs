@@ -58,7 +58,7 @@ public partial class BatchProcessingFixture
                 .Produce<TestEventOne>(
                     endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         for (int i = 1; i <= 10; i++)
         {

@@ -30,11 +30,13 @@ internal sealed class SubscribedMethodsCacheSingleton
         _hasAnyMessageStreamSubscriber ??=
             GetAllSubscribedMethods(serviceProvider).Any(method => method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver);
 
+    // TODO: Cache the exclusive and non-exclusive methods separately?
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
         GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.IsExclusive);
 
+    // TODO: Cache the exclusive and non-exclusive methods separately?
     public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
@@ -68,8 +70,8 @@ internal sealed class SubscribedMethodsCacheSingleton
         if (subscribedMethod.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver)
             return AreCompatibleStreams(message, subscribedMethod);
 
-        if (message is IMessageWrapper wrapper && (wrapper is IEnvelope envelope && envelope.AutoUnwrap || wrapper is not IEnvelope) &&
-            subscribedMethod.MessageType.IsAssignableFrom(wrapper.GetMessageType()))
+        if (message is IEnvelope envelope && envelope is { AutoUnwrap: true } &&
+            subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType))
         {
             return true;
         }

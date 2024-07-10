@@ -35,6 +35,42 @@ public class OutboundEnvelopeFixture
     }
 
     [Fact]
+    public void MessageType_ShouldReturnType_WhenMessageIsNotNull()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.MessageType.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
+    public void MessageType_ShouldReturnObject_WhenMessageIsNull()
+    {
+        OutboundEnvelope envelope = new(
+            null,
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.MessageType.Should().Be(typeof(object));
+    }
+
+    [Fact]
+    public void MessageType_ShouldReturnGenericArgumentType_WhenMessageNullAndGenericArgumentProvided()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>());
+
+        envelope.MessageType.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
     public void CloneReplacingRawMessage_ShouldClone()
     {
         OutboundEnvelope<TestEventOne> outboundEnvelope = new(

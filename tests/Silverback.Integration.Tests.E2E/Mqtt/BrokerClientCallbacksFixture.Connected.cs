@@ -87,6 +87,6 @@ public partial class BrokerClientCallbacksFixture
         }
 
         public Task OnClientConnectedAsync(MqttClientConfiguration configuration) =>
-            _publisher.PublishAsync(new TestEventOne()).AsTask();
+            _publisher.PublishAsync(new TestEventOne());
     }
 }

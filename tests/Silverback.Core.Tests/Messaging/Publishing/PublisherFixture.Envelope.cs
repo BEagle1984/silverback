@@ -17,8 +17,6 @@ namespace Silverback.Tests.Core.Messaging.Publishing;
 
 public partial class PublisherFixture
 {
-    private interface ICustomWrapper<T> : IMessageWrapper<T>;
-
     [Fact]
     public async Task PublishAndPublishAsync_ShouldPublishEnvelope()
     {
@@ -56,69 +54,6 @@ public partial class PublisherFixture
 
         publisher.Publish(new TestEnvelope(new TestCommandOne()));
         await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
-
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<TestCommandOne>();
-    }
-
-    [Fact]
-    public async Task PublishAndPublishAsync_ShouldPublishCustomWrapper()
-    {
-        List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<CustomWrapper<TestCommandOne>>(Handle));
-
-        void Handle(CustomWrapper<TestCommandOne> wrapper) => messages.Add(wrapper);
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
-        await publisher.PublishAsync(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
-
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<CustomWrapper<TestCommandOne>>();
-    }
-
-    [Fact]
-    public async Task PublishAndPublishAsync_ShouldMatchCustomWrapperInterface()
-    {
-        List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<ICustomWrapper<TestCommandOne>>(Handle));
-
-        void Handle(ICustomWrapper<TestCommandOne> wrapper) => messages.Add(wrapper);
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
-        await publisher.PublishAsync(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
-
-        messages.Should().HaveCount(2);
-        messages.Should().AllBeOfType<CustomWrapper<TestCommandOne>>();
-    }
-
-    [Fact]
-    public async Task PublishAndPublishAsync_ShouldUnwrapCustomWrapper()
-    {
-        List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<TestCommandOne>(Handle));
-
-        void Handle(TestCommandOne message) => messages.Add(message);
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
-        await publisher.PublishAsync(new CustomWrapper<TestCommandOne>(new TestCommandOne()));
 
         messages.Should().HaveCount(2);
         messages.Should().AllBeOfType<TestCommandOne>();
@@ -167,15 +102,5 @@ public partial class PublisherFixture
 
         messages.OfType<TestEnvelope>().Should().HaveCount(2);
         messages.OfType<TestCommandOne>().Should().BeEmpty();
-    }
-
-    private class CustomWrapper<T> : ICustomWrapper<T>
-    {
-        public CustomWrapper(T? message)
-        {
-            Message = message;
-        }
-
-        public T? Message { get; }
     }
 }

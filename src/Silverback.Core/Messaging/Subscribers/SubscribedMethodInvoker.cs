@@ -132,9 +132,9 @@ internal static class SubscribedMethodInvoker
     }
 
     private static object? UnwrapIfNeeded(object? message, SubscribedMethod subscribedMethod) =>
-        !typeof(IMessageWrapper).IsAssignableFrom(subscribedMethod.MessageType) &&
-        message is IMessageWrapper wrapper && subscribedMethod.MessageType.IsAssignableFrom(wrapper.GetMessageType())
-            ? wrapper.Message
+        !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType) &&
+        message is IEnvelope envelope && subscribedMethod.MessageType.IsAssignableFrom(envelope.MessageType)
+            ? envelope.Message
             : message;
 
     private static Task<object?> InvokeWithActivityWithoutBlockingAsync(SubscribedMethod subscribedMethod, object target, object?[] arguments) =>

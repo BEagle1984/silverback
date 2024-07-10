@@ -8,21 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
 
 internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 {
-    private static readonly Type[] CompatibleGenericInterfaces =
-    [
-        typeof(ITombstone<>),
-        typeof(IEnumerable<>),
-        typeof(IAsyncEnumerable<>),
-        typeof(IMessageWithHeaders<>)
-    ];
-
     private readonly List<ProducerItem> _producers = [];
 
     private readonly ConcurrentDictionary<Type, IReadOnlyCollection<IProducer>> _producersByMessageType = new();
@@ -60,9 +51,6 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
         throw new InvalidOperationException($"No producer has been configured for endpoint '{endpointName}'.");
     }
 
-    public IReadOnlyCollection<IProducer> GetProducersForMessage(object message) =>
-        GetProducersForMessage(message.GetType());
-
     public IReadOnlyCollection<IProducer> GetProducersForMessage(Type messageType) =>
         _producersByMessageType.GetOrAdd(
             messageType,
@@ -75,31 +63,22 @@ internal sealed class ProducerCollection : IProducerCollection, IAsyncDisposable
 
     public ValueTask DisposeAsync() => _producers.DisposeAllAsync();
 
-    private static List<IProducer> GetProducersForMessage(List<ProducerItem> producers, Type messageType) =>
+    private static IProducer[] GetProducersForMessage(List<ProducerItem> producers, Type messageType) =>
         producers
             .Where(
                 item =>
                     item.IsRouting &&
                     item.Producer.EndpointConfiguration.MessageType.IsAssignableFrom(GetActualMessageType(messageType)))
             .Select(item => item.Producer)
-            .ToList();
+            .ToArray();
 
     private static Type GetActualMessageType(Type messageType) =>
-        ExtractTypeFromSupportedInterface(messageType) ?? messageType;
-
-    private static Type? ExtractTypeFromSupportedInterface(Type messageType)
-    {
-        Type? supportedInterfaceType = Array.Find(
-            messageType.GetInterfaces(),
-            interfaceType => interfaceType.IsGenericType && CompatibleGenericInterfaces.Contains(interfaceType.GetGenericTypeDefinition()));
-
-        if (supportedInterfaceType == null)
-            return null;
-
-        Type innerMessageType = supportedInterfaceType.GenericTypeArguments[0];
-
-        return ExtractTypeFromSupportedInterface(innerMessageType) ?? innerMessageType;
-    }
+        typeof(ITombstone<object>).IsAssignableFrom(messageType)
+            ? messageType.GetInterfaces().First(
+                    interfaceType => interfaceType.IsGenericType &&
+                                     interfaceType.GetGenericTypeDefinition() == typeof(ITombstone<>))
+                .GenericTypeArguments[0]
+            : messageType;
 
     private sealed record ProducerItem(IProducer Producer, bool IsRouting);
 }

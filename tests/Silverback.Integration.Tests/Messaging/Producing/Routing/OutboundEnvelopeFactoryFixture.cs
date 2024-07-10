@@ -5,7 +5,6 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
@@ -46,26 +45,6 @@ public class OutboundEnvelopeFactoryFixture
         envelope.Message.Should().BeNull();
         envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
         envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.Endpoint.Should().Be(endpoint);
-        envelope.Producer.Should().Be(producer);
-    }
-
-    [Fact]
-    public void CreateEnvelope_ShouldUnwrapMessageWithHeaders()
-    {
-        TestProducerEndpoint endpoint = TestProducerEndpoint.GetDefault();
-        IMessageWithHeaders message = new TestEventOne().AddHeader("one", "1").AddHeader("two", "2");
-        MessageHeader[] headers = [new MessageHeader("three", "3"), new MessageHeader("four", "4")];
-        IProducer producer = Substitute.For<IProducer>();
-
-        IOutboundEnvelope envelope = OutboundEnvelopeFactory.CreateEnvelope(message, headers, endpoint, producer);
-
-        envelope.Should().BeOfType<OutboundEnvelope<TestEventOne>>();
-        envelope.As<OutboundEnvelope<TestEventOne>>().Message.Should().Be(message.Message);
-        envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "three" && header.Value == "3");
-        envelope.Headers.Should().ContainSingle(header => header.Name == "four" && header.Value == "4");
         envelope.Endpoint.Should().Be(endpoint);
         envelope.Producer.Should().Be(producer);
     }

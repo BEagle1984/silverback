@@ -9,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <content>
-///     Implements the <c>WithMessageId</c> methods.
+///     Implements the <c>SetMessageId</c> methods.
 /// </content>
 public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
 {
@@ -23,7 +23,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithMessageId(Func<TMessage?, object?> valueProvider)
+    public TBuilder SetMessageId(Func<TMessage?, object?> valueProvider)
     {
         Check.NotNull(valueProvider, nameof(valueProvider));
         return AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessage>(valueProvider));
@@ -42,7 +42,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithMessageId<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
+    public TBuilder SetMessageId<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
         where TMessageChildType : TMessage
     {
         Check.NotNull(valueProvider, nameof(valueProvider));
@@ -59,7 +59,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithMessageId(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+    public TBuilder SetMessageId(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
     {
         AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessage>(valueProvider));
         return This;
@@ -78,7 +78,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder WithMessageId<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
+    public TBuilder SetMessageId<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
         where TMessageChildType : TMessage
     {
         AddMessageEnricher(new OutboundMessageIdHeadersEnricher<TMessageChildType>(valueProvider));

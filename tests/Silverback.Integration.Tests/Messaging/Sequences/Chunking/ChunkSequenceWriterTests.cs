@@ -104,7 +104,7 @@ public class ChunkSequenceWriterTests
                 }
             }.GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
-            new SilverbackContext(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()),
             true);
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());

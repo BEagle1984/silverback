@@ -23,17 +23,6 @@ public interface IProducerCollection : IReadOnlyList<IProducer>
     IProducer GetProducerForEndpoint(string endpointName);
 
     /// <summary>
-    ///     Gets the producers that are compatible with the type of the specified message (and are configured for routing).
-    /// </summary>
-    /// <param name="message">
-    ///     The message to be routed.
-    /// </param>
-    /// <returns>
-    ///     A collection of <see cref="IProducer" /> to be used to produce the message.
-    /// </returns>
-    IReadOnlyCollection<IProducer> GetProducersForMessage(object message);
-
-    /// <summary>
     ///     Gets the producers that are compatible with the specified message type (and are configured for routing).
     /// </summary>
     /// <param name="messageType">

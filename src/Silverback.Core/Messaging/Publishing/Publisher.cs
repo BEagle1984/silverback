@@ -61,11 +61,11 @@ public class Publisher : IPublisher
         CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).SafeWait()).ToList();
 
     /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
-    public async ValueTask PublishAsync(object message, bool throwIfUnhandled = false) =>
+    public async Task PublishAsync(object message, bool throwIfUnhandled = false) =>
         await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false);
 
     /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
-    public async ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false) =>
+    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false) =>
         CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false)).ToList();
 
     private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(

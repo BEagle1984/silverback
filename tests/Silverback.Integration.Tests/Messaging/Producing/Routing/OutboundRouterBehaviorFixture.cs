@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Types;
@@ -19,278 +21,281 @@ namespace Silverback.Tests.Integration.Messaging.Producing.Routing;
 
 public class OutboundRouterBehaviorFixture
 {
-    [Fact]
-    public async Task HandleAsync_ShouldRouteToSingleEndpoint()
+    private readonly ProducerCollection _producers = [];
+
+    private readonly IMessageWrapper _messageWrapper;
+
+    private readonly OutboundRouterBehavior _behavior;
+
+    public OutboundRouterBehaviorFixture()
     {
+        _messageWrapper = Substitute.For<IMessageWrapper>();
         IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = [];
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
-        producers.Add(producer1);
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
-        producers.Add(producer2);
-        OutboundRouterBehavior behavior = new(
-            publisher,
-            producers,
-            new SilverbackContext(),
-            Substitute.For<IServiceProvider>());
+        publisher.Context.Returns(new SilverbackContext(Substitute.For<IServiceProvider>()));
+        _behavior = new OutboundRouterBehavior(publisher, _messageWrapper, _producers);
 
-        int nextBehaviorCalls = 0;
-
-        await behavior.HandleAsync(
-            new TestEventOne(),
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-        await behavior.HandleAsync(
-            new TestEventTwo(),
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-
-        nextBehaviorCalls.Should().Be(0);
-
-        await publisher.Received(2).PublishAsync(Arg.Any<OutboundEnvelope>());
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is TestEventOne &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic1"));
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is TestEventTwo &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
+        _messageWrapper.WrapAndProduceAsync(
+                Arg.Any<object>(),
+                Arg.Any<SilverbackContext>(),
+                Arg.Any<IProducer[]>())
+            .Returns(call => call.Arg<IProducer[]>().All(producer => !producer.EndpointConfiguration.EnableSubscribing));
+        _messageWrapper.WrapAndProduceBatchAsync(
+                Arg.Any<IReadOnlyCollection<object>>(),
+                Arg.Any<SilverbackContext>(),
+                Arg.Any<IProducer[]>())
+            .Returns(call => call.Arg<IProducer[]>().All(producer => !producer.EndpointConfiguration.EnableSubscribing));
+        _messageWrapper.WrapAndProduceBatchAsync(
+                Arg.Any<IEnumerable<object>>(),
+                Arg.Any<SilverbackContext>(),
+                Arg.Any<IProducer[]>())
+            .Returns(call => call.Arg<IProducer[]>().All(producer => !producer.EndpointConfiguration.EnableSubscribing));
+        _messageWrapper.WrapAndProduceBatchAsync(
+                Arg.Any<IAsyncEnumerable<object>>(),
+                Arg.Any<SilverbackContext>(),
+                Arg.Any<IProducer[]>())
+            .Returns(call => call.Arg<IProducer[]>().All(producer => !producer.EndpointConfiguration.EnableSubscribing));
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldRouteEnumerable()
+    public async Task HandleAsync_ShouldContinuePipeline_WhenNoMatchingProducer()
     {
-        IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = [];
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
-        producers.Add(producer1);
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
-        producers.Add(producer2);
-        OutboundRouterBehavior behavior = new(
-            publisher,
-            producers,
-            new SilverbackContext(),
-            Substitute.For<IServiceProvider>());
-
+        AddProducer<TestEventTwo>("topic2");
         int nextBehaviorCalls = 0;
 
-        IEnumerable<TestEventOne> events1 = [new TestEventOne(), new TestEventOne()];
-        IEnumerable<TestEventTwo> events2 = [new TestEventTwo(), new TestEventTwo()];
+        await _behavior.HandleAsync(new TestEventOne(), _ => Next(ref nextBehaviorCalls));
 
-        await behavior.HandleAsync(
-            events1,
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-        await behavior.HandleAsync(
-            events2,
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-
-        nextBehaviorCalls.Should().Be(0);
-
-        await publisher.Received(2).PublishAsync(Arg.Any<OutboundEnvelope>());
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is IEnumerable<TestEventOne> &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic1"));
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is IEnumerable<TestEventTwo> &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
+        nextBehaviorCalls.Should().Be(1);
+        _messageWrapper.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldRouteAsyncEnumerable()
+    public async Task HandleAsync_ShouldProduceSingleMessage()
     {
-        IPublisher publisher = Substitute.For<IPublisher>();
-        ProducerCollection producers = [];
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic1", typeof(TestEventOne)));
-        producers.Add(producer1);
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(new TestProducerEndpointConfiguration("topic2", typeof(TestEventTwo)));
-        producers.Add(producer2);
-        OutboundRouterBehavior behavior = new(
-            publisher,
-            producers,
-            new SilverbackContext(),
-            Substitute.For<IServiceProvider>());
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        TestEventOne message1 = new();
+        TestEventTwo message2 = new();
 
-        int nextBehaviorCalls = 0;
+        await _behavior.HandleAsync(message1, _ => Next());
+        await _behavior.HandleAsync(message2, _ => Next());
 
-        IAsyncEnumerable<TestEventOne> events1 = new[] { new TestEventOne(), new TestEventOne() }.ToAsyncEnumerable();
-        IAsyncEnumerable<TestEventTwo> events2 = new[] { new TestEventTwo(), new TestEventTwo() }.ToAsyncEnumerable();
-
-        await behavior.HandleAsync(
-            events1,
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-        await behavior.HandleAsync(
-            events2,
-            _ =>
-            {
-                nextBehaviorCalls++;
-                return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
-            });
-
-        nextBehaviorCalls.Should().Be(0);
-
-        await publisher.Received(2).PublishAsync(Arg.Any<OutboundEnvelope>());
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is IAsyncEnumerable<TestEventOne> &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic1"));
-        await publisher.Received(1).PublishAsync(
-            Arg.Is<OutboundEnvelope>(
-                envelope => envelope.Message is IAsyncEnumerable<TestEventTwo> &&
-                            ((TestProducerEndpoint)envelope.Endpoint).Topic == "topic2"));
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceAsync(message2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
     }
 
-    // TODO: Multiple endpoints, tombstones, etc.
-    //
-    // [Fact]
-    // public async Task HandleAsync_Message_CorrectlyRouted()
-    // {
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     _broker.ProducedMessages.Should().HaveCount(1);
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_Message_RoutedMessageIsFiltered()
-    // {
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     IReadOnlyCollection<object?> messages = await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     messages.Should().BeEmpty();
-    //
-    //     messages = await _behavior.HandleAsync(
-    //         new TestEventTwo(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     messages.Should().NotBeEmpty();
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_Message_RoutedMessageIsRepublishedWithoutAutoUnwrap()
-    // {
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     _testSubscriber.ReceivedMessages.Should()
-    //         .BeEmpty(); // Because TestSubscriber discards the envelopes
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsFiltered()
-    // {
-    //     _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     IReadOnlyCollection<object?> messages = await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     messages.Should().BeEmpty();
-    //
-    //     messages = await _behavior.HandleAsync(
-    //         new TestEventTwo(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     messages.Should().NotBeEmpty();
-    // }
-    //
-    // [Fact]
-    // public async Task
-    //     HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
-    // {
-    //     _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     _testSubscriber.ReceivedMessages.Should().HaveCount(1);
-    //     _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_EnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
-    // {
-    //     _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //
-    //     IReadOnlyCollection<object?> messages = await _behavior.HandleAsync(
-    //         new OutboundEnvelope<TestEventOne>(
-    //             new TestEventOne(),
-    //             null,
-    //             new TestProducerConfiguration("eventOne").GetDefaultEndpoint()),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     messages.Should().HaveCount(1);
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_UnhandledMessageType_CorrectlyRelayed()
-    // {
-    //     /* Test for possible issue similar to #33: messages don't have to be registered with HandleMessagesOfType
-    //      * to be relayed */
-    //
-    //     SomeUnhandledMessage message = new() { Content = "abc" };
-    //     _routingConfiguration.AddRoute(typeof(SomeUnhandledMessage), new TestProducerConfiguration("eventOne"));
-    //
-    //     await _behavior.HandleAsync(
-    //         message,
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     _broker.ProducedMessages.Should().HaveCount(1);
-    // }
-    //
-    // [Fact]
-    // public async Task HandleAsync_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
-    // {
-    //     _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
-    //     _routingConfiguration.AddRoute(typeof(TestEventTwo), new TestOtherProducerConfiguration("eventTwo"));
-    //     _routingConfiguration.AddRoute(typeof(TestEventThree), new TestProducerConfiguration("eventThree"));
-    //
-    //     await _behavior.HandleAsync(
-    //         new TestEventOne(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     await _behavior.HandleAsync(
-    //         new TestEventThree(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //     await _behavior.HandleAsync(
-    //         new TestEventTwo(),
-    //         nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
-    //
-    //     _broker.ProducedMessages.Should().HaveCount(2);
-    //     _otherBroker.ProducedMessages.Should().HaveCount(1);
-    // }
+    [Fact]
+    public async Task HandleAsync_ShouldProduceSingleMessageToMultipleProducers()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventOne>("topic2");
+        TestEventOne message = new();
+
+        await _behavior.HandleAsync(message, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(1);
+        await _messageWrapper.Received(1).WrapAndProduceAsync(message, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1, producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceCollection()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        List<TestEventOne> messages1 = [new TestEventOne(), new TestEventOne()];
+        TestEventTwo[] messages2 = [new TestEventTwo(), new TestEventTwo()];
+
+        await _behavior.HandleAsync(messages1, _ => Next());
+        await _behavior.HandleAsync(messages2, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceEnumerable()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        IEnumerable<TestEventOne> messages1 = new TestEventOne[] { new(), new() }.ToPureEnumerable();
+        IEnumerable<TestEventTwo> messages2 = new TestEventTwo[] { new(), new() }.ToPureEnumerable();
+
+        await _behavior.HandleAsync(messages1, _ => Next());
+        await _behavior.HandleAsync(messages2, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceAsyncEnumerable()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        IAsyncEnumerable<TestEventOne> messages1 = new TestEventOne[] { new(), new() }.ToAsyncEnumerable();
+        IAsyncEnumerable<TestEventTwo> messages2 = new TestEventTwo[] { new(), new() }.ToAsyncEnumerable();
+
+        await _behavior.HandleAsync(messages1, _ => Next());
+        await _behavior.HandleAsync(messages2, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceSingleTombstone()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        Tombstone<TestEventOne> message1 = new("1");
+        Tombstone<TestEventTwo> message2 = new("2");
+
+        await _behavior.HandleAsync(message1, _ => Next());
+        await _behavior.HandleAsync(message2, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceAsync(message1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceAsync(message2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceTombstoneCollection()
+    {
+        IProducer producer1 = AddProducer<TestEventOne>("topic1");
+        IProducer producer2 = AddProducer<TestEventTwo>("topic2");
+        List<Tombstone<TestEventOne>> messages1 = [new Tombstone<TestEventOne>("1"), new Tombstone<TestEventOne>("2")];
+        Tombstone<TestEventTwo>[] messages2 = [new Tombstone<TestEventTwo>("1"), new Tombstone<TestEventTwo>("2")];
+
+        await _behavior.HandleAsync(messages1, _ => Next());
+        await _behavior.HandleAsync(messages2, _ => Next());
+
+        _messageWrapper.ReceivedCalls().Count().Should().Be(2);
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages1, Arg.Any<SilverbackContext>(), ArgIsProducers(producer1));
+        await _messageWrapper.Received(1).WrapAndProduceBatchAsync(messages2, Arg.Any<SilverbackContext>(), ArgIsProducers(producer2));
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldProduceEnvelope()
+    {
+        IProducer producer = AddProducer<TestEventOne>("topic1");
+        IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
+        producer.EndpointConfiguration.Strategy.Build(Arg.Any<IServiceProvider>(), Arg.Any<ProducerEndpointConfiguration>())
+            .Returns(produceStrategyImplementation);
+        TestEventOne message = new();
+        IOutboundEnvelope envelope = new OutboundEnvelope<TestEventOne>(
+            message,
+            null,
+            producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, Substitute.For<IServiceProvider>()),
+            producer);
+
+        await _behavior.HandleAsync(envelope, _ => Next());
+
+        await produceStrategyImplementation.Received(1).ProduceAsync(Arg.Is<IOutboundEnvelope<TestEventOne>>(producedEnvelope => producedEnvelope.Message == message));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task HandleAsync_ShouldContinuePipelineAccordingToEnableSubscribingFlag(bool enableSubscribing)
+    {
+        AddProducer<TestEventOne>("topic1", enableSubscribing);
+        TestEventOne message = new();
+        int nextBehaviorCalls = 0;
+
+        await _behavior.HandleAsync(message, _ => Next(ref nextBehaviorCalls));
+
+        nextBehaviorCalls.Should().Be(enableSubscribing ? 1 : 0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task HandleAsync_ShouldContinuePipelineAccordingToEnableSubscribingFlag_WhenHandlingCollection(bool enableSubscribing)
+    {
+        AddProducer<TestEventOne>("topic1", enableSubscribing);
+        List<TestEventOne> messages = [new TestEventOne(), new TestEventOne()];
+        int nextBehaviorCalls = 0;
+
+        await _behavior.HandleAsync(messages, _ => Next(ref nextBehaviorCalls));
+
+        nextBehaviorCalls.Should().Be(enableSubscribing ? 1 : 0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task HandleAsync_ShouldContinuePipelineAccordingToEnableSubscribingFlag_WhenHandlingEnumerable(bool enableSubscribing)
+    {
+        AddProducer<TestEventOne>("topic1", enableSubscribing);
+        IEnumerable<TestEventOne> messages = new TestEventOne[] { new(), new() }.ToPureEnumerable();
+        int nextBehaviorCalls = 0;
+
+        await _behavior.HandleAsync(messages, _ => Next(ref nextBehaviorCalls));
+
+        nextBehaviorCalls.Should().Be(enableSubscribing ? 1 : 0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task HandleAsync_ShouldContinuePipelineAccordingToEnableSubscribingFlag_WhenHandlingAsyncEnumerable(bool enableSubscribing)
+    {
+        AddProducer<TestEventOne>("topic1", enableSubscribing);
+        IAsyncEnumerable<TestEventOne> messages = new TestEventOne[] { new(), new() }.ToAsyncEnumerable();
+        int nextBehaviorCalls = 0;
+
+        await _behavior.HandleAsync(messages, _ => Next(ref nextBehaviorCalls));
+
+        nextBehaviorCalls.Should().Be(enableSubscribing ? 1 : 0);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task HandleAsync_ShouldContinuePipelineAccordingToEnableSubscribingFlag_WhenHandlingEnvelope(bool enableSubscribing)
+    {
+        AddProducer<TestEventOne>("topic1", enableSubscribing);
+        IProducer producer = AddProducer<TestEventOne>("topic1", enableSubscribing);
+        IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
+        producer.EndpointConfiguration.Strategy.Build(Arg.Any<IServiceProvider>(), Arg.Any<ProducerEndpointConfiguration>())
+            .Returns(produceStrategyImplementation);
+        TestEventOne message = new();
+        IOutboundEnvelope envelope = new OutboundEnvelope<TestEventOne>(
+            message,
+            null,
+            producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, Substitute.For<IServiceProvider>()),
+            producer);
+        int nextBehaviorCalls = 0;
+
+        await _behavior.HandleAsync(envelope, _ => Next(ref nextBehaviorCalls));
+
+        nextBehaviorCalls.Should().Be(enableSubscribing ? 1 : 0);
+    }
+
+    private static ValueTask<IReadOnlyCollection<object?>> Next() => ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
+
+    private static ValueTask<IReadOnlyCollection<object?>> Next(ref int nextBehaviorCalls)
+    {
+        nextBehaviorCalls++;
+        return ValueTask.FromResult<IReadOnlyCollection<object?>>([]);
+    }
+
+    private static IProducer[] ArgIsProducers(params IProducer[] expectedProducers) =>
+        Arg.Is<IProducer[]>(producers => producers.SequenceEqual(expectedProducers));
+
+    private IProducer AddProducer<TMessage>(string topic, bool enableSubscribing = false)
+    {
+        IProducer producer = Substitute.For<IProducer>();
+        producer.EndpointConfiguration.Returns(
+            new TestProducerEndpointConfiguration(topic, typeof(TMessage))
+            {
+                Strategy = Substitute.For<IProduceStrategy>(),
+                EnableSubscribing = enableSubscribing
+            });
+        _producers.Add(producer);
+        return producer;
+    }
 }

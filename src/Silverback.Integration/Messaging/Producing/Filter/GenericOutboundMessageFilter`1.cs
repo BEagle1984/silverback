@@ -26,6 +26,7 @@ public class GenericOutboundMessageFilter<TMessage> : IOutboundMessageFilter
     public GenericOutboundMessageFilter(Func<TMessage?, bool> filter)
     {
         Check.NotNull(filter, nameof(filter));
+
         _filter = envelope => filter.Invoke(envelope.Message);
     }
 

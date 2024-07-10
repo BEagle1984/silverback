@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt;
 public partial class OutboundMessageEnrichmentFixture
 {
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderFromMessage()
+    public async Task SetMessageId_ShouldAddHeaderFromMessage()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
@@ -31,7 +31,7 @@ public partial class OutboundMessageEnrichmentFixture
                                 .Produce<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .WithMessageId<TestEventOne>(message => message?.ContentEventOne))))
+                                        .SetMessageId<TestEventOne>(message => message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
         IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
@@ -48,7 +48,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderFromEnvelope()
+    public async Task SetMessageId_ShouldAddHeaderFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
@@ -63,7 +63,7 @@ public partial class OutboundMessageEnrichmentFixture
                                 .Produce<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .WithMessageId<TestEventOne>(envelope => envelope.Message?.ContentEventOne))))
+                                        .SetMessageId<TestEventOne>(envelope => envelope.Message?.ContentEventOne))))
                 .AddIntegrationSpy());
 
         IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);
@@ -80,7 +80,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldAddHeaderByMessageType()
+    public async Task SetMessageId_ShouldAddHeaderByMessageType()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => LoggingServiceCollectionExtensions.AddLogging(services)
@@ -95,8 +95,8 @@ public partial class OutboundMessageEnrichmentFixture
                                 .Produce<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .WithMessageId<TestEventOne>(message => message?.ContentEventOne)
-                                        .WithMessageId((TestEventTwo? _) => "two"))))
+                                        .SetMessageId<TestEventOne>(message => message?.ContentEventOne)
+                                        .SetMessageId((TestEventTwo? _) => "two"))))
                 .AddIntegrationSpy());
 
         IPublisher publisher = ServiceProviderServiceExtensions.GetRequiredService<IPublisher>(Host.ScopedServiceProvider);

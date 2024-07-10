@@ -90,7 +90,7 @@ public class IntegrationLoggingBenchmark
                 [new MessageHeader("Test", "Test")],
                 producerEndpoint,
                 new TestProducer(),
-                new SilverbackContext(),
+                new SilverbackContext(serviceProvider),
                 false,
                 new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
     }

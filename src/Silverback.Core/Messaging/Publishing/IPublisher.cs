@@ -64,9 +64,9 @@ public interface IPublisher
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask" /> representing the asynchronous operation.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask PublishAsync(object message, bool throwIfUnhandled = false);
+    Task PublishAsync(object message, bool throwIfUnhandled = false);
 
     /// <summary>
     ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -84,9 +84,9 @@ public interface IPublisher
     ///     message.
     /// </param>
     /// <returns>
-    ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains a
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
     ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
     ///     and return a value.
     /// </returns>
-    ValueTask<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false);
+    Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false);
 }

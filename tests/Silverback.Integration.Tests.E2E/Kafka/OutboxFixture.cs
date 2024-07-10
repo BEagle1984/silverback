@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Messaging.Publishing;
 using Silverback.Storage;
@@ -302,7 +301,7 @@ public class OutboxFixture : KafkaFixture
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
-        await publisher.PublishEventAsync(new TestEventOne().WithKafkaKey("key"));
+        await publisher.WrapAndPublishAsync(new TestEventOne(), envelope => envelope.SetKafkaKey("key"));
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
 

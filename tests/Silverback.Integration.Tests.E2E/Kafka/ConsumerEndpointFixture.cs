@@ -198,7 +198,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
                 .Produce<TestEventOne>(
                     endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         for (int i = 1; i <= 8; i++)
         {
@@ -302,7 +302,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
                 .Produce<TestEventOne>(
                     endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });
@@ -351,7 +351,7 @@ public partial class ConsumerEndpointFixture : KafkaFixture
                 .Produce<TestEventOne>(
                     endpoint => endpoint
                         .ProduceTo(DefaultTopicName)
-                        .WithKafkaKey(envelope => envelope.Message?.ContentEventOne)));
+                        .SetKafkaKey(envelope => envelope.Message?.ContentEventOne)));
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "0" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "1" });

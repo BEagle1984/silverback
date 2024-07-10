@@ -14,7 +14,7 @@ public class SilverbackContextKafkaOffsetStoreExtensionsFixture
     [Fact]
     public void SetKafkaOffsetStoreScope_ShouldSetScope()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaOffsetStoreScope scope = new(Substitute.For<IKafkaOffsetStore>(), ConsumerPipelineContextHelper.CreateSubstitute());
 
         context.SetKafkaOffsetStoreScope(scope);
@@ -25,7 +25,7 @@ public class SilverbackContextKafkaOffsetStoreExtensionsFixture
     [Fact]
     public void SetKafkaOffsetStoreScope_ShouldThrow_WhenAlreadySet()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaOffsetStoreScope scope1 = new(Substitute.For<IKafkaOffsetStore>(), ConsumerPipelineContextHelper.CreateSubstitute());
         KafkaOffsetStoreScope scope2 = new(Substitute.For<IKafkaOffsetStore>(), ConsumerPipelineContextHelper.CreateSubstitute());
 
@@ -37,7 +37,7 @@ public class SilverbackContextKafkaOffsetStoreExtensionsFixture
     [Fact]
     public void SetKafkaOffsetStoreScope_ShouldNotThrow_WhenSameScopeIsSetAgain()
     {
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaOffsetStoreScope scope = new(Substitute.For<IKafkaOffsetStore>(), ConsumerPipelineContextHelper.CreateSubstitute());
 
         context.SetKafkaOffsetStoreScope(scope);

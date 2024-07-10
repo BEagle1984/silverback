@@ -130,7 +130,6 @@ internal sealed class ProduceStrategiesImplementation : IDisposable
                     {
                         Number = ++number
                     })
-                .AsTask()
                 .ContinueWith(
                     task =>
                     {

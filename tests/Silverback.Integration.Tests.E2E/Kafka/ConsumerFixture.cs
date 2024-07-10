@@ -10,7 +10,6 @@ using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -46,9 +45,9 @@ public class ConsumerFixture : KafkaFixture
                                 .WithGroupId(DefaultGroupId)
                                 .LimitBackpressure(1)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(HandleEnvelope));
+                .AddDelegateSubscriber<IInboundEnvelope<TestEventWithKafkaKey>>(HandleEnvelope));
 
-        void HandleEnvelope(IInboundEnvelope<TestEventOne> envelope)
+        void HandleEnvelope(IInboundEnvelope<TestEventWithKafkaKey> envelope)
         {
             KafkaOffset offset = (KafkaOffset)envelope.BrokerMessageIdentifier;
             receivedMessages[offset.TopicPartition.Partition]++;
@@ -61,9 +60,9 @@ public class ConsumerFixture : KafkaFixture
 
         for (int i = 1; i <= 3; i++)
         {
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("1"));
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("2"));
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("3"));
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = $"{i}" });
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = $"{i}" });
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = $"{i}" });
         }
 
         await AsyncTestingUtil.WaitAsync(() => receivedMessages.Sum() == 6);
@@ -99,9 +98,9 @@ public class ConsumerFixture : KafkaFixture
                                 .WithGroupId(DefaultGroupId)
                                 .LimitBackpressure(1)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                .AddDelegateSubscriber<IInboundEnvelope<TestEventOne>>(HandleEnvelope));
+                .AddDelegateSubscriber<IInboundEnvelope<TestEventWithKafkaKey>>(HandleEnvelope));
 
-        void HandleEnvelope(IInboundEnvelope<TestEventOne> envelope)
+        void HandleEnvelope(IInboundEnvelope<TestEventWithKafkaKey> envelope)
         {
             KafkaOffset offset = (KafkaOffset)envelope.BrokerMessageIdentifier;
             receivedMessages[offset.TopicPartition.Partition]++;
@@ -111,9 +110,9 @@ public class ConsumerFixture : KafkaFixture
 
         for (int i = 1; i <= 3; i++)
         {
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("1"));
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("2"));
-            await producer.ProduceAsync(new TestEventOne { ContentEventOne = $"{i}" }.WithKafkaKey("3"));
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = $"{i}" });
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = $"{i}" });
+            await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = $"{i}" });
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();

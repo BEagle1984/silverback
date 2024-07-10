@@ -206,8 +206,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<TMessage?, object?> valueProvider) =>
-        WithMessageId(valueProvider);
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<TMessage?, object?> valueProvider) =>
+        SetMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -221,8 +221,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
-        where TMessageChildType : TMessage => WithMessageId(valueProvider);
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<TMessageChildType?, object?> valueProvider)
+        where TMessageChildType : TMessage => SetMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -233,8 +233,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> valueProvider) =>
-        WithMessageId(valueProvider);
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey(Func<IOutboundEnvelope<TMessage>, object?> valueProvider) =>
+        SetMessageId(valueProvider);
 
     /// <summary>
     ///     Uses the specified value provider function to set the kafka key for each message being produced.
@@ -248,8 +248,8 @@ public sealed class KafkaProducerEndpointConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="KafkaProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerEndpointConfigurationBuilder<TMessage> WithKafkaKey<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
-        where TMessageChildType : TMessage => WithMessageId(valueProvider);
+    public KafkaProducerEndpointConfigurationBuilder<TMessage> SetKafkaKey<TMessageChildType>(Func<IOutboundEnvelope<TMessageChildType>, object?> valueProvider)
+        where TMessageChildType : TMessage => SetMessageId(valueProvider);
 
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override KafkaProducerEndpointConfiguration CreateConfiguration() =>

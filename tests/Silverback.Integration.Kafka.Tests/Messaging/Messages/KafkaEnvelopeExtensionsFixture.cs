@@ -9,6 +9,7 @@ using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
@@ -46,6 +47,21 @@ public class KafkaEnvelopeExtensionsFixture
         string? key = envelope.GetKafkaKey();
 
         key.Should().BeNull();
+    }
+
+    [Fact]
+    public void SetKafkaKey_ShouldSetMessageIdHeader()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            [],
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
+
+        envelope.SetKafkaKey("test");
+
+        envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "test"));
     }
 
     [Fact]

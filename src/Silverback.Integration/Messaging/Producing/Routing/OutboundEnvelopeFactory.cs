@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Producing.Routing;
@@ -74,6 +73,14 @@ public static class OutboundEnvelopeFactory
             originalEnvelope.AutoUnwrap);
     }
 
+    internal static IOutboundEnvelope CreateEnvelope(object message, IProducer producer, SilverbackContext context) =>
+        CreateEnvelope(
+            message,
+            null,
+            producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider),
+            producer,
+            context);
+
     private static IOutboundEnvelope CreateEnvelope(
         object? message,
         IReadOnlyCollection<MessageHeader>? headers,
@@ -84,24 +91,6 @@ public static class OutboundEnvelopeFactory
     {
         Check.NotNull(endpoint, nameof(endpoint));
         Check.NotNull(producer, nameof(producer));
-
-        if (message is IMessageWithHeaders { Headers.Count: > 0 } messageWithHeaders)
-        {
-            IOutboundEnvelope outboundEnvelope = messageWithHeaders.Message == null
-                ? new OutboundEnvelope(null, headers, endpoint, producer, context, autoUnwrap)
-                : (IOutboundEnvelope)Activator.CreateInstance(
-                    typeof(OutboundEnvelope<>).MakeGenericType(messageWithHeaders.Message.GetType()),
-                    messageWithHeaders.Message,
-                    headers,
-                    endpoint,
-                    producer,
-                    context,
-                    autoUnwrap)!;
-
-            outboundEnvelope.Headers.AddRange(messageWithHeaders.Headers);
-
-            return outboundEnvelope;
-        }
 
         return message == null
             ? new OutboundEnvelope(null, headers, endpoint, producer, context, autoUnwrap)

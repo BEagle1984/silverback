@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using NSubstitute;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Transactions;
@@ -14,7 +15,7 @@ public class KafkaTransactionFixture
     public void Commit_ShouldCommitTransaction()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
         transaction.Begin();
@@ -28,7 +29,7 @@ public class KafkaTransactionFixture
     public void Abort_ShouldAbortTransaction()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
         transaction.Begin();
@@ -42,7 +43,7 @@ public class KafkaTransactionFixture
     public void Dispose_ShouldAbortTransaction()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
         transaction.Begin();
@@ -56,7 +57,7 @@ public class KafkaTransactionFixture
     public void Dispose_ShouldNotAbortTransaction_WhenNotPending()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
 
@@ -69,7 +70,7 @@ public class KafkaTransactionFixture
     public void Begin_ShouldBeginTransaction()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
 
@@ -82,7 +83,7 @@ public class KafkaTransactionFixture
     public void EnsureBegin_ShouldBeginTransaction()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
 
@@ -95,7 +96,7 @@ public class KafkaTransactionFixture
     public void EnsureBegin_ShouldNotBeginTransaction_WhenAlreadyPending()
     {
         IConfluentProducerWrapper confluentProducer = Substitute.For<IConfluentProducerWrapper>();
-        SilverbackContext context = new();
+        SilverbackContext context = new(Substitute.For<IServiceProvider>());
         KafkaTransaction transaction = new(context);
         transaction.BindConfluentProducer(confluentProducer);
         transaction.Begin();

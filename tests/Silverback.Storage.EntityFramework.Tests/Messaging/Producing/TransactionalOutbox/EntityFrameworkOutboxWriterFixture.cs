@@ -120,7 +120,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(_serviceProvider);
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {
@@ -168,7 +168,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(_serviceProvider);
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {
@@ -225,7 +225,7 @@ public sealed class EntityFrameworkOutboxWriterFixture : IDisposable
         await outboxWriter.AddAsync(new OutboxMessage([0x02], null, Endpoint));
         await outboxWriter.AddAsync(new OutboxMessage([0x03], null, Endpoint));
 
-        SilverbackContext context = new();
+        SilverbackContext context = new(_serviceProvider);
 
         await using (IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted))
         {

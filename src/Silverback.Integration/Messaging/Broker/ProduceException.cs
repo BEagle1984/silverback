@@ -32,8 +32,7 @@ public class ProduceException : SilverbackException
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ProduceException" /> class with the specified message
-    ///     and inner exception.
+    ///     Initializes a new instance of the <see cref="ProduceException" /> class with the specified message and inner exception.
     /// </summary>
     /// <param name="message">
     ///     The exception message.

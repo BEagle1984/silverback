@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka;
 public partial class OutboundMessageEnrichmentFixture
 {
     [Fact]
-    public async Task WithMessageId_ShouldSetMessageKeyFromMessage()
+    public async Task SetMessageId_ShouldSetMessageKeyFromMessage()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -34,7 +34,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId(message => message?.ContentEventOne)))));
+                                    .SetMessageId(message => message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -49,7 +49,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldSetMessageKeyFromEnvelope()
+    public async Task SetMessageId_ShouldSetMessageKeyFromEnvelope()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -65,7 +65,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<TestEventOne>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId(envelope => envelope.Message?.ContentEventOne)))));
+                                    .SetMessageId(envelope => envelope.Message?.ContentEventOne)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -80,7 +80,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldSetMessageKeyByMessageType()
+    public async Task SetMessageId_ShouldSetMessageKeyByMessageType()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -96,8 +96,8 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId<TestEventOne>(message => message?.ContentEventOne)
-                                    .WithMessageId<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
+                                    .SetMessageId<TestEventOne>(message => message?.ContentEventOne)
+                                    .SetMessageId<TestEventTwo>(envelope => envelope.Message?.ContentEventTwo)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });
@@ -112,7 +112,7 @@ public partial class OutboundMessageEnrichmentFixture
     }
 
     [Fact]
-    public async Task WithMessageId_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
+    public async Task SetMessageId_ShouldSetMessageKeyToNull_WhenFunctionReturnsNull()
     {
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -128,7 +128,7 @@ public partial class OutboundMessageEnrichmentFixture
                             producer => producer.Produce<IIntegrationEvent>(
                                 endpoint => endpoint
                                     .ProduceTo(DefaultTopicName)
-                                    .WithMessageId((TestEventOne? _) => null)))));
+                                    .SetMessageId((TestEventOne? _) => null)))));
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
         await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = "one" });

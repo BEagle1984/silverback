@@ -55,7 +55,7 @@ public partial class PublisherFixture
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        Func<Task> act = () => publisher.PublishAsync(new TestEventOne()).AsTask();
+        Func<Task> act = () => publisher.PublishAsync(new TestEventOne());
 
         await act.Should().ThrowAsync<TargetInvocationException>();
         messages.Should().HaveCount(1);
@@ -103,8 +103,8 @@ public partial class PublisherFixture
 
         IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-        Func<Task> act1 = () => publisher.PublishAsync(new TestEventOne()).AsTask();
-        Func<Task> act2 = () => publisher.PublishAsync(new TestEventOne()).AsTask();
+        Func<Task> act1 = () => publisher.PublishAsync(new TestEventOne());
+        Func<Task> act2 = () => publisher.PublishAsync(new TestEventOne());
 
         await act1.Should().ThrowAsync<TargetInvocationException>();
         await act2.Should().ThrowAsync<TargetInvocationException>();

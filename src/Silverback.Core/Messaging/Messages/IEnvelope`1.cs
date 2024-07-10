@@ -9,4 +9,10 @@ namespace Silverback.Messaging.Messages;
 /// <typeparam name="TMessage">
 ///     The type of the message.
 /// </typeparam>
-public interface IEnvelope<out TMessage> : IEnvelope, IMessageWrapper<TMessage>;
+public interface IEnvelope<out TMessage> : IEnvelope
+{
+    /// <summary>
+    ///     Gets the message.
+    /// </summary>
+    new TMessage? Message { get; }
+}

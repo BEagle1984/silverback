@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
@@ -125,5 +126,100 @@ public class OutboxInMemoryFixture : KafkaFixture
         Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
         Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
         DefaultTopic.MessagesCount.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceBatch()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddInMemoryOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseMemory())
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishBatchAsync(new[] { new TestEventOne(), new TestEventOne() });
+        await publisher.WrapAndPublishBatchAsync(new IIntegrationEvent[] { new TestEventTwo(), new TestEventOne() });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(4);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task Outbox_ShouldProduceAsyncBatch()
+    {
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka()
+                        .AddInMemoryOutbox()
+                        .AddOutboxWorker(
+                            worker => worker
+                                .ProcessOutbox(outbox => outbox.UseMemory())
+                                .WithInterval(TimeSpan.FromMilliseconds(50))))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .Produce<IIntegrationEvent>(
+                                    "my-endpoint",
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddIntegrationSpyAndSubscriber());
+
+        static async IAsyncEnumerable<IIntegrationEvent> GetMessagesAsync()
+        {
+            yield return new TestEventOne();
+            await Task.Delay(10);
+            yield return new TestEventTwo();
+            await Task.Delay(20);
+            yield return new TestEventThree();
+        }
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.WrapAndPublishBatchAsync(GetMessagesAsync());
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventOne>>().Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventTwo>>().Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes.OfType<IInboundEnvelope<TestEventThree>>().Should().HaveCount(1);
     }
 }

@@ -31,9 +31,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
@@ -70,9 +68,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
@@ -110,9 +106,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
@@ -150,9 +144,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
@@ -193,9 +185,7 @@ public class NullMessageHandlingFixture : KafkaFixture
             services => services
                 .AddLogging()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                 .AddKafkaClients(
                     clients => clients
                         .WithBootstrapServers("PLAINTEXT://e2e")
