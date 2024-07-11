@@ -131,17 +131,27 @@ public class Publisher : IPublisher
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
-        ExecutionFlow executionFlow) =>
-        (await _subscribedMethodsCache.GetExclusiveMethods(message)
-            .SelectAsync(method => SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow))
-            .ConfigureAwait(false))
-        .ToList();
+        ExecutionFlow executionFlow)
+    {
+        return (await _subscribedMethodsCache.GetExclusiveMethods(message)
+                .SelectAsync(InvokeAsync)
+                .ConfigureAwait(false))
+            .ToList();
+
+        ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
+            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow);
+    }
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
         object message,
-        ExecutionFlow executionFlow) =>
-        (await _subscribedMethodsCache.GetNonExclusiveMethods(message)
-            .ParallelSelectAsync(method => SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow))
-            .ConfigureAwait(false))
-        .ToList();
+        ExecutionFlow executionFlow)
+    {
+        return (await _subscribedMethodsCache.GetNonExclusiveMethods(message)
+                .ParallelSelectAsync(InvokeAsync)
+                .ConfigureAwait(false))
+            .ToList();
+
+        ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
+            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow);
+    }
 }

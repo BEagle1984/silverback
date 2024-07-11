@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Producing.Routing;
 
@@ -23,8 +24,8 @@ public interface IMessageWrapper
     /// <param name="message">
     ///     The message to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -33,12 +34,11 @@ public interface IMessageWrapper
     ///     An optional action that can be used to configure the envelope.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the message is to be considered handled and doesn't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceAsync<TMessage>(
+    Task WrapAndProduceAsync<TMessage>(
         TMessage? message,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
@@ -55,8 +55,8 @@ public interface IMessageWrapper
     /// <param name="message">
     ///     The message to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -68,12 +68,11 @@ public interface IMessageWrapper
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the message is to be considered handled and doesn't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceAsync<TMessage, TArgument>(
+    Task WrapAndProduceAsync<TMessage, TArgument>(
         TMessage? message,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument)
@@ -88,8 +87,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -98,12 +97,11 @@ public interface IMessageWrapper
     ///     An optional action that can be used to configure the envelope.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage>(
+    Task WrapAndProduceBatchAsync<TMessage>(
         IReadOnlyCollection<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
@@ -120,8 +118,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -133,12 +131,11 @@ public interface IMessageWrapper
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage, TArgument>(
+    Task WrapAndProduceBatchAsync<TMessage, TArgument>(
         IReadOnlyCollection<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument)
@@ -153,8 +150,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -163,12 +160,11 @@ public interface IMessageWrapper
     ///     An optional action that can be used to configure the envelope.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage>(
+    Task WrapAndProduceBatchAsync<TMessage>(
         IEnumerable<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
@@ -185,8 +181,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -198,12 +194,11 @@ public interface IMessageWrapper
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage, TArgument>(
+    Task WrapAndProduceBatchAsync<TMessage, TArgument>(
         IEnumerable<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument)
@@ -218,8 +213,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -228,12 +223,11 @@ public interface IMessageWrapper
     ///     An optional action that can be used to configure the envelope.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage>(
+    Task WrapAndProduceBatchAsync<TMessage>(
         IAsyncEnumerable<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
@@ -250,8 +244,8 @@ public interface IMessageWrapper
     /// <param name="messages">
     ///     The messages to be produced.
     /// </param>
-    /// <param name="context">
-    ///     The context.
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
     /// </param>
     /// <param name="producers">
     ///     The producers to be used to produce the message.
@@ -263,12 +257,11 @@ public interface IMessageWrapper
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> result contains a value indicating whether
-    ///     the messages are to be considered handled and don't need to be published to the internal bus.
+    ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task<bool> WrapAndProduceBatchAsync<TMessage, TArgument>(
+    Task WrapAndProduceBatchAsync<TMessage, TArgument>(
         IAsyncEnumerable<TMessage> messages,
-        SilverbackContext context,
+        IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument)

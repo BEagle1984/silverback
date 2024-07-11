@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
@@ -158,62 +157,6 @@ public class ProducerCollectionFixture
     }
 
     [Fact]
-    public void GetProducersForMessage_ShouldReturnProducerForEnumerableType()
-    {
-        ProducerCollection producerCollection = [];
-
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic1")
-            {
-                MessageType = typeof(TestEventOne)
-            });
-        producerCollection.Add(producer1);
-
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic2")
-            {
-                MessageType = typeof(TestEventTwo)
-            });
-        producerCollection.Add(producer2);
-
-        IProducer eventOneProducer = producerCollection.GetProducersForMessage(typeof(List<TestEventOne>)).Single();
-        IProducer eventTwoProducer = producerCollection.GetProducersForMessage(typeof(TestEventTwo[])).Single();
-
-        eventOneProducer.Should().Be(producer1);
-        eventTwoProducer.Should().Be(producer2);
-    }
-
-    [Fact]
-    public void GetProducersForMessage_ShouldReturnProducerForAsyncEnumerableType()
-    {
-        ProducerCollection producerCollection = [];
-
-        IProducer producer1 = Substitute.For<IProducer>();
-        producer1.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic1")
-            {
-                MessageType = typeof(TestEventOne)
-            });
-        producerCollection.Add(producer1);
-
-        IProducer producer2 = Substitute.For<IProducer>();
-        producer2.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration("topic2")
-            {
-                MessageType = typeof(TestEventTwo)
-            });
-        producerCollection.Add(producer2);
-
-        IProducer eventOneProducer = producerCollection.GetProducersForMessage(typeof(IAsyncEnumerable<TestEventOne>)).Single();
-        IProducer eventTwoProducer = producerCollection.GetProducersForMessage(typeof(TestAsyncEnumerable<TestEventTwo>)).Single();
-
-        eventOneProducer.Should().Be(producer1);
-        eventTwoProducer.Should().Be(producer2);
-    }
-
-    [Fact]
     public void GetProducersForMessage_ShouldReturnAllProducersForMessageType()
     {
         ProducerCollection producerCollection = [];
@@ -285,11 +228,5 @@ public class ProducerCollectionFixture
         IReadOnlyCollection<IProducer> eventTwoProducers = producerCollection.GetProducersForMessage(typeof(TestEventTwo));
 
         eventTwoProducers.Should().BeEmpty();
-    }
-
-    private class TestAsyncEnumerable<T> : IAsyncEnumerable<T>
-    {
-        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
     }
 }

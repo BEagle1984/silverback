@@ -60,7 +60,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher.Context, producers, envelopeConfigurationAction);
+        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher.Context, producers, envelopeConfigurationAction, actionArgument);
+        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction, actionArgument);
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction, actionArgument);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
     }
 
     /// <summary>
@@ -252,7 +252,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
     }
 
     /// <summary>
@@ -304,7 +304,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction, actionArgument);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
     }
 
     /// <summary>
@@ -348,7 +348,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
     }
 
     /// <summary>
@@ -400,7 +400,7 @@ public static class IntegrationPublisherExtensions
             return Task.CompletedTask;
         }
 
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher.Context, producers, envelopeConfigurationAction, actionArgument);
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
     }
 
     private static IProducerCollection GetProducerCollection(SilverbackContext context) =>

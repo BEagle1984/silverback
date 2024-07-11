@@ -521,5 +521,7 @@ public class MessageStreamProviderTests
         public bool AutoUnwrap => true;
 
         public object? Message { get; }
+
+        public Type MessageType => Message?.GetType() ?? typeof(object);
     }
 }

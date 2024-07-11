@@ -697,6 +697,8 @@ public class StreamPublisherFixture
         public bool AutoUnwrap { get; }
 
         public object? Message { get; }
+
+        public Type MessageType => Message?.GetType() ?? typeof(object);
     }
 
     private class TestBehavior : IBehavior

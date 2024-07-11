@@ -15,5 +15,5 @@ public static class IntegrationBehaviorsSortIndexes
     /// <summary>
     ///     The <see cref="OutboundRouterBehavior" /> sort index.
     /// </summary>
-    public const int OutboundRouter = 300;
+    public const int OutboundRouter = -100;
 }

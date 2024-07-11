@@ -29,12 +29,12 @@ uid: releases
     * Kafka transactions (see...)
     * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing)
     * Envelope.IsTombstone() and Kafka envelope extensions
-    * Batch produce via WrapAndPublish / WrapAndPublishAsync
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies
 * Support subscribers returning `ValueTask`
 * Support exponential delay in `RetryErrorPolicy`
+* New `WrapAndPublishAsync` and `WrapAndPublishBatchAsync` added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.)
   
 ### Breaking Changes
 
@@ -83,6 +83,7 @@ uid: releases
     * Deprecated NullMessageHandlingStrategy (now tombstones can always be consumed both as `null` or as `Tombstone`)
     * Moved `PublishToInternalBus` 
     * WithKafkaKey -> SetKafkaKey
+    * IBehavior will be invoked for produced messages only with EnableSubscribing (see also SortIndex)
 * `BatchSettings`, `ChunkSettings`, `SequenceSettings`, ` EncryptionSettings`, etc. renamed to `BatchConfiguration`, `ChunkConfiguration`, `SequenceConfiguration`, ` EncryptionConfiguration`, etc.
 * Deprecated EF package
 * Changed integration of domain entities / domain events with DbContext

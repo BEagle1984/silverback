@@ -59,24 +59,8 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         Check.NotNull(message, nameof(message));
         Check.NotNull(next, nameof(next));
 
-        if (message is IOutboundEnvelope envelope)
-        {
-            if (await ProduceEnvelopeAsync(envelope).ConfigureAwait(false))
-                return [];
-        }
-        else if (await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false))
-        {
-            return [];
-        }
-
-        return await next(message).ConfigureAwait(false);
+        return await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false) ? [] : await next(message).ConfigureAwait(false);
     }
-
-    private static ProducerEndpoint GetProducerEndpoint(object? message, IProducer producer, SilverbackContext context) =>
-        producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider);
-
-    private static IProduceStrategyImplementation GetProduceStrategy(ProducerEndpoint endpoint, SilverbackContext context) =>
-        endpoint.Configuration.Strategy.Build(context.ServiceProvider, endpoint.Configuration);
 
     private static Type? GetEnumerableType(Type messageType)
     {
@@ -109,16 +93,6 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                               method.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type))
             .MakeGenericMethod(messageType);
 
-    private async Task<bool> ProduceEnvelopeAsync(IOutboundEnvelope envelope)
-    {
-        ProducerEndpoint endpoint = GetProducerEndpoint(envelope.Message, envelope.Producer, _publisher.Context);
-        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, _publisher.Context);
-
-        await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);
-
-        return !endpoint.Configuration.EnableSubscribing;
-    }
-
     private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(object message)
     {
         Type messageType = message.GetType();
@@ -140,6 +114,8 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                                   method.GetParameters().Length == 4)).MakeGenericMethod(args.ActualMessageType),
             (EnumerableType: enumerableType, ActualMessageType: actualMessageType));
 
-        return await ((Task<bool>)wrapAndProduceMethod.Invoke(_messageWrapper, [message, _publisher.Context, producers, null])!).ConfigureAwait(false);
+        await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, _publisher, producers, null])!).ConfigureAwait(false);
+
+        return true;
     }
 }
