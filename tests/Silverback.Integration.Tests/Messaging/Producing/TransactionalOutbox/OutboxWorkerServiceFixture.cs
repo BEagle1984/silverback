@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
@@ -28,7 +29,7 @@ public class OutboxWorkerServiceFixture
 
         await outboxWorkerService.StartAsync(CancellationToken.None);
 
-        await Task.Delay(200);
+        await AsyncTestingUtil.WaitAsync(() => outboxWorker.ReceivedCalls().Count() >= 2);
 
         await outboxWorker.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
     }
@@ -51,19 +52,37 @@ public class OutboxWorkerServiceFixture
             new SilverbackLoggerSubstitute<OutboxWorkerService>());
 
         CancellationTokenSource cancellationTokenSource1 = new();
+        CancellationTokenSource cancellationTokenSource2 = new();
 
         await outboxWorkerService1.StartAsync(cancellationTokenSource1.Token);
-        await outboxWorkerService2.StartAsync(CancellationToken.None);
+        await outboxWorkerService2.StartAsync(cancellationTokenSource2.Token);
 
-        await Task.Delay(200);
+        await AsyncTestingUtil.WaitAsync(
+            () => outboxWorker1.ReceivedCalls().Count() >= 2 ||
+                  outboxWorker2.ReceivedCalls().Count() >= 2);
+
+        if (outboxWorker1.ReceivedCalls().Any())
+        {
+            await outboxWorker1.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
+            await outboxWorker2.DidNotReceive().ProcessOutboxAsync(Arg.Any<CancellationToken>());
+        }
+        else
+        {
+            await outboxWorker1.DidNotReceive().ProcessOutboxAsync(Arg.Any<CancellationToken>());
+            await outboxWorker2.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
+        }
+
+#if NET8_0
+        await cancellationTokenSource1.CancelAsync();
+#else
+        cancellationTokenSource1.Cancel();
+#endif
+
+        await AsyncTestingUtil.WaitAsync(
+            () => outboxWorker1.ReceivedCalls().Count() >= 2 &&
+                  outboxWorker2.ReceivedCalls().Count() >= 2);
 
         await outboxWorker1.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
-        await outboxWorker2.DidNotReceive().ProcessOutboxAsync(Arg.Any<CancellationToken>());
-
-        cancellationTokenSource1.Cancel();
-
-        await Task.Delay(200);
-
         await outboxWorker2.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
     }
 }
