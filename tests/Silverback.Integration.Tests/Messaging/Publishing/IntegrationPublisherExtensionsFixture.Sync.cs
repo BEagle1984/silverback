@@ -3,46 +3,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Producing;
 using Silverback.Messaging.Producing.Routing;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing;
 
+[SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Testing sync methods")]
 public partial class IntegrationPublisherExtensionsFixture
 {
-    private readonly IPublisher _publisher = Substitute.For<IPublisher>();
-
-    private readonly ProducerCollection _producers = [];
-
-    public IntegrationPublisherExtensionsFixture()
-    {
-        IServiceProvider serviceProvider = Substitute.For<IServiceProvider>();
-        serviceProvider.GetService(typeof(IProducerCollection)).Returns(_producers);
-        _publisher.Context.Returns(new SilverbackContext(serviceProvider));
-    }
-
     [Fact]
-    public async Task WrapAndPublishAsync_ShouldProduceEnvelopes()
+    public async Task WrapAndPublish_ShouldProduceEnvelopes()
     {
         TestEventOne message1 = new();
         TestEventTwo message2 = new();
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
         (IProducer _, IProduceStrategyImplementation strategy2) = AddProducer<TestEventTwo>("two");
 
-        await _publisher.WrapAndPublishAsync(message1);
-        await _publisher.WrapAndPublishAsync(message2);
+        _publisher.WrapAndPublish(message1);
+        _publisher.WrapAndPublish(message2);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
@@ -55,13 +44,13 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishAsync_ShouldProduceConfiguredEnvelopes()
+    public async Task WrapAndPublish_ShouldProduceConfiguredEnvelopes()
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
         (IProducer _, IProduceStrategyImplementation strategy2) = AddProducer<TestEventOne>("two");
 
-        await _publisher.WrapAndPublishAsync(
+        _publisher.WrapAndPublish(
             message,
             envelope =>
             {
@@ -84,13 +73,13 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishAsync_ShouldProduceConfiguredEnvelopes_WhenPassingArgument()
+    public async Task WrapAndPublish_ShouldProduceConfiguredEnvelopes_WhenPassingArgument()
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
         (IProducer _, IProduceStrategyImplementation strategy2) = AddProducer<TestEventOne>("two");
 
-        await _publisher.WrapAndPublishAsync(
+        _publisher.WrapAndPublish(
             message,
             static (envelope, value) =>
             {
@@ -116,17 +105,17 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishAsync_ShouldThrowOrIgnore_WhenNoMatchingProducers(bool throwIfUnhandled)
+    public void WrapAndPublish_ShouldThrowOrIgnore_WhenNoMatchingProducers(bool throwIfUnhandled)
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishAsync(message, throwIfUnhandled: throwIfUnhandled);
+        Action act = () => _publisher.WrapAndPublish(message, throwIfUnhandled: throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
@@ -134,12 +123,12 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersAndPassingArgument(bool throwIfUnhandled)
+    public void WrapAndPublish_ShouldThrowOrIgnore_WhenNoMatchingProducersAndPassingArgument(bool throwIfUnhandled)
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishAsync(
+        Action act = () => _publisher.WrapAndPublish(
             message,
             (_, _) =>
             {
@@ -147,16 +136,16 @@ public partial class IntegrationPublisherExtensionsFixture
             1,
             throwIfUnhandled);
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
 
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceEnvelopesForCollection()
+    public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForCollection()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -174,7 +163,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes2 = envelopes.ToArray()));
 
-        await _publisher.WrapAndPublishBatchAsync(messages);
+        _publisher.WrapAndPublishBatch(messages);
 
         await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>());
         capturedEnvelopes1.ShouldNotBeNull();
@@ -194,7 +183,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForCollection()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForCollection()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -213,7 +202,7 @@ public partial class IntegrationPublisherExtensionsFixture
                     capturedEnvelopes2 = envelopes.ToArray()));
         int count = 0;
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             envelope =>
             {
@@ -247,7 +236,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForCollection_WhenPassingArgument()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -265,7 +254,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes2 = envelopes.ToArray()));
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             static (envelope, counter) =>
             {
@@ -302,19 +291,19 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForCollection(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForCollection(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         List<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(messages, throwIfUnhandled: throwIfUnhandled);
+        Action act = () => _publisher.WrapAndPublishBatch(messages, throwIfUnhandled: throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
@@ -322,14 +311,14 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForCollectionAndPassingArgument(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForCollectionAndPassingArgument(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         List<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(
+        Action act = () => _publisher.WrapAndPublishBatch(
             messages,
             (_, _) =>
             {
@@ -338,15 +327,15 @@ public partial class IntegrationPublisherExtensionsFixture
             throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceEnvelopesForEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -358,7 +347,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArray()));
 
-        await _publisher.WrapAndPublishBatchAsync(messages);
+        _publisher.WrapAndPublishBatch(messages);
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>());
         capturedEnvelopes.ShouldNotBeNull();
@@ -370,7 +359,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -383,7 +372,7 @@ public partial class IntegrationPublisherExtensionsFixture
                     capturedEnvelopes = envelopes.ToArray()));
         int count = 0;
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             envelope =>
             {
@@ -405,7 +394,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForEnumerable_WhenPassingArgument()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -417,7 +406,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArray()));
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             static (envelope, counter) =>
             {
@@ -442,19 +431,19 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerable(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerable(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         IEnumerable<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(messages, throwIfUnhandled: throwIfUnhandled);
+        Action act = () => _publisher.WrapAndPublishBatch(messages, throwIfUnhandled: throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
@@ -462,14 +451,14 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerableAndPassingArgument(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForEnumerableAndPassingArgument(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         IEnumerable<TestEventOne> messages = [message1, message2];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(
+        Action act = () => _publisher.WrapAndPublishBatch(
             messages,
             (_, _) =>
             {
@@ -478,15 +467,15 @@ public partial class IntegrationPublisherExtensionsFixture
             throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceEnvelopesForAsyncEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceEnvelopesForAsyncEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -498,7 +487,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()));
 
-        await _publisher.WrapAndPublishBatchAsync(messages);
+        _publisher.WrapAndPublishBatch(messages);
 
         await strategy.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>());
         capturedEnvelopes.ShouldNotBeNull();
@@ -510,7 +499,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForAsyncEnumerable()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -523,7 +512,7 @@ public partial class IntegrationPublisherExtensionsFixture
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()));
         int count = 0;
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             envelope =>
             {
@@ -545,7 +534,7 @@ public partial class IntegrationPublisherExtensionsFixture
     }
 
     [Fact]
-    public async Task WrapAndPublishBatchAsync_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()
+    public async Task WrapAndPublishBatch_ShouldProduceConfiguredEnvelopesForAsyncEnumerable_WhenPassingArgument()
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
@@ -557,7 +546,7 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelopes =>
                     capturedEnvelopes = envelopes.ToArrayAsync().SafeWait()));
 
-        await _publisher.WrapAndPublishBatchAsync(
+        _publisher.WrapAndPublishBatch(
             messages,
             static (envelope, counter) =>
             {
@@ -582,19 +571,19 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerable(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerable(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         IAsyncEnumerable<TestEventOne> messages = new[] { message1, message2 }.ToAsyncEnumerable();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(messages, throwIfUnhandled: throwIfUnhandled);
+        Action act = () => _publisher.WrapAndPublishBatch(messages, throwIfUnhandled: throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
     }
@@ -602,14 +591,14 @@ public partial class IntegrationPublisherExtensionsFixture
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task WrapAndPublishBatchAsync_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerableAndPassingArgument(bool throwIfUnhandled)
+    public void WrapAndPublishBatch_ShouldThrowOrIgnore_WhenNoMatchingProducersForAsyncEnumerableAndPassingArgument(bool throwIfUnhandled)
     {
         TestEventOne message1 = new();
         TestEventOne message2 = new();
         IAsyncEnumerable<TestEventOne> messages = new[] { message1, message2 }.ToAsyncEnumerable();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Func<Task> act = () => _publisher.WrapAndPublishBatchAsync(
+        Action act = () => _publisher.WrapAndPublishBatch(
             messages,
             (_, _) =>
             {
@@ -618,27 +607,10 @@ public partial class IntegrationPublisherExtensionsFixture
             throwIfUnhandled);
 
         if (throwIfUnhandled)
-            await act.Should().ThrowAsync<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
+            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         else
-            await act.Should().NotThrowAsync();
+            act.Should().NotThrow();
 
         strategy.ReceivedCalls().Should().BeEmpty();
-    }
-
-    private (IProducer Producer, IProduceStrategyImplementation Strategy) AddProducer<TMessage>(string topic, bool enableSubscribing = false)
-    {
-        IProducer producer = Substitute.For<IProducer>();
-        producer.EndpointConfiguration.Returns(
-            new TestProducerEndpointConfiguration(topic, typeof(TMessage))
-            {
-                Strategy = Substitute.For<IProduceStrategy>(),
-                EnableSubscribing = enableSubscribing
-            });
-        IProduceStrategyImplementation produceStrategyImplementation = Substitute.For<IProduceStrategyImplementation>();
-        producer.EndpointConfiguration.Strategy.Build(
-            Arg.Any<IServiceProvider>(),
-            Arg.Any<ProducerEndpointConfiguration>()).Returns(produceStrategyImplementation);
-        _producers.Add(producer);
-        return (producer, produceStrategyImplementation);
     }
 }

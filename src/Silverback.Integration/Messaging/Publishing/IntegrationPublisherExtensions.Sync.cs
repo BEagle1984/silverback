@@ -3,23 +3,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Publishing;
 
-/// <summary>
-///     Adds the <c>WrapAndPublish</c>,<c>WrapAndPublishBatch</c>, <c>WrapAndPublishAsync</c>, and <c>WrapAndPublishBatchAsync</c> methods
-///     to the <see cref="IPublisher" /> interface.
-/// </summary>
+/// <content>
+///     Adds the <c>WrapAndPublish</c> methods to the <see cref="IPublisher" /> interface.
+/// </content>
 public static partial class IntegrationPublisherExtensions
 {
-    private static readonly Guid ProducerCollectionObjectTypeId = new("56db3045-37a7-420a-89af-dfe4c5b1740c");
-
     /// <summary>
     ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
     /// </summary>
@@ -38,31 +31,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishAsync<TMessage>(
+    public static void WrapAndPublish<TMessage>(
         this IPublisher publisher,
         TMessage message,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
         bool throwIfUnhandled = true)
-        where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(message, nameof(message));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction);
-    }
+        where TMessage : class =>
+        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
@@ -88,33 +63,14 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishAsync<TMessage, TArgument>(
+    public static void WrapAndPublish<TMessage, TArgument>(
         this IPublisher publisher,
         TMessage message,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument,
         bool throwIfUnhandled = true)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(message, nameof(message));
-        Check.NotNull(envelopeConfigurationAction, nameof(envelopeConfigurationAction));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction, actionArgument);
-    }
+        => WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, actionArgument, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -134,31 +90,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage>(
+    public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IReadOnlyCollection<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.HasNoNulls(messages, nameof(messages));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-    }
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -184,33 +122,14 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage, TArgument>(
+    public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IReadOnlyCollection<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.HasNoNulls(messages, nameof(messages));
-        Check.NotNull(envelopeConfigurationAction, nameof(envelopeConfigurationAction));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
-    }
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, actionArgument, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -230,31 +149,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage>(
+    public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IEnumerable<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(messages, nameof(messages));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-    }
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -280,33 +181,14 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage, TArgument>(
+    public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IEnumerable<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(messages, nameof(messages));
-        Check.NotNull(envelopeConfigurationAction, nameof(envelopeConfigurationAction));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
-    }
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, actionArgument, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -326,31 +208,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage>(
+    public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IAsyncEnumerable<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(messages, nameof(messages));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-    }
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -376,37 +240,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="throwIfUnhandled">
     ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
-    /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation.
-    /// </returns>
-    public static Task WrapAndPublishBatchAsync<TMessage, TArgument>(
+    public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IAsyncEnumerable<TMessage> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument actionArgument,
         bool throwIfUnhandled = false)
         where TMessage : class
-    {
-        Check.NotNull(publisher, nameof(publisher));
-        Check.NotNull(messages, nameof(messages));
-        Check.NotNull(envelopeConfigurationAction, nameof(envelopeConfigurationAction));
-
-        IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
-
-        if (producers.Count == 0)
-        {
-            if (throwIfUnhandled)
-                throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-            return Task.CompletedTask;
-        }
-
-        return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, actionArgument);
-    }
-
-    private static IProducerCollection GetProducerCollection(SilverbackContext context) =>
-        context.GetOrAddObject(
-            ProducerCollectionObjectTypeId,
-            static serviceProvider => serviceProvider.GetRequiredService<IProducerCollection>(),
-            context.ServiceProvider);
+        => WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, actionArgument, throwIfUnhandled).SafeWait();
 }
