@@ -104,8 +104,7 @@ public class ChunkSequenceWriterTests
                 }
             }.GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
-            new SilverbackContext(Substitute.For<IServiceProvider>()),
-            true);
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
 
         ChunkSequenceWriter writer = new(enricherFactory, Substitute.For<IServiceProvider>());
         List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
@@ -113,7 +112,6 @@ public class ChunkSequenceWriterTests
         envelopes.Should().HaveCount(4);
         envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));
         envelopes.ForEach(envelope => envelope.Headers.Should().Contain(sourceEnvelope.Headers));
-        envelopes.ForEach(envelope => envelope.AutoUnwrap.Should().Be(sourceEnvelope.AutoUnwrap));
         envelopes[0].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[..3]);
         envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
         envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));

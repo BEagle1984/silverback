@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,28 +78,5 @@ public partial class PublisherFixture
 
         messages.Should().HaveCount(2);
         messages.Should().AllBeOfType<TestEnvelope>();
-    }
-
-    [Fact]
-    public async Task PublishAndPublishAsync_ShouldNotUnwrap_WhenUnwrappingIsDisabled()
-    {
-        List<object> messages = [];
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<ICommand>(Handle1)
-                .AddDelegateSubscriber<IEnvelope>(Handle2));
-
-        void Handle1(ICommand message) => messages.Add(message);
-        void Handle2(IEnvelope envelope) => messages.Add(envelope);
-
-        IPublisher publisher = serviceProvider.GetRequiredService<IPublisher>();
-
-        publisher.Publish(new TestEnvelope(new TestCommandOne(), false));
-        await publisher.PublishAsync(new TestEnvelope(new TestCommandOne(), false));
-
-        messages.OfType<TestEnvelope>().Should().HaveCount(2);
-        messages.OfType<TestCommandOne>().Should().BeEmpty();
     }
 }

@@ -40,13 +40,10 @@ public partial class PublisherFixture
 
     private class TestEnvelope : IEnvelope, ITestRawEnvelope
     {
-        public TestEnvelope(object? message, bool autoUnwrap = true)
+        public TestEnvelope(object? message)
         {
             Message = message;
-            AutoUnwrap = autoUnwrap;
         }
-
-        public bool AutoUnwrap { get; }
 
         public object? Message { get; }
 

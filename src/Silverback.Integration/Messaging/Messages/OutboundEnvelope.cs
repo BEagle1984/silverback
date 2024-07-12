@@ -16,7 +16,6 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
         ProducerEndpoint endpoint,
         IProducer producer,
         SilverbackContext? context = null,
-        bool autoUnwrap = false,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
         : base(headers, endpoint, producer, context, brokerMessageIdentifier)
     {
@@ -27,11 +26,7 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 
         if (message is Stream stream)
             RawMessage = stream;
-
-        AutoUnwrap = autoUnwrap;
     }
-
-    public bool AutoUnwrap { get; }
 
     public object? Message { get; init; }
 

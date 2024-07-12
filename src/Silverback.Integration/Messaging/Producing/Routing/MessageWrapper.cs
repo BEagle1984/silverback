@@ -329,23 +329,13 @@ internal class MessageWrapper : IMessageWrapper
         }
     }
 
-    private static IOutboundEnvelope<TMessage> CreateOutboundEnvelope<TMessage>(
+    private static OutboundEnvelope<TMessage> CreateOutboundEnvelope<TMessage>(
         TMessage? message,
         IProducer producer,
         ProducerEndpoint endpoint,
         SilverbackContext context)
-        where TMessage : class
-    {
-        IOutboundEnvelope<TMessage> envelope = new OutboundEnvelope<TMessage>(
-            message,
-            null,
-            endpoint,
-            producer,
-            context,
-            endpoint.Configuration.EnableSubscribing);
-
-        return envelope;
-    }
+        where TMessage : class =>
+        new(message, null, endpoint, producer, context);
 
     private static ProducerEndpoint GetProducerEndpoint(object? message, IProducer producer, SilverbackContext context) =>
         producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider);

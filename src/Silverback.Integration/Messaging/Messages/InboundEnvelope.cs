@@ -56,8 +56,6 @@ internal record InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
 
     public virtual Type MessageType => Message?.GetType() ?? typeof(object);
 
-    public bool AutoUnwrap => true;
-
     public object? Message { get; set; }
 
     public bool IsTombstone => Message is null or ITombstone;

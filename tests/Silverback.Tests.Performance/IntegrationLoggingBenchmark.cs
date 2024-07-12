@@ -91,7 +91,6 @@ public class IntegrationLoggingBenchmark
                 producerEndpoint,
                 new TestProducer(),
                 new SilverbackContext(serviceProvider),
-                false,
                 new KafkaOffset(new TopicPartitionOffset("test", 4, 2)));
     }
 

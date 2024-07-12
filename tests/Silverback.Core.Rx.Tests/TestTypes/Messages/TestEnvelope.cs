@@ -8,13 +8,10 @@ namespace Silverback.Tests.Core.Rx.TestTypes.Messages;
 
 public class TestEnvelope : IEnvelope
 {
-    public TestEnvelope(object message, bool autoUnwrap = true)
+    public TestEnvelope(object message)
     {
         Message = message;
-        AutoUnwrap = autoUnwrap;
     }
-
-    public bool AutoUnwrap { get; }
 
     public object? Message { get; }
 

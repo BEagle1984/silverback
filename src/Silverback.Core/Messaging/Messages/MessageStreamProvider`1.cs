@@ -214,7 +214,7 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
             return true;
         }
 
-        if (message is IEnvelope { Message: not null, AutoUnwrap: true } envelope &&
+        if (message is IEnvelope { Message: not null } envelope &&
             lazyStream.MessageType.IsInstanceOfType(envelope.Message))
         {
             messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(envelope.Message, cancellationToken);

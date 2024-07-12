@@ -47,7 +47,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogProduced(envelope);
@@ -98,7 +97,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogProduceError(envelope, new InvalidDataException());
@@ -148,7 +146,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "topic2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogFiltered(envelope);
@@ -176,7 +173,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogStoringIntoOutbox(envelope);
@@ -204,7 +200,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogErrorProducingOutboxStoredMessage(envelope, new InvalidOperationException());
@@ -236,7 +231,6 @@ public class ProducerLoggerFixture
             new TestProducerEndpointConfiguration("test1", "test2").GetDefaultEndpoint(),
             Substitute.For<IProducer>(),
             null,
-            true,
             new TestOffset("a", "42"));
 
         _producerLogger.LogInvalidMessage(envelope, "[errors]");

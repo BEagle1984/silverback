@@ -607,39 +607,6 @@ public class StreamPublisherFixture
     }
 
     [Fact]
-    public async Task PublishAsync_ShouldInvokeUnwrappedMessageSubscribersOnlyWhenEnvelopeIsAutoUnwrap()
-    {
-        List<IEvent> receivedEvents = [];
-
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AddDelegateSubscriber<IMessageStreamEnumerable<IEvent>>(Handle));
-
-        void Handle(IMessageStreamEnumerable<IEvent> enumerable)
-        {
-            foreach (IEvent envelope in enumerable)
-            {
-                receivedEvents.Add(envelope);
-            }
-        }
-
-        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
-
-        MessageStreamProvider<IEnvelope> streamProvider = new();
-        await streamPublisher.PublishAsync(streamProvider);
-
-        await streamProvider.PushAsync(new TestEnvelope(new TestEventOne(), false), false);
-        await streamProvider.PushAsync(new TestEnvelope(new TestEventTwo()));
-
-        await AsyncTestingUtil.WaitAsync(() => receivedEvents.Count >= 1);
-
-        receivedEvents.Should().HaveCount(1);
-        receivedEvents[0].Should().BeOfType<TestEventTwo>();
-    }
-
-    [Fact]
     public async Task PublishAsync_ShouldInvokeSubscribers_WhenBehaviorsAreConfigured()
     {
         int receivedStreams = 0;
@@ -688,13 +655,10 @@ public class StreamPublisherFixture
 
     private class TestEnvelope : IEnvelope
     {
-        public TestEnvelope(object? message, bool autoUnwrap = true)
+        public TestEnvelope(object? message)
         {
             Message = message;
-            AutoUnwrap = autoUnwrap;
         }
-
-        public bool AutoUnwrap { get; }
 
         public object? Message { get; }
 

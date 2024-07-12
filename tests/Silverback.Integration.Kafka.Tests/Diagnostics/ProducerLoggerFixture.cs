@@ -50,7 +50,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogProduced(envelope);
@@ -101,7 +100,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogProduceError(envelope, new InvalidDataException());
@@ -151,7 +149,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogFiltered(envelope);
@@ -179,7 +176,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogStoringIntoOutbox(envelope);
@@ -207,7 +203,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogErrorProducingOutboxStoredMessage(envelope, new InvalidOperationException());
@@ -239,7 +234,6 @@ public class ProducerLoggerFixture
             new KafkaProducerEndpoint("topic2", 1, new KafkaProducerEndpointConfiguration()),
             Substitute.For<IProducer>(),
             null,
-            true,
             new KafkaOffset(new TopicPartitionOffset("topic2", 2, 42)));
 
         _producerLogger.LogInvalidMessage(envelope, "[errors]");

@@ -44,7 +44,18 @@ public static class OutboundEnvelopeFactory
     {
         Check.NotNull(endpoint, nameof(endpoint));
 
-        return CreateEnvelope(message, headers, endpoint, producer, context, endpoint.Configuration.EnableSubscribing);
+        Check.NotNull(endpoint, nameof(endpoint));
+        Check.NotNull(producer, nameof(producer));
+
+        return message == null
+            ? new OutboundEnvelope(null, headers, endpoint, producer, context)
+            : (IOutboundEnvelope)Activator.CreateInstance(
+                typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
+                message,
+                headers,
+                endpoint,
+                producer,
+                context)!;
     }
 
     /// <summary>
@@ -69,38 +80,6 @@ public static class OutboundEnvelopeFactory
             originalEnvelope.Headers,
             originalEnvelope.Endpoint,
             originalEnvelope.Producer,
-            originalEnvelope.Context,
-            originalEnvelope.AutoUnwrap);
-    }
-
-    internal static IOutboundEnvelope CreateEnvelope(object message, IProducer producer, SilverbackContext context) =>
-        CreateEnvelope(
-            message,
-            null,
-            producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider),
-            producer,
-            context);
-
-    private static IOutboundEnvelope CreateEnvelope(
-        object? message,
-        IReadOnlyCollection<MessageHeader>? headers,
-        ProducerEndpoint endpoint,
-        IProducer producer,
-        SilverbackContext? context,
-        bool autoUnwrap)
-    {
-        Check.NotNull(endpoint, nameof(endpoint));
-        Check.NotNull(producer, nameof(producer));
-
-        return message == null
-            ? new OutboundEnvelope(null, headers, endpoint, producer, context, autoUnwrap)
-            : (IOutboundEnvelope)Activator.CreateInstance(
-                typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
-                message,
-                headers,
-                endpoint,
-                producer,
-                context,
-                autoUnwrap)!;
+            originalEnvelope.Context);
     }
 }

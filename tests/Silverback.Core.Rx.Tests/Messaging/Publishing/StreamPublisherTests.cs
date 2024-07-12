@@ -435,33 +435,4 @@ public class StreamPublisherTests
         receivedTestEventOnes.Should().Be(2);
         receivedTestEnvelopes.Should().Be(4);
     }
-
-    [Fact]
-    public async Task Publish_MessageStreamProviderOfEnvelopes_OnlyAutoUnwrapMessagesReceived()
-    {
-        List<IEvent> receivedEvents = [];
-
-        IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
-            services => services
-                .AddFakeLogger()
-                .AddSilverback()
-                .AsObservable()
-                .AddDelegateSubscriber<IMessageStreamObservable<IEvent>>(Handle));
-
-        void Handle(IMessageStreamObservable<IEvent> observable) =>
-            observable.Subscribe(receivedEvents.Add);
-
-        IStreamPublisher streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
-
-        MessageStreamProvider<IEnvelope> streamProvider = new();
-        await streamPublisher.PublishAsync(streamProvider);
-
-        await streamProvider.PushAsync(new TestEnvelope(new TestEventOne(), false), false);
-        await streamProvider.PushAsync(new TestEnvelope(new TestEventTwo()));
-
-        await AsyncTestingUtil.WaitAsync(() => receivedEvents.Count >= 1);
-
-        receivedEvents.Should().HaveCount(1);
-        receivedEvents[0].Should().BeOfType<TestEventTwo>();
-    }
 }

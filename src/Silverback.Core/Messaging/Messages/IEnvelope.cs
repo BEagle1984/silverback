@@ -19,13 +19,4 @@ public interface IEnvelope
     ///     Gets the type of the message.
     /// </summary>
     Type MessageType { get; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the contained message can be automatically unwrapped forwarded to the matching subscribers
-    ///     in its pure form.
-    /// </summary>
-    /// <remarks>
-    ///     This is internally used to avoid mortal loops.
-    /// </remarks>
-    bool AutoUnwrap { get; }
 }
