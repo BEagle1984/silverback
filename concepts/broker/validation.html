@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Message Validation | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Message Validation | Silverback ">
-    <meta name="generator" content="docfx ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
   
-
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-
+  
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-  
-  <meta property="docfx:rel" content="../../">
-  
+    
+    <meta property="docfx:rel" content="../../">
+    
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-
+        
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-
+              
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-
+        
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-
+        
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-
+        
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -89,7 +89,7 @@
 <p>Both the consumed and produced messages are being validated using the same mechanism implemented in the asp.net controllers.</p>
 <p>You can either decorate the message model with the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">System.ComponentModel.DataAnnotations.ValidationAttribute</a> standard implementations, create your own attributes (extending <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.validationattribute">ValidationAttribute</a>) or otherwise you can implement the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.ivalidatableobject">IValidatableObject</a> interface in your message model.</p>
 <h2 id="configuration">Configuration</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationMode.html">MessageValidationMode</a> can be configured per endpoint and has 3 values:</p>
+<p>The &lt;xref:Silverback.Messaging.Validation.MessageValidationMode&gt; can be configured per endpoint and has 3 values:</p>
 <ul>
 <li><code>LogWarning</code> (default): a warning is logged if the message is not valid</li>
 <li><code>ThrowException</code>: an exception is thrown if the message is not valid</li>
@@ -97,7 +97,7 @@
 </ul>
 <div class="NOTE">
 <h5>Note</h5>
-<p>If an invalid message is produced, the <a class="xref" href="../../api/Silverback.Messaging.Validation.MessageValidationException.html">MessageValidationException</a> will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
+<p>If an invalid message is produced, the &lt;xref:Silverback.Messaging.Validation.MessageValidationException&gt; will be rethrown by the <code>Produce</code>/<code>Publish</code> method.</p>
 <p>In the consumer it will instead be handled like any other exception, according to the configured policies, or leading to the consumer being stopped.</p>
 </div>
 <div class="WARNING">
@@ -105,16 +105,16 @@
 <p>The validation might have a - relatively speaking - big impact on the performance, depending on the object size, the number of validations to be performed and their complexity.</p>
 <p>You might want to consider disabling the validation, if performance is a critical concern in your use case.</p>
 </div>
-<div class="tabGroup" id="tabgroup_1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_1_fluent" role="tab" aria-controls="tabpanel_1_fluent" data-tab="fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S_fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_fluent" data-tab="fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_1_legacy" role="tab" aria-controls="tabpanel_1_legacy" data-tab="legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S_legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_legacy" data-tab="legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_1_fluent" role="tabpanel" data-tab="fluent">
+<section id="tabpanel_bHGHmlrG6S_fluent" role="tabpanel" data-tab="fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -138,7 +138,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_1_legacy" role="tabpanel" data-tab="legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_legacy" role="tabpanel" data-tab="legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -198,7 +198,7 @@
 </code></pre>
 </article>
           </div>
-
+          
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -215,7 +215,7 @@
           </div>
         </div>
       </div>
-
+      
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -226,13 +226,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
-      
+            © 2020 Sergio Aquilini
+            
           </div>
         </div>
       </footer>
     </div>
-
+    
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>

@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Testing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Testing | Silverback ">
-    <meta name="generator" content="docfx ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
   
-
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-
+  
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-  
-  <meta property="docfx:rel" content="../../">
-  
+    
+    <meta property="docfx:rel" content="../../">
+    
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-
+        
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-
+              
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-
+        
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-
+        
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-
+        
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -195,7 +195,7 @@
 }
 </code></pre>
 <h2 id="testing-helper">Testing helper</h2>
-<p>The testing helpers (such has <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>) contain some methods that simplify testing with the message broker, given it's asynchronous nature.</p>
+<p>The testing helpers (such has &lt;xref:Silverback.Testing.IKafkaTestingHelper&gt;) contain some methods that simplify testing with the message broker, given it's asynchronous nature.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -237,7 +237,7 @@
 }
 </code></pre>
 <h2 id="integrationspy">IntegrationSpy</h2>
-<p>The <a class="xref" href="../../api/Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> ships with the <a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a> package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.</p>
+<p>The &lt;xref:Silverback.Testing.IIntegrationSpy&gt; ships with the <a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a> package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -283,7 +283,7 @@
 </code></pre>
 <h2 id="mocked-kafka">Mocked Kafka</h2>
 <p>Many aspects of the Kafka broker have been mocked to replicated as much as possible the behavior you have when connected with the real broker. This new implementation supports commits, kafka events, offset reset, partitioning, rebalance, etc.</p>
-<p>The mocked topics can be retrieved and inspected via the <code>GetTopic</code> method of the <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>.</p>
+<p>The mocked topics can be retrieved and inspected via the <code>GetTopic</code> method of the &lt;xref:Silverback.Testing.IKafkaTestingHelper&gt;.</p>
 <h3 id="partitioning">Partitioning</h3>
 <p>By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. The setting is per broker and there's currently no way to configure each topic independently.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
@@ -306,7 +306,7 @@
 </code></pre>
 </article>
           </div>
-
+          
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -323,7 +323,7 @@
           </div>
         </div>
       </div>
-
+      
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -334,13 +334,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
-      
+            © 2020 Sergio Aquilini
+            
           </div>
         </div>
       </footer>
     </div>
-
+    
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>

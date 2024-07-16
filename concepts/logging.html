@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Logging | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Logging | Silverback ">
-    <meta name="generator" content="docfx ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
   
-
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-
+  
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../styles/docfx.css">
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
-  
-  <meta property="docfx:rel" content="../">
-  
+    
+    <meta property="docfx:rel" content="../">
+    
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-
+        
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-
+        
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-
+        
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-
+        
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -106,10 +106,10 @@
 <p>Here is a list of all events that are being logged and their default log level.</p>
 <p>See also:</p>
 <ul>
-<li><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html">CoreLogEvents</a></li>
-<li><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html">IntegrationLogEvents</a></li>
-<li><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html">KafkaLogEvents</a></li>
-<li><a class="xref" href="../api/Silverback.Diagnostics.RabbitLogEvents.html">RabbitLogEvents</a></li>
+<li>&lt;xref:Silverback.Diagnostics.CoreLogEvents&gt;</li>
+<li>&lt;xref:Silverback.Diagnostics.IntegrationLogEvents&gt;</li>
+<li>&lt;xref:Silverback.Diagnostics.KafkaLogEvents&gt;</li>
+<li>&lt;xref:Silverback.Diagnostics.RabbitLogEvents&gt;</li>
 </ul>
 <h3 id="core">Core</h3>
 <table>
@@ -126,85 +126,85 @@
 <td style="text-align: left;">11</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Discarding result of type {type} because it doesn't match the expected return type {expectedType}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_SubscriberResultDiscarded">SubscriberResultDiscarded</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_SubscriberResultDiscarded">SubscriberResultDiscarded</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">21</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Trying to acquire lock {lockName} ({lockUniqueId})...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_AcquiringDistributedLock">AcquiringDistributedLock</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_AcquiringDistributedLock">AcquiringDistributedLock</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">22</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Acquired lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_DistributedLockAcquired">DistributedLockAcquired</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_DistributedLockAcquired">DistributedLockAcquired</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">23</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Failed to acquire lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_FailedToAcquireDistributedLock">FailedToAcquireDistributedLock</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_FailedToAcquireDistributedLock">FailedToAcquireDistributedLock</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">24</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Released lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_DistributedLockReleased">DistributedLockReleased</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_DistributedLockReleased">DistributedLockReleased</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">25</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Failed to release lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_FailedToReleaseDistributedLock">FailedToReleaseDistributedLock</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_FailedToReleaseDistributedLock">FailedToReleaseDistributedLock</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">26</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Failed to check lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_FailedToCheckDistributedLock">FailedToCheckDistributedLock</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_FailedToCheckDistributedLock">FailedToCheckDistributedLock</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">27</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Failed to send heartbeat for lock {lockName} ({lockUniqueId}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_FailedToSendDistributedLockHeartbeat">FailedToSendDistributedLockHeartbeat</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_FailedToSendDistributedLockHeartbeat">FailedToSendDistributedLockHeartbeat</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">41</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Starting background service {backgroundService}...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceStarting">BackgroundServiceStarting</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceStarting">BackgroundServiceStarting</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">42</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Lock acquired, executing background service {backgroundService}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceLockAcquired">BackgroundServiceLockAcquired</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceLockAcquired">BackgroundServiceLockAcquired</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">43</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Background service {backgroundService} execution failed.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceException">BackgroundServiceException</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_BackgroundServiceException">BackgroundServiceException</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">51</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Background service {backgroundService} stopped.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceStopped">RecurringBackgroundServiceStopped</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceStopped">RecurringBackgroundServiceStopped</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">52</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Background service {backgroundService} sleeping for {delay} milliseconds.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceSleeping">RecurringBackgroundServiceSleeping</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceSleeping">RecurringBackgroundServiceSleeping</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">53</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Background service {backgroundService} execution failed.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceException">RecurringBackgroundServiceException</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.CoreLogEvents#Silverback_Diagnostics_CoreLogEvents_RecurringBackgroundServiceException">RecurringBackgroundServiceException</a></td>
 </tr>
 </tbody>
 </table>
@@ -223,355 +223,355 @@
 <td style="text-align: left;">1001</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Processing inbound message.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage">ProcessingInboundMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage">ProcessingInboundMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1002</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the inbound message.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage">ErrorProcessingInboundMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage">ErrorProcessingInboundMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1003</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Message '{messageId}' added to {sequenceType} '{sequenceId}'. | length: {sequenceLength}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence">MessageAddedToSequence</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence">MessageAddedToSequence</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1004</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Started new {sequenceType} '{sequenceId}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted">SequenceStarted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted">SequenceStarted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1005</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{sequenceType} '{sequenceId}' completed. | length: {sequenceLength}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted">SequenceCompleted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted">SequenceCompleted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1006</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">The {sequenceType} '{sequenceId}' processing has been aborted. | length: {sequenceLength}, reason: {reason}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted">SequenceProcessingAborted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted">SequenceProcessingAborted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1007</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the {sequenceType} '{sequenceId}'. | length: {sequenceLength}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1008</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">The incomplete {sequenceType} '{sequenceId}' is aborted. | length: {sequenceLength}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted">IncompleteSequenceAborted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted">IncompleteSequenceAborted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1009</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Skipping the incomplete sequence '{sequenceId}'. The first message is missing.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence">SkippingIncompleteSequence</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence">SkippingIncompleteSequence</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1110</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred aborting the {sequenceType} '{sequenceId}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence">ErrorAbortingInboundSequence</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence">ErrorAbortingInboundSequence</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1011</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{broker} connecting to message broker...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnecting">BrokerConnecting</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnecting">BrokerConnecting</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1012</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">{broker} connected to message broker.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnected">BrokerConnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnected">BrokerConnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1013</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{broker} disconnecting from message broker...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnecting">BrokerDisconnecting</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnecting">BrokerDisconnecting</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1014</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">{broker} disconnected from message broker.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnected">BrokerDisconnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_BrokerDisconnected">BrokerDisconnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1015</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Creating new consumer for endpoint '{endpointName}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CreatingNewConsumer">CreatingNewConsumer</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CreatingNewConsumer">CreatingNewConsumer</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1016</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Creating new producer for endpoint '{endpointName}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CreatingNewProducer">CreatingNewProducer</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CreatingNewProducer">CreatingNewProducer</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1017</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred connecting to the message broker(s).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnectionError">BrokerConnectionError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_BrokerConnectionError">BrokerConnectionError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1021</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Connected consumer to endpoint.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnected">ConsumerConnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnected">ConsumerConnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1022</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Disconnected consumer from endpoint.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnected">ConsumerDisconnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnected">ConsumerDisconnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1023</td>
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">Fatal error occurred processing the consumed message. The consumer will be stopped.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError">ConsumerFatalError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError">ConsumerFatalError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1024</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred while disposing the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError">ConsumerDisposingError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError">ConsumerDisposingError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1025</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Commit failed.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError">ConsumerCommitError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError">ConsumerCommitError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1026</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Rollback failed.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError">ConsumerRollbackError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError">ConsumerRollbackError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1127</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred while connecting the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError">ConsumerConnectError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError">ConsumerConnectError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1128</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred while disconnecting the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError">ConsumerDisconnectError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError">ConsumerDisconnectError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1129</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred while (re)starting the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError">ConsumerStartError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError">ConsumerStartError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1130</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred while stopping the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError">ConsumerStopError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError">ConsumerStopError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1131</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Failed to reconnect the consumer. Will retry in {retryDelay} milliseconds.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer">ErrorReconnectingConsumer</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer">ErrorReconnectingConsumer</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1027</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Connected producer to endpoint.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected">ProducerConnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected">ProducerConnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1028</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Disconnected producer from endpoint.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected">ProducerDisconnected</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected">ProducerDisconnected</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1031</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Message produced.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageProduced">MessageProduced</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageProduced">MessageProduced</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1032</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred producing the message.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage">ErrorProducingMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage">ErrorProducingMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1041</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum attempts ({maxFailedAttempts}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded">PolicyMaxFailedAttemptsExceeded</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded">PolicyMaxFailedAttemptsExceeded</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1042</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded">PolicyExceptionNotIncluded</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded">PolicyExceptionNotIncluded</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1043</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded">PolicyExceptionExcluded</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded">PolicyExceptionExcluded</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1044</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The {policyType} will be skipped because the apply rule evaluated to false.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_PolicyApplyRuleReturnedFalse">PolicyApplyRuleReturnedFalse</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyApplyRuleReturnedFalse">PolicyApplyRuleReturnedFalse</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1045</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_PolicyChainCompleted">PolicyChainCompleted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyChainCompleted">PolicyChainCompleted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1046</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">The message(s) will be processed again.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing">RetryMessageProcessing</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing">RetryMessageProcessing</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1047</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">Waiting {delay} milliseconds before retrying to process the message(s).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RetryDelayed">RetryDelayed</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RetryDelayed">RetryDelayed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1048</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">The message will be moved to the endpoint '{targetEndpointName}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageMoved">MessageMoved</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageMoved">MessageMoved</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1049</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">The message(s) will be skipped.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped">MessageSkipped</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped">MessageSkipped</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1050</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">The message belongs to a {sequenceType} and cannot be moved.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences">CannotMoveSequences</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences">CannotMoveSequences</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1051</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reconnected.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed">RollbackToRetryFailed</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed">RollbackToRetryFailed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1052</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reconnected.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed">RollbackToSkipFailed</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed">RollbackToSkipFailed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1061</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Not used anymore.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity">ErrorInitializingActivity</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity">ErrorInitializingActivity</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1062</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">The null message will be skipped.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped">NullMessageSkipped</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped">NullMessageSkipped</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1072</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Message is being skipped since it was already processed.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed">MessageAlreadyProcessed</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed">MessageAlreadyProcessed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1073</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Writing the outbound message to the transactional outbox.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox">MessageWrittenToOutbox</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox">MessageWrittenToOutbox</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1074</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">Reading a batch of {readBatchSize} messages from the outbox queue...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox">ReadingMessagesFromOutbox</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox">ReadingMessagesFromOutbox</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1075</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The outbox is empty.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_OutboxEmpty">OutboxEmpty</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_OutboxEmpty">OutboxEmpty</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1076</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Processing outbox message {currentMessageIndex} of {totalMessages}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ProcessingOutboxStoredMessage">ProcessingOutboxStoredMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProcessingOutboxStoredMessage">ProcessingOutboxStoredMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1077</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Failed to produce the message stored in the outbox.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingOutboxStoredMessage">ErrorProducingOutboxStoredMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingOutboxStoredMessage">ErrorProducingOutboxStoredMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1078</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the outbox.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox">ErrorProcessingOutbox</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox">ErrorProcessingOutbox</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1079</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">An invalid message has been produced. | validation errors:{validationErrors}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced">InvalidMessageProduced</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProduced">InvalidMessageProduced</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1080</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">An invalid message has been processed. | validation errors:{validationErrors}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed">InvalidMessageProcessed</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_InvalidMessageProcessed">InvalidMessageProcessed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1101</td>
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">Invalid configuration for endpoint '{endpointName}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration">InvalidEndpointConfiguration</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration">InvalidEndpointConfiguration</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1102</td>
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">Error occurred configuring the endpoints. | configurator: {endpointsConfiguratorName}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError">EndpointConfiguratorError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError">EndpointConfiguratorError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1103</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred invoking the callback handler(s).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError">CallbackHandlerError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError">CallbackHandlerError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1999</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">The actual message will vary.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a></td>
 </tr>
 </tbody>
 </table>
@@ -590,205 +590,205 @@
 <td style="text-align: left;">2011</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Consuming message: {topic}[{partition}]@{offset}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConsumingMessage">ConsumingMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConsumingMessage">ConsumingMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2012</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Partition EOF reached: {topic}[{partition}]@{offset}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_EndOfPartition">EndOfPartition</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_EndOfPartition">EndOfPartition</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2013</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">An error occurred while trying to pull the next message. The consumer will try to recover.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery">KafkaExceptionAutoRecovery</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionAutoRecovery">KafkaExceptionAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2014</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">An error occurred while trying to pull the next message. The consumer will be stopped. Enable auto recovery to allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer configuration).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery">KafkaExceptionNoAutoRecovery</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_KafkaExceptionNoAutoRecovery">KafkaExceptionNoAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2015</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Not used anymore.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException">ErrorRecoveringFromKafkaException</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ErrorRecoveringFromKafkaException">ErrorRecoveringFromKafkaException</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2016</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">Consuming canceled.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConsumingCanceled">ConsumingCanceled</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConsumingCanceled">ConsumingCanceled</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2021</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Creating Confluent.Kafka.Producer...</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_CreatingConfluentProducer">CreatingConfluentProducer</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_CreatingConfluentProducer">CreatingConfluentProducer</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2022</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">The message was transmitted to broker, but no acknowledgement was received.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged">ProduceNotAcknowledged</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged">ProduceNotAcknowledged</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2031</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Assigned partition {topic}[{partition}].</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned">PartitionAssigned</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PartitionAssigned">PartitionAssigned</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2032</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{topic}[{partition}] offset will be reset to {offset}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PartitionOffsetReset">PartitionOffsetReset</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PartitionOffsetReset">PartitionOffsetReset</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2033</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Revoked partition {topic}[{partition}] (offset was {offset}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked">PartitionRevoked</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PartitionRevoked">PartitionRevoked</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2034</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Successfully committed offset {topic}[{partition}]@{offset}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_OffsetCommitted">OffsetCommitted</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_OffsetCommitted">OffsetCommitted</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2035</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred committing the offset {topic}[{partition}]@{offset}: '{errorReason}' ({errorCode}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError">OffsetCommitError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError">OffsetCommitError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2036</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Fatal error in Kafka consumer: '{errorReason}' ({errorCode}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError">ConfluentConsumerFatalError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerFatalError">ConfluentConsumerFatalError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2037</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error in Kafka error handler.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError">KafkaErrorHandlerError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_KafkaErrorHandlerError">KafkaErrorHandlerError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2038</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Kafka consumer statistics received: {statistics}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConsumerStatisticsReceived">ConsumerStatisticsReceived</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConsumerStatisticsReceived">ConsumerStatisticsReceived</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2039</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Kafka producer statistics received: {statistics}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ProducerStatisticsReceived">ProducerStatisticsReceived</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ProducerStatisticsReceived">ProducerStatisticsReceived</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2040</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">The received statistics JSON couldn't be deserialized.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError">StatisticsDeserializationError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError">StatisticsDeserializationError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2041</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Assigned partition {topic}[{partition}]@{offset}.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned">PartitionManuallyAssigned</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned">PartitionManuallyAssigned</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2042</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error in Kafka consumer: '{errorReason}' ({errorCode}).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError">ConfluentConsumerError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError">ConfluentConsumerError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2043</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error in Kafka log handler.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError">KafkaLogHandlerError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError">KafkaLogHandlerError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2050</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">An error occurred while disconnecting the consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError">ConfluentConsumerDisconnectError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError">ConfluentConsumerDisconnectError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2060</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -&gt; The consumer will try to recover.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery">PollTimeoutAutoRecovery</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery">PollTimeoutAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2061</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -&gt; Enable auto recovery to allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer configuration).</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery">PollTimeoutNoAutoRecovery</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery">PollTimeoutNoAutoRecovery</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2201</td>
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical">ConfluentProducerLogCritical</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical">ConfluentProducerLogCritical</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2202</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError">ConfluentProducerLogError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError">ConfluentProducerLogError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2203</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning">ConfluentProducerLogWarning</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning">ConfluentProducerLogWarning</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2204</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation">ConfluentProducerLogInformation</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogInformation">ConfluentProducerLogInformation</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2205</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug">ConfluentProducerLogDebug</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogDebug">ConfluentProducerLogDebug</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2211</td>
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical">ConfluentConsumerLogCritical</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogCritical">ConfluentConsumerLogCritical</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2212</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError">ConfluentConsumerLogError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogError">ConfluentConsumerLogError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2213</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning">ConfluentConsumerLogWarning</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogWarning">ConfluentConsumerLogWarning</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2214</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation">ConfluentConsumerLogInformation</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogInformation">ConfluentConsumerLogInformation</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2215</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug">ConfluentConsumerLogDebug</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerLogDebug">ConfluentConsumerLogDebug</a></td>
 </tr>
 </tbody>
 </table>
@@ -807,55 +807,55 @@
 <td style="text-align: left;">4011</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Consuming message '{messageId}' from topic '{topic}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ConsumingMessage">ConsumingMessage</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConsumingMessage">ConsumingMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4021</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Error occurred connecting to the MQTT broker. | clientId: {clientId}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ConnectError">ConnectError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectError">ConnectError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4022</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Error occurred retrying to connect to the MQTT broker. | clientId: {clientId}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError">ConnectRetryError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError">ConnectRetryError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4023</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Connection with the MQTT broker lost. The client will try to reconnect. | clientId: {clientId}</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ConnectionLost">ConnectionLost</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectionLost">ConnectionLost</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4031</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Producer queue processing was canceled.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled">ProducerQueueProcessingCanceled</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled">ProducerQueueProcessingCanceled</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4101</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error from MqttClient ({source}): '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogError">MqttClientLogError</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogError">MqttClientLogError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4102</td>
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Warning from MqttClient ({source}): '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning">MqttClientLogWarning</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogWarning">MqttClientLogWarning</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4103</td>
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Information from MqttClient ({source}): '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation">MqttClientLogInformation</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogInformation">MqttClientLogInformation</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">4104</td>
 <td style="text-align: left;">Trace</td>
 <td style="text-align: left;">Verbose from MqttClient ({source}): '{logMessage}'.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.MqttLogEvents.html#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose">MqttClientLogVerbose</a></td>
+<td style="text-align: left;"><a href="xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_MqttClientLogVerbose">MqttClientLogVerbose</a></td>
 </tr>
 </tbody>
 </table>
@@ -864,7 +864,7 @@
 <ul>
 <li>in the Consumer when a message is received (initialized with the <code>traceparent</code> header, if submitted)</li>
 <li>in the Producer when a message is being sent (submitting the <code>Activity.Id</code> in the <code>traceparent</code> header )</li>
-<li>when a sequence (e.g. a <a class="xref" href="../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>) is being consumed</li>
+<li>when a sequence (e.g. a <a href="xref:Silverback.Messaging.Sequences.Batch.BatchSequence">BatchSequence</a>) is being consumed</li>
 <li>when a subscriber is being invoked (either internally or from a consumer)</li>
 </ul>
 <p>This allows to trace the methods execution and follow a message across different services (distributed tracing).</p>
@@ -897,7 +897,7 @@
 </table>
 </article>
           </div>
-
+          
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -914,7 +914,7 @@
           </div>
         </div>
       </div>
-
+      
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -925,13 +925,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
-      
+            © 2020 Sergio Aquilini
+            
           </div>
         </div>
       </footer>
     </div>
-
+    
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>

@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Kafka Partitioning and Message Key | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka Partitioning and Message Key | Silverback ">
-    <meta name="generator" content="docfx ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
   
-
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-
+  
     <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../../styles/docfx.css">
     <link rel="stylesheet" href="../../../styles/main.css">
     <meta property="docfx:navrel" content="../../../toc.html">
     <meta property="docfx:tocrel" content="../../toc.html">
-  
-  <meta property="docfx:rel" content="../../../">
-  
+    
+    <meta property="docfx:rel" content="../../../">
+    
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-
+        
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-
+              
               <a class="navbar-brand" href="../../../index.html">
                 <img id="logo" class="svg" src="../../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-
+        
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-
+        
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-
+        
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -90,16 +90,16 @@
 <h3 id="destination-partition">Destination partition</h3>
 <p>If the destination topic contains multiple partitions, the destination partition is picked according to the hash of the <a href="#message-key">message key</a>. If no explicit message key was set, a random one is generated, resulting in the messages being randomly spread across the partitions.</p>
 <p>You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via <a class="xref" href="../outbound-routing.html">dynamic routing</a>.</p>
-<div class="tabGroup" id="tabgroup_1">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_1_destination-partition-fluent" role="tab" aria-controls="tabpanel_1_destination-partition-fluent" data-tab="destination-partition-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S_destination-partition-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_destination-partition-fluent" data-tab="destination-partition-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_1_destination-partition-legacy" role="tab" aria-controls="tabpanel_1_destination-partition-legacy" data-tab="destination-partition-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S_destination-partition-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_destination-partition-legacy" data-tab="destination-partition-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_1_destination-partition-fluent" role="tabpanel" data-tab="destination-partition-fluent">
+<section id="tabpanel_bHGHmlrG6S_destination-partition-fluent" role="tabpanel" data-tab="destination-partition-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -115,7 +115,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_1_destination-partition-legacy" role="tabpanel" data-tab="destination-partition-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S_destination-partition-legacy" role="tabpanel" data-tab="destination-partition-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -146,18 +146,18 @@
 	<a href="../../../images/diagrams/kafka-key.png"><img src="../../../images/diagrams/kafka-key.png"></a>
     <figcaption>The messages with the same key are guaranteed to be written to the same partition.</figcaption>
 </figure>
-<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but you can also generate your own key, either adding an enricher to the <a class="xref" href="../../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> or decorating the properties that must be part of the key with <a class="xref" href="../../../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>.</p>
+<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but you can also generate your own key, either adding an enricher to the &lt;xref:Silverback.Messaging.IProducerEndpoint&gt; or decorating the properties that must be part of the key with &lt;xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute&gt;.</p>
 <h4 id="using-enricher">Using enricher</h4>
-<div class="tabGroup" id="tabgroup_2">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_2_enricher-fluent" role="tab" aria-controls="tabpanel_2_enricher-fluent" data-tab="enricher-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-1_enricher-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_enricher-fluent" data-tab="enricher-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_2_enricher-legacy" role="tab" aria-controls="tabpanel_2_enricher-legacy" data-tab="enricher-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-1_enricher-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_enricher-legacy" data-tab="enricher-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_2_enricher-fluent" role="tabpanel" data-tab="enricher-fluent">
+<section id="tabpanel_bHGHmlrG6S-1_enricher-fluent" role="tabpanel" data-tab="enricher-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -175,7 +175,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_2_enricher-legacy" role="tabpanel" data-tab="enricher-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-1_enricher-legacy" role="tabpanel" data-tab="enricher-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -220,16 +220,16 @@
 <h3 id="partitions-processing">Partitions processing</h3>
 <p>While using a single poll loop, Silverback processes the messages consumed from each Kafka partition independently and concurrently.</p>
 <p>By default up to 10 messages/partitions are processed concurrently (per topic). This value can be tweaked in the endpoint configuration or disabled completely.</p>
-<div class="tabGroup" id="tabgroup_3">
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_3_concurrency-fluent" role="tab" aria-controls="tabpanel_3_concurrency-fluent" data-tab="concurrency-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-2_concurrency-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_concurrency-fluent" data-tab="concurrency-fluent" tabindex="0" aria-selected="true">Fluent</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_3_concurrency-legacy" role="tab" aria-controls="tabpanel_3_concurrency-legacy" data-tab="concurrency-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-2_concurrency-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_concurrency-legacy" data-tab="concurrency-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_3_concurrency-fluent" role="tabpanel" data-tab="concurrency-fluent">
+<section id="tabpanel_bHGHmlrG6S-2_concurrency-fluent" role="tabpanel" data-tab="concurrency-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -257,7 +257,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_3_concurrency-legacy" role="tabpanel" data-tab="concurrency-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-2_concurrency-legacy" role="tabpanel" data-tab="concurrency-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -290,23 +290,23 @@
 <h3 id="manual-partitions-assignment">Manual partitions assignment</h3>
 <p>In some cases you don't want to let the broker randomly distribute the partitions among the consumers.</p>
 <p>This might also be useful when dealing with large sequences (e.g. large messages/files being <a class="xref" href="../chunking.html">chunked</a> or when <a class="xref" href="../inbound.html#batch-processing">batch processing</a>), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.</p>
-<p>The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see <a class="xref" href="../../../api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a> and <a class="xref" href="../../../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> for details).</p>
-<div class="tabGroup" id="tabgroup_4">
+<p>The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see &lt;xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder&gt; and &lt;xref:Silverback.Messaging.KafkaConsumerEndpoint&gt; for details).</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_4_assignment-fluent" role="tab" aria-controls="tabpanel_4_assignment-fluent" data-tab="assignment-fluent" tabindex="0" aria-selected="true">Fluent (static)</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-fluent" data-tab="assignment-fluent" tabindex="0" aria-selected="true">Fluent (static)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_4_assignment-fluent2" role="tab" aria-controls="tabpanel_4_assignment-fluent2" data-tab="assignment-fluent2" tabindex="-1">Fluent (dynamic)</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-fluent2" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-fluent2" data-tab="assignment-fluent2" tabindex="-1">Fluent (dynamic)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_4_assignment-legacy" role="tab" aria-controls="tabpanel_4_assignment-legacy" data-tab="assignment-legacy" tabindex="-1">Legacy (static)</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-legacy" data-tab="assignment-legacy" tabindex="-1">Legacy (static)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_4_assignment-legacy2" role="tab" aria-controls="tabpanel_4_assignment-legacy2" data-tab="assignment-legacy2" tabindex="-1">Legacy (dynamic)</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-legacy2" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-legacy2" data-tab="assignment-legacy2" tabindex="-1">Legacy (dynamic)</a>
 </li>
 </ul>
-<section id="tabpanel_4_assignment-fluent" role="tabpanel" data-tab="assignment-fluent">
+<section id="tabpanel_bHGHmlrG6S-3_assignment-fluent" role="tabpanel" data-tab="assignment-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -328,7 +328,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_4_assignment-fluent2" role="tabpanel" data-tab="assignment-fluent2" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-3_assignment-fluent2" role="tabpanel" data-tab="assignment-fluent2" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -351,7 +351,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_4_assignment-legacy" role="tabpanel" data-tab="assignment-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-3_assignment-legacy" role="tabpanel" data-tab="assignment-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -371,7 +371,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_4_assignment-legacy2" role="tabpanel" data-tab="assignment-legacy2" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_bHGHmlrG6S-3_assignment-legacy2" role="tabpanel" data-tab="assignment-legacy2" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -399,7 +399,7 @@
 </ul>
 </article>
           </div>
-
+          
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -416,7 +416,7 @@
           </div>
         </div>
       </div>
-
+      
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -427,13 +427,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-      © 2020 Sergio Aquilini
-      
+            © 2020 Sergio Aquilini
+            
           </div>
         </div>
       </footer>
     </div>
-
+    
     <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../../styles/main.js"></script>
