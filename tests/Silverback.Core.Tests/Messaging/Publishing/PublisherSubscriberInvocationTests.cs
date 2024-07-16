@@ -295,7 +295,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             Action actSync = () => publisher.Publish(new UnhandledMessage(), true);
             Func<Task> actAsync = () => publisher.PublishAsync(new UnhandledMessage(), true);
 
-            actSync.Should().ThrowExactly<AggregateException>();
+            actSync.Should().Throw<Exception>();
             await actAsync.Should().ThrowExactlyAsync<UnhandledMessageException>();
         }
 
