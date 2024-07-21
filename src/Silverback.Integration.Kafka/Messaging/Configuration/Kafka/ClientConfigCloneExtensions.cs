@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Configuration.Kafka;
-
+// TODO: Still needed?
 internal static class ClientConfigCloneExtensions
 {
     public static TClientConfig Clone<TClientConfig>(this TClientConfig source)

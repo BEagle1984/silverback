@@ -12,86 +12,48 @@ namespace Silverback.Messaging.Configuration;
 /// <summary>
 ///     Builds the <see cref="AvroMessageDeserializer{TMessage}" />.
 /// </summary>
-public class AvroMessageDeserializerBuilder
+public class AvroMessageDeserializerBuilder : SchemaRegistryDeserializerBuilder<AvroMessageDeserializerBuilder>
 {
-    private IAvroMessageDeserializer? _deserializer;
-
-    private Action<SchemaRegistryConfig>? _configureSchemaRegistryAction;
-
-    private Action<AvroDeserializerConfig>? _configureDeserializerAction;
+    private AvroDeserializerConfig? _avroDeserializerConfig;
 
     /// <summary>
-    ///     Specifies the message type.
+    ///     Initializes a new instance of the <see cref="AvroMessageDeserializerBuilder" /> class.
     /// </summary>
-    /// <typeparam name="TMessage">
-    ///     The type of the message to deserialize.
-    /// </typeparam>
-    /// <returns>
-    ///     The <see cref="AvroMessageDeserializerBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public AvroMessageDeserializerBuilder UseModel<TMessage>()
-        where TMessage : class
+    /// <param name="schemaRegistryClientFactory">
+    ///     The <see cref="ISchemaRegistryClientFactory" /> to be used to create the schema registry client.
+    /// </param>
+    public AvroMessageDeserializerBuilder(ISchemaRegistryClientFactory schemaRegistryClientFactory)
+        : base(schemaRegistryClientFactory)
     {
-        _deserializer = new AvroMessageDeserializer<TMessage>();
-        return this;
     }
 
-    /// <summary>
-    ///     Specifies the message type.
-    /// </summary>
-    /// <param name="messageType">
-    ///     The type of the message to serialize or deserialize.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="AvroMessageDeserializerBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public AvroMessageDeserializerBuilder UseModel(Type messageType)
-    {
-        Type deserializerType = typeof(AvroMessageDeserializer<>).MakeGenericType(messageType);
-        _deserializer = (IAvroMessageDeserializer)Activator.CreateInstance(deserializerType)!;
-        return this;
-    }
+    /// <inheritdoc cref="SchemaRegistryDeserializerBuilder{TBuilder}.This" />
+    protected override AvroMessageDeserializerBuilder This => this;
 
     /// <summary>
-    ///     Configures the <see cref="SchemaRegistryConfig" /> and the <see cref="AvroSerializerConfig" />.
+    ///     Configures the <see cref="AvroDeserializerConfig" />.
     /// </summary>
-    /// <param name="configureSchemaRegistryAction">
-    ///     An <see cref="Action{T}" /> that takes the <see cref="SchemaRegistryConfig" /> and configures it.
-    /// </param>
-    /// <param name="configureDeserializerAction">
+    /// <param name="configureAction">
     ///     An <see cref="Action{T}" /> that takes the <see cref="AvroDeserializerConfig" /> and configures it.
     /// </param>
     /// <returns>
     ///     The <see cref="AvroMessageDeserializerBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public AvroMessageDeserializerBuilder Configure(
-        Action<SchemaRegistryConfig> configureSchemaRegistryAction,
-        Action<AvroDeserializerConfig>? configureDeserializerAction = null)
+    public AvroMessageDeserializerBuilder Configure(Action<AvroDeserializerConfig> configureAction)
     {
-        _configureSchemaRegistryAction = Check.NotNull(
-            configureSchemaRegistryAction,
-            nameof(configureSchemaRegistryAction));
-        _configureDeserializerAction = configureDeserializerAction;
+        Check.NotNull(configureAction, nameof(configureAction));
+
+        _avroDeserializerConfig = new AvroDeserializerConfig();
+        configureAction.Invoke(_avroDeserializerConfig);
 
         return this;
     }
 
-    /// <summary>
-    ///     Builds the <see cref="IMessageDeserializer" /> instance.
-    /// </summary>
-    /// <returns>
-    ///     The <see cref="IMessageDeserializer" />.
-    /// </returns>
-    public IMessageDeserializer Build()
-    {
-        if (_deserializer == null)
-        {
-            throw new InvalidOperationException("The message type was not specified. Please call UseModel<TMessage>.");
-        }
-
-        _configureSchemaRegistryAction?.Invoke(_deserializer.SchemaRegistryConfig);
-        _configureDeserializerAction?.Invoke(_deserializer.AvroDeserializerConfig);
-
-        return _deserializer;
-    }
+    /// <inheritdoc cref="SchemaRegistryDeserializerBuilder{TBuilder}.BuildCore" />
+    protected override IMessageDeserializer BuildCore(Type messageType, ISchemaRegistryClient schemaRegistryClient) =>
+        (IMessageDeserializer?)Activator.CreateInstance(
+            typeof(AvroMessageDeserializer<>).MakeGenericType(messageType),
+            schemaRegistryClient,
+            _avroDeserializerConfig)
+        ?? throw new InvalidOperationException("The AvroMessageDeserializer could not be created.");
 }

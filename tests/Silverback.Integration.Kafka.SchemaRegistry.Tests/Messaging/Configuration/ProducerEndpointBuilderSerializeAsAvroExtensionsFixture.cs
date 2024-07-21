@@ -3,6 +3,7 @@
 
 using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -13,22 +14,31 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
 
 public class ProducerEndpointBuilderSerializeAsAvroExtensionsFixture
 {
+    private readonly IServiceProvider _serviceProvider = Substitute.For<IServiceProvider>();
+
+    public ProducerEndpointBuilderSerializeAsAvroExtensionsFixture()
+    {
+        _serviceProvider.GetService(typeof(ISchemaRegistryClientFactory)).Returns(Substitute.For<ISchemaRegistryClientFactory>());
+    }
+
     [Fact]
     public void SerializeAsAvro_ShouldThrow_WhenTypeNotSpecified()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
-        Action act = () => builder.SerializeAsAvro();
+        Action act = () => builder.SerializeAsAvro(serializer => serializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<InvalidOperationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
     public void SerializeAsAvro_ShouldSetSerializer()
     {
-        TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        TestProducerEndpointConfigurationBuilder<TestEventOne> builder = new(_serviceProvider);
 
-        TestProducerEndpointConfiguration endpointConfiguration = builder.SerializeAsAvro().Build();
+        TestProducerEndpointConfiguration endpointConfiguration = builder
+            .SerializeAsAvro(serializer => serializer.ConnectToSchemaRegistry("test-url"))
+            .Build();
 
         endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
     }
@@ -36,10 +46,13 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsFixture
     [Fact]
     public void SerializeAsAvro_ShouldSetSerializer_WhenUseModelWithGenericArgumentIsCalled()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(serializer => serializer.UseModel<TestEventOne>())
+            .SerializeAsAvro(
+                serializer => serializer
+                    .ConnectToSchemaRegistry("test-url")
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
@@ -48,10 +61,13 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsFixture
     [Fact]
     public void SerializeAsAvro_ShouldSetSerializer_WhenUseModelIsCalled()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestProducerEndpointConfiguration endpointConfiguration = builder
-            .SerializeAsAvro(serializer => serializer.UseModel(typeof(TestEventOne)))
+            .SerializeAsAvro(
+                serializer => serializer
+                    .ConnectToSchemaRegistry("test-url")
+                    .UseModel(typeof(TestEventOne)))
             .Build();
 
         endpointConfiguration.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();

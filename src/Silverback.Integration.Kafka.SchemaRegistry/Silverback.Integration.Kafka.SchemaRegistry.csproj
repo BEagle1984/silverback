@@ -22,12 +22,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="2.0.2" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.0.2" />
+    <PackageReference Include="Confluent.Kafka" Version="2.5.0" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.5.0" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Json" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Silverback.Integration.Kafka.SchemaRegistry.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

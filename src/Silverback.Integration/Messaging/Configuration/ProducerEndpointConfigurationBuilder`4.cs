@@ -59,11 +59,14 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" /> class.
     /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    protected ProducerEndpointConfigurationBuilder(string? friendlyName)
-        : base(friendlyName)
+    protected ProducerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName)
+        : base(serviceProvider, friendlyName)
     {
         // Initialize default serializer according to TMessage type parameter
         if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))

@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public class NewtonsoftJsonMessageDeserializerBuilder
 {
-    private INewtonsoftJsonMessageDeserializer? _deserializer;
+    private Type _messageType = typeof(object);
 
     private JsonSerializerSettings? _settings;
 
@@ -33,7 +33,7 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     /// </returns>
     public NewtonsoftJsonMessageDeserializerBuilder UseModel<TMessage>()
     {
-        _deserializer = new NewtonsoftJsonMessageDeserializer<TMessage>();
+        _messageType = typeof(TMessage);
         return this;
     }
 
@@ -49,8 +49,7 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     /// </returns>
     public NewtonsoftJsonMessageDeserializerBuilder UseModel(Type messageType)
     {
-        Type deserializerType = typeof(NewtonsoftJsonMessageDeserializer<>).MakeGenericType(messageType);
-        _deserializer = (INewtonsoftJsonMessageDeserializer)Activator.CreateInstance(deserializerType)!;
+        _messageType = Check.NotNull(messageType, nameof(messageType));
         return this;
     }
 
@@ -67,9 +66,8 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        JsonSerializerSettings settings = new();
-        configureAction.Invoke(settings);
-        _settings = settings;
+        _settings = new JsonSerializerSettings();
+        configureAction.Invoke(_settings);
 
         return this;
     }
@@ -131,19 +129,11 @@ public class NewtonsoftJsonMessageDeserializerBuilder
     /// <returns>
     ///     The <see cref="IMessageDeserializer" />.
     /// </returns>
-    public IMessageDeserializer Build()
-    {
-        _deserializer ??= new NewtonsoftJsonMessageDeserializer<object>();
-
-        if (_settings != null)
-            _deserializer.Settings = _settings;
-
-        if (_encoding != null)
-            _deserializer.Encoding = _encoding.Value;
-
-        if (_typeHeaderBehavior.HasValue)
-            _deserializer.TypeHeaderBehavior = _typeHeaderBehavior.Value;
-
-        return _deserializer;
-    }
+    public IMessageDeserializer Build() =>
+        (IMessageDeserializer?)Activator.CreateInstance(
+            typeof(NewtonsoftJsonMessageDeserializer<>).MakeGenericType(_messageType),
+            _settings,
+            _encoding,
+            _typeHeaderBehavior)
+        ?? throw new InvalidOperationException("Failed to create the NewtonsoftJsonMessageDeserializer instance.");
 }

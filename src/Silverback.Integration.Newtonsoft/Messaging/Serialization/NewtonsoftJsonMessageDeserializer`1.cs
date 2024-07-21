@@ -18,28 +18,50 @@ namespace Silverback.Messaging.Serialization;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be deserialized.
 /// </typeparam>
-public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJsonMessageDeserializer, IEquatable<NewtonsoftJsonMessageDeserializer<TMessage>>
+public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : IMessageDeserializer, IEquatable<NewtonsoftJsonMessageDeserializer<TMessage>>
 {
     private readonly Type _type = typeof(TMessage);
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="NewtonsoftJsonMessageDeserializer{TMessage}" /> class.
+    /// </summary>
+    /// <param name="settings">
+    ///     The <see cref="JsonSerializer" /> settings.
+    /// </param>
+    /// <param name="encoding">
+    ///     The message encoding. The default is UTF8.
+    /// </param>
+    /// <param name="typeHeaderBehavior">
+    ///     The behavior to adopt when deserializing according to the message type header.
+    /// </param>
+    public NewtonsoftJsonMessageDeserializer(
+        JsonSerializerSettings? settings = null,
+        MessageEncoding? encoding = null,
+        JsonMessageDeserializerTypeHeaderBehavior? typeHeaderBehavior = null)
+    {
+        Settings = settings;
+        Encoding = encoding ?? MessageEncoding.UTF8;
+        TypeHeaderBehavior = typeHeaderBehavior ?? JsonMessageDeserializerTypeHeaderBehavior.Optional;
+    }
 
     /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
     public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
 
-    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.Encoding" />
+    /// <summary>
+    ///     Gets the <see cref="JsonSerializer" /> settings.
+    /// </summary>
+    public JsonSerializerSettings? Settings { get; }
+
+    /// <summary>
+    ///     Gets the message encoding. The default is UTF8.
+    /// </summary>
     [DefaultValue("UTF8")]
-    public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
+    public MessageEncoding Encoding { get; }
 
-    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.Settings" />
-    public JsonSerializerSettings Settings { get; set; } = new()
-    {
-        Formatting = Formatting.None,
-        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-        NullValueHandling = NullValueHandling.Ignore,
-        DefaultValueHandling = DefaultValueHandling.Ignore
-    };
-
-    /// <inheritdoc cref="INewtonsoftJsonMessageDeserializer.TypeHeaderBehavior" />
-    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; set; }
+    /// <summary>
+    ///     Gets the behavior to adopt when deserializing according to the message type header.
+    /// </summary>
+    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; }
 
     /// <summary>
     ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.
@@ -80,11 +102,7 @@ public sealed class NewtonsoftJsonMessageDeserializer<TMessage> : INewtonsoftJso
     }
 
     /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />
-    public IMessageSerializer GetCompatibleSerializer() => new NewtonsoftJsonMessageSerializer
-    {
-        Settings = Settings,
-        Encoding = Encoding
-    };
+    public IMessageSerializer GetCompatibleSerializer() => new NewtonsoftJsonMessageSerializer(Settings, Encoding);
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
     public bool Equals(NewtonsoftJsonMessageDeserializer<TMessage>? other) =>

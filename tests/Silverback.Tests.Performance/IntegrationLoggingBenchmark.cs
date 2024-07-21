@@ -65,7 +65,7 @@ public class IntegrationLoggingBenchmark
         KafkaConsumerEndpoint consumerEndpoint = new(
             "test-topic",
             42,
-            new KafkaConsumerEndpointConfigurationBuilder<TestEventOne>().ConsumeFrom("test-topic").Build());
+            new KafkaConsumerEndpointConfigurationBuilder<TestEventOne>(serviceProvider).ConsumeFrom("test-topic").Build());
 
         _inboundEnvelope = new RawInboundEnvelope(
             [],
@@ -82,7 +82,7 @@ public class IntegrationLoggingBenchmark
         KafkaProducerEndpoint producerEndpoint = new(
             "test-topic",
             Partition.Any,
-            new KafkaProducerEndpointConfigurationBuilder<TestEventOne>().ProduceTo("test-topic").Build());
+            new KafkaProducerEndpointConfigurationBuilder<TestEventOne>(serviceProvider).ProduceTo("test-topic").Build());
 
         _outboundEnvelope =
             new OutboundEnvelope(

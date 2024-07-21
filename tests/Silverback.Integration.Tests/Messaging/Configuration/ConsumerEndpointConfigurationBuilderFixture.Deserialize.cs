@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -20,7 +21,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetJsonMessageDeserializerByDefault()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -31,7 +32,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetTypedJsonMessageDeserializerByDefault_WhenMessageTypeIsNotObject()
     {
-        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -41,7 +42,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeIsBinaryMessage()
     {
-        TestConsumerEndpointConfigurationBuilder<BinaryMessage> builder = new();
+        TestConsumerEndpointConfigurationBuilder<BinaryMessage> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -52,7 +53,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetBinaryMessageDeserializerByDefault_WhenMessageTypeImplementsIBinaryMessage()
     {
-        TestConsumerEndpointConfigurationBuilder<CustomBinaryMessage> builder = new();
+        TestConsumerEndpointConfigurationBuilder<CustomBinaryMessage> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -62,7 +63,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetDeserializer()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson().Build();
 
@@ -73,7 +74,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetTypedDeserializer_WhenMessageTypeIsNotObject()
     {
-        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson().Build();
 
@@ -83,7 +84,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelWithGenericArgumentIsCalled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
             .DeserializeJson(deserializer => deserializer.UseModel<TestEventOne>())
@@ -95,7 +96,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetTypedDeserializer_WhenUseModelIsCalled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
             .DeserializeJson(deserializer => deserializer.UseModel(typeof(TestEventOne)))
@@ -107,7 +108,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetDeserializerAndOptions_WhenOptionsAreSpecified()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeJson(
                 deserializer => deserializer.Configure(
@@ -124,7 +125,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeJson_ShouldSetDeserializerAndOptions_WhenFixedTypeAndOptionsAreSpecified()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
             .DeserializeJson(
@@ -144,7 +145,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeBinaryMessages_ShouldSetDeserializer()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
@@ -155,7 +156,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer()
     {
-        TestConsumerEndpointConfigurationBuilder<CustomBinaryMessage> builder = new();
+        TestConsumerEndpointConfigurationBuilder<CustomBinaryMessage> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.ConsumeBinaryMessages().Build();
 
@@ -165,7 +166,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeBinaryMessages_ShouldThrow_WhenTheMessageTypeIsNotValid()
     {
-        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.ConsumeBinaryMessages();
 
@@ -177,7 +178,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     {
         Action act = () =>
         {
-            TestConsumerEndpointConfigurationBuilder<BinaryMessageWithoutDefaultConstructor> builder = new();
+            TestConsumerEndpointConfigurationBuilder<BinaryMessageWithoutDefaultConstructor> builder = new(Substitute.For<IServiceProvider>());
             builder.ConsumeBinaryMessages();
         };
 
@@ -188,7 +189,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeBinaryMessages_ShouldSetCustomTypeDeserializer_WhenUseModelIsCalled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder
             .ConsumeBinaryMessages(deserializer => deserializer.UseModel<CustomBinaryMessage>())

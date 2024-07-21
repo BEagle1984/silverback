@@ -28,6 +28,17 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
 
     private TimeSpan? _transactionAbortTimeout;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaProducerConfigurationBuilder" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
+    public KafkaProducerConfigurationBuilder(IServiceProvider serviceProvider)
+        : base(serviceProvider)
+    {
+    }
+
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaProducerConfigurationBuilder This => this;
 
@@ -99,16 +110,11 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        KafkaProducerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        KafkaProducerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
         configurationBuilderAction.Invoke(builder);
         KafkaProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}";
-
-        if (_endpoints.ContainsKey(name))
-            return this;
-
-        _endpoints[name] = endpointConfiguration;
+        _endpoints.TryAdd(name ?? $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}", endpointConfiguration);
 
         return this;
     }

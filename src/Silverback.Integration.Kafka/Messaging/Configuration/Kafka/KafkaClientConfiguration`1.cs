@@ -45,7 +45,11 @@ public abstract partial record KafkaClientConfiguration<TClientConfig> : IValida
     protected TClientConfig ClientConfig { get; }
 
     /// <inheritdoc cref="IValidatableSettings.Validate" />
-    public abstract void Validate();
+    public virtual void Validate()
+    {
+        if (string.IsNullOrEmpty(BootstrapServers))
+            throw new BrokerConfigurationException($"The {nameof(BootstrapServers)} are required to connect with the message broker.");
+    }
 
-    internal virtual TClientConfig GetConfluentClientConfig() => ClientConfig;
+    internal TClientConfig GetConfluentClientConfig() => ClientConfig;
 }

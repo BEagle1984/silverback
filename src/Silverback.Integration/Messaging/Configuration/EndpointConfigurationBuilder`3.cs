@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Validation;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration;
 
@@ -30,13 +32,22 @@ public abstract class EndpointConfigurationBuilder<TMessage, TConfiguration, TBu
     /// <summary>
     ///     Initializes a new instance of the <see cref="EndpointConfigurationBuilder{TMessage, TConfiguration, TBuilder}" /> class.
     /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    protected EndpointConfigurationBuilder(string? friendlyName)
+    protected EndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName)
     {
+        ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _friendlyName = friendlyName;
     }
+
+    /// <summary>
+    ///     Gets the <see cref="IServiceProvider" />.
+    /// </summary>
+    public IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     ///     Gets this instance.

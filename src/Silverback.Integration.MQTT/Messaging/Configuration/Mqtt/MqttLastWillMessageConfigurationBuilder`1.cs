@@ -69,7 +69,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageConfigurationBuilder<TMessage> Message(TMessage message)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> SendMessage(TMessage message)
     {
         _message = Check.NotNull(message, nameof(message));
         return this;
@@ -257,7 +257,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     }
 
     /// <summary>
-    ///     Adds a user property to the last will message.
+    ///     Adds an header (user property) to the last will message.
     /// </summary>
     /// <param name="name">
     ///     The property name.
@@ -268,7 +268,7 @@ public class MqttLastWillMessageConfigurationBuilder<TMessage>
     /// <returns>
     ///     The <see cref="MqttLastWillMessageConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
     /// </returns>
-    public MqttLastWillMessageConfigurationBuilder<TMessage> AddUserProperty(string name, string? value)
+    public MqttLastWillMessageConfigurationBuilder<TMessage> AddHeader(string name, string? value)
     {
         Check.NotNull(name, nameof(name));
 

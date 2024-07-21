@@ -20,7 +20,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -30,7 +30,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicName()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo("some-topic");
 
@@ -47,7 +47,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameAndPartition()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo("some-topic", 42);
 
@@ -64,7 +64,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicPartition()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo(new TopicPartition("some-topic", 42));
 
@@ -81,7 +81,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameAndPartitionFunction()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo("some-topic", _ => 42);
 
@@ -98,7 +98,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameFunction()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo(_ => "some-topic");
 
@@ -115,7 +115,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameFunctionAndPartitionFunction()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo(_ => "some-topic", _ => 42);
 
@@ -132,7 +132,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicPartitionFunction()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo(_ => new TopicPartition("some-topic", 42));
 
@@ -149,7 +149,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameFormat()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ProduceTo("some-topic-{0}", _ => ["123"], _ => 42);
 
@@ -168,7 +168,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [InlineData("")]
     public void ProduceTo_ShouldThrow_WhenTopicNameIsNotValid(string? topicName)
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.ProduceTo(topicName!);
 
@@ -178,7 +178,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldThrow_WhenPartitionIndexIsNotValid()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.ProduceTo("test", -42);
 
@@ -188,7 +188,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void UseEndpointResolver_ShouldSetEndpoint()
     {
-        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        KafkaProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         builder.UseEndpointResolver<TestTypedEndpointResolver>();
 

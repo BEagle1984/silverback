@@ -10,7 +10,7 @@ namespace Silverback.Tools.Generators.MqttConfigProxies;
 
 [SuppressMessage("ReSharper", "CognitiveComplexity", Justification = "Don't care")]
 [SuppressMessage("Maintainability", "CA1502: Avoid excessive complexity", Justification = "Don't care")]
-internal static class DocumentationProvider
+public static class DocumentationProvider
 {
     public static void AppendSummary(this StringBuilder builder, PropertyInfo property)
     {

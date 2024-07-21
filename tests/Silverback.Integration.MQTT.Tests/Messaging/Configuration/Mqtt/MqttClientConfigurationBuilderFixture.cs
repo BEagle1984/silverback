@@ -26,7 +26,7 @@ public class MqttClientConfigurationBuilderFixture
     [Fact]
     public void Constructor_ShouldSetProtocolVersionToV500()
     {
-        MqttClientConfigurationBuilder builder = new();
+        MqttClientConfigurationBuilder builder = new(Substitute.For<IServiceProvider>());
 
         builder
             .ConnectViaTcp("tests-server")
@@ -39,7 +39,7 @@ public class MqttClientConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        MqttClientConfigurationBuilder builder = new();
+        MqttClientConfigurationBuilder builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -357,7 +357,7 @@ public class MqttClientConfigurationBuilderFixture
 
         builder.SendLastWillMessage<TestEventOne>(
             lastWill => lastWill
-                .Message(
+                .SendMessage(
                     new TestEventOne
                     {
                         Content = "I died!"
@@ -950,10 +950,12 @@ public class MqttClientConfigurationBuilderFixture
     }
 
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>
-        GetBuilderWithValidConfiguration(serviceProvider).Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
+        GetBuilderWithValidConfiguration(serviceProvider)
+            .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 
     private static MqttClientConfigurationBuilder GetBuilderWithValidConfiguration(IServiceProvider? serviceProvider = null) =>
-        new MqttClientConfigurationBuilder(serviceProvider).ConnectViaTcp("test");
+        new MqttClientConfigurationBuilder(serviceProvider ?? Substitute.For<IServiceProvider>())
+            .ConnectViaTcp("test");
 
     private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
     {

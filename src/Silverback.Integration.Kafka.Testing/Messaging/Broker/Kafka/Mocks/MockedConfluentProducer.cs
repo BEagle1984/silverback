@@ -160,6 +160,8 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
     public void SendOffsetsToTransaction(IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata, TimeSpan timeout) =>
         throw new NotSupportedException();
 
+    public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
+
     public void Dispose() => _isDisposed = true;
 
     private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)

@@ -28,7 +28,15 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints =
         ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
 
-    internal KafkaConsumerConfiguration(ConsumerConfig? consumerConfig = null)
+    /// <summary>
+    ///    Initializes a new instance of the <see cref="KafkaConsumerConfiguration" /> class.
+    /// </summary>
+    public KafkaConsumerConfiguration()
+        : this((ConsumerConfig?)null)
+    {
+    }
+
+    internal KafkaConsumerConfiguration(ConsumerConfig? consumerConfig)
         : base(consumerConfig)
     {
         ClientConfig.EnableAutoCommit ??= true;
@@ -156,6 +164,8 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
+        base.Validate();
+
         ValidateEndpoints();
 
         CheckDuplicateTopics();
@@ -163,13 +173,10 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
         if (GroupId == UnsetGroupId)
             CheckGroupIdRequirements();
 
-        if (string.IsNullOrEmpty(BootstrapServers))
-            throw new BrokerConfigurationException($"The {nameof(BootstrapServers)} are required to connect with the message broker.");
-
         ValidateCommitStrategy();
 
         if (MaxDegreeOfParallelism < 1)
-            throw new BrokerConfigurationException("The maximum degree of parallelism must be greater or equal to 1.");
+            throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} must be greater or equal to 1.");
 
         if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
             throw new BrokerConfigurationException($"{nameof(MaxDegreeOfParallelism)} cannot be greater than 1 when the partitions aren't processed independently.");

@@ -17,6 +17,14 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
 {
     private const bool KafkaDefaultEnableDeliveryReports = true;
 
+    /// <summary>
+    ///    Initializes a new instance of the <see cref="KafkaProducerConfiguration" /> class.
+    /// </summary>
+    public KafkaProducerConfiguration()
+        : this((ProducerConfig?)null)
+    {
+    }
+
     internal KafkaProducerConfiguration(ProducerConfig? producerConfig = null)
         : base(producerConfig)
     {
@@ -81,13 +89,12 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
     /// <inheritdoc cref="IValidatableSettings.Validate" />
     public override void Validate()
     {
+        base.Validate();
+
         if (Endpoints == null || Endpoints.Count == 0)
             throw new BrokerConfigurationException("At least one endpoint must be configured.");
 
         Endpoints.ForEach(endpoint => endpoint.Validate());
-
-        if (string.IsNullOrEmpty(BootstrapServers))
-            throw new BrokerConfigurationException("The bootstrap servers are required to connect with the message broker.");
 
         if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             throw new BrokerConfigurationException($"{nameof(ThrowIfNotAcknowledged)} cannot be set to true if delivery reports are not enabled.");

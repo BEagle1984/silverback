@@ -36,6 +36,17 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
 
     private TimeSpan? _getMetadataTimeout;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaConsumerConfigurationBuilder" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> instance.
+    /// </param>
+    public KafkaConsumerConfigurationBuilder(IServiceProvider serviceProvider)
+        : base(serviceProvider)
+    {
+    }
+
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
     protected override KafkaConsumerConfigurationBuilder This => this;
 
@@ -75,7 +86,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     /// </summary>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s).
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.
@@ -98,7 +109,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     /// </typeparam>
     /// <param name="name">
     ///     The name is used to guarantee that a duplicated configuration is discarded and is also displayed in the logs.
-    ///     By default the name will be generated concatenating the topic name(s).
+    ///     By default, the name will be generated concatenating the topic name(s).
     /// </param>
     /// <param name="configurationBuilderAction">
     ///     An <see cref="Action" /> that takes the <see cref="KafkaConsumerConfigurationBuilder" /> and configures it.
@@ -113,16 +124,11 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        KafkaConsumerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        KafkaConsumerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
         configurationBuilderAction.Invoke(builder);
         KafkaConsumerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= endpointConfiguration.RawName;
-
-        if (_endpoints.ContainsKey(name))
-            return this;
-
-        _endpoints[name] = endpointConfiguration;
+        _endpoints.TryAdd(name ?? endpointConfiguration.RawName, endpointConfiguration);
 
         return this;
     }

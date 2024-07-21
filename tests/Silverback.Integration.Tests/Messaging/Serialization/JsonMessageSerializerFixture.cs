@@ -49,10 +49,7 @@ public class JsonMessageSerializerFixture
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = [];
 
-        JsonMessageSerializer serializer = new()
-        {
-            MustSetTypeHeader = false
-        };
+        JsonMessageSerializer serializer = new(mustSetTypeHeader: false);
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
@@ -114,23 +111,19 @@ public class JsonMessageSerializerFixture
     [Fact]
     public void Equals_ShouldReturnTrue_WhenSameSettings()
     {
-        JsonMessageSerializer serializer1 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageSerializer serializer1 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
-        JsonMessageSerializer serializer2 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageSerializer serializer2 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
         bool result = Equals(serializer1, serializer2);
 
@@ -151,22 +144,18 @@ public class JsonMessageSerializerFixture
     [Fact]
     public void Equals_ShouldReturnFalse_WhenDifferentSettings()
     {
-        JsonMessageSerializer serializer1 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageSerializer serializer1 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
-        JsonMessageSerializer serializer2 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageSerializer serializer2 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = false
-            }
-        };
+            });
 
         bool result = Equals(serializer1, serializer2);
 

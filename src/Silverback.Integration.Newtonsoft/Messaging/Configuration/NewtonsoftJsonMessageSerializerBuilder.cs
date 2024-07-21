@@ -33,9 +33,8 @@ public class NewtonsoftJsonMessageSerializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        JsonSerializerSettings settings = new();
-        configureAction.Invoke(settings);
-        _settings = settings;
+        _settings = new JsonSerializerSettings();
+        configureAction.Invoke(_settings);
 
         return this;
     }
@@ -87,19 +86,5 @@ public class NewtonsoftJsonMessageSerializerBuilder
     /// <returns>
     ///     The <see cref="IMessageSerializer" />.
     /// </returns>
-    public IMessageSerializer Build()
-    {
-        NewtonsoftJsonMessageSerializer serializer = new();
-
-        if (_settings != null)
-            serializer.Settings = _settings;
-
-        if (_encoding != null)
-            serializer.Encoding = _encoding.Value;
-
-        if (_mustSetTypeHeader.HasValue)
-            serializer.MustSetTypeHeader = _mustSetTypeHeader.Value;
-
-        return serializer;
-    }
+    public IMessageSerializer Build() => new NewtonsoftJsonMessageSerializer(_settings, _encoding, _mustSetTypeHeader);
 }

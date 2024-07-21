@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Encryption;
 using Silverback.Tests.Types;
 using Xunit;
@@ -13,7 +15,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void EncryptUsingAes_ShouldSetKeyAndIV()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         byte[] key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();
@@ -28,7 +30,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void EncryptUsingAes_ShouldSetKeyIdentifier()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         byte[] key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();

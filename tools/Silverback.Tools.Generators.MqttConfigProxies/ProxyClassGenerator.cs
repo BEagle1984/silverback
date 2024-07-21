@@ -11,7 +11,7 @@ using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
 
-internal sealed class ProxyClassGenerator
+public class ProxyClassGenerator
 {
     private readonly Type _proxiedType;
 
@@ -63,7 +63,7 @@ internal sealed class ProxyClassGenerator
     {
         bool generateDefaultInstanceField = false;
         StringBuilder propertiesStringBuilder = new();
-        StringBuilder buildMethodStringBuilder = new();
+        StringBuilder mapMethodStringBuilder = new();
 
         foreach (PropertyInfo property in GetProxiedTypeProperties())
         {
@@ -93,7 +93,7 @@ internal sealed class ProxyClassGenerator
             propertiesStringBuilder.AppendLine();
             propertiesStringBuilder.AppendLine();
 
-            buildMethodStringBuilder.AppendLine(
+            mapMethodStringBuilder.AppendLine(
                 isMapped
                     ? $"            {property.Name} = {property.Name}?.ToMqttNetType(),"
                     : $"            {property.Name} = {property.Name},");
@@ -109,7 +109,7 @@ internal sealed class ProxyClassGenerator
         _stringBuilder.AppendLine($"    private {_proxiedType.FullName} MapCore() =>");
         _stringBuilder.AppendLine("        new()");
         _stringBuilder.AppendLine("        {");
-        _stringBuilder.Append(buildMethodStringBuilder);
+        _stringBuilder.Append(mapMethodStringBuilder);
         _stringBuilder.AppendLine("        };");
     }
 

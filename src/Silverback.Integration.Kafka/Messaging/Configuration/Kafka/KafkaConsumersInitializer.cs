@@ -52,7 +52,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
     {
         foreach (MergedAction<KafkaConsumerConfigurationBuilder> mergedAction in _configurationActions.ConsumerConfigurationActions)
         {
-            KafkaConsumerConfigurationBuilder builder = new();
+            KafkaConsumerConfigurationBuilder builder = new(ServiceProvider);
             mergedAction.Action.Invoke(builder);
             KafkaConsumerConfiguration configuration = builder.Build();
 

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
@@ -19,7 +20,7 @@ public class KafkaConsumerConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        KafkaConsumerConfigurationBuilder builder = new();
+        KafkaConsumerConfigurationBuilder builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -440,7 +441,7 @@ public class KafkaConsumerConfigurationBuilderFixture
         GetBuilderWithValidConfiguration().Consume(endpoint => endpoint.ConsumeFrom("topic"));
 
     private static KafkaConsumerConfigurationBuilder GetBuilderWithValidConfiguration() =>
-        new KafkaConsumerConfigurationBuilder()
+        new KafkaConsumerConfigurationBuilder(Substitute.For<IServiceProvider>())
             .WithBootstrapServers("PLAINTEXT://test")
             .WithGroupId("consumer1");
 }

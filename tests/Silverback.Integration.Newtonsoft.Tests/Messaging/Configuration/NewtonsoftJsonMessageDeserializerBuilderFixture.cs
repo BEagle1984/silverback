@@ -55,7 +55,9 @@ public class NewtonsoftJsonMessageDeserializerBuilderFixture
                 })
             .Build();
 
-        deserializer.As<NewtonsoftJsonMessageDeserializer<object>>().Settings.MaxDepth.Should().Be(42);
+        NewtonsoftJsonMessageDeserializer<object> newtonsoftJsonMessageDeserializer = deserializer.As<NewtonsoftJsonMessageDeserializer<object>>();
+        newtonsoftJsonMessageDeserializer.Settings.ShouldNotBeNull();
+        newtonsoftJsonMessageDeserializer.Settings.MaxDepth.Should().Be(42);
     }
 
     [Fact]

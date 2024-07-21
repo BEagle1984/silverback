@@ -420,7 +420,7 @@ public class KafkaConsumerConfigurationFixture
             act.Should().ThrowExactly<BrokerConfigurationException>()
                 .WithMessage(
                     value < 1
-                        ? "The maximum degree of parallelism must be greater or equal to 1."
+                        ? "MaxDegreeOfParallelism must be greater or equal to 1."
                         : "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't processed independently.");
         }
     }

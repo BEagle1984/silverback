@@ -47,11 +47,14 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerEndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}" /> class.
     /// </summary>
+    /// <param name="serviceProvider">
+    ///   The <see cref="IServiceProvider" />.
+    /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    protected ConsumerEndpointConfigurationBuilder(string? friendlyName)
-        : base(friendlyName)
+    protected ConsumerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName)
+        : base(serviceProvider, friendlyName)
     {
         // Initialize default serializer according to TMessage type parameter
         if (typeof(IBinaryMessage).IsAssignableFrom(typeof(TMessage)))

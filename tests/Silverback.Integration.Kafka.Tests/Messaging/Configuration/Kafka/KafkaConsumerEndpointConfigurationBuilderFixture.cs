@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Xunit;
@@ -18,7 +19,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -28,7 +29,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromSingleTopicName()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom("topic");
 
@@ -43,7 +44,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromMultipleTopicNames()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom("topic1", "topic2");
 
@@ -59,7 +60,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromSingleTopicNameAndSinglePartition()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom("topic", 1);
 
@@ -74,7 +75,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromSingleTopicNameAndMultiplePartitions()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom("topic", 1, 2, 3);
 
@@ -91,7 +92,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromMultipleTopicPartitions()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom(
             new TopicPartition("topic1", 0),
@@ -113,7 +114,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromMultipleTopicPartitionOffsets()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom(
             new TopicPartitionOffset("topic1", 0, Offset.Beginning),
@@ -135,7 +136,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromSingleTopicAndPartitionsProvider()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom("topic1", partitions => partitions);
 
@@ -152,7 +153,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromMultipleTopicsAndPartitionsProvider()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder.ConsumeFrom(["topic1", "topic2"], partitions => partitions);
 
@@ -170,7 +171,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromSingleTopicAndPartitionOffsetsProvider()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder
             .ConsumeFrom(
@@ -192,7 +193,7 @@ public class KafkaConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ConsumeFrom_ShouldSetTopicPartitionsFromMultipleTopicsAndPartitionOffsetsProvider()
     {
-        KafkaConsumerEndpointConfigurationBuilder<object> builder = new();
+        KafkaConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         builder
             .ConsumeFrom(

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using MQTTnet.Protocol;
 using Silverback.Collections;
 using Silverback.Util;
@@ -23,11 +24,14 @@ public class MqttConsumerEndpointConfigurationBuilder<TMessage>
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttConsumerEndpointConfigurationBuilder{TMessage}" /> class.
     /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    public MqttConsumerEndpointConfigurationBuilder(string? friendlyName = null)
-        : base(friendlyName)
+    public MqttConsumerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName = null)
+        : base(serviceProvider, friendlyName)
     {
     }
 

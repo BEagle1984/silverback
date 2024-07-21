@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Encryption;
 using Silverback.Tests.Types;
 using Xunit;
@@ -13,7 +15,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyAndIVAreSpecified()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         byte[] key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();
@@ -28,7 +30,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DecryptUsingAes_ShouldSetEncryptionSettings_WhenKeyProviderIsSpecified()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         byte[] key = BytesUtil.GetRandomBytes();
         byte[] iv = BytesUtil.GetRandomBytes();

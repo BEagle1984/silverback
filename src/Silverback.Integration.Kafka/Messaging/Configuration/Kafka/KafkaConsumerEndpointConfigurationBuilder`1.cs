@@ -27,11 +27,14 @@ public class KafkaConsumerEndpointConfigurationBuilder<TMessage>
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaConsumerEndpointConfigurationBuilder{TMessage}" /> class.
     /// </summary>
+    /// <param name="serviceProvider">
+    ///   The <see cref="IServiceProvider" />.
+    /// </param>
     /// <param name="friendlyName">
     ///     An optional friendly to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
     /// </param>
-    public KafkaConsumerEndpointConfigurationBuilder(string? friendlyName = null)
-        : base(friendlyName)
+    public KafkaConsumerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName = null)
+        : base(serviceProvider, friendlyName)
     {
     }
 

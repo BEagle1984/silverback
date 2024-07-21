@@ -67,10 +67,7 @@ public class JsonMessageDeserializerFixture
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = [];
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -110,10 +107,7 @@ public class JsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        JsonMessageDeserializer<IEvent> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        JsonMessageDeserializer<IEvent> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -134,10 +128,7 @@ public class JsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        JsonMessageDeserializer<TestEventTwo> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        JsonMessageDeserializer<TestEventTwo> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -156,10 +147,7 @@ public class JsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventTwo).AssemblyQualifiedName }
         };
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Ignore
-        };
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -178,10 +166,7 @@ public class JsonMessageDeserializerFixture
             { "x-message-type", "What.The.Header" }
         };
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Ignore
-        };
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -197,10 +182,7 @@ public class JsonMessageDeserializerFixture
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = [];
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Mandatory
-        };
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Mandatory);
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
@@ -218,10 +200,7 @@ public class JsonMessageDeserializerFixture
             { "x-message-type", "What.The.Header" }
         };
 
-        JsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        JsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
@@ -267,23 +246,19 @@ public class JsonMessageDeserializerFixture
     [Fact]
     public void Equals_ShouldReturnTrue_WhenSameSettings()
     {
-        JsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
-        JsonMessageDeserializer<TestEventOne> deserializer2 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 
@@ -305,23 +280,19 @@ public class JsonMessageDeserializerFixture
     [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
     public void Equals_ShouldReturnFalse_WhenDifferentType()
     {
-        JsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
-        JsonMessageDeserializer<TestEventTwo> deserializer2 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventTwo> deserializer2 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 
@@ -331,22 +302,18 @@ public class JsonMessageDeserializerFixture
     [Fact]
     public void Equals_ShouldReturnFalse_WhenDifferentSettings()
     {
-        JsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 DefaultBufferSize = 42
-            }
-        };
+            });
 
-        JsonMessageDeserializer<TestEventOne> deserializer2 = new()
-        {
-            Options = new JsonSerializerOptions
+        JsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerOptions
             {
                 AllowTrailingCommas = false
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 

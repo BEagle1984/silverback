@@ -44,7 +44,9 @@ public class NewtonsoftJsonMessageSerializerBuilderFixture
                 })
             .Build();
 
-        serializer.As<NewtonsoftJsonMessageSerializer>().Settings.MaxDepth.Should().Be(42);
+        NewtonsoftJsonMessageSerializer newtonsoftJsonMessageSerializer = serializer.As<NewtonsoftJsonMessageSerializer>();
+        newtonsoftJsonMessageSerializer.Settings.ShouldNotBeNull();
+        newtonsoftJsonMessageSerializer.Settings.MaxDepth.Should().Be(42);
     }
 
     [Fact]

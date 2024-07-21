@@ -19,7 +19,7 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -29,10 +29,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicName()
     {
-        MqttProducerEndpointConfiguration endpointConfiguration = new MqttProducerEndpointConfigurationBuilder<TestEventOne>()
-            .ProduceTo("some-topic")
-            .Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic");
+
+        MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttStaticProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().Be("some-topic");
         MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
@@ -45,10 +46,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameFunction()
     {
-        MqttProducerEndpointConfiguration endpointConfiguration = new MqttProducerEndpointConfigurationBuilder<TestEventOne>()
-            .ProduceTo(_ => "some-topic")
-            .Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo(_ => "some-topic");
+
+        MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-");
         MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
@@ -61,10 +63,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceTo_ShouldSetEndpointFromTopicNameFormat()
     {
-        MqttProducerEndpointConfiguration endpointConfiguration = new MqttProducerEndpointConfigurationBuilder<TestEventOne>()
-            .ProduceTo("some-topic/{0}", _ => ["123"])
-            .Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic/{0}", _ => ["123"]);
+
+        MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().Be("some-topic/{0}");
         MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
@@ -77,9 +80,11 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void UseEndpointResolver_ShouldSetEndpoint()
     {
-        MqttProducerEndpointConfiguration endpointConfiguration = new MqttProducerEndpointConfigurationBuilder<TestEventOne>()
-            .UseEndpointResolver<TestEndpointResolver>()
-            .Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        builder.UseEndpointResolver<TestEndpointResolver>();
+
+        MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
         endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
@@ -88,60 +93,55 @@ public class MqttProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void WithQualityOfServiceLevel_ShouldSetQualityOfServiceLevel()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
-        builder
-            .ProduceTo("some-topic")
-            .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
-        MqttProducerEndpointConfiguration configuration = builder.Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic").WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
     public void WithAtMostOnceQoS_ShouldSetQualityOfServiceLevel()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
-        builder
-            .ProduceTo("some-topic")
-            .WithAtMostOnceQoS();
-        MqttProducerEndpointConfiguration configuration = builder.Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic").WithAtMostOnceQoS();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtMostOnce);
     }
 
     [Fact]
     public void WithAtLeastOnceQoS_ShouldSetQualityOfServiceLevel()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
-        builder
-            .ProduceTo("some-topic")
-            .WithAtLeastOnceQoS();
-        MqttProducerEndpointConfiguration configuration = builder.Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic").WithAtLeastOnceQoS();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.AtLeastOnce);
     }
 
     [Fact]
     public void Retain_ShouldSetRetain()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
-        builder
-            .ProduceTo("some-topic")
-            .Retain();
-        MqttProducerEndpointConfiguration configuration = builder.Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic").Retain();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.Retain.Should().BeTrue();
     }
 
     [Fact]
     public void WithMessageExpiration_ShouldSetMessageExpiryInterval()
     {
-        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new();
-        builder
-            .ProduceTo("some-topic")
-            .WithMessageExpiration(TimeSpan.FromMinutes(42));
-        MqttProducerEndpointConfiguration configuration = builder.Build();
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
 
+        builder.ProduceTo("some-topic").WithMessageExpiration(TimeSpan.FromMinutes(42));
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
         configuration.MessageExpiryInterval.Should().Be(42 * 60);
     }
 

@@ -52,7 +52,7 @@ internal class KafkaProducersInitializer : BrokerClientsInitializer
     {
         foreach (MergedAction<KafkaProducerConfigurationBuilder>? mergedAction in _configurationActions.ProducerConfigurationActions)
         {
-            KafkaProducerConfigurationBuilder builder = new();
+            KafkaProducerConfigurationBuilder builder = new(ServiceProvider);
             mergedAction.Action.Invoke(builder);
             KafkaProducerConfiguration configuration = builder.Build();
 

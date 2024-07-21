@@ -21,8 +21,6 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </summary>
 public partial class MqttClientConfigurationBuilder
 {
-    private readonly IServiceProvider? _serviceProvider;
-
     private readonly List<MqttUserProperty> _userProperties = [];
 
     private readonly Dictionary<string, MqttProducerEndpointConfiguration> _producerEndpoints = [];
@@ -45,13 +43,18 @@ public partial class MqttClientConfigurationBuilder
     ///     Initializes a new instance of the <see cref="MqttClientConfigurationBuilder" /> class.
     /// </summary>
     /// <param name="serviceProvider">
-    ///     The <see cref="IServiceProvider" /> to be used to resolve the required types (e.g. the
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the required services (e.g. the
     ///     <see cref="IMqttExtendedAuthenticationExchangeHandler" />).
     /// </param>
-    public MqttClientConfigurationBuilder(IServiceProvider? serviceProvider = null)
+    public MqttClientConfigurationBuilder(IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
+        ServiceProvider = serviceProvider;
     }
+
+    /// <summary>
+    ///     Gets the <see cref="IServiceProvider" /> instance to be used to resolve the required services.
+    /// </summary>
+    public IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     ///     Adds a producer endpoint, which is a topic and its related configuration (serializer, etc.).
@@ -121,16 +124,11 @@ public partial class MqttClientConfigurationBuilder
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        MqttProducerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        MqttProducerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
         configurationBuilderAction.Invoke(builder);
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}";
-
-        if (_producerEndpoints.ContainsKey(name))
-            return this;
-
-        _producerEndpoints[name] = endpointConfiguration;
+        _producerEndpoints.TryAdd(name ?? $"{endpointConfiguration.RawName}|{typeof(TMessage).FullName}", endpointConfiguration);
 
         return this;
     }
@@ -205,16 +203,11 @@ public partial class MqttClientConfigurationBuilder
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        MqttConsumerEndpointConfigurationBuilder<TMessage> builder = new(name);
+        MqttConsumerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
         configurationBuilderAction.Invoke(builder);
         MqttConsumerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        name ??= endpointConfiguration.RawName;
-
-        if (_consumerEndpoints.ContainsKey(name))
-            return this;
-
-        _consumerEndpoints[name] = endpointConfiguration;
+        _consumerEndpoints.TryAdd(name ?? endpointConfiguration.RawName, endpointConfiguration);
 
         return this;
     }
@@ -683,10 +676,10 @@ public partial class MqttClientConfigurationBuilder
     /// </returns>
     public MqttClientConfigurationBuilder UseExtendedAuthenticationExchangeHandler(Type handlerType)
     {
-        if (_serviceProvider == null)
+        if (ServiceProvider == null)
             throw new InvalidOperationException("The service provider is not set.");
 
-        UseExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)_serviceProvider.GetRequiredService(handlerType));
+        UseExtendedAuthenticationExchangeHandler((IMqttExtendedAuthenticationExchangeHandler)ServiceProvider.GetRequiredService(handlerType));
         return this;
     }
 
@@ -974,7 +967,7 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///  Allow packet fragmentation. This is the default, use <see cref="DisablePacketFragmentation" /> to turn it off.
+    ///     Allow packet fragmentation. This is the default, use <see cref="DisablePacketFragmentation" /> to turn it off.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
@@ -1010,7 +1003,7 @@ public partial class MqttClientConfigurationBuilder
     }
 
     /// <summary>
-    ///   Disables the exception throwing when the server replies with a non success ACK packet.
+    ///     Disables the exception throwing when the server replies with a non success ACK packet.
     /// </summary>
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.

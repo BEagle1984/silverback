@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration;
 /// </summary>
 public sealed class JsonMessageDeserializerBuilder
 {
-    private IJsonMessageDeserializer? _deserializer;
+    private Type _messageType = typeof(object);
 
     private JsonSerializerOptions? _options;
 
@@ -31,7 +31,7 @@ public sealed class JsonMessageDeserializerBuilder
     /// </returns>
     public JsonMessageDeserializerBuilder UseModel<TMessage>()
     {
-        _deserializer = new JsonMessageDeserializer<TMessage>();
+        _messageType = typeof(TMessage);
         return this;
     }
 
@@ -47,8 +47,7 @@ public sealed class JsonMessageDeserializerBuilder
     /// </returns>
     public JsonMessageDeserializerBuilder UseModel(Type messageType)
     {
-        Type deserializerType = typeof(JsonMessageDeserializer<>).MakeGenericType(messageType);
-        _deserializer = (IJsonMessageDeserializer)Activator.CreateInstance(deserializerType)!;
+        _messageType = Check.NotNull(messageType, nameof(messageType));
         return this;
     }
 
@@ -65,9 +64,8 @@ public sealed class JsonMessageDeserializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        JsonSerializerOptions options = new();
-        configureAction.Invoke(options);
-        _options = options;
+        _options = new JsonSerializerOptions();
+        configureAction.Invoke(_options);
 
         return this;
     }
@@ -114,16 +112,10 @@ public sealed class JsonMessageDeserializerBuilder
     /// <returns>
     ///     The <see cref="IMessageDeserializer" />.
     /// </returns>
-    public IMessageDeserializer Build()
-    {
-        _deserializer ??= new JsonMessageDeserializer<object>();
-
-        if (_options != null)
-            _deserializer.Options = _options;
-
-        if (_typeHeaderBehavior.HasValue)
-            _deserializer.TypeHeaderBehavior = _typeHeaderBehavior.Value;
-
-        return _deserializer;
-    }
+    public IMessageDeserializer Build() =>
+        (IMessageDeserializer?)Activator.CreateInstance(
+            typeof(JsonMessageDeserializer<>).MakeGenericType(_messageType),
+            _options,
+            _typeHeaderBehavior)
+        ?? throw new InvalidOperationException("Failed to create the JsonMessageDeserializer instance.");
 }

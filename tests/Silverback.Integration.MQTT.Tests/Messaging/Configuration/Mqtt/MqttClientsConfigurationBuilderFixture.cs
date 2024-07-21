@@ -117,7 +117,7 @@ public class MqttClientsConfigurationBuilderFixture
 
         builder.SendLastWillMessage<TestEventOne>(
             lastWill => lastWill
-                .Message(
+                .SendMessage(
                     new TestEventOne
                     {
                         Content = "I died!"
@@ -796,10 +796,12 @@ public class MqttClientsConfigurationBuilderFixture
     }
 
     private static MqttClientConfigurationBuilder GetClientConfigurationBuilderWithValidConfigurationAndEndpoint(IServiceProvider? serviceProvider = null) =>
-        GetClientConfigurationBuilderWithValidConfiguration(serviceProvider).Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
+        GetClientConfigurationBuilderWithValidConfiguration(serviceProvider)
+            .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 
     private static MqttClientConfigurationBuilder GetClientConfigurationBuilderWithValidConfiguration(IServiceProvider? serviceProvider = null) =>
-        new MqttClientConfigurationBuilder(serviceProvider).ConnectViaTcp("test");
+        new MqttClientConfigurationBuilder(serviceProvider ?? Substitute.For<IServiceProvider>())
+            .ConnectViaTcp("test");
 
     private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
     {

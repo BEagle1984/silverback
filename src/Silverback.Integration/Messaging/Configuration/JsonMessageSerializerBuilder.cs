@@ -31,9 +31,8 @@ public sealed class JsonMessageSerializerBuilder
     {
         Check.NotNull(configureAction, nameof(configureAction));
 
-        JsonSerializerOptions options = new();
-        configureAction.Invoke(options);
-        _options = options;
+        _options = new JsonSerializerOptions();
+        configureAction.Invoke(_options);
 
         return this;
     }
@@ -70,16 +69,5 @@ public sealed class JsonMessageSerializerBuilder
     /// <returns>
     ///     The <see cref="IMessageSerializer" />.
     /// </returns>
-    public IMessageSerializer Build()
-    {
-        JsonMessageSerializer serializer = new();
-
-        if (_options != null)
-            serializer.Options = _options;
-
-        if (_mustSetTypeHeader.HasValue)
-            serializer.MustSetTypeHeader = _mustSetTypeHeader.Value;
-
-        return serializer;
-    }
+    public IMessageSerializer Build() => new JsonMessageSerializer(_options, _mustSetTypeHeader);
 }

@@ -16,18 +16,39 @@ namespace Silverback.Messaging.Serialization;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be deserialized.
 /// </typeparam>
-public sealed class JsonMessageDeserializer<TMessage> : IJsonMessageDeserializer, IEquatable<JsonMessageDeserializer<TMessage>>
+public sealed class JsonMessageDeserializer<TMessage> : IMessageDeserializer, IEquatable<JsonMessageDeserializer<TMessage>>
 {
     private readonly Type _type = typeof(TMessage);
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="JsonMessageDeserializer{TMessage}" /> class.
+    /// </summary>
+    /// <param name="options">
+    ///     The <see cref="JsonSerializer" /> options.
+    /// </param>
+    /// <param name="typeHeaderBehavior">
+    ///     The behavior to adopt when deserializing according to the message type header.
+    /// </param>
+    public JsonMessageDeserializer(
+        JsonSerializerOptions? options = null,
+        JsonMessageDeserializerTypeHeaderBehavior? typeHeaderBehavior = null)
+    {
+        Options = options;
+        TypeHeaderBehavior = typeHeaderBehavior ?? JsonMessageDeserializerTypeHeaderBehavior.Optional;
+    }
 
     /// <inheritdoc cref="IMessageDeserializer.RequireHeaders" />
     public bool RequireHeaders { get; } = typeof(TMessage) == typeof(object) || typeof(TMessage).IsInterface;
 
-    /// <inheritdoc cref="IJsonMessageDeserializer.Options" />
-    public JsonSerializerOptions? Options { get; set; } = new();
+    /// <summary>
+    ///     Gets the <see cref="JsonSerializer" /> options.
+    /// </summary>
+    public JsonSerializerOptions? Options { get; }
 
-    /// <inheritdoc cref="IJsonMessageDeserializer.TypeHeaderBehavior" />
-    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; set; }
+    /// <summary>
+    ///     Gets the behavior to adopt when deserializing according to the message type header.
+    /// </summary>
+    public JsonMessageDeserializerTypeHeaderBehavior TypeHeaderBehavior { get; }
 
     /// <inheritdoc cref="IMessageDeserializer.DeserializeAsync" />
     public async ValueTask<DeserializedMessage> DeserializeAsync(
@@ -53,7 +74,7 @@ public sealed class JsonMessageDeserializer<TMessage> : IJsonMessageDeserializer
     }
 
     /// <inheritdoc cref="IMessageDeserializer.GetCompatibleSerializer" />
-    public IMessageSerializer GetCompatibleSerializer() => new JsonMessageSerializer { Options = Options };
+    public IMessageSerializer GetCompatibleSerializer() => new JsonMessageSerializer(Options);
 
     /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
     public bool Equals(JsonMessageDeserializer<TMessage>? other) => ComparisonHelper.JsonEquals(this, other);

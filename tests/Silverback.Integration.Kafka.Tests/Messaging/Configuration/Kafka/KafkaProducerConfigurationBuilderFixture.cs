@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Producing.EndpointResolvers;
 using Silverback.Messaging.Serialization;
@@ -18,7 +19,7 @@ public class KafkaProducerConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        KafkaProducerConfigurationBuilder builder = new();
+        KafkaProducerConfigurationBuilder builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Build();
 
@@ -342,5 +343,6 @@ public class KafkaProducerConfigurationBuilderFixture
         GetBuilderWithValidConfiguration().Produce<TestEventOne>(endpoint => endpoint.ProduceTo("topic"));
 
     private static KafkaProducerConfigurationBuilder GetBuilderWithValidConfiguration() =>
-        new KafkaProducerConfigurationBuilder().WithBootstrapServers("PLAINTEXT://test");
+        new KafkaProducerConfigurationBuilder(Substitute.For<IServiceProvider>())
+            .WithBootstrapServers("PLAINTEXT://test");
 }

@@ -23,7 +23,7 @@ public partial class KafkaTestingHelper
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         KafkaProducersInitializer producersInitializer = scope.ServiceProvider.GetService<KafkaProducersInitializer>() ??
                                                          throw new InvalidOperationException("The KafkaProducersInitializer is not initialized.");
-        KafkaProducerConfigurationBuilder builder = new();
+        KafkaProducerConfigurationBuilder builder = new(_serviceProvider);
         configurationBuilderAction.Invoke(builder);
         KafkaProducerConfiguration producerConfiguration = builder.Build();
 

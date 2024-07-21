@@ -261,6 +261,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public void Close() => _consumerGroup.Remove(this);
 
+    public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
+
     public void Dispose()
     {
         Close();

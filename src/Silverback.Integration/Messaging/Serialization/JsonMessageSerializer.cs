@@ -12,15 +12,36 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes the messages in JSON format.
+///     Serializes the messages as JSON.
 /// </summary>
-public sealed class JsonMessageSerializer : IJsonMessageSerializer, IEquatable<JsonMessageSerializer>
+public sealed class JsonMessageSerializer : IMessageSerializer, IEquatable<JsonMessageSerializer>
 {
-    /// <inheritdoc cref="IJsonMessageSerializer.Options" />
-    public JsonSerializerOptions? Options { get; set; }
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="JsonMessageSerializer" /> class.
+    /// </summary>
+    /// <param name="options">
+    ///     The <see cref="JsonSerializer" /> options.
+    /// </param>
+    /// <param name="mustSetTypeHeader">
+    ///     A value indicating whether the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must be set.
+    /// </param>
+    public JsonMessageSerializer(JsonSerializerOptions? options = null, bool? mustSetTypeHeader = null)
+    {
+        Options = options;
+        MustSetTypeHeader = mustSetTypeHeader ?? true;
+    }
 
-    /// <inheritdoc cref="IJsonMessageSerializer.MustSetTypeHeader" />
-    public bool MustSetTypeHeader { get; set; } = true;
+    /// <summary>
+    ///     Gets the <see cref="JsonSerializer" /> options.
+    /// </summary>
+    public JsonSerializerOptions? Options { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must be set.
+    ///     This is necessary when sending multiple message type through the same endpoint, to allow Silverback to automatically figure out
+    ///     the correct type to deserialize into.
+    /// </summary>
+    public bool MustSetTypeHeader { get; }
 
     /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
     [SuppressMessage("", "CA2000", Justification = "MemoryStream is returned")]

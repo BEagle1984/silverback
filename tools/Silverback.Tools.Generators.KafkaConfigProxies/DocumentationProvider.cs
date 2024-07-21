@@ -5,12 +5,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
 using Confluent.Kafka;
+using Confluent.SchemaRegistry;
 
 namespace Silverback.Tools.Generators.KafkaConfigProxies;
 
 [SuppressMessage("ReSharper", "CognitiveComplexity", Justification = "Don't care")]
 [SuppressMessage("Maintainability", "CA1502: Avoid excessive complexity", Justification = "Don't care")]
-internal static class DocumentationProvider
+public static class DocumentationProvider
 {
     public static void AppendSummary(this StringBuilder builder, PropertyInfo property)
     {
@@ -29,6 +30,9 @@ internal static class DocumentationProvider
                 break;
             case nameof(ProducerConfig):
                 AppendSummaryForProducerConfig(builder, property);
+                break;
+            case nameof(SchemaRegistryConfig):
+                AppendSummaryForSchemaRegistryConfig(builder, property);
                 break;
         }
 
@@ -504,6 +508,44 @@ internal static class DocumentationProvider
                 builder.AppendLine("    ///     of <see cref=\"LingerMs\" />. To disable sticky behavior, set it to 0. This behavior affects messages with the key <c>null</c> in all");
                 builder.AppendLine("    ///     cases, and messages with key lengths of zero when the <see cref=\"Confluent.Kafka.Partitioner.ConsistentRandom\" /> partitioner is in");
                 builder.AppendLine("    ///     use. These messages would otherwise be assigned randomly. A higher value allows for more effective batching of these messages.");
+                break;
+        }
+    }
+
+    private static void AppendSummaryForSchemaRegistryConfig(StringBuilder builder, PropertyInfo property)
+    {
+        switch (property.Name)
+        {
+            case nameof(SchemaRegistryConfig.BasicAuthCredentialsSource):
+                builder.AppendLine("    ///     Gets the source of the basic authentication credentials. This specifies whether the credentials are specified in the <see cref=\"BasicAuthUserInfo\" />");
+                builder.AppendLine("    ///     or they are inherited from the producer or consumer configuration.");
+                break;
+            case nameof(SchemaRegistryConfig.Url):
+                builder.AppendLine("    ///     Gets the comma-separated list of URLs for schema registry instances that are used to register or lookup schemas.");
+                break;
+            case nameof(SchemaRegistryConfig.RequestTimeoutMs):
+                builder.AppendLine("    ///     Gets the timeout in milliseconds for the requests to the Confluent schema registry.");
+                break;
+            case nameof(SchemaRegistryConfig.SslCaLocation):
+                builder.AppendLine("    ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.");
+                builder.AppendLine("    ///     On Mac OSX this configuration defaults to <c>probe</c>. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package.");
+                builder.AppendLine("    ///     If OpenSSL is statically linked or <see cref=\"SslCaLocation\" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.");
+                builder.AppendLine("    ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).");
+                break;
+            case nameof(SchemaRegistryConfig.SslKeystoreLocation):
+                builder.AppendLine("    ///     Gets the path to the client's keystore (PKCS#12) used for the authentication.");
+                break;
+            case nameof(SchemaRegistryConfig.SslKeystorePassword):
+                builder.AppendLine("    ///     Gets the client's keystore (PKCS#12) password.");
+                break;
+            case nameof(SchemaRegistryConfig.EnableSslCertificateVerification):
+                builder.AppendLine("    ///     Gets a value indicating whether the registry (server) certificate must be verified.");
+                break;
+            case nameof(SchemaRegistryConfig.MaxCachedSchemas):
+                builder.AppendLine("    ///     Gets the maximum number of schemas that are cached by the schema registry client.");
+                break;
+            case nameof(SchemaRegistryConfig.BasicAuthUserInfo):
+                builder.AppendLine("    ///     Gets the basic authentication credentials in the form {username}:{password}.");
                 break;
         }
     }

@@ -50,10 +50,7 @@ public class NewtonsoftJsonMessageSerializerFixture
         TestEventOne message = new() { Content = "the message" };
         MessageHeaderCollection headers = [];
 
-        NewtonsoftJsonMessageSerializer serializer = new()
-        {
-            MustSetTypeHeader = false
-        };
+        NewtonsoftJsonMessageSerializer serializer = new(mustSetTypeHeader: false);
 
         await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
 
@@ -115,23 +112,19 @@ public class NewtonsoftJsonMessageSerializerFixture
     [Fact]
     public void Equals_SameSettings_TrueReturned()
     {
-        NewtonsoftJsonMessageSerializer serializer1 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageSerializer serializer1 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
-        NewtonsoftJsonMessageSerializer serializer2 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageSerializer serializer2 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
         bool result = Equals(serializer1, serializer2);
 
@@ -152,22 +145,18 @@ public class NewtonsoftJsonMessageSerializerFixture
     [Fact]
     public void Equals_DifferentSettings_FalseReturned()
     {
-        NewtonsoftJsonMessageSerializer serializer1 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageSerializer serializer1 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
-        NewtonsoftJsonMessageSerializer serializer2 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageSerializer serializer2 = new(
+            new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Include
-            }
-        };
+            });
 
         bool result = Equals(serializer1, serializer2);
 

@@ -63,10 +63,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = [];
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -105,10 +102,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        NewtonsoftJsonMessageDeserializer<IEvent> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        NewtonsoftJsonMessageDeserializer<IEvent> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -129,10 +123,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
         };
 
-        NewtonsoftJsonMessageDeserializer<TestEventTwo> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventTwo> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -151,10 +142,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             { "x-message-type", typeof(TestEventTwo).AssemblyQualifiedName }
         };
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Ignore
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -173,10 +161,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             { "x-message-type", "What.The.Header" }
         };
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Ignore
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Ignore);
 
         (object? deserializedObject, Type type) = await deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
@@ -192,10 +177,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
         MemoryStream rawMessage = new("{\"Content\":\"the message\"}"u8.ToArray());
         MessageHeaderCollection headers = [];
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = JsonMessageDeserializerTypeHeaderBehavior.Mandatory
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: JsonMessageDeserializerTypeHeaderBehavior.Mandatory);
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
@@ -213,10 +195,7 @@ public class NewtonsoftJsonMessageDeserializerFixture
             { "x-message-type", "What.The.Header" }
         };
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new()
-        {
-            TypeHeaderBehavior = typeHeaderBehavior
-        };
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer = new(typeHeaderBehavior: typeHeaderBehavior);
 
         Func<Task> act = () => deserializer.DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault()).AsTask();
 
@@ -289,23 +268,19 @@ public class NewtonsoftJsonMessageDeserializerFixture
     [Fact]
     public void Equals_ShouldReturnTrue_WhenSameSettings()
     {
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 
@@ -327,23 +302,19 @@ public class NewtonsoftJsonMessageDeserializerFixture
     [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "Test code")]
     public void Equals_ShouldReturnFalse_WhenDifferentType()
     {
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
-        NewtonsoftJsonMessageDeserializer<TestEventTwo> deserializer2 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventTwo> deserializer2 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 
@@ -353,22 +324,18 @@ public class NewtonsoftJsonMessageDeserializerFixture
     [Fact]
     public void Equals_ShouldReturnFalse_WhenDifferentSettings()
     {
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer1 = new(
+            new JsonSerializerSettings
             {
                 MaxDepth = 42,
                 NullValueHandling = NullValueHandling.Ignore
-            }
-        };
+            });
 
-        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new()
-        {
-            Settings = new JsonSerializerSettings
+        NewtonsoftJsonMessageDeserializer<TestEventOne> deserializer2 = new(
+            new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Include
-            }
-        };
+            });
 
         bool result = Equals(deserializer1, deserializer2);
 

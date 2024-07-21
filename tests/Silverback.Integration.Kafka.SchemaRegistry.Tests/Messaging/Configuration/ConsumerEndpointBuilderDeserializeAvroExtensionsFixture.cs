@@ -3,6 +3,8 @@
 
 using System;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
@@ -13,22 +15,31 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
 
 public class ConsumerEndpointBuilderDeserializeAvroExtensionsFixture
 {
+    private readonly IServiceProvider _serviceProvider = Substitute.For<IServiceProvider>();
+
+    public ConsumerEndpointBuilderDeserializeAvroExtensionsFixture()
+    {
+        _serviceProvider.GetService(typeof(ISchemaRegistryClientFactory)).Returns(Substitute.For<ISchemaRegistryClientFactory>());
+    }
+
     [Fact]
     public void DeserializeAvro_ShouldThrow_WhenTypeNotSpecified()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
-        Action act = () => builder.DeserializeAvro();
+        Action act = () => builder.DeserializeAvro(deserializer => deserializer.ConnectToSchemaRegistry("test-url"));
 
-        act.Should().Throw<InvalidOperationException>();
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("The message type was not specified. Please call UseModel.");
     }
 
     [Fact]
     public void DeserializeAvro_ShouldSetDeserializer()
     {
-        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new();
+        TestConsumerEndpointConfigurationBuilder<TestEventOne> builder = new(_serviceProvider);
 
-        TestConsumerEndpointConfiguration endpointConfiguration = builder.DeserializeAvro().Build();
+        TestConsumerEndpointConfiguration endpointConfiguration = builder
+            .DeserializeAvro(deserializer => deserializer.ConnectToSchemaRegistry("test-url"))
+            .Build();
 
         endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
     }
@@ -36,10 +47,13 @@ public class ConsumerEndpointBuilderDeserializeAvroExtensionsFixture
     [Fact]
     public void DeserializeAvro_ShouldSetDeserializer_WhenUseModelWithGenericArgumentIsCalled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(deserializer => deserializer.UseModel<TestEventOne>())
+            .DeserializeAvro(
+                deserializer => deserializer
+                    .ConnectToSchemaRegistry("test-url")
+                    .UseModel<TestEventOne>())
             .Build();
 
         endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
@@ -48,10 +62,13 @@ public class ConsumerEndpointBuilderDeserializeAvroExtensionsFixture
     [Fact]
     public void DeserializeAvro_ShouldSetDeserializer_WhenUseModelIsCalled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(_serviceProvider);
 
         TestConsumerEndpointConfiguration endpointConfiguration = builder
-            .DeserializeAvro(deserializer => deserializer.UseModel(typeof(TestEventOne)))
+            .DeserializeAvro(
+                deserializer => deserializer
+                    .ConnectToSchemaRegistry("test-url")
+                    .UseModel(typeof(TestEventOne)))
             .Build();
 
         endpointConfiguration.Deserializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();

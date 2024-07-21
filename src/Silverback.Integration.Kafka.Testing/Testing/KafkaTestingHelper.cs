@@ -10,12 +10,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Kafka.Mocks;
+using Silverback.Util;
 
 namespace Silverback.Testing;
 
 /// <inheritdoc cref="IKafkaTestingHelper" />
 public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly IInMemoryTopicCollection? _topics;
 
     private readonly IMockedConsumerGroupsCollection? _groups;
@@ -34,6 +37,7 @@ public partial class KafkaTestingHelper : TestingHelper, IKafkaTestingHelper
     public KafkaTestingHelper(IServiceProvider serviceProvider, ILogger<KafkaTestingHelper> logger)
         : base(serviceProvider, logger)
     {
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
         _groups = serviceProvider.GetService<IMockedConsumerGroupsCollection>();
         _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();

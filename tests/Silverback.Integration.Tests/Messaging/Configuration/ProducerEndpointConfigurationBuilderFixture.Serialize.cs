@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -15,7 +17,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetJsonMessageSerializerByDefault()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestProducerEndpointConfiguration endpoint = builder.Build();
 
@@ -26,7 +28,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetBinaryMessageSerializerByDefault_WhenMessageTypeIsBinaryMessage()
     {
-        TestProducerEndpointConfigurationBuilder<BinaryMessage> builder = new();
+        TestProducerEndpointConfigurationBuilder<BinaryMessage> builder = new(Substitute.For<IServiceProvider>());
 
         TestProducerEndpointConfiguration endpoint = builder.Build();
 
@@ -37,7 +39,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void SerializeAsJson_ShouldSetSerializer()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestProducerEndpointConfiguration endpoint = builder.SerializeAsJson().Build();
 
@@ -48,7 +50,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void SerializeAsJson_ShouldSetSerializerAndOptions()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestProducerEndpointConfiguration endpoint = builder.SerializeAsJson(
             serializer => serializer.Configure(
@@ -64,7 +66,7 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     [Fact]
     public void ProduceBinaryMessages_ShouldSetSerializer()
     {
-        TestProducerEndpointConfigurationBuilder<object> builder = new();
+        TestProducerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestProducerEndpointConfiguration endpoint = builder.ProduceBinaryMessages().Build();
 

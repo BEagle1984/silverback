@@ -3,6 +3,7 @@
 
 using System;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging.BinaryMessages;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Consuming.ErrorHandling;
@@ -19,7 +20,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenConfigurationIsNotValid()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.Decrypt(new SymmetricDecryptionSettings()).Build();
 
@@ -29,7 +30,9 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Constructor_ShouldSetDisplayName()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new("display-name");
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(
+            Substitute.For<IServiceProvider>(),
+            "display-name");
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -39,7 +42,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DeserializeUsing_ShouldSetSerializer()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
         BinaryMessageDeserializer<BinaryMessage> deserializer = new();
 
         TestConsumerEndpointConfiguration endpoint = builder.DeserializeUsing(deserializer).Build();
@@ -50,7 +53,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Decrypt_ShouldSetEncryptionSettings()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
         SymmetricDecryptionSettings encryptionSettings = new()
         {
             AlgorithmName = "TripleDES",
@@ -65,7 +68,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void OnError_ShouldSetErrorPolicy()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
         RetryErrorPolicy errorPolicy = new();
 
         TestConsumerEndpointConfiguration endpoint = builder.OnError(errorPolicy).Build();
@@ -76,7 +79,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void OnError_ShouldSetErrorPolicyViaBuilder()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.OnError(errorPolicy => errorPolicy.Retry(5).ThenSkip()).Build();
 
@@ -88,7 +91,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [InlineData(2000)]
     public void EnableBatchProcessing_ShouldSetBatchSettings(int size)
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.EnableBatchProcessing(size, TimeSpan.FromMinutes(42)).Build();
 
@@ -102,7 +105,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [InlineData(-1)]
     public void EnableBatchProcessing_ShouldThrow_WhenBatchSizeIsOutOfRange(int size)
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         Action act = () => builder.EnableBatchProcessing(size).Build();
 
@@ -112,7 +115,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void WithSequenceTimeout_ShouldSetSequenceTimeout()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.WithSequenceTimeout(TimeSpan.FromMinutes(42)).Build();
 
@@ -122,7 +125,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ThrowIfUnhandled_ShouldSetThrowIfUnhandled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.ThrowIfUnhandled().Build();
 
@@ -132,7 +135,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void IgnoreUnhandledMessages_ShouldSetThrowIfUnhandled()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.IgnoreUnhandledMessages().Build();
 
@@ -142,7 +145,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void Build_ShouldSetMessageValidationModeToLogWarningByDefault()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.Build();
 
@@ -152,7 +155,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void DisableMessageValidation_ShouldSetMessageValidationMode()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.DisableMessageValidation().Build();
 
@@ -162,7 +165,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsFalse()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.ValidateMessage(false).Build();
 
@@ -172,7 +175,7 @@ public partial class ConsumerEndpointConfigurationBuilderFixture
     [Fact]
     public void ValidateMessage_ShouldSetMessageValidationMode_WhenThrowExceptionIsTrue()
     {
-        TestConsumerEndpointConfigurationBuilder<object> builder = new();
+        TestConsumerEndpointConfigurationBuilder<object> builder = new(Substitute.For<IServiceProvider>());
 
         TestConsumerEndpointConfiguration endpoint = builder.ValidateMessage(true).Build();
 

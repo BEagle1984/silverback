@@ -3,18 +3,16 @@
 
 using System.Collections.Concurrent;
 using Confluent.SchemaRegistry;
-using Silverback.Util;
+using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 
 namespace Silverback.Messaging.Serialization;
 
-internal static class SchemaRegistryClientFactory
+internal class SchemaRegistryClientFactory : ISchemaRegistryClientFactory
 {
-    private static readonly ConfigurationDictionaryEqualityComparer<string, string>
-        ConfluentConfigEqualityComparer = new();
+    private static readonly ConcurrentDictionary<KafkaSchemaRegistryConfiguration, ISchemaRegistryClient> Clients = new();
 
-    private static readonly ConcurrentDictionary<SchemaRegistryConfig, ISchemaRegistryClient> Clients =
-        new(ConfluentConfigEqualityComparer);
-
-    public static ISchemaRegistryClient GetClient(SchemaRegistryConfig config) =>
-        Clients.GetOrAdd(config, static keySchemaRegistryConfig => new CachedSchemaRegistryClient(keySchemaRegistryConfig));
+    public ISchemaRegistryClient GetClient(KafkaSchemaRegistryConfiguration schemaRegistryConfiguration) =>
+        Clients.GetOrAdd(
+            schemaRegistryConfiguration,
+            static configuration => new CachedSchemaRegistryClient(configuration.GetConfluentSchemaRegistryConfig()));
 }

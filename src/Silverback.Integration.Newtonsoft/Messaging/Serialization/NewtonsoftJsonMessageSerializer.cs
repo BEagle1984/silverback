@@ -13,25 +13,46 @@ using Silverback.Util;
 namespace Silverback.Messaging.Serialization;
 
 /// <summary>
-///     Serializes the messages in JSON format.
+///     Serializes the messages as JSON.
 /// </summary>
-public sealed class NewtonsoftJsonMessageSerializer : INewtonsoftJsonMessageSerializer, IEquatable<NewtonsoftJsonMessageSerializer>
+public sealed class NewtonsoftJsonMessageSerializer : IMessageSerializer, IEquatable<NewtonsoftJsonMessageSerializer>
 {
-    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.Encoding" />
-    [DefaultValue("UTF8")]
-    public MessageEncoding Encoding { get; set; } = MessageEncoding.UTF8;
-
-    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.Settings" />
-    public JsonSerializerSettings Settings { get; set; } = new()
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="NewtonsoftJsonMessageSerializer" /> class.
+    /// </summary>
+    /// <param name="settings">
+    ///     The <see cref="JsonSerializer" /> settings.
+    /// </param>
+    /// <param name="encoding">
+    ///     The message encoding. The default is UTF8.
+    /// </param>
+    /// <param name="mustSetTypeHeader">
+    ///     A value indicating whether the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must be set.
+    /// </param>
+    public NewtonsoftJsonMessageSerializer(JsonSerializerSettings? settings = null, MessageEncoding? encoding = null, bool? mustSetTypeHeader = null)
     {
-        Formatting = Formatting.None,
-        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-        NullValueHandling = NullValueHandling.Ignore,
-        DefaultValueHandling = DefaultValueHandling.Ignore
-    };
+        Settings = settings;
+        Encoding = encoding ?? MessageEncoding.UTF8;
+        MustSetTypeHeader = mustSetTypeHeader ?? true;
+    }
 
-    /// <inheritdoc cref="INewtonsoftJsonMessageSerializer.MustSetTypeHeader" />
-    public bool MustSetTypeHeader { get; set; } = true;
+    /// <summary>
+    ///     Gets the <see cref="JsonSerializer" /> settings.
+    /// </summary>
+    public JsonSerializerSettings? Settings { get; }
+
+    /// <summary>
+    ///     Gets the message encoding. The default is UTF8.
+    /// </summary>
+    [DefaultValue("UTF8")]
+    public MessageEncoding Encoding { get; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the message type header (see <see cref="DefaultMessageHeaders.MessageType" />) must be set.
+    ///     This is necessary when sending multiple message type through the same endpoint, to allow Silverback to automatically figure out
+    ///     the correct type to deserialize into.
+    /// </summary>
+    public bool MustSetTypeHeader { get; }
 
     /// <summary>
     ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.

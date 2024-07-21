@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 
@@ -19,6 +20,22 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     where TClientConfig : ClientConfig, new()
     where TBuilder : KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder{TClientConfig, TBuilder}" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
+    protected KafkaClientConfigurationBuilder(IServiceProvider serviceProvider)
+    {
+        ServiceProvider = serviceProvider;
+    }
+
+    /// <summary>
+    ///     Gets the <see cref="IServiceProvider" /> instance to be used to resolve the required services.
+    /// </summary>
+    public IServiceProvider ServiceProvider { get; }
+
     /// <summary>
     ///     Gets the <see cref="Confluent.Kafka.ClientConfig" /> being wrapped.
     /// </summary>

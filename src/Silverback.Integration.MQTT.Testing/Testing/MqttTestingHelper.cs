@@ -10,12 +10,15 @@ using Microsoft.Extensions.Logging;
 using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
+using Silverback.Util;
 
 namespace Silverback.Testing;
 
 /// <inheritdoc cref="IMqttTestingHelper" />
 public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly IInMemoryMqttBroker? _inMemoryMqttBroker;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -34,6 +37,7 @@ public partial class MqttTestingHelper : TestingHelper, IMqttTestingHelper
         ILogger<MqttTestingHelper> logger)
         : base(serviceProvider, logger)
     {
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
         _serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
     }

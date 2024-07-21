@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Configuration;
 
 namespace Silverback.Tests.Types;
@@ -10,8 +11,8 @@ public class TestProducerEndpointConfigurationBuilder<TMessage>
 {
     private string _topic = "test";
 
-    public TestProducerEndpointConfigurationBuilder(string? friendlyName = null)
-        : base(friendlyName)
+    public TestProducerEndpointConfigurationBuilder(IServiceProvider serviceProvider, string? friendlyName = null)
+        : base(serviceProvider, friendlyName)
     {
     }
 

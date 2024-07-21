@@ -10,7 +10,7 @@ using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.MqttConfigProxies;
 
-internal sealed class BuilderGenerator
+public class BuilderGenerator
 {
     private readonly Type _proxiedType;
 
