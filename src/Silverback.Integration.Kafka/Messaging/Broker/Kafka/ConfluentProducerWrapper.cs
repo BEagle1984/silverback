@@ -34,7 +34,7 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         _logger = Check.NotNull(logger, nameof(logger));
 
         _producerBuilder = Check.NotNull(producerBuilder, nameof(producerBuilder))
-            .SetConfiguration(configuration.GetConfluentClientConfig())
+            .SetConfiguration(configuration.ToConfluentConfig())
             .SetEventsHandlers(this, brokerClientCallbacksInvoker, Check.NotNull(logger, nameof(logger)));
     }
 

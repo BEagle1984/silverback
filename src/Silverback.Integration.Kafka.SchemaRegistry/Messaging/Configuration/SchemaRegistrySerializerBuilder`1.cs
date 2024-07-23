@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Configuration;
 public abstract class SchemaRegistrySerializerBuilder<TBuilder>
     where TBuilder : SchemaRegistrySerializerBuilder<TBuilder>
 {
-    private readonly ISchemaRegistryClientFactory _schemaRegistryClientFactory;
+    private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory;
 
     private Type? _messageType;
 
@@ -29,9 +29,9 @@ public abstract class SchemaRegistrySerializerBuilder<TBuilder>
     ///     Initializes a new instance of the <see cref="SchemaRegistrySerializerBuilder{TBuilder}" /> class.
     /// </summary>
     /// <param name="schemaRegistryClientFactory">
-    ///     The <see cref="ISchemaRegistryClientFactory" /> to be used to create the schema registry client.
+    ///     The <see cref="IConfluentSchemaRegistryClientFactory" /> to be used to create the schema registry client.
     /// </param>
-    protected SchemaRegistrySerializerBuilder(ISchemaRegistryClientFactory schemaRegistryClientFactory)
+    protected SchemaRegistrySerializerBuilder(IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory)
     {
         _schemaRegistryClientFactory = schemaRegistryClientFactory;
     }

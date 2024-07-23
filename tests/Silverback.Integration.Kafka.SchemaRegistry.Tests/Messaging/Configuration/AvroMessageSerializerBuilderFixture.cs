@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
 
 public class AvroMessageSerializerBuilderFixture
 {
-    private readonly ISchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<ISchemaRegistryClientFactory>();
+    private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<IConfluentSchemaRegistryClientFactory>();
 
     [Fact]
     public void UseModel_ShouldSetSerializerType()
@@ -34,7 +34,7 @@ public class AvroMessageSerializerBuilderFixture
     [Fact]
     public void ConnectToSchemaRegistry_ShouldSetSchemaRegistryConfiguration()
     {
-        IMessageSerializer serializer = GetValidBuilder()
+        GetValidBuilder()
             .UseModel<TestEventOne>()
             .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("some-url"))
             .Build();

@@ -104,7 +104,7 @@ public class BuilderGenerator
             for (int i = 0; i < parameters.Length; i++)
             {
                 ParameterInfo parameter = parameters[i];
-                _stringBuilder.Append($"{ReflectionHelper.GetTypeString(parameter.ParameterType, true)} {parameter.Name}");
+                _stringBuilder.Append($"{ReflectionHelper.GetTypeString(parameter.ParameterType)} {parameter.Name}");
                 if (i < parameters.Length - 1)
                     _stringBuilder.Append(", ");
             }

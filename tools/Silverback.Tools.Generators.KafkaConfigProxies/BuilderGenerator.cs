@@ -14,19 +14,17 @@ namespace Silverback.Tools.Generators.KafkaConfigProxies;
 public class BuilderGenerator
 {
     public BuilderGenerator(Type proxiedType)
-        : this(proxiedType, $"Kafka{proxiedType.Name}urationBuilder")
-    {
-    }
-
-    protected BuilderGenerator(Type proxiedType, string generatedClassName)
     {
         ProxiedType = proxiedType;
-        GeneratedClassName = generatedClassName;
+        GeneratedClassName = $"Kafka{proxiedType.Name}urationBuilder";
+        BuiltTypeName = $"Kafka{proxiedType.Name}uration";
     }
 
     protected Type ProxiedType { get; }
 
     protected string GeneratedClassName { get; }
+
+    protected string BuiltTypeName { get; }
 
     protected StringBuilder StringBuilder { get; } = new();
 
@@ -48,42 +46,56 @@ public class BuilderGenerator
     {
         IEnumerable<PropertyInfo> properties =
             ReflectionHelper.GetProperties(ProxiedType, false)
-                .Where(
-                    property => !IgnoredProperties.Contains(property) &&
-                                property.Name != "GroupId");
+                .Where(property => !IgnoredProperties.Contains(property));
+
+        StringBuilder fieldsStringBuilder = new();
+        StringBuilder propertiesStringBuilder = new();
+        StringBuilder buildMethodStringBuilder = new();
 
         foreach (PropertyInfo property in properties)
         {
-            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType, true);
-            string valueVariableName = property.Name.ToCamelCase();
+            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType);
+            string argument = property.Name.ToCamelCase();
+            string field = $"_{argument}";
             string visibility = MustBeInternal(property.Name) ? "internal" : "public partial";
 
-            StringBuilder.AppendLine($"    {visibility} {GeneratedClassName} With{property.Name}({propertyType} {valueVariableName})");
-            StringBuilder.AppendLine("    {");
-            StringBuilder.AppendLine($"        ClientConfig.{property.Name} = {valueVariableName};");
-            StringBuilder.AppendLine("        return This;");
-            StringBuilder.AppendLine("    }");
-            StringBuilder.AppendLine();
+            fieldsStringBuilder.AppendLine($"    private {propertyType} {field};");
+            fieldsStringBuilder.AppendLine();
+
+            propertiesStringBuilder.AppendLine($"    {visibility} {GeneratedClassName} With{property.Name}({propertyType} {argument})");
+            propertiesStringBuilder.AppendLine("    {");
+            propertiesStringBuilder.AppendLine($"        {field} = {argument};");
+            propertiesStringBuilder.AppendLine("        return this;");
+            propertiesStringBuilder.AppendLine("    }");
+            propertiesStringBuilder.AppendLine();
+
+            buildMethodStringBuilder.AppendLine($"            {property.Name} = {field},");
         }
+
+        StringBuilder.Append(fieldsStringBuilder);
+        StringBuilder.Append(propertiesStringBuilder);
+        StringBuilder.AppendLine("    /// <summary>");
+        StringBuilder.AppendLine("    ///     Builds the configuration.");
+        StringBuilder.AppendLine("    /// </summary>");
+        StringBuilder.AppendLine("    /// <returns>");
+        StringBuilder.AppendLine("    ///     The configuration.");
+        StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine($"    protected override {BuiltTypeName} BuildCore() =>");
+        StringBuilder.AppendLine("        base.BuildCore() with");
+        StringBuilder.AppendLine("        {");
+        StringBuilder.Append(buildMethodStringBuilder);
+        StringBuilder.AppendLine("        };");
     }
 
     protected void GenerateBasicFooter() => StringBuilder.AppendLine("}");
 
     private static bool MustBeInternal(string propertyName) =>
         propertyName
-            is "EnableAutoCommit"
-            or "EnablePartitionEof"
-            or "AllowAutoCreateTopics"
+            is "EnablePartitionEof"
             or "EnableDeliveryReports"
             or "EnableIdempotence"
-            or "TopicMetadataRefreshSparse"
-            or "SocketKeepaliveEnable"
-            or "SocketNagleDisable"
-            or "ApiVersionRequest"
-            or "EnableSslCertificateVerification"
-            or "EnableSaslOauthbearerUnsecureJwt"
-            or "CheckCrcs"
             or "EnableGaplessGuarantee"
+            or "CheckCrcs"
             or "TransactionalId";
 
     private void GenerateClassHeading()

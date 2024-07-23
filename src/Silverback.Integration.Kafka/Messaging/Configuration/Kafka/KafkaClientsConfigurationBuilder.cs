@@ -973,6 +973,70 @@ public partial class KafkaClientsConfigurationBuilder
     /// </returns>
     public partial KafkaClientsConfigurationBuilder WithCancellationDelayMaxMs(int cancellationDelayMaxMs);
 
+    /// <summary>
+    ///     Sets the backoff time in milliseconds before retrying a protocol request, this is the first backoff time, and will be backed off
+    ///     exponentially until number of retries is exhausted, and it's capped with
+    ///     <see cref="KafkaClientConfiguration{TClientConfig}.RetryBackoffMaxMs" />.
+    /// </summary>
+    /// <param name="retryBackoffMs">
+    ///     The backoff time in milliseconds before retrying a protocol request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithRetryBackoffMs(int? retryBackoffMs);
+
+    /// <summary>
+    ///     Sets the maximum backoff time in milliseconds before retrying a protocol request, this is the maximum backoff allowed for exponentially
+    ///     backed off requests.
+    /// </summary>
+    /// <param name="retryBackoffMaxMs">
+    ///     The maximum backoff time in milliseconds before retrying a protocol request.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithRetryBackoffMaxMs(int? retryBackoffMaxMs);
+
+    /// <summary>
+    ///     Sets a value indicating how the client uses DNS lookups. By default, when the lookup returns multiple IP addresses for a hostname, they will all be attempted for connection before the
+    ///     connection is considered failed. This applies to both bootstrap and advertised servers. If the value is set to <see cref="ClientDnsLookup.ResolveCanonicalBootstrapServersOnly" />, each
+    ///     entry will be resolved and expanded into a list of canonical names. Warning: <see cref="ClientDnsLookup.ResolveCanonicalBootstrapServersOnly" /> must only be used with
+    ///     <see cref="SaslMechanism.Gssapi" /> (Kerberos), as it's the only purpose of this configuration value. Note: Default here is different from the Java client's default behavior, which
+    ///     connects only to the first IP address returned for a hostname.
+    /// </summary>
+    /// <param name="clientDnsLookup">
+    ///     A value indicating how the client uses DNS lookups.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaClientsConfigurationBuilder WithClientDnsLookup(ClientDnsLookup? clientDnsLookup);
+
+    /// <summary>
+    ///     Enables pushing of client metrics to the cluster, if the cluster has a client metrics subscription which matches this client.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder EnableMetricsPush()
+    {
+        WithEnableMetricsPush(true);
+        return this;
+    }
+
+    /// <summary>
+    ///     Disables pushing of client metrics to the cluster.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaClientsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaClientsConfigurationBuilder DisableMetricsPush()
+    {
+        WithEnableMetricsPush(false);
+        return this;
+    }
+
     internal KafkaClientsConfigurationActions GetConfigurationActions()
     {
         foreach (Action<IKafkaClientConfigurationBuilder> sharedAction in _sharedConfigurationActions)

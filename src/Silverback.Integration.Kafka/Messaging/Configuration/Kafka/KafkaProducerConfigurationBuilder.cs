@@ -12,7 +12,8 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <summary>
 ///     Builds the <see cref="KafkaProducerConfiguration" />.
 /// </summary>
-public partial class KafkaProducerConfigurationBuilder : KafkaClientConfigurationBuilder<ProducerConfig, KafkaProducerConfigurationBuilder>
+public partial class KafkaProducerConfigurationBuilder
+    : KafkaClientConfigurationBuilder<KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder>
 {
     private readonly Dictionary<string, KafkaProducerEndpointConfiguration> _endpoints = [];
 
@@ -39,7 +40,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     {
     }
 
-    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
+    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TConfig,TConfluentConfig,TBuilder}.This" />
     protected override KafkaProducerConfigurationBuilder This => this;
 
     /// <summary>
@@ -237,7 +238,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaProducerConfigurationBuilder EnableDeliveryReports()
     {
-        ClientConfig.EnableDeliveryReports = true;
+        WithEnableDeliveryReports(true);
         return this;
     }
 
@@ -249,7 +250,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaProducerConfigurationBuilder DisableDeliveryReports()
     {
-        ClientConfig.EnableDeliveryReports = false;
+        WithEnableDeliveryReports(false);
         return this;
     }
 
@@ -264,7 +265,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaProducerConfigurationBuilder EnableIdempotence()
     {
-        ClientConfig.EnableIdempotence = true;
+        WithEnableIdempotence(true);
         return this;
     }
 
@@ -276,7 +277,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaProducerConfigurationBuilder DisableIdempotence()
     {
-        ClientConfig.EnableIdempotence = false;
+        WithEnableIdempotence(false);
         return this;
     }
 
@@ -338,7 +339,7 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaProducerConfiguration Build()
     {
-        KafkaProducerConfiguration configuration = new(ClientConfig);
+        KafkaProducerConfiguration configuration = BuildCore();
 
         configuration = configuration with
         {
@@ -478,17 +479,6 @@ public partial class KafkaProducerConfigurationBuilder : KafkaClientConfiguratio
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public partial KafkaProducerConfigurationBuilder WithMessageSendMaxRetries(int? messageSendMaxRetries);
-
-    /// <summary>
-    ///     Sets the backoff time in milliseconds before retrying a request.
-    /// </summary>
-    /// <param name="retryBackoffMs">
-    ///     The backoff time before retrying a request.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public partial KafkaProducerConfigurationBuilder WithRetryBackoffMs(int? retryBackoffMs);
 
     /// <summary>
     ///     Sets the threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's message accumulator.

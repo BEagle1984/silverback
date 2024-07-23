@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Serializat
 
 public class SchemaRegistryClientFactoryFixture
 {
-    private readonly ISchemaRegistryClientFactory _clientFactory = new SchemaRegistryClientFactory();
+    private readonly IConfluentSchemaRegistryClientFactory _clientFactory = new ConfluentSchemaRegistryClientFactory();
 
     [Fact]
     public void GetClient_ShouldReturnClient()

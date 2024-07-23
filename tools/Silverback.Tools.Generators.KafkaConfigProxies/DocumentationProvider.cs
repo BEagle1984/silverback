@@ -108,8 +108,8 @@ public static class DocumentationProvider
                 builder.AppendLine("    ///     from the time the topic is first referenced in the client.");
                 break;
             case nameof(ClientConfig.TopicBlacklist):
-                builder.AppendLine("///     Gets a comma-separated list of regular expressions for matching topic names that should be ignored in broker metadata information");
-                builder.AppendLine("///     as if the topics did not exist.");
+                builder.AppendLine("    ///     Gets a comma-separated list of regular expressions for matching topic names that should be ignored in broker metadata information");
+                builder.AppendLine("    ///     as if the topics did not exist.");
                 break;
             case nameof(ClientConfig.Debug):
                 builder.AppendLine("    ///     Gets a comma-separated list of debug contexts to enable.");
@@ -303,6 +303,23 @@ public static class DocumentationProvider
             case nameof(ClientConfig.ClientRack):
                 builder.AppendLine("    ///     Gets the rack identifier for this client. This can be any string value which indicates where this client is physically located.");
                 break;
+            case nameof(ClientConfig.RetryBackoffMs):
+                builder.AppendLine("    ///     Gets the backoff time in milliseconds before retrying a protocol request, this is the first backoff time, and will be backed off exponentially until number of retries is exhausted, ");
+                builder.AppendLine("    ///     and it's capped by <see cref=\"RetryBackoffMaxMs\" />.");
+                break;
+            case nameof(ClientConfig.RetryBackoffMaxMs):
+                builder.AppendLine("    ///     Gets the maximum backoff time in milliseconds before retrying a protocol request, this is the maximum backoff allowed for exponentially backed off requests.");
+                break;
+            case nameof(ClientConfig.ClientDnsLookup):
+                builder.AppendLine("    ///     Gets a value indicating how the client uses DNS lookups. By default, when the lookup returns multiple IP addresses for a hostname, they will all be attempted for connection before the ");
+                builder.AppendLine("    ///     connection is considered failed. This applies to both bootstrap and advertised servers. If the value is set to <see cref=\"ClientDnsLookup.ResolveCanonicalBootstrapServersOnly\" />, each ");
+                builder.AppendLine("    ///     entry will be resolved and expanded into a list of canonical names. Warning: <see cref=\"ClientDnsLookup.ResolveCanonicalBootstrapServersOnly\" /> must only be used with <see cref=\"SaslMechanism.Gssapi\" /> ");
+                builder.AppendLine("    ///     (Kerberos) as <see cref=\"SaslMechanism\" />, as it's the only purpose of this configuration value. Note: Default here is different from the Java client's default behavior, which connects ");
+                builder.AppendLine("    ///     only to the first IP address returned for a hostname.");
+                break;
+            case nameof(ClientConfig.EnableMetricsPush):
+                builder.AppendLine("    ///     Gets a value indicating whether to enable pushing of client metrics to the cluster, if the cluster has a client metrics subscription which matches this client.");
+                break;
         }
     }
 
@@ -398,6 +415,18 @@ public static class DocumentationProvider
             case nameof(ConsumerConfig.CheckCrcs):
                 builder.AppendLine("    ///     Gets a value indicating whether the CRC32 of the consumed messages must be verified, ensuring no on-the-wire or on-disk corruption");
                 builder.AppendLine("    ///     to the messages occurred. This check comes at slightly increased CPU usage.");
+                break;
+            case nameof(ConsumerConfig.GroupProtocol):
+                builder.AppendLine("    ///     Gets the group protocol to use. Use <see cref=\"GroupProtocol.Classic\" /> for the original protocol and <see cref=\"GroupProtocol.Consumer\" /> for the new protocol introduced in KIP-848. ");
+                builder.AppendLine("    ///     Default is <see cref=\"GroupProtocol.Classic\" />, but will change to <see cref=\"GroupProtocol.Consumer\" /> in next releases.");
+                break;
+            case nameof(ConsumerConfig.GroupRemoteAssignor):
+                builder.AppendLine("    ///     Gets the server-side assignor to use. Keep it <c>null</c> to make the server select a suitable assignor for the group. Available assignors: uniform or range.");
+                break;
+            case nameof(ConsumerConfig.FetchQueueBackoffMs):
+                builder.AppendLine("    ///     Gets the maximum time in milliseconds to postpone the next fetch request for a topic+partition in case the current fetch queue thresholds (<see cref=\"QueuedMinMessages\" /> ");
+                builder.AppendLine("    ///     or <see cref=\"QueuedMaxMessagesKbytes\" />) have been exceeded. This property may need to be decreased if the queue thresholds are set low and the application is experiencing long (~1s) ");
+                builder.AppendLine("    ///     delays between messages. Low values may increase CPU utilization.");
                 break;
         }
     }
@@ -546,6 +575,9 @@ public static class DocumentationProvider
                 break;
             case nameof(SchemaRegistryConfig.BasicAuthUserInfo):
                 builder.AppendLine("    ///     Gets the basic authentication credentials in the form {username}:{password}.");
+                break;
+            case nameof(SchemaRegistryConfig.LatestCacheTtlSecs):
+                builder.AppendLine("    ///     Gets the TTL in seconds for caches holding latest schemas, or -1 for no TTL.");
                 break;
         }
     }

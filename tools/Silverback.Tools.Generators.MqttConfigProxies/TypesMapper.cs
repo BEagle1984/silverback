@@ -35,6 +35,6 @@ public static class TypesMapper
             nameof(IMqttClientChannelOptions) => ("MqttClientChannelConfiguration?", true),
             nameof(MqttClientTlsOptions) => ("MqttClientTlsConfiguration?", true),
             nameof(MqttClientWebSocketProxyOptions) => ("MqttClientWebSocketProxyConfiguration?", true),
-            _ => (ReflectionHelper.GetTypeString(propertyType, true), false)
+            _ => (ReflectionHelper.GetTypeString(propertyType), false)
         };
 }

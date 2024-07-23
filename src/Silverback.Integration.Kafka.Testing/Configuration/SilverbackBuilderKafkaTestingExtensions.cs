@@ -13,7 +13,7 @@ using Silverback.Util;
 namespace Silverback.Configuration;
 
 /// <summary>
-///     Adds the <c>UseMockedKafka</c> method to the <see cref="SilverbackBuilder" />.
+///     Adds the <see cref="UseMockedKafka" /> method to the <see cref="SilverbackBuilder" />.
 /// </summary>
 public static class SilverbackBuilderKafkaTestingExtensions
 {
@@ -39,11 +39,11 @@ public static class SilverbackBuilderKafkaTestingExtensions
         builder.Services
             .RemoveAll<IConfluentConsumerBuilder>()
             .RemoveAll<IConfluentProducerBuilder>()
-            .RemoveAll<IConfluentAdminClientBuilder>()
+            .RemoveAll<IConfluentAdminClientFactory>()
             .AddSingleton<IMockedKafkaOptions>(new MockedKafkaOptions())
             .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
             .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
-            .AddTransient<IConfluentAdminClientBuilder, MockedConfluentAdminClientBuilder>()
+            .AddTransient<IConfluentAdminClientFactory, MockedConfluentAdminClientFactory>()
             .AddSingleton<IMockedConsumerGroupsCollection, MockedConsumerGroupsCollection>()
             .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
             .AddSingleton<IInMemoryTransactionManager, InMemoryTransactionManager>()

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Silverback.Collections;
 
 /// <summary>
-///     Adds the <c>AsValueReadOnlyCollection</c> method to the <see cref="IReadOnlyCollection{T}" />.
+///     Adds the <see cref="AsValueReadOnlyCollection{T}" /> method to the <see cref="IReadOnlyCollection{T}" />.
 /// </summary>
 public static class ValueReadOnlyCollectionExtensions
 {

@@ -12,6 +12,7 @@ public static class IgnoredProperties
     private static bool Contains(string propertyName) =>
         propertyName
             is "EnableAutoOffsetStore" // the offsets will be explicitly stored only after successful processing
+            or "EnableAutoCommit" // manually handled to avoid nullable
             or "EnableBackgroundPoll" // the background thread is needed
             or "DeliveryReportFields" // limited by default to key and status since no other value is used
             or "LogQueue"

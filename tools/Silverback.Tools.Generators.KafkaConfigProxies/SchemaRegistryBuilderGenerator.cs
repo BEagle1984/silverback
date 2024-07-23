@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.KafkaConfigProxies;
@@ -13,7 +14,7 @@ namespace Silverback.Tools.Generators.KafkaConfigProxies;
 public class SchemaRegistryBuilderGenerator : BuilderGenerator
 {
     public SchemaRegistryBuilderGenerator(Type proxiedType)
-        : base(proxiedType, "KafkaSchemaRegistryConfigurationBuilder")
+        : base(proxiedType)
     {
     }
 
@@ -24,19 +25,36 @@ public class SchemaRegistryBuilderGenerator : BuilderGenerator
             ReflectionHelper.GetProperties(ProxiedType, true)
                 .Where(property => !IgnoredProperties.Contains(property));
 
+        StringBuilder fieldsStringBuilder = new();
+        StringBuilder propertiesStringBuilder = new();
+        StringBuilder buildMethodStringBuilder = new();
+
         foreach (PropertyInfo property in properties)
         {
-            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType, true);
-            string valueVariableName = property.Name.ToCamelCase();
+            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType);
+            string argument = property.Name.ToCamelCase();
+            string field = $"_{argument}";
             string visibility = MustBeInternal(property.Name) ? "internal" : "public partial";
 
-            StringBuilder.AppendLine($"    {visibility} {GeneratedClassName} With{property.Name}({propertyType} {valueVariableName})");
-            StringBuilder.AppendLine("    {");
-            StringBuilder.AppendLine($"        SchemaRegistryConfig.{property.Name} = {valueVariableName};");
-            StringBuilder.AppendLine("        return this;");
-            StringBuilder.AppendLine("    }");
-            StringBuilder.AppendLine();
+            fieldsStringBuilder.AppendLine($"    private {propertyType} {field};");
+
+            propertiesStringBuilder.AppendLine($"    {visibility} {GeneratedClassName} With{property.Name}({propertyType} {argument})");
+            propertiesStringBuilder.AppendLine("    {");
+            propertiesStringBuilder.AppendLine($"        {field} = {argument};");
+            propertiesStringBuilder.AppendLine("        return this;");
+            propertiesStringBuilder.AppendLine("    }");
+            propertiesStringBuilder.AppendLine();
+
+            buildMethodStringBuilder.AppendLine($"            {property.Name} = {field},");
         }
+
+        StringBuilder.Append(fieldsStringBuilder);
+        StringBuilder.Append(propertiesStringBuilder);
+        StringBuilder.AppendLine($"    private {BuiltTypeName} BuildCore() =>");
+        StringBuilder.AppendLine($"        new()");
+        StringBuilder.AppendLine("        {");
+        StringBuilder.Append(buildMethodStringBuilder);
+        StringBuilder.AppendLine("        };");
     }
 
     private static bool MustBeInternal(string propertyName) => propertyName is "EnableSslCertificateVerification";

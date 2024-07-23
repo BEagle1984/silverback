@@ -15,28 +15,10 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// </summary>
 public sealed partial record KafkaProducerConfiguration : KafkaClientConfiguration<ProducerConfig>
 {
-    private const bool KafkaDefaultEnableDeliveryReports = true;
-
-    /// <summary>
-    ///    Initializes a new instance of the <see cref="KafkaProducerConfiguration" /> class.
-    /// </summary>
-    public KafkaProducerConfiguration()
-        : this((ProducerConfig?)null)
-    {
-    }
-
-    internal KafkaProducerConfiguration(ProducerConfig? producerConfig = null)
-        : base(producerConfig)
-    {
-        // These properties are not exposed and hardcoded
-        ClientConfig.EnableBackgroundPoll = true; // the background thread is needed
-        ClientConfig.DeliveryReportFields ??= "key,status"; // limit to key and status since no other field is needed or forwarded
-    }
-
     /// <summary>
     ///     Gets a value indicating whether delivery reports are enabled according to the explicit configuration and Kafka defaults.
     /// </summary>
-    public bool AreDeliveryReportsEnabled => EnableDeliveryReports ?? KafkaDefaultEnableDeliveryReports;
+    public bool AreDeliveryReportsEnabled => EnableDeliveryReports ?? true;
 
     /// <summary>
     ///     Gets a value indicating whether an exception must be thrown by the producer if the persistence is not acknowledge
@@ -98,5 +80,16 @@ public sealed partial record KafkaProducerConfiguration : KafkaClientConfigurati
 
         if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             throw new BrokerConfigurationException($"{nameof(ThrowIfNotAcknowledged)} cannot be set to true if delivery reports are not enabled.");
+    }
+
+    internal override ProducerConfig ToConfluentConfig()
+    {
+        ProducerConfig confluentConfig = MapCore();
+
+        // These properties are not exposed and hardcoded
+        confluentConfig.EnableBackgroundPoll = true; // the background thread is needed
+        confluentConfig.DeliveryReportFields = "key,status"; // limit to key and status since no other field is needed or forwarded
+
+        return confluentConfig;
     }
 }

@@ -152,21 +152,6 @@ public class KafkaConsumerConfigurationBuilderFixture
         configuration.GroupId.Should().Be("group1");
     }
 
-    [InlineData(null)]
-    [InlineData("")]
-    [Theory]
-    public void WithGroupId_ShouldSetGroupIdToUnset_WhenNullOrEmpty(string? groupId)
-    {
-        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfiguration();
-        builder.Consume(endpoint => endpoint.ConsumeFrom("topic1", 1));
-        builder.DisableOffsetsCommit();
-
-        builder.WithGroupId(groupId);
-
-        KafkaConsumerConfiguration configuration = builder.Build();
-        configuration.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
-    }
-
     [Fact]
     public void EnableOffsetsCommit_ShouldSetCommitOffsets()
     {

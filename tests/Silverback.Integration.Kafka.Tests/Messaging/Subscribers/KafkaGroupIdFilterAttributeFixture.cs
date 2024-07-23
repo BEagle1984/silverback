@@ -43,12 +43,9 @@ public class KafkaGroupIdFilterAttributeFixture
             new KafkaConsumer(
                 "42",
                 confluentConsumerWrapper,
-                new KafkaConsumerConfiguration(
-                    new ConsumerConfig
-                    {
-                        GroupId = consumerGroupId
-                    })
+                new KafkaConsumerConfiguration
                 {
+                    GroupId = consumerGroupId,
                     Endpoints = new ValueReadOnlyCollection<KafkaConsumerEndpointConfiguration>(
                     [
                         new KafkaConsumerEndpointConfiguration

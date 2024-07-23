@@ -42,7 +42,7 @@ internal class StoredOffsetsLoader
             return topicPartitionOffset;
 
         _storedOffsets ??= _offsetStoreFactory.GetStore(_configuration.ClientSideOffsetStore, _serviceProvider)
-            .GetStoredOffsets(_configuration.GroupId);
+            .GetStoredOffsets(_configuration.GroupId ?? throw new InvalidOperationException("GroupId not set."));
 
         KafkaOffset? storedOffset = _storedOffsets.FirstOrDefault(offset => offset.TopicPartition == topicPartitionOffset.TopicPartition);
 

@@ -27,7 +27,7 @@ public class ConfluentConsumerWrapperFixture
 
     private readonly IBrokerClientCallbacksInvoker _callbacksInvoker = Substitute.For<IBrokerClientCallbacksInvoker>();
 
-    private readonly IConfluentAdminClientBuilder _adminClientBuilder = Substitute.For<IConfluentAdminClientBuilder>();
+    private readonly IConfluentAdminClientFactory _adminClientFactory = Substitute.For<IConfluentAdminClientFactory>();
 
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory = Substitute.For<IKafkaOffsetStoreFactory>();
 
@@ -64,7 +64,7 @@ public class ConfluentConsumerWrapperFixture
             "test",
             _consumerBuilder,
             configuration,
-            _adminClientBuilder,
+            _adminClientFactory,
             _callbacksInvoker,
             _offsetStoreFactory,
             _serviceProvider,
@@ -99,7 +99,7 @@ public class ConfluentConsumerWrapperFixture
             "test",
             _consumerBuilder,
             configuration,
-            _adminClientBuilder,
+            _adminClientFactory,
             _callbacksInvoker,
             _offsetStoreFactory,
             _serviceProvider,
@@ -136,7 +136,7 @@ public class ConfluentConsumerWrapperFixture
             "test",
             _consumerBuilder,
             configuration,
-            _adminClientBuilder,
+            _adminClientFactory,
             _callbacksInvoker,
             _offsetStoreFactory,
             _serviceProvider,

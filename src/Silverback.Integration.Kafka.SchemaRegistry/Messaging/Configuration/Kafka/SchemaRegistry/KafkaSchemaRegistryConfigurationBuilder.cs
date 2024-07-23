@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Confluent.SchemaRegistry;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 
@@ -12,11 +11,6 @@ namespace Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 /// </summary>
 public partial class KafkaSchemaRegistryConfigurationBuilder
 {
-    /// <summary>
-    ///     Gets the <see cref="Confluent.SchemaRegistry.SchemaRegistryConfig" /> being wrapped.
-    /// </summary>
-    protected SchemaRegistryConfig SchemaRegistryConfig { get; } = new();
-
     /// <summary>
     ///     Sets the source of the basic authentication credentials. This specifies whether the credentials are specified in the
     ///     <see cref="KafkaSchemaRegistryConfiguration.BasicAuthUserInfo" /> or they are inherited from the producer or consumer configuration.
@@ -132,6 +126,17 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthUserInfo(string? basicAuthUserInfo);
 
     /// <summary>
+    ///     Sets the TTL in seconds for caches holding latest schemas, or -1 for no TTL.
+    /// </summary>
+    /// <param name="latestCacheTtlSecs">
+    ///     The TTL in seconds for caches holding latest schemas, or -1 for no TTL.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaSchemaRegistryConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaSchemaRegistryConfigurationBuilder WithLatestCacheTtlSecs(int? latestCacheTtlSecs);
+
+    /// <summary>
     ///     Builds the <see cref="KafkaSchemaRegistryConfiguration" /> instance.
     /// </summary>
     /// <returns>
@@ -139,7 +144,7 @@ public partial class KafkaSchemaRegistryConfigurationBuilder
     /// </returns>
     public KafkaSchemaRegistryConfiguration Build()
     {
-        KafkaSchemaRegistryConfiguration configuration = new(SchemaRegistryConfig.ShallowCopy());
+        KafkaSchemaRegistryConfiguration configuration = BuildCore();
 
         configuration.Validate();
 

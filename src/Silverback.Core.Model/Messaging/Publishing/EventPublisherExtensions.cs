@@ -8,8 +8,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
-///     Adds the <c>PublishEvent</c>, <c>PublishEvents</c>, <c>PublishEventAsync</c> and <c>PublishEventsAsync</c> methods to the
-///     <see cref="IPublisher" /> interface.
+///     Adds the <see cref="PublishEvent" /> and <see cref="PublishEventAsync" /> methods to the <see cref="IPublisher" /> interface.
 /// </summary>
 public static class EventPublisherExtensions
 {

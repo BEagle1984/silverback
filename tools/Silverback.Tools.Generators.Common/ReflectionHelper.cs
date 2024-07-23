@@ -32,13 +32,13 @@ public static class ReflectionHelper
         return [.. type.GetMethods(bindingFlags)];
     }
 
-    public static string GetTypeString(Type propertyType, bool forceReferenceTypeNullability)
+    public static string GetTypeString(Type propertyType)
     {
         Type? nullableType = Nullable.GetUnderlyingType(propertyType);
         if (nullableType != null)
             return GetTypeName(nullableType) + "?";
 
-        if (forceReferenceTypeNullability && !propertyType.IsValueType)
+        if (!propertyType.IsValueType)
             return GetTypeName(propertyType) + "?";
 
         return GetTypeName(propertyType);

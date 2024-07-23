@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Confluent.Kafka;
 using Silverback.Tools.Generators.Common;
 
 namespace Silverback.Tools.Generators.KafkaConfigProxies;
@@ -49,67 +50,52 @@ public class ProxyClassGenerator
         IEnumerable<PropertyInfo> properties =
             ReflectionHelper.GetProperties(ProxiedType, false)
                 .Where(
-                    property => !IgnoredProperties.Contains(property) &&
-                                property.Name != "EnableAutoCommit" &&
-                                property.Name != "GroupId");
+                    property => !IgnoredProperties.Contains(property)
+                                && property.Name != "GroupId");
 
         StringBuilder propertiesStringBuilder = new();
-        StringBuilder constructorStringBuilder = new();
         StringBuilder mapMethodStringBuilder = new();
-
-        string proxiedTypeParameterName = $"{ProxiedType.Name[0].ToString().ToLowerInvariant()}{ProxiedType.Name[1..]}";
 
         foreach (PropertyInfo property in properties)
         {
-            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType, true);
+            string propertyType = ReflectionHelper.GetTypeString(property.PropertyType);
 
             propertiesStringBuilder.AppendSummary(property);
 
             if (property.Name.EndsWith("Url") && property.PropertyType == typeof(string))
                 propertiesStringBuilder.AppendLine("    [SuppressMessage(\"Design\", \"CA1056:URI-like properties should not be strings\", Justification = \"Generated according to wrapped class.\")]");
 
-            propertiesStringBuilder.AppendLine($"    public {propertyType} {property.Name}");
-            propertiesStringBuilder.AppendLine("    {");
-
-            if (property.GetGetMethod() != null)
-                propertiesStringBuilder.AppendLine($"        get => ClientConfig.{property.Name};");
-
-            if (property.Name == "DeliveryReportFields")
-            {
-                propertiesStringBuilder.AppendLine("        init");
-                propertiesStringBuilder.AppendLine("        {");
-                propertiesStringBuilder.AppendLine("            if (value != null)");
-                propertiesStringBuilder.AppendLine($"                ClientConfig.{property.Name} = value;");
-                propertiesStringBuilder.AppendLine("        }");
-            }
-            else if (property.GetSetMethod() != null)
-            {
-                propertiesStringBuilder.AppendLine($"        init => ClientConfig.{property.Name} = value;");
-            }
-
-            propertiesStringBuilder.AppendLine("    }");
+            propertiesStringBuilder.AppendLine($"    public {propertyType} {property.Name} {{ get; init; }}");
             propertiesStringBuilder.AppendLine();
 
-            constructorStringBuilder.AppendLine($"        {property.Name} = {proxiedTypeParameterName}.{property.Name};");
-            mapMethodStringBuilder.AppendLine($"            {property.Name} = {property.Name},");
+            if (property.Name == nameof(ProducerConfig.DeliveryReportFields))
+            {
+                mapMethodStringBuilder.AppendLine();
+                mapMethodStringBuilder.AppendLine($"        if ({property.Name} != null)");
+                mapMethodStringBuilder.AppendLine($"            confluentConfig.{property.Name} = {property.Name};");
+                mapMethodStringBuilder.AppendLine();
+            }
+            else
+            {
+                mapMethodStringBuilder.AppendLine($"        confluentConfig.{property.Name} = {property.Name};");
+            }
         }
 
-        StringBuilder.AppendLine($"    public {GeneratedClassName}()");
-        StringBuilder.AppendLine("    {");
-        StringBuilder.AppendLine("    }");
-        StringBuilder.AppendLine();
-        StringBuilder.AppendLine($"    public {GeneratedClassName}({ProxiedType.Name} {proxiedTypeParameterName})");
-        StringBuilder.AppendLine($"        : base({proxiedTypeParameterName}");
-        StringBuilder.AppendLine("    {");
-        StringBuilder.Append(constructorStringBuilder);
-        StringBuilder.AppendLine("    }");
-        StringBuilder.AppendLine();
         StringBuilder.Append(propertiesStringBuilder);
-        StringBuilder.AppendLine($"    protected override {ProxiedType.FullName} MapCore() =>");
-        StringBuilder.AppendLine("        base.MapCore() with");
-        StringBuilder.AppendLine("        {");
+        StringBuilder.AppendLine("    /// <summary>");
+        StringBuilder.AppendLine("    ///     Maps to the Confluent client configuration.");
+        StringBuilder.AppendLine("    /// </summary>");
+        StringBuilder.AppendLine("    /// <returns>");
+        StringBuilder.AppendLine("    ///     The Confluent client configuration.");
+        StringBuilder.AppendLine("    /// </returns>");
+        StringBuilder.AppendLine($"    protected override {ProxiedType.FullName} MapCore()");
+        StringBuilder.AppendLine("    {");
+        StringBuilder.AppendLine($"        {ProxiedType.FullName} confluentConfig = base.MapCore();");
+        StringBuilder.AppendLine();
         StringBuilder.Append(mapMethodStringBuilder);
-        StringBuilder.AppendLine("        };");
+        StringBuilder.AppendLine();
+        StringBuilder.AppendLine("        return confluentConfig;");
+        StringBuilder.AppendLine("    }");
     }
 
     private void GenerateHeading()

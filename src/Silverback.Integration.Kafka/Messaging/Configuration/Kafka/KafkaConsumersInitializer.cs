@@ -60,7 +60,7 @@ internal class KafkaConsumersInitializer : BrokerClientsInitializer
                 mergedAction.Key,
                 ServiceProvider.GetRequiredService<IConfluentConsumerBuilder>(),
                 configuration,
-                ServiceProvider.GetRequiredService<IConfluentAdminClientBuilder>(),
+                ServiceProvider.GetRequiredService<IConfluentAdminClientFactory>(),
                 _brokerClientCallbacksInvoker,
                 _offsetStoreFactory,
                 ServiceProvider,

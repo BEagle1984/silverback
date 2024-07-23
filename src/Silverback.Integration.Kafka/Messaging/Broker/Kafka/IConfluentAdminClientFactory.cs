@@ -6,12 +6,12 @@ using Confluent.Kafka;
 namespace Silverback.Messaging.Broker.Kafka;
 
 /// <summary>
-///     Used to build the <see cref="IAdminClient" />.
+///     The factory used to create <see cref="IAdminClient" /> instances.
 /// </summary>
-public interface IConfluentAdminClientBuilder
+public interface IConfluentAdminClientFactory
 {
     /// <summary>
-    ///     Returns an <see cref="IAdminClient" />.
+    ///     Returns an <see cref="IAdminClient" /> instance for the specified configuration.
     /// </summary>
     /// <param name="config">
     ///     The client configuration.
@@ -19,5 +19,5 @@ public interface IConfluentAdminClientBuilder
     /// <returns>
     ///     The <see cref="IAdminClient" />.
     /// </returns>
-    IAdminClient Build(ClientConfig config);
+    IAdminClient GetClient(ClientConfig config);
 }

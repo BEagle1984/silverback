@@ -44,7 +44,7 @@ public class KafkaSchemaRegistryConfigurationFixture
     }
 
     [Fact]
-    public void GetConfluentClientConfig_ShouldReturnClientConfig()
+    public void ToConfluentConfig_ShouldReturnConfluentConfig()
     {
         KafkaSchemaRegistryConfiguration configuration = GetValidConfiguration() with
         {
@@ -52,7 +52,7 @@ public class KafkaSchemaRegistryConfigurationFixture
             MaxCachedSchemas = 42
         };
 
-        SchemaRegistryConfig schemaRegistryConfig = configuration.GetConfluentSchemaRegistryConfig();
+        SchemaRegistryConfig schemaRegistryConfig = configuration.ToConfluentConfig();
 
         schemaRegistryConfig.Url.Should().Be("tests");
         schemaRegistryConfig.MaxCachedSchemas.Should().Be(42);

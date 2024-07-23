@@ -16,13 +16,16 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <summary>
 ///     Builds the <see cref="KafkaConsumerConfiguration" />.
 /// </summary>
-public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfigurationBuilder<ConsumerConfig, KafkaConsumerConfigurationBuilder>
+public partial class KafkaConsumerConfigurationBuilder
+    : KafkaClientConfigurationBuilder<KafkaConsumerConfiguration, ConsumerConfig, KafkaConsumerConfigurationBuilder>
 {
     private readonly Dictionary<string, KafkaConsumerEndpointConfiguration> _endpoints = [];
 
     private bool? _commitOffsets;
 
     private int? _commitOffsetEach;
+
+    private bool? _enableAutoCommit;
 
     private KafkaOffsetStoreSettings? _clientSideOffsetStoreSettings;
 
@@ -47,7 +50,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     {
     }
 
-    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TClientConfig,TBuilder}.This" />
+    /// <inheritdoc cref="KafkaClientConfigurationBuilder{TConfig,TConfluentConfig,TBuilder}.This" />
     protected override KafkaConsumerConfigurationBuilder This => this;
 
     /// <summary>
@@ -134,21 +137,6 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
-    ///     Sets the client group id string. All clients sharing the same group.id belong to the same group.
-    /// </summary>
-    /// <param name="groupId">
-    ///     The client group id string. All clients sharing the same group.id belong to the same group.
-    /// </param>
-    /// <returns>
-    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
-    /// </returns>
-    public KafkaConsumerConfigurationBuilder WithGroupId(string? groupId)
-    {
-        ClientConfig.GroupId = string.IsNullOrEmpty(groupId) ? KafkaConsumerConfiguration.UnsetGroupId : groupId;
-        return This;
-    }
-
-    /// <summary>
     ///     Enable the offsets commit. This is the default.
     /// </summary>
     /// <returns>
@@ -174,7 +162,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     {
         _commitOffsets = false;
         _commitOffsetEach = null;
-        DisableAutoCommit();
+        _enableAutoCommit = false;
         return this;
     }
 
@@ -191,7 +179,8 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     public KafkaConsumerConfigurationBuilder EnableAutoCommit()
     {
         _commitOffsetEach = null;
-        return WithEnableAutoCommit(true);
+        _enableAutoCommit = true;
+        return this;
     }
 
     /// <summary>
@@ -204,7 +193,11 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     /// <returns>
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaConsumerConfigurationBuilder DisableAutoCommit() => WithEnableAutoCommit(false);
+    public KafkaConsumerConfigurationBuilder DisableAutoCommit()
+    {
+        _enableAutoCommit = false;
+        return this;
+    }
 
     /// <summary>
     ///     Defines the number of message to be processed before committing the offset to the server. The most
@@ -222,7 +215,7 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     public KafkaConsumerConfigurationBuilder CommitOffsetEach(int commitOffsetEach)
     {
         _commitOffsetEach = commitOffsetEach;
-        WithEnableAutoCommit(false);
+        _enableAutoCommit = false;
         return this;
     }
 
@@ -434,6 +427,17 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
     public KafkaConsumerConfigurationBuilder DisableAutoOffsetReset() => WithAutoOffsetReset(AutoOffsetReset.Error);
+
+    /// <summary>
+    ///     Sets the client group id string. All clients sharing the same group.id belong to the same group.
+    /// </summary>
+    /// <param name="groupId">
+    ///     The client group id string. All clients sharing the same group.id belong to the same group.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithGroupId(string? groupId);
 
     /// <summary>
     ///     Sets the static instance id used to enable static group membership. Static group members are able to leave and rejoin a group within
@@ -662,6 +666,47 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     }
 
     /// <summary>
+    ///     Sets the group protocol to use. Use <see cref="GroupProtocol.Classic" /> for the original protocol and
+    ///     <see cref="GroupProtocol.Consumer" /> for the new protocol introduced in KIP-848. Default is <see cref="GroupProtocol.Classic" />,
+    ///     but will change to <see cref="GroupProtocol.Consumer" /> in next releases.
+    /// </summary>
+    /// <param name="groupProtocol">
+    ///     The group protocol to use. Use <see cref="GroupProtocol.Classic" /> for the original protocol and <see cref="GroupProtocol.Consumer" />
+    ///     for the new protocol introduced in KIP-848.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithGroupProtocol(GroupProtocol? groupProtocol);
+
+    /// <summary>
+    ///     Sets the server-side assignor to use. Keep it <c>null</c> to make the server select a suitable assignor for the group.
+    ///     Available assignors: uniform or range.
+    /// </summary>
+    /// <param name="groupRemoteAssignor">
+    ///     The server-side assignor to use.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithGroupRemoteAssignor(string? groupRemoteAssignor);
+
+    /// <summary>
+    ///     Sets the maximum time in milliseconds to postpone the next fetch request for a topic+partition in case the current fetch queue
+    ///     thresholds (<see cref="KafkaConsumerConfiguration.QueuedMinMessages" /> or <see cref="KafkaConsumerConfiguration.QueuedMaxMessagesKbytes" />)
+    ///     have been exceeded. This property may need to be decreased if the queue thresholds are set low and the application is experiencing
+    ///     long (~1s) delays between messages. Low values may increase CPU utilization.
+    /// </summary>
+    /// <param name="fetchQueueBackoffMs">
+    ///     The maximum time in milliseconds to postpone the next fetch request for a topic+partition in case the current fetch queue thresholds
+    ///     have been exceeded.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public partial KafkaConsumerConfigurationBuilder WithFetchQueueBackoffMs(int? fetchQueueBackoffMs);
+
+    /// <summary>
     ///     Builds the <see cref="KafkaConsumerConfiguration" /> instance.
     /// </summary>
     /// <returns>
@@ -669,10 +714,12 @@ public partial class KafkaConsumerConfigurationBuilder : KafkaClientConfiguratio
     /// </returns>
     public KafkaConsumerConfiguration Build()
     {
-        KafkaConsumerConfiguration configuration = new(ClientConfig.Clone());
+        KafkaConsumerConfiguration configuration = BuildCore();
 
         configuration = configuration with
         {
+            GroupId = _groupId ?? configuration.GroupId,
+            EnableAutoCommit = _enableAutoCommit ?? configuration.EnableAutoCommit,
             CommitOffsets = _commitOffsets ?? configuration.CommitOffsets,
             CommitOffsetEach = _commitOffsetEach ?? configuration.CommitOffsetEach,
             ClientSideOffsetStore = _clientSideOffsetStoreSettings ?? configuration.ClientSideOffsetStore,

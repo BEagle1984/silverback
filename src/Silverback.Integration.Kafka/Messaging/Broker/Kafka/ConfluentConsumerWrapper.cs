@@ -18,6 +18,8 @@ namespace Silverback.Messaging.Broker.Kafka;
 
 internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrapper
 {
+    private readonly ConsumerConfig _confluentConfiguration;
+
     private readonly IBrokerClientCallbacksInvoker _brokerClientCallbacksInvoker;
 
     private readonly IKafkaOffsetStoreFactory _offsetStoreFactory;
@@ -28,7 +30,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
 
     private readonly IConfluentConsumerBuilder _consumerBuilder;
 
-    private readonly IConfluentAdminClientBuilder _adminClientBuilder;
+    private readonly IConfluentAdminClientFactory _adminClientFactory;
 
     [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "Life cycle externally handled")]
     private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
@@ -42,7 +44,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         string name,
         IConfluentConsumerBuilder consumerBuilder,
         KafkaConsumerConfiguration configuration,
-        IConfluentAdminClientBuilder adminClientBuilder,
+        IConfluentAdminClientFactory adminClientFactory,
         IBrokerClientCallbacksInvoker brokerClientCallbacksInvoker,
         IKafkaOffsetStoreFactory offsetStoreFactory,
         IServiceProvider serviceProvider,
@@ -50,15 +52,16 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         : base(name, logger)
     {
         Configuration = Check.NotNull(configuration, nameof(configuration));
+        _confluentConfiguration = configuration.ToConfluentConfig();
         _brokerClientCallbacksInvoker = Check.NotNull(brokerClientCallbacksInvoker, nameof(brokerClientCallbacksInvoker));
         _offsetStoreFactory = Check.NotNull(offsetStoreFactory, nameof(offsetStoreFactory));
         _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         _logger = Check.NotNull(logger, nameof(logger));
 
         _consumerBuilder = Check.NotNull(consumerBuilder, nameof(consumerBuilder))
-            .SetConfig(configuration.GetConfluentClientConfig())
+            .SetConfig(_confluentConfiguration)
             .SetEventsHandlers(this, Configuration, _brokerClientCallbacksInvoker, _logger);
-        _adminClientBuilder = Check.NotNull(adminClientBuilder, nameof(adminClientBuilder));
+        _adminClientFactory = Check.NotNull(adminClientFactory, nameof(adminClientFactory));
     }
 
     public KafkaConsumerConfiguration Configuration { get; }
@@ -241,7 +244,7 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         Func<IReadOnlyCollection<TopicPartition>, ValueTask<IEnumerable<TopicPartitionOffset>>> partitionOffsetsProvider,
         TopicPartitionOffset topicPartitionOffset)
     {
-        _adminClient ??= _adminClientBuilder.Build(Configuration.GetConfluentClientConfig());
+        _adminClient ??= _adminClientFactory.GetClient(_confluentConfiguration);
 
         List<TopicPartition> availablePartitions =
             _adminClient

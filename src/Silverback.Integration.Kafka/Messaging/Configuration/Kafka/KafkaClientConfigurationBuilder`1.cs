@@ -10,18 +10,22 @@ namespace Silverback.Messaging.Configuration.Kafka;
 /// <summary>
 ///     The base class for all Kafka client configuration builders.
 /// </summary>
-/// <typeparam name="TClientConfig">
-///     The type of the <see cref="Confluent.Kafka.ClientConfig" /> being built.
+/// <typeparam name="TConfig">
+///     The type of the configuration being built.
+/// </typeparam>
+/// <typeparam name="TConfluentConfig">
+///     The type of the wrapped <see cref="ClientConfig" />.
 /// </typeparam>
 /// <typeparam name="TBuilder">
 ///     The actual builder type.
 /// </typeparam>
-public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
-    where TClientConfig : ClientConfig, new()
-    where TBuilder : KafkaClientConfigurationBuilder<TClientConfig, TBuilder>
+public abstract partial class KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, TBuilder>
+    where TConfig : KafkaClientConfiguration<TConfluentConfig>, new()
+    where TConfluentConfig : ClientConfig, new()
+    where TBuilder : KafkaClientConfigurationBuilder<TConfig, TConfluentConfig, TBuilder>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder{TClientConfig, TBuilder}" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaClientConfigurationBuilder{TConfig, TConfluentConfig, TBuilder}" /> class.
     /// </summary>
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" />.
@@ -37,9 +41,9 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     public IServiceProvider ServiceProvider { get; }
 
     /// <summary>
-    ///     Gets the <see cref="Confluent.Kafka.ClientConfig" /> being wrapped.
+    ///     Gets the configuration being built.
     /// </summary>
-    protected TClientConfig ClientConfig { get; } = new();
+    protected TConfig Config { get; } = new();
 
     /// <summary>
     ///     Gets this instance.
@@ -964,4 +968,68 @@ public abstract partial class KafkaClientConfigurationBuilder<TClientConfig, TBu
     ///     The builder so that additional calls can be chained.
     /// </returns>
     public partial TBuilder WithClientId(string? clientId);
+
+    /// <summary>
+    ///     Sets the backoff time in milliseconds before retrying a protocol request, this is the first backoff time, and will be backed off
+    ///     exponentially until number of retries is exhausted, and it's capped with
+    ///     <see cref="KafkaClientConfiguration{TClientConfig}.RetryBackoffMaxMs" />.
+    /// </summary>
+    /// <param name="retryBackoffMs">
+    ///     The backoff time in milliseconds before retrying a protocol request.
+    /// </param>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public partial TBuilder WithRetryBackoffMs(int? retryBackoffMs);
+
+    /// <summary>
+    ///     Sets the maximum backoff time in milliseconds before retrying a protocol request, this is the maximum backoff allowed for exponentially
+    ///     backed off requests.
+    /// </summary>
+    /// <param name="retryBackoffMaxMs">
+    ///     The maximum backoff time in milliseconds before retrying a protocol request.
+    /// </param>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public partial TBuilder WithRetryBackoffMaxMs(int? retryBackoffMaxMs);
+
+    /// <summary>
+    ///     Sets a value indicating how the client uses DNS lookups. By default, when the lookup returns multiple IP addresses for a hostname, they will all be attempted for connection before the
+    ///     connection is considered failed. This applies to both bootstrap and advertised servers. If the value is set to <see cref="ClientDnsLookup.ResolveCanonicalBootstrapServersOnly" />, each
+    ///     entry will be resolved and expanded into a list of canonical names. Warning: <see cref="ClientDnsLookup.ResolveCanonicalBootstrapServersOnly" /> must only be used with
+    ///     <see cref="SaslMechanism.Gssapi" /> (Kerberos), as it's the only purpose of this configuration value. Note: Default here is different from the Java client's default behavior, which
+    ///     connects only to the first IP address returned for a hostname.
+    /// </summary>
+    /// <param name="clientDnsLookup">
+    ///     A value indicating how the client uses DNS lookups.
+    /// </param>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public partial TBuilder WithClientDnsLookup(ClientDnsLookup? clientDnsLookup);
+
+    /// <summary>
+    ///     Enables pushing of client metrics to the cluster, if the cluster has a client metrics subscription which matches this client.
+    /// </summary>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder EnableMetricsPush()
+    {
+        WithEnableMetricsPush(true);
+        return This;
+    }
+
+    /// <summary>
+    ///     Disables pushing of client metrics to the cluster.
+    /// </summary>
+    /// <returns>
+    ///     The builder so that additional calls can be chained.
+    /// </returns>
+    public TBuilder DisableMetricsPush()
+    {
+        WithEnableMetricsPush(false);
+        return This;
+    }
 }

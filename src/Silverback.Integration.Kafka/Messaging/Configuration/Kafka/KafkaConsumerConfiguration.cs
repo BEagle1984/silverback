@@ -25,36 +25,13 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
     private readonly bool _processPartitionsIndependently = true;
 
-    private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints =
-        ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
-
-    /// <summary>
-    ///    Initializes a new instance of the <see cref="KafkaConsumerConfiguration" /> class.
-    /// </summary>
-    public KafkaConsumerConfiguration()
-        : this((ConsumerConfig?)null)
-    {
-    }
-
-    internal KafkaConsumerConfiguration(ConsumerConfig? consumerConfig)
-        : base(consumerConfig)
-    {
-        ClientConfig.EnableAutoCommit ??= true;
-        ClientConfig.GroupId ??= UnsetGroupId;
-
-        // This property is not exposed and hardcoded: the offsets will be explicitly stored only after successful processing
-        ClientConfig.EnableAutoOffsetStore = false;
-    }
+    private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints = ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
 
     /// <summary>
     ///     Gets the client group id. All clients sharing the same group id belong to the same group. The default is <c>null</c>
     ///     (which will internally be replaced with <c>"not-set"</c> since the underlying library requires a value).
     /// </summary>
-    public string GroupId
-    {
-        get => ClientConfig.GroupId;
-        init => ClientConfig.GroupId = string.IsNullOrEmpty(value) ? UnsetGroupId : value;
-    }
+    public string? GroupId { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the offsets must be committed. The default is <c>true</c>.
@@ -85,11 +62,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     Note: setting this to false does not prevent the consumer from fetching previously committed start offsets. To circumvent this
     ///     behaviour set specific start offsets per partition in the call to assign(). The default is <c>true</c>.
     /// </summary>
-    public bool EnableAutoCommit
-    {
-        get => ClientConfig.EnableAutoCommit ?? true;
-        init => ClientConfig.EnableAutoCommit = value;
-    }
+    public bool EnableAutoCommit { get; init; } = true;
 
     /// <summary>
     ///     Gets the number of message to be processed before committing the offset to the server. The most
@@ -170,7 +143,7 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         CheckDuplicateTopics();
 
-        if (GroupId == UnsetGroupId)
+        if (string.IsNullOrEmpty(GroupId))
             CheckGroupIdRequirements();
 
         ValidateCommitStrategy();
@@ -189,6 +162,19 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
         if (!ProcessPartitionsIndependently && Endpoints.Skip(0).Any(endpoint => endpoint != Endpoints.First()))
             throw new BrokerConfigurationException("All endpoints must use the same Batch settings if the partitions are consumed independently.");
+    }
+
+    internal override ConsumerConfig ToConfluentConfig()
+    {
+        ConsumerConfig confluentConfig = MapCore();
+
+        confluentConfig.GroupId = string.IsNullOrEmpty(GroupId) ? UnsetGroupId : GroupId;
+        confluentConfig.EnableAutoCommit = EnableAutoCommit;
+
+        // This property is not exposed and hardcoded: the offsets will be explicitly stored only after successful processing
+        confluentConfig.EnableAutoOffsetStore = false;
+
+        return confluentConfig;
     }
 
     private void ValidateEndpoints()

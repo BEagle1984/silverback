@@ -9,8 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
-///     Adds the <c>ExecuteQuery</c>, <c>ExecuteQueries</c>, <c>ExecuteQueryAsync</c> and <c>ExecuteQueriesAsync</c> methods to the
-///     <see cref="IPublisher" /> interface.
+///     Adds the <see cref="ExecuteQuery{TResult}" /> and <see cref="ExecuteQueryAsync{TResult}" /> methods to the <see cref="IPublisher" /> interface.
 /// </summary>
 public static class QueryPublisherExtensions
 {

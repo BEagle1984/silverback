@@ -18,30 +18,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 public class KafkaConsumerConfigurationFixture
 {
     [Fact]
-    public void Constructor_ShouldSetEnableAutoCommit()
-    {
-        KafkaConsumerConfiguration configuration = new();
-
-        configuration.EnableAutoCommit.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Constructor_ShouldSetGroupIdToUnset()
-    {
-        KafkaConsumerConfiguration configuration = new();
-
-        configuration.GroupId.Should().Be("not-set");
-    }
-
-    [Fact]
-    public void Constructor_ShouldDisableAutoOffsetStore()
-    {
-        KafkaConsumerConfiguration configuration = new();
-
-        configuration.GetConfluentClientConfig().EnableAutoOffsetStore.Should().BeFalse();
-    }
-
-    [Fact]
     public void CloneConstructor_ShouldCloneWrappedClientConfig()
     {
         KafkaConsumerConfiguration configuration1 = new()
@@ -55,11 +31,11 @@ public class KafkaConsumerConfigurationFixture
             BootstrapServers = "config2"
         };
 
-        configuration1.BootstrapServers.Should().Be("config1");
-        configuration2.BootstrapServers.Should().Be("config2");
+        configuration1.ToConfluentConfig().BootstrapServers.Should().Be("config1");
+        configuration2.ToConfluentConfig().BootstrapServers.Should().Be("config2");
 
-        configuration1.GroupId.Should().Be("group");
-        configuration2.GroupId.Should().Be("group");
+        configuration1.ToConfluentConfig().GroupId.Should().Be("group");
+        configuration2.ToConfluentConfig().GroupId.Should().Be("group");
     }
 
     [Fact]
@@ -76,30 +52,6 @@ public class KafkaConsumerConfigurationFixture
 
         configuration1.CommitOffsetEach.Should().Be(42);
         configuration2.CommitOffsetEach.Should().Be(42);
-    }
-
-    [Fact]
-    public void GroupId_ShouldSet()
-    {
-        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
-        {
-            GroupId = "group1"
-        };
-
-        configuration.GroupId.Should().Be("group1");
-    }
-
-    [InlineData(null)]
-    [InlineData("")]
-    [Theory]
-    public void GroupId_ShouldReturnUnset_WhenNullOrEmpty(string? groupId)
-    {
-        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
-        {
-            GroupId = groupId!
-        };
-
-        configuration.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
     }
 
     [Fact]
@@ -583,7 +535,7 @@ public class KafkaConsumerConfigurationFixture
     }
 
     [Fact]
-    public void GetConfluentClientConfig_ShouldReturnClientConfig()
+    public void ToConfluentConfig_ShouldReturnConfluentConfig()
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration() with
         {
@@ -592,11 +544,52 @@ public class KafkaConsumerConfigurationFixture
             FetchMaxBytes = 42
         };
 
-        ConsumerConfig clientConfig = configuration.GetConfluentClientConfig();
+        ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        clientConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
-        clientConfig.GroupId.Should().Be("group-42");
-        clientConfig.FetchMaxBytes.Should().Be(42);
+        confluentConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        confluentConfig.GroupId.Should().Be("group-42");
+        confluentConfig.FetchMaxBytes.Should().Be(42);
+    }
+
+    [Fact]
+    public void ToConfluentConfig_ShouldDisableAutoOffsetStore()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            BootstrapServers = "PLAINTEXT://tests"
+        };
+
+        ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
+
+        confluentConfig.EnableAutoOffsetStore.Should().BeFalse();
+    }
+
+    [InlineData(null)]
+    [InlineData("")]
+    [Theory]
+    public void ToConfluentConfig_ShouldSetGroupIdToUnset_WhenNullOrEmpty(string? groupId)
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            GroupId = groupId
+        };
+
+        ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
+
+        confluentConfig.GroupId.Should().Be(KafkaConsumerConfiguration.UnsetGroupId);
+    }
+
+    [Fact]
+    public void ToConfluentConfig_ShouldSetGroupId_WhenNotNullOrEmpty()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            GroupId = "group1"
+        };
+
+        ConsumerConfig confluentConfig = configuration.ToConfluentConfig();
+
+        confluentConfig.GroupId.Should().Be("group1");
     }
 
     private static KafkaConsumerConfiguration GetValidConfiguration() =>

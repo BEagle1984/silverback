@@ -15,22 +15,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
 public class KafkaProducerConfigurationFixture
 {
     [Fact]
-    public void Constructor_ShouldSetDefaultDeliveryReportFields()
-    {
-        KafkaProducerConfiguration configuration = new();
-
-        configuration.GetConfluentClientConfig().DeliveryReportFields.Should().Be("key,status");
-    }
-
-    [Fact]
-    public void Constructor_ShouldForceEnableBackgroundPoll()
-    {
-        KafkaProducerConfiguration configuration = new();
-
-        configuration.GetConfluentClientConfig().EnableBackgroundPoll.Should().BeTrue();
-    }
-
-    [Fact]
     public void CloneConstructor_ShouldCloneWrappedClientConfig()
     {
         KafkaProducerConfiguration configuration1 = new()
@@ -172,7 +156,7 @@ public class KafkaProducerConfigurationFixture
     }
 
     [Fact]
-    public void GetConfluentClientConfig_ShouldReturnClientConfig()
+    public void ToConfluentConfig_ShouldReturnConfluentConfig()
     {
         KafkaProducerConfiguration configuration = GetValidConfiguration() with
         {
@@ -180,10 +164,30 @@ public class KafkaProducerConfigurationFixture
             LingerMs = 42
         };
 
-        ProducerConfig clientConfig = configuration.GetConfluentClientConfig();
+        ProducerConfig confluentConfig = configuration.ToConfluentConfig();
 
-        clientConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
-        clientConfig.LingerMs.Should().Be(42);
+        confluentConfig.BootstrapServers.Should().Be("PLAINTEXT://tests");
+        confluentConfig.LingerMs.Should().Be(42);
+    }
+
+    [Fact]
+    public void ToConfluentConfig_ShouldSetDefaultDeliveryReportFields()
+    {
+        KafkaProducerConfiguration configuration = new();
+
+        ProducerConfig confluentConfig = configuration.ToConfluentConfig();
+
+        confluentConfig.DeliveryReportFields.Should().Be("key,status");
+    }
+
+    [Fact]
+    public void ToConfluentConfig_ShouldForceEnableBackgroundPoll()
+    {
+        KafkaProducerConfiguration configuration = new();
+
+        ProducerConfig confluentConfig = configuration.ToConfluentConfig();
+
+        confluentConfig.EnableBackgroundPoll.Should().BeTrue();
     }
 
     private static KafkaProducerConfiguration GetValidConfiguration() => new()

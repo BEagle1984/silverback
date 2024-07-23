@@ -14,7 +14,7 @@ namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configurat
 
 public class AvroMessageDeserializerBuilderFixture
 {
-    private readonly ISchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<ISchemaRegistryClientFactory>();
+    private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<IConfluentSchemaRegistryClientFactory>();
 
     [Fact]
     public void UseModel_ShouldSetSerializerType()

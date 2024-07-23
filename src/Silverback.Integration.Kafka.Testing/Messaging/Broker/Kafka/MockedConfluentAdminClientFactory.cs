@@ -11,23 +11,23 @@ namespace Silverback.Messaging.Broker.Kafka;
 /// <summary>
 ///     The builder for the <see cref="MockedConfluentAdminClient" />.
 /// </summary>
-public class MockedConfluentAdminClientBuilder : IConfluentAdminClientBuilder
+public class MockedConfluentAdminClientFactory : IConfluentAdminClientFactory
 {
     private readonly IMockedKafkaOptions _options;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MockedConfluentAdminClientBuilder" /> class.
+    ///     Initializes a new instance of the <see cref="MockedConfluentAdminClientFactory" /> class.
     /// </summary>
     /// <param name="options">
     ///     The <see cref="IMockedKafkaOptions" />.
     /// </param>
-    public MockedConfluentAdminClientBuilder(IMockedKafkaOptions options)
+    public MockedConfluentAdminClientFactory(IMockedKafkaOptions options)
     {
         _options = Check.NotNull(options, nameof(options));
     }
 
-    /// <inheritdoc cref="IConfluentAdminClientBuilder.Build" />
-    public IAdminClient Build(ClientConfig config) =>
+    /// <inheritdoc cref="IConfluentAdminClientFactory.GetClient" />
+    public IAdminClient GetClient(ClientConfig config) =>
         new MockedConfluentAdminClient(
             Check.NotNull(config, nameof(config)),
             _options);

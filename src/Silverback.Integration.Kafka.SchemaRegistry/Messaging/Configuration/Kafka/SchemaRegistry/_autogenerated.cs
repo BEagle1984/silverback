@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.SchemaRegistry;
 
@@ -18,30 +17,18 @@ public partial record KafkaSchemaRegistryConfiguration
     ///     Gets the source of the basic authentication credentials. This specifies whether the credentials are specified in the <see cref="BasicAuthUserInfo" />
     ///     or they are inherited from the producer or consumer configuration.
     /// </summary>
-    public AuthCredentialsSource? BasicAuthCredentialsSource
-    {
-        get => SchemaRegistryConfig.BasicAuthCredentialsSource;
-        init => SchemaRegistryConfig.BasicAuthCredentialsSource = value;
-    }
+    public AuthCredentialsSource? BasicAuthCredentialsSource { get; init; }
 
     /// <summary>
     ///     Gets the comma-separated list of URLs for schema registry instances that are used to register or lookup schemas.
     /// </summary>
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Generated according to wrapped class.")]
-    public string? Url
-    {
-        get => SchemaRegistryConfig.Url;
-        init => SchemaRegistryConfig.Url = value;
-    }
+    public string? Url { get; init; }
 
     /// <summary>
     ///     Gets the timeout in milliseconds for the requests to the Confluent schema registry.
     /// </summary>
-    public int? RequestTimeoutMs
-    {
-        get => SchemaRegistryConfig.RequestTimeoutMs;
-        init => SchemaRegistryConfig.RequestTimeoutMs = value;
-    }
+    public int? RequestTimeoutMs { get; init; }
 
     /// <summary>
     ///     Gets the file or directory path to the CA certificate(s) for verifying the registry's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store.
@@ -49,87 +36,58 @@ public partial record KafkaSchemaRegistryConfiguration
     ///     If OpenSSL is statically linked or <see cref="SslCaLocation" /> is set to <c>probe</c> a list of standard paths will be probed and the first one found will be used as the default CA certificate location path.
     ///     If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see <c>OPENSSLDIR</c> in <c>openssl version -a</c>).
     /// </summary>
-    public string? SslCaLocation
-    {
-        get => SchemaRegistryConfig.SslCaLocation;
-        init => SchemaRegistryConfig.SslCaLocation = value;
-    }
+    public string? SslCaLocation { get; init; }
 
     /// <summary>
     ///     Gets the path to the client's keystore (PKCS#12) used for the authentication.
     /// </summary>
-    public string? SslKeystoreLocation
-    {
-        get => SchemaRegistryConfig.SslKeystoreLocation;
-        init => SchemaRegistryConfig.SslKeystoreLocation = value;
-    }
+    public string? SslKeystoreLocation { get; init; }
 
     /// <summary>
     ///     Gets the client's keystore (PKCS#12) password.
     /// </summary>
-    public string? SslKeystorePassword
-    {
-        get => SchemaRegistryConfig.SslKeystorePassword;
-        init => SchemaRegistryConfig.SslKeystorePassword = value;
-    }
+    public string? SslKeystorePassword { get; init; }
 
     /// <summary>
     ///     Gets a value indicating whether the registry (server) certificate must be verified.
     /// </summary>
-    public bool? EnableSslCertificateVerification
-    {
-        get => SchemaRegistryConfig.EnableSslCertificateVerification;
-        init => SchemaRegistryConfig.EnableSslCertificateVerification = value;
-    }
+    public bool? EnableSslCertificateVerification { get; init; }
 
     /// <summary>
     ///     Gets the maximum number of schemas that are cached by the schema registry client.
     /// </summary>
-    public int? MaxCachedSchemas
-    {
-        get => SchemaRegistryConfig.MaxCachedSchemas;
-        init => SchemaRegistryConfig.MaxCachedSchemas = value;
-    }
+    public int? MaxCachedSchemas { get; init; }
+
+    /// <summary>
+    ///     Gets the TTL in seconds for caches holding latest schemas, or -1 for no TTL.
+    /// </summary>
+    public int? LatestCacheTtlSecs { get; init; }
 
     /// <summary>
     ///     Gets the basic authentication credentials in the form {username}:{password}.
     /// </summary>
-    public string? BasicAuthUserInfo
-    {
-        get => SchemaRegistryConfig.BasicAuthUserInfo;
-        init => SchemaRegistryConfig.BasicAuthUserInfo = value;
-    }
+    public string? BasicAuthUserInfo { get; init; }
 
-    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-    public bool Equals(KafkaSchemaRegistryConfiguration? other)
-    {
-        if (other is null)
-            return false;
-
-        if (ReferenceEquals(this, other))
-            return true;
-
-        return BasicAuthCredentialsSource == other.BasicAuthCredentialsSource &&
-               Url == other.Url &&
-               RequestTimeoutMs == other.RequestTimeoutMs &&
-               SslCaLocation == other.SslCaLocation &&
-               SslKeystoreLocation == other.SslKeystoreLocation &&
-               SslKeystorePassword == other.SslKeystorePassword &&
-               EnableSslCertificateVerification == other.EnableSslCertificateVerification &&
-               MaxCachedSchemas == other.MaxCachedSchemas &&
-               BasicAuthUserInfo == other.BasicAuthUserInfo;
-    }
-
-    /// <inheritdoc cref="object.GetHashCode" />
-    public override int GetHashCode() => HashCode.Combine(
-        BasicAuthCredentialsSource,
-        Url,
-        RequestTimeoutMs,
-        SslCaLocation,
-        SslKeystoreLocation,
-        EnableSslCertificateVerification,
-        MaxCachedSchemas,
-        BasicAuthUserInfo);
+    /// <summary>
+    ///     Maps to the Confluent client configuration.
+    /// </summary>
+    /// <returns>
+    ///     The Confluent client configuration.
+    /// </returns>
+    private SchemaRegistryConfig MapCore() =>
+        new()
+        {
+            BasicAuthCredentialsSource = BasicAuthCredentialsSource,
+            Url = Url,
+            RequestTimeoutMs = RequestTimeoutMs,
+            SslCaLocation = SslCaLocation,
+            SslKeystoreLocation = SslKeystoreLocation,
+            SslKeystorePassword = SslKeystorePassword,
+            EnableSslCertificateVerification = EnableSslCertificateVerification,
+            MaxCachedSchemas = MaxCachedSchemas,
+            LatestCacheTtlSecs = LatestCacheTtlSecs,
+            BasicAuthUserInfo = BasicAuthUserInfo
+        };
 }
 
 /// <content>
@@ -141,57 +99,98 @@ public partial record KafkaSchemaRegistryConfiguration
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1601:Partial elements should be documented", Justification = "Autogenerated")]
 public partial class KafkaSchemaRegistryConfigurationBuilder
 {
+    private AuthCredentialsSource? _basicAuthCredentialsSource;
+
+    private string? _url;
+
+    private int? _requestTimeoutMs;
+
+    private string? _sslCaLocation;
+
+    private string? _sslKeystoreLocation;
+
+    private string? _sslKeystorePassword;
+
+    private bool? _enableSslCertificateVerification;
+
+    private int? _maxCachedSchemas;
+
+    private int? _latestCacheTtlSecs;
+
+    private string? _basicAuthUserInfo;
+
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthCredentialsSource(AuthCredentialsSource? basicAuthCredentialsSource)
     {
-        SchemaRegistryConfig.BasicAuthCredentialsSource = basicAuthCredentialsSource;
+        _basicAuthCredentialsSource = basicAuthCredentialsSource;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithUrl(string? url)
     {
-        SchemaRegistryConfig.Url = url;
+        _url = url;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithRequestTimeoutMs(int? requestTimeoutMs)
     {
-        SchemaRegistryConfig.RequestTimeoutMs = requestTimeoutMs;
+        _requestTimeoutMs = requestTimeoutMs;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslCaLocation(string? sslCaLocation)
     {
-        SchemaRegistryConfig.SslCaLocation = sslCaLocation;
+        _sslCaLocation = sslCaLocation;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslKeystoreLocation(string? sslKeystoreLocation)
     {
-        SchemaRegistryConfig.SslKeystoreLocation = sslKeystoreLocation;
+        _sslKeystoreLocation = sslKeystoreLocation;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithSslKeystorePassword(string? sslKeystorePassword)
     {
-        SchemaRegistryConfig.SslKeystorePassword = sslKeystorePassword;
+        _sslKeystorePassword = sslKeystorePassword;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithMaxCachedSchemas(int? maxCachedSchemas)
     {
-        SchemaRegistryConfig.MaxCachedSchemas = maxCachedSchemas;
+        _maxCachedSchemas = maxCachedSchemas;
+        return this;
+    }
+
+    public partial KafkaSchemaRegistryConfigurationBuilder WithLatestCacheTtlSecs(int? latestCacheTtlSecs)
+    {
+        _latestCacheTtlSecs = latestCacheTtlSecs;
         return this;
     }
 
     public partial KafkaSchemaRegistryConfigurationBuilder WithBasicAuthUserInfo(string? basicAuthUserInfo)
     {
-        SchemaRegistryConfig.BasicAuthUserInfo = basicAuthUserInfo;
+        _basicAuthUserInfo = basicAuthUserInfo;
         return this;
     }
 
     internal KafkaSchemaRegistryConfigurationBuilder WithEnableSslCertificateVerification(bool? enableSslCertificateVerification)
     {
-        SchemaRegistryConfig.EnableSslCertificateVerification = enableSslCertificateVerification;
+        _enableSslCertificateVerification = enableSslCertificateVerification;
         return this;
     }
+
+    private KafkaSchemaRegistryConfiguration BuildCore() =>
+        new()
+        {
+            BasicAuthCredentialsSource = _basicAuthCredentialsSource,
+            Url = _url,
+            RequestTimeoutMs = _requestTimeoutMs,
+            SslCaLocation = _sslCaLocation,
+            SslKeystoreLocation = _sslKeystoreLocation,
+            SslKeystorePassword = _sslKeystorePassword,
+            EnableSslCertificateVerification = _enableSslCertificateVerification,
+            MaxCachedSchemas = _maxCachedSchemas,
+            LatestCacheTtlSecs = _latestCacheTtlSecs,
+            BasicAuthUserInfo = _basicAuthUserInfo
+        };
 }

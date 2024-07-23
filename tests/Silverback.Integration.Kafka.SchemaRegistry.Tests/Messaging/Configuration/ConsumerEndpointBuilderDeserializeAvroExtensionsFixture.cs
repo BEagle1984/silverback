@@ -3,7 +3,6 @@
 
 using System;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
@@ -19,7 +18,7 @@ public class ConsumerEndpointBuilderDeserializeAvroExtensionsFixture
 
     public ConsumerEndpointBuilderDeserializeAvroExtensionsFixture()
     {
-        _serviceProvider.GetService(typeof(ISchemaRegistryClientFactory)).Returns(Substitute.For<ISchemaRegistryClientFactory>());
+        _serviceProvider.GetService(typeof(IConfluentSchemaRegistryClientFactory)).Returns(Substitute.For<IConfluentSchemaRegistryClientFactory>());
     }
 
     [Fact]

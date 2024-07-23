@@ -9,7 +9,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration;
 
 /// <summary>
-///     Adds the <c>SerializeAsAvro</c> method to the <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
+///     Adds the <see cref="SerializeAsAvro{TMessage,TConfiguration,TEndpoint,TBuilder}" />  method to the
+///     <see cref="ProducerEndpointConfigurationBuilder{TMessage,TConfiguration,TEndpoint,TBuilder}" />.
 /// </summary>
 public static class ProducerEndpointConfigurationBuilderSerializeAsAvroExtensions
 {
@@ -49,7 +50,7 @@ public static class ProducerEndpointConfigurationBuilderSerializeAsAvroExtension
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
-        AvroMessageSerializerBuilder serializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<ISchemaRegistryClientFactory>());
+        AvroMessageSerializerBuilder serializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>());
 
         if (typeof(TMessage) != typeof(object))
             serializerBuilder.UseModel<TMessage>();
@@ -96,7 +97,7 @@ public static class ProducerEndpointConfigurationBuilderSerializeAsAvroExtension
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
-        JsonSchemaRegistryMessageSerializerBuilder serializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<ISchemaRegistryClientFactory>());
+        JsonSchemaRegistryMessageSerializerBuilder serializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>());
 
         if (typeof(TMessage) != typeof(object))
             serializerBuilder.UseModel<TMessage>();

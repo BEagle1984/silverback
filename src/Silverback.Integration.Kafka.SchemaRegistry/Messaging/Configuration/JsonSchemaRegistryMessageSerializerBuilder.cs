@@ -23,9 +23,9 @@ public class JsonSchemaRegistryMessageSerializerBuilder : SchemaRegistrySerializ
     ///     Initializes a new instance of the <see cref="JsonSchemaRegistryMessageSerializerBuilder" /> class.
     /// </summary>
     /// <param name="schemaRegistryClientFactory">
-    ///     The <see cref="ISchemaRegistryClientFactory" /> to be used to create the schema registry client.
+    ///     The <see cref="IConfluentSchemaRegistryClientFactory" /> to be used to create the schema registry client.
     /// </param>
-    public JsonSchemaRegistryMessageSerializerBuilder(ISchemaRegistryClientFactory schemaRegistryClientFactory)
+    public JsonSchemaRegistryMessageSerializerBuilder(IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory)
         : base(schemaRegistryClientFactory)
     {
     }

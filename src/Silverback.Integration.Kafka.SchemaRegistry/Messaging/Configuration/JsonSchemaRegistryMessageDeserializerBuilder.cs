@@ -23,9 +23,9 @@ public class JsonSchemaRegistryMessageDeserializerBuilder : SchemaRegistryDeseri
     ///     Initializes a new instance of the <see cref="JsonSchemaRegistryMessageDeserializerBuilder" /> class.
     /// </summary>
     /// <param name="schemaRegistryClientFactory">
-    ///     The <see cref="ISchemaRegistryClientFactory" /> to be used to create the schema registry client.
+    ///     The <see cref="IConfluentSchemaRegistryClientFactory" /> to be used to create the schema registry client.
     /// </param>
-    public JsonSchemaRegistryMessageDeserializerBuilder(ISchemaRegistryClientFactory schemaRegistryClientFactory)
+    public JsonSchemaRegistryMessageDeserializerBuilder(IConfluentSchemaRegistryClientFactory schemaRegistryClientFactory)
         : base(schemaRegistryClientFactory)
     {
     }

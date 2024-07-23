@@ -47,7 +47,7 @@ public static class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
-        AvroMessageDeserializerBuilder deserializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<ISchemaRegistryClientFactory>());
+        AvroMessageDeserializerBuilder deserializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>());
 
         if (typeof(TMessage) != typeof(object))
             deserializerBuilder.UseModel<TMessage>();
@@ -89,7 +89,7 @@ public static class ConsumerEndpointConfigurationBuilderSchemaRegistryExtensions
 
         endpointBuilder.DisableMessageValidation(); // Implicit
 
-        JsonSchemaRegistryMessageDeserializerBuilder deserializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<ISchemaRegistryClientFactory>());
+        JsonSchemaRegistryMessageDeserializerBuilder deserializerBuilder = new(endpointBuilder.ServiceProvider.GetRequiredService<IConfluentSchemaRegistryClientFactory>());
 
         if (typeof(TMessage) != typeof(object))
             deserializerBuilder.UseModel<TMessage>();

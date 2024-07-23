@@ -9,8 +9,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Publishing;
 
 /// <summary>
-///     Adds the <c>ExecuteCommand</c>, <c>ExecuteCommands</c>, <c>ExecuteCommandAsync</c> and <c>ExecuteCommandsAsync</c> methods to the
-///     <see cref="IPublisher" /> interface.
+///     Adds the <see cref="ExecuteCommand" /> and <see cref="ExecuteCommandAsync" /> methods to the <see cref="IPublisher" /> interface.
 /// </summary>
 public static class CommandPublisherExtensions
 {

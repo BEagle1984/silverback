@@ -18,7 +18,7 @@ public class ProducerEndpointBuilderSerializeAsAvroExtensionsFixture
 
     public ProducerEndpointBuilderSerializeAsAvroExtensionsFixture()
     {
-        _serviceProvider.GetService(typeof(ISchemaRegistryClientFactory)).Returns(Substitute.For<ISchemaRegistryClientFactory>());
+        _serviceProvider.GetService(typeof(IConfluentSchemaRegistryClientFactory)).Returns(Substitute.For<IConfluentSchemaRegistryClientFactory>());
     }
 
     [Fact]
