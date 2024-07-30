@@ -6,11 +6,11 @@ using Confluent.SchemaRegistry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Silverback.Examples.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
 
-namespace Silverback.Samples.Kafka.Avro.Producer;
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
 
 public class ProducerBackgroundService : BackgroundService
 {
@@ -38,8 +38,8 @@ public class ProducerBackgroundService : BackgroundService
                 .WithUrl("localhost:8081"));
 
         await schemaRegistry.RegisterSchemaAsync(
-            "samples-avro-value",
-            new Schema(AvroMessage._SCHEMA.ToString(), null, SchemaType.Avro, null, null));
+            "samples-json-schema-registry-value",
+            new Schema(SampleMessage.Schema, null, SchemaType.Json, null, null));
 
         // Create a service scope and resolve the IPublisher
         // (the IPublisher cannot be resolved from the root scope and cannot
@@ -62,9 +62,9 @@ public class ProducerBackgroundService : BackgroundService
         try
         {
             await publisher.PublishAsync(
-                new AvroMessage
+                new SampleMessage
                 {
-                    number = number.ToString(CultureInfo.InvariantCulture)
+                    Number = number
                 });
 
             _logger.LogInformation("Produced {Number}", number);

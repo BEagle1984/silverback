@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Producing.EnrichedMessages;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Kafka.BatchWithTombstone.Common;
 
@@ -48,27 +47,21 @@ public class ProducerBackgroundService : BackgroundService
     {
         try
         {
-            List<MessageWithHeaders<SampleMessage>> messages = new();
-            List<Tombstone<SampleMessage>> tombstones = new();
+            List<SampleMessage> messages = [];
+            List<Tombstone<SampleMessage>> tombstones = [];
 
             for (int i = 0; i < 100; i++)
             {
-                string messageKey = $"N{number + i}";
-
                 if (i % 30 == 0)
-                {
-                    tombstones.Add(new Tombstone<SampleMessage>(messageKey));
-                }
+                    tombstones.Add(new Tombstone<SampleMessage>($"N{number + i}"));
                 else
-                {
-                    messages.Add(
-                        new SampleMessage { Number = number + i }
-                            .WithKafkaKey(messageKey));
-                }
+                    messages.Add(new SampleMessage { Number = number + i });
             }
 
-            await publisher.PublishAsync(messages);
-            await publisher.PublishAsync(tombstones);
+            await publisher.WrapAndPublishBatchAsync(
+                messages,
+                envelope => envelope.SetKafkaKey($"N{envelope.Message?.Number}"));
+            await publisher.WrapAndPublishBatchAsync(tombstones);
 
             _logger.LogInformation("Produced {FirstNumber}-{LastNumber}", number, number + 99);
         }

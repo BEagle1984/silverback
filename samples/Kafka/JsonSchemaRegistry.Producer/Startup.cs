@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Producer;
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
 
 public class Startup
 {

@@ -22,7 +22,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             // Send last will message if disconnecting ungracefully
                             .SendLastWillMessage<TestamentMessage>(
                                 lastWill => lastWill
-                                    .Message(new TestamentMessage())
+                                    .SendMessage(new TestamentMessage())
                                     .ProduceTo("samples/testaments"))
 
                             // Consume the samples/basic topic

@@ -1,7 +1,7 @@
-﻿using Silverback.Examples.Messages;
-using Silverback.Messaging.Configuration;
+﻿using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
 
-namespace Silverback.Samples.Kafka.Avro.Producer;
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Producer;
 
 public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
@@ -19,12 +19,12 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                         producer => producer
 
                             // Produce the AvroMessage to the samples-avro topic
-                            .Produce<AvroMessage>(
+                            .Produce<SampleMessage>(
                                 endpoint => endpoint
-                                    .ProduceTo("samples-avro")
+                                    .ProduceTo("samples-json-schema-registry")
 
-                                    // Configure Avro serialization
-                                    .SerializeAsAvro(
+                                    // Configure JSON serialization
+                                    .SerializeAsJsonUsingSchemaRegistry(
                                         avro => avro
                                             .ConnectToSchemaRegistry("localhost:8081")
                                             .Configure(

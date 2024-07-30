@@ -3,8 +3,7 @@
   "profiles": {
     "Default": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchBrowser": false,
       "applicationUrl": "http://127.0.0.1:0",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

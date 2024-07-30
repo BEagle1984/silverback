@@ -1,18 +1,9 @@
-version: "3.3"
+# Kafka dashboard (AKHQ): http://localhost:8080
+# MQTT dashboard (EMQX): http://localhost:18083 (user: admin / pwd: public)
+
 services:
-
-  ### Database ###
-  mssql:
-    container_name: silverback-mssql
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "mssql2017."
-      MSSQL_PID: "Developer"
-    ports:
-      - "1433:1433"
-
-  ### Apache Kafka ###
+  
+  # Apache Kafka (confluent)
   zookeeper:
     container_name: silverback-zookeeper
     image: confluentinc/cp-zookeeper:latest
@@ -52,57 +43,61 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka:29092"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
-
-  ### RabbitMQ ###
-  # management console http://localhost:15672/#/ (login guest/guest)
-#  rabbit:
-#    container_name: silverback-rabbit
-#    image: rabbitmq:3-management
-#    ports:
-#      - "15672:15672"
-#      - "5672:5672"
-
-  ### MQTT (emqx)
+  akhq:
+    container_name: silverback-akhq
+    image: tchiotludo/akhq:latest
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            silverback-kafka:
+              properties:
+                bootstrap.servers: "kafka:29092"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+  
+  # MQTT (emqx)
   emqx1:
-    image: emqx:5.1.0
+    image: emqx:latest
     container_name: silverback-emqx1
     environment:
-    - "EMQX_NODE_NAME=emqx@node1.emqx.io"
-    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - "EMQX_NODE_NAME=emqx@node1.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
     healthcheck:
-      test: ["CMD", "/opt/emqx/bin/emqx", "ctl", "status"]
+      test: [ "CMD", "/opt/emqx/bin/emqx", "ctl", "status" ]
       interval: 5s
       timeout: 25s
       retries: 5
     networks:
       default:
         aliases:
-        - node1.emqx.io
-
+          - node1.emqx.io
   emqx2:
-    image: emqx:5.1.0
+    image: emqx:latest
     container_name: silverback-emqx2
     environment:
-    - "EMQX_NODE_NAME=emqx@node2.emqx.io"
-    - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - "EMQX_NODE_NAME=emqx@node2.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
     healthcheck:
-      test: ["CMD", "/opt/emqx/bin/emqx", "ctl", "status"]
+      test: [ "CMD", "/opt/emqx/bin/emqx", "ctl", "status" ]
       interval: 5s
       timeout: 25s
       retries: 5
     networks:
       default:
         aliases:
-        - node2.emqx.io
-
-  ### HA Proxy (used to load balance the emqx cluster nodes)
+          - node2.emqx.io
   haproxy:
     image: haproxy:latest
     container_name: silverback-haproxy
     ports:
-      - "1883:1883"
+      - "1883:1883"   # MQTT
+      - "8083:8083"   # WebSocket/HTTP
+      - "18083:18083" # Dashboard
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     depends_on:
@@ -115,4 +110,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 10.200.1.1/24
+        - subnet: 10.200.1.0/24

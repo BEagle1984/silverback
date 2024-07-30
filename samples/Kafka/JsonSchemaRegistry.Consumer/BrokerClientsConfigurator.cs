@@ -1,7 +1,7 @@
-﻿using Silverback.Examples.Messages;
-using Silverback.Messaging.Configuration;
+﻿using Silverback.Messaging.Configuration;
+using Silverback.Samples.Kafka.JsonSchemaRegistry.Common;
 
-namespace Silverback.Samples.Kafka.Avro.Consumer;
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Consumer;
 
 public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
@@ -27,13 +27,13 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             .AutoResetOffsetToEarliest()
 
                             // Consume the AvroMessage from the samples-avro topic
-                            .Consume<AvroMessage>(
+                            .Consume<SampleMessage>(
                                 endpoint => endpoint
-                                    .ConsumeFrom("samples-avro")
+                                    .ConsumeFrom("samples-json-schema-registry")
 
-                                    // Configure Avro deserialization
-                                    .DeserializeAvro(
-                                        avro => avro
+                                    // Configure JSON deserialization
+                                    .DeserializeJsonUsingSchemaRegistry(
+                                        json => json
                                             .ConnectToSchemaRegistry("localhost:8081")))));
     }
 }

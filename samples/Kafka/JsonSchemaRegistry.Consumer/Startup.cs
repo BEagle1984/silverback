@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Avro.Producer;
+namespace Silverback.Samples.Kafka.JsonSchemaRegistry.Consumer;
 
 public class Startup
 {
@@ -17,10 +17,10 @@ public class Startup
                 .AddKafkaSchemaRegistry())
 
             // Delegate the broker clients configuration to a separate class
-            .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
+            .AddBrokerClientsConfigurator<BrokerClientsConfigurator>()
 
-        // Add the hosted service that produces the random sample messages
-        services.AddHostedService<ProducerBackgroundService>();
+            // Register the subscribers
+            .AddSingletonSubscriber<SampleMessageSubscriber>();
     }
 
     public void Configure()

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Kafka.Batch.Common;
 
@@ -46,13 +47,15 @@ public class ProducerBackgroundService : BackgroundService
     {
         try
         {
-            List<SampleMessage> messages = new();
+            List<SampleMessage> messages = [];
             for (int i = 0; i < 100; i++)
             {
                 messages.Add(new SampleMessage { Number = number + i });
             }
 
-            await publisher.PublishAsync(messages);
+            await publisher.WrapAndPublishBatchAsync(
+                messages,
+                envelope => envelope.SetKafkaKey($"N{envelope.Message?.Number}"));
 
             _logger.LogInformation("Produced {FirstNumber}-{LastNumber}", number, number + 99);
         }

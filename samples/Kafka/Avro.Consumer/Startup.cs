@@ -11,8 +11,10 @@ public class Startup
         // Enable Silverback
         services.AddSilverback()
 
-            // Use Apache Kafka as message broker
-            .WithConnectionToMessageBroker(options => options.AddKafka())
+            // Use Apache Kafka as message broker and the Confluent schema registry
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka()
+                .AddKafkaSchemaRegistry())
 
             // Delegate the broker clients configuration to a separate class
             .AddBrokerClientsConfigurator<BrokerClientsConfigurator>()
