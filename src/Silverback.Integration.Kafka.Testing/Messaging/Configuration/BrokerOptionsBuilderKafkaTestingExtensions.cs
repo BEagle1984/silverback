@@ -38,4 +38,24 @@ public static class BrokerOptionsBuilderKafkaTestingExtensions
 
         return brokerOptionsBuilder;
     }
+
+    /// <summary>
+    ///     Registers the Confluent schema registry but replaces the schema registry connectivity with a mocked in-memory
+    ///     schema registry that <b>more or less</b> replicates the Confluent schema registry behavior.
+    /// </summary>
+    /// <param name="brokerOptionsBuilder">
+    ///     The <see cref="BrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="BrokerOptionsBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static BrokerOptionsBuilder AddMockedConfluentSchemaRegistry(this BrokerOptionsBuilder brokerOptionsBuilder)
+    {
+        Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
+
+        brokerOptionsBuilder.AddConfluentSchemaRegistry();
+        brokerOptionsBuilder.SilverbackBuilder.UseMockedConfluentSchemaRegistry();
+
+        return brokerOptionsBuilder;
+    }
 }

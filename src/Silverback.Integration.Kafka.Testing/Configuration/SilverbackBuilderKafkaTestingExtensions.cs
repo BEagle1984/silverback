@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Serialization;
 using Silverback.Testing;
 using Silverback.Util;
 
@@ -51,6 +52,27 @@ public static class SilverbackBuilderKafkaTestingExtensions
 
         MockedKafkaOptionsBuilder optionsBuilder = new(builder.Services);
         optionsAction?.Invoke(optionsBuilder);
+
+        return builder;
+    }
+
+    /// <summary>
+    ///     Replaces the Confluent schema registry connectivity with a mocked in-memory schema registry that
+    ///     <b>more or less</b> replicates the Confluent schema registry behavior.
+    /// </summary>
+    /// <param name="builder">
+    ///     The <see cref="SilverbackBuilder" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static SilverbackBuilder UseMockedConfluentSchemaRegistry(this SilverbackBuilder builder)
+    {
+        Check.NotNull(builder, nameof(builder));
+
+        builder.Services
+            .RemoveAll<IConfluentSchemaRegistryClientFactory>()
+            .AddSingleton<IConfluentSchemaRegistryClientFactory, MockedConfluentSchemaRegistryClientFactory>();
 
         return builder;
     }

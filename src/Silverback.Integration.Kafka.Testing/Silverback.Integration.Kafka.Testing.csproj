@@ -22,6 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Silverback.Integration.Kafka.SchemaRegistry\Silverback.Integration.Kafka.SchemaRegistry.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
   </ItemGroup>
