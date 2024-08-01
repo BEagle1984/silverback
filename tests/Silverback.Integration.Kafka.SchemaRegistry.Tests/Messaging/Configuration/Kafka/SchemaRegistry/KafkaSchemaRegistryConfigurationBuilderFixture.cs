@@ -3,13 +3,11 @@
 
 using System;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration.Kafka.SchemaRegistry;
 
-[TestSubject(typeof(KafkaSchemaRegistryConfigurationBuilder))]
 public class KafkaSchemaRegistryConfigurationBuilderFixture
 {
     [Fact]

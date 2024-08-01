@@ -22,6 +22,7 @@ public class BrokerClientsConfigurator : IBrokerClientsConfigurator
                             .Produce<AvroMessage>(
                                 endpoint => endpoint
                                     .ProduceTo("samples-avro")
+                                    .SetKafkaKey(message => message?.number.ToString())
 
                                     // Configure Avro serialization
                                     .SerializeAsAvro(

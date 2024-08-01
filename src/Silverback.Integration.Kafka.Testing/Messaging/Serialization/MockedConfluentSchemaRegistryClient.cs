@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+extern alias GoogleProtobuf;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -50,7 +52,14 @@ internal class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
 
     public Task<string> GetSchemaAsync(string subject, int version) => throw new NotSupportedException();
 
-    public Task<RegisteredSchema> GetLatestSchemaAsync(string subject) => throw new NotSupportedException();
+    public Task<RegisteredSchema> GetLatestSchemaAsync(string subject)
+    {
+        RegisteredSchema registeredSchema =
+            GetLatestSchema(subject) ??
+            throw new SchemaRegistryException($"No schema found for subject '{subject}'.", HttpStatusCode.NotFound, 42);
+
+        return Task.FromResult(registeredSchema);
+    }
 
     public Task<RegisteredSchema> GetLatestWithMetadataAsync(string subject, IDictionary<string, string> metadata, bool ignoreDeletedSchemas) => throw new NotSupportedException();
 
@@ -84,9 +93,12 @@ internal class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
 
         lock (_schemas)
         {
+            if (TryGetSchemaId(subject, schemaString, schemaType, normalize, out int id))
+                return Task.FromResult(id);
+
             List<RegisteredSchema> registeredSchemas = _schemas.GetOrAdd(subject, _ => []);
 
-            int id = GetNextId();
+            id = GetNextId();
 
             registeredSchemas.Add(
                 new RegisteredSchema(
@@ -101,27 +113,51 @@ internal class MockedConfluentSchemaRegistryClient : ISchemaRegistryClient
         }
     }
 
+    private Task<int> GetSchemaIdAsync(string subject, string schemaString, SchemaType schemaType, bool normalize) =>
+        TryGetSchemaId(subject, schemaString, schemaType, normalize, out int schemaId)
+            ? Task.FromResult(schemaId)
+            : throw new SchemaRegistryException(
+                $"No matching schema found for subject '{subject}' and the specified schema.",
+                HttpStatusCode.NotFound,
+                42);
+
     [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Only synchronized when writing")]
-    private Task<int> GetSchemaIdAsync(string subject, string schemaString, SchemaType schemaType, bool normalize)
+    private bool TryGetSchemaId(
+        string subject,
+        string schemaString,
+        SchemaType schemaType,
+        bool normalize,
+        out int schemaId)
     {
         if (normalize)
             schemaString = SchemaNormalizer.Normalize(schemaString, schemaType);
 
         if (!_schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas))
-            throw new SchemaRegistryException($"No schema found for subject '{subject}'.", HttpStatusCode.NotFound, 42);
+        {
+            schemaId = -1;
+            return false;
+        }
 
-        RegisteredSchema registeredSchema = registeredSchemas.FirstOrDefault(
-                                                schema => schema.Schema.SchemaString == schemaString &&
-                                                          schema.Schema.SchemaType == schemaType) ??
-                                            throw new SchemaRegistryException(
-                                                $"No matching schema found for subject '{subject}' and the specified schema.",
-                                                HttpStatusCode.NotFound,
-                                                42);
+        // Note: for protobuf only the latest schema is considered at the moment, since the schema string matching is not straightforward
+        RegisteredSchema? registeredSchema = registeredSchemas.LastOrDefault(
+            schema => (schema.Schema.SchemaString == schemaString || schemaType == SchemaType.Protobuf) &&
+                      schema.Schema.SchemaType == schemaType);
+
+        if (registeredSchema == null)
+        {
+            schemaId = -1;
+            return false;
+        }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        return Task.FromResult(registeredSchema.Id);
+        schemaId = registeredSchema.Id;
 #pragma warning restore CS0618 // Type or member is obsolete
+
+        return true;
     }
+
+    private RegisteredSchema? GetLatestSchema(string subject) =>
+        _schemas.TryGetValue(subject, out List<RegisteredSchema>? registeredSchemas) ? registeredSchemas.Last() : null;
 
     private int GetNextId() => _schemas.Values.Sum(schema => schema.Count);
 }

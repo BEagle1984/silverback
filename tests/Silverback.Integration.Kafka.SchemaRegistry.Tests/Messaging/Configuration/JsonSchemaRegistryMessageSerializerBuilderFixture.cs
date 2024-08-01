@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Confluent.SchemaRegistry;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging.Configuration;
@@ -13,31 +12,33 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration;
 
-public class AvroMessageDeserializerBuilderFixture
+public class JsonSchemaRegistryMessageSerializerBuilderFixture
 {
     private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<IConfluentSchemaRegistryClientFactory>();
 
     [Fact]
     public void UseModel_ShouldSetSerializerType()
     {
-        IMessageDeserializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
     public void UseModel_ShouldSetSerializerType_WhenPassingType()
     {
-        IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.Should().BeOfType<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
     }
 
     [Fact]
     public void ConnectToSchemaRegistry_ShouldSetSchemaRegistryConfiguration()
     {
         GetValidBuilder()
-            .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("some-url")).Build();
+            .UseModel<TestEventOne>()
+            .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("some-url"))
+            .Build();
 
         _schemaRegistryClientFactory.Received().GetClient(
             Arg.Is<KafkaSchemaRegistryConfiguration>(
@@ -46,21 +47,9 @@ public class AvroMessageDeserializerBuilderFixture
     }
 
     [Fact]
-    public void Configure_ShouldSetAvroDeserializerConfig()
-    {
-        IMessageDeserializer serializer = GetValidBuilder()
-            .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
-            .Build();
-
-        AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.As<AvroMessageDeserializer<TestEventThree>>();
-        avroMessageDeserializer.AvroDeserializerConfig.ShouldNotBeNull();
-        avroMessageDeserializer.AvroDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
-    }
-
-    [Fact]
     public void Build_ShouldThrow_WhenMessageTypeNotSet()
     {
-        AvroMessageDeserializerBuilder builder = new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory).ConnectToSchemaRegistry("http://test.com");
+        JsonSchemaRegistryMessageSerializerBuilder builder = new JsonSchemaRegistryMessageSerializerBuilder(_schemaRegistryClientFactory).ConnectToSchemaRegistry("http://test.com");
 
         Action act = () => builder.Build();
 
@@ -70,15 +59,28 @@ public class AvroMessageDeserializerBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenSchemaRegistryConfigurationNotSet()
     {
-        AvroMessageDeserializerBuilder builder = new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory).UseModel<TestEventOne>();
+        JsonSchemaRegistryMessageSerializerBuilder builder = new JsonSchemaRegistryMessageSerializerBuilder(_schemaRegistryClientFactory).UseModel<TestEventOne>();
 
         Action act = () => builder.Build();
 
         act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
     }
 
-    private AvroMessageDeserializerBuilder GetValidBuilder() =>
-        new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory)
+    [Fact]
+    public void Configure_ShouldSetJsonRegistrySerializerConfig()
+    {
+        IMessageSerializer serializer = GetValidBuilder()
+            .UseModel<TestEventOne>()
+            .Configure(config => config.AutoRegisterSchemas = false)
+            .Build();
+
+        JsonSchemaRegistryMessageSerializer<TestEventOne> jsonUsingSchemaRegistryMessageSerializer = serializer.As<JsonSchemaRegistryMessageSerializer<TestEventOne>>();
+        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.ShouldNotBeNull();
+        jsonUsingSchemaRegistryMessageSerializer.JsonSerializerConfig.AutoRegisterSchemas.Should().BeFalse();
+    }
+
+    private JsonSchemaRegistryMessageSerializerBuilder GetValidBuilder() =>
+        new JsonSchemaRegistryMessageSerializerBuilder(_schemaRegistryClientFactory)
             .UseModel<TestEventThree>()
             .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("http://test.com"));
 }

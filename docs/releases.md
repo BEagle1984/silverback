@@ -7,6 +7,7 @@ uid: releases
 ## [5.0.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v5.0.0-beta.1)
 
 ### What's new
+### (TODO: LINK TO DOCS)
 
 * Support Kafka cooperative sticky partition assignment strategy
 * Increase default [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) to 100
@@ -27,7 +28,7 @@ uid: releases
     * JsonSerializer typename handling none by default (Security)
     * Outbound message filter
     * Kafka transactions (see...)
-    * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing)
+    * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing and in general too)
     * Envelope.IsTombstone() and Kafka envelope extensions
 * Clean up code and increase tests coverage
 * Reduce allocations
@@ -35,6 +36,7 @@ uid: releases
 * Support subscribers returning `ValueTask`
 * Support exponential delay in `RetryErrorPolicy`
 * New `WrapAndPublishAsync` and `WrapAndPublishBatchAsync` added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.)
+* Full support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
   
 ### Breaking Changes
 

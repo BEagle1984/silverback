@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration;
 
-public class AvroMessageDeserializerBuilderFixture
+public class JsonSchemaRegistryMessageDeserializerBuilderFixture
 {
     private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<IConfluentSchemaRegistryClientFactory>();
 
@@ -22,7 +22,7 @@ public class AvroMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class AvroMessageDeserializerBuilderFixture
     {
         IMessageDeserializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
 
-        serializer.Should().BeOfType<AvroMessageDeserializer<TestEventOne>>();
+        serializer.Should().BeOfType<JsonSchemaRegistryMessageDeserializer<TestEventOne>>();
     }
 
     [Fact]
@@ -46,21 +46,22 @@ public class AvroMessageDeserializerBuilderFixture
     }
 
     [Fact]
-    public void Configure_ShouldSetAvroDeserializerConfig()
+    public void Configure_ShouldSetJsonDeserializerConfig()
     {
         IMessageDeserializer serializer = GetValidBuilder()
             .Configure(config => config.SubjectNameStrategy = SubjectNameStrategy.TopicRecord)
             .Build();
 
-        AvroMessageDeserializer<TestEventThree> avroMessageDeserializer = serializer.As<AvroMessageDeserializer<TestEventThree>>();
-        avroMessageDeserializer.AvroDeserializerConfig.ShouldNotBeNull();
-        avroMessageDeserializer.AvroDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
+        JsonSchemaRegistryMessageDeserializer<TestEventThree> jsonUsingSchemaRegistryMessageDeserializer = serializer.As<JsonSchemaRegistryMessageDeserializer<TestEventThree>>();
+        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.ShouldNotBeNull();
+        jsonUsingSchemaRegistryMessageDeserializer.JsonDeserializerConfig.SubjectNameStrategy.Should().Be(SubjectNameStrategy.TopicRecord);
     }
 
     [Fact]
     public void Build_ShouldThrow_WhenMessageTypeNotSet()
     {
-        AvroMessageDeserializerBuilder builder = new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory).ConnectToSchemaRegistry("http://test.com");
+        JsonSchemaRegistryMessageDeserializerBuilder builder = new JsonSchemaRegistryMessageDeserializerBuilder(_schemaRegistryClientFactory)
+            .ConnectToSchemaRegistry("http://test.com");
 
         Action act = () => builder.Build();
 
@@ -70,15 +71,16 @@ public class AvroMessageDeserializerBuilderFixture
     [Fact]
     public void Build_ShouldThrow_WhenSchemaRegistryConfigurationNotSet()
     {
-        AvroMessageDeserializerBuilder builder = new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory).UseModel<TestEventOne>();
+        JsonSchemaRegistryMessageDeserializerBuilder builder = new JsonSchemaRegistryMessageDeserializerBuilder(_schemaRegistryClientFactory)
+            .UseModel<TestEventOne>();
 
         Action act = () => builder.Build();
 
         act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
     }
 
-    private AvroMessageDeserializerBuilder GetValidBuilder() =>
-        new AvroMessageDeserializerBuilder(_schemaRegistryClientFactory)
+    private JsonSchemaRegistryMessageDeserializerBuilder GetValidBuilder() =>
+        new JsonSchemaRegistryMessageDeserializerBuilder(_schemaRegistryClientFactory)
             .UseModel<TestEventThree>()
             .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("http://test.com"));
 }

@@ -7,36 +7,37 @@ using NSubstitute;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka.SchemaRegistry;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Integration.Kafka.SchemaRegistry.TestTypes;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration;
 
-public class AvroMessageSerializerBuilderFixture
+public class ProtobufMessageSerializerBuilderFixture
 {
     private readonly IConfluentSchemaRegistryClientFactory _schemaRegistryClientFactory = Substitute.For<IConfluentSchemaRegistryClientFactory>();
 
     [Fact]
     public void UseModel_ShouldSetSerializerType()
     {
-        IMessageSerializer serializer = GetValidBuilder().UseModel<TestEventOne>().Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel<ProtobufMessage>().Build();
 
-        serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        serializer.Should().BeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
     }
 
     [Fact]
     public void UseModel_ShouldSetSerializerType_WhenPassingType()
     {
-        IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(TestEventOne)).Build();
+        IMessageSerializer serializer = GetValidBuilder().UseModel(typeof(ProtobufMessage)).Build();
 
-        serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        serializer.Should().BeOfType<ProtobufMessageSerializer<ProtobufMessage>>();
     }
 
     [Fact]
     public void ConnectToSchemaRegistry_ShouldSetSchemaRegistryConfiguration()
     {
         GetValidBuilder()
-            .UseModel<TestEventOne>()
+            .UseModel<ProtobufMessage>()
             .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("some-url"))
             .Build();
 
@@ -47,22 +48,22 @@ public class AvroMessageSerializerBuilderFixture
     }
 
     [Fact]
-    public void Configure_ShouldSetAvroSerializerConfig()
+    public void Configure_ShouldSetProtobufSerializerConfig()
     {
         IMessageSerializer serializer = GetValidBuilder()
-            .UseModel<TestEventOne>()
+            .UseModel<ProtobufMessage>()
             .Configure(config => config.AutoRegisterSchemas = false)
             .Build();
 
-        AvroMessageSerializer<TestEventOne> avroMessageSerializer = serializer.As<AvroMessageSerializer<TestEventOne>>();
-        avroMessageSerializer.AvroSerializerConfig.ShouldNotBeNull();
-        avroMessageSerializer.AvroSerializerConfig.AutoRegisterSchemas.Should().BeFalse();
+        ProtobufMessageSerializer<ProtobufMessage> protobufMessageSerializer = serializer.As<ProtobufMessageSerializer<ProtobufMessage>>();
+        protobufMessageSerializer.ProtobufSerializerConfig.ShouldNotBeNull();
+        protobufMessageSerializer.ProtobufSerializerConfig.AutoRegisterSchemas.Should().BeFalse();
     }
 
     [Fact]
     public void Build_ShouldThrow_WhenMessageTypeNotSet()
     {
-        AvroMessageSerializerBuilder builder = new AvroMessageSerializerBuilder(_schemaRegistryClientFactory).ConnectToSchemaRegistry("http://test.com");
+        ProtobufMessageSerializerBuilder builder = new ProtobufMessageSerializerBuilder(_schemaRegistryClientFactory).ConnectToSchemaRegistry("http://test.com");
 
         Action act = () => builder.Build();
 
@@ -70,17 +71,27 @@ public class AvroMessageSerializerBuilderFixture
     }
 
     [Fact]
+    public void Build_ShouldThrow_WhenMessageTypeNotImplementingInterface()
+    {
+        ProtobufMessageSerializerBuilder builder = GetValidBuilder().UseModel<TestEventOne>();
+
+        Action act = () => builder.Build();
+
+        act.Should().Throw<SilverbackConfigurationException>().WithMessage("TestEventOne does not implement IMessage<TestEventOne>.");
+    }
+
+    [Fact]
     public void Build_ShouldThrow_WhenSchemaRegistryConfigurationNotSet()
     {
-        AvroMessageSerializerBuilder builder = new AvroMessageSerializerBuilder(_schemaRegistryClientFactory).UseModel<TestEventOne>();
+        ProtobufMessageSerializerBuilder builder = new ProtobufMessageSerializerBuilder(_schemaRegistryClientFactory).UseModel<ProtobufMessage>();
 
         Action act = () => builder.Build();
 
         act.Should().Throw<SilverbackConfigurationException>().WithMessage("At least 1 Url is required to connect with the schema registry.");
     }
 
-    private AvroMessageSerializerBuilder GetValidBuilder() =>
-        new AvroMessageSerializerBuilder(_schemaRegistryClientFactory)
-            .UseModel<TestEventThree>()
+    private ProtobufMessageSerializerBuilder GetValidBuilder() =>
+        new ProtobufMessageSerializerBuilder(_schemaRegistryClientFactory)
+            .UseModel<ProtobufMessage>()
             .ConnectToSchemaRegistry(schemaRegistryBuilder => schemaRegistryBuilder.WithUrl("http://test.com"));
 }
