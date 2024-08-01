@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -11,7 +12,6 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
@@ -20,8 +20,6 @@ namespace Silverback.Messaging.Broker;
 public sealed class KafkaProducer : Producer
 {
     private readonly ISilverbackLogger _logger;
-
-    private readonly IKafkaMessageSerializer _serializer;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="KafkaProducer" /> class.
@@ -64,8 +62,6 @@ public sealed class KafkaProducer : Producer
         _logger = Check.NotNull(logger, nameof(logger));
 
         EndpointConfiguration = Configuration.Endpoints.Single();
-        _serializer = EndpointConfiguration.Serializer as IKafkaMessageSerializer ??
-                      new DefaultKafkaMessageSerializer(EndpointConfiguration.Serializer);
     }
 
     /// <inheritdoc cref="Producer.Client" />
@@ -99,7 +95,7 @@ public sealed class KafkaProducer : Producer
 
         Message<byte[]?, byte[]?> kafkaMessage = new()
         {
-            Key = GetKafkaKey(envelope, endpoint),
+            Key = GetKafkaKey(envelope),
             Value = envelope.RawMessage.ReadAll()
         };
 
@@ -139,7 +135,7 @@ public sealed class KafkaProducer : Producer
 
             Message<byte[]?, byte[]?> kafkaMessage = new()
             {
-                Key = GetKafkaKey(envelope, endpoint),
+                Key = GetKafkaKey(envelope),
                 Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
             };
 
@@ -162,12 +158,12 @@ public sealed class KafkaProducer : Producer
         }
     }
 
-    private byte[]? GetKafkaKey(IOutboundEnvelope envelope, KafkaProducerEndpoint endpoint)
+    private static byte[]? GetKafkaKey(IOutboundEnvelope envelope)
     {
         if (!envelope.Headers.TryGetValue(DefaultMessageHeaders.MessageId, out string? kafkaKey) || kafkaKey == null)
             return null;
 
-        return _serializer.SerializeKey(kafkaKey, envelope.Headers, endpoint);
+        return Encoding.UTF8.GetBytes(kafkaKey);
     }
 
     private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?>? deliveryReport)

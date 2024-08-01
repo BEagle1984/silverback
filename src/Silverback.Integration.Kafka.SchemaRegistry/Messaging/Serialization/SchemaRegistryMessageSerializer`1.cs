@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -17,12 +16,10 @@ namespace Silverback.Messaging.Serialization;
 /// <typeparam name="TMessage">
 ///     The type of the messages to be serialized.
 /// </typeparam>
-public abstract class SchemaRegistryMessageSerializer<TMessage> : IKafkaMessageSerializer
+public abstract class SchemaRegistryMessageSerializer<TMessage> : IMessageSerializer
     where TMessage : class
 {
     private readonly IAsyncSerializer<TMessage> _confluentSerializer;
-
-    private readonly IAsyncSerializer<string> _keyConfluentSerializer;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SchemaRegistryMessageSerializer{TMessage}" /> class.
@@ -33,17 +30,10 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IKafkaMessageS
     /// <param name="confluentSerializer">
     ///     The Confluent serializer to be used to serialize the message.
     /// </param>
-    /// <param name="keyConfluentSerializer">
-    ///     The Confluent serializer to be used to serialize the key.
-    /// </param>
-    protected SchemaRegistryMessageSerializer(
-        ISchemaRegistryClient schemaRegistryClient,
-        IAsyncSerializer<TMessage> confluentSerializer,
-        IAsyncSerializer<string> keyConfluentSerializer)
+    protected SchemaRegistryMessageSerializer(ISchemaRegistryClient schemaRegistryClient, IAsyncSerializer<TMessage> confluentSerializer)
     {
         SchemaRegistryClient = schemaRegistryClient;
         _confluentSerializer = confluentSerializer;
-        _keyConfluentSerializer = keyConfluentSerializer;
     }
 
     /// <summary>
@@ -71,17 +61,5 @@ public abstract class SchemaRegistryMessageSerializer<TMessage> : IKafkaMessageS
             .ConfigureAwait(false);
 
         return new MemoryStream(buffer);
-    }
-
-    /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-    public byte[] SerializeKey(string key, IReadOnlyCollection<MessageHeader>? headers, KafkaProducerEndpoint endpoint)
-    {
-        Check.NotNullOrEmpty(key, nameof(key));
-        Check.NotNull(endpoint, nameof(endpoint));
-
-        return _keyConfluentSerializer.SerializeAsync(
-                key,
-                new SerializationContext(MessageComponentType.Key, endpoint.RawName))
-            .SafeWait();
     }
 }

@@ -34,8 +34,7 @@ public class JsonSchemaRegistryMessageSerializer<TMessage> : SchemaRegistryMessa
         JsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
         : base(
             schemaRegistryClient,
-            new JsonSerializer<TMessage>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings),
-            new JsonSerializer<string>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings))
+            new JsonSerializer<TMessage>(schemaRegistryClient, jsonSerializerConfig, jsonSchemaGeneratorSettings))
     {
         JsonSerializerConfig = jsonSerializerConfig;
         JsonSchemaGeneratorSettings = jsonSchemaGeneratorSettings;

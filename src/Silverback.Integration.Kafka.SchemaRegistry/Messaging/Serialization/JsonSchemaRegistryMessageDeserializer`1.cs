@@ -34,8 +34,7 @@ public class JsonSchemaRegistryMessageDeserializer<TMessage> : SchemaRegistryMes
         JsonSchemaGeneratorSettings? jsonSchemaGeneratorSettings = null)
         : base(
             schemaRegistryClient,
-            new JsonDeserializer<TMessage>(schemaRegistryClient, jsonDeserializerConfig, jsonSchemaGeneratorSettings),
-            new JsonDeserializer<string>(schemaRegistryClient, jsonDeserializerConfig, jsonSchemaGeneratorSettings))
+            new JsonDeserializer<TMessage>(schemaRegistryClient, jsonDeserializerConfig, jsonSchemaGeneratorSettings))
     {
         JsonDeserializerConfig = jsonDeserializerConfig;
         JsonSchemaGeneratorSettings = jsonSchemaGeneratorSettings;

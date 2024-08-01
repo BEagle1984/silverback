@@ -25,6 +25,7 @@
     <PackageReference Include="Confluent.Kafka" Version="2.5.0" />
     <PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.5.0" />
     <PackageReference Include="Confluent.SchemaRegistry.Serdes.Json" Version="2.5.0" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes.Protobuf" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>

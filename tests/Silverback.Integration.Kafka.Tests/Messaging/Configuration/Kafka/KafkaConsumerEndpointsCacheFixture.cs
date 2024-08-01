@@ -5,10 +5,9 @@ using System;
 using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
-using NSubstitute;
 using Silverback.Collections;
+using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.Serialization;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka;
@@ -18,8 +17,6 @@ public class KafkaConsumerEndpointsCacheFixture
     [Fact]
     public void GetEndpoint_ShouldReturnEndpointAndSerializer()
     {
-        IKafkaMessageDeserializer deserializer = Substitute.For<IKafkaMessageDeserializer>();
-
         KafkaConsumerConfiguration configuration = new()
         {
             Endpoints = new[]
@@ -29,18 +26,16 @@ public class KafkaConsumerEndpointsCacheFixture
                     TopicPartitions = new[]
                     {
                         new TopicPartitionOffset("topic1", Partition.Any, Offset.Beginning)
-                    }.AsValueReadOnlyCollection(),
-                    Deserializer = deserializer
+                    }.AsValueReadOnlyCollection()
                 }
             }.AsValueReadOnlyCollection(),
         };
 
         KafkaConsumerEndpointsCache cache = new(configuration);
 
-        KafkaConsumerEndpointsCache.CachedEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
+        KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
 
-        result.Endpoint.Configuration.Should().Be(configuration.Endpoints.First());
-        result.Deserializer.Should().Be(deserializer);
+        result.Configuration.Should().Be(configuration.Endpoints.First());
     }
 
     [Fact]
@@ -63,9 +58,9 @@ public class KafkaConsumerEndpointsCacheFixture
 
         KafkaConsumerEndpointsCache cache = new(configuration);
 
-        KafkaConsumerEndpointsCache.CachedEndpoint result = cache.GetEndpoint(new TopicPartition("topic2", 42));
+        KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic2", 42));
 
-        result.Endpoint.TopicPartition.Should().Be(new TopicPartition("topic2", Partition.Any));
+        result.TopicPartition.Should().Be(new TopicPartition("topic2", Partition.Any));
     }
 
     [Fact]
@@ -89,9 +84,9 @@ public class KafkaConsumerEndpointsCacheFixture
 
         KafkaConsumerEndpointsCache cache = new(configuration);
 
-        KafkaConsumerEndpointsCache.CachedEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
+        KafkaConsumerEndpoint result = cache.GetEndpoint(new TopicPartition("topic1", 42));
 
-        result.Endpoint.TopicPartition.Should().Be(new TopicPartition("topic1", 42));
+        result.TopicPartition.Should().Be(new TopicPartition("topic1", 42));
     }
 
     [Fact]

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -15,7 +16,6 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
-using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker;
@@ -204,11 +204,11 @@ public class KafkaConsumer : Consumer<KafkaOffset>
     {
         MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
 
-        (KafkaConsumerEndpoint endpoint, IKafkaMessageDeserializer deserializer) = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
+        KafkaConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(topicPartitionOffset.TopicPartition);
 
         if (message.Key != null)
         {
-            string deserializedKafkaKey = deserializer.DeserializeKey(message.Key, headers, endpoint);
+            string deserializedKafkaKey = Encoding.UTF8.GetString(message.Key);
             headers.AddOrReplace(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
         }
 
