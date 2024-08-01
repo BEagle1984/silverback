@@ -14,7 +14,7 @@ public class Startup
             // Use Apache Kafka as message broker and the Confluent schema registry
             .WithConnectionToMessageBroker(options => options
                 .AddKafka()
-                .AddKafkaSchemaRegistry())
+                .AddConfluentSchemaRegistry())
 
             // Delegate the broker clients configuration to a separate class
             .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
