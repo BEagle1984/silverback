@@ -19,11 +19,11 @@ public class TestKafkaOffsetCommittedCallback : IKafkaOffsetCommittedCallback
 
     public void OnOffsetsCommitted(CommittedOffsets offsets, KafkaConsumer consumer)
     {
-        Interlocked.Increment(ref _callsCount);
-
         foreach (TopicPartitionOffsetError? offset in offsets.Offsets)
         {
             Offsets.AddOrUpdate(offset.TopicPartition, _ => offset.Offset, (_, _) => offset.Offset);
         }
+
+        Interlocked.Increment(ref _callsCount);
     }
 }
