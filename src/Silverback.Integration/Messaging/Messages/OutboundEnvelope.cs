@@ -32,6 +32,8 @@ internal record OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 
     public virtual Type MessageType => Message?.GetType() ?? typeof(object);
 
+    public bool IsTombstone => Message is null or ITombstone;
+
     public IOutboundEnvelope CloneReplacingRawMessage(Stream? newRawMessage) => this with
     {
         RawMessage = newRawMessage,

@@ -35,7 +35,8 @@ uid: releases
 * Better builders for error policies
 * Support subscribers returning `ValueTask`
 * Support exponential delay in `RetryErrorPolicy`
-* New `WrapAndPublishAsync` and `WrapAndPublishBatchAsync` added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.)
+* `WrapAndPublishAsync` methods added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) -> TODO: LINKS TO CONCEPT PAGE
+* `WrapAndPublishBatchAsync` methods added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) and efficient batching at protocol level (Kafka) -> TODO: LINKS TO CONCEPT PAGE showing mapping etc.
 * Full support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
   
 ### Breaking Changes

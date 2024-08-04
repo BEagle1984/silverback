@@ -21,7 +21,7 @@ public static class KafkaEnvelopeExtensions
     /// <returns>
     ///     The Kafka message key.
     /// </returns>
-    public static string? GetKafkaKey(this IRawInboundEnvelope envelope) =>
+    public static string? GetKafkaKey(this IBrokerEnvelope envelope) =>
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(DefaultMessageHeaders.MessageId);
 
     /// <summary>

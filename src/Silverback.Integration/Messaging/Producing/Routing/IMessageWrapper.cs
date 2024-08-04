@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Producing.Routing;
 public interface IMessageWrapper
 {
     /// <summary>
-    ///     The message is wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the message to be produced.
@@ -44,7 +44,7 @@ public interface IMessageWrapper
         where TMessage : class;
 
     /// <summary>
-    ///     The message is wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the message to be produced.
@@ -62,9 +62,9 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     The action used to configure the envelopes.
     /// </param>
-    /// <param name="actionArgument">
+    /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
@@ -75,11 +75,11 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -94,20 +94,20 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     An optional action that can be used to configure the envelopes.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage>(
-        IReadOnlyCollection<TMessage> messages,
+        IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -125,24 +125,101 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     The action used to configure the envelopes.
     /// </param>
-    /// <param name="actionArgument">
+    /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IReadOnlyCollection<TMessage> messages,
+        IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     An optional action that can be used to configure the envelopes.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IReadOnlyCollection<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <typeparam name="TArgument">
+    ///     The type of the argument passed to the <paramref name="envelopeConfigurationAction" />.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     The action used to configure the envelopes.
+    /// </param>
+    /// <param name="argument">
+    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IReadOnlyCollection<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -157,20 +234,20 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     An optional action that can be used to configure the envelopes.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage>(
-        IEnumerable<TMessage> messages,
+        IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -188,24 +265,101 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     The action used to configure the envelopes.
     /// </param>
-    /// <param name="actionArgument">
+    /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IEnumerable<TMessage> messages,
+        IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     An optional action that can be used to configure the envelopes.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <typeparam name="TArgument">
+    ///     The type of the argument passed to the <paramref name="envelopeConfigurationAction" />.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     The action used to configure the envelopes.
+    /// </param>
+    /// <param name="argument">
+    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -220,20 +374,20 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     An optional action that can be used to configure the envelopes.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage>(
-        IAsyncEnumerable<TMessage> messages,
+        IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class;
 
     /// <summary>
-    ///     The messages are wrapped in an <see cref="IOutboundEnvelope{TMessage}" /> and produced.
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages to be produced.
@@ -251,19 +405,96 @@ public interface IMessageWrapper
     ///     The producers to be used to produce the message.
     /// </param>
     /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
+    ///     The action used to configure the envelopes.
     /// </param>
-    /// <param name="actionArgument">
+    /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
     Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IAsyncEnumerable<TMessage> messages,
+        IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     An optional action that can be used to configure the envelopes.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IAsyncEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class;
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <typeparam name="TArgument">
+    ///     The type of the argument passed to the <paramref name="envelopeConfigurationAction" />.
+    /// </typeparam>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="producers">
+    ///     The producers to be used to produce the message.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     The action used to configure the envelopes.
+    /// </param>
+    /// <param name="argument">
+    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IAsyncEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
         where TMessage : class;
 }

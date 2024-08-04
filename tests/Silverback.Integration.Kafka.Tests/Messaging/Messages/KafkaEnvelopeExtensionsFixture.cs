@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages;
 public class KafkaEnvelopeExtensionsFixture
 {
     [Fact]
-    public void GetKafkaKey_ShouldReturnMessageIdHeaderValue()
+    public void GetKafkaKey_ShouldReturnMessageIdHeaderValueForInboundEnvelope()
     {
         InboundEnvelope envelope = new(
             null,
@@ -28,6 +28,24 @@ public class KafkaEnvelopeExtensionsFixture
             TestConsumerEndpoint.GetDefault(),
             Substitute.For<IConsumer>(),
             new TestOffset("a", "b"));
+
+        string? key = envelope.GetKafkaKey();
+
+        key.Should().Be("test");
+    }
+
+    [Fact]
+    public void GetKafkaKey_ShouldReturnMessageIdHeaderValueForOutboundEnvelope()
+    {
+        OutboundEnvelope envelope = new(
+            new TestEventOne(),
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageId, "test" }
+            },
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>(),
+            new SilverbackContext(Substitute.For<IServiceProvider>()));
 
         string? key = envelope.GetKafkaKey();
 

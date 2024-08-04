@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,21 +48,12 @@ public class ProducerBackgroundService : BackgroundService
     {
         try
         {
-            List<SampleMessage> messages = [];
-            List<Tombstone<SampleMessage>> tombstones = [];
-
-            for (int i = 0; i < 100; i++)
-            {
-                if (i % 30 == 0)
-                    tombstones.Add(new Tombstone<SampleMessage>($"N{number + i}"));
-                else
-                    messages.Add(new SampleMessage { Number = number + i });
-            }
+            IEnumerable<int> batch = Enumerable.Range(number, 100);
 
             await publisher.WrapAndPublishBatchAsync(
-                messages,
-                envelope => envelope.SetKafkaKey($"N{envelope.Message?.Number}"));
-            await publisher.WrapAndPublishBatchAsync(tombstones);
+                batch,
+                n => n % 30 == 0 ? null : new SampleMessage { Number = n },
+                (envelope, n) => envelope.SetKafkaKey($"N{n}"));
 
             _logger.LogInformation("Produced {FirstNumber}-{LastNumber}", number, number + 99);
         }

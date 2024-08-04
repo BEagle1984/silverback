@@ -73,7 +73,7 @@ public class OutboundEnvelopeFixture
     [Fact]
     public void CloneReplacingRawMessage_ShouldClone()
     {
-        OutboundEnvelope<TestEventOne> outboundEnvelope = new(
+        OutboundEnvelope<TestEventOne> envelope = new(
             new TestEventOne { Content = "old" },
             null,
             TestProducerEndpoint.GetDefault(),
@@ -82,10 +82,54 @@ public class OutboundEnvelopeFixture
             RawMessage = new MemoryStream()
         };
 
-        IOutboundEnvelope newEnvelope = outboundEnvelope.CloneReplacingRawMessage(new MemoryStream());
+        IOutboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
 
-        newEnvelope.Should().NotBeSameAs(outboundEnvelope);
-        newEnvelope.Should().BeEquivalentTo(outboundEnvelope, options => options.Excluding(envelope => envelope.RawMessage));
-        newEnvelope.RawMessage.Should().NotBeSameAs(outboundEnvelope.RawMessage);
+        newEnvelope.Should().NotBeSameAs(envelope);
+        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(envelope => envelope.RawMessage));
+        newEnvelope.RawMessage.Should().NotBeSameAs(envelope.RawMessage);
+    }
+
+    [Fact]
+    public void IsTombstone_ShouldReturnTrue_WhenMessageIsNull()
+    {
+        OutboundEnvelope<TestEventOne> envelope = new(
+            null,
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>())
+        {
+            RawMessage = null
+        };
+
+        envelope.IsTombstone.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsTombstone_ShouldReturnTrue_WhenMessageIsTombstone()
+    {
+        OutboundEnvelope<Tombstone<TestEventOne>> envelope = new(
+            new Tombstone<TestEventOne>("key"),
+            null,
+            TestProducerEndpoint.GetDefault(),
+            Substitute.For<IProducer>())
+        {
+            RawMessage = new MemoryStream()
+        };
+
+        envelope.IsTombstone.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsTombstone_ShouldReturnFalse_WhenMessageIsNotNull()
+    {
+        InboundEnvelope envelope = new(
+            new TestEventOne(),
+            null,
+            null,
+            TestConsumerEndpoint.GetDefault(),
+            Substitute.For<IConsumer>(),
+            new TestOffset("a", "b"));
+
+        envelope.IsTombstone.Should().BeFalse();
     }
 }

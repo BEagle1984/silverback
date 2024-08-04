@@ -44,7 +44,7 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -53,7 +53,7 @@ internal class MessageWrapper : IMessageWrapper
             IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
 
             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-            envelopeConfigurationAction.Invoke(envelope, actionArgument);
+            envelopeConfigurationAction.Invoke(envelope, argument);
 
             if (endpoint.Configuration.EnableSubscribing)
                 await publisher.PublishAsync(envelope).ConfigureAwait(false);
@@ -63,7 +63,7 @@ internal class MessageWrapper : IMessageWrapper
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage>(
-        IReadOnlyCollection<TMessage> messages,
+        IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -103,11 +103,11 @@ internal class MessageWrapper : IMessageWrapper
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IReadOnlyCollection<TMessage> messages,
+        IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -122,7 +122,7 @@ internal class MessageWrapper : IMessageWrapper
                         async message =>
                         {
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                            envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                            envelopeConfigurationAction.Invoke(envelope, argument);
 
                             await publisher.PublishAsync(envelope).ConfigureAwait(false);
 
@@ -136,7 +136,94 @@ internal class MessageWrapper : IMessageWrapper
                         message =>
                         {
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                            envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                            envelopeConfigurationAction.Invoke(envelope, argument);
+                            return envelope;
+                        })).ConfigureAwait(false);
+            }
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IReadOnlyCollection<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        foreach (IProducer producer in producers)
+        {
+            ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+            if (endpoint.Configuration.EnableSubscribing)
+            {
+                await produceStrategy.ProduceAsync(
+                    sources.ToAsyncEnumerable().SelectAwait(
+                        async source =>
+                        {
+                            TMessage? message = mapperFunction.Invoke(source);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            envelopeConfigurationAction?.Invoke(envelope, source);
+
+                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                            return envelope;
+                        })).ConfigureAwait(false);
+            }
+            else
+            {
+                await produceStrategy.ProduceAsync(
+                    sources.Select(
+                        source =>
+                        {
+                            TMessage? message = mapperFunction.Invoke(source);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            envelopeConfigurationAction?.Invoke(envelope, source);
+                            return envelope;
+                        })).ConfigureAwait(false);
+            }
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IReadOnlyCollection<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
+        where TMessage : class
+    {
+        foreach (IProducer producer in producers)
+        {
+            ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+            IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+            if (endpoint.Configuration.EnableSubscribing)
+            {
+                await produceStrategy.ProduceAsync(
+                    sources.ToAsyncEnumerable().SelectAwait(
+                        async source =>
+                        {
+                            TMessage? message = mapperFunction.Invoke(source, argument);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            envelopeConfigurationAction.Invoke(envelope, source, argument);
+
+                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                            return envelope;
+                        })).ConfigureAwait(false);
+            }
+            else
+            {
+                await produceStrategy.ProduceAsync(
+                    sources.Select(
+                        source =>
+                        {
+                            TMessage? message = mapperFunction.Invoke(source, argument);
+                            IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                            envelopeConfigurationAction.Invoke(envelope, source, argument);
                             return envelope;
                         })).ConfigureAwait(false);
             }
@@ -144,7 +231,7 @@ internal class MessageWrapper : IMessageWrapper
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage>(
-        IEnumerable<TMessage> messages,
+        IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -190,11 +277,11 @@ internal class MessageWrapper : IMessageWrapper
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IEnumerable<TMessage> messages,
+        IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -216,7 +303,7 @@ internal class MessageWrapper : IMessageWrapper
                     async message =>
                     {
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                        envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                        envelopeConfigurationAction.Invoke(envelope, argument);
 
                         await publisher.PublishAsync(envelope).ConfigureAwait(false);
 
@@ -230,14 +317,113 @@ internal class MessageWrapper : IMessageWrapper
                     message =>
                     {
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                        envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                        envelopeConfigurationAction.Invoke(envelope, argument);
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        if (producers.Count > 1)
+        {
+            throw new RoutingException(
+                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
+                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+        }
+
+        IProducer producer = producers.First();
+
+        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+        if (endpoint.Configuration.EnableSubscribing)
+        {
+            await produceStrategy.ProduceAsync(
+                sources.ToAsyncEnumerable().SelectAwait(
+                    async source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction?.Invoke(envelope, source);
+
+                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+        else
+        {
+            await produceStrategy.ProduceAsync(
+                sources.Select(
+                    source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction?.Invoke(envelope, source);
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
+        where TMessage : class
+    {
+        if (producers.Count > 1)
+        {
+            throw new RoutingException(
+                "Cannot route an IEnumerable batch of messages to multiple endpoints. " +
+                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+        }
+
+        IProducer producer = producers.First();
+
+        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+        if (endpoint.Configuration.EnableSubscribing)
+        {
+            await produceStrategy.ProduceAsync(
+                sources.ToAsyncEnumerable().SelectAwait(
+                    async source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source, argument);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction.Invoke(envelope, source, argument);
+
+                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+        else
+        {
+            await produceStrategy.ProduceAsync(
+                sources.Select(
+                    source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source, argument);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
                     })).ConfigureAwait(false);
         }
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage>(
-        IAsyncEnumerable<TMessage> messages,
+        IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
@@ -283,11 +469,11 @@ internal class MessageWrapper : IMessageWrapper
     }
 
     public async Task WrapAndProduceBatchAsync<TMessage, TArgument>(
-        IAsyncEnumerable<TMessage> messages,
+        IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument actionArgument)
+        TArgument argument)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -309,7 +495,7 @@ internal class MessageWrapper : IMessageWrapper
                     async message =>
                     {
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                        envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                        envelopeConfigurationAction.Invoke(envelope, argument);
 
                         await publisher.PublishAsync(envelope).ConfigureAwait(false);
 
@@ -323,7 +509,106 @@ internal class MessageWrapper : IMessageWrapper
                     message =>
                     {
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
-                        envelopeConfigurationAction.Invoke(envelope, actionArgument);
+                        envelopeConfigurationAction.Invoke(envelope, argument);
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage>(
+        IAsyncEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        where TMessage : class
+    {
+        if (producers.Count > 1)
+        {
+            throw new RoutingException(
+                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
+                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+        }
+
+        IProducer producer = producers.First();
+
+        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+        if (endpoint.Configuration.EnableSubscribing)
+        {
+            await produceStrategy.ProduceAsync(
+                sources.SelectAwait(
+                    async source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction?.Invoke(envelope, source);
+
+                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+        else
+        {
+            await produceStrategy.ProduceAsync(
+                sources.Select(
+                    source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction?.Invoke(envelope, source);
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+    }
+
+    public async Task WrapAndProduceBatchAsync<TSource, TMessage, TArgument>(
+        IAsyncEnumerable<TSource> sources,
+        IPublisher publisher,
+        IReadOnlyCollection<IProducer> producers,
+        Func<TSource, TArgument, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
+        TArgument argument)
+        where TMessage : class
+    {
+        if (producers.Count > 1)
+        {
+            throw new RoutingException(
+                "Cannot route an IAsyncEnumerable batch of messages to multiple endpoints. " +
+                "Please materialize into a List or an array or any type implementing IReadOnlyCollection.");
+        }
+
+        IProducer producer = producers.First();
+
+        ProducerEndpoint endpoint = GetProducerEndpoint(sources, producer, publisher.Context);
+        IProduceStrategyImplementation produceStrategy = GetProduceStrategy(endpoint, publisher.Context);
+
+        if (endpoint.Configuration.EnableSubscribing)
+        {
+            await produceStrategy.ProduceAsync(
+                sources.SelectAwait(
+                    async source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source, argument);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction.Invoke(envelope, source, argument);
+
+                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+
+                        return envelope;
+                    })).ConfigureAwait(false);
+        }
+        else
+        {
+            await produceStrategy.ProduceAsync(
+                sources.Select(
+                    source =>
+                    {
+                        TMessage? message = mapperFunction.Invoke(source, argument);
+                        IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
+                        envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
                     })).ConfigureAwait(false);
         }
