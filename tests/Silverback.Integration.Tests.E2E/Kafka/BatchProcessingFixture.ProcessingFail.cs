@@ -184,7 +184,7 @@ public partial class BatchProcessingFixture
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i, Content = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromMinutes(1));
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromMinutes(1));
 
         batchesCount.Should().BeGreaterThan(1);
         abortedCount.Should().BeGreaterOrEqualTo(1);
