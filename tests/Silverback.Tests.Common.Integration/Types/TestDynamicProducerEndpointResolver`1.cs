@@ -7,7 +7,8 @@ using Silverback.Util;
 
 namespace Silverback.Tests.Types;
 
-public sealed record TestDynamicProducerEndpointResolver : DynamicProducerEndpointResolver<TestProducerEndpoint, TestProducerEndpointConfiguration>
+public sealed record TestDynamicProducerEndpointResolver<TMessage> : DynamicProducerEndpointResolver<TMessage, TestProducerEndpoint, TestProducerEndpointConfiguration>
+    where TMessage : class
 {
     private readonly string _topicName;
 
@@ -23,7 +24,7 @@ public sealed record TestDynamicProducerEndpointResolver : DynamicProducerEndpoi
         throw new NotSupportedException();
 
     protected override TestProducerEndpoint GetEndpointCore(
-        object? message,
+        TMessage? message,
         TestProducerEndpointConfiguration configuration,
         IServiceProvider serviceProvider) =>
         new(_topicName, configuration);

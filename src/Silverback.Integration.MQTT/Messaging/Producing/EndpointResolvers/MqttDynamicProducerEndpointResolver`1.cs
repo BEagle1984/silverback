@@ -12,17 +12,22 @@ namespace Silverback.Messaging.Producing.EndpointResolvers;
 /// <summary>
 ///     Dynamically resolves the target topic for each message being produced.
 /// </summary>
-public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpointResolver<MqttProducerEndpoint, MqttProducerEndpointConfiguration>
+/// <typeparam name="TMessage">
+///     The type of the message being produced.
+/// </typeparam>
+public sealed record MqttDynamicProducerEndpointResolver<TMessage>
+    : DynamicProducerEndpointResolver<TMessage, MqttProducerEndpoint, MqttProducerEndpointConfiguration>
+    where TMessage : class
 {
-    private readonly Func<object?, IServiceProvider, string> _topicFunction;
+    private readonly Func<TMessage?, IServiceProvider, string> _topicFunction;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MqttDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="MqttDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicFunction">
     ///     The function returning the target topic for the message being produced.
     /// </param>
-    public MqttDynamicProducerEndpointResolver(Func<object?, string> topicFunction)
+    public MqttDynamicProducerEndpointResolver(Func<TMessage?, string> topicFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
@@ -31,7 +36,7 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MqttDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="MqttDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
@@ -41,7 +46,7 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
     ///     The function returning the arguments to be used to format the string.
     /// </param>
     [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Not an issue, the array is not modified")]
-    public MqttDynamicProducerEndpointResolver(string topicFormatString, Func<object?, string[]> topicArgumentsFunction)
+    public MqttDynamicProducerEndpointResolver(string topicFormatString, Func<TMessage?, string[]> topicArgumentsFunction)
         : base(Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString)))
     {
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
@@ -51,7 +56,7 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
             string.Format(CultureInfo.InvariantCulture, topicFormatString, topicArgumentsFunction.Invoke(message));
     }
 
-    internal MqttDynamicProducerEndpointResolver(Type resolverType, Func<object?, IServiceProvider, string> topicFunction)
+    internal MqttDynamicProducerEndpointResolver(Type resolverType, Func<TMessage?, IServiceProvider, string> topicFunction)
         : base($"dynamic-{resolverType.Name}-{Guid.NewGuid():N}")
     {
         Check.NotNull(resolverType, nameof(resolverType));
@@ -60,7 +65,7 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
         _topicFunction = topicFunction;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
     public override string Serialize(MqttProducerEndpoint endpoint)
     {
         Check.NotNull(endpoint, nameof(endpoint));
@@ -68,7 +73,7 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
         return endpoint.Topic;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
     public override MqttProducerEndpoint Deserialize(
         string serializedEndpoint,
         MqttProducerEndpointConfiguration configuration)
@@ -79,9 +84,9 @@ public sealed record MqttDynamicProducerEndpointResolver : DynamicProducerEndpoi
         return new MqttProducerEndpoint(serializedEndpoint, configuration);
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.GetEndpointCore" />
     protected override MqttProducerEndpoint GetEndpointCore(
-        object? message,
+        TMessage? message,
         MqttProducerEndpointConfiguration configuration,
         IServiceProvider serviceProvider) =>
         new(_topicFunction.Invoke(message, serviceProvider), configuration);

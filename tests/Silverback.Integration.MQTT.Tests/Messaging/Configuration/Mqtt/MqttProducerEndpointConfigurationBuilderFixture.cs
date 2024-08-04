@@ -51,7 +51,7 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => "some-topic");
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
+        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-");
         MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
             null,
@@ -68,7 +68,7 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic/{0}", _ => ["123"]);
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
+        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().Be("some-topic/{0}");
         MqttProducerEndpoint endpoint = (MqttProducerEndpoint)endpointConfiguration.Endpoint.GetEndpoint(
             null,
@@ -86,7 +86,7 @@ public class MqttProducerEndpointConfigurationBuilderFixture
 
         MqttProducerEndpointConfiguration endpointConfiguration = builder.Build();
 
-        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver>();
+        endpointConfiguration.Endpoint.Should().BeOfType<MqttDynamicProducerEndpointResolver<TestEventOne>>();
         endpointConfiguration.RawName.Should().StartWith("dynamic-TestEndpointResolver-");
     }
 

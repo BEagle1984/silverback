@@ -97,7 +97,8 @@ public partial class MqttClientConfigurationBuilder
     /// <returns>
     ///     The <see cref="MqttClientConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public MqttClientConfigurationBuilder Produce<TMessage>(Action<MqttProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction) =>
+    public MqttClientConfigurationBuilder Produce<TMessage>(Action<MqttProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+        where TMessage : class =>
         Produce(null, configurationBuilderAction);
 
     /// <summary>
@@ -120,6 +121,7 @@ public partial class MqttClientConfigurationBuilder
     public MqttClientConfigurationBuilder Produce<TMessage>(
         string? name,
         Action<MqttProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+        where TMessage : class
     {
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));

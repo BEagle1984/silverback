@@ -84,7 +84,8 @@ public partial class KafkaProducerConfigurationBuilder
     /// <returns>
     ///     The <see cref="KafkaProducerConfigurationBuilder" /> so that additional calls can be chained.
     /// </returns>
-    public KafkaProducerConfigurationBuilder Produce<TMessage>(Action<KafkaProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction) =>
+    public KafkaProducerConfigurationBuilder Produce<TMessage>(Action<KafkaProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+        where TMessage : class =>
         Produce(null, configurationBuilderAction);
 
     /// <summary>
@@ -107,6 +108,7 @@ public partial class KafkaProducerConfigurationBuilder
     public KafkaProducerConfigurationBuilder Produce<TMessage>(
         string? name,
         Action<KafkaProducerEndpointConfigurationBuilder<TMessage>> configurationBuilderAction)
+        where TMessage : class
     {
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));

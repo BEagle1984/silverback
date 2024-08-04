@@ -86,7 +86,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic", _ => 42);
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().Be("some-topic");
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
@@ -103,7 +103,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => "some-topic");
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().StartWith("dynamic-");
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
@@ -120,7 +120,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => "some-topic", _ => 42);
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().StartWith("dynamic-");
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
@@ -137,7 +137,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo(_ => new TopicPartition("some-topic", 42));
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().StartWith("dynamic-");
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
@@ -154,7 +154,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.ProduceTo("some-topic-{0}", _ => ["123"], _ => 42);
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().Be("some-topic-{0}");
         KafkaProducerEndpoint endpoint = (KafkaProducerEndpoint)configuration.Endpoint.GetEndpoint(
             null,
@@ -193,7 +193,7 @@ public class KafkaProducerEndpointConfigurationBuilderFixture
         builder.UseEndpointResolver<TestTypedEndpointResolver>();
 
         KafkaProducerEndpointConfiguration configuration = builder.Build();
-        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver>();
+        configuration.Endpoint.Should().BeOfType<KafkaDynamicProducerEndpointResolver<TestEventOne>>();
         configuration.RawName.Should().StartWith("dynamic-TestTypedEndpointResolver-");
     }
 

@@ -24,7 +24,7 @@ public sealed record TestProducerEndpointConfiguration : ProducerEndpointConfigu
 
     public TestProducerEndpointConfiguration(params string[] topic)
     {
-        Endpoint = new TestDynamicProducerEndpointResolver(topic[0]);
+        Endpoint = new TestDynamicProducerEndpointResolver<object>(topic[0]);
     }
 
     [SuppressMessage("Design", "CA1024:Use properties where appropriate", Justification = "A new instance is desired")]

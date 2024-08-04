@@ -17,6 +17,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// </typeparam>
 public class MqttProducerEndpointConfigurationBuilder<TMessage>
     : ProducerEndpointConfigurationBuilder<TMessage, MqttProducerEndpointConfiguration, MqttProducerEndpoint, MqttProducerEndpointConfigurationBuilder<TMessage>>
+    where TMessage : class
 {
     private IProducerEndpointResolver<MqttProducerEndpoint>? _endpointResolver;
 
@@ -55,7 +56,9 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> ProduceTo(string topic)
     {
         Check.NotNullOrEmpty(topic, nameof(topic));
+
         _endpointResolver = new MqttStaticProducerEndpointResolver(topic);
+
         return this;
     }
 
@@ -71,7 +74,9 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> ProduceTo(Func<TMessage?, string> topicFunction)
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
-        _endpointResolver = new MqttDynamicProducerEndpointResolver(message => topicFunction.Invoke((TMessage?)message));
+
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFunction.Invoke);
+
         return this;
     }
 
@@ -95,9 +100,7 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
-        _endpointResolver = new MqttDynamicProducerEndpointResolver(
-            topicFormatString,
-            message => topicArgumentsFunction.Invoke((TMessage?)message));
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(topicFormatString, topicArgumentsFunction.Invoke);
 
         return this;
     }
@@ -115,10 +118,9 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
     public MqttProducerEndpointConfigurationBuilder<TMessage> UseEndpointResolver<TResolver>()
         where TResolver : IMqttProducerEndpointResolver<TMessage>
     {
-        _endpointResolver = new MqttDynamicProducerEndpointResolver(
+        _endpointResolver = new MqttDynamicProducerEndpointResolver<TMessage>(
             typeof(TResolver),
-            (message, serviceProvider) =>
-                serviceProvider.GetRequiredService<TResolver>().GetTopic((TMessage?)message));
+            (message, serviceProvider) => serviceProvider.GetRequiredService<TResolver>().GetTopic(message));
 
         return this;
     }

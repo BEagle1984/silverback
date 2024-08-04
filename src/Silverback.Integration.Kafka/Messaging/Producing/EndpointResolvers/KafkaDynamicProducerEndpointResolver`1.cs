@@ -14,13 +14,17 @@ namespace Silverback.Messaging.Producing.EndpointResolvers;
 /// <summary>
 ///     Dynamically resolves the target topic and partition for each message being produced.
 /// </summary>
-public sealed record KafkaDynamicProducerEndpointResolver
-    : DynamicProducerEndpointResolver<KafkaProducerEndpoint, KafkaProducerEndpointConfiguration>
+/// <typeparam name="TMessage">
+///     The type of the message being produced.
+/// </typeparam>
+public sealed record KafkaDynamicProducerEndpointResolver<TMessage>
+    : DynamicProducerEndpointResolver<TMessage, KafkaProducerEndpoint, KafkaProducerEndpointConfiguration>
+    where TMessage : class
 {
-    private readonly Func<object?, IServiceProvider, TopicPartition> _topicPartitionFunction;
+    private readonly Func<TMessage?, IServiceProvider, TopicPartition> _topicPartitionFunction;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topic">
     ///     The target topic.
@@ -28,7 +32,7 @@ public sealed record KafkaDynamicProducerEndpointResolver
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
     /// </param>
-    public KafkaDynamicProducerEndpointResolver(string topic, Func<object?, int> partitionFunction)
+    public KafkaDynamicProducerEndpointResolver(string topic, Func<TMessage?, int> partitionFunction)
         : base(Check.NotNullOrEmpty(topic, nameof(topic)))
     {
         Check.NotNull(partitionFunction, nameof(partitionFunction));
@@ -37,24 +41,21 @@ public sealed record KafkaDynamicProducerEndpointResolver
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicFunction">
     ///     The function returning the target topic for the message being produced.
     /// </param>
-    public KafkaDynamicProducerEndpointResolver(Func<object?, string> topicFunction)
+    public KafkaDynamicProducerEndpointResolver(Func<TMessage?, string> topicFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
 
-        _topicPartitionFunction = (message, _) =>
-            new TopicPartition(
-                topicFunction.Invoke(message),
-                Partition.Any);
+        _topicPartitionFunction = (message, _) => new TopicPartition(topicFunction.Invoke(message), Partition.Any);
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicFunction">
     ///     The function returning the target topic for the message being produced.
@@ -62,25 +63,22 @@ public sealed record KafkaDynamicProducerEndpointResolver
     /// <param name="partitionFunction">
     ///     The function returning the target partition index for the message being produced.
     /// </param>
-    public KafkaDynamicProducerEndpointResolver(Func<object?, string> topicFunction, Func<object?, int> partitionFunction)
+    public KafkaDynamicProducerEndpointResolver(Func<TMessage?, string> topicFunction, Func<TMessage?, int> partitionFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
         Check.NotNull(topicFunction, nameof(topicFunction));
         Check.NotNull(partitionFunction, nameof(partitionFunction));
 
-        _topicPartitionFunction = (message, _) =>
-            new TopicPartition(
-                topicFunction.Invoke(message),
-                partitionFunction.Invoke(message));
+        _topicPartitionFunction = (message, _) => new TopicPartition(topicFunction.Invoke(message), partitionFunction.Invoke(message));
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicPartitionFunction">
     ///     The function returning the target topic and partition index for the message being produced.
     /// </param>
-    public KafkaDynamicProducerEndpointResolver(Func<object?, TopicPartition> topicPartitionFunction)
+    public KafkaDynamicProducerEndpointResolver(Func<TMessage?, TopicPartition> topicPartitionFunction)
         : base($"dynamic-{Guid.NewGuid():N}")
     {
         Check.NotNull(topicPartitionFunction, nameof(topicPartitionFunction));
@@ -89,7 +87,7 @@ public sealed record KafkaDynamicProducerEndpointResolver
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver" /> class.
+    ///     Initializes a new instance of the <see cref="KafkaDynamicProducerEndpointResolver{TMessage}" /> class.
     /// </summary>
     /// <param name="topicFormatString">
     ///     The topic format string that will be combined with the arguments returned by the <paramref name="topicArgumentsFunction" />
@@ -106,14 +104,14 @@ public sealed record KafkaDynamicProducerEndpointResolver
     [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Not an issue, the array is not modified")]
     public KafkaDynamicProducerEndpointResolver(
         string topicFormatString,
-        Func<object?, string[]> topicArgumentsFunction,
-        Func<object?, int>? partitionFunction = null)
+        Func<TMessage?, string[]> topicArgumentsFunction,
+        Func<TMessage?, int>? partitionFunction = null)
         : base(Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString)))
     {
         Check.NotNullOrEmpty(topicFormatString, nameof(topicFormatString));
         Check.NotNull(topicArgumentsFunction, nameof(topicArgumentsFunction));
 
-        string FormatTopic(object? message) =>
+        string FormatTopic(TMessage? message) =>
             string.Format(CultureInfo.InvariantCulture, topicFormatString, topicArgumentsFunction.Invoke(message));
 
         _topicPartitionFunction = partitionFunction == null
@@ -123,7 +121,7 @@ public sealed record KafkaDynamicProducerEndpointResolver
 
     internal KafkaDynamicProducerEndpointResolver(
         Type resolverType,
-        Func<object?, IServiceProvider, TopicPartition> topicPartitionFunction)
+        Func<TMessage?, IServiceProvider, TopicPartition> topicPartitionFunction)
         : base($"dynamic-{Check.NotNull(resolverType, nameof(resolverType)).Name}-{Guid.NewGuid():N}")
     {
         Check.NotNull(resolverType, nameof(resolverType));
@@ -132,7 +130,7 @@ public sealed record KafkaDynamicProducerEndpointResolver
         _topicPartitionFunction = topicPartitionFunction;
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.Serialize(TEndpoint)" />
     public override string Serialize(KafkaProducerEndpoint endpoint)
     {
         Check.NotNull(endpoint, nameof(endpoint));
@@ -140,7 +138,7 @@ public sealed record KafkaDynamicProducerEndpointResolver
         return $"{endpoint.TopicPartition.Topic}|{endpoint.TopicPartition.Partition.Value}";
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.Deserialize(string,TConfiguration)" />
     public override KafkaProducerEndpoint Deserialize(
         string serializedEndpoint,
         KafkaProducerEndpointConfiguration configuration)
@@ -155,9 +153,9 @@ public sealed record KafkaDynamicProducerEndpointResolver
             configuration);
     }
 
-    /// <inheritdoc cref="DynamicProducerEndpointResolver{TEndpoint,TConfiguration}.GetEndpointCore" />
+    /// <inheritdoc cref="DynamicProducerEndpointResolver{TMessage,TEndpoint,TConfiguration}.GetEndpointCore" />
     protected override KafkaProducerEndpoint GetEndpointCore(
-        object? message,
+        TMessage? message,
         KafkaProducerEndpointConfiguration configuration,
         IServiceProvider serviceProvider) =>
         new(_topicPartitionFunction.Invoke(message, serviceProvider), configuration);
