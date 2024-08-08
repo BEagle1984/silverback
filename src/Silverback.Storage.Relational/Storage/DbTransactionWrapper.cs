@@ -33,8 +33,10 @@ internal sealed class DbTransactionWrapper : IStorageTransaction, IEquatable<DbT
     {
         if (other is null)
             return false;
+
         if (ReferenceEquals(this, other))
             return true;
+
         return _transaction.Equals(other._transaction);
     }
 

@@ -42,7 +42,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
@@ -61,8 +61,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                                     .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                     .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -99,7 +98,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
@@ -118,8 +117,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                                     .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
                     .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint("topic1[1]");
@@ -158,7 +156,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
         int received = 0;
         bool mustCommit = false;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
@@ -177,8 +175,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                                     .StoreOffsetsClientSide(offsetStore => offsetStore.UsePostgreSql(database.ConnectionString))
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                     .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
         {
@@ -245,7 +242,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .InitDatabase(storageInitializer => storageInitializer.CreatePostgreSqlKafkaOffsetStoreAsync(database.ConnectionString))
@@ -266,8 +263,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
                     .AddDelegateSubscriber<IEnumerable<TestEventOne>>(
                         batch =>
                             batch.ForEach(_ => Interlocked.Increment(ref received)))
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);

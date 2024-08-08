@@ -43,7 +43,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
@@ -63,8 +63,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
                                     .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
                                     .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                     .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
@@ -101,28 +100,27 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                    .InitDbContext<TestDbContext>()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
-                            .AddEntityFrameworkKafkaOffsetStore())
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
-                                    .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
-                    .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
-                    .AddIntegrationSpy())
-            .RunAsync();
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+                .InitDbContext<TestDbContext>()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3))
+                        .AddEntityFrameworkKafkaOffsetStore())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .DisableOffsetsCommit()
+                                .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
+                                .Consume(endpoint => endpoint.ConsumeFrom(new TopicPartition("topic1", 1)))))
+                .AddDelegateSubscriber<TestEventOne>(_ => Interlocked.Increment(ref received))
+                .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint("topic1[1]");
@@ -161,28 +159,27 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
         int received = 0;
         bool mustCommit = false;
 
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
-                    .InitDbContext<TestDbContext>()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
-                            .AddEntityFrameworkKafkaOffsetStore())
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
-                    .AddIntegrationSpy())
-            .RunAsync();
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
+                .InitDbContext<TestDbContext>()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
+                        .AddEntityFrameworkKafkaOffsetStore())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .DisableOffsetsCommit()
+                                .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
+                .AddIntegrationSpy());
 
         async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
         {
@@ -248,28 +245,27 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
         int received = 0;
         bool mustCommit = false;
 
-        await Host.ConfigureServices(
-                services => services
-                    .AddLogging()
-                    .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(database.ConnectionString))
-                    .InitDbContext<TestDbContext>()
-                    .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
-                            .AddEntityFrameworkKafkaOffsetStore())
-                    .AddKafkaClients(
-                        clients => clients
-                            .WithBootstrapServers("PLAINTEXT://e2e")
-                            .AddConsumer(
-                                consumer => consumer
-                                    .WithGroupId(DefaultGroupId)
-                                    .DisableOffsetsCommit()
-                                    .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
-                                    .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
-                    .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
-                    .AddIntegrationSpy())
-            .RunAsync();
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddDbContextFactory<TestDbContext>(options => options.UseNpgsql(database.ConnectionString))
+                .InitDbContext<TestDbContext>()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)) // TODO: Increase
+                        .AddEntityFrameworkKafkaOffsetStore())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .DisableOffsetsCommit()
+                                .StoreOffsetsClientSide(offsetStore => offsetStore.UseEntityFramework<TestDbContext>())
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddDelegateSubscriber<TestEventOne, KafkaOffsetStoreScope>(HandleAsync)
+                .AddIntegrationSpy());
 
         async Task HandleAsync(TestEventOne message, KafkaOffsetStoreScope offsetStoreScope)
         {
@@ -331,7 +327,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
 
         int received = 0;
 
-        await Host.ConfigureServices(
+        await Host.ConfigureServicesAndRunAsync(
                 services => services
                     .AddLogging()
                     .AddDbContextFactory<TestDbContext>(options => options.UseSqlite(database.ConnectionString))
@@ -353,8 +349,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
                     .AddDelegateSubscriber<IEnumerable<TestEventOne>>(
                         batch =>
                             batch.ForEach(_ => Interlocked.Increment(ref received)))
-                    .AddIntegrationSpy())
-            .RunAsync();
+                    .AddIntegrationSpy());
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().First();
         IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
