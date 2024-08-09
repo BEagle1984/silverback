@@ -53,7 +53,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                                        .StoreToOutbox(outbox => outbox.UseMemory())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -102,7 +102,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                                        .StoreToOutbox(outbox => outbox.UseMemory())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -152,7 +152,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                                        .StoreToOutbox(outbox => outbox.UseMemory())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -195,7 +195,7 @@ public class OutboxInMemoryFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                                        .StoreToOutbox(outbox => outbox.UseMemory())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)

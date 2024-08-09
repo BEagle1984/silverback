@@ -51,7 +51,7 @@ public class EntityFrameworkKafkaOffsetStore : IKafkaOffsetStore
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
-    public async Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null)
+    public async Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null)
     {
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);

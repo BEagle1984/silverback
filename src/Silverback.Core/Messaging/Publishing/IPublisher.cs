@@ -12,9 +12,9 @@ namespace Silverback.Messaging.Publishing;
 public interface IPublisher
 {
     /// <summary>
-    ///     Gets the <see cref="SilverbackContext" /> in the current scope.
+    ///     Gets the <see cref="ISilverbackContext" /> in the current scope.
     /// </summary>
-    public SilverbackContext Context { get; }
+    public ISilverbackContext Context { get; }
 
     /// <summary>
     ///     Publishes the specified message to the internal bus. The message will be forwarded to its

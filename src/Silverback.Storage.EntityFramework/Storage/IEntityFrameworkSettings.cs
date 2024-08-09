@@ -23,10 +23,10 @@ public interface IEntityFrameworkSettings
     ///     The <see cref="IServiceProvider" /> to be used to resolve the <see cref="DbContext" />.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     The <see cref="DbContext" /> instance.
     /// </returns>
-    DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null);
+    DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null);
 }

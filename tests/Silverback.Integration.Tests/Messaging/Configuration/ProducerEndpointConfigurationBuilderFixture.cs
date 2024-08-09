@@ -89,28 +89,28 @@ public partial class ProducerEndpointConfigurationBuilderFixture
     }
 
     [Fact]
-    public void ProduceToOutbox_ShouldSetStrategy()
+    public void StoreToOutbox_ShouldSetStrategy()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(
             Substitute.For<IServiceProvider>(),
             "my-endpoint");
 
         InMemoryOutboxSettings settings = new();
-        TestProducerEndpointConfiguration endpoint = builder.ProduceToOutbox(settings).Build();
+        TestProducerEndpointConfiguration endpoint = builder.StoreToOutbox(settings).Build();
 
         endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();
         endpoint.Strategy.As<OutboxProduceStrategy>().Settings.Should().Be(settings);
     }
 
     [Fact]
-    public void ProduceToOutbox_ShouldSetStrategyUsingBuilder()
+    public void StoreToOutbox_ShouldSetStrategyUsingBuilder()
     {
         TestProducerEndpointConfigurationBuilder<object> builder = new(
             Substitute.For<IServiceProvider>(),
             "my-endpoint");
 
         TestProducerEndpointConfiguration endpoint = builder
-            .ProduceToOutbox(outbox => outbox.UseMemory().WithName("test-outbox"))
+            .StoreToOutbox(outbox => outbox.UseMemory().WithName("test-outbox"))
             .Build();
 
         endpoint.Strategy.Should().BeOfType<OutboxProduceStrategy>();

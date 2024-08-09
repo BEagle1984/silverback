@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Producing.TransactionalOutbox;
 /// </summary>
 public record EntityFrameworkOutboxSettings : OutboxSettings, IEntityFrameworkSettings
 {
-    private readonly Func<IServiceProvider, SilverbackContext?, DbContext> _dbContextFactory;
+    private readonly Func<IServiceProvider, ISilverbackContext?, DbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EntityFrameworkOutboxSettings" /> class.
@@ -24,7 +24,7 @@ public record EntityFrameworkOutboxSettings : OutboxSettings, IEntityFrameworkSe
     /// <param name="dbContextFactory">
     ///     The factory method that creates the <see cref="DbContext" /> instance.
     /// </param>
-    public EntityFrameworkOutboxSettings(Type dbContextType, Func<IServiceProvider, SilverbackContext?, DbContext> dbContextFactory)
+    public EntityFrameworkOutboxSettings(Type dbContextType, Func<IServiceProvider, ISilverbackContext?, DbContext> dbContextFactory)
     {
         DbContextType = dbContextType;
         _dbContextFactory = dbContextFactory;
@@ -42,12 +42,12 @@ public record EntityFrameworkOutboxSettings : OutboxSettings, IEntityFrameworkSe
     ///     The <see cref="IServiceProvider" /> to be used to resolve the <see cref="DbContext" />.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     The <see cref="DbContext" /> instance.
     /// </returns>
-    public DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) =>
+    public DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) =>
         _dbContextFactory.Invoke(serviceProvider, context);
 
     /// <summary>

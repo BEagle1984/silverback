@@ -13,9 +13,9 @@ internal sealed class DbTransactionWrapper : IStorageTransaction, IEquatable<DbT
 {
     private readonly DbTransaction _transaction;
 
-    private readonly SilverbackContext _context;
+    private readonly ISilverbackContext _context;
 
-    public DbTransactionWrapper(DbTransaction transaction, SilverbackContext context)
+    public DbTransactionWrapper(DbTransaction transaction, ISilverbackContext context)
     {
         _transaction = Check.NotNull(transaction, nameof(transaction));
         _context = Check.NotNull(context, nameof(context));

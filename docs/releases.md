@@ -30,6 +30,7 @@ uid: releases
     * Kafka transactions (see...)
     * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing and in general too)
     * Envelope.IsTombstone() and Kafka envelope extensions
+    * New improved EntityFrameworkDomainEventsPublisher
 * Clean up code and increase tests coverage
 * Reduce allocations
 * Better builders for error policies

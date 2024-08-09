@@ -21,12 +21,12 @@ public interface IOutboxWriter
     ///     The message to be stored in the outbox.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" /> in the current scope.
+    ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null);
+    Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null);
 
     /// <summary>
     ///     Adds the message contained in the specified envelope to the outbox.
@@ -35,12 +35,12 @@ public interface IOutboxWriter
     ///     The messages to be stored in the outbox.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" /> in the current scope.
+    ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null);
+    Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null);
 
     /// <summary>
     ///     Adds the message contained in the specified envelope to the outbox.
@@ -49,10 +49,10 @@ public interface IOutboxWriter
     ///     The messages to be stored in the outbox.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" /> in the current scope.
+    ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null);
+    Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null);
 }

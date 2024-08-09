@@ -23,7 +23,7 @@ public class EntityFrameworkKafkaOffsetStoreSettingsBuilderFixture
         settings.Should().BeEquivalentTo(new EntityFrameworkKafkaOffsetStoreSettings(typeof(TestDbContext), GetDbContext));
     }
 
-    private static DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) => new TestDbContext();
+    private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();
 
     private class TestDbContext : DbContext;
 }

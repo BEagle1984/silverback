@@ -30,7 +30,7 @@ public static class OutboundEnvelopeFactory
     ///     The producer to be used to produce this message.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     The <see cref="IOutboundEnvelope" /> instance.
@@ -40,7 +40,7 @@ public static class OutboundEnvelopeFactory
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
     {
         Check.NotNull(endpoint, nameof(endpoint));
 

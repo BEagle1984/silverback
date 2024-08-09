@@ -184,7 +184,7 @@ public class KafkaOffsetStoreFactoryFixture
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) =>
             throw new NotSupportedException();
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 
@@ -193,7 +193,7 @@ public class KafkaOffsetStoreFactoryFixture
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) =>
             throw new NotSupportedException();
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 
@@ -202,7 +202,7 @@ public class KafkaOffsetStoreFactoryFixture
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) =>
             throw new NotSupportedException();
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 }

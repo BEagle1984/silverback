@@ -15,7 +15,7 @@ internal record RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
-        SilverbackContext? context = null,
+        ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
         : this(null, headers, endpoint, producer, context, brokerMessageIdentifier)
     {
@@ -26,7 +26,7 @@ internal record RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
-        SilverbackContext? context = null,
+        ISilverbackContext? context = null,
         IBrokerMessageIdentifier? brokerMessageIdentifier = null)
         : base(rawMessage, headers, endpoint)
     {
@@ -40,7 +40,7 @@ internal record RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
 
     public IProducer Producer { get; }
 
-    public SilverbackContext? Context { get; }
+    public ISilverbackContext? Context { get; }
 
     public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
 

@@ -113,11 +113,11 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ProduceToOutbox(Func<OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder> settingsBuilderFunc)
+    public TBuilder StoreToOutbox(Func<OutboxSettingsBuilder, IOutboxSettingsImplementationBuilder> settingsBuilderFunc)
     {
         Check.NotNull(settingsBuilderFunc, nameof(settingsBuilderFunc));
 
-        return ProduceToOutbox(settingsBuilderFunc.Invoke(new OutboxSettingsBuilder()).Build());
+        return StoreToOutbox(settingsBuilderFunc.Invoke(new OutboxSettingsBuilder()).Build());
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TCo
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public TBuilder ProduceToOutbox(OutboxSettings settings)
+    public TBuilder StoreToOutbox(OutboxSettings settings)
     {
         Check.NotNull(settings, nameof(settings));
         settings.Validate();

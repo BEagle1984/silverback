@@ -50,7 +50,7 @@ public class Publisher : IPublisher
     }
 
     /// <inheritdoc cref="IPublisher.Context" />
-    public SilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
+    public ISilverbackContext Context => _context ??= _serviceProvider.GetRequiredService<SilverbackContext>();
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     public void Publish(object message, bool throwIfUnhandled = false) =>

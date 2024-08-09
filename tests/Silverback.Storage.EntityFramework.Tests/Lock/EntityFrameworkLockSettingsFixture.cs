@@ -156,7 +156,7 @@ public class EntityFrameworkLockSettingsFixture
         act.Should().Throw<SilverbackConfigurationException>().WithMessage("The lock timeout must be greater than the heartbeat interval.");
     }
 
-    private static DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) => new TestDbContext();
+    private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();
 
     private class TestDbContext : DbContext;
 }

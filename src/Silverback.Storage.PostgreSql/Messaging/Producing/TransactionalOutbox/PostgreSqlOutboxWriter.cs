@@ -48,8 +48,8 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                      "@Created)";
     }
 
-    /// <inheritdoc cref="AddAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage,Silverback.SilverbackContext?)" />
-    public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage,Silverback.ISilverbackContext?)" />
+    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null)
     {
         Check.NotNull(outboxMessage, nameof(outboxMessage));
 
@@ -81,8 +81,8 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             context);
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
-    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
+    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -110,8 +110,8 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
             context);
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
-    public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
+    public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 

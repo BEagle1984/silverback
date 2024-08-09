@@ -749,7 +749,7 @@ public static partial class IntegrationPublisherExtensions
         return Task.CompletedTask;
     }
 
-    private static IProducerCollection GetProducerCollection(SilverbackContext context) =>
+    private static IProducerCollection GetProducerCollection(ISilverbackContext context) =>
         context.GetOrAddObject(
             ProducerCollectionObjectTypeId,
             static serviceProvider => serviceProvider.GetRequiredService<IProducerCollection>(),

@@ -26,8 +26,8 @@ public class InMemoryOutboxWriter : IOutboxWriter
         _outbox = Check.NotNull(outbox, nameof(outbox));
     }
 
-    /// <inheritdoc cref="AddAsync(OutboxMessage, SilverbackContext)" />
-    public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(OutboxMessage, ISilverbackContext)" />
+    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null)
     {
         WarnIfTransaction(context);
 
@@ -35,8 +35,8 @@ public class InMemoryOutboxWriter : IOutboxWriter
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
-    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
+    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -50,8 +50,8 @@ public class InMemoryOutboxWriter : IOutboxWriter
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.SilverbackContext?)" />
-    public async Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
+    public async Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -63,7 +63,7 @@ public class InMemoryOutboxWriter : IOutboxWriter
         }
     }
 
-    private static void WarnIfTransaction(SilverbackContext? context)
+    private static void WarnIfTransaction(ISilverbackContext? context)
     {
         if (context != null && context.TryGetStorageTransaction(out _))
         {

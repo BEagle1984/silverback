@@ -9,13 +9,13 @@ namespace Silverback.Messaging.Transactions;
 
 internal sealed class KafkaTransaction : IKafkaTransaction
 {
-    private readonly SilverbackContext _context;
+    private readonly ISilverbackContext _context;
 
     private IConfluentProducerWrapper? _confluentProducer;
 
     private bool _isPending;
 
-    public KafkaTransaction(SilverbackContext context, string? transactionalIdSuffix = null)
+    public KafkaTransaction(ISilverbackContext context, string? transactionalIdSuffix = null)
     {
         _context = Check.NotNull(context, nameof(context));
         TransactionalIdSuffix = transactionalIdSuffix;

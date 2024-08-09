@@ -68,7 +68,7 @@ public class KafkaOffsetStoreScopeFixture
 
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) => _offsets[groupId];
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null)
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null)
         {
             _offsets[groupId] = offsets.ToArray();
             return Task.CompletedTask;

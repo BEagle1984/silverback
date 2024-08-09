@@ -22,7 +22,7 @@ internal class InitDbContextHostedService<TDbContext> : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        using TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        await using TDbContext dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
     }

@@ -15,7 +15,7 @@ internal sealed record OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundE
         IReadOnlyCollection<MessageHeader>? headers,
         ProducerEndpoint endpoint,
         IProducer producer,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
         : base(message, headers, endpoint, producer, context)
     {
         Message = message;

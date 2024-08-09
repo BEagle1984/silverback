@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 /// </summary>
 public record EntityFrameworkKafkaOffsetStoreSettings : KafkaOffsetStoreSettings, IEntityFrameworkSettings
 {
-    private readonly Func<IServiceProvider, SilverbackContext?, DbContext> _dbContextFactory;
+    private readonly Func<IServiceProvider, ISilverbackContext?, DbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EntityFrameworkKafkaOffsetStoreSettings" /> class.
@@ -23,7 +23,7 @@ public record EntityFrameworkKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
     /// <param name="dbContextFactory">
     ///     The factory method that creates the <see cref="DbContext" /> instance.
     /// </param>
-    public EntityFrameworkKafkaOffsetStoreSettings(Type dbContextType, Func<IServiceProvider, SilverbackContext?, DbContext> dbContextFactory)
+    public EntityFrameworkKafkaOffsetStoreSettings(Type dbContextType, Func<IServiceProvider, ISilverbackContext?, DbContext> dbContextFactory)
     {
         DbContextType = dbContextType;
         _dbContextFactory = dbContextFactory;
@@ -33,7 +33,7 @@ public record EntityFrameworkKafkaOffsetStoreSettings : KafkaOffsetStoreSettings
     public Type DbContextType { get; }
 
     /// <inheritdoc cref="IEntityFrameworkSettings.GetDbContext" />
-    public DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) =>
+    public DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) =>
         _dbContextFactory.Invoke(serviceProvider, context);
 
     /// <inheritdoc cref="KafkaOffsetStoreSettings.Validate" />

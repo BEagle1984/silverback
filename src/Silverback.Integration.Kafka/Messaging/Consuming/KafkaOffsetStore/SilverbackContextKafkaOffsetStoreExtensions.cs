@@ -7,7 +7,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Consuming.KafkaOffsetStore;
 
 /// <summary>
-///     Adds the Kafka offset store specific methods to the <see cref="SilverbackContext" />.
+///     Adds the Kafka offset store specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
 public static class SilverbackContextKafkaOffsetStoreExtensions
 {
@@ -17,23 +17,23 @@ public static class SilverbackContextKafkaOffsetStoreExtensions
     ///     Sets the <see cref="KafkaOffsetStoreScope" /> to be used to store the offsets.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="scope">
     ///     The scope.
     /// </param>
-    public static void SetKafkaOffsetStoreScope(this SilverbackContext context, KafkaOffsetStoreScope scope) =>
+    public static void SetKafkaOffsetStoreScope(this ISilverbackContext context, KafkaOffsetStoreScope scope) =>
         Check.NotNull(context, nameof(context)).AddObject(OffsetStoreObjectTypeId, scope);
 
     /// <summary>
     ///     Returns the <see cref="KafkaOffsetStoreScope" /> to be used to store the offsets.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
-    public static KafkaOffsetStoreScope GetKafkaOffsetStoreScope(this SilverbackContext context) =>
+    public static KafkaOffsetStoreScope GetKafkaOffsetStoreScope(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).GetObject<KafkaOffsetStoreScope>(OffsetStoreObjectTypeId);
 }

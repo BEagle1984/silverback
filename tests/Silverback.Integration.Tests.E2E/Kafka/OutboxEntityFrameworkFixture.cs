@@ -64,7 +64,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -115,7 +115,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -169,7 +169,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -223,7 +223,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -302,7 +302,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
+                                        .StoreToOutbox(outbox => outbox.UseEntityFramework<TestDbContext>())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -353,7 +353,7 @@ public class OutboxEntityFrameworkFixture : KafkaFixture
 
     private class TestDbContext : DbContext
     {
-        [ActivatorUtilitiesConstructor] // TODO: Can be removed? https://github.com/dotnet/efcore/issues/25273
+        [ActivatorUtilitiesConstructor]
         public TestDbContext(DbContextOptions options)
             : base(options)
         {

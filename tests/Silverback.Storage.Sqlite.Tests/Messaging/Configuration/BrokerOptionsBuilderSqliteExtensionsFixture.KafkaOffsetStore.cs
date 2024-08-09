@@ -62,13 +62,13 @@ public partial class BrokerOptionsBuilderSqliteExtensionsFixture
     {
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) => throw new NotSupportedException();
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) => throw new NotSupportedException();
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) => throw new NotSupportedException();
     }
 
     private class KafkaOffsetStore2 : IKafkaOffsetStore
     {
         public IReadOnlyCollection<KafkaOffset> GetStoredOffsets(string groupId) => throw new NotSupportedException();
 
-        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) => throw new NotSupportedException();
+        public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) => throw new NotSupportedException();
     }
 }

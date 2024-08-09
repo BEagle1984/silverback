@@ -57,12 +57,12 @@ public class OutboxFixture : KafkaFixture
                                     "my-endpoint-1",
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventTwo>(
                                     "my-endpoint-2",
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -117,7 +117,7 @@ public class OutboxFixture : KafkaFixture
                                                 "3" => "topic3",
                                                 _ => throw new InvalidOperationException()
                                             })
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -165,12 +165,12 @@ public class OutboxFixture : KafkaFixture
                                     "my-topic",
                                     endpoint => endpoint
                                         .ProduceTo(_ => "topic1")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString)))
                                 .Produce<TestEventOne>(
                                     "other-topic",
                                     endpoint => endpoint
                                         .ProduceTo(_ => "topic2")
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -236,7 +236,7 @@ public class OutboxFixture : KafkaFixture
                                     "my-endpoint-1",
                                     endpoint => endpoint
                                         .ProduceTo("topic1")
-                                        .ProduceToOutbox(
+                                        .StoreToOutbox(
                                             outbox => outbox
                                                 .UseSqlite(database.ConnectionString)
                                                 .WithTableName("outbox1")))
@@ -244,7 +244,7 @@ public class OutboxFixture : KafkaFixture
                                     "my-endpoint-2",
                                     endpoint => endpoint
                                         .ProduceTo("topic2")
-                                        .ProduceToOutbox(
+                                        .StoreToOutbox(
                                             outbox => outbox
                                                 .UseSqlite(database.ConnectionString)
                                                 .WithTableName("outbox2"))))
@@ -296,7 +296,7 @@ public class OutboxFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory()))))
+                                        .StoreToOutbox(outbox => outbox.UseMemory()))))
                 .AddIntegrationSpy());
 
         IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();

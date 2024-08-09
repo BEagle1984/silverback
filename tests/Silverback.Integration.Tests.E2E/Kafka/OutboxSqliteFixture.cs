@@ -57,7 +57,7 @@ public class OutboxSqliteFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -107,7 +107,7 @@ public class OutboxSqliteFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -160,7 +160,7 @@ public class OutboxSqliteFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -213,7 +213,7 @@ public class OutboxSqliteFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UseSqlite(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)

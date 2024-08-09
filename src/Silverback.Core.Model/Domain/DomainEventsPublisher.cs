@@ -13,8 +13,7 @@ using Silverback.Util;
 namespace Silverback.Domain;
 
 /// <summary>
-///     Publishes the domain events stored into the domain entities. Can be plugged into an Entity Framework's DbContext to automatically
-///     publish the events related to the modified entities.
+///     Publishes the domain events stored into the domain entities.
 /// </summary>
 public class DomainEventsPublisher
 {

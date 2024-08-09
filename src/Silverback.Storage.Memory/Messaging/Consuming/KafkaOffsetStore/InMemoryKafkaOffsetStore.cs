@@ -29,7 +29,7 @@ public class InMemoryKafkaOffsetStore : IKafkaOffsetStore
     }
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
-    public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null)
+    public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null)
     {
         Check.NotNull(offsets, nameof(offsets));
 

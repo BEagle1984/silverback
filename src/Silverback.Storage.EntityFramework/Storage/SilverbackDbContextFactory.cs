@@ -14,7 +14,7 @@ internal static class SilverbackDbContextFactory
 {
     private static readonly ConcurrentDictionary<CacheKey, ConstructorInfo> ConstructorsCache = new();
 
-    public static TDbContext CreateDbContext<TDbContext>(IServiceProvider serviceProvider, SilverbackContext? context)
+    public static TDbContext CreateDbContext<TDbContext>(IServiceProvider serviceProvider, ISilverbackContext? context)
         where TDbContext : DbContext
     {
         DbTransaction? transaction = context?.GetActiveDbTransaction<DbTransaction>();

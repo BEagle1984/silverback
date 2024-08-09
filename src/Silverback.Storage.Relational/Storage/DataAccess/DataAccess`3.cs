@@ -66,7 +66,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return (T?)result;
     }
 
-    public async Task<int> ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, SilverbackContext? context = null)
+    public async Task<int> ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, ISilverbackContext? context = null)
     {
         using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
@@ -89,7 +89,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
         TimeSpan timeout,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
     {
         using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
@@ -116,7 +116,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
         TimeSpan timeout,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
     {
         using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
 
@@ -161,7 +161,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[]? parameters,
         TimeSpan timeout,
         bool beginTransaction = false,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
     {
         bool isNewConnection = false;
         bool isNewTransaction = false;
@@ -213,7 +213,7 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[]? parameters,
         TimeSpan timeout,
         bool beginTransaction = false,
-        SilverbackContext? context = null)
+        ISilverbackContext? context = null)
     {
         bool isNewConnection = false;
         bool isNewTransaction = false;

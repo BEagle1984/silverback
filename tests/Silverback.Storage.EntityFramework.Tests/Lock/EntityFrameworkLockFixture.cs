@@ -21,7 +21,7 @@ public sealed class EntityFrameworkLockFixture : IDisposable
 
     private readonly Type _dbContextType;
 
-    private readonly Func<IServiceProvider, SilverbackContext?, DbContext> _dbContextFactory;
+    private readonly Func<IServiceProvider, ISilverbackContext?, DbContext> _dbContextFactory;
 
     private readonly EntityFrameworkLockSettings _lockSettings;
 

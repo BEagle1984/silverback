@@ -33,7 +33,7 @@ public sealed class KafkaOffsetStoreScope
     ///     The <see cref="IKafkaOffsetStore" />.
     /// </param>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     public KafkaOffsetStoreScope(IKafkaOffsetStore offsetStore, ConsumerPipelineContext context)
     {
@@ -44,9 +44,9 @@ public sealed class KafkaOffsetStoreScope
     }
 
     /// <summary>
-    ///     Gets the <see cref="SilverbackContext" />.
+    ///     Gets the <see cref="ISilverbackContext" />.
     /// </summary>
-    public SilverbackContext SilverbackContext { get; }
+    public ISilverbackContext SilverbackContext { get; }
 
     /// <summary>
     ///     Store all offsets that have been processed in this scope.

@@ -8,7 +8,7 @@ using Silverback.Util;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Adds the storage specific methods to the <see cref="SilverbackContext" />.
+///     Adds the storage specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
 public static class SilverbackContextStorageExtensions
 {
@@ -18,19 +18,19 @@ public static class SilverbackContextStorageExtensions
     ///     Specifies the transaction to be used for storage operations.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transaction">
     ///     The transaction.
     /// </param>
-    public static void EnlistTransaction(this SilverbackContext context, IStorageTransaction transaction) =>
+    public static void EnlistTransaction(this ISilverbackContext context, IStorageTransaction transaction) =>
         Check.NotNull(context, nameof(context)).AddObject(StorageTransactionObjectTypeId, transaction);
 
     /// <summary>
     ///     Checks whether a storage transaction is set and returns it.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transaction">
     ///     The transaction.
@@ -39,7 +39,7 @@ public static class SilverbackContextStorageExtensions
     ///     A value indicating whether the transaction was found.
     /// </returns>
     public static bool TryGetStorageTransaction(
-        this SilverbackContext context,
+        this ISilverbackContext context,
         [NotNullWhen(true)] out IStorageTransaction? transaction) =>
         Check.NotNull(context, nameof(context)).TryGetObject(StorageTransactionObjectTypeId, out transaction);
 
@@ -47,8 +47,8 @@ public static class SilverbackContextStorageExtensions
     ///     Clears the storage transaction.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
-    public static void RemoveTransaction(this SilverbackContext context) =>
+    public static void RemoveTransaction(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(StorageTransactionObjectTypeId);
 }

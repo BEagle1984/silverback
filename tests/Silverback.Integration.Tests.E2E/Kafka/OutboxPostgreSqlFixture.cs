@@ -59,7 +59,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -117,7 +117,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -167,7 +167,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -220,7 +220,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
@@ -273,7 +273,7 @@ public class OutboxPostgreSqlFixture : KafkaFixture
                                     "my-endpoint",
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .ProduceToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
+                                        .StoreToOutbox(outbox => outbox.UsePostgreSql(database.ConnectionString))))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)

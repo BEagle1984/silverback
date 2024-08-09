@@ -56,7 +56,7 @@ public class PostgreSqlKafkaOffsetStore : IKafkaOffsetStore
             _settings.DbCommandTimeout);
 
     /// <inheritdoc cref="IKafkaOffsetStore.StoreOffsetsAsync" />
-    public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, SilverbackContext? context = null) =>
+    public Task StoreOffsetsAsync(string groupId, IEnumerable<KafkaOffset> offsets, ISilverbackContext? context = null) =>
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(offsets, nameof(offsets)),
             _insertOrReplaceSql,

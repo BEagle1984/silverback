@@ -32,9 +32,9 @@ public interface IRawOutboundEnvelope : IRawBrokerEnvelope
     IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }
 
     /// <summary>
-    ///     Gets the current <see cref="SilverbackContext" />.
+    ///     Gets the current <see cref="ISilverbackContext" />.
     /// </summary>
-    SilverbackContext? Context { get; }
+    ISilverbackContext? Context { get; }
 
     /// <summary>
     ///     Adds a new header.

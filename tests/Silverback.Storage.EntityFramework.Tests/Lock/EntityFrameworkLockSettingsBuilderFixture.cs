@@ -14,7 +14,7 @@ public class EntityFrameworkLockSettingsBuilderFixture
     [Fact]
     public void Build_ShouldBuildSettings()
     {
-        static DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) => null!;
+        static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => null!;
         EntityFrameworkLockSettingsBuilder builder = new("my-lock", typeof(DbContext), GetDbContext);
 
         DistributedLockSettings settings = builder.Build();

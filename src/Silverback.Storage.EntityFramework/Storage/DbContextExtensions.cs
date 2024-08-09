@@ -8,7 +8,7 @@ namespace Silverback.Storage;
 
 internal static class DbContextExtensions
 {
-    public static void UseTransactionIfAvailable(this DbContext dbContext, SilverbackContext? context)
+    public static void UseTransactionIfAvailable(this DbContext dbContext, ISilverbackContext? context)
     {
         DbTransaction? transaction = context?.GetActiveDbTransaction<DbTransaction>();
 

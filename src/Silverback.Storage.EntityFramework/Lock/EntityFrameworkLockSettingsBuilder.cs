@@ -16,7 +16,7 @@ public class EntityFrameworkLockSettingsBuilder : IDistributedLockSettingsImplem
 
     private readonly Type _dbContextType;
 
-    private readonly Func<IServiceProvider, SilverbackContext?, DbContext> _dbContextFactory;
+    private readonly Func<IServiceProvider, ISilverbackContext?, DbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EntityFrameworkLockSettingsBuilder" /> class.
@@ -30,7 +30,7 @@ public class EntityFrameworkLockSettingsBuilder : IDistributedLockSettingsImplem
     /// <param name="dbContextFactory">
     ///     The factory method that creates the <see cref="DbContext" /> instance.
     /// </param>
-    public EntityFrameworkLockSettingsBuilder(string lockName, Type dbContextType, Func<IServiceProvider, SilverbackContext?, DbContext> dbContextFactory)
+    public EntityFrameworkLockSettingsBuilder(string lockName, Type dbContextType, Func<IServiceProvider, ISilverbackContext?, DbContext> dbContextFactory)
     {
         _lockName = lockName;
         _dbContextType = dbContextType;

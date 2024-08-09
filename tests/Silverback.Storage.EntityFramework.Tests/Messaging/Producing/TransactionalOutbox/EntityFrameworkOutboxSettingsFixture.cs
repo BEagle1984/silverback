@@ -66,7 +66,7 @@ public class EntityFrameworkOutboxSettingsFixture
         act.Should().Throw<SilverbackConfigurationException>().WithMessage("The DbContext factory is required.");
     }
 
-    private static DbContext GetDbContext(IServiceProvider serviceProvider, SilverbackContext? context = null) => new TestDbContext();
+    private static DbContext GetDbContext(IServiceProvider serviceProvider, ISilverbackContext? context = null) => new TestDbContext();
 
     private class TestDbContext : DbContext;
 }

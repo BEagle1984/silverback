@@ -19,7 +19,7 @@ internal static class SilverbackContextConsumedPartitionExtensions
         Check.NotNull(context, nameof(context)).SetObject(ConsumedPartitionObjectTypeId, consumedPartition);
 
     internal static bool TryGetConsumedPartition(
-        this SilverbackContext context,
+        this ISilverbackContext context,
         [NotNullWhen(true)] out ConsumedTopicPartition? consumedPartition) =>
         Check.NotNull(context, nameof(context)).TryGetObject(ConsumedPartitionObjectTypeId, out consumedPartition);
 }

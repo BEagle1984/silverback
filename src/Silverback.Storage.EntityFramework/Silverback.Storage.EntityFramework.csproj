@@ -22,6 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Silverback.Core.Model\Silverback.Core.Model.csproj" />
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
     <ProjectReference Include="..\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />

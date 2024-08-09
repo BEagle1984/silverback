@@ -188,37 +188,37 @@ public class OutboxWriterFactoryFixture
 
     private class OutboxWriter1 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 
     private class OverrideOutboxWriter : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, SilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, SilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
             throw new NotSupportedException();
     }
 }

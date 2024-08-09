@@ -48,7 +48,7 @@ public partial class ChunkingFixture
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(chunkSize)
-                                        .ProduceToOutbox(outbox => outbox.UseMemory())))
+                                        .StoreToOutbox(outbox => outbox.UseMemory())))
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)

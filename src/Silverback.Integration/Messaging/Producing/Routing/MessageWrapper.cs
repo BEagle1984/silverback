@@ -618,13 +618,13 @@ internal class MessageWrapper : IMessageWrapper
         TMessage? message,
         IProducer producer,
         ProducerEndpoint endpoint,
-        SilverbackContext context)
+        ISilverbackContext context)
         where TMessage : class =>
         new(message, null, endpoint, producer, context);
 
-    private static ProducerEndpoint GetProducerEndpoint(object? message, IProducer producer, SilverbackContext context) =>
+    private static ProducerEndpoint GetProducerEndpoint(object? message, IProducer producer, ISilverbackContext context) =>
         producer.EndpointConfiguration.Endpoint.GetEndpoint(message, producer.EndpointConfiguration, context.ServiceProvider);
 
-    private static IProduceStrategyImplementation GetProduceStrategy(ProducerEndpoint endpoint, SilverbackContext context) =>
+    private static IProduceStrategyImplementation GetProduceStrategy(ProducerEndpoint endpoint, ISilverbackContext context) =>
         endpoint.Configuration.Strategy.Build(context.ServiceProvider, endpoint.Configuration);
 }

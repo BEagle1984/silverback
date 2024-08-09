@@ -18,7 +18,7 @@ public static class SilverbackContextKafkaTransactionExtensions
     ///     Initializes the Kafka transaction.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transactionalIdSuffix">
     ///    The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
@@ -26,7 +26,7 @@ public static class SilverbackContextKafkaTransactionExtensions
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.
     /// </returns>
-    public static IKafkaTransaction InitKafkaTransaction(this SilverbackContext context, string? transactionalIdSuffix = null)
+    public static IKafkaTransaction InitKafkaTransaction(this ISilverbackContext context, string? transactionalIdSuffix = null)
     {
         Check.NotNull(context, nameof(context));
 
@@ -36,12 +36,12 @@ public static class SilverbackContextKafkaTransactionExtensions
         return new KafkaTransaction(context, transactionalIdSuffix);
     }
 
-    internal static void AddKafkaTransaction(this SilverbackContext context, KafkaTransaction kafkaTransaction) =>
+    internal static void AddKafkaTransaction(this ISilverbackContext context, KafkaTransaction kafkaTransaction) =>
         Check.NotNull(context, nameof(context)).AddObject(KafkaTransactionObjectTypeId, kafkaTransaction);
 
-    internal static void RemoveKafkaTransaction(this SilverbackContext context) =>
+    internal static void RemoveKafkaTransaction(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).RemoveObject(KafkaTransactionObjectTypeId);
 
-    internal static KafkaTransaction GetKafkaTransaction(this SilverbackContext context) =>
+    internal static KafkaTransaction GetKafkaTransaction(this ISilverbackContext context) =>
         Check.NotNull(context, nameof(context)).GetObject<KafkaTransaction>(KafkaTransactionObjectTypeId);
 }

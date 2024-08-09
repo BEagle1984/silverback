@@ -14,7 +14,7 @@ public class EntityFrameworkOutboxSettingsBuilder : IOutboxSettingsImplementatio
 {
     private readonly Type _dbContextType;
 
-    private readonly Func<IServiceProvider, SilverbackContext?, DbContext> _dbContextFactory;
+    private readonly Func<IServiceProvider, ISilverbackContext?, DbContext> _dbContextFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EntityFrameworkOutboxSettingsBuilder" /> class.
@@ -25,7 +25,7 @@ public class EntityFrameworkOutboxSettingsBuilder : IOutboxSettingsImplementatio
     /// <param name="dbContextFactory">
     ///     The factory method that creates the <see cref="DbContext" /> instance.
     /// </param>
-    public EntityFrameworkOutboxSettingsBuilder(Type dbContextType, Func<IServiceProvider, SilverbackContext?, DbContext> dbContextFactory)
+    public EntityFrameworkOutboxSettingsBuilder(Type dbContextType, Func<IServiceProvider, ISilverbackContext?, DbContext> dbContextFactory)
     {
         _dbContextType = dbContextType;
         _dbContextFactory = dbContextFactory;

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Storage;
 
 /// <summary>
-///     Adds the relational storage specific methods to the <see cref="SilverbackContext" />.
+///     Adds the relational storage specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
 // TODO: Test
 public static class SilverbackContextRelationalStorageExtensions
@@ -17,7 +17,7 @@ public static class SilverbackContextRelationalStorageExtensions
     ///     Specifies the <see cref="DbTransaction" /> to be used for storage operations.
     /// </summary>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transaction">
     ///     The transaction.
@@ -25,7 +25,7 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <returns>
     ///    The <see cref="IStorageTransaction" />.
     /// </returns>
-    public static IStorageTransaction EnlistDbTransaction(this SilverbackContext context, DbTransaction transaction) =>
+    public static IStorageTransaction EnlistDbTransaction(this ISilverbackContext context, DbTransaction transaction) =>
         new DbTransactionWrapper(transaction, context);
 
     /// <summary>
@@ -36,12 +36,12 @@ public static class SilverbackContextRelationalStorageExtensions
     ///     the stored transaction object is not compatible.
     /// </typeparam>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <returns>
     ///     The transaction or <c>null</c>.
     /// </returns>
-    public static T? GetActiveDbTransaction<T>(this SilverbackContext? context)
+    public static T? GetActiveDbTransaction<T>(this ISilverbackContext? context)
         where T : DbTransaction => context != null && context.TryGetActiveDbTransaction(out T? transaction) ? transaction : null;
 
     /// <summary>
@@ -52,7 +52,7 @@ public static class SilverbackContextRelationalStorageExtensions
     ///     the stored transaction object is not compatible.
     /// </typeparam>
     /// <param name="context">
-    ///     The <see cref="SilverbackContext" />.
+    ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transaction">
     ///     The transaction.
@@ -60,7 +60,7 @@ public static class SilverbackContextRelationalStorageExtensions
     /// <returns>
     ///     A value indicating whether the transaction was found.
     /// </returns>
-    public static bool TryGetActiveDbTransaction<T>(this SilverbackContext context, [NotNullWhen(true)] out T? transaction)
+    public static bool TryGetActiveDbTransaction<T>(this ISilverbackContext context, [NotNullWhen(true)] out T? transaction)
         where T : DbTransaction
     {
         if (!context.TryGetStorageTransaction(out IStorageTransaction? storageTransaction))
