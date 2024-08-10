@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -34,12 +35,13 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         public async Task HandleAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var newEnvelope = await DeserializeAsync(context).ConfigureAwait(false);
+            var newEnvelope = await DeserializeAsync(context, cancellationToken).ConfigureAwait(false);
 
             if (newEnvelope == null)
             {
@@ -49,10 +51,12 @@ namespace Silverback.Messaging.Serialization
 
             context.Envelope = newEnvelope;
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
 
-        private static async Task<IRawInboundEnvelope?> DeserializeAsync(ConsumerPipelineContext context)
+        private static async Task<IRawInboundEnvelope?> DeserializeAsync(
+            ConsumerPipelineContext context,
+            CancellationToken cancellationToken)
         {
             var envelope = context.Envelope;
 
@@ -63,7 +67,8 @@ namespace Silverback.Messaging.Serialization
                 envelope.Endpoint.Serializer.DeserializeAsync(
                         envelope.RawMessage,
                         envelope.Headers,
-                        new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
+                        new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName),
+                        cancellationToken)
                     .ConfigureAwait(false);
 
             envelope.Headers.AddIfNotExists(

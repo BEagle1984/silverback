@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -36,10 +37,15 @@ namespace Silverback.Messaging.Publishing
         /// <param name="streamProvider">
         ///     The <see cref="IMessageStreamProvider" /> to be used to generate the streams to be published.
         /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     collection of <see cref="Task" /> that will complete when each subscriber completes.
         /// </returns>
-        Task<IReadOnlyCollection<Task>> PublishAsync(IMessageStreamProvider streamProvider);
+        Task<IReadOnlyCollection<Task>> PublishAsync(
+            IMessageStreamProvider streamProvider,
+            CancellationToken cancellationToken = default);
     }
 }

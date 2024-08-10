@@ -18,6 +18,6 @@ namespace Silverback.EventStore
         public int EntityVersion { get; set; }
 
         /// <inheritdoc cref="IEventStoreEntity{TEventEntity}.AddDomainEvents" />
-        public void AddDomainEvents(IEnumerable<object> events) => events?.ForEach(AddEvent);
+        public void AddDomainEvents(IEnumerable<object> events) => events.ForEach(AddEvent);
     }
 }

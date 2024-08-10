@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound
 
             await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             var keyValue = envelope.Headers.GetValue("x-kafka-message-key");
             keyValue.Should().NotBeNullOrEmpty();
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound
 
             await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "Heidi!"));
         }
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound
 
             await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "1"));
         }
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound
 
             await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
-                _ => Task.CompletedTask);
+                (_, _) => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "One=1,Two=2"));
         }

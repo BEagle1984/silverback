@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -130,21 +131,25 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             protected override async Task<bool> ApplyPolicyAsync(
                 ConsumerPipelineContext context,
-                Exception exception)
+                Exception exception,
+                CancellationToken cancellationToken = default)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
                 _logger.LogMoved(context.Envelope, _endpoint);
 
-                await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
+                await PublishToNewEndpointAsync(context.Envelope, exception, cancellationToken).ConfigureAwait(false);
 
                 await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 
                 return true;
             }
 
-            private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
+            private async Task PublishToNewEndpointAsync(
+                IRawInboundEnvelope envelope,
+                Exception exception,
+                CancellationToken cancellationToken)
             {
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope
@@ -159,7 +164,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 _transformationAction?.Invoke(outboundEnvelope, exception);
 
-                await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
+                await _producer.ProduceAsync(outboundEnvelope, cancellationToken).ConfigureAwait(false);
             }
         }
     }

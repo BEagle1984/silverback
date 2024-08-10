@@ -212,7 +212,10 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.AbortAsync" />
-        public Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
+        public Task AbortAsync(
+            SequenceAbortReason reason,
+            Exception? exception = null,
+            CancellationToken cancellationToken = default)
         {
             if (reason == SequenceAbortReason.None)
                 throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
@@ -224,7 +227,7 @@ namespace Silverback.Messaging.Sequences
                     "The exception must be specified if the reason is Error.");
             }
 
-            return AbortCoreAsync(reason, exception);
+            return AbortCoreAsync(reason, exception, cancellationToken);
         }
 
         /// <inheritdoc cref="ISequence.GetBrokerMessageIdentifiers" />
@@ -537,7 +540,10 @@ namespace Silverback.Messaging.Sequences
                 });
         }
 
-        private async Task AbortCoreAsync(SequenceAbortReason reason, Exception? exception)
+        private async Task AbortCoreAsync(
+            SequenceAbortReason reason,
+            Exception? exception,
+            CancellationToken cancellationToken)
         {
             bool alreadyAborted;
 
@@ -586,7 +592,7 @@ namespace Silverback.Messaging.Sequences
             }
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
-            if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
+            if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception, cancellationToken).ConfigureAwait(false))
                 LogAbort();
 
             _streamProvider.AbortIfPending();
@@ -596,7 +602,9 @@ namespace Silverback.Messaging.Sequences
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception notified")]
-        private async Task<bool> RollbackTransactionAndNotifyProcessingCompletedAsync(Exception? exception)
+        private async Task<bool> RollbackTransactionAndNotifyProcessingCompletedAsync(
+            Exception? exception,
+            CancellationToken cancellationToken)
         {
             var done = true;
 
@@ -605,7 +613,7 @@ namespace Silverback.Messaging.Sequences
                 switch (AbortReason)
                 {
                     case SequenceAbortReason.Error:
-                        if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
+                        if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!, cancellationToken)
                                 .ConfigureAwait(false))
                         {
                             await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);

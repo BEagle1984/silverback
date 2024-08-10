@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -36,12 +37,13 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
         protected override Task PublishSequenceAsync(
             ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+            ConsumerBehaviorHandler next,
+            CancellationToken cancellationToken)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var processingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
+            var processingTask = Task.Run(async () => await next(context, cancellationToken).ConfigureAwait(false), cancellationToken);
 
             context.ProcessingTask ??= processingTask;
 

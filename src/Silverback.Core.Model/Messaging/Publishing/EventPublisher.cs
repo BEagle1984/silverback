@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -29,11 +30,15 @@ namespace Silverback.Messaging.Publishing
         public void Publish(IEvent eventMessage, bool throwIfUnhandled) =>
             _publisher.Publish(eventMessage, throwIfUnhandled);
 
-        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent)" />
-        public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
+        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent, CancellationToken)" />
+        public Task PublishAsync(IEvent eventMessage, CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync(eventMessage, cancellationToken);
 
-        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent, bool)" />
-        public Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled) =>
-            _publisher.PublishAsync(eventMessage, throwIfUnhandled);
+        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent, bool, CancellationToken)" />
+        public Task PublishAsync(
+            IEvent eventMessage,
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default) =>
+            _publisher.PublishAsync(eventMessage, throwIfUnhandled, cancellationToken);
     }
 }

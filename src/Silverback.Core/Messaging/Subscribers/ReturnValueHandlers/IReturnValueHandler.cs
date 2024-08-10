@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
@@ -20,7 +21,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         /// <returns>
         ///     A boolean value indicating whether the value can be handled.
         /// </returns>
-        bool CanHandle(object returnValue);
+        bool CanHandle(object? returnValue);
 
         /// <summary>
         ///     Handles the specified return value.
@@ -28,17 +29,20 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         /// <param name="returnValue">
         ///     The value to be handled.
         /// </param>
-        void Handle(object returnValue);
+        void Handle(object? returnValue);
 
         /// <summary>
         ///     Handles the specified return value.
         /// </summary>
         /// <param name="returnValue">
         ///     The value to be handled.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task HandleAsync(object returnValue);
+        Task HandleAsync(object? returnValue, CancellationToken cancellationToken = default);
     }
 }
