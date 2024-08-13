@@ -28,7 +28,5 @@ public class MockedConfluentAdminClientFactory : IConfluentAdminClientFactory
 
     /// <inheritdoc cref="IConfluentAdminClientFactory.GetClient" />
     public IAdminClient GetClient(ClientConfig config) =>
-        new MockedConfluentAdminClient(
-            Check.NotNull(config, nameof(config)),
-            _options);
+        new MockedConfluentAdminClient(Check.NotNull(config, nameof(config)), _options);
 }

@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Configuration.Kafka;
 public partial class KafkaProducerConfigurationBuilder
     : KafkaClientConfigurationBuilder<KafkaProducerConfiguration, ProducerConfig, KafkaProducerConfigurationBuilder>
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly Dictionary<string, KafkaProducerEndpointConfiguration> _endpoints = [];
 
     private bool? _throwIfNotAcknowledged;
@@ -36,8 +38,8 @@ public partial class KafkaProducerConfigurationBuilder
     ///     The <see cref="IServiceProvider" />.
     /// </param>
     public KafkaProducerConfigurationBuilder(IServiceProvider serviceProvider)
-        : base(serviceProvider)
     {
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TConfig,TConfluentConfig,TBuilder}.This" />
@@ -113,7 +115,7 @@ public partial class KafkaProducerConfigurationBuilder
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        KafkaProducerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
+        KafkaProducerEndpointConfigurationBuilder<TMessage> builder = new(_serviceProvider, name);
         configurationBuilderAction.Invoke(builder);
         KafkaProducerEndpointConfiguration endpointConfiguration = builder.Build();
 

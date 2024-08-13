@@ -50,7 +50,7 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
             .AddScoped<KafkaClientsConfigurationActions>()
             .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
             .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
-            .AddTransient<IConfluentAdminClientFactory, ConfluentAdminClientFactory>()
+            .AddSingleton<IConfluentAdminClientFactory, ConfluentAdminClientFactory>()
             .AddTransient<IBrokerClientsInitializer, KafkaProducersInitializer>()
             .AddTransient<IBrokerClientsInitializer, KafkaConsumersInitializer>()
             .AddTransient<KafkaProducersInitializer>()

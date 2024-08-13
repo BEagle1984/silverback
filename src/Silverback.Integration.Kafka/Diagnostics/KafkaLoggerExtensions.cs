@@ -117,6 +117,27 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, string, string, Exception?> ConfluentConsumerLogDebug =
         SilverbackLoggerMessage.Define<string, string, string>(KafkaLogEvents.ConfluentConsumerLogDebug);
 
+    private static readonly Action<ILogger, string, int, Exception?> ConfluentAdminClientError =
+        SilverbackLoggerMessage.Define<string, int>(KafkaLogEvents.ConfluentAdminClientError);
+
+    private static readonly Action<ILogger, string, int, Exception?> ConfluentAdminClientFatalError =
+        SilverbackLoggerMessage.Define<string, int>(KafkaLogEvents.ConfluentAdminClientFatalError);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogCritical =
+        SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogCritical);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogError =
+        SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogError);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogWarning =
+        SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogWarning);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogInformation =
+        SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogInformation);
+
+    private static readonly Action<ILogger, string, string, Exception?> ConfluentAdminClientLogDebug =
+        SilverbackLoggerMessage.Define<string, string>(KafkaLogEvents.ConfluentAdminClientLogDebug);
+
     public static void LogConsuming(this ISilverbackLogger logger, ConsumeResult<byte[]?, byte[]?> consumeResult, KafkaConsumer consumer) =>
         ConsumingMessage(logger.InnerLogger, consumeResult.Topic, consumeResult.Partition, consumeResult.Offset, consumer.DisplayName, null);
 
@@ -348,6 +369,70 @@ internal static class KafkaLoggerExtensions
             return;
 
         ConfluentConsumerLogDebug(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, consumer.DisplayName, null);
+    }
+
+    public static void LogConfluentAdminClientError(this ISilverbackLogger logger, Error error)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientError))
+            return;
+
+        ConfluentAdminClientError(
+            logger.InnerLogger,
+            GetErrorReason(error),
+            (int)error.Code,
+            null);
+    }
+
+    public static void LogConfluentAdminClientFatalError(this ISilverbackLogger logger, Error error)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientFatalError))
+            return;
+
+        ConfluentAdminClientFatalError(
+            logger.InnerLogger,
+            GetErrorReason(error),
+            (int)error.Code,
+            null);
+    }
+
+    public static void LogConfluentAdminClientLogCritical(this ISilverbackLogger logger, LogMessage logMessage)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientLogCritical))
+            return;
+
+        ConfluentAdminClientLogCritical(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, null);
+    }
+
+    public static void LogConfluentAdminClientLogError(this ISilverbackLogger logger, LogMessage logMessage)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientLogError))
+            return;
+
+        ConfluentAdminClientLogError(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, null);
+    }
+
+    public static void LogConfluentAdminClientLogWarning(this ISilverbackLogger logger, LogMessage logMessage)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientLogWarning))
+            return;
+
+        ConfluentAdminClientLogWarning(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, null);
+    }
+
+    public static void LogConfluentAdminClientLogInformation(this ISilverbackLogger logger, LogMessage logMessage)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientLogInformation))
+            return;
+
+        ConfluentAdminClientLogInformation(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, null);
+    }
+
+    public static void LogConfluentAdminClientLogDebug(this ISilverbackLogger logger, LogMessage logMessage)
+    {
+        if (!logger.IsEnabled(KafkaLogEvents.ConfluentAdminClientLogDebug))
+            return;
+
+        ConfluentAdminClientLogDebug(logger.InnerLogger, logMessage.Level.ToString(), logMessage.Message, null);
     }
 
     private static string GetErrorReason(Error error) =>

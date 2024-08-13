@@ -526,6 +526,90 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
             2215);
     }
 
+    [Fact]
+    public void LogConfluentAdminClientError_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientError(new Error(ErrorCode.IllegalGeneration));
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Error in Kafka admin client: 'Broker: Specified group generation id is not valid' (22).",
+            2301);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientFatalError_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientFatalError(new Error(ErrorCode.RequestTimedOut));
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Fatal error in Kafka admin client: 'Broker: Request timed out' (7).",
+            2302);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientLogCritical_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientLogCritical(new LogMessage("-", SyslogLevel.Alert, "-", "The broker is burning"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Critical,
+            null,
+            "Alert event from Confluent.Kafka admin client: 'The broker is burning'.",
+            2311);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientLogError_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientLogError(new LogMessage("-", SyslogLevel.Error, "-", "The broker is burning"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Error,
+            null,
+            "Error event from Confluent.Kafka admin client: 'The broker is burning'.",
+            2312);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientLogWarning_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientLogWarning(new LogMessage("-", SyslogLevel.Warning, "-", "The broker is burning"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Warning,
+            null,
+            "Warning event from Confluent.Kafka admin client: 'The broker is burning'.",
+            2313);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientLogInformation_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientLogInformation(new LogMessage("-", SyslogLevel.Notice, "-", "The broker is burning"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Information,
+            null,
+            "Notice event from Confluent.Kafka admin client: 'The broker is burning'.",
+            2314);
+    }
+
+    [Fact]
+    public void LogConfluentAdminClientLogDebug_ShouldLog()
+    {
+        _silverbackLogger.LogConfluentAdminClientLogDebug(new LogMessage("-", SyslogLevel.Debug, "-", "The broker is burning"));
+
+        _loggerSubstitute.Received(
+            LogLevel.Debug,
+            null,
+            "Debug event from Confluent.Kafka admin client: 'The broker is burning'.",
+            2315);
+    }
+
     public void Dispose()
     {
         _consumer.Dispose();

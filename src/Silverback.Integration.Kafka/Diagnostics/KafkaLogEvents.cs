@@ -371,6 +371,90 @@ public static class KafkaLogEvents
         GetEventId(215, nameof(ConfluentConsumerLogDebug)),
         "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. | consumerName: {consumerName}");
 
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a non fatal error is reported
+    ///     by the <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     Fatal errors are reported with a different event id.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientError { get; } = new(
+        LogLevel.Warning,
+        GetEventId(301, nameof(ConfluentAdminClientError)),
+        "Error in Kafka admin client: '{errorReason}' ({errorCode}).");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a fatal error is reported by
+    ///     the <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     Non fatal errors are reported with a different event id.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientFatalError { get; } = new(
+        LogLevel.Error,
+        GetEventId(302, nameof(ConfluentAdminClientFatalError)),
+        "Fatal error in Kafka admin client: '{errorReason}' ({errorCode}).");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientLogCritical { get; } = new(
+        LogLevel.Critical,
+        GetEventId(311, nameof(ConfluentAdminClientLogCritical)),
+        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientLogError { get; } = new(
+        LogLevel.Error,
+        GetEventId(312, nameof(ConfluentAdminClientLogError)),
+        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientLogWarning { get; } = new(
+        LogLevel.Warning,
+        GetEventId(313, nameof(ConfluentAdminClientLogWarning)),
+        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientLogInformation { get; } = new(
+        LogLevel.Information,
+        GetEventId(314, nameof(ConfluentAdminClientLogInformation)),
+        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+
+    /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
+    ///     the underlying <see cref="Confluent.Kafka.AdminClient" />.
+    /// </summary>
+    /// <remarks>
+    ///     A different event id is used per each log level.
+    /// </remarks>
+    public static LogEvent ConfluentAdminClientLogDebug { get; } = new(
+        LogLevel.Debug,
+        GetEventId(315, nameof(ConfluentAdminClientLogDebug)),
+        "{sysLogLevel} event from Confluent.Kafka admin client: '{logMessage}'.");
+
     private static EventId GetEventId(int id, string name) =>
         new(2000 + id, $"Silverback.Integration.Kafka_{name}");
 }

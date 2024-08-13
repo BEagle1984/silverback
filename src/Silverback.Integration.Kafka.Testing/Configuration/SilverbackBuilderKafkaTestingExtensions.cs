@@ -44,7 +44,7 @@ public static class SilverbackBuilderKafkaTestingExtensions
             .AddSingleton<IMockedKafkaOptions>(new MockedKafkaOptions())
             .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
             .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
-            .AddTransient<IConfluentAdminClientFactory, MockedConfluentAdminClientFactory>()
+            .AddSingleton<IConfluentAdminClientFactory, MockedConfluentAdminClientFactory>()
             .AddSingleton<IMockedConsumerGroupsCollection, MockedConsumerGroupsCollection>()
             .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
             .AddSingleton<IInMemoryTransactionManager, InMemoryTransactionManager>()

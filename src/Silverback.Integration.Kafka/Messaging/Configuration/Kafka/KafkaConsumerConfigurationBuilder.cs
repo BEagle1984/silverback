@@ -19,6 +19,8 @@ namespace Silverback.Messaging.Configuration.Kafka;
 public partial class KafkaConsumerConfigurationBuilder
     : KafkaClientConfigurationBuilder<KafkaConsumerConfiguration, ConsumerConfig, KafkaConsumerConfigurationBuilder>
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private readonly Dictionary<string, KafkaConsumerEndpointConfiguration> _endpoints = [];
 
     private bool? _commitOffsets;
@@ -46,8 +48,8 @@ public partial class KafkaConsumerConfigurationBuilder
     ///     The <see cref="IServiceProvider" /> instance.
     /// </param>
     public KafkaConsumerConfigurationBuilder(IServiceProvider serviceProvider)
-        : base(serviceProvider)
     {
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
     }
 
     /// <inheritdoc cref="KafkaClientConfigurationBuilder{TConfig,TConfluentConfig,TBuilder}.This" />
@@ -127,7 +129,7 @@ public partial class KafkaConsumerConfigurationBuilder
         Check.NullButNotEmpty(name, nameof(name));
         Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-        KafkaConsumerEndpointConfigurationBuilder<TMessage> builder = new(ServiceProvider, name);
+        KafkaConsumerEndpointConfigurationBuilder<TMessage> builder = new(_serviceProvider, name);
         configurationBuilderAction.Invoke(builder);
         KafkaConsumerEndpointConfiguration endpointConfiguration = builder.Build();
 
