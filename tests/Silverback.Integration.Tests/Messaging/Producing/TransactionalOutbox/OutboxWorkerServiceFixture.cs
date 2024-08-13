@@ -65,18 +65,25 @@ public class OutboxWorkerServiceFixture
         {
             await outboxWorker1.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
             await outboxWorker2.DidNotReceive().ProcessOutboxAsync(Arg.Any<CancellationToken>());
+
+#if NET8_0
+            await cancellationTokenSource1.CancelAsync();
+#else
+        cancellationTokenSource1.Cancel();
+#endif
         }
         else
         {
             await outboxWorker1.DidNotReceive().ProcessOutboxAsync(Arg.Any<CancellationToken>());
             await outboxWorker2.Received(Quantity.Within(2, 1000)).ProcessOutboxAsync(Arg.Any<CancellationToken>());
-        }
 
 #if NET8_0
-        await cancellationTokenSource1.CancelAsync();
+            await cancellationTokenSource2.CancelAsync();
 #else
-        cancellationTokenSource1.Cancel();
+        cancellationTokenSource2.Cancel();
 #endif
+        }
+
 
         await AsyncTestingUtil.WaitAsync(
             () => outboxWorker1.ReceivedCalls().Count() >= 2 &&
