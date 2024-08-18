@@ -126,12 +126,13 @@ public partial class BatchProcessingFixture
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
     }
 
-    // TODO: Check flaky test (CI)
     [Fact]
     public async Task Batch_ShouldStopConsumer_WhenProcessingFailsWithIncompatibleSubscriber()
     {
         int batchesCount = 0;
         int abortedCount = 0;
+
+        CountdownEvent batchesStartedCountDown = new(3);
 
         await Host.ConfigureServicesAndRunAsync(
             services => services
@@ -160,12 +161,19 @@ public partial class BatchProcessingFixture
 
             int messagesCount = 0;
 
+            batchesStartedCountDown.Signal();
+
             try
             {
                 await foreach (TestEventWithKafkaKey dummy in eventsStream)
                 {
                     if (batchIndex == 2 && ++messagesCount == 2)
+                    {
+                        // Ensure that all batches have started before throwing the exception and cause the abort
+                        batchesStartedCountDown.Wait();
+
                         throw new InvalidOperationException("Test");
+                    }
                 }
             }
             catch (OperationCanceledException)
