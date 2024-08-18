@@ -12,6 +12,8 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     private readonly LinkedList<IConsumerStatusChange> _history = [];
 
+    private readonly object _syncLock = new();
+
     public IReadOnlyCollection<IConsumerStatusChange> History => _history;
 
     public ConsumerStatus Status { get; private set; }
@@ -26,15 +28,24 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     public void SetStarted(bool allowStepBack = false)
     {
-        if (allowStepBack || Status < ConsumerStatus.Started)
-            ChangeStatus(ConsumerStatus.Started);
+        lock (_syncLock)
+        {
+            if (allowStepBack || Status < ConsumerStatus.Started)
+                ChangeStatus(ConsumerStatus.Started);
+        }
     }
 
-    public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
+    public void SetConnected()
+    {
+        lock (_syncLock)
+        {
+            ChangeStatus(ConsumerStatus.Connected);
+        }
+    }
 
     public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
     {
-        lock (_history)
+        lock (_syncLock)
         {
             if (Status is ConsumerStatus.Started or ConsumerStatus.Connected)
                 ChangeStatus(ConsumerStatus.Consuming);
