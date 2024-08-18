@@ -20,4 +20,4 @@ using Silverback.Tests.Performance;
 * await BenchmarkRunner.Run(typeof(MessageValidatorBenchmark));
 */
 
-BenchmarkRunner.Run(typeof(KafkaKeyHelperBenchmark));
+BenchmarkRunner.Run(typeof(SerializationHelperBenchmark));
