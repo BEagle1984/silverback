@@ -15,6 +15,8 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
 
     private readonly IConsumerLogger<ConsumerTransactionManager> _logger;
 
+    private readonly object _syncLock = new();
+
     private Task? _commitTask;
 
     private Task<bool>? _abortTask;
@@ -51,16 +53,19 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
     public Task CommitAsync()
     {
-        if (_commitTask != null)
+        lock (_syncLock)
         {
-            _logger.LogConsumerLowLevelTrace("Not committing consumer transaction because it was already committed.", _context.Envelope);
-            return _commitTask;
+            if (_commitTask != null)
+            {
+                _logger.LogConsumerLowLevelTrace("Not committing consumer transaction because it was already committed.", _context.Envelope);
+                return _commitTask;
+            }
+
+            if (_abortTask != null)
+                throw new InvalidOperationException("The transaction already aborted.");
+
+            return _commitTask = CommitCoreAsync();
         }
-
-        if (_abortTask != null)
-            throw new InvalidOperationException("The transaction already aborted.");
-
-        return _commitTask = CommitCoreAsync();
     }
 
     /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
@@ -70,21 +75,24 @@ public sealed class ConsumerTransactionManager : IConsumerTransactionManager
         bool throwIfAlreadyCommitted = true,
         bool stopConsuming = true)
     {
-        if (_abortTask != null)
+        lock (_syncLock)
         {
-            _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
-            return _abortTask;
+            if (_abortTask != null)
+            {
+                _logger.LogConsumerLowLevelTrace("Not aborting consumer transaction because it was already aborted.", _context.Envelope);
+                return _abortTask;
+            }
+
+            if (_commitTask != null)
+            {
+                if (throwIfAlreadyCommitted)
+                    throw new InvalidOperationException("The transaction already completed.");
+
+                return Task.FromResult(false);
+            }
+
+            return _abortTask = RollbackCoreAsync(exception, commitConsumer, stopConsuming);
         }
-
-        if (_commitTask != null)
-        {
-            if (throwIfAlreadyCommitted)
-                throw new InvalidOperationException("The transaction already completed.");
-
-            return Task.FromResult(false);
-        }
-
-        return _abortTask = RollbackCoreAsync(exception, commitConsumer, stopConsuming);
     }
 
     private async Task CommitCoreAsync()
