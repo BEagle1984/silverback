@@ -25,7 +25,4 @@
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-  </ItemGroup>
-
 </Project>

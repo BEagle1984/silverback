@@ -25,7 +25,7 @@ public static class KafkaEnvelopeExtensions
         Check.NotNull(envelope, nameof(envelope)).Headers.GetValue(DefaultMessageHeaders.MessageId);
 
     /// <summary>
-    ///     Set the key of the message to be produced to Kafka.
+    ///     Sets the key of the message to be produced to Kafka.
     /// </summary>
     /// <param name="envelope">
     ///     The envelope containing the message.

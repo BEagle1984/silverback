@@ -73,7 +73,7 @@ public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     /// <param name="value">
     ///     The header value.
     /// </param>
-    public void Add(string name, object value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
+    public void Add(string name, object? value) => Add(new MessageHeader(Check.NotNull(name, nameof(name)), value));
 
     /// <summary>
     ///     Adds a new header.

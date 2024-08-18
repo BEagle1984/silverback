@@ -69,7 +69,7 @@ public class OutboxWorkerServiceFixture
 #if NET8_0
             await cancellationTokenSource1.CancelAsync();
 #else
-        cancellationTokenSource1.Cancel();
+            cancellationTokenSource1.Cancel();
 #endif
         }
         else
@@ -80,10 +80,9 @@ public class OutboxWorkerServiceFixture
 #if NET8_0
             await cancellationTokenSource2.CancelAsync();
 #else
-        cancellationTokenSource2.Cancel();
+            cancellationTokenSource2.Cancel();
 #endif
         }
-
 
         await AsyncTestingUtil.WaitAsync(
             () => outboxWorker1.ReceivedCalls().Count() >= 2 &&

@@ -33,12 +33,13 @@ uid: releases
     * New improved EntityFrameworkDomainEventsPublisher
 * Clean up code and increase tests coverage
 * Reduce allocations
-* Better builders for error policies
+* Improve builders for error policies
 * Support subscribers returning `ValueTask`
 * Support exponential delay in `RetryErrorPolicy`
 * `WrapAndPublishAsync` methods added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) -> TODO: LINKS TO CONCEPT PAGE
-* `WrapAndPublishBatchAsync` methods added to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) and efficient batching at protocol level (Kafka) -> TODO: LINKS TO CONCEPT PAGE showing mapping etc.
-* Full support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
+* Add `WrapAndPublishBatchAsync` methods to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) and efficient batching at protocol level (Kafka) -> TODO: LINKS TO CONCEPT PAGE showing mapping etc.
+* Add support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
+* Add <xref:InboundEnvelopeBuilder> and <xref:OutboundEnvelopeBuilder> to testing packages to help creating test envelopes
   
 ### Breaking Changes
 

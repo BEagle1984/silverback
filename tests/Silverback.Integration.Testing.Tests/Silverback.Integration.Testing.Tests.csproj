@@ -4,7 +4,7 @@
     <TargetFrameworks>$(TestsTargetFrameworks)</TargetFrameworks>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <RootNamespace>Silverback.Tests.Integration.Kafka.Testing</RootNamespace>
+    <RootNamespace>Silverback.Tests.Integration.Testing</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
@@ -16,7 +16,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="NSubstitute" Version="5.1.0" />
     <PackageReference Include="xunit" Version="2.8.0" />
@@ -27,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Testing\Silverback.Integration.Testing.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
     <ProjectReference Include="..\Silverback.Tests.Common\Silverback.Tests.Common.csproj" />
