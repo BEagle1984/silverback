@@ -186,8 +186,8 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromMinutes(1));
 
-        batchesCount.Should().BeGreaterThan(1);
-        abortedCount.Should().BeGreaterOrEqualTo(1);
+        batchesCount.Should().Be(3);
+        abortedCount.Should().Be(2);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
     }

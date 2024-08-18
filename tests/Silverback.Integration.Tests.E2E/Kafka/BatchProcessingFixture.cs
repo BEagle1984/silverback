@@ -624,6 +624,7 @@ public partial class BatchProcessingFixture : KafkaFixture
 
         await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 8);
 
+        receivedBatches.Sum(batch => batch.Count).Should().Be(8);
         receivedBatches.Should().HaveCount(3);
         completedBatches.Should().Be(2);
         exitedSubscribers.Should().Be(2);
