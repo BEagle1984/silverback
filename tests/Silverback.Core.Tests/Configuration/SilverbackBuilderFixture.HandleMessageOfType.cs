@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -42,6 +41,5 @@ public partial class SilverbackBuilderFixture
             });
     }
 
-    [UsedImplicitly]
     private class UnhandledMessage;
 }

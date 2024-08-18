@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 
@@ -55,7 +54,7 @@ public partial class PublisherFixture
         public TestingCollection<TMessage> ReceivedMessages { get; } = [];
 
         [Subscribe]
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Subscriber(TMessage message) => ReceivedMessages.Add(message);
     }
 

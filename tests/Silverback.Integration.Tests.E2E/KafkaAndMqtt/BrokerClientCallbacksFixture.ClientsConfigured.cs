@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
@@ -99,10 +98,8 @@ public partial class BrokerClientCallbacksFixture
         }
     }
 
-    [UsedImplicitly]
     private sealed class OtherBrokerClientsConfiguredCallback : BrokerClientsConfiguredCallback;
 
-    [UsedImplicitly]
     private sealed class ProducingBrokerClientsConfiguredCallback : IBrokerClientsConfiguredCallback
     {
         private readonly IPublisher _publisher;

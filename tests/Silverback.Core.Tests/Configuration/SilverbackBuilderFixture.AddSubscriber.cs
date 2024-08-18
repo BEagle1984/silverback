@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Subscribers.Subscriptions;
@@ -838,6 +837,5 @@ public partial class SilverbackBuilderFixture
                             subscription.Options.Filters.Count == 0);
     }
 
-    [UsedImplicitly]
     private class TestSubscriber;
 }

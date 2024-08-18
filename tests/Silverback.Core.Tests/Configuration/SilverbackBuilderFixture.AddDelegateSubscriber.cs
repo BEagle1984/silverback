@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Subscribers.Subscriptions;
@@ -945,6 +944,5 @@ public partial class SilverbackBuilderFixture
             });
     }
 
-    [UsedImplicitly]
     private class TestEventOne;
 }

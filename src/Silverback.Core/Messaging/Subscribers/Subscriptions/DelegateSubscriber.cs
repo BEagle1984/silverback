@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Silverback.Messaging.Subscribers.Subscriptions;
 
@@ -90,7 +90,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Execute(TMessage message) => _handler.Invoke(message);
     }
 
@@ -103,7 +103,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public TResult Execute(TMessage message) => _handler.Invoke(message);
     }
 
@@ -116,7 +116,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
@@ -129,7 +129,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task<TResult> ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
@@ -142,7 +142,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
@@ -155,7 +155,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask<TResult> ExecuteAsync(TMessage message) => _handler.Invoke(message);
     }
 
@@ -168,7 +168,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Execute(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -181,7 +181,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public TResult Execute(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -194,7 +194,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -207,7 +207,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -220,7 +220,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -233,7 +233,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask<TResult> ExecuteAsync(TMessage message, T2 t2) => _handler.Invoke(message, t2);
     }
 
@@ -246,7 +246,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Execute(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -259,7 +259,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public TResult Execute(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -272,7 +272,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -285,7 +285,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -298,7 +298,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -311,7 +311,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3) => _handler.Invoke(message, t2, t3);
     }
 
@@ -324,7 +324,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public void Execute(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
@@ -337,7 +337,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public TResult Execute(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
@@ -350,7 +350,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
@@ -363,7 +363,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
@@ -376,7 +376,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 
@@ -389,7 +389,7 @@ internal static class DelegateSubscriber
             _handler = handler;
         }
 
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public ValueTask<TResult> ExecuteAsync(TMessage message, T2 t2, T3 t3, T4 t4) => _handler.Invoke(message, t2, t3, t4);
     }
 }

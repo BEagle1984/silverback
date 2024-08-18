@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -207,7 +206,6 @@ public class GroupIdFilterFixture : KafkaFixture
         subscriber.ReceivedConsumer2.Should().Be(3);
     }
 
-    [UsedImplicitly]
     private sealed class Subscriber
     {
         private int _received;
@@ -215,11 +213,11 @@ public class GroupIdFilterFixture : KafkaFixture
         public int Received => _received;
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnMessageReceived(IMessage message) => Interlocked.Increment(ref _received);
     }
 
-    [UsedImplicitly]
     private sealed class DecoratedSubscriber
     {
         private int _receivedConsumer1;
@@ -231,17 +229,18 @@ public class GroupIdFilterFixture : KafkaFixture
         public int ReceivedConsumer2 => _receivedConsumer2;
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
         [KafkaGroupIdFilter("group1")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnConsumer1Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer1);
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
         [KafkaGroupIdFilter("group2")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnConsumer2Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer2);
     }
 
-    [UsedImplicitly]
     private sealed class StreamSubscriber
     {
         private int _receivedConsumer1;
@@ -252,13 +251,13 @@ public class GroupIdFilterFixture : KafkaFixture
 
         public int ReceivedConsumer2 => _receivedConsumer2;
 
-        [UsedImplicitly]
         [KafkaGroupIdFilter("group1")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task OnConsumer1Received(IAsyncEnumerable<IMessage> messages) =>
             messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer1));
 
-        [UsedImplicitly]
         [KafkaGroupIdFilter("group2")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         public Task OnConsumer2Received(IAsyncEnumerable<IMessage> messages) =>
             messages.ForEachAsync(_ => Interlocked.Increment(ref _receivedConsumer2));
     }

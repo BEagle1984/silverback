@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -78,7 +77,6 @@ public partial class BrokerClientCallbacksFixture
         callbackKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(8);
     }
 
-    [UsedImplicitly]
     private sealed class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
     {
         public int AllPartitionsEofCallbackCount => PartitionEofCallbacksDictionary.Sum(pair => pair.Value);

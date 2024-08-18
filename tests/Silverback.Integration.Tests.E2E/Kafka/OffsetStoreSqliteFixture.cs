@@ -147,6 +147,7 @@ public class OffsetStoreSqliteFixture : KafkaFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
+    [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();

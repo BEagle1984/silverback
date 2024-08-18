@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Broker;
@@ -148,7 +147,6 @@ public class ClientIdFilterFixture : MqttFixture
         received2.Should().Be(3);
     }
 
-    [UsedImplicitly]
     private sealed class Subscriber
     {
         private int _received;
@@ -156,11 +154,11 @@ public class ClientIdFilterFixture : MqttFixture
         public int Received => _received;
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnMessageReceived(IMessage message) => Interlocked.Increment(ref _received);
     }
 
-    [UsedImplicitly]
     private sealed class DecoratedSubscriber
     {
         private int _receivedConsumer1;
@@ -173,12 +171,14 @@ public class ClientIdFilterFixture : MqttFixture
 
         [MqttClientIdFilter("client1")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnConsumer1Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer1);
 
         [MqttClientIdFilter("client2")]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used for routing")]
-        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
         public void OnConsumer2Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer2);
     }
 }

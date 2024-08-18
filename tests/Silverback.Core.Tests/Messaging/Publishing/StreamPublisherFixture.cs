@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
 using Silverback.Messaging.Messages;
@@ -650,7 +649,6 @@ public class StreamPublisherFixture
 
     private class TestEventTwo : IEvent;
 
-    [UsedImplicitly]
     private class TestCommandOne : IMessage;
 
     private class TestEnvelope : IEnvelope
