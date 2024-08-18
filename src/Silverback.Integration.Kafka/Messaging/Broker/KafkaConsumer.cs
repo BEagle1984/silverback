@@ -281,7 +281,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
         Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
         // If the consumer is disconnecting the rollback is not needed
-        if (Client.Status == ClientStatus.Disconnecting)
+        if (Client.Status is ClientStatus.Disconnecting or ClientStatus.Disconnected)
             return default;
 
         // If the partitions are being processed together we must rollback them all
