@@ -28,5 +28,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Silverback.Integration.MQTT.Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Silverback.Integration.MQTT.Testing</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 
 </Project>

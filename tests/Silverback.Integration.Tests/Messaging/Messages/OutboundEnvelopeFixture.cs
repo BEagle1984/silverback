@@ -85,7 +85,7 @@ public class OutboundEnvelopeFixture
         IOutboundEnvelope newEnvelope = envelope.CloneReplacingRawMessage(new MemoryStream());
 
         newEnvelope.Should().NotBeSameAs(envelope);
-        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(envelope => envelope.RawMessage));
+        newEnvelope.Should().BeEquivalentTo(envelope, options => options.Excluding(e => e.RawMessage));
         newEnvelope.RawMessage.Should().NotBeSameAs(envelope.RawMessage);
     }
 

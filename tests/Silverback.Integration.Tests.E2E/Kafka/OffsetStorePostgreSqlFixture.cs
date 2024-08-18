@@ -149,6 +149,7 @@ public class OffsetStorePostgreSqlFixture : KafkaFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
+    [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();

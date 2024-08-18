@@ -152,6 +152,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
 
     [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
+    [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction_WhenUsingSqlite()
     {
         using SqliteDatabase database = await SqliteDatabase.StartAsync();
@@ -238,6 +239,7 @@ public class OffsetStoreEntityFrameworkFixture : KafkaFixture
     [Trait("Dependency", "Docker")]
     [Trait("Database", "PostgreSql")]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Reviewed")]
+    [SuppressMessage("ReSharper", "RedundantAssignment", Justification = "False positive")]
     public async Task OffsetStore_ShouldUseTransaction_WhenUsingPostgreSql()
     {
         using PostgreSqlDatabase database = await PostgreSqlDatabase.StartAsync();
