@@ -14,7 +14,7 @@ steps:
       version: '8.0.x'
     displayName: 'Install SDK 8.0.x'
   # Build, test and analyze
-  - task: SonarCloudPrepare@1
+  - task: SonarCloudPrepare@2
     inputs:
       SonarCloud: 'Silverback SonarCloud'
       organization: 'silverback'
@@ -56,10 +56,10 @@ steps:
         -p:CoverletOutputFormat=opencover%2ccobertura \
         -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
     displayName: 'Run E2E integration tests (.NET 8)'
-  - task: SonarCloudAnalyze@1
+  - task: SonarCloudAnalyze@2
     condition: succeededOrFailed()
     displayName: 'Run SonarCloud analysis'
-  - task: SonarCloudPublish@1
+  - task: SonarCloudPublish@2
     condition: succeededOrFailed()
     displayName: 'Publish SonarCloud quality gate result'
   # Publish results
