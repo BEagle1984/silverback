@@ -193,6 +193,7 @@ public partial class BatchProcessingFixture
         }
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromMinutes(1));
+        await AsyncTestingUtil.WaitAsync(() => abortedCount == 2);
 
         batchesCount.Should().Be(3);
         abortedCount.Should().Be(2);
