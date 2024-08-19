@@ -89,13 +89,12 @@ public class EntityFrameworkOutboxReader : IOutboxReader
     }
 
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
-    // TODO: Optimize?
     public async Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages)
     {
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider);
 
-        List<long> identifiers = outboxMessages.Cast<DbOutboxMessage>().Select(message => message.Id).ToList();
+        long[] identifiers = outboxMessages.Cast<DbOutboxMessage>().Select(message => message.Id).ToArray();
 
         await dbContext.Set<SilverbackOutboxMessage>()
             .Where(message => identifiers.Contains(message.Id))

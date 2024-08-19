@@ -47,7 +47,7 @@ public partial class MqttTestingHelper
                         endpoint =>
                             (ConsumerConfiguration: consumer.Configuration, EndpointConfiguration: endpoint)))
                 .FirstOrDefault(
-                    tuple => tuple.EndpointConfiguration.RawName == endpointName || // TODO: strip $share?
+                    tuple => tuple.EndpointConfiguration.RawName == endpointName ||
                              tuple.EndpointConfiguration.FriendlyName == endpointName);
 
         if (clientConfiguration == null || endpointConfiguration == null)

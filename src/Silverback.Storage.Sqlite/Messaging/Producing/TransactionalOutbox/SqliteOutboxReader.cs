@@ -92,7 +92,6 @@ public class SqliteOutboxReader : IOutboxReader
     }
 
     /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
-    // TODO: Optimize?
     public Task AcknowledgeAsync(IEnumerable<OutboxMessage> outboxMessages) =>
         _dataAccess.ExecuteNonQueryAsync(
             Check.NotNull(outboxMessages, nameof(outboxMessages)).Cast<DbOutboxMessage>(),
