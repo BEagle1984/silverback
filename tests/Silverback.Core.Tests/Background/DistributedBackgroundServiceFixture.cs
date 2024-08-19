@@ -67,9 +67,7 @@ public class DistributedBackgroundServiceFixture
         executed.Should().BeTrue();
     }
 
-    // TODO: Check flaky test (CI)
     [Fact]
-    [Trait("CI", "Skip")]
     public async Task StartAsync_ShouldNotExecuteInParallel_WhenInMemoryLockIsUsed()
     {
         bool executed1 = false;

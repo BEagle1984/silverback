@@ -68,7 +68,6 @@ public class RecurringDistributedBackgroundServiceFixture
         executed.Should().BeTrue();
     }
 
-    // TODO: Investigate flaky test
     [Fact]
     public async Task StartAsync_ShouldNotExecuteInParallel_WhenInMemoryLockIsUsed()
     {
@@ -153,7 +152,6 @@ public class RecurringDistributedBackgroundServiceFixture
 
         await AsyncTestingUtil.WaitAsync(() => secondExecution != null);
 
-        // TODO: Revert assert to >=100 and figure out why it fails in the pipeline
         (secondExecution - firstExecution).Should().BeGreaterThan(TimeSpan.FromMilliseconds(90));
     }
 
