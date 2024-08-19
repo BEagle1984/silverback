@@ -44,7 +44,7 @@ public abstract class TableBasedDistributedLock : DistributedLock
         {
             try
             {
-                if (await TryAcquireLockAsync(handlerName).ConfigureAwait(true))
+                if (await TryAcquireLockAsync(handlerName).ConfigureAwait(false))
                 {
                     return new TableLockHandle(
                         _settings,

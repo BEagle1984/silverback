@@ -98,7 +98,7 @@ public sealed class MqttProducer : Producer
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
 
         Client.Produce(
-            await envelope.RawMessage.ReadAllAsync().ConfigureAwait(true),
+            await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
             envelope.Headers,
             (MqttProducerEndpoint)envelope.Endpoint,
             taskCompletionSource.SetResult,

@@ -47,7 +47,7 @@ public class EntityFrameworkOutboxReader : IOutboxReader
             .AsNoTracking()
             .OrderBy(message => message.Created)
             .Take(count)
-            .ToListAsync().ConfigureAwait(true);
+            .ToListAsync().ConfigureAwait(false);
 
         return messages.Select(
                 message => new DbOutboxMessage(
@@ -67,7 +67,7 @@ public class EntityFrameworkOutboxReader : IOutboxReader
         return await dbContext.Set<SilverbackOutboxMessage>()
             .AsNoTracking()
             .CountAsync()
-            .ConfigureAwait(true);
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
@@ -99,6 +99,6 @@ public class EntityFrameworkOutboxReader : IOutboxReader
         await dbContext.Set<SilverbackOutboxMessage>()
             .Where(message => identifiers.Contains(message.Id))
             .ExecuteDeleteAsync()
-            .ConfigureAwait(true);
+            .ConfigureAwait(false);
     }
 }
