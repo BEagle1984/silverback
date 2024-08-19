@@ -24,7 +24,13 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     public IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; private set; }
 
-    public void SetStopped() => ChangeStatus(ConsumerStatus.Stopped);
+    public void SetStopped()
+    {
+        lock (_syncLock)
+        {
+            ChangeStatus(ConsumerStatus.Stopped);
+        }
+    }
 
     public void SetStarted(bool allowStepBack = false)
     {
