@@ -192,12 +192,13 @@ public partial class BatchProcessingFixture
             await producer.ProduceAsync(new TestEventWithKafkaKey { KafkaKey = i, Content = $"{i}" });
         }
 
-        await Helper.WaitUntilAllMessagesAreConsumedAsync(false, TimeSpan.FromMinutes(1));
-        await AsyncTestingUtil.WaitAsync(() => abortedCount == 2);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped);
 
         batchesCount.Should().Be(3);
         abortedCount.Should().Be(2);
         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
+        Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status.Should().Be(ClientStatus.Disconnected);
         Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
     }
 }
