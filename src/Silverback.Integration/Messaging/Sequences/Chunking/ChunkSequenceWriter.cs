@@ -87,7 +87,7 @@ public class ChunkSequenceWriter : ISequenceWriter
                 envelope);
 
             if (chunkIndex > 0 && firstChunkMessageHeader != null)
-                chunkEnvelope.Headers.Add(firstChunkMessageHeader.Value);
+                chunkEnvelope.Headers.Add(firstChunkMessageHeader);
 
             // Read the next chunk and check if we were at the end of the stream (to not rely on Length property)
             readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);

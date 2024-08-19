@@ -9,10 +9,10 @@ namespace Silverback.Messaging.Messages;
 /// <summary>
 ///     An header added to the message being sent over a message broker.
 /// </summary>
-public readonly record struct MessageHeader
+public record MessageHeader
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageHeader" /> struct.
+    ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
     /// </summary>
     /// <param name="name">
     ///     The header name.
@@ -26,7 +26,7 @@ public readonly record struct MessageHeader
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="MessageHeader" /> struct.
+    ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
     /// </summary>
     /// <param name="name">
     ///     The header name.

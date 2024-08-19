@@ -51,9 +51,9 @@ public static class MessageHeaderEnumerableExtensions
         Check.NotNull(headers, nameof(headers));
         Check.NotNullOrEmpty(name, nameof(name));
 
-        MessageHeader header = headers.FirstOrDefault(header => header.Name == name);
+        MessageHeader? header = headers.FirstOrDefault(header => header.Name == name);
 
-        if (header == default)
+        if (header == null)
         {
             value = null;
             return false;
