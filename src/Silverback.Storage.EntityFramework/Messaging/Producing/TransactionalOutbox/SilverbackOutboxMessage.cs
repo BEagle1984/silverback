@@ -30,7 +30,7 @@ public class SilverbackOutboxMessage
     /// <summary>
     ///     Gets or sets the message headers.
     /// </summary>
-    [MaxLength(1000)] // TODO: Define a proper max length
+    [MaxLength(1000)]
     public string? Headers { get; set; }
 
     /// <summary>
