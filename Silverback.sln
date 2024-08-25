@@ -123,6 +123,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.EntityFr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.Testing.Tests", "tests\Silverback.Integration.Testing.Tests\Silverback.Integration.Testing.Tests.csproj", "{5244CA89-97CA-418E-8976-357057A104F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Storage.Relational.Tests", "tests\Silverback.Storage.Relational.Tests\Silverback.Storage.Relational.Tests.csproj", "{9C26779F-D843-4B87-BCE5-ABC283E6A16B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -293,6 +295,10 @@ Global
 		{5244CA89-97CA-418E-8976-357057A104F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5244CA89-97CA-418E-8976-357057A104F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5244CA89-97CA-418E-8976-357057A104F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C26779F-D843-4B87-BCE5-ABC283E6A16B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C26779F-D843-4B87-BCE5-ABC283E6A16B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C26779F-D843-4B87-BCE5-ABC283E6A16B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C26779F-D843-4B87-BCE5-ABC283E6A16B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -325,6 +331,7 @@ Global
 		{77107DC7-54A9-4E89-91E9-D4482F240C94} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{E64D2F7D-5FB9-40F3-BE6E-1BDE32881694} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{5244CA89-97CA-418E-8976-357057A104F6} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
+		{9C26779F-D843-4B87-BCE5-ABC283E6A16B} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

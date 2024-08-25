@@ -10,7 +10,6 @@ namespace Silverback.Storage;
 /// <summary>
 ///     Adds the storage specific methods to the <see cref="Publisher" />.
 /// </summary>
-// TODO: Test
 public static class PublisherStorageExtensions
 {
     /// <summary>

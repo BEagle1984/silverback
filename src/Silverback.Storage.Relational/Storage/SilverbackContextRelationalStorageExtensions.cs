@@ -10,7 +10,6 @@ namespace Silverback.Storage;
 /// <summary>
 ///     Adds the relational storage specific methods to the <see cref="ISilverbackContext" />.
 /// </summary>
-// TODO: Test
 public static class SilverbackContextRelationalStorageExtensions
 {
     /// <summary>
