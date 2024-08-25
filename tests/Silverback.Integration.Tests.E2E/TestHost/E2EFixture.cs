@@ -14,6 +14,8 @@ public abstract class E2EFixture : IDisposable
 
     protected E2EFixture(ITestOutputHelper testOutputHelper)
     {
+        ThreadPool.SetMinThreads(4 * Environment.ProcessorCount, 4 * Environment.ProcessorCount);
+
         Semaphore.Wait();
 
         Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
