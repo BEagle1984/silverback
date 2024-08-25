@@ -215,10 +215,6 @@ internal sealed class MockedConsumerGroup : IMockedConsumerGroup, IDisposable
 
             await WaitUntilPartitionsAssignedAsync().ConfigureAwait(false);
 
-            // Add a delay to avoid deadlocks
-            // TODO: Investigate why it's needed
-            await Task.Delay(50).ConfigureAwait(false);
-
             return result;
         }
         finally
