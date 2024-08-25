@@ -48,7 +48,10 @@ public partial class ConsumerEndpointFixture
 
         await producer.ProduceAsync(new TestEventTwo { ContentEventTwo = "Unhandled message" });
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
-        await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped);
+        await AsyncTestingUtil.WaitAsync(
+            () =>
+                Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped &&
+                Helper.GetConsumerForEndpoint(DefaultTopicName).Client.Status == ClientStatus.Disconnected);
 
         IConsumer consumer = Helper.GetConsumerForEndpoint(DefaultTopicName);
         consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
