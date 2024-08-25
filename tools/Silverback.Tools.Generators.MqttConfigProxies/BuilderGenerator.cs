@@ -44,7 +44,6 @@ public class BuilderGenerator
             or "WithClientId"
             or "WithWillMessage"
             or "WithWillDelayInterval"
-            or "WithKeepAliveSendInterval"
             or "WithTopicAliasMaximum"
             or "WithMaximumPacketSize"
             or "WithReceiveMaximum"

@@ -181,8 +181,15 @@ internal sealed class InMemoryPartition : IInMemoryPartition
         public StoredMessageStatus Status { get; set; }
     }
 
-    private sealed record Transaction(Guid Id)
+    private sealed class Transaction
     {
+        public Transaction(Guid id)
+        {
+            Id = id;
+        }
+
+        public Guid Id { get; }
+
         public List<StoredMessage> Messages { get; } = [];
     }
 }

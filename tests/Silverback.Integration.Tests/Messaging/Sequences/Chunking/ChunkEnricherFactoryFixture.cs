@@ -233,16 +233,16 @@ public class ChunkEnricherFactoryFixture
 
     private class ChunkEnricher1 : IChunkEnricher
     {
-        public MessageHeader? GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     private class ChunkEnricher2 : IChunkEnricher
     {
-        public MessageHeader? GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
     }
 
     private class OverrideChunkEnricher : IChunkEnricher
     {
-        public MessageHeader? GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
+        public MessageHeader GetFirstChunkMessageHeader(IOutboundEnvelope envelope) => throw new NotSupportedException();
     }
 }

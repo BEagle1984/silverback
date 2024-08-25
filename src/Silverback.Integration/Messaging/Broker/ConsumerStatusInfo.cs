@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Messaging.Broker;
 
@@ -14,6 +15,7 @@ internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
 
     private readonly object _syncLock = new();
 
+    [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Reads are not synchronized")]
     public IReadOnlyCollection<IConsumerStatusChange> History => _history;
 
     public ConsumerStatus Status { get; private set; }
