@@ -4,6 +4,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Configuration;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Producing.TransactionalOutbox;
 using Silverback.Util;
 
@@ -38,7 +39,10 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
         InMemoryOutboxFactory outboxFactory = GetInMemoryOutboxFactory(builder);
 
         readerFactory.OverrideFactories((settings, _) => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
-        writerFactory.OverrideFactories((settings, _) => new InMemoryOutboxWriter(outboxFactory.GetOutbox(settings)));
+        writerFactory.OverrideFactories(
+            (settings, serviceProvider) => new InMemoryOutboxWriter(
+                outboxFactory.GetOutbox(settings),
+                serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
 
         return builder;
     }
@@ -68,7 +72,12 @@ public static partial class BrokerOptionsBuilderMemoryExtensions
             readerFactory.AddFactory<InMemoryOutboxSettings>((settings, _) => new InMemoryOutboxReader(outboxFactory.GetOutbox(settings)));
 
         if (!writerFactory.HasFactory<InMemoryOutboxSettings>())
-            writerFactory.AddFactory<InMemoryOutboxSettings>((settings, _) => new InMemoryOutboxWriter(outboxFactory.GetOutbox(settings)));
+        {
+            writerFactory.AddFactory<InMemoryOutboxSettings>(
+                (settings, serviceProvider) => new InMemoryOutboxWriter(
+                    outboxFactory.GetOutbox(settings),
+                    serviceProvider.GetRequiredService<ISilverbackLogger<InMemoryOutboxWriter>>()));
+        }
 
         builder.SilverbackBuilder.AddInMemoryLock();
 

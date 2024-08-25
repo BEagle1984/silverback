@@ -38,7 +38,7 @@ public class OutboxWorkerFixture
     [SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "NSubstitute setup")]
     public OutboxWorkerFixture()
     {
-        _outboxWriter = new InMemoryOutboxWriter(_inMemoryOutbox);
+        _outboxWriter = new InMemoryOutboxWriter(_inMemoryOutbox, Substitute.For<ISilverbackLogger<InMemoryOutboxWriter>>());
 
         _producerCollection.GetProducerForEndpoint("one").Returns(_producer1);
         _producerCollection.GetProducerForEndpoint("two").Returns(_producer2);

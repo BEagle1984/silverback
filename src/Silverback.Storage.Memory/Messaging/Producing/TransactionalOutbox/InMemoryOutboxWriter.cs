@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Diagnostics;
 using Silverback.Storage;
 using Silverback.Util;
 
@@ -15,15 +16,21 @@ public class InMemoryOutboxWriter : IOutboxWriter
 {
     private readonly InMemoryOutbox _outbox;
 
+    private readonly ISilverbackLogger<InMemoryOutboxWriter> _logger;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="InMemoryOutboxWriter" /> class.
     /// </summary>
     /// <param name="outbox">
     ///     The in-memory outbox shared between the <see cref="InMemoryOutboxWriter" /> and <see cref="InMemoryOutboxReader" />.
     /// </param>
-    public InMemoryOutboxWriter(InMemoryOutbox outbox)
+    /// <param name="logger">
+    ///     The logger.
+    /// </param>
+    public InMemoryOutboxWriter(InMemoryOutbox outbox, ISilverbackLogger<InMemoryOutboxWriter> logger)
     {
         _outbox = Check.NotNull(outbox, nameof(outbox));
+        _logger = Check.NotNull(logger, nameof(logger));
     }
 
     /// <inheritdoc cref="AddAsync(OutboxMessage, ISilverbackContext)" />
@@ -63,11 +70,11 @@ public class InMemoryOutboxWriter : IOutboxWriter
         }
     }
 
-    private static void WarnIfTransaction(ISilverbackContext? context)
+    private void WarnIfTransaction(ISilverbackContext? context)
     {
         if (context != null && context.TryGetStorageTransaction(out _))
         {
-            // TODO: Log warning
+            _logger.LogOutboxUnsupportedTransaction();
         }
     }
 }
