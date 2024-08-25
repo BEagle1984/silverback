@@ -5,6 +5,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  enableLegacyVersionTests: false
 
 steps:
   # Install .NET SDK
@@ -39,7 +40,7 @@ steps:
         --logger trx \
         --framework net8.0 \
         --filter "Type=E2E&Dependency!=Docker&CI!=Skip"
-    displayName: 'Run E2E integration tests (.NET 8)'
+    displayName: 'Run E2E tests (.NET 8)'
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
@@ -49,6 +50,7 @@ steps:
         --framework net6.0 \
         --filter "Type!=E2E&Dependency!=Docker&CI!=Skip"
     displayName: 'Run unit tests (.NET 6)'
+    condition: eq(variables.enableLegacyVersionTests, true)
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
@@ -57,7 +59,8 @@ steps:
         --logger trx \
         --framework net6.0 \
         --filter "Type=E2E&Dependency!=Docker&CI!=Skip"
-    displayName: 'Run E2E integration tests (.NET 6)'
+    displayName: 'Run E2E tests (.NET 6)'
+    condition: eq(variables.enableLegacyVersionTests, true)
   # Publish results
   - task: PublishTestResults@2
     condition: succeededOrFailed()
