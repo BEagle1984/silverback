@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Configuration;
@@ -13,7 +14,9 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class SubscribedMethodsCacheSingleton
 {
-    private readonly Dictionary<Type, IReadOnlyCollection<SubscribedMethod>> _cache = [];
+    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<SubscribedMethod>> _exclusiveMethodsCache = [];
+
+    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<SubscribedMethod>> _nonExclusiveMethodsCache = [];
 
     private readonly BusOptions _options;
 
@@ -30,38 +33,15 @@ internal sealed class SubscribedMethodsCacheSingleton
         _hasAnyMessageStreamSubscriber ??=
             GetAllSubscribedMethods(serviceProvider).Any(method => method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver);
 
-    // TODO: Cache the exclusive and non-exclusive methods separately?
     public IEnumerable<SubscribedMethod> GetExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
-        GetMethods(message, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.IsExclusive);
+        GetMethods(message, true, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.IsExclusive);
 
-    // TODO: Cache the exclusive and non-exclusive methods separately?
     public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(
         object message,
         IServiceProvider serviceProvider) =>
-        GetMethods(message, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.IsExclusive);
-
-    public IReadOnlyCollection<SubscribedMethod> GetMethods(object message, IServiceProvider serviceProvider)
-    {
-        Type messageType = message.GetType();
-
-        lock (_cache)
-        {
-            if (_cache.TryGetValue(messageType, out IReadOnlyCollection<SubscribedMethod>? value))
-                return value;
-        }
-
-        List<SubscribedMethod> subscribers = GetAllSubscribedMethods(serviceProvider)
-            .Where(subscribedMethod => AreCompatible(message, subscribedMethod)).ToList();
-
-        lock (_cache)
-        {
-            _cache[messageType] = subscribers;
-        }
-
-        return subscribers;
-    }
+        GetMethods(message, false, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.IsExclusive);
 
     public void Preload(IServiceProvider serviceProvider) => GetAllSubscribedMethods(serviceProvider);
 
@@ -102,6 +82,17 @@ internal sealed class SubscribedMethodsCacheSingleton
 
         return false;
     }
+
+    private IReadOnlyCollection<SubscribedMethod> GetMethods(object message, bool exclusive, IServiceProvider serviceProvider) =>
+        (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
+        .GetOrAdd(
+            message.GetType(),
+            static (_, args) => args.Instance.GetAllSubscribedMethods(args.ServiceProvider)
+                .Where(
+                    subscribedMethod => AreCompatible(args.Message, subscribedMethod) &&
+                                        subscribedMethod.Options.IsExclusive == args.Exclusive)
+                .ToList(),
+            (ServiceProvider: serviceProvider, Message: message, Exclusive: exclusive, Instance: this));
 
     private IReadOnlyCollection<SubscribedMethod> GetAllSubscribedMethods(IServiceProvider serviceProvider) =>
         _subscribedMethods ??= LoadSubscribedMethods(serviceProvider);
