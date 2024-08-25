@@ -194,6 +194,7 @@ public partial class BatchProcessingFixture
 
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         await AsyncTestingUtil.WaitAsync(() => Helper.GetConsumerForEndpoint(DefaultTopicName).StatusInfo.Status == ConsumerStatus.Stopped);
+        await AsyncTestingUtil.WaitAsync(() => abortedCount == 2);
 
         batchesCount.Should().Be(3);
         abortedCount.Should().Be(2);

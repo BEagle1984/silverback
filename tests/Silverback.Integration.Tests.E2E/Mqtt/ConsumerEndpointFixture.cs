@@ -262,7 +262,6 @@ public partial class ConsumerEndpointFixture : MqttFixture
         client4Envelopes.Select(envelope => envelope.Message?.ContentEventOne).Should().BeEquivalentTo("1", "2", "3", "4", "5");
     }
 
-    // TODO: Check flaky test
     [Fact]
     public async Task ConsumerEndpoint_ShouldConsumeAfterStopAndStart()
     {
