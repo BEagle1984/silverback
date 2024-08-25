@@ -96,13 +96,19 @@ public class DistributedBackgroundServiceFixture
         {
             Interlocked.Increment(ref executingCount);
 
-            execute.Invoke();
+            try
+            {
+                execute.Invoke();
 
-            if (executingCount > 1)
-                executedInParallel = true;
+                if (executingCount > 1)
+                    executedInParallel = true;
 
-            await Task.Delay(100, stoppingToken);
-            Interlocked.Decrement(ref executingCount);
+                await Task.Delay(100, stoppingToken);
+            }
+            finally
+            {
+                Interlocked.Decrement(ref executingCount);
+            }
         }
 
         await service1.StartAsync(CancellationToken.None);
