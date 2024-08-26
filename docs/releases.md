@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [4.5.2](https://github.com/BEagle1984/silverback/releases/tag/v4.5.2)
+
+### Fixes
+
+* Fix retry policy when batch processing all partitions together
+
 ## [4.5.1](https://github.com/BEagle1984/silverback/releases/tag/v4.5.1)
 
 ### Fixes
