@@ -286,7 +286,7 @@ public class KafkaConsumer : Consumer<KafkaOffset>
 
         // If the partitions are being processed together we must rollback them all
         if (!Configuration.ProcessPartitionsIndependently && _offsets != null)
-            brokerMessageIdentifiers = _offsets.GetRollbackOffSets().Cast<KafkaOffset>().AsReadOnlyCollection();
+            brokerMessageIdentifiers = _offsets.GetRollbackOffSets().AsReadOnlyCollection();
 
         // Filter out the partitions we aren't processing anymore (during a rebalance the rollback might be triggered aborting the
         // pending sequences but we don't want to pause/resume the partitions we aren't processing)

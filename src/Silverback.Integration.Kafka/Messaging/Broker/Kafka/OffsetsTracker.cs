@@ -92,7 +92,7 @@ public sealed class OffsetsTracker : IBrokerMessageIdentifiersTracker
     /// <returns>
     ///     The offsets to be used to rollback.
     /// </returns>
-    public IReadOnlyCollection<IBrokerMessageIdentifier> GetRollbackOffSets() => _rollbackOffsets.Values.AsReadOnlyCollection();
+    public IReadOnlyCollection<KafkaOffset> GetRollbackOffSets() => _rollbackOffsets.Values.AsReadOnlyCollection();
 
     /// <inheritdoc cref="IBrokerMessageIdentifiersTracker.TrackIdentifier" />
     void IBrokerMessageIdentifiersTracker.TrackIdentifier(IBrokerMessageIdentifier identifier) => TrackOffset((KafkaOffset)identifier);
