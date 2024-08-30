@@ -7,8 +7,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using MQTTnet.Protocol;
+using Newtonsoft.Json;
 using NSubstitute;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -191,6 +193,37 @@ public class MqttLastWillMessageConfigurationBuilderFixture
                         options =>
                         {
                             options.WriteIndented = true;
+                        }))
+            .SendMessage(message);
+
+        MqttLastWillMessageConfiguration willMessage = configurationBuilder.Build();
+        willMessage.Payload.Should().NotBeNullOrEmpty();
+        willMessage.Payload.Should().BeEquivalentTo(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsJsonUsingNewtonsoft_ShouldSetSerializer()
+    {
+        TestEventOne message = new() { Content = "Hello MQTT!" };
+        NewtonsoftJsonMessageSerializer serializer = new(
+            new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            });
+        byte[]? messageBytes = (await serializer.SerializeAsync(
+            message,
+            [],
+            TestProducerEndpoint.GetDefault())).ReadAll();
+        MqttLastWillMessageConfigurationBuilder<TestEventOne> configurationBuilder = new();
+
+        configurationBuilder
+            .ProduceTo("testaments")
+            .SerializeAsJsonUsingNewtonsoft(
+                serializerBuilder => serializerBuilder
+                    .Configure(
+                        settings =>
+                        {
+                            settings.Formatting = Formatting.Indented;
                         }))
             .SendMessage(message);
 

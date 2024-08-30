@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Configuration;
 /// <content>
 ///     Implements the <c>Serialize</c> (and <c>ProduceBinaryMessages</c>) methods.
 /// </content>
-public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
+public abstract partial class ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder> : IMessageSerializationBuilder<TMessage, TBuilder>
 {
     /// <summary>
     ///     Specifies the <see cref="IMessageSerializer" /> to be used to serialize the messages.

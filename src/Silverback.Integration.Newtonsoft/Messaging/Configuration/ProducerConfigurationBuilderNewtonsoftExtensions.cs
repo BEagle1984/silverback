@@ -19,17 +19,11 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
     /// <typeparam name="TMessage">
     ///     The type of the messages being produced.
     /// </typeparam>
-    /// <typeparam name="TConfiguration">
-    ///     The type of the configuration being built.
-    /// </typeparam>
-    /// <typeparam name="TEndpoint">
-    ///     The type of the endpoint.
-    /// </typeparam>
     /// <typeparam name="TBuilder">
     ///     The actual builder type.
     /// </typeparam>
-    /// <param name="endpointBuilder">
-    ///     The endpoint builder.
+    /// <param name="builder">
+    ///     The builder.
     /// </param>
     /// <param name="serializerBuilderAction">
     ///     An optional <see cref="Action{T}" /> that takes the <see cref="NewtonsoftJsonMessageSerializerBuilder" /> and configures it.
@@ -37,18 +31,15 @@ public static class ProducerConfigurationBuilderNewtonsoftExtensions
     /// <returns>
     ///     The endpoint builder so that additional calls can be chained.
     /// </returns>
-    public static TBuilder SerializeAsJsonUsingNewtonsoft<TMessage, TConfiguration, TEndpoint, TBuilder>(
-        this ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder> endpointBuilder,
+    public static TBuilder SerializeAsJsonUsingNewtonsoft<TMessage, TBuilder>(
+        this IMessageSerializationBuilder<TMessage, TBuilder> builder,
         Action<NewtonsoftJsonMessageSerializerBuilder>? serializerBuilderAction = null)
-        where TConfiguration : ProducerEndpointConfiguration<TEndpoint>
-        where TEndpoint : ProducerEndpoint
-        where TBuilder : ProducerEndpointConfigurationBuilder<TMessage, TConfiguration, TEndpoint, TBuilder>
     {
-        Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+        Check.NotNull(builder, nameof(builder));
 
         NewtonsoftJsonMessageSerializerBuilder serializerBuilder = new();
         serializerBuilderAction?.Invoke(serializerBuilder);
-        endpointBuilder.SerializeUsing(serializerBuilder.Build());
-        return (TBuilder)endpointBuilder;
+        builder.SerializeUsing(serializerBuilder.Build());
+        return (TBuilder)builder;
     }
 }

@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Configuration.Mqtt;
 /// <typeparam name="TMessage">
 ///     The LWT message type.
 /// </typeparam>
-public class MqttLastWillMessageConfigurationBuilder<TMessage>
+public class MqttLastWillMessageConfigurationBuilder<TMessage> : IMessageSerializationBuilder<TMessage, MqttLastWillMessageConfigurationBuilder<TMessage>>
 {
     private readonly List<MqttUserProperty> _userProperties = [];
 
