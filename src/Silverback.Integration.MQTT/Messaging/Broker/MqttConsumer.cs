@@ -29,6 +29,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     private readonly MqttConsumerEndpointsCache _endpointsCache;
 
+    private readonly DynamicCountdownEvent _pendingMessagesCountdown = new();
+
     private bool _isDisposed;
 
     /// <summary>
@@ -91,25 +93,34 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
     internal async Task HandleMessageAsync(ConsumedApplicationMessage message, ISequenceStore sequenceStore)
     {
-        MessageHeaderCollection headers = Configuration.AreHeadersSupported
-            ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
-            : [];
+        _pendingMessagesCountdown.AddCount();
 
-        MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
+        try
+        {
+            MessageHeaderCollection headers = Configuration.AreHeadersSupported
+                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties?.ToSilverbackHeaders())
+                : [];
 
-        headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
+            MqttConsumerEndpoint endpoint = _endpointsCache.GetEndpoint(message.ApplicationMessage.Topic);
 
-        // If another message is still pending, cancel its task (might happen in case of timeout)
-        if (!_inProcessingMessages.TryAdd(message.Id, message))
-            throw new InvalidOperationException("The message has been processed already.");
+            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
-        await HandleMessageAsync(
-                [.. message.ApplicationMessage.PayloadSegment],
-                headers,
-                endpoint,
-                new MqttMessageIdentifier(Configuration.ClientId, message.Id),
-                sequenceStore)
-            .ConfigureAwait(false);
+            // If another message is still pending, cancel its task (might happen in case of timeout)
+            if (!_inProcessingMessages.TryAdd(message.Id, message))
+                throw new InvalidOperationException("The message has been processed already.");
+
+            await HandleMessageAsync(
+                    [.. message.ApplicationMessage.PayloadSegment],
+                    headers,
+                    endpoint,
+                    new MqttMessageIdentifier(Configuration.ClientId, message.Id),
+                    sequenceStore)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _pendingMessagesCountdown.Signal();
+        }
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
@@ -127,7 +138,11 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
-    protected override async ValueTask WaitUntilConsumingStoppedCoreAsync() => await _channelsManager.Stopping.ConfigureAwait(false);
+    protected override async ValueTask WaitUntilConsumingStoppedCoreAsync()
+    {
+        await _channelsManager.Stopping.ConfigureAwait(false);
+        await _pendingMessagesCountdown.WaitAsync().ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.CommitCoreAsync" />
     protected override async ValueTask CommitCoreAsync(IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers)
@@ -163,6 +178,8 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
 
         Client.Connected.RemoveHandler(OnClientConnectedAsync);
         Client.Disconnected.RemoveHandler(OnClientDisconnectedAsync);
+
+        _pendingMessagesCountdown.Dispose();
     }
 
     private async ValueTask OnClientConnectedAsync(BrokerClient client)
