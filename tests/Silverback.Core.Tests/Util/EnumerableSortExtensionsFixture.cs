@@ -20,8 +20,8 @@ public class EnumerableSortExtensionsFixture
             new SortedItem(-50),
             new SortedItem(50),
             new SortedItem(-100),
-            new Item("unsorted3"),
-            new Item("unsorted2")
+            new("unsorted3"),
+            new("unsorted2")
         ];
 
         IEnumerable<Item> sorted = items.SortBySortIndex();

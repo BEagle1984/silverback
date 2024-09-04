@@ -37,7 +37,7 @@ public class CheckFixture
     [Fact]
     public void NotEmpty_ShouldReturnCollection_WhenCollectionIsNotNullOrEmpty()
     {
-        List<object> collection = [new object(), new object()];
+        List<object> collection = [new(), new()];
 
         IReadOnlyCollection<object> result = Check.NotEmpty(collection, "param");
 
@@ -127,7 +127,7 @@ public class CheckFixture
     [Fact]
     public void HasNoNulls_ShouldReturnCollection_WhenCollectionIsNotNullAndContainsNoNulls()
     {
-        List<object> collection = [new object(), new object()];
+        List<object> collection = [new(), new()];
 
         IReadOnlyCollection<object> result = Check.HasNoNulls(collection, "param");
 
@@ -137,7 +137,7 @@ public class CheckFixture
     [Fact]
     public void HasNoNulls_ShouldThrow_WhenCollectionContainsSomeNulls()
     {
-        List<object?> collection = [new object(), new object(), null];
+        List<object?> collection = [new(), new(), null];
 
         Action act = () => Check.HasNoNulls(collection, "param");
 

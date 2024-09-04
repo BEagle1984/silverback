@@ -53,7 +53,7 @@ public class RetryErrorPolicyFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
         InboundEnvelope envelope = new(
@@ -82,7 +82,7 @@ public class RetryErrorPolicyFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
         InboundEnvelope envelope = new(

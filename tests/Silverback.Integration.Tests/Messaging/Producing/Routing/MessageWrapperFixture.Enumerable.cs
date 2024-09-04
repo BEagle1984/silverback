@@ -232,7 +232,7 @@ public partial class MessageWrapperFixture
     [InlineData(true)]
     public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
     {
-        IEnumerable<TestEventOne?> messages = [new TestEventOne(), new TestEventOne(), null];
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", enableSubscribing);
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
@@ -256,7 +256,7 @@ public partial class MessageWrapperFixture
     [InlineData(true)]
     public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
     {
-        IEnumerable<TestEventOne?> messages = [new TestEventOne(), new TestEventOne(), null];
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer producer, IProduceStrategyImplementation strategy) = CreateProducer("one", enableSubscribing);
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
@@ -285,7 +285,7 @@ public partial class MessageWrapperFixture
     [Fact]
     public async Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable()
     {
-        IEnumerable<TestEventOne> messages = [new TestEventOne(), new TestEventOne()];
+        IEnumerable<TestEventOne> messages = [new(), new()];
         IProducer producer = Substitute.For<IProducer>();
         IProducer producer2 = Substitute.For<IProducer>();
 
@@ -300,7 +300,7 @@ public partial class MessageWrapperFixture
     [Fact]
     public async Task WrapAndProduceBatchAsync_ShouldThrow_WhenMultipleProducersSpecifiedForEnumerable_WhenPassingArgument()
     {
-        IEnumerable<TestEventOne> messages = [new TestEventOne(), new TestEventOne()];
+        IEnumerable<TestEventOne> messages = [new(), new()];
         IProducer producer = Substitute.For<IProducer>();
         IProducer producer2 = Substitute.For<IProducer>();
 

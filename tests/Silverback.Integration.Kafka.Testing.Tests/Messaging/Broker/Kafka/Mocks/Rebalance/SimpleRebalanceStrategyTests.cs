@@ -18,14 +18,14 @@ public class SimpleRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4),
-            new TopicPartition("topic2", 0),
-            new TopicPartition("topic2", 1),
-            new TopicPartition("topic2", 2)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
@@ -33,8 +33,8 @@ public class SimpleRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2)
+            new(consumer1),
+            new(consumer2)
         ];
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
@@ -68,14 +68,14 @@ public class SimpleRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4),
-            new TopicPartition("topic2", 0),
-            new TopicPartition("topic2", 1),
-            new TopicPartition("topic2", 2)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
@@ -84,9 +84,9 @@ public class SimpleRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2),
-            new SubscriptionPartitionAssignment(consumer3)
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
         ];
 
         RebalanceResult result = new SimpleRebalanceStrategy().Rebalance(partitions, partitionAssignments);
@@ -125,11 +125,11 @@ public class SimpleRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1");
@@ -138,9 +138,9 @@ public class SimpleRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2),
-            new SubscriptionPartitionAssignment(consumer3)
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
         ];
 
         partitionAssignments[0].Partitions.AddRange(
@@ -201,11 +201,11 @@ public class SimpleRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1");
@@ -213,8 +213,8 @@ public class SimpleRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2)
+            new(consumer1),
+            new(consumer2)
         ];
 
         partitionAssignments[0].Partitions.AddRange(

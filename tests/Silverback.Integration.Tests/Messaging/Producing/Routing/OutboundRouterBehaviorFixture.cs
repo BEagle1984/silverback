@@ -80,8 +80,8 @@ public class OutboundRouterBehaviorFixture
     {
         IProducer producer1 = AddProducer<TestEventOne>("topic1");
         IProducer producer2 = AddProducer<TestEventTwo>("topic2");
-        List<TestEventOne> messages1 = [new TestEventOne(), new TestEventOne()];
-        TestEventTwo[] messages2 = [new TestEventTwo(), new TestEventTwo()];
+        List<TestEventOne> messages1 = [new(), new()];
+        TestEventTwo[] messages2 = [new(), new()];
 
         await _behavior.HandleAsync(messages1, _ => Next());
         await _behavior.HandleAsync(messages2, _ => Next());
@@ -144,8 +144,8 @@ public class OutboundRouterBehaviorFixture
     {
         IProducer producer1 = AddProducer<TestEventOne>("topic1");
         IProducer producer2 = AddProducer<TestEventTwo>("topic2");
-        List<Tombstone<TestEventOne>> messages1 = [new Tombstone<TestEventOne>("1"), new Tombstone<TestEventOne>("2")];
-        Tombstone<TestEventTwo>[] messages2 = [new Tombstone<TestEventTwo>("1"), new Tombstone<TestEventTwo>("2")];
+        List<Tombstone<TestEventOne>> messages1 = [new("1"), new("2")];
+        Tombstone<TestEventTwo>[] messages2 = [new("1"), new("2")];
 
         await _behavior.HandleAsync(messages1, _ => Next());
         await _behavior.HandleAsync(messages2, _ => Next());

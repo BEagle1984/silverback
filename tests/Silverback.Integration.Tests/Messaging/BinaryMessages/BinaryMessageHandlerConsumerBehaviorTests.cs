@@ -24,7 +24,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =
         [
-            new MessageHeader("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
+            new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         ];
         RawInboundEnvelope envelope = new(
             rawContent,
@@ -86,7 +86,7 @@ public class BinaryMessageHandlerConsumerBehaviorTests
         byte[] rawContent = BytesUtil.GetRandomBytes();
         MessageHeader[] headers =
         [
-            new MessageHeader("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
+            new("x-message-type", typeof(BinaryMessage).AssemblyQualifiedName)
         ];
         TestConsumerEndpointConfiguration endpointConfiguration = new("test")
         {

@@ -85,8 +85,8 @@ public sealed class SqliteKafkaOffsetStoreFixture : IDisposable
 
         KafkaOffset[] offsets =
         [
-            new KafkaOffset("topic1", 3, 42),
-            new KafkaOffset("topic1", 5, 42)
+            new("topic1", 3, 42),
+            new("topic1", 5, 42)
         ];
 
         await store.StoreOffsetsAsync("group1", offsets);

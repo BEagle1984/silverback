@@ -183,7 +183,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [Fact]
     public async Task WrapAndPublishBatch_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing()
     {
-        TestEventOne?[] messages = [new TestEventOne(), new TestEventOne(), null];
+        TestEventOne?[] messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
         (IProducer _, IProduceStrategyImplementation strategy2) = AddProducer<TestEventOne>("two", true);
         (IProducer _, IProduceStrategyImplementation strategy3) = AddProducer<TestEventOne>("three", true);
@@ -203,7 +203,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [Fact]
     public async Task WrapAndPublishBatch_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing_WhenPassingArgument()
     {
-        TestEventOne?[] messages = [new TestEventOne(), new TestEventOne(), null];
+        TestEventOne?[] messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy1) = AddProducer<TestEventOne>("one");
         (IProducer _, IProduceStrategyImplementation strategy2) = AddProducer<TestEventOne>("two", true);
         (IProducer _, IProduceStrategyImplementation strategy3) = AddProducer<TestEventOne>("three", true);

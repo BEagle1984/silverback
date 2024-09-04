@@ -36,7 +36,7 @@ public class OutboundEnvelopeBuilderFixture
     public void WithHeaders_ShouldSetHeaders()
     {
         OutboundEnvelopeBuilder<TestEventOne> builder = new();
-        MessageHeader[] headers = [new MessageHeader("one", "1"), new MessageHeader("two", "2")];
+        MessageHeader[] headers = [new("one", "1"), new("two", "2")];
 
         builder.WithHeaders(headers);
 

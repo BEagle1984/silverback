@@ -45,7 +45,7 @@ public class ErrorPolicyChainFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
         TestErrorPolicy testPolicy = new();
@@ -80,7 +80,7 @@ public class ErrorPolicyChainFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
         TestErrorPolicy testPolicy = new();
@@ -117,7 +117,7 @@ public class ErrorPolicyChainFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
+            new(DefaultMessageHeaders.FailedAttempts, failedAttempts.ToString(CultureInfo.InvariantCulture))
         ];
 
         ErrorPolicyBase[] policies =
@@ -151,7 +151,7 @@ public class ErrorPolicyChainFixture
         MemoryStream rawMessage = new();
         MessageHeader[] headers =
         [
-            new MessageHeader(DefaultMessageHeaders.FailedAttempts, 42)
+            new(DefaultMessageHeaders.FailedAttempts, 42)
         ];
 
         ErrorPolicyBase[] policies =

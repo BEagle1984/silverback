@@ -91,7 +91,7 @@ public partial class PublisherFixture
                 .AddDelegateSubscriber<TestEventOne, TestCommandOne[]>(Handle3)
                 .AddDelegateSubscriber<TestCommandOne>(Handle4));
 
-        static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => [new TestCommandOne(), new TestCommandOne()];
+        static IEnumerable<TestCommandOne> Handle1(TestEventOne message) => [new(), new()];
         static Task<TestCommandOne[]> Handle2(TestEventOne message) => Task.FromResult(new TestCommandOne[] { new(), new() });
         static ValueTask<TestCommandOne[]> Handle3(TestEventOne message) => ValueTask.FromResult(new TestCommandOne[] { new(), new() });
         void Handle4(TestCommandOne message) => republishedMessages.Add(message);
@@ -609,7 +609,7 @@ public partial class PublisherFixture
     {
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]
-        public IEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) => [new TestCommandOne(), new TestCommandOne()];
+        public IEnumerable<TestCommandOne> SyncSubscriber(TestEventOne message) => [new(), new()];
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via reflection")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Used for routing")]

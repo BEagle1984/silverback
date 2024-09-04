@@ -23,9 +23,9 @@ public class ActivityExtensionsTests
         Activity activity = new("test");
         IList<KeyValuePair<string, string>> itemsToAdd =
         [
-            new KeyValuePair<string, string>("key1", "value1"),
-            new KeyValuePair<string, string>("key2", "value2"),
-            new KeyValuePair<string, string>("key3", "value3")
+            new("key1", "value1"),
+            new("key2", "value2"),
+            new("key3", "value3")
         ];
 
         activity.AddBaggage("key0", "value0");

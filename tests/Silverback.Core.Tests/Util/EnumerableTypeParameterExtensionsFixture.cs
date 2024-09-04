@@ -56,7 +56,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void ToList_ShouldReturnEquivalentList_WhenTypeSpecifiedViaParameter()
     {
-        ObjectA[] objects = [new ObjectA(), new ObjectA()];
+        ObjectA[] objects = [new(), new()];
 
         IEnumerable<object> results = objects.ToList(typeof(ObjectA));
 
@@ -68,7 +68,7 @@ public class EnumerableTypeParameterExtensionsFixture
     [Fact]
     public void ToList_ShouldReturnEquivalentListOfInterfaceType_WhenTypeSpecifiedViaParameter()
     {
-        ObjectA[] objects = [new ObjectA(), new ObjectA()];
+        ObjectA[] objects = [new(), new()];
 
         IEnumerable<object> results = objects.ToList(typeof(IObjectA));
 

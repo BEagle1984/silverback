@@ -184,7 +184,7 @@ public partial class MessageWrapperFixture
     [Fact]
     public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing()
     {
-        TestEventOne?[] messages = [new TestEventOne(), new TestEventOne(), null];
+        TestEventOne?[] messages = [new(), new(), null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two", true);
         (IProducer producer3, IProduceStrategyImplementation strategy3) = CreateProducer("three", true);
@@ -204,7 +204,7 @@ public partial class MessageWrapperFixture
     [Fact]
     public async Task WrapAndProduceBatchAsync_ShouldPublishToInternalBusForCollectionAccordingToEnableSubscribing_WhenPassingArgument()
     {
-        TestEventOne?[] messages = [new TestEventOne(), new TestEventOne(), null];
+        TestEventOne?[] messages = [new(), new(), null];
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two", true);
         (IProducer producer3, IProduceStrategyImplementation strategy3) = CreateProducer("three", true);

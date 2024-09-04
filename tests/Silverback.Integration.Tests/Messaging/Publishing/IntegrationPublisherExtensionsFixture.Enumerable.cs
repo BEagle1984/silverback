@@ -225,7 +225,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [InlineData(true)]
     public async Task WrapAndPublishBatchAsync_ShouldPublishToInternalBusForEnumerableAccordingToEnableSubscribing(bool enableSubscribing)
     {
-        IEnumerable<TestEventOne?> messages = [new TestEventOne(), new TestEventOne(), null];
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
@@ -249,7 +249,7 @@ public partial class IntegrationPublisherExtensionsFixture
     [InlineData(true)]
     public async Task WrapAndPublishBatchAsync_ShouldPublishToInternalBusForEnumerableAccordingToEnableSubscribing_WhenPassingArgument(bool enableSubscribing)
     {
-        IEnumerable<TestEventOne?> messages = [new TestEventOne(), new TestEventOne(), null];
+        IEnumerable<TestEventOne?> messages = [new(), new(), null];
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventOne>("one", enableSubscribing);
         await strategy.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(

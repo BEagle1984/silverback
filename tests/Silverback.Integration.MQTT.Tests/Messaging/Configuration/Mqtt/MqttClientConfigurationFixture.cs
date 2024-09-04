@@ -389,8 +389,8 @@ public class MqttClientConfigurationFixture
     {
         List<MqttUserProperty> mqttUserProperties =
         [
-            new MqttUserProperty("key1", "value1"),
-            new MqttUserProperty("key2", "value2")
+            new("key1", "value1"),
+            new("key2", "value2")
         ];
 
         MqttClientConfiguration configuration = new()

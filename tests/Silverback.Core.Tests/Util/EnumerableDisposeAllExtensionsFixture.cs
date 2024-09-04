@@ -31,7 +31,7 @@ public class EnumerableDisposeAllExtensionsFixture
     [Fact]
     public async Task DisposeAllAsync_ShouldDisposeObjectsOnce_WhenBothSyncAndAsyncDisposableAreImplemented()
     {
-        AsyncAndSyncDisposable[] objects = [new AsyncAndSyncDisposable(), new AsyncAndSyncDisposable()];
+        AsyncAndSyncDisposable[] objects = [new(), new()];
 
         await objects.DisposeAllAsync();
 

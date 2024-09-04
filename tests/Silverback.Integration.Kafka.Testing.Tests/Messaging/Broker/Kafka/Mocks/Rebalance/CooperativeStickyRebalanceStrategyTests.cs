@@ -18,14 +18,14 @@ public class CooperativeStickyRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4),
-            new TopicPartition("topic2", 0),
-            new TopicPartition("topic2", 1),
-            new TopicPartition("topic2", 2)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
@@ -33,8 +33,8 @@ public class CooperativeStickyRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2)
+            new(consumer1),
+            new(consumer2)
         ];
 
         RebalanceResult result = new CooperativeStickyRebalanceStrategy().Rebalance(partitions, partitionAssignments);
@@ -68,14 +68,14 @@ public class CooperativeStickyRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4),
-            new TopicPartition("topic2", 0),
-            new TopicPartition("topic2", 1),
-            new TopicPartition("topic2", 2)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4),
+            new("topic2", 0),
+            new("topic2", 1),
+            new("topic2", 2)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1", "topic2");
@@ -84,9 +84,9 @@ public class CooperativeStickyRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2),
-            new SubscriptionPartitionAssignment(consumer3)
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
         ];
 
         RebalanceResult result = new CooperativeStickyRebalanceStrategy().Rebalance(partitions, partitionAssignments);
@@ -125,16 +125,16 @@ public class CooperativeStickyRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4),
-            new TopicPartition("topic1", 5),
-            new TopicPartition("topic1", 6),
-            new TopicPartition("topic1", 7),
-            new TopicPartition("topic1", 8),
-            new TopicPartition("topic1", 9)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4),
+            new("topic1", 5),
+            new("topic1", 6),
+            new("topic1", 7),
+            new("topic1", 8),
+            new("topic1", 9)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1");
@@ -143,9 +143,9 @@ public class CooperativeStickyRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2),
-            new SubscriptionPartitionAssignment(consumer3)
+            new(consumer1),
+            new(consumer2),
+            new(consumer3)
         ];
 
         partitionAssignments[0].Partitions.AddRange(
@@ -197,11 +197,11 @@ public class CooperativeStickyRebalanceStrategyTests
     {
         List<TopicPartition> partitions =
         [
-            new TopicPartition("topic1", 0),
-            new TopicPartition("topic1", 1),
-            new TopicPartition("topic1", 2),
-            new TopicPartition("topic1", 3),
-            new TopicPartition("topic1", 4)
+            new("topic1", 0),
+            new("topic1", 1),
+            new("topic1", 2),
+            new("topic1", 3),
+            new("topic1", 4)
         ];
 
         IMockedConfluentConsumer consumer1 = GetMockedConsumer("topic1");
@@ -209,8 +209,8 @@ public class CooperativeStickyRebalanceStrategyTests
 
         List<SubscriptionPartitionAssignment> partitionAssignments =
         [
-            new SubscriptionPartitionAssignment(consumer1),
-            new SubscriptionPartitionAssignment(consumer2)
+            new(consumer1),
+            new(consumer2)
         ];
 
         partitionAssignments[0].Partitions.AddRange(
