@@ -31,6 +31,8 @@ public partial class KafkaConsumerConfigurationBuilder
 
     private KafkaOffsetStoreSettings? _clientSideOffsetStoreSettings;
 
+    private bool? _sendOffsetsToTransaction;
+
     private bool? _enableAutoRecovery;
 
     private bool? _processPartitionsIndependently;
@@ -254,6 +256,33 @@ public partial class KafkaConsumerConfigurationBuilder
         settings.Validate();
 
         _clientSideOffsetStoreSettings = settings;
+        return This;
+    }
+
+    /// <summary>
+    ///     Specifies that the consumer should commit the consumed offsets in the same transaction of the produced messages.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder SendOffsetsToTransaction()
+    {
+        _sendOffsetsToTransaction = true;
+        DisableOffsetsCommit();
+
+        return This;
+    }
+
+    /// <summary>
+    ///     Specifies that the consumer should not commit the consumed offsets in the same transaction of the produced messages.
+    ///     This is the default.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="KafkaConsumerConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaConsumerConfigurationBuilder DisableSendOffsetsToTransaction()
+    {
+        _sendOffsetsToTransaction = false;
         return This;
     }
 
@@ -725,6 +754,7 @@ public partial class KafkaConsumerConfigurationBuilder
             CommitOffsets = _commitOffsets ?? configuration.CommitOffsets,
             CommitOffsetEach = _commitOffsetEach ?? configuration.CommitOffsetEach,
             ClientSideOffsetStore = _clientSideOffsetStoreSettings ?? configuration.ClientSideOffsetStore,
+            SendOffsetsToTransaction = _sendOffsetsToTransaction ?? configuration.SendOffsetsToTransaction,
             EnableAutoRecovery = _enableAutoRecovery ?? configuration.EnableAutoRecovery,
             BackpressureLimit = _backpressureLimit ?? configuration.BackpressureLimit,
             GetMetadataTimeout = _getMetadataTimeout ?? configuration.GetMetadataTimeout,

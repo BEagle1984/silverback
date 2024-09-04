@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Confluent.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
@@ -36,7 +37,7 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
             else
             {
                 _topics.ForEach(topic => topic.AbortTransaction(producerInfo.TransactionalUniqueId));
-                producerInfo.TransactionalUniqueId = Guid.NewGuid();
+                producerInfo.Reset();
             }
 
             return producerInfo.TransactionalUniqueId;
@@ -62,6 +63,13 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
                 throw new InvalidOperationException("No pending transaction.");
 
             _topics.ForEach(topic => topic.CommitTransaction(producerInfo.TransactionalUniqueId));
+
+            foreach (GroupPendingOffsets pendingOffsets in producerInfo.PendingOffsets)
+            {
+                pendingOffsets.GroupMetadata.ConsumerGroup.Commit(pendingOffsets.Offsets);
+            }
+
+            producerInfo.PendingOffsets.Clear();
         }
     }
 
@@ -75,6 +83,20 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
                 throw new InvalidOperationException("No pending transaction.");
 
             _topics.ForEach(topic => topic.AbortTransaction(producerInfo.TransactionalUniqueId));
+            producerInfo.PendingOffsets.Clear();
+        }
+    }
+
+    public void SendOffsetsToTransaction(Guid transactionalUniqueId, IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata)
+    {
+        lock (_producersInfo)
+        {
+            TransactionalProducerInfo producerInfo = GetProducerInfo(transactionalUniqueId);
+
+            if (!producerInfo.IsTransactionPending)
+                throw new InvalidOperationException("No pending transaction.");
+
+            producerInfo.PendingOffsets.Add(new GroupPendingOffsets(offsets, (MockedConsumerGroupMetadata)groupMetadata));
         }
     }
 
@@ -108,8 +130,19 @@ internal class InMemoryTransactionManager : IInMemoryTransactionManager
 
         public string TransactionalId { get; }
 
-        public Guid TransactionalUniqueId { get; set; } = Guid.NewGuid();
+        public Guid TransactionalUniqueId { get; private set; } = Guid.NewGuid();
 
         public bool IsTransactionPending { get; set; }
+
+        public List<GroupPendingOffsets> PendingOffsets { get; } = [];
+
+        public void Reset()
+        {
+            IsTransactionPending = false;
+            PendingOffsets.Clear();
+            TransactionalUniqueId = Guid.NewGuid();
+        }
     }
+
+    private record GroupPendingOffsets(IEnumerable<TopicPartitionOffset> Offsets, MockedConsumerGroupMetadata GroupMetadata);
 }

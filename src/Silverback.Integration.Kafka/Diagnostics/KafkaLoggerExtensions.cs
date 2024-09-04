@@ -87,6 +87,9 @@ internal static class KafkaLoggerExtensions
     private static readonly Action<ILogger, string, string?, Exception?> TransactionAborted =
         SilverbackLoggerMessage.Define<string, string?>(KafkaLogEvents.TransactionAborted);
 
+    private static readonly Action<ILogger, string, int, long, string, string?, Exception?> OffsetSentToTransaction =
+        SilverbackLoggerMessage.Define<string, int, long, string, string?>(KafkaLogEvents.OffsetSentToTransaction);
+
     private static readonly Action<ILogger, string, string, string, Exception?> ConfluentProducerLogCritical =
         SilverbackLoggerMessage.Define<string, string, string>(KafkaLogEvents.ConfluentProducerLogCritical);
 
@@ -290,6 +293,19 @@ internal static class KafkaLoggerExtensions
 
     public static void LogTransactionAborted(this ISilverbackLogger logger, IConfluentProducerWrapper producerWrapper) =>
         TransactionAborted(logger.InnerLogger, producerWrapper.DisplayName, producerWrapper.Configuration.TransactionalId, null);
+
+    public static void LogOffsetSentToTransaction(
+        this ISilverbackLogger logger,
+        IConfluentProducerWrapper producerWrapper,
+        TopicPartitionOffset topicPartitionOffset) =>
+        OffsetSentToTransaction(
+            logger.InnerLogger,
+            topicPartitionOffset.Topic,
+            topicPartitionOffset.Partition,
+            topicPartitionOffset.Offset,
+            producerWrapper.DisplayName,
+            producerWrapper.Configuration.TransactionalId,
+            null);
 
     public static void LogConfluentProducerLogCritical(this ISilverbackLogger logger, LogMessage logMessage, IConfluentProducerWrapper producerWrapper)
     {

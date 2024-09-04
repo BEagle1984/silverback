@@ -2,16 +2,22 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Confluent.Kafka;
 using FluentAssertions;
 using NSubstitute;
-using Silverback.Messaging.Consuming.ContextEnrichment;
+using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Callbacks;
+using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Consuming.KafkaOffsetStore;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Messaging.Transactions;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Transactions;
 
-public class SilverbackContextTransactionExtensionsFixture
+public class SilverbackContextKafkaTransactionExtensionsFixture
 {
     [Fact]
     public void InitKafkaTransaction_ShouldInitAndReturnTransaction()
@@ -42,7 +48,27 @@ public class SilverbackContextTransactionExtensionsFixture
     public void InitKafkaTransaction_ShouldAppendPartitionToTransactionalId_WhenInConsumerContext(string? baseSuffix)
     {
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
-        context.SetConsumedPartition(new TopicPartition("topic1", 42), true);
+        IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
+        confluentConsumerWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
+        confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+        KafkaConsumer kafkaConsumer = new(
+            "consumer1",
+            confluentConsumerWrapper,
+            new KafkaConsumerConfigurationBuilder(Substitute.For<IServiceProvider>())
+                .WithBootstrapServers("PLAINTEXT://tests:9092")
+                .WithGroupId("group1")
+                .ProcessPartitionsIndependently()
+                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                .Build(),
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<IKafkaOffsetStoreFactory>(),
+            Substitute.For<IServiceProvider>(),
+            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+        context.SetConsumerPipelineContext(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                consumer: kafkaConsumer,
+                identifier: new KafkaOffset("topic1", 42, 1)));
 
         IKafkaTransaction transaction = context.InitKafkaTransaction(baseSuffix);
 
@@ -54,7 +80,27 @@ public class SilverbackContextTransactionExtensionsFixture
     public void InitKafkaTransaction_ShouldNotAppendPartitionToTransactionalId_WhenNotProcessingIndependently()
     {
         SilverbackContext context = new(Substitute.For<IServiceProvider>());
-        context.SetConsumedPartition(new TopicPartition("topic1", 42), false);
+        IConfluentConsumerWrapper confluentConsumerWrapper = Substitute.For<IConfluentConsumerWrapper>();
+        confluentConsumerWrapper.Initialized.Returns(new AsyncEvent<BrokerClient>());
+        confluentConsumerWrapper.Disconnecting.Returns(new AsyncEvent<BrokerClient>());
+        KafkaConsumer kafkaConsumer = new(
+            "consumer1",
+            confluentConsumerWrapper,
+            new KafkaConsumerConfigurationBuilder(Substitute.For<IServiceProvider>())
+                .WithBootstrapServers("PLAINTEXT://tests:9092")
+                .WithGroupId("group1")
+                .ProcessAllPartitionsTogether()
+                .Consume(endpoint => endpoint.ConsumeFrom("topic1"))
+                .Build(),
+            Substitute.For<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            Substitute.For<IBrokerClientCallbacksInvoker>(),
+            Substitute.For<IKafkaOffsetStoreFactory>(),
+            Substitute.For<IServiceProvider>(),
+            Substitute.For<IConsumerLogger<KafkaConsumer>>());
+        context.SetConsumerPipelineContext(
+            ConsumerPipelineContextHelper.CreateSubstitute(
+                consumer: kafkaConsumer,
+                identifier: new KafkaOffset("topic1", 42, 1)));
 
         IKafkaTransaction transaction = context.InitKafkaTransaction();
 

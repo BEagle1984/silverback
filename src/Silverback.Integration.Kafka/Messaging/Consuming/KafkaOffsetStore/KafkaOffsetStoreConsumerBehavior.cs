@@ -19,7 +19,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher - 10;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -32,7 +32,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
             context.TransactionManager.Committing.AddHandler(CommitOffsetsAsync);
         }
 
-        await next(context).ConfigureAwait(false);
+        return next(context);
     }
 
     private static KafkaOffsetStoreScope CreateOffsetStoreScope(ConsumerPipelineContext context, KafkaOffsetStoreSettings storeSettings) =>

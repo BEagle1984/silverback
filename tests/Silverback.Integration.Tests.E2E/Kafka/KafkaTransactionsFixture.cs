@@ -358,4 +358,168 @@ public class KafkaTransactionsFixture : KafkaFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         committedOutputMessages.Should().Be(expectedOutputMessages);
     }
+
+    [Fact]
+    public async Task KafkaTransactions_ShouldSendOffsetsToTransactionAndCommit()
+    {
+        int processedInputMessages = 0;
+        int committedOutputMessages = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .EnableTransactions("transactional-id")
+                                .Produce<TestEventTwo>(endpoint => endpoint.ProduceTo("output")))
+                        .AddProducer(
+                            producer => producer
+                                .Produce<TestEventOne>(endpoint => endpoint.ProduceTo("input")))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("input")
+                                .SendOffsetsToTransaction()
+                                .Consume(endpoint => endpoint.ConsumeFrom("input")))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("output")
+                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+                .AddDelegateSubscriber<TestEventOne, IPublisher>(HandleInput)
+                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleInput(TestEventOne eventOne, IPublisher publisher)
+        {
+            IKafkaTransaction transaction = publisher.InitKafkaTransaction();
+
+            await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = eventOne.ContentEventOne });
+            Interlocked.Increment(ref processedInputMessages);
+
+            transaction.Commit();
+        }
+
+        void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne());
+        await publisher.PublishEventAsync(new TestEventOne());
+
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= 3);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync(true);
+        committedOutputMessages.Should().Be(3);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input").Should().Be(3);
+    }
+
+    [Fact]
+    public async Task KafkaTransactions_ShouldSendOffsetsToTransactionAndCommit_WhenBatchProcessing()
+    {
+        const int batchSize = 10;
+        const int partitionsPerTopic = 3;
+        int processedInputMessages = 0;
+        int committedOutputMessages = 0;
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(partitionsPerTopic)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddProducer(
+                            producer => producer
+                                .EnableTransactions("transactional-id")
+                                .Produce<TestEventTwo>(
+                                    endpoint => endpoint.ProduceTo(
+                                        "output",
+                                        eventTwo => int.Parse(eventTwo!.ContentEventTwo!, CultureInfo.InvariantCulture))))
+                        .AddProducer(
+                            producer => producer
+                                .Produce<TestEventOne>(
+                                    endpoint => endpoint.ProduceTo(
+                                        "input1",
+                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture)))
+                                .Produce<TestEventOne>(
+                                    endpoint => endpoint.ProduceTo(
+                                        "input2",
+                                        eventOne => int.Parse(eventOne!.ContentEventOne!, CultureInfo.InvariantCulture))))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("input")
+                                .SendOffsetsToTransaction()
+                                .Consume(endpoint => endpoint.ConsumeFrom("input1", "input2").EnableBatchProcessing(batchSize)))
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId("output")
+                                .Consume<TestEventTwo>(endpoint => endpoint.ConsumeFrom("output"))))
+                .AddDelegateSubscriber<IAsyncEnumerable<TestEventOne>, IPublisher>(HandleInputBatch)
+                .AddDelegateSubscriber<TestEventTwo>(HandleOutput)
+                .AddIntegrationSpy());
+
+        async ValueTask HandleInputBatch(IAsyncEnumerable<TestEventOne> batch, IPublisher publisher)
+        {
+            IKafkaTransaction transaction = publisher.InitKafkaTransaction();
+
+            await foreach (TestEventOne eventOne in batch)
+            {
+                await publisher.PublishEventAsync(new TestEventTwo { ContentEventTwo = eventOne.ContentEventOne });
+                Interlocked.Increment(ref processedInputMessages);
+            }
+
+            transaction.Commit();
+        }
+
+        void HandleOutput(TestEventTwo dummy) => Interlocked.Increment(ref committedOutputMessages);
+
+        IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+
+        // Publish incomplete batches (1 message missing) to each partition
+        for (int i = 0; i < batchSize - 1; i++)
+        {
+            for (int partition = 0; partition < partitionsPerTopic; partition++)
+            {
+                // The input and output topics are co-partitioned to ensure that each transaction is limited to a single partition to simplify the test
+                await publisher.PublishEventAsync(new TestEventOne { ContentEventOne = partition.ToString(CultureInfo.InvariantCulture) });
+            }
+        }
+
+        await AsyncTestingUtil.WaitAsync(() => processedInputMessages >= 2 * partitionsPerTopic * (batchSize - 1));
+        committedOutputMessages.Should().Be(0);
+
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(0);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(0);
+
+        // Publish 1 extra message to complete the first 2 batches (1 per topic)
+        await publisher.PublishAsync(new TestEventOne { ContentEventOne = (partitionsPerTopic - 1).ToString(CultureInfo.InvariantCulture) });
+
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= batchSize * 2);
+        await Task.Delay(100);
+        committedOutputMessages.Should().Be(batchSize * 2);
+        await AsyncTestingUtil.WaitAsync(
+            () => Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1") >= batchSize
+                  && Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2") >= batchSize);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(batchSize);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(batchSize);
+
+        // Complete all batches
+        for (int partition = 0; partition < partitionsPerTopic - 1; partition++)
+        {
+            await publisher.PublishAsync(new TestEventOne { ContentEventOne = partition.ToString(CultureInfo.InvariantCulture) });
+        }
+
+        int expectedOutputMessages = batchSize * partitionsPerTopic * 2;
+        await AsyncTestingUtil.WaitAsync(() => committedOutputMessages >= expectedOutputMessages);
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        committedOutputMessages.Should().Be(expectedOutputMessages);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input1").Should().Be(batchSize * partitionsPerTopic);
+        Helper.GetConsumerGroup("input").GetCommittedOffsetsCount("input2").Should().Be(batchSize * partitionsPerTopic);
+    }
 }

@@ -387,6 +387,17 @@ public sealed class KafkaLoggerExtensionsFixture : IDisposable
     }
 
     [Fact]
+    public void LogOffsetSentToTransaction_ShouldLog()
+    {
+        _silverbackLogger.LogOffsetSentToTransaction(
+            _transactionalProducerWrapper,
+            new TopicPartitionOffset("topic1", 13, 42));
+
+        string expectedMessage = "Offset topic1[13]@42 sent to transaction. | producerName: producer1, transactionalId: transactional1";
+        _loggerSubstitute.Received(LogLevel.Debug, null, expectedMessage, 2074);
+    }
+
+    [Fact]
     public void LogConfluentProducerLogCritical_ShouldLog()
     {
         _silverbackLogger.LogConfluentProducerLogCritical(

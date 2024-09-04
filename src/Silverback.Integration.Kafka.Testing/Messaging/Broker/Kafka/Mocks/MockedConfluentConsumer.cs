@@ -50,6 +50,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             ? consumerGroups.Get(Config)
             : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers));
 
+        ConsumerGroupMetadata = new MockedConsumerGroupMetadata(_consumerGroup);
+
         if (config.EnableAutoCommit ?? true)
         {
             _autoCommitIntervalMs = options.OverriddenAutoCommitIntervalMs ??
@@ -72,7 +74,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public List<string> Subscription { get; } = [];
 
-    public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
+    public IConsumerGroupMetadata ConsumerGroupMetadata { get; }
 
     public bool PartitionsAssigned { get; private set; }
 
@@ -135,7 +137,7 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     public void Assign(TopicPartition partition) =>
         Assign(new[] { new TopicPartitionOffset(partition, Offset.Unset) });
 
-    public void Assign(TopicPartitionOffset partition) => Assign(new[] { partition });
+    public void Assign(TopicPartitionOffset partition) => Assign([partition]);
 
     public void Assign(IEnumerable<TopicPartitionOffset> partitions)
     {
@@ -441,14 +443,16 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
             _consumerGroup.Commit(committedOffsets);
             _storedOffsets.Clear();
 
-            List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
-                .Select(
-                    topicPartitionOffset =>
-                        new TopicPartitionOffsetError(topicPartitionOffset, null))
-                .ToList();
-
             if (isAutoCommit)
+            {
+                List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
+                    .Select(
+                        topicPartitionOffset =>
+                            new TopicPartitionOffsetError(topicPartitionOffset, null))
+                    .ToList();
+
                 OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
+            }
 
             return committedOffsets;
         }

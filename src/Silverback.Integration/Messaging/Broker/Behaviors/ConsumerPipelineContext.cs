@@ -27,6 +27,8 @@ public sealed class ConsumerPipelineContext : IDisposable
 
     private bool _isDisposed;
 
+    private ISilverbackContext? _silverbackContext;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
     /// </summary>
@@ -117,6 +119,12 @@ public sealed class ConsumerPipelineContext : IDisposable
     }
 
     /// <summary>
+    ///     Gets the <see cref="ISilverbackContext" />.
+    /// </summary>
+    public ISilverbackContext SilverbackContext =>
+        _silverbackContext ??= ServiceProvider.GetRequiredService<ISilverbackContext>();
+
+    /// <summary>
     ///     Gets or sets the envelopes containing the messages being processed.
     /// </summary>
     public IRawInboundEnvelope Envelope
@@ -166,6 +174,7 @@ public sealed class ConsumerPipelineContext : IDisposable
 
         _serviceScope = Check.NotNull(newServiceScope, nameof(newServiceScope));
         ServiceProvider = newServiceScope.ServiceProvider;
+        _silverbackContext = null;
     }
 
     /// <summary>

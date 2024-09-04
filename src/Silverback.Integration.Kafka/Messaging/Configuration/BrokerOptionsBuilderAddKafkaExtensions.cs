@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.BrokerMessageIdentifiersTracking;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.Consuming.ContextEnrichment;
 using Silverback.Messaging.Consuming.KafkaOffsetStore;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Producing;
@@ -43,7 +42,6 @@ public static class BrokerOptionsBuilderAddKafkaExtensions
         brokerOptionsBuilder.SilverbackBuilder
             .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
             .AddSingletonBrokerBehavior<KafkaOffsetStoreConsumerBehavior>()
-            .AddSingletonBrokerBehavior<KafkaContextEnricherConsumerBehavior>()
             .AddSingletonBrokerClientCallback<KafkaConsumerLocalTimeoutMonitor>()
             .AddExtensibleFactory<IKafkaOffsetStoreFactory, KafkaOffsetStoreFactory>()
             .Services

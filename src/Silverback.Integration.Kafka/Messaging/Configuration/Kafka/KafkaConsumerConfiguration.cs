@@ -23,6 +23,8 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
     private readonly bool _commitOffsets = true;
 
+    private readonly bool _sendOffsetsToTransaction;
+
     private readonly bool _processPartitionsIndependently = true;
 
     private readonly IValueReadOnlyCollection<KafkaConsumerEndpointConfiguration> _endpoints = ValueReadOnlyCollection.Empty<KafkaConsumerEndpointConfiguration>();
@@ -69,6 +71,22 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     ///     reliable level is 1, but it reduces throughput.
     /// </summary>
     public int? CommitOffsetEach { get; init; }
+
+    /// <summary>
+    ///     Gets a value indicating whether the consumer should commit the consumed offsets in the same transaction of the produced
+    ///     messages. The default is <c>false</c>.
+    /// </summary>
+    public bool SendOffsetsToTransaction
+    {
+        get => _sendOffsetsToTransaction;
+        init
+        {
+            _sendOffsetsToTransaction = value;
+
+            if (value)
+                CommitOffsets = false;
+        }
+    }
 
     /// <summary>
     ///     Gets a value indicating whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
@@ -228,6 +246,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
 
             if (!EnableAutoCommit && CommitOffsetEach is null or < 1)
                 throw new BrokerConfigurationException($"{nameof(CommitOffsetEach)} must be greater or equal to 1 when auto-commit is disabled.");
+
+            if (SendOffsetsToTransaction)
+                throw new BrokerConfigurationException($"{nameof(SendOffsetsToTransaction)} and {nameof(CommitOffsets)} cannot be enabled at the same time.");
         }
         else
         {

@@ -158,7 +158,7 @@ internal sealed class MockedConfluentProducer : IMockedConfluentProducer
     public void AbortTransaction() => _transactionManager.AbortTransaction(_transactionalUniqueId);
 
     public void SendOffsetsToTransaction(IEnumerable<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata, TimeSpan timeout) =>
-        throw new NotSupportedException();
+        _transactionManager.SendOffsetsToTransaction(_transactionalUniqueId, offsets, groupMetadata);
 
     public void SetSaslCredentials(string username, string password) => throw new NotSupportedException();
 

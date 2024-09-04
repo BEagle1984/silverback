@@ -49,6 +49,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
             context.TransactionManager = new ConsumerTransactionManager(
                 context,
                 context.ServiceProvider.GetRequiredService<IConsumerLogger<ConsumerTransactionManager>>());
+            context.SilverbackContext.SetConsumerPipelineContext(context);
 
             _logger.LogProcessing(context.Envelope);
 

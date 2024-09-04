@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Consuming.ContextEnrichment;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Consuming.Transaction;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Transactions;
@@ -21,7 +23,7 @@ public static class SilverbackContextKafkaTransactionExtensions
     ///     The <see cref="ISilverbackContext" />.
     /// </param>
     /// <param name="transactionalIdSuffix">
-    ///    The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
+    ///     The optional suffix to be appended to the transactional Id. This must be used to allow multiple concurrent transactions.
     /// </param>
     /// <returns>
     ///     The created <see cref="IKafkaTransaction" />.
@@ -30,8 +32,15 @@ public static class SilverbackContextKafkaTransactionExtensions
     {
         Check.NotNull(context, nameof(context));
 
-        if (context.TryGetConsumedPartition(out ConsumedTopicPartition? consumedPartition) && consumedPartition.ProcessedIndependently)
-            transactionalIdSuffix = $"{transactionalIdSuffix}|{consumedPartition.TopicPartition.Topic}[{consumedPartition.TopicPartition.Partition.Value}]";
+        if (context.TryGetConsumerPipelineContext(out ConsumerPipelineContext? consumerPipelineContext) &&
+            consumerPipelineContext is
+            {
+                Consumer: KafkaConsumer { Configuration.ProcessPartitionsIndependently: true },
+                Envelope.BrokerMessageIdentifier: KafkaOffset offset
+            })
+        {
+            transactionalIdSuffix = $"{transactionalIdSuffix}|{offset.TopicPartition.Topic}[{offset.TopicPartition.Partition.Value}]";
+        }
 
         return new KafkaTransaction(context, transactionalIdSuffix);
     }

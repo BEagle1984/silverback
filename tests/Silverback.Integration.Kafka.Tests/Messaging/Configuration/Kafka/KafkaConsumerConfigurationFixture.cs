@@ -55,6 +55,47 @@ public class KafkaConsumerConfigurationFixture
     }
 
     [Fact]
+    public void CommitOffsets_ShouldDisableAutoCommitAndCommitOffsetEach_WhenDisabled()
+    {
+        KafkaConsumerConfiguration configuration = new()
+        {
+            EnableAutoCommit = true,
+            CommitOffsetEach = 42
+        };
+
+        configuration = configuration with { CommitOffsets = false };
+
+        configuration.EnableAutoCommit.Should().BeFalse();
+        configuration.CommitOffsetEach.Should().BeNull();
+    }
+
+    [Fact]
+    public void SendOffsetsToTransaction_ShouldDisableCommitOffsets_WhenEnabled()
+    {
+        KafkaConsumerConfiguration configuration = new()
+        {
+            CommitOffsets = true
+        };
+
+        configuration = configuration with { SendOffsetsToTransaction = true };
+
+        configuration.CommitOffsets.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ProcessPartitionsIndependently_ShouldSetMaxDegreeOfParallelismToOne_WhenSetToFalse()
+    {
+        KafkaConsumerConfiguration configuration = new()
+        {
+            MaxDegreeOfParallelism = 42
+        };
+
+        configuration = configuration with { ProcessPartitionsIndependently = false };
+
+        configuration.MaxDegreeOfParallelism.Should().Be(1);
+    }
+
+    [Fact]
     public void Validate_ShouldNotThrow_WhenIsValid()
     {
         KafkaConsumerConfiguration configuration = GetValidConfiguration();
@@ -342,6 +383,22 @@ public class KafkaConsumerConfigurationFixture
             act.Should().NotThrow();
         else
             act.Should().ThrowExactly<BrokerConfigurationException>();
+    }
+
+    [Fact]
+    public void Validate_ShouldValidateSendOffsetsToTransaction()
+    {
+        KafkaConsumerConfiguration configuration = GetValidConfiguration() with
+        {
+            SendOffsetsToTransaction = true,
+            CommitOffsets = true,
+            EnableAutoCommit = true
+        };
+
+        Action act = configuration.Validate;
+
+        act.Should().ThrowExactly<BrokerConfigurationException>()
+            .WithMessage("SendOffsetsToTransaction and CommitOffsets cannot be enabled at the same time.");
     }
 
     [Theory]

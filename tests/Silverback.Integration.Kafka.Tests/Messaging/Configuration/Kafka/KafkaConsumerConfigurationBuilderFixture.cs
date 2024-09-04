@@ -257,6 +257,32 @@ public class KafkaConsumerConfigurationBuilderFixture
     }
 
     [Fact]
+    public void SendOffsetsToTransaction_ShouldSetSendOffsetsToTransactionAndDisableOffsetsCommit()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+
+        builder.SendOffsetsToTransaction();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.SendOffsetsToTransaction.Should().BeTrue();
+        configuration.CommitOffsets.Should().BeFalse();
+        configuration.EnableAutoCommit.Should().BeFalse();
+        configuration.CommitOffsetEach.Should().BeNull();
+    }
+
+    [Fact]
+    public void DisableSendOffsetsToTransaction_ShouldSetSendOffsetsToTransaction()
+    {
+        KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();
+        builder.SendOffsetsToTransaction();
+
+        builder.DisableSendOffsetsToTransaction();
+
+        KafkaConsumerConfiguration configuration = builder.Build();
+        configuration.SendOffsetsToTransaction.Should().BeFalse();
+    }
+
+    [Fact]
     public void EnableAutoRecovery_ShouldSetEnableAutoRecovery()
     {
         KafkaConsumerConfigurationBuilder builder = GetBuilderWithValidConfigurationAndEndpoint();

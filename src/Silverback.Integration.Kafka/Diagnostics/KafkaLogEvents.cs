@@ -252,6 +252,14 @@ public static class KafkaLogEvents
         "Transaction aborted. | producerName: {producerName}, transactionalId: {transactionalId}");
 
     /// <summary>
+    ///     Gets the <see cref="LogEvent" /> representing the log that is written when an offset is sent to the transaction.
+    /// </summary>
+    public static LogEvent OffsetSentToTransaction { get; } = new(
+        LogLevel.Debug,
+        GetEventId(74, nameof(OffsetSentToTransaction)),
+        "Offset {topic}[{partition}]@{offset} sent to transaction. | producerName: {producerName}, transactionalId: {transactionalId}");
+
+    /// <summary>
     ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from
     ///     the underlying <see cref="Confluent.Kafka.Producer{TKey,TValue}" />.
     /// </summary>

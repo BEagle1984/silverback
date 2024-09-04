@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -44,6 +46,23 @@ public interface IInMemoryTransactionManager
     ///     The transactional unique identifier.
     /// </param>
     void AbortTransaction(Guid transactionalUniqueId);
+
+    /// <summary>
+    ///     Sends the consumed offsets to the transaction.
+    /// </summary>
+    /// <param name="transactionalUniqueId">
+    ///     The transactional unique identifier.
+    /// </param>
+    /// <param name="offsets">
+    ///     The offsets to send.
+    /// </param>
+    /// <param name="groupMetadata">
+    ///     The consumer group metadata.
+    /// </param>
+    void SendOffsetsToTransaction(
+        Guid transactionalUniqueId,
+        IEnumerable<TopicPartitionOffset> offsets,
+        IConsumerGroupMetadata groupMetadata);
 
     /// <summary>
     ///     Gets a value indicating whether a transaction is pending for the specified transactional unique identifier.

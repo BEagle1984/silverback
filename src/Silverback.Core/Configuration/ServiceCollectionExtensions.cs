@@ -40,6 +40,7 @@ public static class ServiceCollectionExtensions
                 .AddScoped<IBehaviorsProvider, BehaviorsProvider>()
                 .AddSingleton<SubscribedMethodsCacheSingleton>()
                 .AddScoped<SubscribedMethodsCache>()
+                .AddScoped<ISilverbackContext>(serviceProvider => serviceProvider.GetRequiredService<SilverbackContext>())
                 .AddScoped<SilverbackContext>()
                 .AddSingleton<RootServiceProvider>()
                 .AddLogger()

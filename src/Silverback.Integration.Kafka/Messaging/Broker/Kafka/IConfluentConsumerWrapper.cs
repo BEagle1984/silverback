@@ -29,6 +29,14 @@ public interface IConfluentConsumerWrapper : IBrokerClient
     KafkaConsumer Consumer { get; set; }
 
     /// <summary>
+    ///     Gets the consumer group metadata.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="IConsumerGroupMetadata" />.
+    /// </returns>
+    IConsumerGroupMetadata GetConsumerGroupMetadata();
+
+    /// <summary>
     ///     Poll for new messages (or events). This call blocks until a <see cref="ConsumeResult{TKey,TValue}" /> is available or the
     ///     operation has been cancelled.
     /// </summary>

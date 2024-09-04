@@ -27,7 +27,7 @@ uid: releases
     * Fluent API for connection options
     * JsonSerializer typename handling none by default (Security)
     * Outbound message filter
-    * Kafka transactions (see...)
+    * Kafka transactions (including consumer, see...)
     * Transparent Tombstone handling (new suggested way should be to work with envelope when batch processing and in general too)
     * Envelope.IsTombstone() and Kafka envelope extensions
     * New improved EntityFrameworkDomainEventsPublisher

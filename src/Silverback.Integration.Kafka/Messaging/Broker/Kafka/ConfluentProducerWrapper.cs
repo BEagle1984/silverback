@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -136,6 +137,28 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         {
             confluentProducer.AbortTransaction(Configuration.TransactionAbortTimeout);
             _logger.LogTransactionAborted(this);
+        }
+        catch (KafkaException)
+        {
+            if (Configuration.DisposeOnException)
+                DisposeConfluentProducer();
+
+            throw;
+        }
+    }
+
+    public void SendOffsetsToTransaction(IReadOnlyCollection<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata)
+    {
+        IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
+
+        try
+        {
+            confluentProducer.SendOffsetsToTransaction(offsets, groupMetadata, TimeSpan.Zero); // TODO: Timespan from config
+
+            foreach (TopicPartitionOffset offset in offsets)
+            {
+                _logger.LogOffsetSentToTransaction(this, offset);
+            }
         }
         catch (KafkaException)
         {

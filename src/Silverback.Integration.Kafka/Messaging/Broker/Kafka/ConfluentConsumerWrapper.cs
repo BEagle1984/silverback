@@ -74,6 +74,17 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         set => _consumer = Check.NotNull(value, nameof(value));
     }
 
+    public IConsumerGroupMetadata GetConsumerGroupMetadata()
+    {
+        if (Status != ClientStatus.Initialized)
+            throw new InvalidOperationException("The consumer is not connected.");
+
+        if (_confluentConsumer == null)
+            throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+        return _confluentConsumer.ConsumerGroupMetadata;
+    }
+
     public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken)
     {
         if (Status is not (ClientStatus.Initialized or ClientStatus.Initializing))

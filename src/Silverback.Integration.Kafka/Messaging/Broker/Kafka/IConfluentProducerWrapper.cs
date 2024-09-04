@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
@@ -76,4 +77,15 @@ public interface IConfluentProducerWrapper : IBrokerClient
     ///     Aborts the pending transaction.
     /// </summary>
     public void AbortTransaction();
+
+    /// <summary>
+    ///     Sends the consumed offsets to the transaction.
+    /// </summary>
+    /// <param name="offsets">
+    ///     The offsets to send.
+    /// </param>
+    /// <param name="groupMetadata">
+    ///     The consumer group metadata.
+    /// </param>
+    void SendOffsetsToTransaction(IReadOnlyCollection<TopicPartitionOffset> offsets, IConsumerGroupMetadata groupMetadata);
 }
