@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -64,7 +64,9 @@ public sealed partial class ContainerLogParser : IDisposable
     private static async Task WaitFileExistsAsync(string logPath)
     {
         while (!File.Exists(logPath))
+        {
             await Task.Delay(500);
+        }
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Logged")]

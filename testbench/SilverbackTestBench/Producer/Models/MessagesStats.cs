@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
@@ -7,6 +7,8 @@ namespace Silverback.TestBench.Producer.Models;
 
 public class MessagesStats
 {
+    public int LagCount => ProducedCount - ProcessedCount - LostCount;
+
     public int ProducedCount { get; set; }
 
     public int FailedProduceCount { get; set; }
@@ -18,8 +20,6 @@ public class MessagesStats
     public int SkippedCount { get; set; }
 
     public int LostCount { get; set; }
-
-    public int LagCount => ProducedCount - ProcessedCount - LostCount;
 
     public Timestamp CurrentLagTime { get; set; }
 

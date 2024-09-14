@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.TestBench.UI.CustomControls;
@@ -20,28 +20,28 @@ public static class TableStyles
     {
         Normal = new Attribute(Color.BrightGreen, Colors.TopLevel.Normal.Background),
         Focus = new Attribute(Color.BrightGreen, Colors.TopLevel.Focus.Background),
-        HotFocus = new Attribute(Color.BrightGreen, Colors.TopLevel.HotFocus.Background),
+        HotFocus = new Attribute(Color.BrightGreen, Colors.TopLevel.HotFocus.Background)
     };
 
     public static ColorScheme RedCellColorScheme { get; } = new()
     {
         Normal = new Attribute(Color.BrightRed, Colors.TopLevel.Normal.Background),
         Focus = new Attribute(Color.BrightRed, Colors.TopLevel.Focus.Background),
-        HotFocus = new Attribute(Color.BrightRed, Colors.TopLevel.HotFocus.Background),
+        HotFocus = new Attribute(Color.BrightRed, Colors.TopLevel.HotFocus.Background)
     };
 
     public static ColorScheme GrayCellColorScheme { get; } = new()
     {
         Normal = new Attribute(Color.Gray, Colors.TopLevel.Normal.Background),
         Focus = new Attribute(Color.Gray, Colors.TopLevel.Focus.Background),
-        HotFocus = new Attribute(Color.Gray, Colors.TopLevel.HotFocus.Background),
+        HotFocus = new Attribute(Color.Gray, Colors.TopLevel.HotFocus.Background)
     };
 
     public static ColorScheme BrownCellColorScheme { get; } = new()
     {
         Normal = new Attribute(Color.Brown, Colors.TopLevel.Normal.Background),
         Focus = new Attribute(Color.Brown, Colors.TopLevel.Focus.Background),
-        HotFocus = new Attribute(Color.Brown, Colors.TopLevel.HotFocus.Background),
+        HotFocus = new Attribute(Color.Brown, Colors.TopLevel.HotFocus.Background)
     };
 
     public static CustomTableView.ColumnStyle NumberColumnStyle { get; } = new()

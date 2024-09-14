@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -117,8 +117,6 @@ public sealed class ContainersOrchestrator : IDisposable
         }
     }
 
-    private IContainerService[] GetExistingContainers(string imageName, string imageTag) => _containers.Where(container => container.Image.Name == imageName && container.Image.Tag == imageTag).ToArray();
-
     private static IContainerService StartContainer(string imageName, string imageTag, string containerName, bool isRetry = false)
     {
         try
@@ -149,6 +147,8 @@ public sealed class ContainersOrchestrator : IDisposable
             return StartContainer(imageName, imageTag, containerName, true);
         }
     }
+
+    private IContainerService[] GetExistingContainers(string imageName, string imageTag) => _containers.Where(container => container.Image.Name == imageName && container.Image.Tag == imageTag).ToArray();
 
     private void IncrementInstances(string imageName, string imageTag, int count, IContainerService[] existingContainers)
     {

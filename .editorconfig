@@ -27,7 +27,7 @@ dotnet_diagnostic.IDE0046.severity = suggestion
 dotnet_diagnostic.IDE0058.severity = none
 # IDE0072: Add missing cases to switch expression
 dotnet_diagnostic.IDE0072.severity = none
-# IDE0290: Use primary constructor"
+# IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = suggestion
 
 # StyleCop.Analyzers

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Terminal.Gui;
@@ -50,7 +50,7 @@ public sealed class TestBenchTopLevel : Toplevel
     private void SwitchTo(Toplevel childView)
     {
         //if (!Application.MdiChildes.Contains(childView))
-            Application.Top.Add(childView);
+        Application.Top.Add(childView);
 
         //childView.ShowChild();
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Sergio Aquilini
+﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
@@ -18,6 +18,8 @@ public sealed class ContainersRandomScaling : IDisposable
         _containersOrchestrator = containersOrchestrator;
     }
 
+    public bool IsEnabled => _timer != null;
+
     public TimeSpan Interval { get; private set; } = TimeSpan.FromMinutes(2);
 
     public double Chance { get; private set; } = 1;
@@ -25,8 +27,6 @@ public sealed class ContainersRandomScaling : IDisposable
     public int MinInstances { get; private set; } = 2;
 
     public int MaxInstances { get; private set; } = 5;
-
-    public bool IsEnabled => _timer != null;
 
     public void Enable()
     {
