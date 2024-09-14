@@ -9,15 +9,20 @@ namespace Silverback.Util;
 
 internal static partial class TaskExtensions
 {
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
+    private static readonly TaskFactory TaskFactory =
+        new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
+
     public static void SafeWait(this Task task, CancellationToken cancellationToken = default)
     {
         if (task.IsCompletedSuccessfully)
             return;
 
-        SpinUntilCompleted(task, cancellationToken);
-
-        task.GetAwaiter().GetResult();
+        TaskFactory
+            .StartNew(() => task, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
@@ -26,63 +31,38 @@ internal static partial class TaskExtensions
         if (task.IsCompletedSuccessfully)
             return task.Result;
 
-        SpinUntilCompleted(task, cancellationToken);
-
-        return task.GetAwaiter().GetResult();
+        return TaskFactory
+            .StartNew(() => task, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 
-    [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static void SafeWait(this ValueTask valueTask, CancellationToken cancellationToken = default)
     {
         if (valueTask.IsCompletedSuccessfully)
             return;
 
-        SpinUntilCompleted(valueTask, cancellationToken);
-
-        valueTask.GetAwaiter().GetResult();
+        TaskFactory
+            .StartNew(valueTask.AsTask, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 
     [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits", Justification = "Reviewed")]
     public static TResult SafeWait<TResult>(this ValueTask<TResult> valueTask, CancellationToken cancellationToken = default)
     {
         if (valueTask.IsCompletedSuccessfully)
-            return valueTask.Result;
+            return valueTask.GetAwaiter().GetResult();
 
-        SpinUntilCompleted(valueTask, cancellationToken);
-
-        return valueTask.GetAwaiter().GetResult();
-    }
-
-    private static void SpinUntilCompleted(Task task, CancellationToken cancellationToken)
-    {
-        SpinWait spinner = default;
-
-        while (!task.IsCompleted)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            spinner.SpinOnce();
-        }
-    }
-
-    private static void SpinUntilCompleted(ValueTask task, CancellationToken cancellationToken)
-    {
-        SpinWait spinner = default;
-
-        while (!task.IsCompleted)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            spinner.SpinOnce();
-        }
-    }
-
-    private static void SpinUntilCompleted<T>(ValueTask<T> task, CancellationToken cancellationToken)
-    {
-        SpinWait spinner = default;
-
-        while (!task.IsCompleted)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            spinner.SpinOnce();
-        }
+        return TaskFactory
+            .StartNew(valueTask.AsTask, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default)
+            .Unwrap()
+            .ConfigureAwait(false)
+            .GetAwaiter()
+            .GetResult();
     }
 }
