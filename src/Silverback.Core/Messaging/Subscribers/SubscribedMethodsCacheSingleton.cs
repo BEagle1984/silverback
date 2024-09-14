@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Subscribers;
 
 internal sealed class SubscribedMethodsCacheSingleton
 {
-    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<SubscribedMethod>> _exclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _exclusiveMethodsCache = [];
 
-    private readonly ConcurrentDictionary<Type, IReadOnlyCollection<SubscribedMethod>> _nonExclusiveMethodsCache = [];
+    private readonly ConcurrentDictionary<Type, IReadOnlyList<SubscribedMethod>> _nonExclusiveMethodsCache = [];
 
     private readonly BusOptions _options;
 
@@ -33,15 +33,11 @@ internal sealed class SubscribedMethodsCacheSingleton
         _hasAnyMessageStreamSubscriber ??=
             GetAllSubscribedMethods(serviceProvider).Any(method => method.MessageArgumentResolver is IStreamEnumerableMessageArgumentResolver);
 
-    public IEnumerable<SubscribedMethod> GetExclusiveMethods(
-        object message,
-        IServiceProvider serviceProvider) =>
-        GetMethods(message, true, serviceProvider).Where(subscribedMethod => subscribedMethod.Options.IsExclusive);
+    public IReadOnlyList<SubscribedMethod> GetExclusiveMethods(object message, IServiceProvider serviceProvider) =>
+        GetMethods(message, true, serviceProvider);
 
-    public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(
-        object message,
-        IServiceProvider serviceProvider) =>
-        GetMethods(message, false, serviceProvider).Where(subscribedMethod => !subscribedMethod.Options.IsExclusive);
+    public IReadOnlyList<SubscribedMethod> GetNonExclusiveMethods(object message, IServiceProvider serviceProvider) =>
+        GetMethods(message, false, serviceProvider);
 
     public void Preload(IServiceProvider serviceProvider) => GetAllSubscribedMethods(serviceProvider);
 
@@ -83,7 +79,7 @@ internal sealed class SubscribedMethodsCacheSingleton
         return false;
     }
 
-    private IReadOnlyCollection<SubscribedMethod> GetMethods(object message, bool exclusive, IServiceProvider serviceProvider) =>
+    private IReadOnlyList<SubscribedMethod> GetMethods(object message, bool exclusive, IServiceProvider serviceProvider) =>
         (exclusive ? _exclusiveMethodsCache : _nonExclusiveMethodsCache)
         .GetOrAdd(
             message.GetType(),

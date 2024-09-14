@@ -95,13 +95,9 @@ public class Publisher : IPublisher
             finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executionFlow));
     }
 
-    private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(
-        object message,
-        bool throwIfUnhandled,
-        ExecutionFlow executionFlow)
+    private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(object message, bool throwIfUnhandled, ExecutionFlow executionFlow)
     {
-        IReadOnlyCollection<MethodInvocationResult> resultsCollection =
-            await InvokeSubscribedMethodsAsync(message, executionFlow).ConfigureAwait(false);
+        IReadOnlyCollection<MethodInvocationResult> resultsCollection = await InvokeSubscribedMethodsAsync(message, executionFlow).ConfigureAwait(false);
 
         bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
 
@@ -133,7 +129,15 @@ public class Publisher : IPublisher
         object message,
         ExecutionFlow executionFlow)
     {
-        return (await _subscribedMethodsCache.GetExclusiveMethods(message)
+        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetExclusiveMethods(message);
+
+        if (methods.Count == 0)
+            return [];
+
+        if (methods.Count == 1)
+            return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
+
+        return (await methods
                 .SelectAsync(InvokeAsync)
                 .ConfigureAwait(false))
             .ToList();
@@ -146,7 +150,15 @@ public class Publisher : IPublisher
         object message,
         ExecutionFlow executionFlow)
     {
-        return (await _subscribedMethodsCache.GetNonExclusiveMethods(message)
+        IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetNonExclusiveMethods(message);
+
+        if (methods.Count == 0)
+            return [];
+
+        if (methods.Count == 1)
+            return [await InvokeAsync(methods[0]).ConfigureAwait(false)];
+
+        return (await methods
                 .ParallelSelectAsync(InvokeAsync)
                 .ConfigureAwait(false))
             .ToList();

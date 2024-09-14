@@ -21,9 +21,9 @@ internal sealed class SubscribedMethodsCache
 
     public bool HasAnyMessageStreamSubscriber => _cacheSingleton.HasAnyMessageStreamSubscriber(_serviceProvider);
 
-    public IEnumerable<SubscribedMethod> GetExclusiveMethods(object message) =>
+    public IReadOnlyList<SubscribedMethod> GetExclusiveMethods(object message) =>
         _cacheSingleton.GetExclusiveMethods(message, _serviceProvider);
 
-    public IEnumerable<SubscribedMethod> GetNonExclusiveMethods(object message) =>
+    public IReadOnlyList<SubscribedMethod> GetNonExclusiveMethods(object message) =>
         _cacheSingleton.GetNonExclusiveMethods(message, _serviceProvider);
 }
