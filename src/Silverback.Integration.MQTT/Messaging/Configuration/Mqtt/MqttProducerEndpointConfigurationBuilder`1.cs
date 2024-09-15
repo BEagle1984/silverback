@@ -27,6 +27,8 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
 
     private uint? _messageExpiryInterval;
 
+    private bool? _ignoreNoMatchingSubscribersError;
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> class.
     /// </summary>
@@ -202,6 +204,30 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
         return this;
     }
 
+    /// <summary>
+    ///     Specifies that no exception should be thrown when no matching subscribers are found for the produced message.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttProducerEndpointConfigurationBuilder<TMessage> IgnoreNoMatchingSubscribersError()
+    {
+        _ignoreNoMatchingSubscribersError = true;
+        return this;
+    }
+
+    /// <summary>
+    ///     Specifies that an exception should be thrown when no matching subscribers are found for the produced message.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="MqttProducerEndpointConfigurationBuilder{TMessage}" /> so that additional calls can be chained.
+    /// </returns>
+    public MqttProducerEndpointConfigurationBuilder<TMessage> ThrowNoMatchingSubscribersError()
+    {
+        _ignoreNoMatchingSubscribersError = false;
+        return this;
+    }
+
     /// <inheritdoc cref="EndpointConfigurationBuilder{TMessage,TConfiguration,TBuilder}.CreateConfiguration" />
     protected override MqttProducerEndpointConfiguration CreateConfiguration()
     {
@@ -212,7 +238,8 @@ public class MqttProducerEndpointConfigurationBuilder<TMessage>
             Endpoint = _endpointResolver ?? NullProducerEndpointResolver<MqttProducerEndpoint>.Instance,
             QualityOfServiceLevel = _qualityOfServiceLevel ?? configuration.QualityOfServiceLevel,
             Retain = _retain ?? configuration.Retain,
-            MessageExpiryInterval = _messageExpiryInterval ?? configuration.MessageExpiryInterval
+            MessageExpiryInterval = _messageExpiryInterval ?? configuration.MessageExpiryInterval,
+            IgnoreNoMatchingSubscribersError = _ignoreNoMatchingSubscribersError ?? configuration.IgnoreNoMatchingSubscribersError
         };
     }
 }

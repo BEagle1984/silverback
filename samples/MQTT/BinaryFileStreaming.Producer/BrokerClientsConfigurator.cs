@@ -3,7 +3,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Samples.Mqtt.BinaryFileStreaming.Producer;
 
-public abstract class BrokerClientsConfigurator : IBrokerClientsConfigurator
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     public void Configure(BrokerClientsConfigurationBuilder builder)
     {

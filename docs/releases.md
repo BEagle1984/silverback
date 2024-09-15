@@ -40,6 +40,7 @@ uid: releases
 * Add `WrapAndPublishBatchAsync` methods to <xref:IPublisher> (see <xref:IntegrationPublisherExtensions>) to allow envelope enrichment (setting headers, key, etc.) and efficient batching at protocol level (Kafka) -> TODO: LINKS TO CONCEPT PAGE showing mapping etc.
 * Add support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
 * Add <xref:InboundEnvelopeBuilder> and <xref:OutboundEnvelopeBuilder> to testing packages to help creating test envelopes
+* Add `IgnoreNoMatchingSubscribersError` setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message
   
 ### Breaking Changes
 

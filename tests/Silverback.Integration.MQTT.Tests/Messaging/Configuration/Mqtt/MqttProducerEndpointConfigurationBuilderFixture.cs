@@ -145,6 +145,28 @@ public class MqttProducerEndpointConfigurationBuilderFixture
         configuration.MessageExpiryInterval.Should().Be(42 * 60);
     }
 
+    [Fact]
+    public void IgnoreNoMatchingSubscribersError_ShouldSetIgnoreNoMatchingSubscribersError()
+    {
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        builder.ProduceTo("some-topic").IgnoreNoMatchingSubscribersError();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
+        configuration.IgnoreNoMatchingSubscribersError.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ThrowNoMatchingSubscribersError_ShouldSetIgnoreNoMatchingSubscribersError()
+    {
+        MqttProducerEndpointConfigurationBuilder<TestEventOne> builder = new(Substitute.For<IServiceProvider>());
+
+        builder.ProduceTo("some-topic").ThrowNoMatchingSubscribersError();
+
+        MqttProducerEndpointConfiguration configuration = builder.Build();
+        configuration.IgnoreNoMatchingSubscribersError.Should().BeFalse();
+    }
+
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Class used via DI")]
     private sealed class TestEndpointResolver : IMqttProducerEndpointResolver<TestEventOne>
     {

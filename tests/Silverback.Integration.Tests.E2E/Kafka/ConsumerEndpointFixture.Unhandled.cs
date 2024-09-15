@@ -156,7 +156,10 @@ public partial class ConsumerEndpointFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         received.Should().Be(4);
         consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
+
         DefaultConsumerGroup.CommittedOffsets.Count.Should().Be(1);
         DefaultConsumerGroup.CommittedOffsets.Single().Offset.Value.Should().Be(3);
     }

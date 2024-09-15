@@ -36,7 +36,7 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public IValueReadOnlyCollection<MqttUserProperty> UserProperties { get; init; } = ValueReadOnlyCollection.Empty<MqttUserProperty>();
 
     /// <summary>
-    ///     Gets the channel configuration (either <see cref="MqttClientTcpConfiguration" /> or <see cref="MqttClientWebSocketConfiguration" />.
+    ///     Gets the channel configuration (either <see cref="MqttClientTcpConfiguration" /> or <see cref="MqttClientWebSocketConfiguration" />).
     /// </summary>
     public MqttClientChannelConfiguration? Channel { get; init; }
 
@@ -62,10 +62,10 @@ public sealed partial record MqttClientConfiguration : IValidatableSettings
     public int MaxDegreeOfParallelism { get; init; } = 1;
 
     /// <summary>
-    ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+    ///     Gets the maximum number of messages to be consumed and enqueued waiting to be processed.
     ///     The default is 2.
     /// </summary>
-    public int BackpressureLimit { get; set; } = 2;
+    public int BackpressureLimit { get; init; } = 2;
 
     /// <summary>
     ///     Gets a value indicating whether the headers (user properties) are supported according to the configured protocol version.

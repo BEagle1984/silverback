@@ -277,7 +277,9 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
                 cancellationToken)
             .ConfigureAwait(false);
 
-        if (result.ReasonCode != MqttClientPublishReasonCode.Success)
+        if (result.ReasonCode != MqttClientPublishReasonCode.Success &&
+            (result.ReasonCode != MqttClientPublishReasonCode.NoMatchingSubscribers ||
+             !queuedMessage.Endpoint.Configuration.IgnoreNoMatchingSubscribersError))
         {
             throw new MqttProduceException(
                 $"Error occurred producing the message to the MQTT broker ({result.ReasonCode}: '{result.ReasonString}'). See the Result property for details.",

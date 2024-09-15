@@ -3,7 +3,7 @@ using Silverback.Samples.Mqtt.Basic.Common;
 
 namespace Silverback.Samples.Mqtt.Basic.Producer;
 
-public abstract class BrokerClientsConfigurator : IBrokerClientsConfigurator
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     public void Configure(BrokerClientsConfigurationBuilder builder)
     {
@@ -24,6 +24,7 @@ public abstract class BrokerClientsConfigurator : IBrokerClientsConfigurator
                                 endpoint => endpoint
                                     .ProduceTo("samples/basic")
                                     .WithAtLeastOnceQoS()
-                                    .Retain())));
+                                    .Retain()
+                                    .IgnoreNoMatchingSubscribersError())));
     }
 }

@@ -4,7 +4,7 @@ using Silverback.Samples.Mqtt.Basic.Common;
 
 namespace Silverback.Samples.Mqtt.Basic.ProducerV3;
 
-public abstract class BrokerClientsConfigurator : IBrokerClientsConfigurator
+public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
     public void Configure(BrokerClientsConfigurationBuilder builder)
     {
