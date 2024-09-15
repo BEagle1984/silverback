@@ -1,5 +1,5 @@
 <Project>
-  <Import Project="../Directory.Build.props"/>
+  <Import Project="../Directory.Build.props" />
 
   <PropertyGroup Label="Package information">
     <Authors>Sergio Aquilini</Authors>
@@ -9,7 +9,7 @@
     <Copyright>Copyright (c) 2024 Sergio Aquilini</Copyright>
     <ProjectUrl>https://silverback-messaging.net</ProjectUrl>
     <Tags>Bus Mediator CQRS Kafka Rabbit RabbitMQ MQTT Microservices</Tags>
-    <IconUrl>https://github.com/BEagle1984/silverback/raw/master/graphics/Icon.png</IconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <!-- Reset warnings -->
     <NoWarn></NoWarn>
     <!-- SourceLink -->
@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\graphics\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
