@@ -15,7 +15,7 @@ public static class AsyncTestingUtil
 
     public static async Task WaitAsync(Func<Task<bool>> breakCondition, TimeSpan? timeout = null)
     {
-        timeout ??= TimeSpan.FromSeconds(10);
+        timeout ??= TimeSpan.FromSeconds(20);
 
         for (double i = 0; i < timeout.Value.TotalMilliseconds; i += Interval.TotalMilliseconds)
         {

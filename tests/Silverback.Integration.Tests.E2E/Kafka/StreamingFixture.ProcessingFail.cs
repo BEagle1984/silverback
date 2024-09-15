@@ -65,6 +65,8 @@ public partial class StreamingFixture
 
         KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
         consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
         consumer.Client.Status.Should().Be(ClientStatus.Disconnected);
     }
 

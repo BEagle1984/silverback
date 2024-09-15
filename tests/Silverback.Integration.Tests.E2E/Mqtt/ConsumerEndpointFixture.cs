@@ -291,6 +291,8 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await consumer.StopAsync();
 
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
+
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
