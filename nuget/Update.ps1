@@ -87,11 +87,11 @@ function Pack-All()
 
         if ($global:warnAsError -eq $TRUE)
         {
-            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q -warnaserror
+            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q -warnaserror /p:ContinuousIntegrationBuild=true /p:EmbedUntrackedSources=true
         }
         else
         {
-            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q
+            dotnet build -c $global:buildConfiguration $projectFilePath --no-incremental --nologo -v q /p:ContinuousIntegrationBuild=true /p:EmbedUntrackedSources=true
         }
 
         Write-Host ""
