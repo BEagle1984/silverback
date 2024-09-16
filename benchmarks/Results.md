@@ -29,15 +29,15 @@
 | 'PublishAsync with multiple sync and async subscribers' | 2,734.4 ns | 11.75 ns | 10.41 ns | 0.2708 |    2835 B |
 
 ## Comparison
-| Method                                                  | Mean 4.5.1 | Mean 5.0.0 | Mean Diff | Allocated 4.5.1 | Allocated 5.0.0 | Allocated Diff |
-|---------------------------------------------------------|-----------:|-----------:|----------:|----------------:|----------------:|---------------:|
-| Publish with single sync subscriber                     |   3.482 us |  0.5496 us |   -84.22% |        10.49 KB |        0.875 KB |        -91.66% |
-| Publish with single async subscriber                    |   5.229 us |  1.5860 us |   -69.67% |        11.40 KB |        1.335 KB |        -88.29% |
-| Publish with multiple sync subscribers                  |   4.036 us |  1.2957 us |   -67.90% |        10.91 KB |        1.391 KB |        -87.25% |
-| Publish with multiple async subscribers                 |   8.484 us |  4.2829 us |   -49.52% |        13.65 KB |        2.771 KB |        -79.70% |
-| Publish with multiple sync and async subscribers        |   5.858 us |  2.2530 us |   -61.54% |        11.65 KB |        1.758 KB |        -84.91% |
-| PublishAsync with single sync subscriber                |   3.396 us |  0.5583 us |   -83.55% |        10.32 KB |        0.875 KB |        -91.52% |
-| PublishAsync with single async subscriber               |   5.861 us |  1.8706 us |   -68.09% |        11.11 KB |        1.959 KB |        -82.37% |
-| PublishAsync with multiple sync subscribers             |   3.997 us |  1.2863 us |   -67.81% |        10.63 KB |        1.391 KB |        -86.91% |
-| PublishAsync with multiple async subscribers            |  14.188 us |  5.7340 us |   -59.58% |        12.53 KB |        4.178 KB |        -66.65% |
-| PublishAsync with multiple sync and async subscribers   |   7.038 us |  2.7344 us |   -61.15% |        11.29 KB |        2.770 KB |        -75.46% |
+| Method                                                | Mean 4.5.1 | Mean 5.0.0 | Mean Diff | Allocated 4.5.1 | Allocated 5.0.0 | Allocated Diff |
+|-------------------------------------------------------|-----------:|-----------:|----------:|----------------:|----------------:|---------------:|
+| Publish with single sync subscriber                   |   3.482 us |   0.550 us |     -84 % |        10.49 KB |        0.875 KB |          -92 % |
+| Publish with single async subscriber                  |   5.229 us |   1.586 us |     -70 % |        11.40 KB |        1.335 KB |          -88 % |
+| Publish with multiple sync subscribers                |   4.036 us |   1.296 us |     -68 % |        10.91 KB |        1.391 KB |          -87 % |
+| Publish with multiple async subscribers               |   8.484 us |   4.283 us |     -50 % |        13.65 KB |        2.771 KB |          -80 % |
+| Publish with multiple sync and async subscribers      |   5.858 us |   2.253 us |     -62 % |        11.65 KB |        1.758 KB |          -85 % |
+| PublishAsync with single sync subscriber              |   3.396 us |   0.558 us |     -84 % |        10.32 KB |        0.875 KB |          -92 % |
+| PublishAsync with single async subscriber             |   5.861 us |   1.871 us |     -68 % |        11.11 KB |        1.959 KB |          -82 % |
+| PublishAsync with multiple sync subscribers           |   3.997 us |   1.286 us |     -68 % |        10.63 KB |        1.391 KB |          -87 % |
+| PublishAsync with multiple async subscribers          |  14.188 us |   5.734 us |     -60 % |        12.53 KB |        4.179 KB |          -67 % |
+| PublishAsync with multiple sync and async subscribers |   7.038 us |   2.734 us |     -61 % |        11.29 KB |        2.769 KB |          -75 % |
