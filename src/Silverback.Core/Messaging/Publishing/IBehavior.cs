@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Publishing;
@@ -21,9 +22,12 @@ public interface IBehavior
     /// <param name="next">
     ///     The next behavior in the pipeline.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     result values (if any).
     /// </returns>
-    ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next);
+    ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken);
 }

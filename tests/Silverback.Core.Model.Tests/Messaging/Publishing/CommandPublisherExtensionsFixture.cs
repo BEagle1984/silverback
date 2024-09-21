@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -45,7 +46,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteCommand(new TestCommandWithResult());
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.Should().BeEquivalentTo([1, 2, 3]);
     }
 
     [Theory]
@@ -60,17 +61,18 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = publisher.ExecuteCommand(new TestCommandWithResult(), throwIfUnhandled);
 
         publisher.Received(1).Publish<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.Should().BeEquivalentTo([1, 2, 3]);
     }
 
     [Fact]
     public async Task ExecuteCommandAsync_ShouldPublish()
     {
         IPublisher publisher = Substitute.For<IPublisher>();
+        CancellationToken cancellationToken = new(false);
 
-        await publisher.ExecuteCommandAsync(new TestCommand());
+        await publisher.ExecuteCommandAsync(new TestCommand(), cancellationToken);
 
-        await publisher.Received(1).PublishAsync(Arg.Any<TestCommand>(), true);
+        await publisher.Received(1).PublishAsync(Arg.Any<TestCommand>(), true, cancellationToken);
     }
 
     [Theory]
@@ -79,10 +81,11 @@ public class CommandPublisherExtensionsFixture
     public async Task ExecuteCommandAsync_ShouldPublishWithThrowIfUnhandled(bool throwIfUnhandled)
     {
         IPublisher publisher = Substitute.For<IPublisher>();
+        CancellationToken cancellationToken = new(false);
 
-        await publisher.ExecuteCommandAsync(new TestCommand(), throwIfUnhandled);
+        await publisher.ExecuteCommandAsync(new TestCommand(), throwIfUnhandled, cancellationToken);
 
-        await publisher.Received(1).PublishAsync(Arg.Any<TestCommand>(), throwIfUnhandled);
+        await publisher.Received(1).PublishAsync(Arg.Any<TestCommand>(), throwIfUnhandled, cancellationToken);
     }
 
     [Fact]
@@ -91,11 +94,12 @@ public class CommandPublisherExtensionsFixture
         IPublisher publisher = Substitute.For<IPublisher>();
         publisher.PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true)
             .Returns(new List<int[]> { new[] { 1, 2, 3 } });
+        CancellationToken cancellationToken = new(false);
 
-        IEnumerable<int> result = await publisher.ExecuteCommandAsync(new TestCommandWithResult());
+        IEnumerable<int> result = await publisher.ExecuteCommandAsync(new TestCommandWithResult(), cancellationToken);
 
-        await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), true, cancellationToken);
+        result.Should().BeEquivalentTo([1, 2, 3]);
     }
 
     [Theory]
@@ -110,7 +114,7 @@ public class CommandPublisherExtensionsFixture
         IEnumerable<int> result = await publisher.ExecuteCommandAsync(new TestCommandWithResult(), throwIfUnhandled);
 
         await publisher.Received(1).PublishAsync<IEnumerable<int>>(Arg.Any<TestCommandWithResult>(), throwIfUnhandled);
-        result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+        result.Should().BeEquivalentTo([1, 2, 3]);
     }
 
     private class TestCommand : ICommand;

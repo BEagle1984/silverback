@@ -38,9 +38,9 @@ public class EventPublisherExtensionsFixture
     {
         IPublisher publisher = Substitute.For<IPublisher>();
 
-        await publisher.PublishEventAsync(new TestEvent());
+        await publisher.PublishEventAsync(new TestEvent(), false);
 
-        await publisher.Received(1).PublishAsync(Arg.Any<TestEvent>());
+        await publisher.Received(1).PublishAsync(Arg.Any<TestEvent>(), false);
     }
 
     [Theory]

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 
@@ -20,8 +21,11 @@ public interface IAdditionalArgumentResolver : IArgumentResolver
     /// <param name="serviceProvider">
     ///     The <see cref="IServiceProvider" /> to be used to resolve the necessary services.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the subscriber method operation.
+    /// </param>
     /// <returns>
     ///     A value to be forwarded to the subscribed method.
     /// </returns>
-    object? GetValue(Type parameterType, IServiceProvider serviceProvider);
+    object? GetValue(Type parameterType, IServiceProvider serviceProvider, CancellationToken cancellationToken);
 }

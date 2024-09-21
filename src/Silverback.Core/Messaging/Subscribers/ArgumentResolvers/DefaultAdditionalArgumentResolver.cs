@@ -2,14 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 /// <summary>
-///     Simply tries to resolve the additional parameters of the subscribed methods using the
-///     <see cref="IServiceProvider" />.
+///     Resolves the additional parameters of the subscribed methods using the <see cref="IServiceProvider" />.
 /// </summary>
 public class DefaultAdditionalArgumentResolver : IAdditionalArgumentResolver
 {
@@ -17,6 +17,6 @@ public class DefaultAdditionalArgumentResolver : IAdditionalArgumentResolver
     public bool CanResolve(Type parameterType) => true;
 
     /// <inheritdoc cref="IAdditionalArgumentResolver.GetValue" />
-    public object GetValue(Type parameterType, IServiceProvider serviceProvider) =>
+    public object GetValue(Type parameterType, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
         Check.NotNull(serviceProvider, nameof(serviceProvider)).GetRequiredService(parameterType);
 }

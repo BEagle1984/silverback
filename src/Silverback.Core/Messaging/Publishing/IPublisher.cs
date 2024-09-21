@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Publishing;
@@ -59,14 +60,54 @@ public interface IPublisher
     /// <param name="message">
     ///     The message to be published.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-    ///     message.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task PublishAsync(object message, bool throwIfUnhandled = false);
+    Task PublishAsync(object message, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Publishes the specified message to the internal bus. The message will be forwarded to its
+    ///     subscribers and the <see cref="Task" /> will not complete until all subscribers have processed it
+    ///     (unless using Silverback.Integration to produce and consume the message through a message broker).
+    /// </summary>
+    /// <param name="message">
+    ///     The message to be published.
+    /// </param>
+    /// <param name="throwIfUnhandled">
+    ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+    ///     message.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Publishes the specified message to the internal bus. The message will be forwarded to its
+    ///     subscribers and the <see cref="Task" /> will not complete until all subscribers have processed it
+    ///     (unless using Silverback.Integration to produce and consume the message through a message broker).
+    /// </summary>
+    /// <typeparam name="TResult">
+    ///     The type of the result that is expected to be returned by the subscribers.
+    /// </typeparam>
+    /// <param name="message">
+    ///     The message to be published.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+    ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
+    ///     and return a value.
+    /// </returns>
+    Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message to the internal bus. The message will be forwarded to its
@@ -83,10 +124,13 @@ public interface IPublisher
     ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
     ///     message.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
     ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
     ///     and return a value.
     /// </returns>
-    Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false);
+    Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default);
 }

@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -54,7 +55,10 @@ public class OutboundRouterBehavior : IBehavior, ISorted
     public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundRouter;
 
     /// <inheritdoc cref="IBehavior.HandleAsync" />
-    public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+    public async ValueTask<IReadOnlyCollection<object?>> HandleAsync(
+        object message,
+        MessageHandler next,
+        CancellationToken cancellationToken)
     {
         Check.NotNull(message, nameof(message));
         Check.NotNull(next, nameof(next));

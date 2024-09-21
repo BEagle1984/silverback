@@ -676,7 +676,7 @@ public class StreamPublisherFixture
 
         public int ExitCount { get; private set; }
 
-        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken)
         {
             _calls?.Add("unsorted");
 

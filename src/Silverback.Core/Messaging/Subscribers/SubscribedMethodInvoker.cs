@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -22,12 +23,13 @@ internal static class SubscribedMethodInvoker
         SubscribedMethod subscribedMethod,
         object message,
         IServiceProvider serviceProvider,
-        ExecutionFlow executionFlow)
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
         if (IsFiltered(subscribedMethod.Options.Filters, message))
             return MethodInvocationResult.NotInvoked;
 
-        object?[] arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider);
+        object?[] arguments = GetArgumentValuesArray(subscribedMethod, serviceProvider, cancellationToken);
         object? returnValue = subscribedMethod.MessageArgumentResolver switch
         {
             ISingleMessageArgumentResolver resolver =>
@@ -70,7 +72,10 @@ internal static class SubscribedMethodInvoker
     private static bool IsFiltered(IReadOnlyCollection<IMessageFilter> filters, object message) =>
         filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
-    private static object?[] GetArgumentValuesArray(SubscribedMethod method, IServiceProvider serviceProvider)
+    private static object?[] GetArgumentValuesArray(
+        SubscribedMethod method,
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken)
     {
         object?[] values = new object?[method.Parameters.Count];
 
@@ -78,7 +83,7 @@ internal static class SubscribedMethodInvoker
         {
             Type parameterType = method.Parameters[i].ParameterType;
 
-            values[i] = method.AdditionalArgumentsResolvers[i - 1].GetValue(parameterType, serviceProvider);
+            values[i] = method.AdditionalArgumentsResolvers[i - 1].GetValue(parameterType, serviceProvider, cancellationToken);
         }
 
         return values;

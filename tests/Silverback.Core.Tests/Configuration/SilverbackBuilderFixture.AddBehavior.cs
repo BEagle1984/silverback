@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -153,6 +154,7 @@ public partial class SilverbackBuilderFixture
 
     private class TestBehavior : IBehavior
     {
-        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) => next.Invoke(message);
+        public ValueTask<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next, CancellationToken cancellationToken) =>
+            next.Invoke(message);
     }
 }

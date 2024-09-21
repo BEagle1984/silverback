@@ -3,17 +3,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 /// <summary>
-///     These resolvers are used to handle the message streams such as
-///     <see cref="IMessageStreamEnumerable{TMessage}" />. The streams are basically handled as a single
-///     message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
-///     from another thread, when published via <see cref="IPublisher.PublishAsync(object, bool)" />/
-///     <see cref="IPublisher.PublishAsync{TResult}(object, bool)" />. This is done to avoid blocking the original
+///     These resolvers are used to handle the message streams such as <see cref="IMessageStreamEnumerable{TMessage}" />. The streams are
+///     basically handled as a single message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
+///     from another thread, when published via <see cref="IPublisher.PublishAsync(object, CancellationToken)" />/
+///     <see cref="IPublisher.PublishAsync{TResult}(object, CancellationToken)" />. This is done to avoid blocking the original
 ///     thread waiting for the stream to complete.
 /// </summary>
 public interface IStreamEnumerableMessageArgumentResolver : IMessageArgumentResolver

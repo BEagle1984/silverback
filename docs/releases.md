@@ -41,6 +41,7 @@ uid: releases
 * Add support for Confluent schema registry (Avro, Json and Protobuf), including mock for in-memory testing
 * Add <xref:InboundEnvelopeBuilder> and <xref:OutboundEnvelopeBuilder> to testing packages to help creating test envelopes
 * Add `IgnoreNoMatchingSubscribersError` setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message
+* Add `CancellationToken` support to in-memory message bus (TODO: see...)
   
 ### Breaking Changes
 

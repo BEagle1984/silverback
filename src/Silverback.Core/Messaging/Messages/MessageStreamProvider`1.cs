@@ -232,6 +232,8 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     {
         foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (PushIfCompatibleType(lazyStream, message, cancellationToken, out Task processingTask))
             {
                 yield return processingTask;

@@ -74,6 +74,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddArgumentResolvers(this IServiceCollection services) => services
         .AddSingleton<ArgumentsResolversRepository>()
         .AddSingleton<IArgumentResolver, DefaultAdditionalArgumentResolver>()
+        .AddSingleton<IArgumentResolver, CancellationTokenArgumentResolver>()
         .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
         .AddSingleton<IArgumentResolver, StreamEnumerableMessageArgumentResolver>();
 

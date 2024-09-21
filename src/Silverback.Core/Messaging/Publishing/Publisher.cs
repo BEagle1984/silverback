@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -54,50 +55,70 @@ public class Publisher : IPublisher
 
     /// <inheritdoc cref="IPublisher.Publish(object, bool)" />
     public void Publish(object message, bool throwIfUnhandled = false) =>
-        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).SafeWait();
+        PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait();
 
     /// <inheritdoc cref="IPublisher.Publish{TResult}(object, bool)" />
     public IReadOnlyCollection<TResult> Publish<TResult>(object message, bool throwIfUnhandled = false) =>
-        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync).SafeWait()).ToList();
+        CastResults<TResult>(PublishAsync(message, throwIfUnhandled, ExecutionFlow.Sync, CancellationToken.None).SafeWait()).ToList();
 
-    /// <inheritdoc cref="IPublisher.PublishAsync(object, bool)" />
-    public async Task PublishAsync(object message, bool throwIfUnhandled = false) =>
-        await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false);
+    /// <inheritdoc cref="IPublisher.PublishAsync(object, CancellationToken)" />
+    public Task PublishAsync(object message, CancellationToken cancellationToken = default) =>
+        PublishAsync(message, false, cancellationToken);
 
-    /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool)" />
-    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled = false) =>
-        CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async).ConfigureAwait(false)).ToList();
+    /// <inheritdoc cref="IPublisher.PublishAsync(object, bool, CancellationToken)" />
+    public async Task PublishAsync(object message, bool throwIfUnhandled, CancellationToken cancellationToken = default) =>
+        await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false);
+
+    /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, CancellationToken)" />
+    public Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, CancellationToken cancellationToken = default) =>
+        PublishAsync<TResult>(message, false, cancellationToken);
+
+    /// <inheritdoc cref="IPublisher.PublishAsync{TResult}(object, bool, CancellationToken)" />
+    public async Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled, CancellationToken cancellationToken) =>
+        CastResults<TResult>(await PublishAsync(message, throwIfUnhandled, ExecutionFlow.Async, cancellationToken).ConfigureAwait(false)).ToList();
 
     private static ValueTask<IReadOnlyCollection<object?>> ExecuteBehaviorsPipelineAsync(
         Stack<IBehavior> behaviors,
         object message,
-        Func<object, ValueTask<IReadOnlyCollection<object?>>> finalAction)
+        bool throwIfUnhandled,
+        Func<object, bool, ExecutionFlow, CancellationToken, ValueTask<IReadOnlyCollection<object?>>> finalAction,
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
         if (!behaviors.TryPop(out IBehavior? nextBehavior))
-            return finalAction(message);
+            return finalAction(message, throwIfUnhandled, executionFlow, cancellationToken);
 
-        return nextBehavior.HandleAsync(
-            message,
-            nextMessage =>
-                ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, finalAction));
+        return nextBehavior.HandleAsync(message, NextAsync, cancellationToken);
+
+        ValueTask<IReadOnlyCollection<object?>> NextAsync(object nextMessage) =>
+            ExecuteBehaviorsPipelineAsync(behaviors, nextMessage, throwIfUnhandled, finalAction, executionFlow, cancellationToken);
     }
 
     private ValueTask<IReadOnlyCollection<object?>> PublishAsync(
         object message,
         bool throwIfUnhandled,
-        ExecutionFlow executionFlow)
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
         Check.NotNull(message, nameof(message));
 
         return ExecuteBehaviorsPipelineAsync(
             _behaviorsProvider.CreateStack(),
             message,
-            finalMessage => PublishCoreAsync(finalMessage, throwIfUnhandled, executionFlow));
+            throwIfUnhandled,
+            PublishCoreAsync,
+            executionFlow,
+            cancellationToken);
     }
 
-    private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(object message, bool throwIfUnhandled, ExecutionFlow executionFlow)
+    private async ValueTask<IReadOnlyCollection<object?>> PublishCoreAsync(
+        object message,
+        bool throwIfUnhandled,
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<MethodInvocationResult> resultsCollection = await InvokeSubscribedMethodsAsync(message, executionFlow).ConfigureAwait(false);
+        IReadOnlyCollection<MethodInvocationResult> resultsCollection =
+            await InvokeSubscribedMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false);
 
         bool handled = resultsCollection.Any(invocationResult => invocationResult.WasInvoked);
 
@@ -120,14 +141,16 @@ public class Publisher : IPublisher
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeSubscribedMethodsAsync(
         object message,
-        ExecutionFlow executionFlow) =>
-        (await InvokeExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
-        .Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow).ConfigureAwait(false))
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken) =>
+        (await InvokeExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))
+        .Union(await InvokeNonExclusiveMethodsAsync(message, executionFlow, cancellationToken).ConfigureAwait(false))
         .ToList();
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeExclusiveMethodsAsync(
         object message,
-        ExecutionFlow executionFlow)
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
         IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetExclusiveMethods(message);
 
@@ -143,12 +166,13 @@ public class Publisher : IPublisher
             .ToList();
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow);
+            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow, cancellationToken);
     }
 
     private async ValueTask<IReadOnlyCollection<MethodInvocationResult>> InvokeNonExclusiveMethodsAsync(
         object message,
-        ExecutionFlow executionFlow)
+        ExecutionFlow executionFlow,
+        CancellationToken cancellationToken)
     {
         IReadOnlyList<SubscribedMethod> methods = _subscribedMethodsCache.GetNonExclusiveMethods(message);
 
@@ -164,6 +188,6 @@ public class Publisher : IPublisher
             .ToList();
 
         ValueTask<MethodInvocationResult> InvokeAsync(SubscribedMethod method) =>
-            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow);
+            SubscribedMethodInvoker.InvokeAsync(method, message, _serviceProvider, executionFlow, cancellationToken);
     }
 }
