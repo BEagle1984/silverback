@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Introduction | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Introduction | Silverback ">
-    <meta name="generator" content="docfx 2.59.4.0">
-    
+    <meta name="generator" content="docfx ">
   
+
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-  
+
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../styles/docfx.css">
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+  
+  <meta property="docfx:rel" content="../">
+  
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -146,7 +146,7 @@
 <p>Contains the extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> to monitor the connection to the message broker.</p>
 <p><a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks"><img src="https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true" alt="NuGet"></a></p>
 <h4 id="silverbackintegrationnewtonsoft">Silverback.Integration.Newtonsoft</h4>
-<p>Contains the legacy implementations of &lt;xref:Silverback.Messaging.Serialization.IMessageSerializer&gt;, based on Newtonsoft.Json.</p>
+<p>Contains the legacy implementations of <a class="xref" href="../api/Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>, based on Newtonsoft.Json.</p>
 <p><a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft"><img src="https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true" alt="NuGet"></a></p>
 <h3 id="event-sourcing">Event Sourcing</h3>
 <h4 id="silverbackeventsourcing">Silverback.EventSourcing</h4>
@@ -155,26 +155,26 @@
 <h2 id="glossary">Glossary</h2>
 <p>The following list serves as introduction to the terminology and types used in Silverback.</p>
 <h3 id="publisher">Publisher</h3>
-<p>An object that can be used to publish messages to the internal in-memory bus. It is represented by the &lt;xref:Silverback.Messaging.Publishing.IPublisher&gt; or (better) the more specific &lt;xref:Silverback.Messaging.Publishing.IEventPublisher&gt; and &lt;xref:Silverback.Messaging.Publishing.ICommandPublisher&gt; interfaces, that can be resolved via dependency injection.</p>
+<p>An object that can be used to publish messages to the internal in-memory bus. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> or (better) the more specific <a class="xref" href="../api/Silverback.Messaging.Publishing.IEventPublisher.html">IEventPublisher</a> and <a class="xref" href="../api/Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a> interfaces, that can be resolved via dependency injection.</p>
 <h3 id="subscriber">Subscriber</h3>
 <p>A method (or delegate) that is subscribed to the bus and will process some (or all) of the messages that will be published or consumed from a message broker (since those messages are automatically pushed to the internal bus).</p>
 <h3 id="broker">Broker</h3>
-<p>A message broker, like Apache Kafka or RabbitMQ. It is represented by the &lt;xref:Silverback.Messaging.Broker.IBroker&gt; interface and is used internally by Silverback to bind the internal bus with a message broker. It can be resolved and used directly but that shouldn't be necessary for most of the use cases.</p>
+<p>A message broker, like Apache Kafka or RabbitMQ. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a> interface and is used internally by Silverback to bind the internal bus with a message broker. It can be resolved and used directly but that shouldn't be necessary for most of the use cases.</p>
 <h3 id="producer">Producer</h3>
-<p>An object used to publish messages to the broker. It is represented by the &lt;xref:Silverback.Messaging.Broker.IProducer&gt; interface.</p>
+<p>An object used to publish messages to the broker. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> interface.</p>
 <h3 id="consumer">Consumer</h3>
-<p>An object used to receive messages from the broker. It is represented by the &lt;xref:Silverback.Messaging.Broker.IConsumer&gt; interface.</p>
+<p>An object used to receive messages from the broker. It is represented by the <a class="xref" href="../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> interface.</p>
 <h3 id="endpoint">Endpoint</h3>
-<p>Identifies a specific topic or queue. It also contains all the settings to bind to that endpoint and is therefore specific to the message broker implementation. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IEndpoint&gt; interface.</p>
+<p>Identifies a specific topic or queue. It also contains all the settings to bind to that endpoint and is therefore specific to the message broker implementation. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IEndpoint.html">IEndpoint</a> interface.</p>
 <h4 id="inbound-endpoint--consumer-endpoint">Inbound Endpoint / Consumer Endpoint</h4>
-<p>An endpoint that is consumed and whose messages are relayed into the internal bus, where they can be consumed by one or more subscribers. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IConsumerEndpoint&gt; interface such as the &lt;xref:Silverback.Messaging.KafkaConsumerEndpoint&gt;.</p>
+<p>An endpoint that is consumed and whose messages are relayed into the internal bus, where they can be consumed by one or more subscribers. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a> interface such as the <a class="xref" href="../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a>.</p>
 <h4 id="outbound-endpoint--producer-endpoint">Outbound Endpoint / Producer Endpoint</h4>
-<p>Silverback can be configured to automatically publish some messages to the message broker, observing the internal bus and relaying the messages matching with the configure type. The outbound/producer endpoint specifies the topic or queue where those message have to be produced. It is represented by an implementation of the &lt;xref:Silverback.Messaging.IProducerEndpoint&gt; interface such as the &lt;xref:Silverback.Messaging.KafkaProducerEndpoint&gt;.</p>
+<p>Silverback can be configured to automatically publish some messages to the message broker, observing the internal bus and relaying the messages matching with the configure type. The outbound/producer endpoint specifies the topic or queue where those message have to be produced. It is represented by an implementation of the <a class="xref" href="../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> interface such as the <a class="xref" href="../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a>.</p>
 <h3 id="behavior">Behavior</h3>
 <p>Multiple behaviors are chained to build a sort of pipeline to process the messages transiting across the internal bus, the consumer or the producer. They are used to implement cross-cutting concerns, isolate responsibilities and allow for greater flexibility. Some built-in behaviors are responsible for serialization, error policies enforcement, batching, chunking, encryption, etc.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -191,7 +191,7 @@
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -202,13 +202,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-            © 2020 Sergio Aquilini
-            
+      © 2020 Sergio Aquilini
+      
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>

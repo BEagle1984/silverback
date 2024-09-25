@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Multiple Clients (in same process) | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Multiple Clients (in same process) | Silverback ">
-    <meta name="generator" content="docfx 2.59.4.0">
-    
+    <meta name="generator" content="docfx ">
   
+
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-  
+
     <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../../styles/docfx.css">
     <link rel="stylesheet" href="../../../styles/main.css">
     <meta property="docfx:navrel" content="../../../toc.html">
     <meta property="docfx:tocrel" content="../../toc.html">
-    
-    <meta property="docfx:rel" content="../../../">
-    
+  
+  <meta property="docfx:rel" content="../../../">
+  
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../../../index.html">
                 <img id="logo" class="svg" src="../../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -87,20 +87,20 @@
 <h1 id="multiple-clients-in-same-process">Multiple Clients (in same process)</h1>
 
 <p>In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
-<p>A much safer approach is to bind multiple consumers to the same topic, using a different client id. This will cause the message to be consumed multiple times (once per client) and being committed independently. The &lt;xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute&gt; can be used to execute a subscribed method according to the client id.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<p>A much safer approach is to bind multiple consumers to the same topic, using a different client id. This will cause the message to be consumed multiple times (once per client) and being committed independently. The <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> can be used to execute a subscribed method according to the client id.</p>
+<div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_clients-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_clients-fluent" data-tab="clients-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_1_clients-fluent" role="tab" aria-controls="tabpanel_1_clients-fluent" data-tab="clients-fluent" tabindex="0" aria-selected="true">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_clients-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_clients-legacy" data-tab="clients-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_1_clients-legacy" role="tab" aria-controls="tabpanel_1_clients-legacy" data-tab="clients-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_clients-subscriber" role="tab" aria-controls="tabpanel_bHGHmlrG6S_clients-subscriber" data-tab="clients-subscriber" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_1_clients-subscriber" role="tab" aria-controls="tabpanel_1_clients-subscriber" data-tab="clients-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_clients-fluent" role="tabpanel" data-tab="clients-fluent">
+<section id="tabpanel_1_clients-fluent" role="tabpanel" data-tab="clients-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -119,7 +119,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_clients-legacy" role="tabpanel" data-tab="clients-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_clients-legacy" role="tabpanel" data-tab="clients-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -152,7 +152,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_clients-subscriber" role="tabpanel" data-tab="clients-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_clients-subscriber" role="tabpanel" data-tab="clients-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MySubscriber
 {
@@ -168,7 +168,7 @@
 
 <div class="NOTE">
 <h5>Note</h5>
-<p>The filters can be added dynamically using the overloads of <code>AddSubscriber</code> accepting a &lt;xref:Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions&gt; or &lt;xref:Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions&gt; and this allows you to use a variable for the client id.</p>
+<p>The filters can be added dynamically using the overloads of <code>AddSubscriber</code> accepting a <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> or <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.Subscriptions.TypeSubscriptionOptions.html">TypeSubscriptionOptions</a> and this allows you to use a variable for the client id.</p>
 <pre><code class="lang-csharp">.AddSingletonSubscriber&lt;MySubscriber&gt;(
     new TypeSubscriptionOptions
     {
@@ -179,7 +179,7 @@
     })
 </code></pre>
 </div>
-<p>Using the &lt;xref:Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute&gt; is the cleanest and easiest approach but alternatively you can always subscribe to the &lt;xref:Silverback.Messaging.Messages.IInboundEnvelope`1&gt; and perform different tasks according to the <code>ClientId</code> value.</p>
+<p>Using the <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a> is the cleanest and easiest approach but alternatively you can always subscribe to the <a class="xref" href="../../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and perform different tasks according to the <code>ClientId</code> value.</p>
 <pre><code class="lang-csharp">public class MySubscriber
 {
     public void OnMessageReceived(IInboundEnvelope&lt;MyEvent&gt; envelope)
@@ -202,7 +202,7 @@
 </code></pre>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -219,7 +219,7 @@
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -230,13 +230,13 @@
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-            © 2020 Sergio Aquilini
-            
+      © 2020 Sergio Aquilini
+      
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../../styles/main.js"></script>

@@ -1,36 +1,36 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Outbound Endpoint | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Outbound Endpoint | Silverback ">
-    <meta name="generator" content="docfx 2.59.4.0">
-    
+    <meta name="generator" content="docfx ">
   
+
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
     <link rel="manifest" href="../../images/icons/site.webmanifest">
     <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
-  
+
     <link rel="stylesheet" href="../../styles/docfx.vendor.css">
     <link rel="stylesheet" href="../../styles/docfx.css">
     <link rel="stylesheet" href="../../styles/main.css">
     <meta property="docfx:navrel" content="../../toc.html">
     <meta property="docfx:tocrel" content="../toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+  
+  <meta property="docfx:rel" content="../../">
+  
     <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
   </head>
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -40,7 +40,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../../index.html">
                 <img id="logo" class="svg" src="../../images/logo.png" alt="">
               </a>
@@ -54,7 +54,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -64,7 +64,7 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
           <div class="search-list"></div>
           <div class="sr-items">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -87,21 +87,21 @@
 <h1 id="outbound-endpoint">Outbound Endpoint</h1>
 
 <p>An outbound endpoint is used to configure silverback to automatically relay the integration messages that ate published to the internal bus to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type or a custom routing logic.</p>
-<p>The endpoint object identifies the topic/queue that is being connected and the client configuration, such the connection options. The endpoint object is therefore very specific and every broker type will define it's own implementation of <a href="xref:Silverback.Messaging.IProducerEndpoint">IProducerEndpoint</a>.</p>
+<p>The endpoint object identifies the topic/queue that is being connected and the client configuration, such the connection options. The endpoint object is therefore very specific and every broker type will define it's own implementation of <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>.</p>
 <p>The options in the endpoint object are also used to tweak the Silverback behavior (e.g. the <a class="xref" href="serialization.html">serialization</a>) and to enable additional features such as <a class="xref" href="chunking.html">chunking</a>, <a class="xref" href="encryption.html">encryption</a>, etc.</p>
 <h2 id="apache-kafka">Apache Kafka</h2>
-<p>The &lt;xref:Silverback.Messaging.KafkaProducerEndpoint&gt; is defined by
+<p>The <a class="xref" href="../../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a> is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka">Silverback.Integration.Kafka</a> and is used to declare an outbound endpoint connected to Apache Kafka.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<div class="tabGroup" id="tabgroup_1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-producer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-producer-fluent" data-tab="kafka-producer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
+<a href="#tabpanel_1_kafka-producer-fluent" role="tab" aria-controls="tabpanel_1_kafka-producer-fluent" data-tab="kafka-producer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S_kafka-producer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_kafka-producer-legacy" data-tab="kafka-producer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_1_kafka-producer-legacy" role="tab" aria-controls="tabpanel_1_kafka-producer-legacy" data-tab="kafka-producer-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S_kafka-producer-fluent" role="tabpanel" data-tab="kafka-producer-fluent">
+<section id="tabpanel_1_kafka-producer-fluent" role="tabpanel" data-tab="kafka-producer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -119,7 +119,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S_kafka-producer-legacy" role="tabpanel" data-tab="kafka-producer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_1_kafka-producer-legacy" role="tabpanel" data-tab="kafka-producer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -148,18 +148,18 @@
 <p>For a more in-depth documentation about the Kafka client configuration refer also to the <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet documentation</a>.</p>
 </div>
 <h2 id="mqtt">MQTT</h2>
-<p>The &lt;xref:Silverback.Messaging.MqttProducerEndpoint&gt; is defined by
+<p>The <a class="xref" href="../../api/Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.MQTT">Silverback.Integration.MQTT</a> and is used to declare an outbound endpoint connected to an MQTT broker.</p>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<div class="tabGroup" id="tabgroup_2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_mqtt-producer-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_mqtt-producer-fluent" data-tab="mqtt-producer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
+<a href="#tabpanel_2_mqtt-producer-fluent" role="tab" aria-controls="tabpanel_2_mqtt-producer-fluent" data-tab="mqtt-producer-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-1_mqtt-producer-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_mqtt-producer-legacy" data-tab="mqtt-producer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_2_mqtt-producer-legacy" role="tab" aria-controls="tabpanel_2_mqtt-producer-legacy" data-tab="mqtt-producer-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-1_mqtt-producer-fluent" role="tabpanel" data-tab="mqtt-producer-fluent">
+<section id="tabpanel_2_mqtt-producer-fluent" role="tabpanel" data-tab="mqtt-producer-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -182,7 +182,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-1_mqtt-producer-legacy" role="tabpanel" data-tab="mqtt-producer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_2_mqtt-producer-legacy" role="tabpanel" data-tab="mqtt-producer-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -213,7 +213,7 @@
 <p>For a more in-depth documentation about the MQTT client configuration refer also to the <a href="https://github.com/chkr1011/MQTTnet/wiki">MQTTNet documentation</a>.</p>
 </div>
 <h2 id="rabbitmq">RabbitMQ</h2>
-<p><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (&lt;xref:Silverback.Messaging.RabbitQueueProducerEndpoint&gt;) or directly to an exchange (&lt;xref:Silverback.Messaging.RabbitExchangeProducerEndpoint&gt;).</p>
+<p><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (<a class="xref" href="../../api/Silverback.Messaging.RabbitQueueProducerEndpoint.html">RabbitQueueProducerEndpoint</a>) or directly to an exchange (<a class="xref" href="../../api/Silverback.Messaging.RabbitExchangeProducerEndpoint.html">RabbitExchangeProducerEndpoint</a>).</p>
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
     public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
@@ -265,28 +265,28 @@
 <p>When using entity framework the outbound messages are stored into a <code>DbSet</code> and are therefore implicitly saved in the same transaction used to save all other changes.</p>
 <div class="NOTE">
 <h5>Note</h5>
-<p>The <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package is also required and the <code>DbContext</code> must include a <code>DbSet</code> of &lt;xref:Silverback.Database.Model.OutboxMessage&gt;. See also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>.</p>
+<p>The <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package is also required and the <code>DbContext</code> must include a <code>DbSet</code> of <a class="xref" href="../../api/Silverback.Database.Model.OutboxMessage.html">OutboxMessage</a>. See also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>.</p>
 </div>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The current &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker&gt; cannot scale horizontally and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock (stored in the database) is used to ensure that only one instance is running and another one will <em>immediately</em> take over when it stops (the <code>DbContext</code> must include a <code>DbSet</code> of &lt;xref:Silverback.Database.Model.Lock&gt; as well, see also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>).</p>
+<p>The current <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> cannot scale horizontally and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock (stored in the database) is used to ensure that only one instance is running and another one will <em>immediately</em> take over when it stops (the <code>DbContext</code> must include a <code>DbSet</code> of <a class="xref" href="../../api/Silverback.Database.Model.Lock.html">Lock</a> as well, see also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>).</p>
 </div>
-<div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
+<div class="tabGroup" id="tabgroup_3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_outbox-startup" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_outbox-startup" data-tab="outbox-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_3_outbox-startup" role="tab" aria-controls="tabpanel_3_outbox-startup" data-tab="outbox-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_outbox-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_outbox-fluent" data-tab="outbox-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
+<a href="#tabpanel_3_outbox-fluent" role="tab" aria-controls="tabpanel_3_outbox-fluent" data-tab="outbox-fluent" tabindex="-1">EndpointsConfigurator (fluent)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_outbox-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_outbox-legacy" data-tab="outbox-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
+<a href="#tabpanel_3_outbox-legacy" role="tab" aria-controls="tabpanel_3_outbox-legacy" data-tab="outbox-legacy" tabindex="-1">EndpointsConfigurator (legacy)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-2_publisher" role="tab" aria-controls="tabpanel_bHGHmlrG6S-2_publisher" data-tab="publisher" tabindex="-1">Publisher</a>
+<a href="#tabpanel_3_publisher" role="tab" aria-controls="tabpanel_3_publisher" data-tab="publisher" tabindex="-1">Publisher</a>
 </li>
 </ul>
-<section id="tabpanel_bHGHmlrG6S-2_outbox-startup" role="tabpanel" data-tab="outbox-startup">
+<section id="tabpanel_3_outbox-startup" role="tabpanel" data-tab="outbox-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -311,7 +311,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_outbox-fluent" role="tabpanel" data-tab="outbox-fluent" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_3_outbox-fluent" role="tabpanel" data-tab="outbox-fluent" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -329,7 +329,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_outbox-legacy" role="tabpanel" data-tab="outbox-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_3_outbox-legacy" role="tabpanel" data-tab="outbox-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -347,7 +347,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_bHGHmlrG6S-2_publisher" role="tabpanel" data-tab="publisher" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_3_publisher" role="tabpanel" data-tab="publisher" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">private readonly IPublisher _publisher;
 private readonly SampleDbContext _dbContext;
@@ -368,8 +368,8 @@ public async Task CancelOrder(int orderId)
 </section>
 </div>
 <h3 id="custom-outbox">Custom outbox</h3>
-<p>You can easily use another kind of storage as outbox, simply creating your own &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter&gt; and &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader&gt; implementations.</p>
-<p>At the moment only a database table accessed using Entity Framework is supported as outbox, but a custom storage can be used implementing &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter&gt; and &lt;xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader&gt;.</p>
+<p>You can easily use another kind of storage as outbox, simply creating your own <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> and <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.html">IOutboxReader</a> implementations.</p>
+<p>At the moment only a database table accessed using Entity Framework is supported as outbox, but a custom storage can be used implementing <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> and <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.html">IOutboxReader</a>.</p>
 <pre><code class="lang-csharp">public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
@@ -404,7 +404,7 @@ public async Task CancelOrder(int orderId)
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
-<p>What said above is only partially true, as you can subscribe to the wrapped message (&lt;xref:Silverback.Messaging.Messages.IOutboundEnvelope`1&gt;) even without calling <code>PublishOutboundMessagesToInternalBus</code>.</p>
+<p>What said above is only partially true, as you can subscribe to the wrapped message (<a class="xref" href="../../api/Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a>) even without calling <code>PublishOutboundMessagesToInternalBus</code>.</p>
 </div>
 <h2 id="producing-the-same-message-to-multiple-endpoints">Producing the same message to multiple endpoints</h2>
 <p>An outbound route can point to multiple endpoints resulting in a broadcast to all endpoints.</p>
@@ -456,7 +456,7 @@ public async Task CancelOrder(int orderId)
 </ul>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
@@ -473,7 +473,7 @@ public async Task CancelOrder(int orderId)
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="footer">
           <div class="container contacts">
@@ -484,13 +484,13 @@ public async Task CancelOrder(int orderId)
             <span class="pull-right">
               <a href="#top">&uarr; Back to top</a>
             </span>
-            © 2020 Sergio Aquilini
-            
+      © 2020 Sergio Aquilini
+      
           </div>
         </div>
       </footer>
     </div>
-    
+
     <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../../styles/docfx.js"></script>
     <script type="text/javascript" src="../../styles/main.js"></script>
