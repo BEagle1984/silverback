@@ -33,7 +33,7 @@ public class Startup
             .AddSilverback()
             .WithConnectionToMessageBroker(options => options
                 .AddKafka())
-            .AddSingletonBrokerCallbacksHandler<ResetOffsetPartitionsAssignedCallbackHandler>();
+            .AddSingletonBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>();
     }
 }
 ```
