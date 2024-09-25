@@ -106,6 +106,24 @@ namespace Silverback.Messaging.Broker
         public override IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() =>
             _channelsManager?.SequenceStores ?? Array.Empty<ISequenceStore>();
 
+        /// <summary>
+        ///     Look up the offsets for the given partitions by timestamp. The returned offset for each partition
+        ///     is the earliest offset for which the timestamp is greater than or equal to the given timestamp.
+        ///     If the provided timestamp exceeds that of the last message in the partition, a value of
+        ///     <c>Offset.End</c> (-1) will be returned.
+        /// </summary>
+        /// <param name="topicPartitionTimestamps">
+        ///     The list of partitions with the target timestamps.
+        /// </param>
+        /// <param name="timeout">
+        ///     The maximum amount of time to block waiting for the requested offsets.
+        /// </param>
+        /// <returns>
+        ///     The list of offsets for each partition.
+        /// </returns>
+        public IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamp(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout) =>
+            ConfluentConsumer.OffsetsForTimes(topicPartitionTimestamps, timeout);
+
         internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
         {
             if (IsDisconnecting)
@@ -299,7 +317,7 @@ namespace Silverback.Messaging.Broker
 
             // If the partitions are being processed together we must rollback them all
             if (!Endpoint.ProcessPartitionsIndependently && _consumeLoopHandler?.OffsetsTracker != null)
-                brokerMessageIdentifiers = _consumeLoopHandler.OffsetsTracker.GetRollbackOffSets().Cast<KafkaOffset>().AsReadOnlyCollection();
+                brokerMessageIdentifiers = _consumeLoopHandler.OffsetsTracker.GetRollbackOffSets().AsReadOnlyCollection();
 
             var latestTopicPartitionOffsets =
                 brokerMessageIdentifiers
