@@ -4,7 +4,11 @@ uid: releases
 
 # Releases
 
-## [4.5.2](https://github.com/BEagle1984/silverback/releases/tag/v4.5.2)
+## [4.5.2](https://github.com/BEagle1984/silverback/releases/tag/v4.6.0)
+
+### What's new
+
+* Add `GetOffsetsForTimestamp` to `KafkaConsumer`
 
 ### Fixes
 
