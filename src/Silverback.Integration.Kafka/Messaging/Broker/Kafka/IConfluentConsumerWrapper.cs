@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Confluent.Kafka;
@@ -86,4 +87,23 @@ public interface IConfluentConsumerWrapper : IBrokerClient
     ///     The offset.
     /// </param>
     void Seek(TopicPartitionOffset topicPartitionOffset);
+
+    /// <summary>
+    ///     Looks up the offsets for the given partitions by timestamp. The returned offset for each partition is the earliest offset for which
+    ///     the timestamp is greater than or equal to the given timestamp. If the provided timestamp exceeds that of the last message in the
+    ///     partition, a value of <see cref="Offset.End" /> will be returned.
+    /// </summary>
+    /// <remarks>
+    ///     The consumer does not need to be assigned to the requested partitions.
+    /// </remarks>
+    /// <param name="timestampsToSearch">
+    ///     The mapping from partition to the timestamp to look up.
+    /// </param>
+    /// <param name="timeout">
+    ///     The maximum period of time the call may block.
+    /// </param>
+    /// <returns>
+    ///     A mapping from partition to the timestamp and offset of the first message with timestamp greater than or equal to the target timestamp.
+    /// </returns>
+    IReadOnlyList<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout);
 }

@@ -180,6 +180,17 @@ internal class ConfluentConsumerWrapper : BrokerClient, IConfluentConsumerWrappe
         _confluentConsumer.Resume(partitions);
     }
 
+    public IReadOnlyList<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
+    {
+        if (Status != ClientStatus.Initialized)
+            throw new InvalidOperationException("The consumer is not connected.");
+
+        if (_confluentConsumer == null)
+            throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+        return _confluentConsumer.OffsetsForTimes(timestampsToSearch, timeout);
+    }
+
     protected override async ValueTask ConnectCoreAsync()
     {
         _confluentConsumer = _consumerBuilder.Build();

@@ -240,10 +240,8 @@ internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
 
     public Offset Position(TopicPartition partition) => throw new NotSupportedException();
 
-    public List<TopicPartitionOffset> OffsetsForTimes(
-        IEnumerable<TopicPartitionTimestamp> timestampsToSearch,
-        TimeSpan timeout) =>
-        throw new NotSupportedException();
+    public List<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout) =>
+        timestampsToSearch.Select(partitionTimestamp => new TopicPartitionOffset(partitionTimestamp.TopicPartition, Offset.End)).ToList();
 
     public WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition) =>
         throw new NotSupportedException();

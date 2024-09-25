@@ -125,6 +125,10 @@ public class KafkaConsumer : Consumer<KafkaOffset>, IKafkaConsumer
     /// <inheritdoc cref="IKafkaConsumer.Seek" />
     public void Seek(TopicPartitionOffset topicPartitionOffset) => Client.Seek(topicPartitionOffset);
 
+    /// <inheritdoc cref="IKafkaConsumer.GetOffsetsForTimestamps" />
+    public IReadOnlyList<TopicPartitionOffset> GetOffsetsForTimestamps(IEnumerable<TopicPartitionTimestamp> topicPartitionTimestamps, TimeSpan timeout) =>
+        Client.OffsetsForTimes(topicPartitionTimestamps, timeout);
+
     internal IReadOnlyCollection<TopicPartitionOffset> OnPartitionsAssigned(IReadOnlyCollection<TopicPartitionOffset> topicPartitionOffsets)
     {
         if (!IsStartedAndNotStopping())
