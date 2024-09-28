@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using NSubstitute;
 using Silverback.Messaging.Broker;
@@ -19,17 +20,25 @@ public partial class MessageWrapperFixture
         TestEventOne message = new();
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
-        await _messageWrapper.WrapAndProduceAsync(message, _publisher, [producer1, producer2]);
+        await _messageWrapper.WrapAndProduceAsync(
+            message,
+            _publisher,
+            [producer1, producer2],
+            null,
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one"));
+                    envelope.Message == message && envelope.Endpoint.RawName == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two"));
+                    envelope.Message == message && envelope.Endpoint.RawName == "two"),
+            cancellationToken);
     }
 
     [Fact]
@@ -37,17 +46,25 @@ public partial class MessageWrapperFixture
     {
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
-        await _messageWrapper.WrapAndProduceAsync<TestEventOne>(null, _publisher, [producer1, producer2]);
+        await _messageWrapper.WrapAndProduceAsync<TestEventOne>(
+            null,
+            _publisher,
+            [producer1, producer2],
+            null,
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "one"));
+                    envelope.Message == null && envelope.Endpoint.RawName == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "two"));
+                    envelope.Message == null && envelope.Endpoint.RawName == "two"),
+            cancellationToken);
     }
 
     [Fact]
@@ -56,6 +73,7 @@ public partial class MessageWrapperFixture
         TestEventOne message = new();
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceAsync(
             message,
@@ -63,20 +81,23 @@ public partial class MessageWrapperFixture
             [producer1, producer2],
             static envelope => envelope
                 .SetKafkaKey("key")
-                .AddHeader("x-topic", envelope.Endpoint.RawName));
+                .AddHeader("x-topic", envelope.Endpoint.RawName),
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            cancellationToken);
     }
 
     [Fact]
@@ -84,6 +105,7 @@ public partial class MessageWrapperFixture
     {
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceAsync<TestEventOne>(
             null,
@@ -91,20 +113,23 @@ public partial class MessageWrapperFixture
             [producer1, producer2],
             static envelope => envelope
                 .SetKafkaKey("key")
-                .AddHeader("x-topic", envelope.Endpoint.RawName));
+                .AddHeader("x-topic", envelope.Endpoint.RawName),
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            cancellationToken);
     }
 
     [Fact]
@@ -113,6 +138,7 @@ public partial class MessageWrapperFixture
         TestEventOne message = new();
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceAsync(
             message,
@@ -121,20 +147,23 @@ public partial class MessageWrapperFixture
             static (envelope, key) => envelope
                 .SetKafkaKey(key)
                 .AddHeader("x-topic", envelope.Endpoint.RawName),
-            "key");
+            "key",
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            cancellationToken);
     }
 
     [Fact]
@@ -142,6 +171,7 @@ public partial class MessageWrapperFixture
     {
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two");
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceAsync(
             (TestEventOne?)null,
@@ -150,20 +180,23 @@ public partial class MessageWrapperFixture
             static (envelope, key) => envelope
                 .SetKafkaKey(key)
                 .AddHeader("x-topic", envelope.Endpoint.RawName),
-            "key");
+            "key",
+            cancellationToken);
 
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            cancellationToken);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            cancellationToken);
     }
 
     [Fact]

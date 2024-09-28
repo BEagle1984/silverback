@@ -44,7 +44,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
     private sealed class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        public async Task ProduceAsync(IOutboundEnvelope envelope)
+        public async Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -53,7 +53,7 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
         [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Intentional and not an issue here.")]
         [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive.")]
-        public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes)
+        public async Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
         {
             Check.NotNull(envelopes, nameof(envelopes));
 
@@ -64,6 +64,8 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
             foreach (IOutboundEnvelope envelope in envelopes)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (taskCompletionSource.Task.IsCompleted)
                     break;
 
@@ -94,14 +96,14 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
         [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Intentional and not an issue here.")]
         [SuppressMessage("Maintainability", "CA1508:Avoid dead conditional code", Justification = "False positive.")]
-        public async Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes)
+        public async Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken)
         {
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;
             TaskCompletionSource<bool> taskCompletionSource = new();
             Exception? produceException = null;
 
-            await foreach (IOutboundEnvelope envelope in envelopes)
+            await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken))
             {
                 if (taskCompletionSource.Task.IsCompleted)
                     break;

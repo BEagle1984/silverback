@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -33,6 +34,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelope.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -40,7 +44,8 @@ public interface IMessageWrapper
         TMessage? message,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -67,6 +72,9 @@ public interface IMessageWrapper
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -75,7 +83,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -96,6 +105,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -103,7 +115,8 @@ public interface IMessageWrapper
         IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -130,6 +143,9 @@ public interface IMessageWrapper
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -138,7 +154,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -164,6 +181,9 @@ public interface IMessageWrapper
     /// </param>
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -173,7 +193,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -204,7 +225,10 @@ public interface IMessageWrapper
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -215,7 +239,8 @@ public interface IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -236,6 +261,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -243,7 +271,8 @@ public interface IMessageWrapper
         IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -270,6 +299,9 @@ public interface IMessageWrapper
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -278,7 +310,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -305,6 +338,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -313,7 +349,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -344,7 +381,10 @@ public interface IMessageWrapper
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -355,7 +395,8 @@ public interface IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -376,6 +417,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -383,7 +427,8 @@ public interface IMessageWrapper
         IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -410,6 +455,9 @@ public interface IMessageWrapper
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -418,7 +466,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -445,6 +494,9 @@ public interface IMessageWrapper
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
@@ -453,7 +505,8 @@ public interface IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 
     /// <summary>
@@ -484,7 +537,10 @@ public interface IMessageWrapper
     ///     The action used to configure the envelopes.
     /// </param>
     /// <param name="argument">
-    ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
+    ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -495,6 +551,7 @@ public interface IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class;
 }

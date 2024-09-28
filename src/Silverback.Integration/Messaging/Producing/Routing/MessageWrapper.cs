@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -21,7 +22,8 @@ internal class MessageWrapper : IMessageWrapper
         TMessage? message,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -33,9 +35,9 @@ internal class MessageWrapper : IMessageWrapper
             envelopeConfigurationAction?.Invoke(envelope);
 
             if (endpoint.Configuration.EnableSubscribing)
-                await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
-            await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);
+            await produceStrategy.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -44,7 +46,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -56,9 +59,9 @@ internal class MessageWrapper : IMessageWrapper
             envelopeConfigurationAction.Invoke(envelope, argument);
 
             if (endpoint.Configuration.EnableSubscribing)
-                await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
-            await produceStrategy.ProduceAsync(envelope).ConfigureAwait(false);
+            await produceStrategy.ProduceAsync(envelope, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -66,7 +69,8 @@ internal class MessageWrapper : IMessageWrapper
         IReadOnlyCollection<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -83,10 +87,11 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope);
 
-                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                            await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -97,7 +102,8 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope);
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }
@@ -107,7 +113,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -124,10 +131,11 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, argument);
 
-                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                            await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -138,7 +146,8 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, argument);
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }
@@ -148,7 +157,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -166,10 +176,11 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope, source);
 
-                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                            await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -181,7 +192,8 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction?.Invoke(envelope, source);
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }
@@ -192,7 +204,8 @@ internal class MessageWrapper : IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         foreach (IProducer producer in producers)
@@ -210,10 +223,11 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, source, argument);
 
-                            await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                            await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -225,7 +239,8 @@ internal class MessageWrapper : IMessageWrapper
                             IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                             envelopeConfigurationAction.Invoke(envelope, source, argument);
                             return envelope;
-                        })).ConfigureAwait(false);
+                        }),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }
@@ -234,7 +249,8 @@ internal class MessageWrapper : IMessageWrapper
         IEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -258,10 +274,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -272,7 +289,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -281,7 +299,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -305,10 +324,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -319,7 +339,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -328,7 +349,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -353,10 +375,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -368,7 +391,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -378,7 +402,8 @@ internal class MessageWrapper : IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -403,10 +428,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -418,7 +444,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -426,7 +453,8 @@ internal class MessageWrapper : IMessageWrapper
         IAsyncEnumerable<TMessage?> messages,
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -450,10 +478,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -464,7 +493,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -473,7 +503,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -497,10 +528,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -511,7 +543,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, argument);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -520,7 +553,8 @@ internal class MessageWrapper : IMessageWrapper
         IPublisher publisher,
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -545,10 +579,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -560,7 +595,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction?.Invoke(envelope, source);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -570,7 +606,8 @@ internal class MessageWrapper : IMessageWrapper
         IReadOnlyCollection<IProducer> producers,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument)
+        TArgument argument,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         if (producers.Count > 1)
@@ -595,10 +632,11 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
 
-                        await publisher.PublishAsync(envelope).ConfigureAwait(false);
+                        await publisher.PublishAsync(envelope, cancellationToken).ConfigureAwait(false);
 
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
         else
         {
@@ -610,7 +648,8 @@ internal class MessageWrapper : IMessageWrapper
                         IOutboundEnvelope<TMessage> envelope = CreateOutboundEnvelope(message, producer, endpoint, publisher.Context);
                         envelopeConfigurationAction.Invoke(envelope, source, argument);
                         return envelope;
-                    })).ConfigureAwait(false);
+                    }),
+                cancellationToken).ConfigureAwait(false);
         }
     }
 

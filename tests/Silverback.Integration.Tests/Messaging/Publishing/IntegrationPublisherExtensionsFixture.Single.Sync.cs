@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -29,11 +30,13 @@ public partial class IntegrationPublisherExtensionsFixture
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "one"));
+                    envelope.Message == message && envelope.Endpoint.RawName == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == message && envelope.Endpoint.RawName == "two"));
+                    envelope.Message == message && envelope.Endpoint.RawName == "two"),
+            CancellationToken.None);
     }
 
     [Fact]
@@ -47,11 +50,13 @@ public partial class IntegrationPublisherExtensionsFixture
         await strategy1.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "one"));
+                    envelope.Message == null && envelope.Endpoint.RawName == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
-                    envelope.Message == null && envelope.Endpoint.RawName == "two"));
+                    envelope.Message == null && envelope.Endpoint.RawName == "two"),
+            CancellationToken.None);
     }
 
     [Fact]
@@ -72,13 +77,15 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            CancellationToken.None);
     }
 
     [Fact]
@@ -98,13 +105,15 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            CancellationToken.None);
     }
 
     [Fact]
@@ -126,13 +135,15 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == message && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            CancellationToken.None);
     }
 
     [Fact]
@@ -153,37 +164,31 @@ public partial class IntegrationPublisherExtensionsFixture
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "one" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "one"));
+                    envelope.Headers["x-topic"] == "one"),
+            CancellationToken.None);
         await strategy2.Received(1).ProduceAsync(
             Arg.Is<IOutboundEnvelope<TestEventOne>>(
                 envelope =>
                     envelope.Message == null && envelope.Endpoint.RawName == "two" &&
                     envelope.GetKafkaKey() == "key" &&
-                    envelope.Headers["x-topic"] == "two"));
+                    envelope.Headers["x-topic"] == "two"),
+            CancellationToken.None);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void WrapAndPublish_ShouldThrowOrIgnore_WhenNoMatchingProducers(bool throwIfUnhandled)
+    [Fact]
+    public void WrapAndPublish_ShouldThrow_WhenNoMatchingProducers()
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
 
-        Action act = () => _publisher.WrapAndPublish(message, throwIfUnhandled: throwIfUnhandled);
+        Action act = () => _publisher.WrapAndPublish(message);
 
-        if (throwIfUnhandled)
-            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        else
-            act.Should().NotThrow();
-
+        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         strategy.ReceivedCalls().Should().BeEmpty();
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void WrapAndPublish_ShouldThrowOrIgnore_WhenNoMatchingProducersAndPassingArgument(bool throwIfUnhandled)
+    [Fact]
+    public void WrapAndPublish_ShouldThrowOrIgnore_WhenNoMatchingProducersAndPassingArgument()
     {
         TestEventOne message = new();
         (IProducer _, IProduceStrategyImplementation strategy) = AddProducer<TestEventTwo>("two");
@@ -193,14 +198,9 @@ public partial class IntegrationPublisherExtensionsFixture
             (_, _) =>
             {
             },
-            1,
-            throwIfUnhandled);
-        if (throwIfUnhandled)
-            act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
-        else
+            1);
 
-            act.Should().NotThrow();
-
+        act.Should().Throw<RoutingException>().WithMessage("No producer found for message of type 'TestEventOne'.");
         strategy.ReceivedCalls().Should().BeEmpty();
     }
 }

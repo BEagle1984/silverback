@@ -63,7 +63,9 @@ public class OutboundRouterBehavior : IBehavior, ISorted
         Check.NotNull(message, nameof(message));
         Check.NotNull(next, nameof(next));
 
-        return await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false) ? [] : await next(message).ConfigureAwait(false);
+        return await WrapAndRepublishRoutedMessageAsync(message, cancellationToken).ConfigureAwait(false)
+            ? []
+            : await next(message).ConfigureAwait(false);
     }
 
     private static Type? GetEnumerableType(Type messageType)
@@ -92,12 +94,12 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                 enumerableType,
                 static type => typeof(IMessageWrapper).GetMethods().First(
                     method => method.Name == "WrapAndProduceBatchAsync" &&
-                              method.GetParameters().Length == 4 &&
+                              method.GetParameters().Length == 5 &&
                               method.GetParameters()[0].ParameterType.IsGenericType &&
                               method.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type))
             .MakeGenericMethod(messageType);
 
-    private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(object message)
+    private async ValueTask<bool> WrapAndRepublishRoutedMessageAsync(object message, CancellationToken cancellationToken)
     {
         Type messageType = message.GetType();
         Type? enumerableType = GetEnumerableType(messageType);
@@ -115,10 +117,10 @@ public class OutboundRouterBehavior : IBehavior, ISorted
                 : (_singleMessageWrapAndProduceMethod ??=
                     typeof(IMessageWrapper).GetMethods().First(
                         method => method.Name == "WrapAndProduceAsync" &&
-                                  method.GetParameters().Length == 4)).MakeGenericMethod(args.ActualMessageType),
+                                  method.GetParameters().Length == 5)).MakeGenericMethod(args.ActualMessageType),
             (EnumerableType: enumerableType, ActualMessageType: actualMessageType));
 
-        await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, _publisher, producers, null])!).ConfigureAwait(false);
+        await ((Task)wrapAndProduceMethod.Invoke(_messageWrapper, [message, _publisher, producers, null, cancellationToken])!).ConfigureAwait(false);
 
         return true;
     }

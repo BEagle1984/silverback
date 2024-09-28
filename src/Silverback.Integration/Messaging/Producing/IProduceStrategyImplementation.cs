@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -18,10 +19,13 @@ public interface IProduceStrategyImplementation
     /// <param name="envelope">
     ///     The <see cref="IOutboundEnvelope" /> containing the message to be produced.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task ProduceAsync(IOutboundEnvelope envelope);
+    Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Produces the messages in the specified envelopes.
@@ -29,10 +33,13 @@ public interface IProduceStrategyImplementation
     /// <param name="envelopes">
     ///     The <see cref="IOutboundEnvelope" /> containing the messages to be produced.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes);
+    Task ProduceAsync(IEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Produces the messages in the specified envelopes.
@@ -40,8 +47,11 @@ public interface IProduceStrategyImplementation
     /// <param name="envelopes">
     ///     The <see cref="IOutboundEnvelope" /> containing the messages to be produced.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes);
+    Task ProduceAsync(IAsyncEnumerable<IOutboundEnvelope> envelopes, CancellationToken cancellationToken);
 }

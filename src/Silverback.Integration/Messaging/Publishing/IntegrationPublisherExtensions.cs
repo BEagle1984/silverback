@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -32,11 +33,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="message">
     ///     The message to be published.
     /// </param>
-    /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelope.
-    /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -44,21 +42,51 @@ public static partial class IntegrationPublisherExtensions
     public static Task WrapAndPublishAsync<TMessage>(
         this IPublisher publisher,
         TMessage? message,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = true)
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishAsync(publisher, message, null, cancellationToken);
+
+    /// <summary>
+    ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the message to be published.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="message">
+    ///     The message to be published.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     An optional action that can be used to configure the envelope.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishAsync<TMessage>(
+        this IPublisher publisher,
+        TMessage? message,
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceAsync(
+            message,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -82,8 +110,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -93,7 +121,7 @@ public static partial class IntegrationPublisherExtensions
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = true)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -101,14 +129,42 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceAsync(message, publisher, producers, envelopeConfigurationAction, argument);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceAsync(
+            message,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
+
+    /// <summary>
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be published.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="messages">
+    ///     The messages to be published.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TMessage>(
+        this IPublisher publisher,
+        IReadOnlyCollection<TMessage?> messages,
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -125,8 +181,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -134,8 +190,8 @@ public static partial class IntegrationPublisherExtensions
     public static Task WrapAndPublishBatchAsync<TMessage>(
         this IPublisher publisher,
         IReadOnlyCollection<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -143,13 +199,15 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -173,8 +231,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -184,7 +242,7 @@ public static partial class IntegrationPublisherExtensions
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -193,13 +251,16 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, argument);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
 
     /// <summary>
@@ -220,11 +281,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="mapperFunction">
     ///     The function used to map the source objects to messages.
     /// </param>
-    /// <param name="envelopeConfigurationAction">
-    ///     An optional action that can be used to configure the envelopes.
-    /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -233,8 +291,43 @@ public static partial class IntegrationPublisherExtensions
         this IPublisher publisher,
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="envelopeConfigurationAction">
+    ///     An optional action that can be used to configure the envelopes.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TSource, TMessage>(
+        this IPublisher publisher,
+        IReadOnlyCollection<TSource> sources,
+        Func<TSource, TMessage?> mapperFunction,
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -249,13 +342,11 @@ public static partial class IntegrationPublisherExtensions
                 publisher,
                 producers,
                 mapperFunction,
-                envelopeConfigurationAction);
+                envelopeConfigurationAction,
+                cancellationToken);
         }
 
-        if (throwIfUnhandled)
-            throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
-
-        return Task.CompletedTask;
+        throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
     }
 
     /// <summary>
@@ -285,8 +376,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -297,7 +388,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -306,22 +397,43 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction,
-                argument);
-        }
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            producers,
+            mapperFunction,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
+
+    /// <summary>
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be published.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="messages">
+    ///     The messages to be published.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TMessage>(
+        this IPublisher publisher,
+        IEnumerable<TMessage?> messages,
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -338,8 +450,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -347,8 +459,8 @@ public static partial class IntegrationPublisherExtensions
     public static Task WrapAndPublishBatchAsync<TMessage>(
         this IPublisher publisher,
         IEnumerable<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -356,13 +468,15 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -386,8 +500,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -397,7 +511,7 @@ public static partial class IntegrationPublisherExtensions
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -406,14 +520,49 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, argument);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TSource, TMessage>(
+        this IPublisher publisher,
+        IEnumerable<TSource> sources,
+        Func<TSource, TMessage?> mapperFunction,
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -436,8 +585,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -446,8 +595,8 @@ public static partial class IntegrationPublisherExtensions
         this IPublisher publisher,
         IEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -455,20 +604,16 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction);
-        }
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            producers,
+            mapperFunction,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -498,8 +643,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -510,7 +655,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -519,22 +664,43 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction,
-                argument);
-        }
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            producers,
+            mapperFunction,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
+
+    /// <summary>
+    ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be published.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="messages">
+    ///     The messages to be published.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TMessage>(
+        this IPublisher publisher,
+        IAsyncEnumerable<TMessage?> messages,
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, messages, null, cancellationToken);
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -551,8 +717,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -560,8 +726,8 @@ public static partial class IntegrationPublisherExtensions
     public static Task WrapAndPublishBatchAsync<TMessage>(
         this IPublisher publisher,
         IAsyncEnumerable<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -569,13 +735,15 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -599,8 +767,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -610,7 +778,7 @@ public static partial class IntegrationPublisherExtensions
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -619,14 +787,49 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(messages, publisher, producers, envelopeConfigurationAction, argument);
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            messages,
+            publisher,
+            producers,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
+
+    /// <summary>
+    ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
+    /// </summary>
+    /// <typeparam name="TSource">
+    ///     The type of the source objects.
+    /// </typeparam>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced.
+    /// </typeparam>
+    /// <param name="publisher">
+    ///     The <see cref="IPublisher" />.
+    /// </param>
+    /// <param name="sources">
+    ///     The source objects to be mapped.
+    /// </param>
+    /// <param name="mapperFunction">
+    ///     The function used to map the source objects to messages.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    public static Task WrapAndPublishBatchAsync<TSource, TMessage>(
+        this IPublisher publisher,
+        IAsyncEnumerable<TSource> sources,
+        Func<TSource, TMessage?> mapperFunction,
+        CancellationToken cancellationToken = default)
+        where TMessage : class =>
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, null, cancellationToken);
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -649,8 +852,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -659,8 +862,8 @@ public static partial class IntegrationPublisherExtensions
         this IPublisher publisher,
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction,
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -668,20 +871,16 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction);
-        }
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            producers,
+            mapperFunction,
+            envelopeConfigurationAction,
+            cancellationToken);
     }
 
     /// <summary>
@@ -711,8 +910,8 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction"/> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
+    /// <param name="cancellationToken">
+    ///     The <see cref="CancellationToken" /> that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
@@ -723,7 +922,7 @@ public static partial class IntegrationPublisherExtensions
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
         TArgument argument,
-        bool throwIfUnhandled = false)
+        CancellationToken cancellationToken = default)
         where TMessage : class
     {
         Check.NotNull(publisher, nameof(publisher));
@@ -732,21 +931,17 @@ public static partial class IntegrationPublisherExtensions
 
         IReadOnlyCollection<IProducer> producers = GetProducerCollection(publisher.Context).GetProducersForMessage(typeof(TMessage));
 
-        if (producers.Count != 0)
-        {
-            return MessageWrapper.Instance.WrapAndProduceBatchAsync(
-                sources,
-                publisher,
-                producers,
-                mapperFunction,
-                envelopeConfigurationAction,
-                argument);
-        }
-
-        if (throwIfUnhandled)
+        if (producers.Count == 0)
             throw new RoutingException($"No producer found for message of type '{typeof(TMessage).Name}'.");
 
-        return Task.CompletedTask;
+        return MessageWrapper.Instance.WrapAndProduceBatchAsync(
+            sources,
+            publisher,
+            producers,
+            mapperFunction,
+            envelopeConfigurationAction,
+            argument,
+            cancellationToken);
     }
 
     private static IProducerCollection GetProducerCollection(ISilverbackContext context) =>

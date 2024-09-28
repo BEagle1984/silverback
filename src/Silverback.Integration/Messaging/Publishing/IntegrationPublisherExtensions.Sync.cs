@@ -28,16 +28,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelope.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublish<TMessage>(
         this IPublisher publisher,
         TMessage? message,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = true)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the message in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes it.
@@ -60,17 +56,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublish<TMessage, TArgument>(
         this IPublisher publisher,
         TMessage? message,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = true)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishAsync(publisher, message, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -87,16 +79,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IReadOnlyCollection<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -119,17 +107,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IReadOnlyCollection<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -152,17 +136,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage>(
         this IPublisher publisher,
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -190,19 +170,15 @@ public static partial class IntegrationPublisherExtensions
     /// </param>
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
-    /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
     /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         this IPublisher publisher,
         IReadOnlyCollection<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -219,16 +195,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IEnumerable<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -251,17 +223,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -284,17 +252,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage>(
         this IPublisher publisher,
         IEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -323,18 +287,14 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         this IPublisher publisher,
         IEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -351,16 +311,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage>(
         this IPublisher publisher,
         IAsyncEnumerable<TMessage?> messages,
-        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Wraps the messages in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -383,17 +339,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TMessage, TArgument>(
         this IPublisher publisher,
         IAsyncEnumerable<TMessage?> messages,
         Action<IOutboundEnvelope<TMessage>, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, messages, envelopeConfigurationAction, argument).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -416,17 +368,13 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="envelopeConfigurationAction">
     ///     An optional action that can be used to configure the envelopes.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage>(
         this IPublisher publisher,
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TMessage?> mapperFunction,
-        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null,
-        bool throwIfUnhandled = false)
+        Action<IOutboundEnvelope<TMessage>, TSource>? envelopeConfigurationAction = null)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction).SafeWait();
 
     /// <summary>
     ///     Maps the source objects into messages, wraps them in an <see cref="IOutboundEnvelope{TMessage}" /> and publishes them.
@@ -455,16 +403,12 @@ public static partial class IntegrationPublisherExtensions
     /// <param name="argument">
     ///     The argument to be passed to the <paramref name="mapperFunction" /> and the <paramref name="envelopeConfigurationAction" />.
     /// </param>
-    /// <param name="throwIfUnhandled">
-    ///     A value indicating whether an exception should be thrown if no producer is found for the message type.
-    /// </param>
     public static void WrapAndPublishBatch<TSource, TMessage, TArgument>(
         this IPublisher publisher,
         IAsyncEnumerable<TSource> sources,
         Func<TSource, TArgument, TMessage?> mapperFunction,
         Action<IOutboundEnvelope<TMessage>, TSource, TArgument> envelopeConfigurationAction,
-        TArgument argument,
-        bool throwIfUnhandled = false)
+        TArgument argument)
         where TMessage : class =>
-        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument, throwIfUnhandled).SafeWait();
+        WrapAndPublishBatchAsync(publisher, sources, mapperFunction, envelopeConfigurationAction, argument).SafeWait();
 }

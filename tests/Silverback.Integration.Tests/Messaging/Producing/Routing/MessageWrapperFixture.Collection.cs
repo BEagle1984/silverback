@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -29,16 +30,19 @@ public partial class MessageWrapperFixture
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()));
+                    capturedEnvelopes1 = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(
             Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()));
+                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        CancellationToken cancellationToken = new(false);
 
-        await _messageWrapper.WrapAndProduceBatchAsync(messages, _publisher, [producer1, producer2]);
+        await _messageWrapper.WrapAndProduceBatchAsync(messages, _publisher, [producer1, producer2], cancellationToken: cancellationToken);
 
-        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().Be(message1);
@@ -48,7 +52,7 @@ public partial class MessageWrapperFixture
         capturedEnvelopes1[2].Message.Should().Be(null);
         capturedEnvelopes1[2].Endpoint.RawName.Should().Be("one");
 
-        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().Be(message1);
@@ -71,12 +75,15 @@ public partial class MessageWrapperFixture
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()));
+                    capturedEnvelopes1 = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(
             Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()));
+                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        CancellationToken cancellationToken = new(false);
         int count = 0;
 
         await _messageWrapper.WrapAndProduceBatchAsync(
@@ -85,9 +92,10 @@ public partial class MessageWrapperFixture
             [producer1, producer2],
             envelope => envelope
                 .SetKafkaKey($"{++count}")
-                .AddHeader("x-topic", envelope.Endpoint.RawName));
+                .AddHeader("x-topic", envelope.Endpoint.RawName),
+            cancellationToken);
 
-        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().Be(message1);
@@ -103,7 +111,7 @@ public partial class MessageWrapperFixture
         capturedEnvelopes1[2].GetKafkaKey().Should().Be("3");
         capturedEnvelopes1[2].Headers["x-topic"].Should().Be("one");
 
-        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().Be(message1);
@@ -132,12 +140,15 @@ public partial class MessageWrapperFixture
         await strategy1.ProduceAsync(
             Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes1 = envelopes.ToArray()));
+                    capturedEnvelopes1 = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
         IOutboundEnvelope<TestEventOne>[]? capturedEnvelopes2 = null;
         await strategy2.ProduceAsync(
             Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(
                 envelopes =>
-                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()));
+                    capturedEnvelopes2 = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceBatchAsync(
             messages,
@@ -146,9 +157,10 @@ public partial class MessageWrapperFixture
             static (envelope, counter) => envelope
                 .SetKafkaKey($"{counter.Increment()}")
                 .AddHeader("x-topic", envelope.Endpoint.RawName),
-            new Counter());
+            new Counter(),
+            cancellationToken);
 
-        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy1.Received(1).ProduceAsync(Arg.Any<IEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes1.ShouldNotBeNull();
         capturedEnvelopes1.Should().HaveCount(3);
         capturedEnvelopes1[0].Message.Should().Be(message1);
@@ -164,7 +176,7 @@ public partial class MessageWrapperFixture
         capturedEnvelopes1[2].GetKafkaKey().Should().Be("3");
         capturedEnvelopes1[2].Headers["x-topic"].Should().Be("one");
 
-        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>());
+        await strategy2.Received(1).ProduceAsync(Arg.Any<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(), cancellationToken);
         capturedEnvelopes2.ShouldNotBeNull();
         capturedEnvelopes2.Should().HaveCount(3);
         capturedEnvelopes2[0].Message.Should().Be(message1);
@@ -188,17 +200,30 @@ public partial class MessageWrapperFixture
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two", true);
         (IProducer producer3, IProduceStrategyImplementation strategy3) = CreateProducer("three", true);
-        await strategy1.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy1.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
-        await strategy2.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy2.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
-        await strategy3.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy3.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
+        await strategy1.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy1.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        await strategy2.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy2.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        await strategy3.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy3.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        CancellationToken cancellationToken = new(false);
 
-        await _messageWrapper.WrapAndProduceBatchAsync(messages, _publisher, [producer1, producer2, producer3]);
+        await _messageWrapper.WrapAndProduceBatchAsync(messages, _publisher, [producer1, producer2, producer3], cancellationToken: cancellationToken);
 
         // Expect to publish 3 messages twice (once per enabled producer)
-        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), cancellationToken);
     }
 
     [Fact]
@@ -208,12 +233,25 @@ public partial class MessageWrapperFixture
         (IProducer producer1, IProduceStrategyImplementation strategy1) = CreateProducer("one");
         (IProducer producer2, IProduceStrategyImplementation strategy2) = CreateProducer("two", true);
         (IProducer producer3, IProduceStrategyImplementation strategy3) = CreateProducer("three", true);
-        await strategy1.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy1.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
-        await strategy2.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy2.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
-        await strategy3.ProduceAsync(Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()));
-        await strategy3.ProduceAsync(Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()));
+        await strategy1.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy1.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        await strategy2.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy2.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        await strategy3.ProduceAsync(
+            Arg.Do<IEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArray()),
+            Arg.Any<CancellationToken>());
+        await strategy3.ProduceAsync(
+            Arg.Do<IAsyncEnumerable<IOutboundEnvelope<TestEventOne>>>(envelopes => _ = envelopes.ToArrayAsync().SafeWait()),
+            Arg.Any<CancellationToken>());
+        CancellationToken cancellationToken = new(false);
 
         await _messageWrapper.WrapAndProduceBatchAsync(
             messages,
@@ -222,9 +260,10 @@ public partial class MessageWrapperFixture
             (_, _) =>
             {
             },
-            1);
+            1,
+            cancellationToken);
 
         // Expect to publish 3 messages twice (once per enabled producer)
-        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>());
+        await _publisher.Received(6).PublishAsync(Arg.Any<IOutboundEnvelope<TestEventOne>>(), cancellationToken);
     }
 }
