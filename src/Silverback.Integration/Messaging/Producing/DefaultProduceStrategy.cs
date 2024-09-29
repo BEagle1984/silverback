@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
@@ -44,11 +45,11 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
 
     private sealed class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        public async Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
+        public Task ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken)
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            await envelope.Producer.ProduceAsync(envelope).ConfigureAwait(false);
+            return envelope.Producer.ProduceAsync(envelope, cancellationToken).AsTask();
         }
 
         [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Intentional and not an issue here.")]
@@ -60,6 +61,8 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;
             TaskCompletionSource<bool> taskCompletionSource = new();
+            await using ConfiguredAsyncDisposable disposable =
+                cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
             Exception? produceException = null;
 
             foreach (IOutboundEnvelope envelope in envelopes)
@@ -101,10 +104,14 @@ public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<Defaul
             // The extra 1 is to prevent the completion before the iteration is over and all messages are enqueued
             int pending = 1;
             TaskCompletionSource<bool> taskCompletionSource = new();
+            await using ConfiguredAsyncDisposable disposable =
+                cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
             Exception? produceException = null;
 
             await foreach (IOutboundEnvelope envelope in envelopes.WithCancellation(cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (taskCompletionSource.Task.IsCompleted)
                     break;
 

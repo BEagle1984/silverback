@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -30,7 +31,7 @@ public class ActivityProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -40,6 +41,6 @@ public class ActivityProducerBehavior : IProducerBehavior
         _activityEnricherFactory.GetEnricher(context.Envelope.Endpoint.Configuration, context.ServiceProvider)
             .EnrichOutboundActivity(activity, context);
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

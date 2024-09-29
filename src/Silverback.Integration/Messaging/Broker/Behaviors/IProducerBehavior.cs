@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker.Behaviors;
@@ -20,8 +21,11 @@ public interface IProducerBehavior : IBrokerBehavior, ISorted
     /// <param name="next">
     ///     The next behavior in the pipeline.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask" /> representing the asynchronous operation.
     /// </returns>
-    ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next);
+    ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken);
 }

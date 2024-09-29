@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -188,37 +189,37 @@ public class OutboxWriterFactoryFixture
 
     private class OutboxWriter1 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
     }
 
     private class OutboxWriter2 : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
     }
 
     private class OverrideOutboxWriter : IOutboxWriter
     {
-        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
+        public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null) =>
+        public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null, CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
     }
 }

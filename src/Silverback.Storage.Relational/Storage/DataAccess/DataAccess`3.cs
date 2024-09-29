@@ -7,6 +7,8 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Util;
 
@@ -37,12 +39,13 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         Func<DbDataReader, T> projection,
         string sql,
         TParameter[]? parameters,
-        TimeSpan timeout)
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout).ConfigureAwait(false);
-        using DbDataReader reader = await wrapper.Command.ExecuteReaderAsync().ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
+        using DbDataReader reader = await wrapper.Command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
-        return await MapAsync(reader, projection).ToListAsync().ConfigureAwait(false);
+        return await MapAsync(reader, projection, cancellationToken).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public T? ExecuteScalar<T>(string sql, TParameter[]? parameters, TimeSpan timeout)
@@ -54,11 +57,15 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return result == DBNull.Value ? default : (T?)result;
     }
 
-    public async Task<T?> ExecuteScalarAsync<T>(string sql, TParameter[]? parameters, TimeSpan timeout)
+    public async Task<T?> ExecuteScalarAsync<T>(
+        string sql,
+        TParameter[]? parameters,
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        object? result = await wrapper.Command.ExecuteScalarAsync().ConfigureAwait(false);
+        object? result = await wrapper.Command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
         if (result == DBNull.Value)
             return default;
@@ -66,19 +73,24 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         return (T?)result;
     }
 
-    public async Task<int> ExecuteNonQueryAsync(string sql, TParameter[]? parameters, TimeSpan timeout, ISilverbackContext? context = null)
+    public async Task<int> ExecuteNonQueryAsync(
+        string sql,
+        TParameter[]? parameters,
+        TimeSpan timeout,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context, cancellationToken).ConfigureAwait(false);
 
         try
         {
-            int affected = await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
-            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
+            int affected = await wrapper.Command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await wrapper.CommitOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
             return affected;
         }
         catch (Exception)
         {
-            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
+            await wrapper.RollbackOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
             throw;
         }
     }
@@ -89,23 +101,28 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
         TimeSpan timeout,
-        ISilverbackContext? context = null)
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context, cancellationToken).ConfigureAwait(false);
 
         try
         {
             foreach (T item in items)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 parameterValuesProvider.Invoke(item, parameters);
-                await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                await wrapper.Command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
+            await wrapper.CommitOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception)
         {
-            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
+            if (!cancellationToken.IsCancellationRequested)
+                await wrapper.RollbackOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
+
             throw;
         }
     }
@@ -116,23 +133,28 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[] parameters,
         Action<T, TParameter[]> parameterValuesProvider,
         TimeSpan timeout,
-        ISilverbackContext? context = null)
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
-        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context).ConfigureAwait(false);
+        using DbCommandWrapper wrapper = await GetCommandAsync(sql, parameters, timeout, true, context, cancellationToken).ConfigureAwait(false);
 
         try
         {
-            await foreach (T item in items)
+            await foreach (T item in items.WithCancellation(cancellationToken))
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 parameterValuesProvider.Invoke(item, parameters);
-                await wrapper.Command.ExecuteNonQueryAsync().ConfigureAwait(false);
+                await wrapper.Command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            await wrapper.CommitOwnedTransactionAsync().ConfigureAwait(false);
+            await wrapper.CommitOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception)
         {
-            await wrapper.RollbackOwnedTransactionAsync().ConfigureAwait(false);
+            if (!cancellationToken.IsCancellationRequested)
+                await wrapper.RollbackOwnedTransactionAsync(cancellationToken).ConfigureAwait(false);
+
             throw;
         }
     }
@@ -147,10 +169,14 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         }
     }
 
-    private static async IAsyncEnumerable<T> MapAsync<T>(DbDataReader reader, Func<DbDataReader, T> projection)
+    private static async IAsyncEnumerable<T> MapAsync<T>(
+        DbDataReader reader,
+        Func<DbDataReader, T> projection,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        while (await reader.ReadAsync().ConfigureAwait(false))
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             yield return projection(reader);
         }
     }
@@ -213,7 +239,8 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
         TParameter[]? parameters,
         TimeSpan timeout,
         bool beginTransaction = false,
-        ISilverbackContext? context = null)
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         bool isNewConnection = false;
         bool isNewTransaction = false;
@@ -232,11 +259,11 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
 
             try
             {
-                await connection.OpenAsync().ConfigureAwait(false);
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                 if (beginTransaction)
                 {
-                    transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted).ConfigureAwait(false);
+                    transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken).ConfigureAwait(false);
                     isNewTransaction = true;
                 }
             }
@@ -296,10 +323,10 @@ internal abstract class DataAccess<TConnection, TTransaction, TParameter>
                 _connection.Dispose();
         }
 
-        public ValueTask CommitOwnedTransactionAsync() =>
-            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.CommitAsync()) : default;
+        public ValueTask CommitOwnedTransactionAsync(CancellationToken cancellationToken = default) =>
+            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.CommitAsync(cancellationToken)) : default;
 
-        public ValueTask RollbackOwnedTransactionAsync() =>
-            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync()) : default;
+        public ValueTask RollbackOwnedTransactionAsync(CancellationToken cancellationToken = default) =>
+            _isTransactionOwner && _transaction != null ? new ValueTask(_transaction.RollbackAsync(cancellationToken)) : default;
     }
 }

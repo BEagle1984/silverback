@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
@@ -48,8 +49,8 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                      "@Created)";
     }
 
-    /// <inheritdoc cref="AddAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage,Silverback.ISilverbackContext?)" />
-    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext?,CancellationToken)" />
+    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessage, nameof(outboxMessage));
 
@@ -78,11 +79,15 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 }
             ],
             _settings.DbCommandTimeout,
-            context);
+            context,
+            cancellationToken);
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public Task AddAsync(
+        IEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -107,11 +112,15 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
             _settings.DbCommandTimeout,
-            context);
+            context,
+            cancellationToken);
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IAsyncEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public Task AddAsync(
+        IAsyncEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -136,6 +145,7 @@ public class PostgreSqlOutboxWriter : IOutboxWriter
                 parameters[3].Value = (object?)outboxMessage.Endpoint.DynamicEndpoint ?? DBNull.Value;
             },
             _settings.DbCommandTimeout,
-            context);
+            context,
+            cancellationToken);
     }
 }

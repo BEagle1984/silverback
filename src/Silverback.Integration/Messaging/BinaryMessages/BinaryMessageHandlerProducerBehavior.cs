@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -19,12 +20,12 @@ public class BinaryMessageHandlerProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryMessageHandler;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        if (context.Envelope.Message is IBinaryMessage && context.Envelope.Endpoint.Configuration.Serializer is not IBinaryMessageSerializer)
+        if (context.Envelope is { Message: IBinaryMessage, Endpoint.Configuration.Serializer: not IBinaryMessageSerializer })
         {
             context.Envelope.RawMessage = await DefaultSerializers.Binary.SerializeAsync(
                     context.Envelope.Message,
@@ -33,6 +34,6 @@ public class BinaryMessageHandlerProducerBehavior : IProducerBehavior
                 .ConfigureAwait(false);
         }
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

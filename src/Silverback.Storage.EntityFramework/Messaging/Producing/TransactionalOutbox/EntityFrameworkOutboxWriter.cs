@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,46 +39,61 @@ public class EntityFrameworkOutboxWriter : IOutboxWriter
         _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
     }
 
-    /// <inheritdoc cref="AddAsync(Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage,Silverback.ISilverbackContext?)" />
-    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null) =>
-        AddAsync(Enumerable.Repeat(outboxMessage, 1), context);
+    /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext?,CancellationToken)" />
+    public Task AddAsync(
+        OutboxMessage outboxMessage,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default) =>
+        AddAsync(Enumerable.Repeat(outboxMessage, 1), context, cancellationToken);
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public async Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public async Task AddAsync(
+        IEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);
+        DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);
+        await using ConfiguredAsyncDisposable disposable = dbContext.ConfigureAwait(false);
 
         dbContext.UseTransactionIfAvailable(context);
 
         foreach (OutboxMessage outboxMessage in outboxMessages)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             dbContext.Add(MapToEntity(outboxMessage));
         }
 
         dbContext.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
-        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public async Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IAsyncEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public async Task AddAsync(
+        IAsyncEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
-        using DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);
+        DbContext dbContext = _settings.GetDbContext(scope.ServiceProvider, context);
+        await using ConfiguredAsyncDisposable disposable = dbContext.ConfigureAwait(false);
 
         dbContext.UseTransactionIfAvailable(context);
 
-        await foreach (OutboxMessage outboxMessage in outboxMessages)
+        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             dbContext.Add(MapToEntity(outboxMessage));
         }
 
-        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static SilverbackOutboxMessage MapToEntity(OutboxMessage outboxMessage) =>

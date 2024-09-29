@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -58,13 +59,16 @@ internal class ConfluentProducerWrapper : BrokerClient, IConfluentProducerWrappe
         }
     }
 
-    public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(TopicPartition topicPartition, Message<byte[]?, byte[]?> message)
+    public async Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
+        TopicPartition topicPartition,
+        Message<byte[]?, byte[]?> message,
+        CancellationToken cancellationToken)
     {
         IProducer<byte[]?, byte[]?> confluentProducer = EnsureConnected();
 
         try
         {
-            return confluentProducer.ProduceAsync(topicPartition, message);
+            return await confluentProducer.ProduceAsync(topicPartition, message, cancellationToken).ConfigureAwait(false);
         }
         catch (KafkaException)
         {

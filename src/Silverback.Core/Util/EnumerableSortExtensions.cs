@@ -8,7 +8,7 @@ namespace Silverback.Util;
 
 internal static class EnumerableSortExtensions
 {
-    public static IEnumerable<T> SortBySortIndex<T>(this IEnumerable<T> items)
+    public static IReadOnlyList<T> SortBySortIndex<T>(this IEnumerable<T> items)
     {
         List<T> list = items.ToList();
 

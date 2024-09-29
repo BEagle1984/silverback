@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -142,13 +143,14 @@ public class ValidatorProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.Message.Should().NotBeNull();
@@ -174,13 +176,14 @@ public class ValidatorProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            }).AsTask();
+            },
+            CancellationToken.None).AsTask();
 
         await act.Should().NotThrowAsync<ValidationException>();
         result.Should().NotBeNull();
@@ -206,13 +209,14 @@ public class ValidatorProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.Message.Should().NotBeNull();
@@ -238,13 +242,14 @@ public class ValidatorProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            }).AsTask();
+            },
+            CancellationToken.None).AsTask();
 
         result.Should().BeNull();
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);

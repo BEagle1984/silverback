@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
@@ -77,7 +78,7 @@ public sealed class KafkaProducer : Producer
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-        ProduceCoreAsync(envelope).SafeWait();
+        ProduceCoreAsync(envelope, CancellationToken.None).SafeWait();
 
     /// <inheritdoc cref="Producer.ProduceCore{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception forwarded")]
@@ -124,8 +125,10 @@ public sealed class KafkaProducer : Producer
             });
     }
 
-    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,CancellationToken)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        IOutboundEnvelope envelope,
+        CancellationToken cancellationToken)
     {
         Check.NotNull(envelope, nameof(envelope));
 
@@ -144,7 +147,8 @@ public sealed class KafkaProducer : Producer
 
             DeliveryResult<byte[]?, byte[]?> deliveryResult = await Client.ProduceAsync(
                     endpoint.TopicPartition,
-                    kafkaMessage)
+                    kafkaMessage,
+                    cancellationToken)
                 .ConfigureAwait(false);
 
             if (Configuration.ArePersistenceStatusReportsEnabled)

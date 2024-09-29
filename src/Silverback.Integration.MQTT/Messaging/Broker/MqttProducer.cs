@@ -3,6 +3,8 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -71,7 +73,7 @@ public sealed class MqttProducer : Producer
 
     /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
     protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-        ProduceCoreAsync(envelope).SafeWait();
+        ProduceCoreAsync(envelope, CancellationToken.None).SafeWait();
 
     /// <inheritdoc cref="Producer.ProduceCore{TState}(IOutboundEnvelope,Action{IBrokerMessageIdentifier,TState},Action{Exception,TState},TState)" />
     protected override void ProduceCore<TState>(
@@ -90,12 +92,16 @@ public sealed class MqttProducer : Producer
             exception => onError.Invoke(exception, state));
     }
 
-    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,CancellationToken)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        IOutboundEnvelope envelope,
+        CancellationToken cancellationToken)
     {
         Check.NotNull(envelope, nameof(envelope));
 
         TaskCompletionSource<IBrokerMessageIdentifier?> taskCompletionSource = new();
+        await using ConfiguredAsyncDisposable disposable =
+            cancellationToken.Register(() => taskCompletionSource.TrySetCanceled(cancellationToken)).ConfigureAwait(false);
 
         Client.Produce(
             await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),

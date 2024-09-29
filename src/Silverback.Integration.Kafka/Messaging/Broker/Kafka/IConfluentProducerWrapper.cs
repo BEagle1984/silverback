@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
@@ -42,11 +43,17 @@ public interface IConfluentProducerWrapper : IBrokerClient
     /// <param name="message">
     ///     The message.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     <see cref="DeliveryResult{TKey,TValue}" />.
     /// </returns>
-    Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(TopicPartition topicPartition, Message<byte[]?, byte[]?> message);
+    Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
+        TopicPartition topicPartition,
+        Message<byte[]?, byte[]?> message,
+        CancellationToken cancellationToken);
 
     /// <summary>
     ///     <para>

@@ -49,6 +49,6 @@ public class ProducerPipelineContextFixture
         Substitute.For<IOutboundEnvelope>(),
         Substitute.For<IProducer>(),
         [],
-        _ => ValueTaskFactory.CompletedTask,
+        (_, _) => ValueTaskFactory.CompletedTask,
         Substitute.For<IServiceProvider>());
 }

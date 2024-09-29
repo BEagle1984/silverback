@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -30,13 +31,14 @@ public class BinaryMessageHandlerProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.RawMessage.Should().BeSameAs(message.Content);
@@ -54,13 +56,14 @@ public class BinaryMessageHandlerProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.RawMessage.Should().BeSameAs(message.Content);
@@ -82,13 +85,14 @@ public class BinaryMessageHandlerProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.Should().BeSameAs(envelope);
@@ -106,13 +110,14 @@ public class BinaryMessageHandlerProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.Should().BeSameAs(envelope);

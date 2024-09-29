@@ -44,8 +44,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         IEnumerable<ISequenceReader> sequenceReaders,
         ISilverbackLogger<SequencerConsumerBehaviorBase> logger)
     {
-        _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex()
-            .ToList();
+        _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex();
         _logger = Check.NotNull(logger, nameof(logger));
     }
 

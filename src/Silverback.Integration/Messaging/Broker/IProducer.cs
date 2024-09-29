@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -362,11 +363,17 @@ public interface IProducer
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
+        object? message,
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message.
@@ -374,11 +381,14 @@ public interface IProducer
     /// <param name="envelope">
     ///     The envelope containing the message to be produced.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
+    ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -389,11 +399,17 @@ public interface IProducer
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        byte[]? messageContent,
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -404,11 +420,17 @@ public interface IProducer
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
     /// </returns>
-    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
+    ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -421,6 +443,9 @@ public interface IProducer
     /// </param>
     /// <param name="headers">
     ///     The optional message headers.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
     /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
@@ -429,7 +454,8 @@ public interface IProducer
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
         byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers = null);
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -443,6 +469,9 @@ public interface IProducer
     /// <param name="headers">
     ///     The optional message headers.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The ValueTask result contains the
     ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
@@ -450,5 +479,6 @@ public interface IProducer
     ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
         Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null);
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default);
 }

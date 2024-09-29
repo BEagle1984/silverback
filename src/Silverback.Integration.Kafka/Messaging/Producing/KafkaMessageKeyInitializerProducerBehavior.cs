@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -20,7 +21,7 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -33,7 +34,7 @@ public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
                 context.Envelope.Headers.Add(DefaultMessageHeaders.MessageId, key);
         }
 
-        return next(context);
+        return next(context, cancellationToken);
     }
 
     private static string? GetKafkaKey(ProducerPipelineContext context)

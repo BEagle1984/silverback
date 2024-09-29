@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -36,9 +37,10 @@ public class ActivityProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().Contain(
             header =>
@@ -57,9 +59,10 @@ public class ActivityProducerBehaviorTests
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().Contain(header => header.Name == DefaultMessageHeaders.TraceId && !string.IsNullOrEmpty(header.Value));
     }

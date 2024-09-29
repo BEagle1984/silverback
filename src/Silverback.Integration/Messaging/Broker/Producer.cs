@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -90,8 +90,6 @@ public abstract class Producer : IProducer, IDisposable
                 this));
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
-    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes synchronously")]
-    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes synchronously")]
     public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
     {
         try
@@ -100,7 +98,7 @@ public abstract class Producer : IProducer, IDisposable
                 envelope,
                 this,
                 _behaviors,
-                static finalContext =>
+                static (finalContext, _) =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         finalContext.BrokerMessageIdentifier =
@@ -112,7 +110,7 @@ public abstract class Producer : IProducer, IDisposable
                 },
                 _serviceProvider);
 
-            ExecutePipelineAsync(context).SafeWait();
+            ExecutePipelineAsync(context, CancellationToken.None).SafeWait();
 
             return context.BrokerMessageIdentifier;
         }
@@ -139,8 +137,6 @@ public abstract class Producer : IProducer, IDisposable
             onError);
 
     /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
-    [SuppressMessage("Usage", "VSTHRD103:Call async methods when in an async method", Justification = "Method executes synchronously")]
-    [SuppressMessage("Performance", "CA1849:Call async methods when in an async method", Justification = "Method executes synchronously")]
     public void Produce(IOutboundEnvelope envelope, Action<IBrokerMessageIdentifier?> onSuccess, Action<Exception> onError)
     {
         try
@@ -149,7 +145,7 @@ public abstract class Producer : IProducer, IDisposable
                 envelope,
                 this,
                 _behaviors,
-                static finalContext =>
+                static (finalContext, _) =>
                 {
                     static void OnSuccess(IBrokerMessageIdentifier? identifier, ProducerPipelineContext finalContext)
                     {
@@ -174,7 +170,7 @@ public abstract class Producer : IProducer, IDisposable
                 OnError = onError
             };
 
-            ExecutePipelineAsync(context).SafeWait();
+            ExecutePipelineAsync(context, CancellationToken.None).SafeWait();
         }
         catch (Exception ex)
         {
@@ -325,19 +321,21 @@ public abstract class Producer : IProducer, IDisposable
             onError,
             state);
 
-    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
     public ValueTask<IBrokerMessageIdentifier?> ProduceAsync(
         object? message,
-        IReadOnlyCollection<MessageHeader>? headers = null) =>
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default) =>
         ProduceAsync(
             OutboundEnvelopeFactory.CreateEnvelope(
                 message,
                 headers,
                 EndpointConfiguration.Endpoint.GetEndpoint(message, EndpointConfiguration, _serviceProvider),
-                this));
+                this),
+            cancellationToken);
 
-    /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
-    public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope)
+    /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,CancellationToken)" />
+    public async ValueTask<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -345,17 +343,17 @@ public abstract class Producer : IProducer, IDisposable
                 envelope,
                 this,
                 _behaviors,
-                static async finalContext =>
+                static async (finalContext, finalCancellationToken) =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         finalContext.BrokerMessageIdentifier =
-                            await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
+                            await ((Producer)finalContext.Producer).ProduceCoreAsync(finalContext.Envelope, finalCancellationToken).ConfigureAwait(false);
 
                     finalContext.ServiceProvider.GetRequiredService<IProducerLogger<IProducer>>().LogProduced(finalContext.Envelope);
                 },
                 _serviceProvider);
 
-            await ExecutePipelineAsync(context).ConfigureAwait(false);
+            await ExecutePipelineAsync(context, cancellationToken).ConfigureAwait(false);
 
             return context.BrokerMessageIdentifier;
         }
@@ -366,29 +364,40 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null) =>
+    /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        byte[]? messageContent,
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default) =>
         RawProduceAsync(
             EndpointConfiguration.Endpoint.GetEndpoint(messageContent, EndpointConfiguration, _serviceProvider),
             messageContent,
-            headers);
+            headers,
+            cancellationToken);
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null) =>
+    /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
+    public ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default) =>
         RawProduceAsync(
             EndpointConfiguration.Endpoint.GetEndpoint(messageStream, EndpointConfiguration, _serviceProvider),
             messageStream,
-            headers);
+            headers,
+            cancellationToken);
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, byte[],IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, byte[],IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
         byte[]? messageContent,
-        IReadOnlyCollection<MessageHeader>? headers = null)
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(new OutboundEnvelope(messageContent, headers, endpoint, this)).ConfigureAwait(false);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
+                new OutboundEnvelope(messageContent, headers, endpoint, this),
+                cancellationToken).ConfigureAwait(false);
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -401,15 +410,18 @@ public abstract class Producer : IProducer, IDisposable
         }
     }
 
-    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, Stream?,IReadOnlyCollection{MessageHeader}?)" />
+    /// <inheritdoc cref="IProducer.RawProduceAsync(ProducerEndpoint, Stream?,IReadOnlyCollection{MessageHeader}?,CancellationToken)" />
     public async ValueTask<IBrokerMessageIdentifier?> RawProduceAsync(
         ProducerEndpoint endpoint,
         Stream? messageStream,
-        IReadOnlyCollection<MessageHeader>? headers = null)
+        IReadOnlyCollection<MessageHeader>? headers = null,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(new OutboundEnvelope(messageStream, headers, endpoint, this)).ConfigureAwait(false);
+            IBrokerMessageIdentifier? brokerMessageIdentifier = await ProduceCoreAsync(
+                new OutboundEnvelope(messageStream, headers, endpoint, this),
+                cancellationToken).ConfigureAwait(false);
 
             _logger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
@@ -474,11 +486,14 @@ public abstract class Producer : IProducer, IDisposable
     /// <param name="envelope">
     ///     The envelope containing the message to be produced.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="ValueTask{TResult}" /> representing the asynchronous operation. The task result contains the
     ///     message identifier assigned by the broker (the Kafka offset or similar).
     /// </returns>
-    protected abstract ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope);
+    protected abstract ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged  resources.
@@ -494,18 +509,21 @@ public abstract class Producer : IProducer, IDisposable
         _isDisposed = true;
     }
 
-    private static ValueTask ExecutePipelineAsync(ProducerPipelineContext context)
+    private static ValueTask ExecutePipelineAsync(ProducerPipelineContext context, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (context.CurrentStepIndex >= context.Pipeline.Count)
-            return context.FinalAction(context);
+            return context.FinalAction(context, cancellationToken);
 
         return context.Pipeline[context.CurrentStepIndex].HandleAsync(
             context,
-            static nextContext =>
+            static (nextContext, nextCancellationToken) =>
             {
                 nextContext.CurrentStepIndex++;
-                return ExecutePipelineAsync(nextContext);
-            });
+                return ExecutePipelineAsync(nextContext, nextCancellationToken);
+            },
+            cancellationToken);
     }
 
     private void RawProduce(

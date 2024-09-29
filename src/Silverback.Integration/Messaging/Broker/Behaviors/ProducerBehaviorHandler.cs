@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker.Behaviors;
@@ -11,7 +12,10 @@ namespace Silverback.Messaging.Broker.Behaviors;
 /// <param name="context">
 ///     The context that is passed along the producer behaviors pipeline.
 /// </param>
+/// <param name="cancellationToken">
+///     The cancellation token that can be used to cancel the operation.
+/// </param>
 /// <returns>
 ///     A <see cref="ValueTask" /> representing the asynchronous operation.
 /// </returns>
-public delegate ValueTask ProducerBehaviorHandler(ProducerPipelineContext context);
+public delegate ValueTask ProducerBehaviorHandler(ProducerPipelineContext context, CancellationToken cancellationToken);

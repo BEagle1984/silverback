@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -38,7 +39,7 @@ public class SequencerProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Sequencer;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -53,12 +54,12 @@ public class SequencerProducerBehavior : IProducerBehavior
             await foreach (IOutboundEnvelope? envelope in envelopesEnumerable.ConfigureAwait(false))
             {
                 ProducerPipelineContext newContext = context.Clone(envelope);
-                await next(newContext).ConfigureAwait(false);
+                await next(newContext, cancellationToken).ConfigureAwait(false);
             }
 
             return;
         }
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -66,9 +67,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().BeNull();
     }
@@ -93,9 +95,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "1"));
     }
@@ -120,9 +123,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "One=1,Two=2"));
     }
@@ -150,9 +154,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.MessageId, "Heidi!"));
     }
@@ -183,9 +188,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 _kafkaProducer,
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.GetValue(DefaultMessageHeaders.MessageId).Should().NotBeNullOrEmpty();
     }
@@ -216,9 +222,10 @@ public sealed class KafkaMessageKeyInitializerProducerBehaviorFixture : IDisposa
                 envelope,
                 Substitute.For<IProducer>(),
                 [],
-                _ => ValueTaskFactory.CompletedTask,
+                (_, _) => ValueTaskFactory.CompletedTask,
                 Substitute.For<IServiceProvider>()),
-            _ => default);
+            (_, _) => default,
+            CancellationToken.None);
 
         envelope.Headers.Should().NotContain(header => header.Name == DefaultMessageHeaders.MessageId);
     }

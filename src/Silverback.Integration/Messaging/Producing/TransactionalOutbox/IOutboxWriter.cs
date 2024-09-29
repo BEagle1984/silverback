@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Producing.TransactionalOutbox;
@@ -23,10 +24,16 @@ public interface IOutboxWriter
     /// <param name="context">
     ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null);
+    Task AddAsync(
+        OutboxMessage outboxMessage,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Adds the message contained in the specified envelope to the outbox.
@@ -37,10 +44,16 @@ public interface IOutboxWriter
     /// <param name="context">
     ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null);
+    Task AddAsync(
+        IEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Adds the message contained in the specified envelope to the outbox.
@@ -51,8 +64,14 @@ public interface IOutboxWriter
     /// <param name="context">
     ///     The <see cref="ISilverbackContext" /> in the current scope.
     /// </param>
+    /// <param name="cancellationToken">
+    ///   The cancellation token that can be used to cancel the operation.
+    ///  </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null);
+    Task AddAsync(
+        IAsyncEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default);
 }

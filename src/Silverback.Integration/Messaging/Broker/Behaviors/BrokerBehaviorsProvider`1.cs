@@ -33,6 +33,5 @@ public class BrokerBehaviorsProvider<TBehavior> : IBrokerBehaviorsProvider<TBeha
         _behaviors ??= _serviceProvider
             .GetServices<IBrokerBehavior>()
             .OfType<TBehavior>()
-            .SortBySortIndex()
-            .ToList();
+            .SortBySortIndex();
 }

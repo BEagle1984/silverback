@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Storage;
@@ -33,8 +34,8 @@ public class InMemoryOutboxWriter : IOutboxWriter
         _logger = Check.NotNull(logger, nameof(logger));
     }
 
-    /// <inheritdoc cref="AddAsync(OutboxMessage, ISilverbackContext)" />
-    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(OutboxMessage,ISilverbackContext,CancellationToken)" />
+    public Task AddAsync(OutboxMessage outboxMessage, ISilverbackContext? context = null, CancellationToken cancellationToken = default)
     {
         WarnIfTransaction(context);
 
@@ -42,8 +43,11 @@ public class InMemoryOutboxWriter : IOutboxWriter
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public Task AddAsync(IEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public Task AddAsync(
+        IEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
@@ -51,21 +55,28 @@ public class InMemoryOutboxWriter : IOutboxWriter
 
         foreach (OutboxMessage outboxMessage in outboxMessages)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             _outbox.Add(outboxMessage);
         }
 
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc cref="AddAsync(System.Collections.Generic.IAsyncEnumerable{Silverback.Messaging.Producing.TransactionalOutbox.OutboxMessage},Silverback.ISilverbackContext?)" />
-    public async Task AddAsync(IAsyncEnumerable<OutboxMessage> outboxMessages, ISilverbackContext? context = null)
+    /// <inheritdoc cref="AddAsync(IAsyncEnumerable{OutboxMessage},ISilverbackContext?,CancellationToken)" />
+    public async Task AddAsync(
+        IAsyncEnumerable<OutboxMessage> outboxMessages,
+        ISilverbackContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         Check.NotNull(outboxMessages, nameof(outboxMessages));
 
         WarnIfTransaction(context);
 
-        await foreach (OutboxMessage outboxMessage in outboxMessages)
+        await foreach (OutboxMessage outboxMessage in outboxMessages.WithCancellation(cancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             _outbox.Add(outboxMessage);
         }
     }

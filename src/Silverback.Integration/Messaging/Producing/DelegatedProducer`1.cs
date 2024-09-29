@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -14,13 +15,19 @@ using Silverback.Util;
 namespace Silverback.Messaging.Producing;
 
 /// <inheritdoc cref="Producer" />
-internal class DelegatedProducer : Producer
+internal class DelegatedProducer<T> : Producer
 {
     private static readonly DelegatedClient DelegatedClientInstance = new();
 
-    private readonly ProduceDelegate _delegate;
+    private readonly T _state;
 
-    public DelegatedProducer(ProduceDelegate produceDelegate, ProducerEndpointConfiguration endpointConfiguration, IServiceProvider serviceProvider)
+    private readonly ProduceDelegate<T> _delegate;
+
+    public DelegatedProducer(
+        ProduceDelegate<T> produceDelegate,
+        ProducerEndpointConfiguration endpointConfiguration,
+        T state,
+        IServiceProvider serviceProvider)
         : base(
             Guid.NewGuid().ToString("D"),
             DelegatedClientInstance,
@@ -29,6 +36,7 @@ internal class DelegatedProducer : Producer
             serviceProvider,
             serviceProvider.GetRequiredService<IProducerLogger<Producer>>())
     {
+        _state = state;
         _delegate = Check.NotNull(produceDelegate, nameof(produceDelegate));
     }
 
@@ -43,10 +51,12 @@ internal class DelegatedProducer : Producer
         Action<Exception, TState> onError,
         TState state) => throw new NotSupportedException("Only asynchronous operations are supported.");
 
-    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+    /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,CancellationToken)" />
+    protected override async ValueTask<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        IOutboundEnvelope envelope,
+        CancellationToken cancellationToken)
     {
-        await _delegate.Invoke(envelope).ConfigureAwait(false);
+        await _delegate.Invoke(envelope, _state, cancellationToken).ConfigureAwait(false);
 
         return null;
     }

@@ -60,7 +60,7 @@ public class KafkaActivityEnricherFixture
             envelope,
             Substitute.For<IProducer>(),
             [],
-            _ => ValueTaskFactory.CompletedTask,
+            (_, _) => ValueTaskFactory.CompletedTask,
             Substitute.For<IServiceProvider>());
 
         Activity activity = new("Test Activity");

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -29,7 +30,7 @@ public class CustomHeadersMapperProducerBehavior : IProducerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Producer.CustomHeadersMapper;
 
     /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    public async ValueTask HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -37,6 +38,6 @@ public class CustomHeadersMapperProducerBehavior : IProducerBehavior
         if (_mappings is { Count: > 0 })
             _mappings.Apply(context.Envelope.Headers);
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }
