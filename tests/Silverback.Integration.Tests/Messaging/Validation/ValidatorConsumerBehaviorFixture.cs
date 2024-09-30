@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Validation;
 
-public class ValidatorConsumerBehaviorTests
+public class ValidatorConsumerBehaviorFixture
 {
     private readonly ServiceProvider _serviceProvider;
 
@@ -29,7 +30,7 @@ public class ValidatorConsumerBehaviorTests
 
     private readonly IConsumerLogger<ValidatorConsumerBehavior> _consumerLogger;
 
-    public ValidatorConsumerBehaviorTests()
+    public ValidatorConsumerBehaviorFixture()
     {
         ServiceCollection services = [];
 
@@ -50,7 +51,7 @@ public class ValidatorConsumerBehaviorTests
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
     [SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "Not working")]
-    public static TheoryData<TestValidationMessage> HandleAsync_None_WarningIsNotLogged_TestData =>
+    public static TheoryData<TestValidationMessage> HandleAsync_ShouldNotLog_WhenModeNone_TestData =>
         new()
         {
             new TestValidationMessage
@@ -75,7 +76,7 @@ public class ValidatorConsumerBehaviorTests
         };
 
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-    public static TheoryData<TestValidationMessage, string> HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData =>
+    public static TheoryData<TestValidationMessage, string> HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData =>
         new()
         {
             {
@@ -130,8 +131,8 @@ public class ValidatorConsumerBehaviorTests
         };
 
     [Theory]
-    [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
-    public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
+    [MemberData(nameof(HandleAsync_ShouldNotLog_WhenModeNone_TestData))]
+    public async Task HandleAsync_ShouldNotLog_WhenModeNone(IIntegrationMessage message)
     {
         TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
@@ -149,11 +150,12 @@ public class ValidatorConsumerBehaviorTests
         IRawInboundEnvelope? result = null;
         await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
@@ -163,7 +165,7 @@ public class ValidatorConsumerBehaviorTests
     [InlineData(MessageValidationMode.None)]
     [InlineData(MessageValidationMode.LogWarning)]
     [InlineData(MessageValidationMode.ThrowException)]
-    public async Task HandleAsync_ValidMessage_NoLogAndNoException(MessageValidationMode validationMode)
+    public async Task HandleAsync_ShouldNotLogOrThrow_WhenMessageIsValid(MessageValidationMode validationMode)
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
         TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
@@ -182,21 +184,20 @@ public class ValidatorConsumerBehaviorTests
         IRawInboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            }).AsTask();
+            },
+            CancellationToken.None).AsTask();
         await act.Should().NotThrowAsync<ValidationException>();
         result.Should().NotBeNull();
         _loggerSubstitute.DidNotReceive(LogLevel.Warning, null).Should().BeTrue();
     }
 
     [Theory]
-    [MemberData(nameof(HandleAsync_MessageValidationModeLogWarning_WarningIsLogged_TestData))]
-    public async Task HandleAsync_LogWarning_WarningIsLogged(
-        IIntegrationMessage message,
-        string expectedValidationMessage)
+    [MemberData(nameof(HandleAsync_ShouldLogWarning_WhenModeIsLogWarning_TestData))]
+    public async Task HandleAsync_ShouldLogWarning_WhenModeIsLogWarning(IIntegrationMessage message, string expectedValidationMessage)
     {
         TestConsumerEndpoint endpoint = new TestConsumerEndpointConfiguration("topic1")
         {
@@ -214,11 +215,12 @@ public class ValidatorConsumerBehaviorTests
         IRawInboundEnvelope? result = null;
         await new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().NotBeNull();
         expectedValidationMessage += " | endpointName: topic1, messageType: (null), messageId: (null), unused1: (null), unused2: (null)";
@@ -226,7 +228,7 @@ public class ValidatorConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_ThrowException_ExceptionIsThrown()
+    public async Task HandleAsync_ShouldThrow_WhenModeIsThrowException()
     {
         TestValidationMessage message = new() { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
         string expectedMessage =
@@ -246,11 +248,12 @@ public class ValidatorConsumerBehaviorTests
         IRawInboundEnvelope? result = null;
         Func<Task> act = () => new ValidatorConsumerBehavior(_consumerLogger).HandleAsync(
             ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            }).AsTask();
+            },
+            CancellationToken.None).AsTask();
 
         await act.Should().ThrowAsync<MessageValidationException>().WithMessage(expectedMessage);
         result.Should().BeNull();

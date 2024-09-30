@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +21,13 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 
-public class FatalExceptionLoggerConsumerBehaviorTests
+public class FatalExceptionLoggerConsumerBehaviorFixture
 {
     private readonly LoggerSubstitute<FatalExceptionLoggerConsumerBehavior> _loggerSubstitute;
 
     private readonly IConsumerLogger<FatalExceptionLoggerConsumerBehavior> _consumerLogger;
 
-    public FatalExceptionLoggerConsumerBehaviorTests()
+    public FatalExceptionLoggerConsumerBehaviorFixture()
     {
         IServiceProvider serviceProvider = ServiceProviderHelper.GetScopedServiceProvider(
             services => services
@@ -43,7 +44,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_ExceptionThrown_ExceptionLogged()
+    public async Task HandleAsync_ShouldLogException()
     {
         RawInboundEnvelope rawEnvelope = new(
             new byte[5],
@@ -61,7 +62,8 @@ public class FatalExceptionLoggerConsumerBehaviorTests
                     Substitute.For<ISequenceStore>(),
                     [],
                     Substitute.For<IServiceProvider>()),
-                _ => throw new InvalidCastException());
+                (_, _) => throw new InvalidCastException(),
+                CancellationToken.None);
         }
         catch
         {
@@ -72,7 +74,7 @@ public class FatalExceptionLoggerConsumerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_ExceptionThrown_ExceptionRethrown()
+    public async Task HandleAsync_ShouldRethrow()
     {
         RawInboundEnvelope rawEnvelope = new(
             new byte[5],
@@ -88,7 +90,8 @@ public class FatalExceptionLoggerConsumerBehaviorTests
                 Substitute.For<ISequenceStore>(),
                 [],
                 Substitute.For<IServiceProvider>()),
-            _ => throw new InvalidCastException()).AsTask();
+            (_, _) => throw new InvalidCastException(),
+            CancellationToken.None).AsTask();
 
         await act.Should().ThrowExactlyAsync<ConsumerPipelineFatalException>()
             .WithInnerExceptionExactly<ConsumerPipelineFatalException, InvalidCastException>();

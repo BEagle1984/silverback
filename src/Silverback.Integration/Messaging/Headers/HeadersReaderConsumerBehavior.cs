@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -17,20 +18,14 @@ public class HeadersReaderConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.HeadersReader;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(
-        ConsumerPipelineContext context,
-        ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         if (context.Envelope is IInboundEnvelope inboundEnvelope)
-        {
-            HeaderAttributeHelper.SetFromHeaders(
-                inboundEnvelope.Message,
-                inboundEnvelope.Headers);
-        }
+            HeaderAttributeHelper.SetFromHeaders(inboundEnvelope.Message, inboundEnvelope.Headers);
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -12,6 +13,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -128,5 +130,71 @@ public class ConsumerFixture : KafkaFixture
         await Helper.WaitUntilAllMessagesAreConsumedAsync();
         receivedMessages.Sum().Should().Be(12);
         receivedMessages[1].Should().Be(6);
+    }
+
+    [Fact]
+    public async Task StopAsync_ShouldCancelProcessing()
+    {
+        bool received = false;
+        bool cancelled = false;
+        using CancellationTokenSource antiDeadlockCancellationTokenSource = new();
+        using SemaphoreSlim semaphore = new(0);
+
+        await Host.ConfigureServicesAndRunAsync(
+            services => services
+                .AddLogging()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(
+                    options => options
+                        .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                .AddKafkaClients(
+                    clients => clients
+                        .WithBootstrapServers("PLAINTEXT://e2e")
+                        .AddConsumer(
+                            consumer => consumer
+                                .WithGroupId(DefaultGroupId)
+                                .LimitBackpressure(1)
+                                .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
+                .AddDelegateSubscriber<TestEventOne, CancellationToken>(HandleEventAsync));
+
+        async Task HandleEventAsync(TestEventOne message, CancellationToken cancellationToken)
+        {
+            received = true;
+
+            while (!cancellationToken.IsCancellationRequested && !antiDeadlockCancellationTokenSource.IsCancellationRequested)
+            {
+                await Task.Delay(10, CancellationToken.None);
+            }
+
+            cancelled = true;
+
+            await semaphore.WaitAsync(CancellationToken.None);
+        }
+
+        try
+        {
+            KafkaConsumer consumer = Host.ServiceProvider.GetRequiredService<IConsumerCollection>().OfType<KafkaConsumer>().Single();
+
+            IProducer producer = Helper.GetProducerForEndpoint(DefaultTopicName);
+            await producer.ProduceAsync(new TestEventOne(), cancellationToken: CancellationToken.None);
+
+            await AsyncTestingUtil.WaitAsync(() => received);
+            received.Should().BeTrue();
+
+            consumer.StopAsync().FireAndForget();
+
+            await AsyncTestingUtil.WaitAsync(() => cancelled);
+            cancelled.Should().BeTrue();
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+
+            semaphore.Release();
+            await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Stopped);
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Stopped);
+        }
+        finally
+        {
+            antiDeadlockCancellationTokenSource.Cancel();
+            semaphore.Release(); // in any case, always release to avoid deadlocking
+        }
     }
 }

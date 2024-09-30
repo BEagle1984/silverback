@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -16,15 +17,15 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 
-public class ActivityConsumerBehaviorTests
+public class ActivityConsumerBehaviorFixture
 {
-    public ActivityConsumerBehaviorTests()
+    public ActivityConsumerBehaviorFixture()
     {
         Activity.DefaultIdFormat = ActivityIdFormat.W3C;
     }
 
     [Fact]
-    public async Task HandleAsync_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
+    public async Task HandleAsync_ShouldStartNewActivityAndSetParentIdFromHeader()
     {
         RawInboundEnvelope rawEnvelope = new(
             new byte[5],
@@ -48,7 +49,7 @@ public class ActivityConsumerBehaviorTests
                     Substitute.For<ISequenceStore>(),
                     [],
                     Substitute.For<IServiceProvider>()),
-                _ =>
+                (_, _) =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current!.ParentId.Should()
@@ -58,13 +59,14 @@ public class ActivityConsumerBehaviorTests
                     entered = true;
 
                     return default;
-                });
+                },
+                CancellationToken.None);
 
         entered.Should().BeTrue();
     }
 
     [Fact]
-    public async Task HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
+    public async Task HandleAsync_ShouldStartNewActivity_WhenNoHeaderIsSet()
     {
         RawInboundEnvelope rawEnvelope = new(
             new byte[5],
@@ -88,7 +90,7 @@ public class ActivityConsumerBehaviorTests
                     Substitute.For<ISequenceStore>(),
                     [],
                     Substitute.For<IServiceProvider>()),
-                _ =>
+                (_, _) =>
                 {
                     Activity.Current.Should().NotBeNull();
                     Activity.Current!.Id.Should().NotBeNullOrEmpty();
@@ -96,7 +98,8 @@ public class ActivityConsumerBehaviorTests
                     entered = true;
 
                     return default;
-                });
+                },
+                CancellationToken.None);
 
         entered.Should().BeTrue();
     }

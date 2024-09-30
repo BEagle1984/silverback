@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -19,7 +20,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher - 10;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -32,7 +33,7 @@ public class KafkaOffsetStoreConsumerBehavior : IConsumerBehavior
             context.TransactionManager.Committing.AddHandler(CommitOffsetsAsync);
         }
 
-        return next(context);
+        return next(context, cancellationToken);
     }
 
     private static KafkaOffsetStoreScope CreateOffsetStoreScope(ConsumerPipelineContext context, KafkaOffsetStoreSettings storeSettings) =>

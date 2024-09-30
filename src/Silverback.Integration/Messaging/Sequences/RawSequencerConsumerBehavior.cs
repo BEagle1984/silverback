@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -34,12 +35,12 @@ public class RawSequencerConsumerBehavior : SequencerConsumerBehaviorBase
     public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.RawSequencer;
 
     /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
-    protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    protected override ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
-        Task processingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
+        Task processingTask = Task.Run(async () => await next(context, cancellationToken).ConfigureAwait(false), CancellationToken.None);
 
         context.ProcessingTask ??= processingTask;
 

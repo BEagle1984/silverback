@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -32,7 +33,7 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Validator;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -47,6 +48,6 @@ public class ValidatorConsumerBehavior : IConsumerBehavior
             _logger.LogInvalidMessage(context.Envelope, validationErrors);
         }
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

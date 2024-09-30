@@ -36,6 +36,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
     private readonly object _reconnectLock = new();
 
+    private CancellationTokenSource _processingCancellationTokenSource = new();
+
     private bool _isReconnecting;
 
     private bool _isDisposed;
@@ -173,6 +175,12 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         try
         {
+            if (_processingCancellationTokenSource.IsCancellationRequested)
+            {
+                _processingCancellationTokenSource.Dispose();
+                _processingCancellationTokenSource = new CancellationTokenSource();
+            }
+
             await StartCoreAsync().ConfigureAwait(false);
 
             IsStarted = true;
@@ -208,6 +216,12 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         try
         {
+#if NETSTANDARD
+            _processingCancellationTokenSource.Cancel();
+#else
+            await _processingCancellationTokenSource.CancelAsync().ConfigureAwait(false);
+#endif
+
             await StopCoreAsync().ConfigureAwait(false);
 
             if (waitUntilStopped)
@@ -384,7 +398,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
 
         _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
-        await ExecutePipelineAsync(context).ConfigureAwait(false);
+        await ExecutePipelineAsync(context, _processingCancellationTokenSource.Token).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -419,6 +433,7 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         Client.Disconnecting.RemoveHandler(OnClientDisconnectingAsync);
 
         _startStopSemaphore.Dispose();
+        _processingCancellationTokenSource.Dispose();
 
         _isDisposed = true;
     }
@@ -432,18 +447,19 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
     protected bool IsStartedAndNotStopping() =>
         Client.Status is ClientStatus.Initialized or ClientStatus.Initializing && (IsStarting || IsStarted) && !IsStopping;
 
-    private static ValueTask ExecutePipelineAsync(ConsumerPipelineContext context)
+    private static ValueTask ExecutePipelineAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         if (context.CurrentStepIndex >= context.Pipeline.Count)
             return ValueTaskFactory.CompletedTask;
 
         return context.Pipeline[context.CurrentStepIndex].HandleAsync(
             context,
-            static nextContext =>
+            static (nextContext, nextCancellationToken) =>
             {
                 nextContext.CurrentStepIndex++;
-                return ExecutePipelineAsync(nextContext);
-            });
+                return ExecutePipelineAsync(nextContext, nextCancellationToken);
+            },
+            cancellationToken);
     }
 
     private ValueTask OnClientConnectedAsync(BrokerClient client)
@@ -460,8 +476,6 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
             await StopCoreAsync().ConfigureAwait(false);
 
         await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-
-        _statusInfo.SetStopped();
     }
 
     private async ValueTask WaitUntilConsumingStoppedAsync()
@@ -471,6 +485,8 @@ public abstract class Consumer<TIdentifier> : IConsumer, IDisposable
         try
         {
             await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
+
+            _statusInfo.SetStopped();
         }
         finally
         {

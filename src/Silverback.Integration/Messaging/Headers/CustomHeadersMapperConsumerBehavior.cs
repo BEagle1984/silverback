@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -29,7 +30,7 @@ public class CustomHeadersMapperConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.CustomHeadersMapper;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -37,6 +38,6 @@ public class CustomHeadersMapperConsumerBehavior : IConsumerBehavior
         if (_mappings is { Count: > 0 })
             _mappings.Revert(context.Envelope.Headers);
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 }

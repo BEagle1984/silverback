@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -36,7 +37,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
     [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Exception rethrown by the Subscribe method")]
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -53,7 +54,7 @@ public class TransactionHandlerConsumerBehavior : IConsumerBehavior
 
             _logger.LogProcessing(context.Envelope);
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
 
             if (context.Sequence == null)
             {

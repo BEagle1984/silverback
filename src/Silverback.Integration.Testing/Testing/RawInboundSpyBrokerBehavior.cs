@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -31,13 +32,13 @@ public class RawInboundSpyBrokerBehavior : IConsumerBehavior
     public int SortIndex => int.MinValue;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         _integrationSpy.AddRawInboundEnvelope(context.Envelope);
 
-        return next(context);
+        return next(context, cancellationToken);
     }
 }

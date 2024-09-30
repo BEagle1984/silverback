@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -30,14 +31,14 @@ public class DecryptorConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Decryptor;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
 
         DecryptIfNeeded(context.Envelope);
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 
     private void DecryptIfNeeded(IRawInboundEnvelope envelope)

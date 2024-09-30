@@ -43,7 +43,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
     public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -52,12 +52,12 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         {
             if (context.Sequence is RawSequence)
             {
-                await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled)
+                await PublishEnvelopeAsync(context, context.Envelope.Endpoint.Configuration.ThrowIfUnhandled, cancellationToken)
                     .ConfigureAwait(false);
             }
             else
             {
-                await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
+                await PublishSequenceAsync(context.Sequence, context, cancellationToken).ConfigureAwait(false);
             }
         }
         else
@@ -66,7 +66,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
             if (HasAnyMessageStreamSubscriber(context) && context.Envelope is IInboundEnvelope envelope)
             {
-                UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context).ConfigureAwait(false);
+                UnboundedSequence unboundedSequence = await GetUnboundedSequenceAsync(context, cancellationToken).ConfigureAwait(false);
 
                 AddToSequenceResult result = await unboundedSequence.AddAsync(envelope, null, false).ConfigureAwait(false);
 
@@ -76,21 +76,22 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                 throwIfUnhandled &= result.PushedStreamsCount == 0;
             }
 
-            await PublishEnvelopeAsync(context, throwIfUnhandled).ConfigureAwait(false);
+            await PublishEnvelopeAsync(context, throwIfUnhandled, cancellationToken).ConfigureAwait(false);
         }
 
-        await next(context).ConfigureAwait(false);
+        await next(context, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task PublishEnvelopeAsync(
         ConsumerPipelineContext context,
-        bool throwIfUnhandled) =>
+        bool throwIfUnhandled,
+        CancellationToken cancellationToken) =>
         await context.ServiceProvider.GetRequiredService<IPublisher>()
-            .PublishAsync(context.Envelope, throwIfUnhandled).ConfigureAwait(false);
+            .PublishAsync(context.Envelope, throwIfUnhandled, cancellationToken).ConfigureAwait(false);
 
-    private async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
+    private async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
-        Task processingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+        Task processingTask = await PublishStreamProviderAsync(sequence, context, cancellationToken).ConfigureAwait(false);
 
         context.ProcessingTask = processingTask;
 
@@ -105,7 +106,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
             ]);
     }
 
-    private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context)
+    private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         const string sequenceIdPrefix = "unbounded|";
 
@@ -116,14 +117,14 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
         sequence = new UnboundedSequence(sequenceIdPrefix + Guid.NewGuid().ToString("N"), context);
         await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
-        await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+        await PublishStreamProviderAsync(sequence, context, cancellationToken).ConfigureAwait(false);
 
         return sequence;
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "Exception passed to AbortAsync to log and forward")]
     [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is synchronous")]
-    private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
+    private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context, CancellationToken cancellationToken)
     {
         _logger.LogConsumerLowLevelTrace(
             "Publishing {sequenceType} '{sequenceId}'...",
@@ -136,7 +137,7 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
 
         IStreamPublisher publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
-        IReadOnlyCollection<Task> processingTasks = await publisher.PublishAsync(sequence.StreamProvider).ConfigureAwait(false);
+        IReadOnlyCollection<Task> processingTasks = await publisher.PublishAsync(sequence.StreamProvider, cancellationToken).ConfigureAwait(false);
 
         if (processingTasks.Count == 0)
         {
@@ -216,7 +217,8 @@ public sealed class PublisherConsumerBehavior : IConsumerBehavior
                             sequence.SequenceId
                         ]);
                 }
-            });
+            },
+            CancellationToken.None); // Let this task run until completion
     }
 
     private bool HasAnyMessageStreamSubscriber(ConsumerPipelineContext context) =>

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -52,7 +52,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     public abstract int SortIndex { get; }
 
     /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-    public virtual async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+    public virtual async ValueTask HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken)
     {
         Check.NotNull(context, nameof(context));
         Check.NotNull(next, nameof(next));
@@ -63,7 +63,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
 
         if (sequenceReader == null)
         {
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
             return;
         }
 
@@ -78,7 +78,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
                 next,
                 sequenceReader,
                 originalEnvelope,
-                previousSequence)
+                previousSequence,
+                cancellationToken)
             .ConfigureAwait(false);
 
         await HandleCompletedSequenceAsync(context, sequence).ConfigureAwait(false);
@@ -93,10 +94,13 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     /// <param name="next">
     ///     The next behavior in the pipeline.
     /// </param>
+    /// <param name="cancellationToken">
+    ///     The cancellation token that can be used to cancel the operation.
+    /// </param>
     /// <returns>
     ///     A <see cref="Task" /> representing the asynchronous operation.
     /// </returns>
-    protected abstract ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
+    protected abstract ValueTask PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next, CancellationToken cancellationToken);
 
     /// <summary>
     ///     When overridden in a derived class awaits for the sequence to be processed by the other twin behavior.
@@ -178,7 +182,8 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
         ConsumerBehaviorHandler next,
         ISequenceReader sequenceReader,
         IRawInboundEnvelope originalEnvelope,
-        ISequence? previousSequence)
+        ISequence? previousSequence,
+        CancellationToken cancellationToken)
     {
         ISequence? sequence;
         AddToSequenceResult addToSequenceResult;
@@ -192,7 +197,7 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
             if (sequence == null)
                 return null;
 
-            await PublishSequenceIfNewAsync(context, next, sequence).ConfigureAwait(false);
+            await PublishSequenceIfNewAsync(context, next, sequence, cancellationToken).ConfigureAwait(false);
 
             addToSequenceResult = await sequence.AddAsync(
                     originalEnvelope,
@@ -266,13 +271,14 @@ public abstract class SequencerConsumerBehaviorBase : IConsumerBehavior
     private async Task PublishSequenceIfNewAsync(
         ConsumerPipelineContext context,
         ConsumerBehaviorHandler next,
-        ISequence sequence)
+        ISequence sequence,
+        CancellationToken cancellationToken)
     {
         if (sequence.IsNew)
         {
             StartActivityIfNeeded(sequence);
 
-            await PublishSequenceAsync(context, next).ConfigureAwait(false);
+            await PublishSequenceAsync(context, next, cancellationToken).ConfigureAwait(false);
 
             if (context.ProcessingTask != null)
                 MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);

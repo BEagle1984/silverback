@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -41,11 +42,12 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 Substitute.For<ISequenceStore>(),
                 [],
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().BeAssignableTo<IInboundEnvelope<BinaryMessage>>();
         BinaryMessage binaryMessage = result.As<IInboundEnvelope<BinaryMessage>>().Message!;
@@ -71,11 +73,12 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 Substitute.For<ISequenceStore>(),
                 [],
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().BeSameAs(envelope);
     }
@@ -108,11 +111,12 @@ public class BinaryMessageHandlerConsumerBehaviorTests
                 Substitute.For<ISequenceStore>(),
                 [],
                 Substitute.For<IServiceProvider>()),
-            context =>
+            (context, _) =>
             {
                 result = context.Envelope;
                 return default;
-            });
+            },
+            CancellationToken.None);
 
         result.Should().BeSameAs(envelope);
     }
