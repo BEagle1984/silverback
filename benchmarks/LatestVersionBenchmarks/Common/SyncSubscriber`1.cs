@@ -3,8 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Silverback.Benchmarks.Latest.Common;
 

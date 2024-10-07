@@ -5,10 +5,11 @@ using System;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 
-namespace Silverback.Benchmarks.Latest;
+namespace Silverback.Benchmarks.V451;
 
 public abstract class Benchmark
 {
@@ -25,10 +26,13 @@ public abstract class Benchmark
             .ConfigureServices(
                 services =>
                 {
+                    services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Error));
                     ConfigureServices(services);
                     ConfigureSilverback(services.AddSilverback());
                 })
             .Build();
+
+        Host.Start();
 
         _publisher = Host.Services.GetRequiredService<IPublisher>();
     }

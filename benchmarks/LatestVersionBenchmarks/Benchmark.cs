@@ -5,6 +5,7 @@ using System;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 
@@ -14,9 +15,9 @@ public abstract class Benchmark
 {
     private IPublisher? _publisher;
 
-    protected IHost? Host { get; private set; }
-
     protected IPublisher Publisher => _publisher ?? throw new InvalidOperationException("The publisher is not initialized yet.");
+
+    protected IHost? Host { get; private set; }
 
     [GlobalSetup]
     public virtual void Setup()
@@ -25,10 +26,13 @@ public abstract class Benchmark
             .ConfigureServices(
                 services =>
                 {
+                    services.AddLogging(configure => configure.SetMinimumLevel(LogLevel.Error));
                     ConfigureServices(services);
                     ConfigureSilverback(services.AddSilverback());
                 })
             .Build();
+
+        Host.Start();
 
         _publisher = Host.Services.GetRequiredService<IPublisher>();
     }

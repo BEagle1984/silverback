@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>Silverback.Benchmarks.Latest</RootNamespace>
+    <RootNamespace>Silverback.Benchmarks.V451</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <OutputType>Exe</OutputType>
@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Silverback.Core" Version="4.5.1" />
     <PackageReference Include="Silverback.Core.Model" Version="4.5.1" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="4.5.1" />
   </ItemGroup>
 
 </Project>

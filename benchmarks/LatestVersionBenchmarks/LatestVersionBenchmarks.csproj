@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Silverback.Core" Version="$(BaseVersion)" />
     <PackageReference Include="Silverback.Core.Model" Version="$(BaseVersion)" />
+    <PackageReference Include="Silverback.Integration.Kafka" Version="$(BaseVersion)" />
   </ItemGroup>
 
 </Project>

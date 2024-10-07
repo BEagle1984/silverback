@@ -41,3 +41,20 @@
 | PublishAsync with multiple sync subscribers           |   3.997 us |   1.286 us |     -68 % |        10.63 KB |        1.391 KB |          -87 % |
 | PublishAsync with multiple async subscribers          |  14.188 us |   5.734 us |     -60 % |        12.53 KB |        4.179 KB |          -67 % |
 | PublishAsync with multiple sync and async subscribers |   7.038 us |   2.734 us |     -61 % |        11.29 KB |        2.769 KB |          -75 % |
+
+# Kafka producer
+
+Publishing 1000 messages to Kafka to a single topic using a single producer.
+
+## 4.5.1
+
+| Method                        | Mean    | Error   | StdDev  | Ratio | Gen0      | Allocated | Alloc Ratio |
+|------------------------------ |--------:|--------:|--------:|------:|----------:|----------:|------------:|
+| 'PublishAsync inside foreach' | 15.54 s | 0.007 s | 0.006 s |  1.00 | 2000.0000 |  21.58 MB |        1.00 |
+
+## 5.0.0
+
+| Method                        | Mean         | Error    | StdDev   | Ratio | Gen0     | Gen1     | Allocated | Alloc Ratio |
+|------------------------------ |-------------:|---------:|---------:|------:|---------:|---------:|----------:|------------:|
+| 'PublishAsync inside foreach' | 15,534.45 ms | 6.023 ms | 5.634 ms | 1.000 |        - |        - |   7.24 MB |        1.00 |
+| WrapAndPublishBatchAsync      |     15.61 ms | 0.207 ms | 0.193 ms | 0.001 | 421.8750 | 281.2500 |   4.32 MB |        0.60 |
