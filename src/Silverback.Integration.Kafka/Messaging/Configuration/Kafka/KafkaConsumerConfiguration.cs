@@ -125,9 +125,9 @@ public sealed partial record KafkaConsumerConfiguration : KafkaClientConfigurati
     /// <summary>
     ///     Gets the maximum number of messages to be consumed and enqueued waiting to be processed.
     ///     When <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be applied per partition.
-    ///     The default is 2.
+    ///     The default is 50.
     /// </summary>
-    public int BackpressureLimit { get; init; } = 2;
+    public int BackpressureLimit { get; init; } = 50;
 
     /// <summary>
     ///     Gets the timeout to wait for the metadata to be retrieved from the broker. The default is 30 seconds.

@@ -42,6 +42,7 @@ uid: releases
 * Add <xref:InboundEnvelopeBuilder> and <xref:OutboundEnvelopeBuilder> to testing packages to help creating test envelopes
 * Add `IgnoreNoMatchingSubscribersError` setting to MQTT producer endpoints, to prevent throwing when no subscriber is consuming the produced message
 * Add `CancellationToken` support to in-memory message bus (TODO: see...)
+* Increase default `KafkaConsumer` backpressure limit to 50
   
 ### Breaking Changes
 

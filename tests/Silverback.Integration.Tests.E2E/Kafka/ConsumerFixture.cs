@@ -45,7 +45,6 @@ public class ConsumerFixture : KafkaFixture
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .LimitBackpressure(1)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddDelegateSubscriber<IInboundEnvelope<TestEventWithKafkaKey>>(HandleEnvelope));
 
@@ -98,7 +97,6 @@ public class ConsumerFixture : KafkaFixture
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .LimitBackpressure(1)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddDelegateSubscriber<IInboundEnvelope<TestEventWithKafkaKey>>(HandleEnvelope));
 
@@ -153,7 +151,6 @@ public class ConsumerFixture : KafkaFixture
                         .AddConsumer(
                             consumer => consumer
                                 .WithGroupId(DefaultGroupId)
-                                .LimitBackpressure(1)
                                 .Consume(endpoint => endpoint.ConsumeFrom(DefaultTopicName))))
                 .AddDelegateSubscriber<TestEventOne, CancellationToken>(HandleEventAsync));
 
