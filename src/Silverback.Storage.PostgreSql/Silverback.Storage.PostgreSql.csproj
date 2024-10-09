@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DistributedLock.Postgres" Version="1.1.0" />
-    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="DistributedLock.Postgres" Version="1.2.0" />
+    <PackageReference Include="Npgsql" Version="8.0.4" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
   
