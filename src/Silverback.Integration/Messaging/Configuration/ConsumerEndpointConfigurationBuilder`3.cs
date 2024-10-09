@@ -113,12 +113,7 @@ public abstract partial class ConsumerEndpointConfigurationBuilder<TMessage, TCo
     public TBuilder EnableBatchProcessing(int batchSize, TimeSpan? maxWaitTime = null)
     {
         if (batchSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(batchSize),
-                batchSize,
-                "batchSize must be greater or equal to 1.");
-        }
+            throw new ArgumentOutOfRangeException(nameof(batchSize), batchSize, "batchSize must be greater or equal to 1.");
 
         _batchSize = batchSize;
         _batchMaxWaitTime = maxWaitTime;

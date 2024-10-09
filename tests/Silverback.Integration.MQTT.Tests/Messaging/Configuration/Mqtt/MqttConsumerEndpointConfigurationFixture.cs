@@ -126,7 +126,7 @@ public class MqttConsumerEndpointConfigurationFixture
         Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Batch processing cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");
+            .WithMessage("Batch processing is currently not supported for MQTT.");
     }
 
     private static MqttConsumerEndpointConfiguration GetValidConfiguration() =>

@@ -43,6 +43,6 @@ public sealed record MqttProducerEndpointConfiguration : ProducerEndpointConfigu
         base.ValidateCore();
 
         if (Chunk is { Size: < int.MaxValue })
-            throw new BrokerConfigurationException("Chunking cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");
+            throw new BrokerConfigurationException("Chunking is currently not supported for MQTT.");
     }
 }

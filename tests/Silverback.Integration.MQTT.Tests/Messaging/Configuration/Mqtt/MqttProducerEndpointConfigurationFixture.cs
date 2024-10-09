@@ -54,7 +54,7 @@ public class MqttProducerEndpointConfigurationFixture
         Action act = configuration.Validate;
 
         act.Should().ThrowExactly<BrokerConfigurationException>()
-            .WithMessage("Chunking cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");
+            .WithMessage("Chunking is currently not supported for MQTT.");
     }
 
     private static MqttProducerEndpointConfiguration GetValidConfiguration() =>

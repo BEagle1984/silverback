@@ -47,6 +47,6 @@ public sealed record MqttConsumerEndpointConfiguration : ConsumerEndpointConfigu
             throw new BrokerConfigurationException("A topic name cannot be null or empty.");
 
         if (Batch is { Size: > 1 })
-            throw new BrokerConfigurationException("Batch processing cannot be enabled for MQTT. This is due to the limitations of the MQTT protocol.");
+            throw new BrokerConfigurationException("Batch processing is currently not supported for MQTT.");
     }
 }
