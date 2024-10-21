@@ -7,11 +7,11 @@ namespace Silverback.TestBench.Models;
 
 public class TestBenchMessage
 {
-    public DateTime CreatedAt { get; init; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; }
 
-    public string MessageId { get; init; } = Guid.NewGuid().ToString("N");
+    public string MessageId { get; set; } = string.Empty;
 
-    public TimeSpan SimulatedProcessingTime { get; init; } = TimeSpan.FromMilliseconds(42);
+    public TimeSpan SimulatedProcessingTime { get; set; }
 
-    public int SimulatedFailuresCount { get; init; }
+    public int SimulatedFailuresCount { get; set; }
 }

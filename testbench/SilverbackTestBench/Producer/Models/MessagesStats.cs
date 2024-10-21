@@ -2,11 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Confluent.Kafka;
+using Silverback.TestBench.Configuration.Models;
 
 namespace Silverback.TestBench.Producer.Models;
 
 public class MessagesStats
 {
+    public MessagesStats(TopicConfiguration? topicConfiguration)
+    {
+        TopicConfiguration = topicConfiguration;
+    }
+
+    public TopicConfiguration? TopicConfiguration { get; }
+
     public int LagCount => ProducedCount - ProcessedCount - LostCount;
 
     public int ProducedCount { get; set; }

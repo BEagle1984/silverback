@@ -5,5 +5,12 @@ using System;
 
 namespace Silverback.TestBench.Configuration.Models;
 
-public record MqttTopicConfiguration(string TopicName, TimeSpan ProduceDelay = default)
-    : TopicConfiguration(TopicName, ProduceDelay);
+public record MqttTopicConfiguration(
+    string TopicName,
+    TimeSpan ProduceDelay,
+    double SimulatedFailureChance = 0.01,
+    bool Enabled = true)
+    : TopicConfiguration(TopicName, ProduceDelay, SimulatedFailureChance, Enabled)
+{
+    public override string ToString() => base.ToString();
+}

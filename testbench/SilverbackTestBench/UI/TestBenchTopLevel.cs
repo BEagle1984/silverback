@@ -25,6 +25,8 @@ public sealed class TestBenchTopLevel : Toplevel
         SwitchTo(_overviewTopLevel);
     }
 
+    private static void SwitchTo(Toplevel childView) => Application.Top.Add(childView);
+
     private void PositionAndResize()
     {
         X = 0;
@@ -36,22 +38,13 @@ public sealed class TestBenchTopLevel : Toplevel
     private MenuBar CreateAndAddMenuBar()
     {
         MenuBar menuBar = new(
-            new MenuBarItem[]
-            {
-                new("_Overview", string.Empty, () => SwitchTo(_overviewTopLevel)),
-                new("_Exit", string.Empty, () => Application.RequestStop(this))
-            });
+        [
+            new MenuBarItem("_Overview", string.Empty, () => SwitchTo(_overviewTopLevel)),
+            new MenuBarItem("_Exit", string.Empty, () => Application.RequestStop(this))
+        ]);
 
         Add(menuBar);
 
         return menuBar;
-    }
-
-    private void SwitchTo(Toplevel childView)
-    {
-        //if (!Application.MdiChildes.Contains(childView))
-        Application.Top.Add(childView);
-
-        //childView.ShowChild();
     }
 }

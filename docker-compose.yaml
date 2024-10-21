@@ -66,6 +66,8 @@ services:
       - "EMQX_NODE_NAME=emqx@node1.emqx.io"
       - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
       - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - "EMQX_DASHBOARD__DEFAULT_USERNAME=admin"
+      - "EMQX_DASHBOARD__DEFAULT_PASSWORD=emqx"
     healthcheck:
       test: [ "CMD", "/opt/emqx/bin/emqx", "ctl", "status" ]
       interval: 5s
@@ -82,6 +84,8 @@ services:
       - "EMQX_NODE_NAME=emqx@node2.emqx.io"
       - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
       - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+      - "EMQX_DASHBOARD__DEFAULT_USERNAME=admin"
+      - "EMQX_DASHBOARD__DEFAULT_PASSWORD=emqx"
     healthcheck:
       test: [ "CMD", "/opt/emqx/bin/emqx", "ctl", "status" ]
       interval: 5s

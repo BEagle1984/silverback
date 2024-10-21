@@ -15,6 +15,8 @@ public class ContainerStats
 
     public IContainerService ContainerService { get; }
 
+    public int ConsumedMessagesCount { get; set; }
+
     public int ProcessedMessagesCount { get; set; }
 
     public int ErrorsCount { get; set; }

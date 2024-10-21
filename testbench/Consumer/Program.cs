@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
 using Silverback.TestBench.Consumer;
@@ -22,6 +23,8 @@ builder.Services.AddLogging(
     {
         loggingBuilder.AddSerilog(
             new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Silverback", LogEventLevel.Verbose)
                 .WriteTo.File(
                     Environment.GetEnvironmentVariable("LOG_PATH") ?? "consumer.log",
                     formatProvider: CultureInfo.InvariantCulture)

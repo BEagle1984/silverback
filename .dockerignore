@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/.git/
+**/node_modules/
+**/coverage/
+*.log
+*.tmp

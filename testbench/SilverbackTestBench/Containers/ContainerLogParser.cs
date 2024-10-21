@@ -55,7 +55,7 @@ public sealed partial class ContainerLogParser : IDisposable
     [GeneratedRegex(@"Application is shutting down\.\.\.")]
     private static partial Regex StoppedRegex();
 
-    [GeneratedRegex(@"Processing inbound message.*endpointName: (?<topicName>.*?)(?=,.*?messageId: (?<messageId>.+?)(?=,|$))")]
+    [GeneratedRegex(@"Processing consumed message.*endpointName: (?<topicName>.*?)(?=,.*?messageId: (?<messageId>.+?)(?=,|$))")]
     private static partial Regex MessageProcessingRegex();
 
     [GeneratedRegex(@"Successfully processed message '(?<messageId>[^']+)' from topic '(?<topicName>[^']+)'")]
@@ -98,14 +98,14 @@ public sealed partial class ContainerLogParser : IDisposable
         {
             while (!reader.EndOfStream && !stoppingToken.IsCancellationRequested)
             {
-                ParseLogLine(await reader.ReadLineAsync(stoppingToken));
+                await ParseLogLineAsync(await reader.ReadLineAsync(stoppingToken), reader);
             }
 
             await Task.Delay(500, stoppingToken);
         }
     }
 
-    private void ParseLogLine(string? logLine)
+    private async ValueTask ParseLogLineAsync(string? logLine, StreamReader reader)
     {
         if (logLine == null)
             return;
@@ -123,9 +123,14 @@ public sealed partial class ContainerLogParser : IDisposable
                 Statistics.WarningsCount++;
                 break;
             case "ERR":
-                Statistics.ErrorsCount++;
+                string? nextLine = await reader.ReadLineAsync();
+                if (nextLine == null || !nextLine.Contains("SimulatedFailureException", StringComparison.Ordinal))
+                {
+                    Statistics.ErrorsCount++;
+                }
+
                 break;
-            case "FAT":
+            case "FTL":
                 Statistics.FatalErrorsCount++;
                 break;
             case "INF":
@@ -157,6 +162,7 @@ public sealed partial class ContainerLogParser : IDisposable
         if (!match.Success)
             return false;
 
+        Statistics.ConsumedMessagesCount++;
         _messagesTracker.TrackConsumed(match.Groups["topicName"].Value);
         return true;
     }
@@ -168,9 +174,7 @@ public sealed partial class ContainerLogParser : IDisposable
             return false;
 
         Statistics.ProcessedMessagesCount++;
-        _messagesTracker.TrackProcessed(
-            match.Groups["topicName"].Value,
-            match.Groups["messageId"].Value);
+        _messagesTracker.TrackProcessed(match.Groups["topicName"].Value, match.Groups["messageId"].Value);
         return true;
     }
 

@@ -57,7 +57,7 @@ public sealed class OverviewTopLevel : Toplevel
         _messagesTracker = messagesTracker;
         _producerBackgroundService = producerBackgroundService;
 
-        int messagesStatsTableHeight = Topics.All.Count + 4;
+        int messagesStatsTableHeight = TopicsConfiguration.All.Count + 4;
         _messagesStatsTableView = new CustomTableView
         {
             X = 0,
@@ -87,15 +87,14 @@ public sealed class OverviewTopLevel : Toplevel
         _toggleProducingStatusItem = new StatusItem(Key.F2, "~F2~ Producing ~OFF~", ToggleProducing);
         _toggleScalingStatusItem = new StatusItem(Key.F3, "~F3~ Autoscaling ~OFF~", ToggleRandomScaling);
         StatusBar statusBar = new(
-            new[]
-            {
-                _toggleProducingStatusItem,
+        [
+            _toggleProducingStatusItem,
                 _toggleScalingStatusItem,
                 new StatusItem(Key.F4, "~F4~ Scale out", ScaleOut),
                 new StatusItem(Key.F5, "~F5~ Scale in", ScaleIn),
                 new StatusItem(Key.F7, "~F7~ Show logs", ShowLogs),
                 new StatusItem(Key.CtrlMask | Key.Q, "~Ctrl+Q~ Quit", () => Application.RequestStop())
-            })
+        ])
         {
             Visible = true
         };
@@ -136,7 +135,7 @@ public sealed class OverviewTopLevel : Toplevel
         DataColumn lagCountColumn = _messagesStatsDataTable.Columns.Add("Lag", typeof(int));
         DataColumn lostCountColumn = _messagesStatsDataTable.Columns.Add("Lost", typeof(int));
 
-        _messagesStatsDataTable.PrimaryKey = new[] { topicColumn };
+        _messagesStatsDataTable.PrimaryKey = [topicColumn];
 
         _messagesStatsTableView.Style.ColumnStyles.Add(producedCountColumn, TableStyles.NumberColumnStyle);
         _messagesStatsTableView.Style.ColumnStyles.Add(failedProduceCountColumn, TableStyles.ErrorsColumnStyle);
@@ -153,12 +152,13 @@ public sealed class OverviewTopLevel : Toplevel
         DataColumn statusColumn = _containersDataTable.Columns.Add("Status");
         DataColumn startedColumn = _containersDataTable.Columns.Add("Started", typeof(DateTime));
         DataColumn stoppedColumn = _containersDataTable.Columns.Add("Stopped", typeof(DateTime));
+        DataColumn consumedColumn = _containersDataTable.Columns.Add("Consumed", typeof(int));
         DataColumn processedColumn = _containersDataTable.Columns.Add("Processed", typeof(int));
         DataColumn errorsColumn = _containersDataTable.Columns.Add("Errors", typeof(int));
         DataColumn fatalErrorsColumn = _containersDataTable.Columns.Add("Fatal Errors", typeof(int));
         DataColumn warningsColumn = _containersDataTable.Columns.Add("Warnings", typeof(int));
 
-        _containersDataTable.PrimaryKey = new[] { containerColumn };
+        _containersDataTable.PrimaryKey = [containerColumn];
 
         CustomTableView.ColumnStyle statusColumnStyle = new()
         {
@@ -178,6 +178,7 @@ public sealed class OverviewTopLevel : Toplevel
         _containersTableView.Style.ColumnStyles.Add(statusColumn, statusColumnStyle);
         _containersTableView.Style.ColumnStyles.Add(startedColumn, TableStyles.TimeColumnStyle);
         _containersTableView.Style.ColumnStyles.Add(stoppedColumn, TableStyles.TimeColumnStyle);
+        _containersTableView.Style.ColumnStyles.Add(consumedColumn, TableStyles.NumberColumnStyle);
         _containersTableView.Style.ColumnStyles.Add(processedColumn, TableStyles.NumberColumnStyle);
         _containersTableView.Style.ColumnStyles.Add(errorsColumn, TableStyles.ErrorsColumnStyle);
         _containersTableView.Style.ColumnStyles.Add(fatalErrorsColumn, TableStyles.ErrorsColumnStyle);
@@ -200,17 +201,17 @@ public sealed class OverviewTopLevel : Toplevel
     {
         _messagesStatsDataTable.Rows.Clear();
 
-        AddMessagesStatsTableRow("global", _messagesTracker.GlobalStats);
+        AddMessagesStatsTableRow(_messagesTracker.GlobalStats);
 
-        foreach ((string key, MessagesStats stats) in _messagesTracker.StatsByTopic)
+        foreach (MessagesStats stats in _messagesTracker.StatsByTopic.Values)
         {
-            AddMessagesStatsTableRow(key, stats);
+            AddMessagesStatsTableRow(stats);
         }
     }
 
-    private void AddMessagesStatsTableRow(string key, MessagesStats stats) =>
+    private void AddMessagesStatsTableRow(MessagesStats stats) =>
         _messagesStatsDataTable.Rows.Add(
-            key,
+            stats.TopicConfiguration?.ToString() ?? "global",
             stats.ProducedCount,
             stats.FailedProduceCount,
             stats.ConsumedCount,
@@ -230,6 +231,7 @@ public sealed class OverviewTopLevel : Toplevel
                 stats.ContainerService.State,
                 stats.Started,
                 stats.Stopped,
+                stats.ConsumedMessagesCount,
                 stats.ProcessedMessagesCount,
                 stats.ErrorsCount,
                 stats.FatalErrorsCount,

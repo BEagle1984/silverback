@@ -5,5 +5,13 @@ using System;
 
 namespace Silverback.TestBench.Configuration.Models;
 
-public record KafkaTopicConfiguration(string TopicName, int PartitionsCount, TimeSpan ProduceDelay = default)
-    : TopicConfiguration(TopicName, ProduceDelay);
+public record KafkaTopicConfiguration(
+    string TopicName,
+    int PartitionsCount,
+    TimeSpan ProduceDelay,
+    double SimulatedFailureChance = 0.01,
+    bool Enabled = true)
+    : TopicConfiguration(TopicName, ProduceDelay, SimulatedFailureChance, Enabled)
+{
+    public override string ToString() => base.ToString();
+}

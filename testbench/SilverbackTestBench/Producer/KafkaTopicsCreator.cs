@@ -13,7 +13,7 @@ namespace Silverback.TestBench.Producer;
 
 public static class KafkaTopicsCreator
 {
-    public static async Task CreateAllTopicsAsync()
+    public static async Task RecreateAllTopicsAsync()
     {
         IAdminClient adminClient = new AdminClientBuilder(
             new ClientConfig
@@ -35,7 +35,7 @@ public static class KafkaTopicsCreator
         try
         {
             await adminClient.CreateTopicsAsync(
-                Topics.Kafka.Select(
+                TopicsConfiguration.Kafka.Select(
                     topic =>
                         new TopicSpecification
                         {
@@ -59,7 +59,7 @@ public static class KafkaTopicsCreator
     {
         try
         {
-            await adminClient.DeleteTopicsAsync(Topics.Kafka.Select(topic => topic.TopicName));
+            await adminClient.DeleteTopicsAsync(TopicsConfiguration.Kafka.Select(topic => topic.TopicName));
         }
         catch (DeleteTopicsException)
         {

@@ -60,7 +60,7 @@ public static class TableStyles
         Alignment = TextAlignment.Right,
         ColorGetter = args => (int?)args.CellValue switch
         {
-            <= 0 => Colors.TopLevel,
+            <= 0 => GreenCellColorScheme,
             _ => RedCellColorScheme
         }
     };

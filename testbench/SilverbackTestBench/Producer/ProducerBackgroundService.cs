@@ -40,10 +40,12 @@ public class ProducerBackgroundService : BackgroundService
     [SuppressMessage("Usage", "VSTHRD110:Observe result of async calls", Justification = "Fire and forget")]
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        foreach (TopicConfiguration topic in Topics.All)
+        foreach (TopicConfiguration topic in TopicsConfiguration.All)
         {
-            _messagesTracker.InitializeTopic(topic.TopicName);
-            Task.Run(() => ProduceAsync(topic, stoppingToken), stoppingToken);
+            _messagesTracker.InitializeTopic(topic);
+
+            if (topic.Enabled)
+                Task.Run(() => ProduceAsync(topic, stoppingToken), stoppingToken);
         }
 
         return Task.CompletedTask;
@@ -60,10 +62,10 @@ public class ProducerBackgroundService : BackgroundService
                 continue;
             }
 
-            RoutableTestBenchMessage message = new(topic.TopicName);
+            RoutableTestBenchMessage message = new(topic);
             try
             {
-                await _publisher.PublishAsync(message);
+                await _publisher.PublishAsync(message, stoppingToken);
                 _messagesTracker.TrackProduced(message);
 
                 if (topic.ProduceDelay != default)

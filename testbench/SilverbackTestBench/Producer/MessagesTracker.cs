@@ -8,13 +8,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Silverback.TestBench.Configuration.Models;
 using Silverback.TestBench.Producer.Models;
 
 namespace Silverback.TestBench.Producer;
 
 public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 {
-    private static readonly TimeSpan LostMessagesThreshold = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan LostMessagesThreshold = TimeSpan.FromMinutes(1);
 
     private readonly ILogger<MessagesTracker> _logger;
 
@@ -28,11 +29,11 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
         _checkLostMessagesTimer = new Timer(_ => CheckLostMessages(), null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
     }
 
-    public MessagesStats GlobalStats { get; } = new();
+    public MessagesStats GlobalStats { get; } = new(null);
 
-    public Dictionary<string, MessagesStats> StatsByTopic { get; } = new();
+    public Dictionary<string, MessagesStats> StatsByTopic { get; } = [];
 
-    public void InitializeTopic(string topicName) => StatsByTopic.Add(topicName, new MessagesStats());
+    public void InitializeTopic(TopicConfiguration topicConfiguration) => StatsByTopic.Add(topicConfiguration.TopicName, new MessagesStats(topicConfiguration));
 
     public void TrackProduced(RoutableTestBenchMessage message)
     {
@@ -45,7 +46,7 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         lock (StatsByTopic)
         {
-            StatsByTopic[message.TargetTopic].ProducedCount++;
+            StatsByTopic[message.TargetTopicConfiguration.TopicName].ProducedCount++;
         }
     }
 
@@ -58,11 +59,11 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         lock (StatsByTopic)
         {
-            StatsByTopic[message.TargetTopic].FailedProduceCount++;
+            StatsByTopic[message.TargetTopicConfiguration.TopicName].FailedProduceCount++;
         }
     }
 
-    public void TrackConsumed(string topic)
+    public void TrackConsumed(string subscribedTopicName)
     {
         lock (GlobalStats)
         {
@@ -71,12 +72,12 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         lock (StatsByTopic)
         {
-            if (StatsByTopic.TryGetValue(topic, out MessagesStats? stats))
+            if (StatsByTopic.TryGetValue(subscribedTopicName, out MessagesStats? stats))
                 stats.ConsumedCount++;
         }
     }
 
-    public void TrackProcessed(string topic, string messageId)
+    public void TrackProcessed(string subscribedTopicName, string messageId)
     {
         if (!_pendingMessages.TryRemove(messageId, out _))
             return;
@@ -88,12 +89,12 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         lock (StatsByTopic)
         {
-            if (StatsByTopic.TryGetValue(topic, out MessagesStats? stats))
+            if (StatsByTopic.TryGetValue(subscribedTopicName, out MessagesStats? stats))
                 stats.ProcessedCount++;
         }
     }
 
-    public bool TrackLost(string topic, string messageId)
+    public bool TrackLost(TopicConfiguration topicConfiguration, string messageId)
     {
         if (!_pendingMessages.TryRemove(messageId, out _))
             return false;
@@ -105,7 +106,7 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         lock (StatsByTopic)
         {
-            if (StatsByTopic.TryGetValue(topic, out MessagesStats? stats))
+            if (StatsByTopic.TryGetValue(topicConfiguration.TopicName, out MessagesStats? stats))
                 stats.LostCount++;
         }
 
@@ -125,13 +126,13 @@ public sealed class MessagesTracker : IDisposable, IAsyncDisposable
 
         foreach (RoutableTestBenchMessage message in lostMessages)
         {
-            if (TrackLost(message.TargetTopic, message.MessageId))
+            if (TrackLost(message.TargetTopicConfiguration, message.MessageId))
             {
                 _logger.LogCritical(
                     "Message {MessageId} produced on topic {Topic} was not consumed within the expected time ({Threshold})" +
                     "and is considered lost",
                     message.MessageId,
-                    message.TargetTopic,
+                    message.TargetTopicConfiguration.TopicName,
                     LostMessagesThreshold);
             }
         }

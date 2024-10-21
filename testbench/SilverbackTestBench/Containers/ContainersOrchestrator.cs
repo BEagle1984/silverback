@@ -20,15 +20,15 @@ namespace Silverback.TestBench.Containers;
 
 public sealed class ContainersOrchestrator : IDisposable
 {
-    private readonly List<IContainerService> _containers = new();
+    private readonly List<IContainerService> _containers = [];
 
-    private readonly Dictionary<string, int> _containersCounters = new();
+    private readonly Dictionary<string, int> _containersCounters = [];
 
     private readonly MessagesTracker _messagesTracker;
 
     private readonly ILogger<ContainersOrchestrator> _logger;
 
-    private readonly LinkedList<ContainerLogParser> _containerLogParsers = new();
+    private readonly LinkedList<ContainerLogParser> _containerLogParsers = [];
 
     private bool _disposed;
 
@@ -128,8 +128,9 @@ public sealed class ContainersOrchestrator : IDisposable
                 .ExposePort(80)
                 .WaitForPort("80/tcp", 10_000)
                 .Mount(FileSystemHelper.LogsFolder, "/logs", MountType.ReadWrite)
-                .WithEnvironment($"CONTAINER_NAME={containerName}")
-                .WithEnvironment($"LOG_PATH=/logs/{containerName}.log")
+                .WithEnvironment(
+                    $"CONTAINER_NAME={containerName}",
+                    $"LOG_PATH=/logs/{containerName}.log")
                 .UseNetwork("silverback_default")
                 .Build()
                 .Start();

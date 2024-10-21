@@ -3,28 +3,54 @@
 
 using System;
 using Silverback.Messaging.Configuration;
-using Silverback.TestBench.Models;
+using Silverback.TestBench.Consumer.Models;
 
 namespace Silverback.TestBench.Consumer;
 
 public class BrokerClientsConfigurator : IBrokerClientsConfigurator
 {
+    private static readonly string ClientId = $"testbench-consumer-{Environment.GetEnvironmentVariable("CONTAINER_NAME")}";
+
     public void Configure(BrokerClientsConfigurationBuilder builder) =>
         builder
             .AddKafkaClients(
                 clients => clients
                     .WithBootstrapServers("PLAINTEXT://kafka:29092")
-                    //.WithBootstrapServers("PLAINTEXT://localhost:9092")
                     .AddConsumer(
                         consumer => consumer
-                            .WithGroupId("testbench-consumer")
+                            .WithGroupId(ClientId)
+                            .WithClientId(ClientId)
                             .AutoResetOffsetToEarliest()
-                            .Consume<TestBenchMessage>(
+                            .Consume<SingleMessage>(
                                 endpoint => endpoint
-                                    .ConsumeFrom("testbench-simple")
-                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))
-                            .Consume<TestBenchMessage>(
-                                endpoint => endpoint.ConsumeFrom("testbench-batch")
+                                    .ConsumeFrom(Topics.Kafka.Single)
+                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                            .Consume<BatchMessage>(
+                                endpoint => endpoint.ConsumeFrom(Topics.Kafka.Batch)
                                     .EnableBatchProcessing(100, TimeSpan.FromSeconds(2))
-                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader()))));
+                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                            .Consume<UnboundedMessage>(
+                                endpoint => endpoint.ConsumeFrom(Topics.Kafka.Unbounded)
+                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))))
+            .AddMqttClients(
+                clients => clients
+                    .AddClient(
+                        client => client
+                            .WithClientId(ClientId)
+                            .ConnectViaTcp("haproxy")
+                            .Consume<SingleMessage>(
+                                endpoint => endpoint
+                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Topic1}")
+                                    .WithAtLeastOnceQoS()
+                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))
+                            .Consume<UnboundedMessage>(
+                                endpoint => endpoint
+                                    .ConsumeFrom($"$share/group/{Topics.Mqtt.Topic2}")
+                                    .WithAtLeastOnceQoS()
+                                    .DeserializeJson(deserializer => deserializer.IgnoreMessageTypeHeader())
+                                    .OnError(policy => policy.Retry(5).ThenSkip()))));
 }

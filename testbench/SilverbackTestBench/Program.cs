@@ -31,7 +31,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         {
             services.AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddKafka().AddMqtt())
-                .AddBrokerClientsConfigurator<ProducerEndpointsBrokerClientsConfigurator>();
+                .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
 
             services
                 .AddSingleton<ContainersOrchestrator>()
@@ -69,7 +69,7 @@ await host.StopAsync();
 host.Dispose();
 ConsoleHelper.WriteDone();
 
-async Task ParseArgsAsync(string[] strings)
+static async Task ParseArgsAsync(string[] strings)
 {
     if (strings.Contains("--clear-logs") || strings.Contains("-c"))
         FileSystemHelper.ClearLogsFolder();
@@ -78,5 +78,5 @@ async Task ParseArgsAsync(string[] strings)
         DockerImagesBuilder.BuildAll();
 
     if (strings.Contains("--topics") || strings.Contains("-t"))
-        await KafkaTopicsCreator.CreateAllTopicsAsync();
+        await KafkaTopicsCreator.RecreateAllTopicsAsync();
 }

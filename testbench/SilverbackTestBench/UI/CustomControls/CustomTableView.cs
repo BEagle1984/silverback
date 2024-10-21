@@ -695,7 +695,7 @@ public class CustomTableView : View
         EnsureValidSelection();
 
         // If there are one or more rectangular selections
-        if (MultiSelect && MultiSelectedRegions.Any())
+        if (MultiSelect && MultiSelectedRegions.Count != 0)
         {
             // Quiz any cells for whether they are selected.  For performance we only need to check those between the top left and lower right vertex of selection regions
             var yMin = MultiSelectedRegions.Min(r => r.Rect.Top);
@@ -1232,7 +1232,7 @@ public class CustomTableView : View
                     rune = Driver.URCorner;
                 }
                 // if the next console column is the lastcolumns end
-                else if (Style.ExpandLastColumn == false &&
+                else if (!Style.ExpandLastColumn &&
                          columnsToRender.Any(r => r.IsVeryLast && r.X + r.Width - 1 == c))
                 {
                     rune = Driver.TopTee;
@@ -1267,7 +1267,7 @@ public class CustomTableView : View
 
             Driver.AddStr(TruncateOrPad(colName, colName, current.Width, colStyle));
 
-            if (Style.ExpandLastColumn == false && current.IsVeryLast)
+            if (!Style.ExpandLastColumn && current.IsVeryLast)
             {
                 RenderSeparator(current.X + current.Width - 1, row, true);
             }
@@ -1359,7 +1359,7 @@ public class CustomTableView : View
                     }
                 }
                 // if the next console column is the lastcolumns end
-                else if (Style.ExpandLastColumn == false &&
+                else if (!Style.ExpandLastColumn &&
                          columnsToRender.Any(r => r.IsVeryLast && r.X + r.Width - 1 == c))
                 {
                     rune = Style.ShowVerticalCellLines ? '┼' : Driver.BottomTee;
@@ -1448,7 +1448,7 @@ public class CustomTableView : View
 
             var render = TruncateOrPad(val, representation, current.Width, colStyle);
 
-            // While many cells can be selected (see MultiSelectedRegions) only one cell is the primary (drives navigation etc)
+            // While many cells can be selected (see MultiSelectedRegions) only one cell is the primary (drives navigation etc.)
             bool isPrimaryCell = current.Column.Ordinal == selectedColumn && rowToRender == selectedRow;
 
             RenderCell(cellColor, render, isPrimaryCell);
@@ -1474,7 +1474,7 @@ public class CustomTableView : View
 
             RenderSeparator(current.X - 1, row, false);
 
-            if (Style.ExpandLastColumn == false && current.IsVeryLast)
+            if (!Style.ExpandLastColumn && current.IsVeryLast)
             {
                 RenderSeparator(current.X + current.Width - 1, row, false);
             }
@@ -1503,7 +1503,7 @@ public class CustomTableView : View
     }
 
     /// <summary>
-    ///     Truncates or pads <paramref name="representation" /> so that it occupies a exactly <paramref name="availableHorizontalSpace" /> using the alignment specified in <paramref name="colStyle" /> (or left if no style is defined)
+    ///     Truncates or pads <paramref name="representation" /> so that it occupies an exactly <paramref name="availableHorizontalSpace" /> using the alignment specified in <paramref name="colStyle" /> (or left if no style is defined)
     /// </summary>
     /// <param name="originalCellValue">The object in this cell of the <see cref="Table" /></param>
     /// <param name="representation">The string representation of <paramref name="originalCellValue" /></param>
@@ -1638,7 +1638,7 @@ public class CustomTableView : View
     {
         return Table == null ||
                Table.Columns.Count <= 0 ||
-               Table.Columns.Cast<DataColumn>().All(c => (Style.GetColumnStyleIfAny(c)?.Visible ?? true) == false);
+               Table.Columns.Cast<DataColumn>().All(c => !(Style.GetColumnStyleIfAny(c)?.Visible ?? true));
     }
 
     /// <summary>
@@ -1702,7 +1702,7 @@ public class CustomTableView : View
             }
         }
 
-        // Caller only wants to look in one direction and we did not find any
+        // Caller only wants to look in one direction, and we did not find any
         // visible columns in that direction
         if (!allowBumpingInOppositeDirection)
         {
@@ -2079,7 +2079,7 @@ public class CustomTableView : View
         /// <summary>
         ///     Collection of columns for which you want special rendering (e.g. custom column lengths, text alignment etc)
         /// </summary>
-        public Dictionary<DataColumn, ColumnStyle> ColumnStyles { get; set; } = new Dictionary<DataColumn, ColumnStyle>();
+        public Dictionary<DataColumn, ColumnStyle> ColumnStyles { get; set; } = [];
 
         /// <summary>
         ///     Delegate for coloring specific rows in a different color.  For cell color <see cref="ColumnStyle.ColorGetter" />
