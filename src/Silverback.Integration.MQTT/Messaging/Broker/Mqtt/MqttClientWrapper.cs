@@ -195,11 +195,14 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         {
             await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken).ConfigureAwait(false);
 
-            MqttClientSubscribeOptions subscribeOptions = new()
+            if (_subscribedTopicsFilters.Length > 0)
             {
-                TopicFilters = _subscribedTopicsFilters.AsList()
-            };
-            await _mqttClient.SubscribeAsync(subscribeOptions, cancellationToken).ConfigureAwait(false);
+                MqttClientSubscribeOptions subscribeOptions = new()
+                {
+                    TopicFilters = _subscribedTopicsFilters.AsList()
+                };
+                await _mqttClient.SubscribeAsync(subscribeOptions, cancellationToken).ConfigureAwait(false);
+            }
 
             // The client might briefly connect and then disconnect immediately (e.g. when connecting with
             // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real
