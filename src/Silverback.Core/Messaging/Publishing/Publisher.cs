@@ -85,8 +85,6 @@ public class Publisher : IPublisher
         ExecutionFlow executionFlow,
         CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
         if (!behaviors.TryPop(out IBehavior? nextBehavior))
             return finalAction(message, throwIfUnhandled, executionFlow, cancellationToken);
 

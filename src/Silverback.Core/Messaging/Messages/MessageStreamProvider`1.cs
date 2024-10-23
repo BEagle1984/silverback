@@ -232,7 +232,10 @@ internal sealed class MessageStreamProvider<TMessage> : MessageStreamProvider
     {
         foreach (ILazyMessageStreamEnumerable? lazyStream in _lazyStreams)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            // Softly abort if the cancellation token is signaled, don't throw to avoid unnecessary logging when triggered by the
+            // application shutdown
+            if (cancellationToken.IsCancellationRequested)
+                yield break;
 
             if (PushIfCompatibleType(lazyStream, message, cancellationToken, out Task processingTask))
             {

@@ -125,9 +125,21 @@ internal sealed class ConsumeLoopHandler : IDisposable
         _isDisposed = true;
     }
 
-    private async Task ConsumeAsync(
-        TaskCompletionSource<bool> taskCompletionSource,
-        CancellationToken cancellationToken)
+    private static ConsumeResult<byte[]?, byte[]?> Consume(IConfluentConsumerWrapper client, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return client.Consume(cancellationToken);
+        }
+        catch (Exception)
+        {
+            // Ignore exceptions if the client is being disconnected
+            cancellationToken.ThrowIfCancellationRequested();
+            throw;
+        }
+    }
+
+    private async Task ConsumeAsync(TaskCompletionSource<bool> taskCompletionSource, CancellationToken cancellationToken)
     {
         // Clear the current activity to ensure we don't propagate the previous traceId
         Activity.Current = null;
@@ -170,7 +182,7 @@ internal sealed class ConsumeLoopHandler : IDisposable
     {
         try
         {
-            ConsumeResult<byte[]?, byte[]?> consumeResult = _consumer.Client.Consume(cancellationToken);
+            ConsumeResult<byte[]?, byte[]?> consumeResult = Consume(_consumer.Client, cancellationToken);
 
             _logger.LogConsuming(consumeResult, _consumer);
 
