@@ -39,7 +39,7 @@ public class DeserializerConsumerBehavior : IConsumerBehavior
         (object? deserializedObject, Type deserializedType) =
             await envelope.Endpoint.Configuration.Deserializer.DeserializeAsync(envelope.RawMessage, envelope.Headers, envelope.Endpoint).ConfigureAwait(false);
 
-        envelope.Headers.AddIfNotExists(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
+        envelope.Headers.AddOrReplace(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
 
         return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
     }
