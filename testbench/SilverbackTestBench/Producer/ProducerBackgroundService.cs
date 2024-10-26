@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,6 +62,9 @@ public class ProducerBackgroundService : BackgroundService
                 await Task.Delay(1000, stoppingToken);
                 continue;
             }
+
+            using Activity activity = new("Produce");
+            activity.Start();
 
             RoutableTestBenchMessage message = new(topic);
             try

@@ -46,7 +46,7 @@ public sealed partial class ContainerLogParser : IDisposable
         _stoppingTokenSource.Dispose();
     }
 
-    [GeneratedRegex(@"^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} \+\d{2}:\d{2}) \[(?<logLevel>[A-Z]+)\] (?<message>.+)$")]
+    [GeneratedRegex(@"^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \[(?<logLevel>[A-Z]+)\] (?<message>.+)$")]
     private static partial Regex LogLineRegex();
 
     [GeneratedRegex(@"Application started\.")]
@@ -98,14 +98,14 @@ public sealed partial class ContainerLogParser : IDisposable
         {
             while (!reader.EndOfStream && !stoppingToken.IsCancellationRequested)
             {
-                await ParseLogLineAsync(await reader.ReadLineAsync(stoppingToken), reader);
+                ParseLogLine(await reader.ReadLineAsync(stoppingToken));
             }
 
             await Task.Delay(500, stoppingToken);
         }
     }
 
-    private async ValueTask ParseLogLineAsync(string? logLine, StreamReader reader)
+    private void ParseLogLine(string? logLine)
     {
         if (logLine == null)
             return;
@@ -123,18 +123,13 @@ public sealed partial class ContainerLogParser : IDisposable
                 Statistics.WarningsCount++;
                 break;
             case "ERR":
-                string? nextLine = await reader.ReadLineAsync();
-                if (nextLine == null || !nextLine.Contains("SimulatedFailureException", StringComparison.Ordinal))
-                {
-                    Statistics.ErrorsCount++;
-                }
-
+                Statistics.ErrorsCount++;
                 break;
             case "FTL":
                 Statistics.FatalErrorsCount++;
                 break;
             case "INF":
-                DateTime timestamp = DateTime.ParseExact(match.Groups["timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
+                DateTime timestamp = DateTime.ParseExact(match.Groups["timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 ParseInfoMessage(match.Groups["message"].Value, timestamp);
 
                 break;

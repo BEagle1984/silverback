@@ -2,15 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
 using Silverback.Configuration;
 using Silverback.Messaging.Configuration;
+using Silverback.TestBench;
 using Silverback.TestBench.Containers;
 using Silverback.TestBench.Producer;
 using Silverback.TestBench.UI;
@@ -20,15 +19,12 @@ using Terminal.Gui;
 await ParseArgsAsync(args);
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .UseSerilog(
-        new LoggerConfiguration()
-            .WriteTo.File(
-                Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"),
-                formatProvider: CultureInfo.InvariantCulture)
-            .CreateLogger())
     .ConfigureServices(
         services =>
         {
+            services
+                .AddSerilog(Path.Combine(FileSystemHelper.LogsFolder, "testbench.log"));
+
             services.AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddKafka().AddMqtt())
                 .AddBrokerClientsConfigurator<BrokerClientsConfigurator>();
@@ -46,7 +42,6 @@ IHost host = Host.CreateDefaultBuilder(args)
                 .AddSingleton<OverviewTopLevel>();
         })
     .Build();
-
 Console.CancelKeyPress += (_, args) =>
 {
     Application.RequestStop();
