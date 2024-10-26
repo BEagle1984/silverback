@@ -101,6 +101,7 @@ internal sealed class ConsumerChannelsManager : ConsumerChannelsManager<Partitio
     {
         await base.StopReadingAsync(channel).ConfigureAwait(false);
 
+        channel.Complete();
         _channels.TryRemove(channel.TopicPartition, out _);
     }
 

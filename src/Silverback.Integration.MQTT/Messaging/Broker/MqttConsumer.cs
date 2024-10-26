@@ -124,10 +124,10 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StartCoreAsync" />
-    protected override ValueTask StartCoreAsync()
+    protected override async ValueTask StartCoreAsync()
     {
         _channelsManager.StartReading();
-        return default;
+        await Client.SubscribeAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="Consumer{TIdentifier}.StopCoreAsync" />
@@ -194,6 +194,9 @@ public class MqttConsumer : Consumer<MqttMessageIdentifier>
     private async ValueTask OnClientDisconnectedAsync(BrokerClient client)
     {
         await StopAsync().ConfigureAwait(false);
+
+        _channelsManager.CompleteAll();
+
         RevertConnectedStatus();
     }
 

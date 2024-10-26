@@ -89,6 +89,20 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         Action<Exception> onError) =>
         _publishQueueChannel.Writer.TryWrite(new QueuedMessage(content, headers, endpoint, onSuccess, onError));
 
+    public Task SubscribeAsync() =>
+        _mqttClient.SubscribeAsync(
+            new MqttClientSubscribeOptions
+            {
+                TopicFilters = [.. _subscribedTopicsFilters]
+            });
+
+    public Task UnsubscribeAsync() =>
+        _mqttClient.UnsubscribeAsync(
+            new MqttClientUnsubscribeOptions
+            {
+                TopicFilters = _subscribedTopicsFilters.Select(filter => filter.Topic).ToList()
+            });
+
     protected override ValueTask ConnectCoreAsync()
     {
         _connectCancellationTokenSource ??= new CancellationTokenSource();
@@ -194,15 +208,6 @@ internal sealed class MqttClientWrapper : BrokerClient, IMqttClientWrapper
         try
         {
             await _mqttClient.ConnectAsync(Configuration.GetMqttClientOptions(), cancellationToken).ConfigureAwait(false);
-
-            if (_subscribedTopicsFilters.Length > 0)
-            {
-                MqttClientSubscribeOptions subscribeOptions = new()
-                {
-                    TopicFilters = _subscribedTopicsFilters.AsList()
-                };
-                await _mqttClient.SubscribeAsync(subscribeOptions, cancellationToken).ConfigureAwait(false);
-            }
 
             // The client might briefly connect and then disconnect immediately (e.g. when connecting with
             // a clientId which is already in use) -> wait 5 seconds and test if we are connected for real

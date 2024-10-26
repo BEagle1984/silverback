@@ -37,7 +37,18 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         consumer.Client.MessageReceived.AddHandler(OnMessageReceivedAsync);
     }
 
-    public void StartReading() => _channels.ForEach(StartReading);
+    public void StartReading()
+    {
+        foreach (ConsumerChannel channel in _channels)
+        {
+            if (channel.IsCompleted)
+                channel.Reset();
+
+            StartReading(channel);
+        }
+    }
+
+    public void CompleteAll() => _channels.ForEach(channel => channel.Complete());
 
     protected override IEnumerable<ConsumerChannel> GetChannels() => _channels;
 
@@ -72,18 +83,14 @@ internal class ConsumerChannelsManager : ConsumerChannelsManager<ConsumerChannel
         _logger.LogConsuming(receivedMessage, _consumer);
 
         eventArgs.AutoAcknowledge = false;
-        await GetNextChannel().WriteAsync(receivedMessage, CancellationToken.None).ConfigureAwait(false);
-
-        _nextChannelIndex = (_nextChannelIndex + 1) % _channels.Length;
-    }
-
-    private ConsumerChannel GetNextChannel()
-    {
         ConsumerChannel channel = _channels[_nextChannelIndex++];
 
+        // We might receive a message before the channels reader is restarted (e.g. after a reconnection to a persistent session)
         if (channel.IsCompleted)
             channel.Reset();
 
-        return channel;
+        await channel.WriteAsync(receivedMessage, CancellationToken.None).ConfigureAwait(false);
+
+        _nextChannelIndex = (_nextChannelIndex + 1) % _channels.Length;
     }
 }

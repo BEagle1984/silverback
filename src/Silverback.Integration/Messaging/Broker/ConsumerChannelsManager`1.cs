@@ -82,7 +82,6 @@ internal abstract class ConsumerChannelsManager<TChannel> : IDisposable
             () => [channel.Id]);
 
         await channel.StopReadingAsync().ConfigureAwait(false);
-        channel.Complete();
     }
 
     protected virtual void Dispose(bool disposing)

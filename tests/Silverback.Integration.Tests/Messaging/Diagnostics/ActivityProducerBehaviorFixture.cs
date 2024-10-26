@@ -17,15 +17,15 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics;
 
-public class ActivityProducerBehaviorTests
+public class ActivityProducerBehaviorFixture
 {
-    public ActivityProducerBehaviorTests()
+    public ActivityProducerBehaviorFixture()
     {
         Activity.DefaultIdFormat = ActivityIdFormat.W3C;
     }
 
     [Fact]
-    public async Task HandleAsync_StartedActivity_TraceIdHeaderIsSet()
+    public async Task HandleAsync_ShouldAddTraceIdHeader()
     {
         Activity activity = new("test");
         activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
@@ -50,7 +50,7 @@ public class ActivityProducerBehaviorTests
     }
 
     [Fact]
-    public async Task HandleAsync_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
+    public async Task HandleAsync_ShouldNotAddTraceIdHeader_WhenNoActivity()
     {
         OutboundEnvelope envelope = new(null, null, TestProducerEndpoint.GetDefault(), Substitute.For<IProducer>());
 

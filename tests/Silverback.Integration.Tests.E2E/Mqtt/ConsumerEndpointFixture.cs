@@ -291,8 +291,6 @@ public partial class ConsumerEndpointFixture : MqttFixture
 
         await consumer.StopAsync();
 
-        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
-
         await producer.ProduceAsync(new TestEventOne());
         await producer.ProduceAsync(new TestEventOne());
 
@@ -334,6 +332,7 @@ public partial class ConsumerEndpointFixture : MqttFixture
         Helper.Spy.InboundEnvelopes.Count.Should().Be(2);
 
         await consumer.Client.DisconnectAsync();
+        await AsyncTestingUtil.WaitAsync(() => consumer.Client.Status == ClientStatus.Disconnected);
 
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "3" });
         await producer.ProduceAsync(new TestEventOne { ContentEventOne = "4" });

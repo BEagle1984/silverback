@@ -111,9 +111,9 @@ internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
         while (!cancellationToken.IsCancellationRequested)
         {
             if (_sessions.Values.All(
-                    session => session.PendingMessagesCount == 0 ||
-                               !session.Client.IsConnected ||
-                               !session.IsConnected))
+                session => session.PendingMessagesCount == 0 ||
+                           !session.Client.IsConnected ||
+                           !session.IsConnected))
             {
                 return;
             }

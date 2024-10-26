@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MQTTnet.Client;
 using MQTTnet.Packets;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -64,4 +65,20 @@ public interface IMqttClientWrapper : IBrokerClient
         MqttProducerEndpoint endpoint,
         Action<IBrokerMessageIdentifier?> onSuccess,
         Action<Exception> onError);
+
+    /// <summary>
+    ///     Subscribes to all configured topics and starts consuming messages.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task SubscribeAsync();
+
+    /// <summary>
+    ///     Unsubscribes from all topics and stops consuming messages.
+    /// </summary>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    Task UnsubscribeAsync();
 }
